@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_thirty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_forty_two_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382
+        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 415, 416
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -328,6 +328,24 @@ def test_rt_cv_image_embedding_receipt_is_bound_to_exact_row() -> None:
     assert evidence["different_image_vector_distinct"] is True
     assert evidence["different_image_cosine"] < 0.99
     assert receipt["negative_path_validation"]["error_exact"] is True
+
+
+def test_vios_file_lifecycle_receipt_is_bound_to_three_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "vios-file-lifecycle-manifest-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [412, 415, 416]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+        assert receipt["cleanup"]["exact_file_list_restored"] is True
+        assert receipt["cleanup"]["exact_sensor_list_restored"] is True
+    receipt = compiler._validate_receipt(entries[0])
+    assert receipt["downloads"]["clip"]["distinct_from_full_file"] is True
+    assert receipt["snapshot"]["visual_marker_correlated"] is True
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

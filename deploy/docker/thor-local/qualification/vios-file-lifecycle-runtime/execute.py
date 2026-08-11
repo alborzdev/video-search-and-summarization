@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import hashlib
 import json
 import os
@@ -71,6 +71,13 @@ def _contains_string(value: Any, target: str) -> bool:
             for key, item in value.items()
         )
     return False
+
+
+def _stale_file_sensor_metadata(
+    sensors: Any, files: Any, sensor_id: str, file_id: str
+) -> bool:
+    """Return true only after storage deletion left owned sensor metadata behind."""
+    return _contains_string(sensors, sensor_id) and not _contains_string(files, file_id)
 
 
 class Client:
@@ -230,6 +237,81 @@ def _timeline_bounds(value: Any) -> tuple[str, str]:
     raise QualificationError("uploaded stream has no valid timeline range")
 
 
+def _probe_media(raw: bytes, label: str) -> dict[str, Any]:
+    if not raw:
+        raise QualificationError(f"empty {label} response")
+    try:
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-show_entries",
+                "stream=codec_name,codec_type,width,height:format=duration",
+                "-of",
+                "json",
+                "pipe:0",
+            ],
+            input=raw,
+            check=True,
+            capture_output=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+        raise QualificationError(f"failed to probe {label} response") from exc
+    probe = _strict_json(result.stdout, f"{label} ffprobe")
+    streams = probe.get("streams")
+    if not isinstance(streams, list) or not streams:
+        raise QualificationError(f"{label} response has no media stream")
+    return probe
+
+
+def _interior_clip_bounds(start: str, end: str) -> tuple[str, str]:
+    try:
+        start_value = datetime.fromisoformat(start.replace("Z", "+00:00"))
+        end_value = datetime.fromisoformat(end.replace("Z", "+00:00"))
+    except ValueError as exc:
+        raise QualificationError("timeline bounds are not ISO-8601 timestamps") from exc
+    if (end_value - start_value).total_seconds() < 1.5:
+        raise QualificationError("timeline is too short for a distinct interior clip")
+    clip_start = start_value + timedelta(milliseconds=400)
+    clip_end = end_value - timedelta(milliseconds=400)
+    return (
+        clip_start.isoformat(timespec="milliseconds").replace("+00:00", "Z"),
+        clip_end.isoformat(timespec="milliseconds").replace("+00:00", "Z"),
+    )
+
+
+def _decode_first_rgb(raw: bytes, label: str) -> bytes:
+    try:
+        result = subprocess.run(
+            [
+                "ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-i",
+                "pipe:0",
+                "-frames:v",
+                "1",
+                "-f",
+                "rawvideo",
+                "-pix_fmt",
+                "rgb24",
+                "pipe:1",
+            ],
+            input=raw,
+            check=True,
+            capture_output=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+        raise QualificationError(f"failed to decode {label}") from exc
+    if not result.stdout:
+        raise QualificationError(f"decoded {label} is empty")
+    return result.stdout
+
+
 def _write_receipt(path: Path, value: dict[str, Any]) -> None:
     if path.is_symlink() or (path.exists() and not path.is_file()):
         raise QualificationError("unsafe receipt output")
@@ -260,6 +342,11 @@ def execute() -> dict[str, Any]:
     pre_sensors: Any = None
     pre_files: Any = None
     timeline: tuple[str, str] | None = None
+    clip: bytes | None = None
+    clip_probe: dict[str, Any] | None = None
+    snapshot: bytes | None = None
+    snapshot_probe: dict[str, Any] | None = None
+    snapshot_rgb_mae: float | None = None
     primary_error: Exception | None = None
 
     with tempfile.TemporaryDirectory(prefix="vss-vios-file-lifecycle-") as directory:
@@ -348,6 +435,64 @@ def execute() -> dict[str, Any]:
                 raise QualificationError("full-file download failed")
             if _sha(download) != fixture["sha256"] or len(download) != fixture["bytes"]:
                 raise QualificationError("full-file download is not byte-identical")
+
+            clip_bounds = _interior_clip_bounds(*timeline)
+            encoded_start = urllib.parse.quote(clip_bounds[0], safe="")
+            encoded_end = urllib.parse.quote(clip_bounds[1], safe="")
+            clip_status, clip = client.request(
+                "GET",
+                (
+                    f"/storage/file/{quoted_stream}?startTime={encoded_start}"
+                    f"&endTime={encoded_end}&container=mp4&disableAudio=true"
+                    "&transcode=full"
+                ),
+            )
+            if clip_status != 200:
+                raise QualificationError("time-bounded MP4 clip download failed")
+            clip_probe = _probe_media(clip, "time-bounded clip")
+            clip_video = [
+                item
+                for item in clip_probe["streams"]
+                if item.get("codec_type") == "video"
+            ]
+            if len(clip_video) != 1 or clip_video[0].get("codec_name") != "h264":
+                raise QualificationError("time-bounded clip video contract differs")
+            if _sha(clip) == fixture["sha256"]:
+                raise QualificationError("generated clip is not distinct from the full file")
+
+            snapshot_start = urllib.parse.quote(timeline[0], safe="")
+            snapshot_status, snapshot = client.request(
+                "GET",
+                (
+                    f"/storage/stream/{quoted_stream}/picture"
+                    f"?startTime={snapshot_start}"
+                ),
+            )
+            if snapshot_status != 200:
+                raise QualificationError("historical snapshot download failed")
+            snapshot_probe = _probe_media(snapshot, "historical snapshot")
+            snapshot_video = [
+                item
+                for item in snapshot_probe["streams"]
+                if item.get("codec_type") == "video"
+            ]
+            if (
+                len(snapshot_video) != 1
+                or snapshot_video[0].get("codec_name") != "mjpeg"
+                or snapshot_video[0].get("width") != 160
+                or snapshot_video[0].get("height") != 120
+            ):
+                raise QualificationError("historical snapshot image contract differs")
+            source_rgb = _decode_first_rgb(fixture_bytes, "owned source fixture")
+            snapshot_rgb = _decode_first_rgb(snapshot, "historical snapshot")
+            if len(source_rgb) != len(snapshot_rgb):
+                raise QualificationError("snapshot pixel dimensions differ from owned fixture")
+            snapshot_rgb_mae = sum(
+                abs(source - observed)
+                for source, observed in zip(source_rgb, snapshot_rgb, strict=True)
+            ) / len(source_rgb)
+            if snapshot_rgb_mae > 20.0:
+                raise QualificationError("snapshot is not correlated to the owned visual marker")
         except Exception as exc:  # cleanup must still run for any bounded failure
             primary_error = exc
         finally:
@@ -406,6 +551,42 @@ def execute() -> dict[str, Any]:
                 ):
                     break
                 time.sleep(0.5)
+            if _stale_file_sensor_metadata(
+                post_sensors, post_files, sensor_id, file_id
+            ):
+                try:
+                    status, deleted = client.json(
+                        "DELETE",
+                        f"/sensor/{urllib.parse.quote(sensor_id, safe='')}",
+                        expected={200},
+                    )
+                    if deleted is not True:
+                        raise QualificationError(
+                            "stale owned file-sensor metadata delete was not acknowledged"
+                        )
+                    cleanup_attempts.append(
+                        {
+                            "operation": "stale-file-sensor-metadata-delete",
+                            "result": "passed",
+                            "status": status,
+                        }
+                    )
+                except Exception as exc:
+                    cleanup_attempts.append(
+                        {
+                            "operation": "stale-file-sensor-metadata-delete",
+                            "result": "failed",
+                            "error": str(exc),
+                        }
+                    )
+                for _ in range(20):
+                    _, post_sensors = client.json("GET", "/sensor/list")
+                    _, post_files = client.json("GET", "/storage/file/list")
+                    if not _contains_string(
+                        post_sensors, sensor_id
+                    ) and not _contains_string(post_files, file_id):
+                        break
+                    time.sleep(0.5)
         else:
             _, post_sensors = client.json("GET", "/sensor/list")
             _, post_files = client.json("GET", "/storage/file/list")
@@ -458,12 +639,33 @@ def execute() -> dict[str, Any]:
                 "upload_response_bytes": fixture["bytes"],
                 "full_download_bytes": fixture["bytes"],
                 "full_download_sha256": fixture["sha256"],
+                "clip_download": {
+                    "bytes": len(clip),
+                    "sha256": _sha(clip),
+                    "probe": clip_probe,
+                    "requested_bounds": {
+                        "startTime": clip_bounds[0],
+                        "endTime": clip_bounds[1],
+                    },
+                    "distinct_from_full_file": True,
+                    "time_bounded": True,
+                },
+                "historical_snapshot": {
+                    "bytes": len(snapshot),
+                    "sha256": _sha(snapshot),
+                    "probe": snapshot_probe,
+                    "source_rgb_mean_absolute_error": snapshot_rgb_mae,
+                    "visual_marker_correlated": True,
+                    "timestamp_from_runtime_timeline": True,
+                },
                 "registration_readbacks": [
                     "stream_timeline",
                     "sensor_file_list",
                     "file_path_and_metadata",
                     "media_info",
                     "full_file",
+                    "time_bounded_mp4_clip",
+                    "historical_snapshot",
                 ],
                 "pre_sensor_list_sha256": _sha(_canonical(pre_sensors)),
                 "post_sensor_list_sha256": _sha(_canonical(post_sensors)),

@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "source_identity", "runtime", "upload_registration", "downloads", "snapshot", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "vios-file-lifecycle-manifest-runtime-successor"},
+    "capability_ids": {"const": ["manifest-entry.vios-core.01-file-upload-and-registration", "manifest-entry.vios-core.04-clip-and-raw-full-file-download", "manifest-entry.vios-core.05-snapshots"]},
+    "official_indices": {"const": [412, 415, 416]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "source_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["executor_sha256", "fixture_contract_sha256", "fixture_sha256"],
+      "properties": {
+        "executor_sha256": {"const": "1cc07bd6c92c48add6bfba97d6bbd4768406a4d4cd4e08b44f3ad9ed7e47d902"},
+        "fixture_contract_sha256": {"const": "297821477baaea974ad9c91736cf6a40871958528ccc7c41c6012fb7b3c85b61"},
+        "fixture_sha256": {"const": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["captured_at", "product_version", "endpoint_scope", "request_count", "http_200_count", "http_409_count"],
+      "properties": {
+        "captured_at": {"type": "string", "format": "date-time"},
+        "product_version": {"const": "3.2.1"},
+        "endpoint_scope": {"const": "loopback-only"},
+        "request_count": {"type": "integer", "minimum": 15},
+        "http_200_count": {"type": "integer", "minimum": 14},
+        "http_409_count": {"const": 1}
+      }
+    },
+    "upload_registration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bytes", "stable_file_sensor_stream_identifiers", "duplicate_name_status", "registration_readbacks"],
+      "properties": {
+        "bytes": {"const": 40394},
+        "stable_file_sensor_stream_identifiers": {"const": true},
+        "duplicate_name_status": {"const": 409},
+        "registration_readbacks": {"const": ["stream_timeline", "sensor_file_list", "file_path_and_metadata", "media_info", "full_file", "time_bounded_mp4_clip", "historical_snapshot"]}
+      }
+    },
+    "downloads": {
+      "type": "object", "additionalProperties": false,
+      "required": ["full_file", "clip"],
+      "properties": {
+        "full_file": {
+          "type": "object", "additionalProperties": false,
+          "required": ["bytes", "sha256", "byte_identical_to_upload"],
+          "properties": {"bytes": {"const": 40394}, "sha256": {"const": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2"}, "byte_identical_to_upload": {"const": true}}
+        },
+        "clip": {
+          "type": "object", "additionalProperties": false,
+          "required": ["bytes", "sha256", "codec", "duration_seconds", "time_bounded", "bounds_derived_from_runtime_timeline", "distinct_from_full_file"],
+          "properties": {
+            "bytes": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/hash"},
+            "codec": {"const": "h264"}, "duration_seconds": {"const": 1.2},
+            "time_bounded": {"const": true}, "bounds_derived_from_runtime_timeline": {"const": true},
+            "distinct_from_full_file": {"const": true}
+          }
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bytes", "sha256", "codec", "width", "height", "timestamp_from_runtime_timeline", "visual_marker_correlated", "source_rgb_mean_absolute_error"],
+      "properties": {
+        "bytes": {"type": "integer", "minimum": 1}, "sha256": {"$ref": "#/$defs/hash"},
+        "codec": {"const": "mjpeg"}, "width": {"const": 160}, "height": {"const": 120},
+        "timestamp_from_runtime_timeline": {"const": true}, "visual_marker_correlated": {"const": true},
+        "source_rgb_mean_absolute_error": {"type": "number", "minimum": 0, "maximum": 20.0}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["result", "owned_file_absent", "owned_sensor_absent", "exact_file_list_restored", "exact_sensor_list_restored", "temporary_fixture_removed"],
+      "properties": {
+        "result": {"const": "passed"}, "owned_file_absent": {"const": true}, "owned_sensor_absent": {"const": true},
+        "exact_file_list_restored": {"const": true}, "exact_sensor_list_restored": {"const": true}, "temporary_fixture_removed": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "warehouse_sample_bundle", "rtsp_or_rt_cv_stream_mutations", "exact_cleanup_required", "raw_identifiers_retained", "raw_media_retained"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"},
+        "rtsp_or_rt_cv_stream_mutations": {"const": 0}, "exact_cleanup_required": {"const": true},
+        "raw_identifiers_retained": {"const": false}, "raw_media_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

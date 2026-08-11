@@ -1,0 +1,85 @@
+{
+  "capability_ids": [
+    "manifest-entry.vios-core.01-file-upload-and-registration",
+    "manifest-entry.vios-core.04-clip-and-raw-full-file-download",
+    "manifest-entry.vios-core.05-snapshots"
+  ],
+  "cleanup": {
+    "exact_file_list_restored": true,
+    "exact_sensor_list_restored": true,
+    "owned_file_absent": true,
+    "owned_sensor_absent": true,
+    "result": "passed",
+    "temporary_fixture_removed": true
+  },
+  "contract_sha256": "59a47ef278c025d3ed043e8c29e0ac311fe96beddcc484419411c92f9b01d6ba",
+  "downloads": {
+    "clip": {
+      "bounds_derived_from_runtime_timeline": true,
+      "bytes": 58223,
+      "codec": "h264",
+      "distinct_from_full_file": true,
+      "duration_seconds": 1.2,
+      "sha256": "072c9b6cd21af3dbb125a524303b2b39129c0015a84aeeb7a7f79839be938069",
+      "time_bounded": true
+    },
+    "full_file": {
+      "byte_identical_to_upload": true,
+      "bytes": 40394,
+      "sha256": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2"
+    }
+  },
+  "official_indices": [
+    412,
+    415,
+    416
+  ],
+  "package_id": "vios-file-lifecycle-manifest-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "exact_cleanup_required": true,
+    "raw_identifiers_retained": false,
+    "raw_media_retained": false,
+    "rtsp_or_rt_cv_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "captured_at": "2026-08-11T18:27:22.154724Z",
+    "endpoint_scope": "loopback-only",
+    "http_200_count": 14,
+    "http_409_count": 1,
+    "product_version": "3.2.1",
+    "request_count": 15
+  },
+  "schema_version": 1,
+  "snapshot": {
+    "bytes": 4152,
+    "codec": "mjpeg",
+    "height": 120,
+    "sha256": "a37fdfa078f06adc19646927b14bd8152b78aac17b1e20723fade9963b29251d",
+    "source_rgb_mean_absolute_error": 15.611770833333333,
+    "timestamp_from_runtime_timeline": true,
+    "visual_marker_correlated": true,
+    "width": 160
+  },
+  "source_identity": {
+    "executor_sha256": "1cc07bd6c92c48add6bfba97d6bbd4768406a4d4cd4e08b44f3ad9ed7e47d902",
+    "fixture_contract_sha256": "297821477baaea974ad9c91736cf6a40871958528ccc7c41c6012fb7b3c85b61",
+    "fixture_sha256": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2"
+  },
+  "status": "passed",
+  "upload_registration": {
+    "bytes": 40394,
+    "duplicate_name_status": 409,
+    "registration_readbacks": [
+      "stream_timeline",
+      "sensor_file_list",
+      "file_path_and_metadata",
+      "media_info",
+      "full_file",
+      "time_bounded_mp4_clip",
+      "historical_snapshot"
+    ],
+    "stable_file_sensor_stream_identifiers": true
+  }
+}

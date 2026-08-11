@@ -5,9 +5,18 @@ through the main loopback-only VIOS ingress, verifies every returned identity,
 proves v2 duplicate-name rejection, reads the registered media ID back through
 the stream timeline, file-list, path, and media-info surfaces, and
 downloads the full file with matching byte count and byte-identical SHA-256
-equality. It then deletes only the returned owned stream range and requires
+equality. Using the timeline returned by VIOS rather than a fabricated time,
+it also downloads a time-bounded H.264 MP4 clip and a 160x120 MJPEG historical
+snapshot and validates both with FFprobe. It then deletes only the returned
+owned stream range and requires
 exact restoration of the
 pre-existing sensor and file-list documents.
+
+On split-service builds, storage deletion can remove the owned media while
+leaving its now-fileless sensor metadata behind. The executor waits for normal
+convergence first. Only when the exact owned file ID is absent does it delete
+that exact owned sensor ID as a stale-metadata fallback, then rechecks both
+inventories. It never applies this fallback while the owned file is present.
 
 NVIDIA's split VIOS developer graph serves file registration from the storage
 module and camera discovery from a separate sensor module. A file upload is

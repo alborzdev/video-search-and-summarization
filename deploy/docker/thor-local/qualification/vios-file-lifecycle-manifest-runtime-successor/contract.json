@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "package_id": "vios-file-lifecycle-manifest-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.vios-core.01-file-upload-and-registration",
+    "manifest-entry.vios-core.04-clip-and-raw-full-file-download",
+    "manifest-entry.vios-core.05-snapshots"
+  ],
+  "official_indices": [412, 415, 416],
+  "target_release": "VSS 3.2.1",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-runtime/execute.py",
+      "sha256": "1cc07bd6c92c48add6bfba97d6bbd4768406a4d4cd4e08b44f3ad9ed7e47d902"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-runtime/fixture-contract.json",
+      "sha256": "297821477baaea974ad9c91736cf6a40871958528ccc7c41c6012fb7b3c85b61"
+    }
+  ],
+  "runtime_contract": {
+    "endpoint_scope": "loopback-only active Thor VIOS ingress",
+    "fixture_bytes": 40394,
+    "fixture_sha256": "4985870a996fbd112ed0bc9d727f6f44b43b2d0f3c6bfc700f8a6bbffeacafa2",
+    "upload_registration_readbacks": [
+      "stream_timeline",
+      "sensor_file_list",
+      "file_path_and_metadata",
+      "media_info",
+      "full_file",
+      "time_bounded_mp4_clip",
+      "historical_snapshot"
+    ],
+    "clip": {
+      "container": "mp4",
+      "codec": "h264",
+      "duration_seconds": 1.2,
+      "must_differ_from_full_file": true
+    },
+    "snapshot": {
+      "codec": "mjpeg",
+      "width": 160,
+      "height": 120,
+      "maximum_source_rgb_mean_absolute_error": 20.0
+    }
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "warehouse_sample_bundle": "excluded",
+    "rtsp_or_rt_cv_stream_mutations": 0,
+    "exact_cleanup_required": true,
+    "raw_identifiers_retained": false,
+    "raw_media_retained": false
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-19",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-20",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -865,6 +865,72 @@
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "file upload and registration",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-core.01-file-upload-and-registration",
+      "feature_id": "vios-core",
+      "official_index": 412,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/contract.json",
+        "contract_sha256": "59a47ef278c025d3ed043e8c29e0ac311fe96beddcc484419411c92f9b01d6ba",
+        "package_id": "vios-file-lifecycle-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "cfeba358a935038f71272981ed51081ba459bdca8c57a304154b782840cf242b",
+        "receipt_sha256": "9db571f5a0602e4db6b60edda81f831e680cfa08e337aefa8e6bb2906f95fba3",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "clip and raw/full-file download",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-core.04-clip-and-raw-full-file-download",
+      "feature_id": "vios-core",
+      "official_index": 415,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/contract.json",
+        "contract_sha256": "59a47ef278c025d3ed043e8c29e0ac311fe96beddcc484419411c92f9b01d6ba",
+        "package_id": "vios-file-lifecycle-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "cfeba358a935038f71272981ed51081ba459bdca8c57a304154b782840cf242b",
+        "receipt_sha256": "9db571f5a0602e4db6b60edda81f831e680cfa08e337aefa8e6bb2906f95fba3",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "snapshots",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-core.05-snapshots",
+      "feature_id": "vios-core",
+      "official_index": 416,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/contract.json",
+        "contract_sha256": "59a47ef278c025d3ed043e8c29e0ac311fe96beddcc484419411c92f9b01d6ba",
+        "package_id": "vios-file-lifecycle-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-file-lifecycle-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "cfeba358a935038f71272981ed51081ba459bdca8c57a304154b782840cf242b",
+        "receipt_sha256": "9db571f5a0602e4db6b60edda81f831e680cfa08e337aefa8e6bb2906f95fba3",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
     }
   ],
   "schema_version": 1,
@@ -874,8 +940,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 39,
-    "row_count": 39,
+    "passed_current_thor": 42,
+    "row_count": 42,
     "warehouse_sample_bundle": "excluded"
   }
 }
