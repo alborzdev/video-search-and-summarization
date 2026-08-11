@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-28",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-29",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -92,6 +92,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "8e93e861e355cb33daea4e650aab414ba97cd80a58fa30cdb62a768b146360fe",
         "receipt_sha256": "9aa5418bc4db6145e640d3cde7ab9766b16bb6d488461829f35a721b74efa5ac",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Behavior embedding downsampling",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "runtime.behavior.embedding-downsampling",
+      "feature_id": "behavior-analytics",
+      "official_index": 207,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/contract.json",
+        "contract_sha256": "c3ff14fc7b7f828a80f97dbb9dd8ad286e31e0a70cdb70833cc43b409220a4aa",
+        "package_id": "behavior-analytics-embedding-downsampling-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "53f2620538801a9b60e58220536d20bf19063e7e1ff9fb537629a5da50f65faa",
+        "receipt_sha256": "f7df00613206c5c150c5cd88dbe70d5df843447bf2f68509a75ce67a23010f3a",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1446,8 +1468,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 65,
-    "row_count": 65,
+    "passed_current_thor": 66,
+    "row_count": 66,
     "warehouse_sample_bundle": "excluded"
   }
 }

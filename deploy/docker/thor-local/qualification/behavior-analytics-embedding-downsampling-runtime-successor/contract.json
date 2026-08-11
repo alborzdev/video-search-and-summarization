@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-embedding-downsampling-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "runtime.behavior.embedding-downsampling"
+  ],
+  "official_indices": [207],
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/window-config.json", "sha256": "5fd66069c0d68849317a9c029e9aa837205325f1d29b7121ed44aa341f7f574b"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/sdt-config.json", "sha256": "74b4ff0ad9b69dee20867e26a04bf0d27379a1d17b3f016d7d593bc5bee6eee2"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/run_downsampling_probe.py", "sha256": "2dc196aadae58ed226e71f6fe9f9fa50843e09445ff07ecb3849690549f62dff"},
+    {"path": "services/analytics/behavior-analytics/apps/fusion_search/main_fusion_search_analytics_app.py", "sha256": "cdd935c5b0708dd94a053fbcfb9092c9b489b044eee290383ffbcc80fff7916c"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py", "sha256": "99fad8777a0138e22d01fa7051301669e43c652ba53ee12dc8e540132bd1effc"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/video_embedding_state_mgmt.py", "sha256": "b78d87eb3eefa9b6641e007a0902bc1c194fe5f695ebd02f42faa5921cd68c35"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/downsampling/downsampler_base.py", "sha256": "b5d7182a662b3302c0c9fba8999295f48608e9c730792ccd83e9bbc0b61d7ad4"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/downsampling/downsampler_sdt.py", "sha256": "a2b0347bacd9537a12ae41961ff7480a795a5736b867dd2530b35ca76f7258f2"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/video_embedding/downsampling/downsampler_window.py", "sha256": "5db120a3afdc54b875096be6304cf24a3dd2f84d2e9662112396c453eaf0bd8e"}
+  ],
+  "required_assertions": {
+    "modes": ["sdt", "window"],
+    "input_protocol": "Kafka nv.VisionLLM protobuf",
+    "service_path": "FusionSearchAnalyticsApp.process_chunk_embeddings",
+    "downsampling_enabled": true,
+    "compression_observed_per_mode": true,
+    "first_point_preserved_per_mode": true,
+    "novel_transition_preserved_per_mode": true,
+    "graceful_pending_flush": true
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "complete bbox/tracking/embedding behavior pipeline",
+    "all output families on all three broker sinks",
+    "embedding quality evaluation",
+    "multi-replica performance envelope"
+  ]
+}

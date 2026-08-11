@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-28",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-29",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -112,6 +112,34 @@
         "/dynamic_calibration/immutable_existing_type/delegated_to": "CalibrationE",
         "/dynamic_calibration/immutable_existing_type/type_switch_markers_after_update": 0,
         "/cleanup/qualification_topics_absent": true
+      }
+    },
+    {
+      "official_index": 207,
+      "capability_id": "runtime.behavior.embedding-downsampling",
+      "advertised_literal": "Behavior embedding downsampling",
+      "package_id": "behavior-analytics-embedding-downsampling-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/contract.json",
+      "contract_sha256": "c3ff14fc7b7f828a80f97dbb9dd8ad286e31e0a70cdb70833cc43b409220a4aa",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "f7df00613206c5c150c5cd88dbe70d5df843447bf2f68509a75ce67a23010f3a",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "53f2620538801a9b60e58220536d20bf19063e7e1ff9fb537629a5da50f65faa",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/modes/sdt/input_count": 13,
+        "/modes/sdt/output_count": 3,
+        "/modes/sdt/output_frame_ids": ["0", "11", "12"],
+        "/modes/sdt/compression_observed": true,
+        "/modes/sdt/novel_transition_preserved": true,
+        "/modes/window/input_count": 13,
+        "/modes/window/output_count": 4,
+        "/modes/window/output_frame_ids": ["0", "1", "2", "12"],
+        "/modes/window/compression_observed": true,
+        "/modes/window/novel_transition_preserved": true,
+        "/cleanup/disposable_containers_absent": true,
+        "/cleanup/qualification_topics_absent": true,
+        "/policy/normal_behavior_consumers_stopped": 0
       }
     },
     {

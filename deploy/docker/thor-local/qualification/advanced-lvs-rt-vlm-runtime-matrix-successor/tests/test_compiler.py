@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_sixty_five_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_sixty_six_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 204, 205, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        69, 70, 204, 205, 207, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -79,6 +79,25 @@ def test_three_broker_behavior_control_receipt_is_bound_to_exact_row() -> None:
             backend["post_update"]["frames_with_fov_metrics"]
             == backend["post_update"]["enhanced_frames"]
         )
+
+
+def test_embedding_downsampling_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "behavior-analytics-embedding-downsampling-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [207]
+    receipt = compiler._validate_receipt(entries[0])
+    assert entries[0]["capability_id"] in receipt["capability_ids"]
+    assert set(receipt["modes"]) == {"sdt", "window"}
+    assert receipt["modes"]["sdt"]["output_frame_ids"] == ["0", "11", "12"]
+    assert receipt["modes"]["window"]["output_frame_ids"] == ["0", "1", "2", "12"]
+    assert all(
+        value["output_count"] < value["input_count"]
+        for value in receipt["modes"].values()
+    )
 
 
 def test_receipts_are_source_locked_schema_valid_and_privacy_safe() -> None:

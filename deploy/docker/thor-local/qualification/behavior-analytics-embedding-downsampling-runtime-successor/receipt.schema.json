@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "contract_sha256", "capability_ids", "official_indices", "status", "runtime", "modes", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-embedding-downsampling-runtime-successor"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "capability_ids": {"const": ["runtime.behavior.embedding-downsampling"]},
+    "official_indices": {"const": [207]},
+    "status": {"const": "passed"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image", "image_id", "application", "input_protocol", "sensor_id"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "image_id": {"$ref": "#/$defs/image_id"},
+        "application": {"const": "FusionSearchAnalyticsApp"},
+        "input_protocol": {"const": "Kafka nv.VisionLLM protobuf"},
+        "sensor_id": {"const": "qualification-camera"}
+      }
+    },
+    "modes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sdt", "window"],
+      "properties": {
+        "sdt": {"$ref": "#/$defs/mode"},
+        "window": {"$ref": "#/$defs/mode"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposable_containers_absent", "qualification_topics_absent", "normal_behavior_containers_running", "failures"],
+      "properties": {
+        "disposable_containers_absent": {"const": true},
+        "qualification_topics_absent": {"const": true},
+        "normal_behavior_containers_running": {"const": true},
+        "failures": {"type": "array", "maxItems": 0}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_generate_calls", "external_requests", "main_rt_cv_mutations", "main_vios_mutations", "normal_behavior_consumers_stopped", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "external_requests": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0},
+        "main_vios_mutations": {"const": 0},
+        "normal_behavior_consumers_stopped": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "mode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["config_sha256", "input_count", "output_count", "output_frame_ids", "compression_observed", "first_point_preserved", "novel_transition_preserved", "container", "log_sha256"],
+      "properties": {
+        "config_sha256": {"$ref": "#/$defs/sha256"},
+        "input_count": {"const": 13},
+        "output_count": {"type": "integer", "minimum": 1, "maximum": 12},
+        "output_frame_ids": {"type": "array", "minItems": 1, "maxItems": 12, "items": {"type": "string", "pattern": "^[0-9]+$"}, "uniqueItems": true},
+        "compression_observed": {"const": true},
+        "first_point_preserved": {"const": true},
+        "novel_transition_preserved": {"const": true},
+        "container": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["exit_code", "oom_killed", "restart_count"],
+          "properties": {
+            "exit_code": {"const": 0},
+            "oom_killed": {"const": false},
+            "restart_count": {"const": 0}
+          }
+        },
+        "log_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

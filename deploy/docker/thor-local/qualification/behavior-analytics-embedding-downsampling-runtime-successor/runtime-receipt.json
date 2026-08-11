@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-embedding-downsampling-runtime-successor",
+  "contract_sha256": "c3ff14fc7b7f828a80f97dbb9dd8ad286e31e0a70cdb70833cc43b409220a4aa",
+  "capability_ids": [
+    "runtime.behavior.embedding-downsampling"
+  ],
+  "official_indices": [207],
+  "status": "passed",
+  "runtime": {
+    "image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "application": "FusionSearchAnalyticsApp",
+    "input_protocol": "Kafka nv.VisionLLM protobuf",
+    "sensor_id": "qualification-camera"
+  },
+  "modes": {
+    "sdt": {
+      "config_sha256": "74b4ff0ad9b69dee20867e26a04bf0d27379a1d17b3f016d7d593bc5bee6eee2",
+      "input_count": 13,
+      "output_count": 3,
+      "output_frame_ids": ["0", "11", "12"],
+      "compression_observed": true,
+      "first_point_preserved": true,
+      "novel_transition_preserved": true,
+      "container": {
+        "exit_code": 0,
+        "oom_killed": false,
+        "restart_count": 0
+      },
+      "log_sha256": "3cbb43b5ea451613d3b7513d56fcff22503d9b2f3361ed5805e0ba084f448206"
+    },
+    "window": {
+      "config_sha256": "5fd66069c0d68849317a9c029e9aa837205325f1d29b7121ed44aa341f7f574b",
+      "input_count": 13,
+      "output_count": 4,
+      "output_frame_ids": ["0", "1", "2", "12"],
+      "compression_observed": true,
+      "first_point_preserved": true,
+      "novel_transition_preserved": true,
+      "container": {
+        "exit_code": 0,
+        "oom_killed": false,
+        "restart_count": 0
+      },
+      "log_sha256": "6f58a2e05572de3ced878ff09c2329e4e95074e68e4d0cf9fcdf1d5fd608e928"
+    }
+  },
+  "cleanup": {
+    "disposable_containers_absent": true,
+    "qualification_topics_absent": true,
+    "normal_behavior_containers_running": true,
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

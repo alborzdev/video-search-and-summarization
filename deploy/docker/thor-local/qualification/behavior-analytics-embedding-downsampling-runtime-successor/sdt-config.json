@@ -1,0 +1,37 @@
+{
+  "kafka": {
+    "brokers": "localhost:9092",
+    "group": "vss-oracle-ba-embed-sdt-group",
+    "consumer": {
+      "autoOffsetReset": "earliest",
+      "enableAutoCommit": false,
+      "maxPollIntervalMs": 900000,
+      "maxPartitionFetchBytes": 10485760,
+      "fetchMaxBytes": 104857600,
+      "maxPollRecords": 100,
+      "timeout": 0.01
+    },
+    "producer": {"lingerMs": 0},
+    "topics": [
+      {"name": "raw", "value": "vss-oracle-ba-embed-sdt-raw"},
+      {"name": "behavior", "value": "vss-oracle-ba-embed-sdt-behavior"},
+      {"name": "embed", "value": "vss-oracle-ba-embed-sdt-input"},
+      {"name": "embedFiltered", "value": "vss-oracle-ba-embed-sdt-output"},
+      {"name": "notification", "value": "vss-oracle-ba-embed-sdt-notification"}
+    ]
+  },
+  "sensors": [],
+  "app": [
+    {"name": "coordinateSystem", "value": "euclidean"},
+    {"name": "embedEnableDownsampling", "value": "true"},
+    {"name": "embedDownsamplerType", "value": "sdt"},
+    {"name": "embedSensorTTLSec", "value": "3600"},
+    {"name": "embedDownsampleToleranceMode", "value": "distance"},
+    {"name": "embedDownsampleDistanceThreshold", "value": "0.15"},
+    {"name": "embedDownsampleMaxIntervalSec", "value": "300"},
+    {"name": "sourceType", "value": "kafka"},
+    {"name": "sinkType", "value": "kafka"},
+    {"name": "numWorkersForBehaviorCreation", "value": "1"},
+    {"name": "numWorkersForEmbedFiltering", "value": "1"}
+  ]
+}
