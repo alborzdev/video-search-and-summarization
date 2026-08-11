@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_ids",
+    "official_indices",
+    "status",
+    "contract_sha256",
+    "duration_seconds",
+    "budget",
+    "runtime_identity",
+    "fixture",
+    "rtsp_support",
+    "non_rtsp_scheme_negative",
+    "stream_add",
+    "live_caption_sse",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-rtsp-runtime-successor"},
+    "capability_ids": {"const": ["manifest-entry.rt-vlm-media.05-rtsp"]},
+    "official_indices": {"const": [341]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 120},
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rt_vlm_http_requests",
+        "max_rt_vlm_http_requests",
+        "model_requests",
+        "max_model_requests",
+        "docker_commands",
+        "max_docker_commands",
+        "support_processes_peak",
+        "max_support_processes",
+        "support_container_lifecycle_actions",
+        "rt_vlm_stream_mutations"
+      ],
+      "properties": {
+        "rt_vlm_http_requests": {"type": "integer", "minimum": 14, "maximum": 35},
+        "max_rt_vlm_http_requests": {"const": 35},
+        "model_requests": {"const": 1},
+        "max_model_requests": {"const": 1},
+        "docker_commands": {"type": "integer", "minimum": 7, "maximum": 12},
+        "max_docker_commands": {"const": 12},
+        "support_processes_peak": {"const": 2},
+        "max_support_processes": {"const": 2},
+        "support_container_lifecycle_actions": {"const": 2},
+        "rt_vlm_stream_mutations": {"const": 3}
+      }
+    },
+    "runtime_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_name_exact",
+        "image_id_exact",
+        "healthy",
+        "restart_count",
+        "oom_killed",
+        "live_source_count",
+        "live_sources_match_locks",
+        "endpoint_loopback_exact",
+        "model_exact",
+        "release_exact",
+        "audio_support"
+      ],
+      "properties": {
+        "container_name_exact": {"const": true},
+        "image_id_exact": {"const": true},
+        "healthy": {"const": true},
+        "restart_count": {"const": 0},
+        "oom_killed": {"const": false},
+        "live_source_count": {"const": 5},
+        "live_sources_match_locks": {"const": true},
+        "endpoint_loopback_exact": {"const": true},
+        "model_exact": {"const": true},
+        "release_exact": {"const": "cosmos3-nano-reasoner:bf16-final"},
+        "audio_support": {"const": false}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["byte_count", "content_sha256", "duration_seconds", "primary_markers"],
+      "properties": {
+        "byte_count": {"const": 75449},
+        "content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"},
+        "duration_seconds": {"const": 9},
+        "primary_markers": {"const": ["blue", "green", "red"]}
+      }
+    },
+    "rtsp_support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "image_id_exact",
+        "architecture_exact",
+        "network_exact",
+        "no_host_ports_published",
+        "publisher_running",
+        "ffmpeg_binary_exact",
+        "codec_h264",
+        "width",
+        "height",
+        "fps",
+        "reported_frame_rate_positive",
+        "tcp_probe_passed"
+      ],
+      "properties": {
+        "image_id_exact": {"const": true},
+        "architecture_exact": {"const": true},
+        "network_exact": {"const": true},
+        "no_host_ports_published": {"const": true},
+        "publisher_running": {"const": true},
+        "ffmpeg_binary_exact": {"const": true},
+        "codec_h264": {"const": true},
+        "width": {"const": 1280},
+        "height": {"const": 720},
+        "fps": {"const": 8},
+        "reported_frame_rate_positive": {"const": true},
+        "tcp_probe_passed": {"const": true}
+      }
+    },
+    "non_rtsp_scheme_negative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_status", "structured", "request_sha256", "response_sha256", "stream_mutated"],
+      "properties": {
+        "http_status": {"const": 422},
+        "structured": {"const": true},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "response_sha256": {"$ref": "#/$defs/hash"},
+        "stream_mutated": {"const": false}
+      }
+    },
+    "stream_add": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_status",
+        "single_result",
+        "errors_empty",
+        "owned_identity_exact",
+        "catalog_count_delta",
+        "metadata_round_trip_exact",
+        "request_sha256",
+        "response_sha256"
+      ],
+      "properties": {
+        "http_status": {"const": 200},
+        "single_result": {"const": true},
+        "errors_empty": {"const": true},
+        "owned_identity_exact": {"const": true},
+        "catalog_count_delta": {"const": 1},
+        "metadata_round_trip_exact": {"const": true},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "response_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "live_caption_sse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_status",
+        "content_type_exact",
+        "data_event_count",
+        "json_event_count",
+        "ping_comment_count",
+        "model_exact",
+        "primary_markers_present",
+        "markers_in_chronological_order",
+        "semantic_output_sha256",
+        "request_sha256"
+      ],
+      "properties": {
+        "http_status": {"const": 200},
+        "content_type_exact": {"const": true},
+        "data_event_count": {"type": "integer", "minimum": 1},
+        "json_event_count": {"type": "integer", "minimum": 1},
+        "ping_comment_count": {"type": "integer", "minimum": 1},
+        "model_exact": {"const": true},
+        "primary_markers_present": {"const": true},
+        "markers_in_chronological_order": {"const": true},
+        "semantic_output_sha256": {"$ref": "#/$defs/hash"},
+        "request_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "failures",
+        "stop_caption_http_status",
+        "delete_stream_http_status",
+        "stream_catalog_before_count",
+        "stream_catalog_after_count",
+        "stream_catalog_restored_exactly",
+        "asset_statistics_restored_exactly",
+        "model_inventory_restored_exactly",
+        "health_contract_restored_exactly",
+        "publisher_stopped",
+        "support_container_absent",
+        "temporary_fixture_root_absent",
+        "owned_stream_absent"
+      ],
+      "properties": {
+        "failures": {"const": []},
+        "stop_caption_http_status": {"const": 200},
+        "delete_stream_http_status": {"const": 200},
+        "stream_catalog_before_count": {"type": "integer", "minimum": 0},
+        "stream_catalog_after_count": {"type": "integer", "minimum": 0},
+        "stream_catalog_restored_exactly": {"const": true},
+        "asset_statistics_restored_exactly": {"const": true},
+        "model_inventory_restored_exactly": {"const": true},
+        "health_contract_restored_exactly": {"const": true},
+        "publisher_stopped": {"const": true},
+        "support_container_absent": {"const": true},
+        "temporary_fixture_root_absent": {"const": true},
+        "owned_stream_absent": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_generate_calls",
+        "main_vios_stream_mutations",
+        "rt_cv_stream_mutations",
+        "core_service_lifecycle_actions",
+        "raw_prompt_retained",
+        "raw_semantic_output_retained",
+        "raw_resource_ids_retained",
+        "raw_rtsp_url_retained",
+        "credentials_retained",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "main_vios_stream_mutations": {"const": 0},
+        "rt_cv_stream_mutations": {"const": 0},
+        "core_service_lifecycle_actions": {"const": 0},
+        "raw_prompt_retained": {"const": false},
+        "raw_semantic_output_retained": {"const": false},
+        "raw_resource_ids_retained": {"const": false},
+        "raw_rtsp_url_retained": {"const": false},
+        "credentials_retained": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

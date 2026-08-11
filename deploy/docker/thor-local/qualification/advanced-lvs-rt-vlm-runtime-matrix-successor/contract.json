@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-5",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-6",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -172,6 +172,31 @@
         "/cleanup/cache_inventory_restored_exactly": true,
         "/cleanup/catalog_restored_exactly": true,
         "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 341,
+      "capability_id": "manifest-entry.rt-vlm-media.05-rtsp",
+      "advertised_literal": "RTSP",
+      "package_id": "rt-vlm-rtsp-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-rtsp-runtime-successor/contract.json",
+      "contract_sha256": "d68d055983a1b3a8ba971b965317e2f061090453b18895e2738299b5867a5516",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-rtsp-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "b91da01061bb02573a4cf9adfe3e1ed6d9e61b3f1b2eb17261947536cc64160f",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-rtsp-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "4abb1c0aea75210f262974fe288a94302bdcc3a3e0ee91f702f910e6e93454c2",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/rtsp_support/codec_h264": true,
+        "/rtsp_support/tcp_probe_passed": true,
+        "/live_caption_sse/primary_markers_present": true,
+        "/live_caption_sse/markers_in_chronological_order": true,
+        "/cleanup/stream_catalog_restored_exactly": true,
+        "/cleanup/support_container_absent": true,
+        "/cleanup/owned_stream_absent": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/main_vios_stream_mutations": 0,
+        "/policy/rt_cv_stream_mutations": 0
       }
     },
     {

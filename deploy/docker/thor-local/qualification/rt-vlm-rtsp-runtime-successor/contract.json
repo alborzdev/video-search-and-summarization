@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-rtsp-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.05-rtsp"
+  ],
+  "official_indices": [341],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "model": {
+    "id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "release": "cosmos3-nano-reasoner:bf16-final",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/execute.py",
+      "sha256": "5091f5cdf3ab27666d0f8ca3615cbac93270a6733d622a8e46326ceb2b9e6b22"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py",
+      "sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py",
+      "sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/vlm_pipeline/video_file_frame_getter.py",
+      "sha256": "a4e8421e7b18ca1e64534a142168a777e10ebc11e9724c7e69cdcd37eb961be9"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/live_stream.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/live_stream.py",
+      "sha256": "2eef1baa7410da2ff8365e4cd6cf08c094398f077d65179a203b36a5cbb11451"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/captions.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/captions.py",
+      "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"
+    }
+  ],
+  "fixture": {
+    "bytes": 75449,
+    "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "duration_seconds": 9,
+    "width": 1280,
+    "height": 720,
+    "fps": 8,
+    "primary_markers": ["blue", "green", "red"]
+  },
+  "rtsp_support": {
+    "image": "bluenviron/mediamtx@sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "image_id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "architecture": "arm64",
+    "container": "vss-rtsp-qualifier-runtime",
+    "network": "mdx_default",
+    "port": 8554,
+    "path": "vss-qualifier-runtime",
+    "stream_id": "00000000-0000-4000-8000-000000000341",
+    "ffmpeg_path": "/usr/bin/ffmpeg",
+    "ffmpeg_sha256": "dbb8cc21c4b4e0e9bbb750cf74f7af6b023199e1b311eb2f6aec31c9722ceb88",
+    "ffmpeg_version": "6.1.1-3ubuntu5"
+  },
+  "execution": {
+    "endpoint": "http://127.0.0.1:8018",
+    "container": "vss-rtvi-vlm",
+    "max_duration_seconds": 120,
+    "max_rt_vlm_http_requests": 35,
+    "max_model_requests": 1,
+    "max_docker_commands": 12,
+    "max_support_processes": 2,
+    "support_container_lifecycle_actions": 2,
+    "rt_vlm_stream_mutations": 3,
+    "acknowledgement": "I_ACK_RT_VLM_ONE_OWNED_RTSP_STREAM_AND_EXACT_CLEANUP"
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "main_vios_stream_mutations": 0,
+    "rt_cv_stream_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded",
+    "raw_prompts_retained": false,
+    "raw_semantic_output_retained": false,
+    "raw_resource_ids_retained": false,
+    "credentials_retained": false
+  }
+}

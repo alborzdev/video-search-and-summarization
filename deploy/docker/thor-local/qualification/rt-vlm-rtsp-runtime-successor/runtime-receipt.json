@@ -1,0 +1,118 @@
+{
+  "budget": {
+    "docker_commands": 8,
+    "max_docker_commands": 12,
+    "max_model_requests": 1,
+    "max_rt_vlm_http_requests": 35,
+    "max_support_processes": 2,
+    "model_requests": 1,
+    "rt_vlm_http_requests": 14,
+    "rt_vlm_stream_mutations": 3,
+    "support_container_lifecycle_actions": 2,
+    "support_processes_peak": 2
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.05-rtsp"
+  ],
+  "cleanup": {
+    "asset_statistics_restored_exactly": true,
+    "delete_stream_http_status": 200,
+    "failures": [],
+    "health_contract_restored_exactly": true,
+    "model_inventory_restored_exactly": true,
+    "owned_stream_absent": true,
+    "publisher_stopped": true,
+    "stop_caption_http_status": 200,
+    "stream_catalog_after_count": 0,
+    "stream_catalog_before_count": 0,
+    "stream_catalog_restored_exactly": true,
+    "support_container_absent": true,
+    "temporary_fixture_root_absent": true
+  },
+  "contract_sha256": "d68d055983a1b3a8ba971b965317e2f061090453b18895e2738299b5867a5516",
+  "duration_seconds": 31.415783,
+  "fixture": {
+    "byte_count": 75449,
+    "content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "duration_seconds": 9,
+    "primary_markers": [
+      "blue",
+      "green",
+      "red"
+    ]
+  },
+  "live_caption_sse": {
+    "content_type_exact": true,
+    "data_event_count": 1,
+    "http_status": 200,
+    "json_event_count": 1,
+    "markers_in_chronological_order": true,
+    "model_exact": true,
+    "ping_comment_count": 18,
+    "primary_markers_present": true,
+    "request_sha256": "24d6f4cdd26b5625d9f98071ee69a7b8771ba9f6b4c1f5f8632b7ce880144682",
+    "semantic_output_sha256": "ae817be56835211ecf46a91ddb72406d89c93a156a9691cc3a005b410667d6c4"
+  },
+  "non_rtsp_scheme_negative": {
+    "http_status": 422,
+    "request_sha256": "caf4264b5e53f9021ceea197e510c616e164d865599a99e36768c46426135a7c",
+    "response_sha256": "2c8bc44a546c4082acdbaddf46301e3b338a1d0e98441ab90b24e706595c973f",
+    "stream_mutated": false,
+    "structured": true
+  },
+  "official_indices": [
+    341
+  ],
+  "package_id": "rt-vlm-rtsp-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "main_vios_stream_mutations": 0,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_rtsp_url_retained": false,
+    "raw_semantic_output_retained": false,
+    "rt_cv_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "rtsp_support": {
+    "architecture_exact": true,
+    "codec_h264": true,
+    "ffmpeg_binary_exact": true,
+    "fps": 8,
+    "height": 720,
+    "image_id_exact": true,
+    "network_exact": true,
+    "no_host_ports_published": true,
+    "publisher_running": true,
+    "reported_frame_rate_positive": true,
+    "tcp_probe_passed": true,
+    "width": 1280
+  },
+  "runtime_identity": {
+    "audio_support": false,
+    "container_name_exact": true,
+    "endpoint_loopback_exact": true,
+    "healthy": true,
+    "image_id_exact": true,
+    "live_source_count": 5,
+    "live_sources_match_locks": true,
+    "model_exact": true,
+    "oom_killed": false,
+    "release_exact": "cosmos3-nano-reasoner:bf16-final",
+    "restart_count": 0
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "stream_add": {
+    "catalog_count_delta": 1,
+    "errors_empty": true,
+    "http_status": 200,
+    "metadata_round_trip_exact": true,
+    "owned_identity_exact": true,
+    "request_sha256": "d3b87e9b6b4e48ab4a13a6b70b3a90ed81684cab398844ff86d678ef5df1c977",
+    "response_sha256": "2d9b97cc9f0286e2f6100302b3288bb4971c3a77539ea1820b37d81a2b9e5868",
+    "single_result": true
+  }
+}

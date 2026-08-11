@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds sixteen advertised capability rows to current-Thor live receipts. Overlay 5 adds RT-VLM HTTP/S media ingestion, including plain HTTP, verified TLS, SSRF/redirect negatives, and exact cleanup, to the fifteen previously proven advanced LVS and RT-VLM rows.
+This read-only successor binds seventeen advertised capability rows to current-Thor live receipts. Overlay 6 adds direct RT-VLM RTSP ingest and live SSE captioning, with an isolated local publisher and exact cleanup, to the sixteen previously proven advanced LVS and RT-VLM rows.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 
