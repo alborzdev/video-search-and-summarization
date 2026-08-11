@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-events-incidents-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "runtime.behavior.events-incidents"
+  ],
+  "official_indices": [206],
+  "advertised_contract": {
+    "events": ["tripwire", "roi"],
+    "violations": ["proximity", "restricted-area", "confined-area", "fov-count"]
+  },
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-events-incidents-runtime-successor/run_fov_probe.py",
+      "sha256": "08d103306ead9594786e87fc71758b88d8a0f6fc9ca519556441d41247dc0027"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/run_broker_probe.py",
+      "sha256": "9a559296167bf5cb09259653d1a828c8f8db08312169a76ed46d75befd00ef1e"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
+      "sha256": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
+      "sha256": "b36262e99620b3769f020ef9ef4f4144dd6e0d5280a205c2e10c3e415657cbe0"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
+      "sha256": "4ec65b7c87cd7463ab7842c440cbe5e65870a992d3f5157b2cc68410ea68ee16"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/oracle-config.json",
+      "sha256": "a810d851845bf6b3f082167773727e2d45294560a61ef9013fd8e31e6c14b3fb"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps/warehouse_2d/calibration.json",
+      "sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps_data/playback/warehouse_2d_playback_data.txt",
+      "sha256": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/analytics/main_analytics_2d_app.py",
+      "sha256": "b6a16e9d4b51e2285ece20ad2d4302a684d9a60910ff4e17ab5800cd9c9dbede"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/frame/frame_state_management.py",
+      "sha256": "6e4f153b422378418d316366d3753616caddccb2ee24a49cc0231de19f3ac2e2"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py",
+      "sha256": "99fad8777a0138e22d01fa7051301669e43c652ba53ee12dc8e540132bd1effc"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/incident-detection.md",
+      "sha256": "bc78da8e5d3e99b6d02470dcde67fe7ab8f4e5f31e445c7891e3cf8725e9f2b1"
+    }
+  ],
+  "required_assertions": {
+    "event_types": ["roi:ENTRY", "roi:EXIT", "tripwire:IN", "tripwire:OUT"],
+    "incident_categories": [
+      "Confined Area Violation",
+      "FOV Count Violation",
+      "Proximity Violation",
+      "Restricted Area Violation"
+    ],
+    "fov_application": "Analytics2DApp",
+    "fov_input_protocol": "Kafka nv.Frame protobuf",
+    "fov_incident_has_sensor_object_and_time_identity": true
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "incident delivery to an external customer system",
+    "completed FOV incident expiry in the retained observation window",
+    "100 GB Warehouse sample bundle",
+    "physical camera scene"
+  ]
+}

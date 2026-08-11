@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-events-incidents-runtime-successor",
+  "contract_sha256": "5be5ac84a38b97a146e3c9e166299e772cc335f7a54dece24c315c96b4047b98",
+  "capability_ids": [
+    "runtime.behavior.events-incidents"
+  ],
+  "official_indices": [206],
+  "status": "passed",
+  "captured_at": "2026-08-11T21:15:25Z",
+  "base_2d_evidence": {
+    "package_id": "behavior-analytics-2d-runtime-successor",
+    "contract_sha256": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957",
+    "receipt_sha256": "b36262e99620b3769f020ef9ef4f4144dd6e0d5280a205c2e10c3e415657cbe0",
+    "receipt_schema_sha256": "4ec65b7c87cd7463ab7842c440cbe5e65870a992d3f5157b2cc68410ea68ee16",
+    "events": {
+      "total": 121,
+      "types": {
+        "roi:ENTRY": 56,
+        "roi:EXIT": 53,
+        "tripwire:IN": 6,
+        "tripwire:OUT": 6
+      }
+    },
+    "incidents": {
+      "total": 24924,
+      "categories": {
+        "Confined Area Violation": 14786,
+        "Proximity Violation": 95,
+        "Restricted Area Violation": 10043
+      }
+    }
+  },
+  "fov_runtime": {
+    "image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "application": "Analytics2DApp",
+    "input_protocol": "Kafka nv.Frame protobuf",
+    "baseline_config_sha256": "a810d851845bf6b3f082167773727e2d45294560a61ef9013fd8e31e6c14b3fb",
+    "runtime_config_sha256": "9900d25ba2f9ee7ed9b5aa2cfb5b10318322b22367f14e45780bdaa22fa5ee50",
+    "calibration_sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1",
+    "fixture_sha256": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef",
+    "bootstrap_reference_sha256": "d81822c04d676bf72dd18334297ba11dec00ae186eb5395bb1a879230af34542",
+    "log_sha256": "19237f033e86dbedacd15049a5ff9fe655529019561b3788ad65066a84d03fe8",
+    "input_frames": 300,
+    "config": {
+      "app": [
+        {"name": "fovCountViolationIncidentEnable", "value": "true"},
+        {"name": "fovCountViolationIncidentObjectThreshold", "value": "1"},
+        {"name": "fovCountViolationIncidentThreshold", "value": "0.1"},
+        {"name": "fovCountViolationIncidentExpirationWindow", "value": "0.1"},
+        {"name": "fovCountViolationIncidentObjectType", "value": "Person"}
+      ]
+    },
+    "incidents": {
+      "count": 18,
+      "categories": ["FOV Count Violation"],
+      "sensor_ids": ["Camera_01", "Camera_02"],
+      "object_id_counts": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      "all_start_before_or_equal_end": true,
+      "positive_time_bounds": true,
+      "complete_count": 0,
+      "observation_state": "ongoing_at_capture"
+    },
+    "container": {
+      "exit_code": 0,
+      "oom_killed": false,
+      "restart_count": 0
+    }
+  },
+  "coverage": {
+    "events": ["tripwire", "roi"],
+    "violations": ["proximity", "restricted-area", "confined-area", "fov-count"]
+  },
+  "cleanup": {
+    "disposable_container_absent": true,
+    "qualification_topics_absent": true,
+    "normal_behavior_containers_running": true,
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

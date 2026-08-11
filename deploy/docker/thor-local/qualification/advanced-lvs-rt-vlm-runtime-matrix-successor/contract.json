@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-30",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-31",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -112,6 +112,39 @@
         "/dynamic_calibration/immutable_existing_type/delegated_to": "CalibrationE",
         "/dynamic_calibration/immutable_existing_type/type_switch_markers_after_update": 0,
         "/cleanup/qualification_topics_absent": true
+      }
+    },
+    {
+      "official_index": 206,
+      "capability_id": "runtime.behavior.events-incidents",
+      "advertised_literal": "Behavior events and incidents",
+      "package_id": "behavior-analytics-events-incidents-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-events-incidents-runtime-successor/contract.json",
+      "contract_sha256": "5be5ac84a38b97a146e3c9e166299e772cc335f7a54dece24c315c96b4047b98",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-events-incidents-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "16745a510f6e8401126c4fbfe8865b5ba44226063ffdfb1b0d562030e060e101",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-events-incidents-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f5aa65287c99f17734822776380886834e9d5ce0f593e911f6b80922385d1c2c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/base_2d_evidence/events/total": 121,
+        "/base_2d_evidence/events/types/roi:ENTRY": 56,
+        "/base_2d_evidence/events/types/roi:EXIT": 53,
+        "/base_2d_evidence/events/types/tripwire:IN": 6,
+        "/base_2d_evidence/events/types/tripwire:OUT": 6,
+        "/base_2d_evidence/incidents/categories/Confined Area Violation": 14786,
+        "/base_2d_evidence/incidents/categories/Proximity Violation": 95,
+        "/base_2d_evidence/incidents/categories/Restricted Area Violation": 10043,
+        "/fov_runtime/incidents/count": 18,
+        "/fov_runtime/incidents/categories": ["FOV Count Violation"],
+        "/fov_runtime/incidents/sensor_ids": ["Camera_01", "Camera_02"],
+        "/fov_runtime/incidents/all_start_before_or_equal_end": true,
+        "/fov_runtime/incidents/positive_time_bounds": true,
+        "/fov_runtime/incidents/observation_state": "ongoing_at_capture",
+        "/coverage/events": ["tripwire", "roi"],
+        "/coverage/violations": ["proximity", "restricted-area", "confined-area", "fov-count"],
+        "/cleanup/qualification_topics_absent": true,
+        "/policy/warehouse_sample_bundle": "excluded"
       }
     },
     {

@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "contract_sha256", "capability_ids", "official_indices", "status", "captured_at", "base_2d_evidence", "fov_runtime", "coverage", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-events-incidents-runtime-successor"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "capability_ids": {"const": ["runtime.behavior.events-incidents"]},
+    "official_indices": {"const": [206]},
+    "status": {"const": "passed"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "base_2d_evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_id", "contract_sha256", "receipt_sha256", "receipt_schema_sha256", "events", "incidents"],
+      "properties": {
+        "package_id": {"const": "behavior-analytics-2d-runtime-successor"},
+        "contract_sha256": {"const": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957"},
+        "receipt_sha256": {"const": "b36262e99620b3769f020ef9ef4f4144dd6e0d5280a205c2e10c3e415657cbe0"},
+        "receipt_schema_sha256": {"const": "4ec65b7c87cd7463ab7842c440cbe5e65870a992d3f5157b2cc68410ea68ee16"},
+        "events": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["total", "types"],
+          "properties": {
+            "total": {"const": 121},
+            "types": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["roi:ENTRY", "roi:EXIT", "tripwire:IN", "tripwire:OUT"],
+              "properties": {
+                "roi:ENTRY": {"const": 56},
+                "roi:EXIT": {"const": 53},
+                "tripwire:IN": {"const": 6},
+                "tripwire:OUT": {"const": 6}
+              }
+            }
+          }
+        },
+        "incidents": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["total", "categories"],
+          "properties": {
+            "total": {"const": 24924},
+            "categories": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["Confined Area Violation", "Proximity Violation", "Restricted Area Violation"],
+              "properties": {
+                "Confined Area Violation": {"const": 14786},
+                "Proximity Violation": {"const": 95},
+                "Restricted Area Violation": {"const": 10043}
+              }
+            }
+          }
+        }
+      }
+    },
+    "fov_runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image", "image_id", "application", "input_protocol", "baseline_config_sha256", "runtime_config_sha256", "calibration_sha256", "fixture_sha256", "bootstrap_reference_sha256", "log_sha256", "input_frames", "config", "incidents", "container"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "image_id": {"$ref": "#/$defs/image_id"},
+        "application": {"const": "Analytics2DApp"},
+        "input_protocol": {"const": "Kafka nv.Frame protobuf"},
+        "baseline_config_sha256": {"const": "a810d851845bf6b3f082167773727e2d45294560a61ef9013fd8e31e6c14b3fb"},
+        "runtime_config_sha256": {"$ref": "#/$defs/sha256"},
+        "calibration_sha256": {"const": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"},
+        "fixture_sha256": {"const": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef"},
+        "bootstrap_reference_sha256": {"$ref": "#/$defs/sha256"},
+        "log_sha256": {"$ref": "#/$defs/sha256"},
+        "input_frames": {"const": 300},
+        "config": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["app"],
+          "properties": {
+            "app": {
+              "const": [
+                {"name": "fovCountViolationIncidentEnable", "value": "true"},
+                {"name": "fovCountViolationIncidentObjectThreshold", "value": "1"},
+                {"name": "fovCountViolationIncidentThreshold", "value": "0.1"},
+                {"name": "fovCountViolationIncidentExpirationWindow", "value": "0.1"},
+                {"name": "fovCountViolationIncidentObjectType", "value": "Person"}
+              ]
+            }
+          }
+        },
+        "incidents": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "categories", "sensor_ids", "object_id_counts", "all_start_before_or_equal_end", "positive_time_bounds", "complete_count", "observation_state"],
+          "properties": {
+            "count": {"type": "integer", "minimum": 1},
+            "categories": {"const": ["FOV Count Violation"]},
+            "sensor_ids": {"const": ["Camera_01", "Camera_02"]},
+            "object_id_counts": {"type": "array", "minItems": 1, "items": {"const": 1}},
+            "all_start_before_or_equal_end": {"const": true},
+            "positive_time_bounds": {"const": true},
+            "complete_count": {"const": 0},
+            "observation_state": {"const": "ongoing_at_capture"}
+          }
+        },
+        "container": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["exit_code", "oom_killed", "restart_count"],
+          "properties": {
+            "exit_code": {"const": 0},
+            "oom_killed": {"const": false},
+            "restart_count": {"const": 0}
+          }
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["events", "violations"],
+      "properties": {
+        "events": {"const": ["tripwire", "roi"]},
+        "violations": {"const": ["proximity", "restricted-area", "confined-area", "fov-count"]}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["disposable_container_absent", "qualification_topics_absent", "normal_behavior_containers_running", "failures"],
+      "properties": {
+        "disposable_container_absent": {"const": true},
+        "qualification_topics_absent": {"const": true},
+        "normal_behavior_containers_running": {"const": true},
+        "failures": {"type": "array", "maxItems": 0}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_generate_calls", "external_requests", "main_rt_cv_mutations", "main_vios_mutations", "normal_behavior_consumers_stopped", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "external_requests": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0},
+        "main_vios_mutations": {"const": 0},
+        "normal_behavior_consumers_stopped": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}
