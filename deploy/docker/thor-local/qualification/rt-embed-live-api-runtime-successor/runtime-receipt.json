@@ -1,0 +1,90 @@
+{
+  "adapted_qualifier_contract_sha256": "abb172b88995ced533bbc70c960bba90665258c67b262ba8319a841ae4d4a650",
+  "budget": {
+    "disposable_helper_containers": 3,
+    "external_network_requests": 0,
+    "http_requests": 43,
+    "max_disposable_helper_containers": 3,
+    "max_external_network_requests": 0,
+    "max_http_requests": 43,
+    "max_model_requests": 4,
+    "model_requests": 4
+  },
+  "capability_ids": [
+    "manifest-entry.rt-embed.01-live-rtsp",
+    "manifest-entry.rt-embed.05-original-and-cv-compatible-stream-apis",
+    "manifest-entry.rt-embed.06-health-metadata-models-metrics"
+  ],
+  "cleanup": {
+    "asset_statistics_restored_exactly": true,
+    "complete_inventories_restored_exactly": true,
+    "helper_containers_absent": true,
+    "operator_paused_workloads_preserved": true,
+    "owned_files_and_streams_absent": true,
+    "publisher_absent": true,
+    "rtsp_path_absent": true,
+    "runtime_identity_preserved": true
+  },
+  "contract_sha256": "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c",
+  "duration_seconds": 88.396,
+  "health_metadata_models_metrics": {
+    "live_http_200": true,
+    "manifest_http_200": true,
+    "metadata_http_200": true,
+    "metrics_http_200_and_prometheus": true,
+    "model_catalog_preserved": true,
+    "models_http_200": true,
+    "ready_http_200": true,
+    "release_and_model_exact": true,
+    "startup_http_200": true,
+    "version_http_200": true
+  },
+  "live_rtsp": {
+    "bridge_gateway_only": true,
+    "embedding_dimension": 768,
+    "embedding_finite": true,
+    "inference_stop_passed": true,
+    "model_exact": true,
+    "registration_passed": true,
+    "sse_embedding_chunk_count": 1,
+    "stream_delete_passed": true,
+    "tcp_source_h264": true
+  },
+  "official_indices": [369, 373, 374],
+  "package_id": "rt-embed-live-api-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "external_network_requests": 0,
+    "image_builds": 0,
+    "image_pulls": 0,
+    "model_staging_actions": 0,
+    "network_scope": "numeric-loopback-http-and-local-docker-bridge-rtsp-only",
+    "raw_embeddings_retained": false,
+    "raw_prompts_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_rtsp_urls_retained": false,
+    "rt_cv_or_vios_stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime_identity": {
+    "credentials_blank": true,
+    "healthy": true,
+    "image_exact": true,
+    "loopback_binding_exact": true,
+    "oom_killed": false,
+    "operator_paused_workloads_preserved": true,
+    "restart_count": 0
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "stream_apis": {
+    "all_operations_exercised": true,
+    "complete_operation_count": 24,
+    "complete_path_count": 22,
+    "cv_compatible_api_add_list_remove_passed": true,
+    "live_inference_control_passed": true,
+    "original_batch_api_add_list_delete_passed": true
+  }
+}

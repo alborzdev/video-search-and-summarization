@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-embed-live-api-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-embed.01-live-rtsp",
+    "manifest-entry.rt-embed.05-original-and-cv-compatible-stream-apis",
+    "manifest-entry.rt-embed.06-health-metadata-models-metrics"
+  ],
+  "official_indices": [369, 373, 374],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "captured_on": "2026-08-11",
+  "runtime": {
+    "container": "vss-rtvi-embed",
+    "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+    "origin": "http://127.0.0.1:8017",
+    "model_id": "cosmos-embed1-448p-anomaly-detection",
+    "embedding_dimension": 768
+  },
+  "reused_qualifier": {
+    "contract_path": "deploy/docker/thor-local/qualification/rt-embed-current-runtime/contract.json",
+    "contract_sha256": "ff00f1cb91045a9f758c3dc23223fc6bc562b9a1819735e8c97d790c96ca2494",
+    "executor_path": "deploy/docker/thor-local/qualification/rt-embed-current-runtime/execute.py",
+    "executor_sha256": "f96902ebc0bc6e3ab9973e60cbd196c556a4886fb7f9f4ac95617ca44e99400d",
+    "allowed_overlay": {
+      "compose_path": "deploy/docker/thor-local/compose.yml",
+      "compose_bytes": 28120,
+      "compose_sha256": "e4b21e864ab179f86a59864208d778bfc432ccd55b289f4dd3d5ec8880fb8282",
+      "captured_on": "2026-08-11"
+    }
+  },
+  "ledger": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "bytes": 818454,
+    "sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4"
+  },
+  "execution": {
+    "max_duration_seconds": 900,
+    "max_http_requests": 43,
+    "max_model_requests": 4,
+    "max_disposable_helper_containers": 3,
+    "max_external_network_requests": 0,
+    "min_free_bytes": 10737418240,
+    "acknowledgement": "I_ACK_CURRENT_RT_EMBED_LIVE_API_AND_EXACT_REVERSIBLE_CLEANUP"
+  },
+  "policy": {
+    "network_scope": "numeric-loopback-http-and-local-docker-bridge-rtsp-only",
+    "external_network_requests": 0,
+    "image_pulls": 0,
+    "image_builds": 0,
+    "model_staging_actions": 0,
+    "service_lifecycle_actions": 0,
+    "agent_generate_calls": 0,
+    "rt_cv_or_vios_stream_mutations": 0,
+    "raw_embeddings_retained": false,
+    "raw_prompts_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_rtsp_urls_retained": false,
+    "credentials_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

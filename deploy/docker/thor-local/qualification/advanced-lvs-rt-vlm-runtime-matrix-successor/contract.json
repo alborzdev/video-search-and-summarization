@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-11",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-12",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -535,6 +535,31 @@
       }
     },
     {
+      "official_index": 369,
+      "capability_id": "manifest-entry.rt-embed.01-live-rtsp",
+      "advertised_literal": "live RTSP",
+      "package_id": "rt-embed-live-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/contract.json",
+      "contract_sha256": "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "0c9732edb1aa2242c0bb3ad1bbc8fd513cf86c1f424be623fd7c4a0a472c7ba6",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "962d788c5aef6c2852c9177624ba3d1ae00f4bee667297c5bc648789ebe37248",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/live_rtsp/registration_passed": true,
+        "/live_rtsp/tcp_source_h264": true,
+        "/live_rtsp/bridge_gateway_only": true,
+        "/live_rtsp/sse_embedding_chunk_count": 1,
+        "/live_rtsp/embedding_dimension": 768,
+        "/live_rtsp/embedding_finite": true,
+        "/live_rtsp/inference_stop_passed": true,
+        "/live_rtsp/stream_delete_passed": true,
+        "/cleanup/rtsp_path_absent": true,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
       "official_index": 371,
       "capability_id": "manifest-entry.rt-embed.03-cosmos-embed1",
       "advertised_literal": "Cosmos-Embed1",
@@ -555,6 +580,55 @@
         "/runtime_identity/production_sources_exact": true,
         "/runtime_identity/safe_model_environment_exact": true,
         "/cleanup/model_catalog_preserved": true,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 373,
+      "capability_id": "manifest-entry.rt-embed.05-original-and-cv-compatible-stream-apis",
+      "advertised_literal": "original and CV-compatible stream APIs",
+      "package_id": "rt-embed-live-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/contract.json",
+      "contract_sha256": "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "0c9732edb1aa2242c0bb3ad1bbc8fd513cf86c1f424be623fd7c4a0a472c7ba6",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "962d788c5aef6c2852c9177624ba3d1ae00f4bee667297c5bc648789ebe37248",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/stream_apis/original_batch_api_add_list_delete_passed": true,
+        "/stream_apis/cv_compatible_api_add_list_remove_passed": true,
+        "/stream_apis/live_inference_control_passed": true,
+        "/stream_apis/complete_operation_count": 24,
+        "/stream_apis/all_operations_exercised": true,
+        "/cleanup/owned_files_and_streams_absent": true,
+        "/cleanup/complete_inventories_restored_exactly": true,
+        "/policy/rt_cv_or_vios_stream_mutations": 0,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 374,
+      "capability_id": "manifest-entry.rt-embed.06-health-metadata-models-metrics",
+      "advertised_literal": "health/metadata/models/metrics",
+      "package_id": "rt-embed-live-api-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/contract.json",
+      "contract_sha256": "c0cc20019d047ac90e8ca772bb3bede6722f15d0ff58788e84973458e55b7c6c",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "0c9732edb1aa2242c0bb3ad1bbc8fd513cf86c1f424be623fd7c4a0a472c7ba6",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-live-api-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "962d788c5aef6c2852c9177624ba3d1ae00f4bee667297c5bc648789ebe37248",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/health_metadata_models_metrics/ready_http_200": true,
+        "/health_metadata_models_metrics/live_http_200": true,
+        "/health_metadata_models_metrics/startup_http_200": true,
+        "/health_metadata_models_metrics/metadata_http_200": true,
+        "/health_metadata_models_metrics/version_http_200": true,
+        "/health_metadata_models_metrics/manifest_http_200": true,
+        "/health_metadata_models_metrics/models_http_200": true,
+        "/health_metadata_models_metrics/metrics_http_200_and_prometheus": true,
+        "/health_metadata_models_metrics/model_catalog_preserved": true,
         "/policy/agent_generate_calls": 0
       }
     }

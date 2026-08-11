@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds twenty-four advertised capability rows to current-Thor live receipts. Overlay 11 adds RT-Embed video/image/text embedding and Cosmos-Embed1 to the twenty-two previously proven advanced LVS and RT-VLM rows. The bounded proof runs all three modalities through the exact local VSS 3.2.1 service and restores its file, asset, model, and runtime state exactly.
+This read-only successor binds twenty-seven advertised capability rows to current-Thor live receipts. Overlay 12 adds RT-Embed live RTSP, both original and CV-compatible stream APIs, and health/metadata/models/metrics to the twenty-four previously proven rows. The bounded proof generates a real live embedding, exercises all 24 documented operations, and restores every owned resource and helper exactly.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 
