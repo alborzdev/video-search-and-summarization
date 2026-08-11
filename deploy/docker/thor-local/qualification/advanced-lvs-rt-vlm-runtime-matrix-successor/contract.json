@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-1",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-2",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -79,6 +79,48 @@
         "/cleanup/owned_absent": true,
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 336,
+      "capability_id": "manifest-entry.rt-vlm-media.00-file-upload",
+      "advertised_literal": "file upload",
+      "package_id": "rt-vlm-file-dense-captions-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/contract.json",
+      "contract_sha256": "c58497bca3ca0911e8577ebf9eb2f46bf6ed2c1ae13c992be1e91c2b622befdd",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "55a98fc3a7cd21351f24ce934d1ce089671a282c11cdb632516a1a2258a93a0e",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "066ee13115f4aaefcbf87932033474675255272756a31b1a4b367d4ebed02b74",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/cleanup/catalog_restored_exactly": true,
+        "/cleanup/owned_file_exact_deleted": true,
+        "/file_upload/content_digest_matches_fixture": true,
+        "/file_upload/stable_file_identity_returned": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 342,
+      "capability_id": "manifest-entry.rt-vlm-media.06-dense-captions",
+      "advertised_literal": "dense captions",
+      "package_id": "rt-vlm-file-dense-captions-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/contract.json",
+      "contract_sha256": "c58497bca3ca0911e8577ebf9eb2f46bf6ed2c1ae13c992be1e91c2b622befdd",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "55a98fc3a7cd21351f24ce934d1ce089671a282c11cdb632516a1a2258a93a0e",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "066ee13115f4aaefcbf87932033474675255272756a31b1a4b367d4ebed02b74",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/cleanup/catalog_restored_exactly": true,
+        "/dense_captions/chunk_count": 3,
+        "/dense_captions/primary_phase_markers_present": [true, true, true],
+        "/non_dense_control/chunk_count": 1,
+        "/policy/agent_generate_calls": 0,
         "/policy/warehouse_sample_bundle": "excluded"
       }
     },

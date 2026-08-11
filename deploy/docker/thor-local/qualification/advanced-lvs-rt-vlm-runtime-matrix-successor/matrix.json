@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-1",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-2",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -77,6 +77,50 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "file upload",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-media.00-file-upload",
+      "feature_id": "rt-vlm-media",
+      "official_index": 336,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/contract.json",
+        "contract_sha256": "c58497bca3ca0911e8577ebf9eb2f46bf6ed2c1ae13c992be1e91c2b622befdd",
+        "package_id": "rt-vlm-file-dense-captions-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "066ee13115f4aaefcbf87932033474675255272756a31b1a4b367d4ebed02b74",
+        "receipt_sha256": "55a98fc3a7cd21351f24ce934d1ce089671a282c11cdb632516a1a2258a93a0e",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "dense captions",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-media.06-dense-captions",
+      "feature_id": "rt-vlm-media",
+      "official_index": 342,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/contract.json",
+        "contract_sha256": "c58497bca3ca0911e8577ebf9eb2f46bf6ed2c1ae13c992be1e91c2b622befdd",
+        "package_id": "rt-vlm-file-dense-captions-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "066ee13115f4aaefcbf87932033474675255272756a31b1a4b367d4ebed02b74",
+        "receipt_sha256": "55a98fc3a7cd21351f24ce934d1ce089671a282c11cdb632516a1a2258a93a0e",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "reasoning",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -126,8 +170,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 5,
-    "row_count": 5,
+    "passed_current_thor": 7,
+    "row_count": 7,
     "warehouse_sample_bundle": "excluded"
   }
 }

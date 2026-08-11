@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-file-dense-captions-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.00-file-upload",
+    "manifest-entry.rt-vlm-media.06-dense-captions"
+  ],
+  "advertised_literals": ["file upload", "dense captions"],
+  "execution": {
+    "default_mode": "plan",
+    "acknowledgement": "I_AUTHORIZE_BOUNDED_RT_VLM_FILE_DENSE_CAPTIONS_RUNTIME",
+    "endpoint": "http://127.0.0.1:8018",
+    "network_scope": "loopback_only",
+    "max_http_requests": 13,
+    "max_model_requests": 2,
+    "max_duration_seconds": 300,
+    "agent_generate_calls": 0,
+    "stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "model": {"id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"},
+  "fixture": {
+    "generator": "lvs-partial-offsets-ffmpeg-lavfi",
+    "duration_seconds": 9,
+    "bytes": 75449,
+    "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "creation_time": "2026-08-11T12:00:00.000Z",
+    "invalid_bytes_sha256": "dd399bfc002b28d714f180efe054d3c5531933c39d72f9efb3c3d14e69ce4fd7"
+  },
+  "dense": {
+    "chunk_duration": 3,
+    "fixed_frames_per_chunk": 4,
+    "expected_windows": [
+      ["2026-08-11T12:00:00.000Z", "2026-08-11T12:00:03.000Z"],
+      ["2026-08-11T12:00:03.000Z", "2026-08-11T12:00:06.000Z"],
+      ["2026-08-11T12:00:06.000Z", "2026-08-11T12:00:09.000Z"]
+    ],
+    "expected_primary_markers": ["blue", "green", "red"]
+  },
+  "non_dense_control": {
+    "chunk_duration": 0,
+    "expected_window": ["2026-08-11T12:00:00.000Z", "2026-08-11T12:00:09.000Z"],
+    "expected_chunk_count": 1
+  },
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/rt-vlm-absolute-timestamps-runtime-successor/execute.py", "sha256": "9975d1e5a1c5d7bf3133e41dfbd1a135e6f5639e2a28fc6e7d8e2145af1539ea"},
+    {"path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/execute.py", "sha256": "5091f5cdf3ab27666d0f8ca3615cbac93270a6733d622a8e46326ceb2b9e6b22"},
+    {"path": "services/rtvi/rt-vlm/README.md", "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/file.py", "sha256": "e403a7437b77a2d60e45255b3fc46c503d0e12673a2fa7babec38c0880a3f6f3"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/captions.py", "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"},
+    {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"}
+  ]
+}

@@ -28,9 +28,11 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_five_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_seven_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
-    assert [row["official_index"] for row in matrix["rows"]] == [299, 300, 302, 345, 367]
+    assert [row["official_index"] for row in matrix["rows"]] == [
+        299, 300, 302, 336, 342, 345, 367
+    ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
 
@@ -48,6 +50,19 @@ def test_receipts_are_source_locked_schema_valid_and_privacy_safe() -> None:
     for entry in contract["entries"]:
         receipt = compiler._validate_receipt(entry)
         assert receipt["contract_sha256"] == entry["contract_sha256"]
+
+
+def test_multi_capability_receipt_is_bound_to_both_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-vlm-file-dense-captions-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [336, 342]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

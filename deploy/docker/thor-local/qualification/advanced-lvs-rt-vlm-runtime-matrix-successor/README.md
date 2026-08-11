@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds five current-Thor live receipts to their exact advertised VSS 3.2.1 candidate rows: structured output, object/event/scenario focus, partial-video offsets, RT-VLM reasoning, and absolute timestamp metadata.
+This read-only successor binds seven advertised capability rows to current-Thor live receipts. Overlay 2 adds RT-VLM file upload and dense captions to structured output, object/event/scenario focus, partial-video offsets, RT-VLM reasoning, and absolute timestamp metadata. The two new rows are bound to one schema-valid multi-capability receipt.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 

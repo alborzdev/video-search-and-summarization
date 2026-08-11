@@ -91,13 +91,27 @@ def _validate_receipt(entry: dict[str, Any]) -> dict[str, Any]:
         raise MatrixError(f"receipt schema validation failed: {entry['package_id']}")
     if package_contract.get("package_id") != entry["package_id"]:
         raise MatrixError("package contract identity mismatch")
-    if package_contract.get("capability_id") != entry["capability_id"]:
+    contract_capabilities = package_contract.get("capability_ids")
+    if contract_capabilities is None:
+        contract_capabilities = [package_contract.get("capability_id")]
+    if (
+        not isinstance(contract_capabilities, list)
+        or entry["capability_id"] not in contract_capabilities
+    ):
         raise MatrixError("package capability identity mismatch")
     if receipt.get("package_id") != entry["package_id"]:
         raise MatrixError("receipt package identity mismatch")
-    receipt_capability = receipt.get("capability_id")
-    if receipt_capability not in (None, entry["capability_id"]):
-        raise MatrixError("receipt capability identity mismatch")
+    receipt_capabilities = receipt.get("capability_ids")
+    if receipt_capabilities is not None:
+        if (
+            not isinstance(receipt_capabilities, list)
+            or entry["capability_id"] not in receipt_capabilities
+        ):
+            raise MatrixError("receipt capability identity mismatch")
+    else:
+        receipt_capability = receipt.get("capability_id")
+        if receipt_capability not in (None, entry["capability_id"]):
+            raise MatrixError("receipt capability identity mismatch")
     if receipt.get("status") != entry["receipt_status"]:
         raise MatrixError("receipt status mismatch")
     if receipt.get("contract_sha256") != entry["contract_sha256"]:

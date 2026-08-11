@@ -1,0 +1,113 @@
+{
+  "budget": {
+    "http_requests": 13,
+    "max_http_requests": 13,
+    "max_model_requests": 2,
+    "model_requests": 2
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.00-file-upload",
+    "manifest-entry.rt-vlm-media.06-dense-captions"
+  ],
+  "cleanup": {
+    "catalog_after_count": 0,
+    "catalog_after_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "catalog_before_count": 0,
+    "catalog_before_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "catalog_restored_exactly": true,
+    "delete_response_sha256": "1b02313ed19c76e0c59c50612c71175d33b3a9bc57891f8a15d843409f9b2d42",
+    "owned_file_exact_deleted": true,
+    "temporary_fixture_root_absent": true
+  },
+  "contract_sha256": "c58497bca3ca0911e8577ebf9eb2f46bf6ed2c1ae13c992be1e91c2b622befdd",
+  "dense_captions": {
+    "all_content_nonempty": true,
+    "chunk_count": 3,
+    "chunk_ids": [0, 1, 2],
+    "chunk_windows": [
+      ["2026-08-11T12:00:00.000Z", "2026-08-11T12:00:03.000Z"],
+      ["2026-08-11T12:00:03.000Z", "2026-08-11T12:00:06.000Z"],
+      ["2026-08-11T12:00:06.000Z", "2026-08-11T12:00:09.000Z"]
+    ],
+    "frame_counts": [4, 4, 4],
+    "http_status": 200,
+    "marker_matrix": [
+      {"blue": true, "green": false, "red": false},
+      {"blue": false, "green": true, "red": true},
+      {"blue": false, "green": false, "red": true}
+    ],
+    "primary_phase_markers_present": [true, true, true],
+    "request_sha256": "810f0e319ed8be54fc2d50593953c5811147a1738b6aafbc9322d51c41605469",
+    "response_model_exact": true,
+    "response_sha256": "96c4e3d691d656449265f4b043aa4603c8119faed92e20aaa465c520e4e46be1",
+    "semantic_response_sha256": "98ea35725c817737c8c711bac00f14bb45ecc5da868e52aa5549be5319079329",
+    "usage_chunks": 3
+  },
+  "duration_seconds": 9.84204,
+  "file_upload": {
+    "content_bytes": 75449,
+    "content_digest_matches_fixture": true,
+    "content_readback_http_status": 200,
+    "content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "http_status": 200,
+    "metadata_readback_http_status": 200,
+    "metadata_readback_response_sha256": "caa9644c0944b257c211397044684416be3b247def558c64cb6775f734c44294",
+    "request_sha256": "f3a6f11447136af541fafdf55153083ad78083eef9ba2fad4855f136785cad88",
+    "resource_id_sha256": "616d9e53816affbc284d6e61b3f1a5ca54382c4dd05b78877147b9e4967a2cf3",
+    "response_sha256": "afe9cf73b91a04ce9955ed7f3e8ccc21df8d181e1eb04cb762ac4e817d32b0eb",
+    "stable_file_identity_returned": true
+  },
+  "fixture": {
+    "bytes": 75449,
+    "creation_time": "2026-08-11T12:00:00.000Z",
+    "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"
+  },
+  "invalid_upload": {
+    "catalog_response_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac",
+    "catalog_unchanged": true,
+    "error_code_sha256": "1b5fbbe98460408f77185b1ed1fa9a296fdf2edccc1e0f651882051f4ee0fadd",
+    "error_message_sha256": "c71d5cb1b06c72b369363f34d7a33fb33097d670d89700360c685626bca82fbb",
+    "http_status": 400,
+    "request_sha256": "016292611f92bc8ee08763f750591e9aa4bb22ba5fd2fa1867a7aeedbbff3884",
+    "response_sha256": "22e7abb5a9f4cf6460faf7777a92ffb770ad8c8eec7ccaeb61ec0bb986c480fd",
+    "structured_error": true
+  },
+  "non_dense_control": {
+    "chunk_count": 1,
+    "chunk_ids": [0],
+    "chunk_windows": [
+      ["2026-08-11T12:00:00.000Z", "2026-08-11T12:00:09.000Z"]
+    ],
+    "content_nonempty": true,
+    "http_status": 200,
+    "multi_chunk_dense_payload_absent": true,
+    "request_sha256": "921f46a8ef2921543509a32d6b2fd8daa066ab86cdc9129542cd4be8eaf5c178",
+    "response_sha256": "483ed68bde3becb3cb38c7e0818737a750ced5e45fa7624bcb24a3d130e5bb5d",
+    "semantic_response_sha256": "c950cd94d8908dfb28cbcd1c17c01d59755656659782cc6676824cb0591af59b",
+    "usage_chunks": 1
+  },
+  "package_id": "rt-vlm-file-dense-captions-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_semantic_output_retained": false,
+    "service_lifecycle_actions": 0,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "endpoint_sha256": "fc2acbd58118c812e3a09da75af02336fe4ade4305f30c1863bf0808546c8de1",
+    "model_id_sha256": "0e8a26c59c5f67a47d4c2fafa065c8524243bfac33810fe4c93ea12d20f4bfe6",
+    "models_after_sha256": "4b112881badb988172b4b5cbd8be253b5464fa874036b39764bf0d9dca76d9a4",
+    "models_before_sha256": "4b112881badb988172b4b5cbd8be253b5464fa874036b39764bf0d9dca76d9a4",
+    "models_post_response_sha256": "2969b6a745c7560bb3c1717c3dc6f9c3a8aced40cfb5415bf968adc90eaae97b",
+    "models_pre_response_sha256": "2969b6a745c7560bb3c1717c3dc6f9c3a8aced40cfb5415bf968adc90eaae97b",
+    "models_unchanged": true,
+    "openapi_http_status": 200,
+    "openapi_response_sha256": "88132c9733fa91e5ddf26460948db02464431bf42b611e572003e42998841bf1",
+    "required_openapi_paths_present": true
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

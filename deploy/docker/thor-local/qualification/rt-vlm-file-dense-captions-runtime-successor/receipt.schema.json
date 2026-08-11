@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "status", "contract_sha256", "duration_seconds", "budget", "runtime", "fixture", "invalid_upload", "file_upload", "dense_captions", "non_dense_control", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-file-dense-captions-runtime-successor"},
+    "capability_ids": {"const": ["manifest-entry.rt-vlm-media.00-file-upload", "manifest-entry.rt-vlm-media.06-dense-captions"]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 300},
+    "budget": {"const": {"http_requests": 13, "max_http_requests": 13, "model_requests": 2, "max_model_requests": 2}},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["endpoint_sha256", "openapi_http_status", "openapi_response_sha256", "required_openapi_paths_present", "model_id_sha256", "models_before_sha256", "models_after_sha256", "models_unchanged", "models_pre_response_sha256", "models_post_response_sha256"],
+      "properties": {
+        "endpoint_sha256": {"$ref": "#/$defs/sha"}, "openapi_http_status": {"const": 200}, "openapi_response_sha256": {"$ref": "#/$defs/sha"}, "required_openapi_paths_present": {"const": true},
+        "model_id_sha256": {"$ref": "#/$defs/sha"}, "models_before_sha256": {"$ref": "#/$defs/sha"}, "models_after_sha256": {"$ref": "#/$defs/sha"}, "models_unchanged": {"const": true},
+        "models_pre_response_sha256": {"$ref": "#/$defs/sha"}, "models_post_response_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "fixture": {"const": {"bytes": 75449, "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29", "creation_time": "2026-08-11T12:00:00.000Z"}},
+    "invalid_upload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "structured_error", "request_sha256", "response_sha256", "error_code_sha256", "error_message_sha256", "catalog_unchanged", "catalog_response_sha256"],
+      "properties": {
+        "http_status": {"enum": [400, 422]}, "structured_error": {"const": true}, "request_sha256": {"$ref": "#/$defs/sha"}, "response_sha256": {"$ref": "#/$defs/sha"},
+        "error_code_sha256": {"$ref": "#/$defs/sha"}, "error_message_sha256": {"$ref": "#/$defs/sha"}, "catalog_unchanged": {"const": true}, "catalog_response_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "file_upload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "request_sha256", "response_sha256", "stable_file_identity_returned", "resource_id_sha256", "metadata_readback_http_status", "metadata_readback_response_sha256", "content_readback_http_status", "content_bytes", "content_sha256", "content_digest_matches_fixture"],
+      "properties": {
+        "http_status": {"const": 200}, "request_sha256": {"$ref": "#/$defs/sha"}, "response_sha256": {"$ref": "#/$defs/sha"}, "stable_file_identity_returned": {"const": true}, "resource_id_sha256": {"$ref": "#/$defs/sha"},
+        "metadata_readback_http_status": {"const": 200}, "metadata_readback_response_sha256": {"$ref": "#/$defs/sha"}, "content_readback_http_status": {"const": 200},
+        "content_bytes": {"const": 75449}, "content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"}, "content_digest_matches_fixture": {"const": true}
+      }
+    },
+    "dense_captions": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "request_sha256", "response_sha256", "chunk_count", "chunk_ids", "chunk_windows", "frame_counts", "primary_phase_markers_present", "marker_matrix", "all_content_nonempty", "usage_chunks", "semantic_response_sha256", "response_model_exact"],
+      "properties": {
+        "http_status": {"const": 200}, "request_sha256": {"$ref": "#/$defs/sha"}, "response_sha256": {"$ref": "#/$defs/sha"}, "chunk_count": {"const": 3}, "chunk_ids": {"const": [0, 1, 2]},
+        "chunk_windows": {"const": [["2026-08-11T12:00:00.000Z", "2026-08-11T12:00:03.000Z"], ["2026-08-11T12:00:03.000Z", "2026-08-11T12:00:06.000Z"], ["2026-08-11T12:00:06.000Z", "2026-08-11T12:00:09.000Z"]]},
+        "frame_counts": {"const": [4, 4, 4]}, "primary_phase_markers_present": {"const": [true, true, true]},
+        "marker_matrix": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["blue", "green", "red"], "properties": {"blue": {"type": "boolean"}, "green": {"type": "boolean"}, "red": {"type": "boolean"}}}},
+        "all_content_nonempty": {"const": true}, "usage_chunks": {"const": 3}, "semantic_response_sha256": {"$ref": "#/$defs/sha"}, "response_model_exact": {"const": true}
+      }
+    },
+    "non_dense_control": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "request_sha256", "response_sha256", "chunk_count", "chunk_ids", "chunk_windows", "multi_chunk_dense_payload_absent", "content_nonempty", "usage_chunks", "semantic_response_sha256"],
+      "properties": {
+        "http_status": {"const": 200}, "request_sha256": {"$ref": "#/$defs/sha"}, "response_sha256": {"$ref": "#/$defs/sha"}, "chunk_count": {"const": 1}, "chunk_ids": {"const": [0]},
+        "chunk_windows": {"const": [["2026-08-11T12:00:00.000Z", "2026-08-11T12:00:09.000Z"]]}, "multi_chunk_dense_payload_absent": {"const": true},
+        "content_nonempty": {"const": true}, "usage_chunks": {"const": 1}, "semantic_response_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owned_file_exact_deleted", "temporary_fixture_root_absent", "catalog_before_count", "catalog_after_count", "catalog_before_sha256", "catalog_after_sha256", "catalog_restored_exactly", "delete_response_sha256"],
+      "properties": {
+        "owned_file_exact_deleted": {"const": true}, "temporary_fixture_root_absent": {"const": true}, "catalog_before_count": {"type": "integer", "minimum": 0}, "catalog_after_count": {"type": "integer", "minimum": 0},
+        "catalog_before_sha256": {"$ref": "#/$defs/sha"}, "catalog_after_sha256": {"$ref": "#/$defs/sha"}, "catalog_restored_exactly": {"const": true}, "delete_response_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "policy": {"const": {"agent_generate_calls": 0, "stream_mutations": 0, "service_lifecycle_actions": 0, "raw_prompt_retained": false, "raw_semantic_output_retained": false, "raw_resource_ids_retained": false, "warehouse_sample_bundle": "excluded"}}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}
