@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-33",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-34",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -158,6 +158,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-embedding-downsampling-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "53f2620538801a9b60e58220536d20bf19063e7e1ff9fb537629a5da50f65faa",
         "receipt_sha256": "f7df00613206c5c150c5cd88dbe70d5df843447bf2f68509a75ce67a23010f3a",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Behavior broker sinks",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "protocol.behavior.broker-sinks",
+      "feature_id": "non-rest-protocols",
+      "official_index": 208,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/contract.json",
+        "contract_sha256": "8707ea55a34e32a2801b153c1691f648201f11a0d5e178026487710c46f90f00",
+        "package_id": "behavior-analytics-broker-sinks-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "f5fa1d3694be34e415200cb3aea700e2add021b2d6de6a26faf881709fe02282",
+        "receipt_sha256": "aa289139683a35e100be896ed38d4515f2d48d4966e7ec7a1c65d688ace2726d",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1556,8 +1578,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 70,
-    "row_count": 70,
+    "passed_current_thor": 71,
+    "row_count": 71,
     "warehouse_sample_bundle": "excluded"
   }
 }

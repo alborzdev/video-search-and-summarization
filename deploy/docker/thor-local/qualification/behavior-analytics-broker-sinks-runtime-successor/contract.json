@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-broker-sinks-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "protocol.behavior.broker-sinks"
+  ],
+  "official_indices": [208],
+  "advertised_contract": {
+    "outputs": [
+      "frames",
+      "behaviors",
+      "events",
+      "incidents",
+      "anomalies",
+      "cluster",
+      "space-utilization"
+    ],
+    "sink_types": ["kafka", "redisStream", "mqtt"]
+  },
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/in_container_sink_probe.py",
+      "sha256": "17cf426164d073cfd6f5ae09f34387b224fb0ca6db9c8e662d3b05e29d7b3493"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/run_sink_probe.py",
+      "sha256": "b87f9f9f414f5d84d2a4e6ae6556b57a6a45913ea4e78dff5109580612519bf8"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/mosquitto.conf",
+      "sha256": "5bbf715cb2518197f7ad99ceff3986bf3e2b137798aae23613ce39cf5f24542c"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/run_broker_probe.py",
+      "sha256": "9a559296167bf5cb09259653d1a828c8f8db08312169a76ed46d75befd00ef1e"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_base.py",
+      "sha256": "4c33fe5aec0133456939a5cb0d420f2f0cf22873ffb6e60e7944b1aef4fce72a"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py",
+      "sha256": "8a5c59dd9d8a604716a9113c8dfc144f5e61c951161b2cfd7e913aa0f97936c2"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_kafka.py",
+      "sha256": "c2fcff09f30c8090aa066a68f527957500a4aadfc8a7c571adef471943063e5f"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_redis_stream.py",
+      "sha256": "6166976af25c8ee37fcc6ec80875289840f44b5dc8752cfbab780c126609589e"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_mqtt.py",
+      "sha256": "280710b441bd33609553ab7ea8e920e2b43382e8158452b8fe25665677b7286b"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+      "sha256": "1360a2f79ff360755d6c9b1ffb38c2079ef1ba5e2b7ee3a7396e167d6e513c52"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/schema_pb2.py",
+      "sha256": "bfa3727bc8c72cd1975eb3169caae768a0e6a4e7fb0f72aa610747cf5ddde87c"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/schema/proto/ext_pb2.py",
+      "sha256": "ca1719b0f731f023592cc6b51f0b0640b677bfccc6ae6c60448746404da0ad4a"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/configuration.md",
+      "sha256": "01bc4475df113cb873fce0d49908603cf76ae71b656d00813143765000aab957"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/modules-overview.md",
+      "sha256": "fd90761cfeba0b46ded786032f37c58536912e35a5661ce1e6b9dc6df791e843"
+    }
+  ],
+  "required_assertions": {
+    "sink_factory_classes": {
+      "kafka": "SinkKafka",
+      "redisStream": "SinkRedisStream",
+      "mqtt": "SinkMQTT"
+    },
+    "destination_keys": {
+      "frames": "frames",
+      "behaviors": "behavior",
+      "events": "events",
+      "incidents": "incidents",
+      "anomalies": "anomaly",
+      "cluster": "behaviorPlus",
+      "space-utilization": "spaceUtilization"
+    },
+    "routes": 21,
+    "one_record_per_route": true,
+    "protobuf_payloads_decoded": true,
+    "keys_and_headers_preserved": true,
+    "payload_identity_across_backends": true
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "production broker throughput, durability, replication, or high availability",
+    "semantic quality of upstream-generated anomaly or cluster records",
+    "3D or MV3DT processing",
+    "100 GB Warehouse sample bundle"
+  ]
+}

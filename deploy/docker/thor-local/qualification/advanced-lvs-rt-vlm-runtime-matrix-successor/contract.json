@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-33",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-34",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -208,6 +208,40 @@
         "/cleanup/disposable_containers_absent": true,
         "/cleanup/qualification_topics_absent": true,
         "/policy/normal_behavior_consumers_stopped": 0
+      }
+    },
+    {
+      "official_index": 208,
+      "capability_id": "protocol.behavior.broker-sinks",
+      "advertised_literal": "Behavior broker sinks",
+      "package_id": "behavior-analytics-broker-sinks-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/contract.json",
+      "contract_sha256": "8707ea55a34e32a2801b153c1691f648201f11a0d5e178026487710c46f90f00",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "aa289139683a35e100be896ed38d4515f2d48d4966e7ec7a1c65d688ace2726d",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-sinks-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f5fa1d3694be34e415200cb3aea700e2add021b2d6de6a26faf881709fe02282",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/backends/kafka/factory_class": "SinkKafka",
+        "/backends/redisStream/factory_class": "SinkRedisStream",
+        "/backends/mqtt/factory_class": "SinkMQTT",
+        "/backends/kafka/family_count": 7,
+        "/backends/redisStream/family_count": 7,
+        "/backends/mqtt/family_count": 7,
+        "/cross_backend/route_count": 21,
+        "/cross_backend/one_record_per_route": true,
+        "/cross_backend/payload_identity": true,
+        "/cross_backend/decoded_identity": true,
+        "/cross_backend/destination_key_identity": true,
+        "/cross_backend/message_key_identity": true,
+        "/cross_backend/headers_preserved": true,
+        "/cleanup/broker_records_absent/kafka": true,
+        "/cleanup/broker_records_absent/redisStream": true,
+        "/cleanup/broker_records_absent/mqtt": true,
+        "/cleanup/probe_containers_absent": true,
+        "/cleanup/mqtt_broker_absent": true,
+        "/policy/warehouse_sample_bundle": "excluded"
       }
     },
     {

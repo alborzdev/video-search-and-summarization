@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "contract_sha256", "capability_ids", "official_indices", "status", "captured_at", "runtime", "payload_catalog", "backends", "cross_backend", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-broker-sinks-runtime-successor"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "capability_ids": {"const": ["protocol.behavior.broker-sinks"]},
+    "official_indices": {"const": [208]},
+    "status": {"const": "passed"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["behavior_image", "brokers"],
+      "properties": {
+        "behavior_image": {"$ref": "#/$defs/image"},
+        "brokers": {
+          "type": "object", "additionalProperties": false,
+          "required": ["kafka", "redisStream", "mqtt"],
+          "properties": {
+            "kafka": {"$ref": "#/$defs/broker"},
+            "redisStream": {"$ref": "#/$defs/broker"},
+            "mqtt": {"$ref": "#/$defs/broker"}
+          }
+        }
+      }
+    },
+    "payload_catalog": {"$ref": "#/$defs/family_payloads"},
+    "backends": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kafka", "redisStream", "mqtt"],
+      "properties": {
+        "kafka": {"$ref": "#/$defs/backend"},
+        "redisStream": {"$ref": "#/$defs/backend"},
+        "mqtt": {"$ref": "#/$defs/backend"}
+      }
+    },
+    "cross_backend": {
+      "type": "object", "additionalProperties": false,
+      "required": ["route_count", "one_record_per_route", "payload_identity", "decoded_identity", "destination_key_identity", "message_key_identity", "headers_preserved"],
+      "properties": {
+        "route_count": {"const": 21},
+        "one_record_per_route": {"const": true},
+        "payload_identity": {"const": true},
+        "decoded_identity": {"const": true},
+        "destination_key_identity": {"const": true},
+        "message_key_identity": {"const": true},
+        "headers_preserved": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["broker_records_absent", "probe_containers_absent", "mqtt_broker_absent", "normal_behavior_containers", "failures"],
+      "properties": {
+        "broker_records_absent": {
+          "type": "object", "additionalProperties": false,
+          "required": ["kafka", "redisStream", "mqtt"],
+          "properties": {"kafka": {"const": true}, "redisStream": {"const": true}, "mqtt": {"const": true}}
+        },
+        "probe_containers_absent": {"const": true},
+        "mqtt_broker_absent": {"const": true},
+        "normal_behavior_containers": {
+          "type": "object", "additionalProperties": false,
+          "required": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"],
+          "properties": {
+            "vss-behavior-analytics": {"$ref": "#/$defs/normal_container"},
+            "vss-behavior-analytics-thor-candidates": {"$ref": "#/$defs/normal_container"}
+          }
+        },
+        "failures": {"type": "array", "maxItems": 0}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "external_requests", "main_rt_cv_mutations", "main_vios_mutations", "normal_behavior_consumers_stopped", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "external_requests": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0},
+        "main_vios_mutations": {"const": 0},
+        "normal_behavior_consumers_stopped": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "image": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "image_id"],
+      "properties": {"name": {"type": "string", "minLength": 1}, "image_id": {"$ref": "#/$defs/image_id"}}
+    },
+    "broker": {
+      "type": "object", "additionalProperties": false,
+      "required": ["image", "image_id", "observed_state"],
+      "properties": {
+        "image": {"type": "string", "minLength": 1},
+        "image_id": {"$ref": "#/$defs/image_id"},
+        "observed_state": {"enum": ["healthy", "disposable_exit_zero"]}
+      }
+    },
+    "container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exit_code", "oom_killed", "restart_count", "image_id"],
+      "properties": {
+        "exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}, "image_id": {"$ref": "#/$defs/image_id"}
+      }
+    },
+    "normal_container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["running", "oom_killed", "restart_count"],
+      "properties": {"running": {"const": true}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}
+    },
+    "identity": {
+      "type": "object", "additionalProperties": false, "minProperties": 3,
+      "properties": {
+        "id": {"type": "string"}, "sensor": {"type": "string"}, "object": {"type": "string"},
+        "objects": {"type": "integer", "minimum": 0}, "event": {"type": "string"},
+        "anomaly_type": {"type": "string"}, "cluster_index": {"type": "string"},
+        "category": {"type": "string"}, "sensors": {"type": "array", "items": {"type": "string"}},
+        "total_space": {"type": "number"}
+      }
+    },
+    "payload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["message_key", "payload_bytes", "payload_sha256", "decoded_identity"],
+      "properties": {
+        "message_key": {"type": "string", "minLength": 1},
+        "payload_bytes": {"type": "integer", "minimum": 1},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "decoded_identity": {"$ref": "#/$defs/identity"}
+      }
+    },
+    "family_payloads": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frames", "behaviors", "events", "incidents", "anomalies", "cluster", "space-utilization"],
+      "properties": {
+        "frames": {"$ref": "#/$defs/payload"}, "behaviors": {"$ref": "#/$defs/payload"},
+        "events": {"$ref": "#/$defs/payload"}, "incidents": {"$ref": "#/$defs/payload"},
+        "anomalies": {"$ref": "#/$defs/payload"}, "cluster": {"$ref": "#/$defs/payload"},
+        "space-utilization": {"$ref": "#/$defs/payload"}
+      }
+    },
+    "route": {
+      "type": "object", "additionalProperties": false,
+      "required": ["destination_key", "broker_destination", "message_key", "payload_sha256", "record_count", "headers_preserved"],
+      "properties": {
+        "destination_key": {"type": "string", "minLength": 1},
+        "broker_destination": {"type": "string", "minLength": 1},
+        "message_key": {"type": "string", "minLength": 1},
+        "payload_sha256": {"$ref": "#/$defs/sha256"},
+        "record_count": {"const": 1},
+        "headers_preserved": {"const": true}
+      }
+    },
+    "routes": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frames", "behaviors", "events", "incidents", "anomalies", "cluster", "space-utilization"],
+      "properties": {
+        "frames": {"$ref": "#/$defs/route"}, "behaviors": {"$ref": "#/$defs/route"},
+        "events": {"$ref": "#/$defs/route"}, "incidents": {"$ref": "#/$defs/route"},
+        "anomalies": {"$ref": "#/$defs/route"}, "cluster": {"$ref": "#/$defs/route"},
+        "space-utilization": {"$ref": "#/$defs/route"}
+      }
+    },
+    "backend": {
+      "type": "object", "additionalProperties": false,
+      "required": ["factory_class", "family_count", "runtime", "routes"],
+      "properties": {
+        "factory_class": {"enum": ["SinkKafka", "SinkRedisStream", "SinkMQTT"]},
+        "family_count": {"const": 7},
+        "runtime": {
+          "type": "object", "additionalProperties": false,
+          "required": ["container", "log_sha256"],
+          "properties": {"container": {"$ref": "#/$defs/container"}, "log_sha256": {"$ref": "#/$defs/sha256"}}
+        },
+        "routes": {"$ref": "#/$defs/routes"}
+      }
+    }
+  }
+}

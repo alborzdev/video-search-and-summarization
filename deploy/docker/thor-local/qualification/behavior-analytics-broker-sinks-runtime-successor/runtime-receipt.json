@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-broker-sinks-runtime-successor",
+  "contract_sha256": "8707ea55a34e32a2801b153c1691f648201f11a0d5e178026487710c46f90f00",
+  "capability_ids": ["protocol.behavior.broker-sinks"],
+  "official_indices": [208],
+  "status": "passed",
+  "captured_at": "2026-08-11T21:49:56Z",
+  "runtime": {
+    "behavior_image": {
+      "name": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+      "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"
+    },
+    "brokers": {
+      "kafka": {
+        "image": "confluentinc/cp-kafka:8.2.0",
+        "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436",
+        "observed_state": "healthy"
+      },
+      "redisStream": {
+        "image": "redis:8.6.2-alpine",
+        "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17",
+        "observed_state": "healthy"
+      },
+      "mqtt": {
+        "image": "eclipse-mosquitto:2.0",
+        "image_id": "sha256:6852da90a65dfff7aa3a1c8b249e92bb83c17ea8bbcce56bedff8707332a1a29",
+        "observed_state": "disposable_exit_zero"
+      }
+    }
+  },
+  "payload_catalog": {
+    "frames": {
+      "message_key": "sink-matrix-camera",
+      "payload_bytes": 53,
+      "payload_sha256": "5532e842dbe5ebca91b84217f217996c233d11e844221ae4630e588777803a1d",
+      "decoded_identity": {"id": "frame-1", "sensor": "sink-matrix-camera", "objects": 1}
+    },
+    "behaviors": {
+      "message_key": "sink-matrix-camera",
+      "payload_bytes": 47,
+      "payload_sha256": "94b3b8fb99996848061fd1835a61cefb3ef563f13b879f0f86728cc8f082c462",
+      "decoded_identity": {"id": "behavior-1", "sensor": "sink-matrix-camera", "object": "track-1"}
+    },
+    "events": {
+      "message_key": "sink-matrix-camera",
+      "payload_bytes": 68,
+      "payload_sha256": "4f24feaa5a7c8c0922476c8fdde1049950c69856fe37f24705d809b7bf34f066",
+      "decoded_identity": {"id": "event-1", "sensor": "sink-matrix-camera", "object": "track-1", "event": "roi:ENTRY"}
+    },
+    "incidents": {
+      "message_key": "sink-matrix-camera",
+      "payload_bytes": 50,
+      "payload_sha256": "a5e845b1bc8190887a2abbd47082fbfbe1d98558d9e979b7705fb2f5bbbc78cd",
+      "decoded_identity": {"sensor": "sink-matrix-camera", "category": "FOV Count Violation", "objects": 1}
+    },
+    "anomalies": {
+      "message_key": "sink-matrix-camera",
+      "payload_bytes": 78,
+      "payload_sha256": "8afd0af7426f4952fb35e2d52d54f24d90c95391d4492c0217b248f0421f4388",
+      "decoded_identity": {"id": "anomaly-1", "sensor": "sink-matrix-camera", "object": "track-1", "anomaly_type": "qualification"}
+    },
+    "cluster": {
+      "message_key": "sink-matrix-camera",
+      "payload_bytes": 67,
+      "payload_sha256": "9d5f1f9e483ea80516c2ee16fed4f9627b5a699c3f5a53e3045cc5a9392989e8",
+      "decoded_identity": {"id": "cluster-1", "sensor": "sink-matrix-camera", "object": "track-1", "cluster_index": "7"}
+    },
+    "space-utilization": {
+      "message_key": "zone-1",
+      "payload_bytes": 66,
+      "payload_sha256": "67abdfb34a703c3f7729ee4d875bbd12f29e8b4dd8145dde2a36da4f78685654",
+      "decoded_identity": {"id": "zone-1", "sensors": ["sink-matrix-camera"], "total_space": 3.0}
+    }
+  },
+  "backends": {
+    "kafka": {
+      "factory_class": "SinkKafka",
+      "family_count": 7,
+      "runtime": {
+        "container": {"exit_code": 0, "oom_killed": false, "restart_count": 0, "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"},
+        "log_sha256": "277a70d082e18433a680726b9615d452ffdb4f05c39e14ccceaff5a5beed4fb3"
+      },
+      "routes": {
+        "frames": {"destination_key": "frames", "broker_destination": "vss-sink-matrix-kafka-frames", "message_key": "sink-matrix-camera", "payload_sha256": "5532e842dbe5ebca91b84217f217996c233d11e844221ae4630e588777803a1d", "record_count": 1, "headers_preserved": true},
+        "behaviors": {"destination_key": "behavior", "broker_destination": "vss-sink-matrix-kafka-behavior", "message_key": "sink-matrix-camera", "payload_sha256": "94b3b8fb99996848061fd1835a61cefb3ef563f13b879f0f86728cc8f082c462", "record_count": 1, "headers_preserved": true},
+        "events": {"destination_key": "events", "broker_destination": "vss-sink-matrix-kafka-events", "message_key": "sink-matrix-camera", "payload_sha256": "4f24feaa5a7c8c0922476c8fdde1049950c69856fe37f24705d809b7bf34f066", "record_count": 1, "headers_preserved": true},
+        "incidents": {"destination_key": "incidents", "broker_destination": "vss-sink-matrix-kafka-incidents", "message_key": "sink-matrix-camera", "payload_sha256": "a5e845b1bc8190887a2abbd47082fbfbe1d98558d9e979b7705fb2f5bbbc78cd", "record_count": 1, "headers_preserved": true},
+        "anomalies": {"destination_key": "anomaly", "broker_destination": "vss-sink-matrix-kafka-anomaly", "message_key": "sink-matrix-camera", "payload_sha256": "8afd0af7426f4952fb35e2d52d54f24d90c95391d4492c0217b248f0421f4388", "record_count": 1, "headers_preserved": true},
+        "cluster": {"destination_key": "behaviorPlus", "broker_destination": "vss-sink-matrix-kafka-behaviorPlus", "message_key": "sink-matrix-camera", "payload_sha256": "9d5f1f9e483ea80516c2ee16fed4f9627b5a699c3f5a53e3045cc5a9392989e8", "record_count": 1, "headers_preserved": true},
+        "space-utilization": {"destination_key": "spaceUtilization", "broker_destination": "vss-sink-matrix-kafka-spaceUtilization", "message_key": "zone-1", "payload_sha256": "67abdfb34a703c3f7729ee4d875bbd12f29e8b4dd8145dde2a36da4f78685654", "record_count": 1, "headers_preserved": true}
+      }
+    },
+    "redisStream": {
+      "factory_class": "SinkRedisStream",
+      "family_count": 7,
+      "runtime": {
+        "container": {"exit_code": 0, "oom_killed": false, "restart_count": 0, "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"},
+        "log_sha256": "22b94c1fdc0a19021920b4b091d0d8273fdf001d293f58eca8f80e0796661f90"
+      },
+      "routes": {
+        "frames": {"destination_key": "frames", "broker_destination": "vss-sink-matrix-redisStream-frames", "message_key": "sink-matrix-camera", "payload_sha256": "5532e842dbe5ebca91b84217f217996c233d11e844221ae4630e588777803a1d", "record_count": 1, "headers_preserved": true},
+        "behaviors": {"destination_key": "behavior", "broker_destination": "vss-sink-matrix-redisStream-behavior", "message_key": "sink-matrix-camera", "payload_sha256": "94b3b8fb99996848061fd1835a61cefb3ef563f13b879f0f86728cc8f082c462", "record_count": 1, "headers_preserved": true},
+        "events": {"destination_key": "events", "broker_destination": "vss-sink-matrix-redisStream-events", "message_key": "sink-matrix-camera", "payload_sha256": "4f24feaa5a7c8c0922476c8fdde1049950c69856fe37f24705d809b7bf34f066", "record_count": 1, "headers_preserved": true},
+        "incidents": {"destination_key": "incidents", "broker_destination": "vss-sink-matrix-redisStream-incidents", "message_key": "sink-matrix-camera", "payload_sha256": "a5e845b1bc8190887a2abbd47082fbfbe1d98558d9e979b7705fb2f5bbbc78cd", "record_count": 1, "headers_preserved": true},
+        "anomalies": {"destination_key": "anomaly", "broker_destination": "vss-sink-matrix-redisStream-anomaly", "message_key": "sink-matrix-camera", "payload_sha256": "8afd0af7426f4952fb35e2d52d54f24d90c95391d4492c0217b248f0421f4388", "record_count": 1, "headers_preserved": true},
+        "cluster": {"destination_key": "behaviorPlus", "broker_destination": "vss-sink-matrix-redisStream-behaviorPlus", "message_key": "sink-matrix-camera", "payload_sha256": "9d5f1f9e483ea80516c2ee16fed4f9627b5a699c3f5a53e3045cc5a9392989e8", "record_count": 1, "headers_preserved": true},
+        "space-utilization": {"destination_key": "spaceUtilization", "broker_destination": "vss-sink-matrix-redisStream-spaceUtilization", "message_key": "zone-1", "payload_sha256": "67abdfb34a703c3f7729ee4d875bbd12f29e8b4dd8145dde2a36da4f78685654", "record_count": 1, "headers_preserved": true}
+      }
+    },
+    "mqtt": {
+      "factory_class": "SinkMQTT",
+      "family_count": 7,
+      "runtime": {
+        "container": {"exit_code": 0, "oom_killed": false, "restart_count": 0, "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"},
+        "log_sha256": "e2a1577ba4c8c8a95a8f4b7667f8a56b12e2ecdb79c3147b83d7e2b59409e569"
+      },
+      "routes": {
+        "frames": {"destination_key": "frames", "broker_destination": "vss/sink/matrix/frames", "message_key": "sink-matrix-camera", "payload_sha256": "5532e842dbe5ebca91b84217f217996c233d11e844221ae4630e588777803a1d", "record_count": 1, "headers_preserved": true},
+        "behaviors": {"destination_key": "behavior", "broker_destination": "vss/sink/matrix/behavior", "message_key": "sink-matrix-camera", "payload_sha256": "94b3b8fb99996848061fd1835a61cefb3ef563f13b879f0f86728cc8f082c462", "record_count": 1, "headers_preserved": true},
+        "events": {"destination_key": "events", "broker_destination": "vss/sink/matrix/events", "message_key": "sink-matrix-camera", "payload_sha256": "4f24feaa5a7c8c0922476c8fdde1049950c69856fe37f24705d809b7bf34f066", "record_count": 1, "headers_preserved": true},
+        "incidents": {"destination_key": "incidents", "broker_destination": "vss/sink/matrix/incidents", "message_key": "sink-matrix-camera", "payload_sha256": "a5e845b1bc8190887a2abbd47082fbfbe1d98558d9e979b7705fb2f5bbbc78cd", "record_count": 1, "headers_preserved": true},
+        "anomalies": {"destination_key": "anomaly", "broker_destination": "vss/sink/matrix/anomaly", "message_key": "sink-matrix-camera", "payload_sha256": "8afd0af7426f4952fb35e2d52d54f24d90c95391d4492c0217b248f0421f4388", "record_count": 1, "headers_preserved": true},
+        "cluster": {"destination_key": "behaviorPlus", "broker_destination": "vss/sink/matrix/behaviorPlus", "message_key": "sink-matrix-camera", "payload_sha256": "9d5f1f9e483ea80516c2ee16fed4f9627b5a699c3f5a53e3045cc5a9392989e8", "record_count": 1, "headers_preserved": true},
+        "space-utilization": {"destination_key": "spaceUtilization", "broker_destination": "vss/sink/matrix/spaceUtilization", "message_key": "zone-1", "payload_sha256": "67abdfb34a703c3f7729ee4d875bbd12f29e8b4dd8145dde2a36da4f78685654", "record_count": 1, "headers_preserved": true}
+      }
+    }
+  },
+  "cross_backend": {
+    "route_count": 21,
+    "one_record_per_route": true,
+    "payload_identity": true,
+    "decoded_identity": true,
+    "destination_key_identity": true,
+    "message_key_identity": true,
+    "headers_preserved": true
+  },
+  "cleanup": {
+    "broker_records_absent": {"kafka": true, "redisStream": true, "mqtt": true},
+    "probe_containers_absent": true,
+    "mqtt_broker_absent": true,
+    "normal_behavior_containers": {
+      "vss-behavior-analytics": {"running": true, "oom_killed": false, "restart_count": 0},
+      "vss-behavior-analytics-thor-candidates": {"running": true, "oom_killed": false, "restart_count": 0}
+    },
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}
