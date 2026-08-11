@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-36",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-37",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -485,6 +485,36 @@
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 330,
+      "capability_id": "manifest-entry.realtime-alerts.02-rule-replay",
+      "advertised_literal": "rule replay",
+      "package_id": "realtime-alert-rule-replay-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/realtime-alert-rule-replay-runtime-successor/contract.json",
+      "contract_sha256": "c6e08fbcbbc83d5781f893d6d1692d3cf53a0d65286f59524c60c75acee7468a",
+      "receipt_path": "deploy/docker/thor-local/qualification/realtime-alert-rule-replay-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "b7216af88c66f006593f3ea3de4217b495c536a5f73dca9b1d2e4e4a9ce76511",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-rule-replay-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "34513ea8bb939b5bbeeb889aa4e3ec77349f90b91a522cf23924b3205e8e428f",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/run/agent_generate_request_count": 0,
+        "/replay/replay_count": 2,
+        "/replay/replay_success_count": 2,
+        "/replay/immutable_identity_preserved": true,
+        "/replay/immutable_config_preserved": true,
+        "/replay/created_at_preserved": true,
+        "/replay/replay_timestamp_advanced": true,
+        "/replay/one_public_rule_after_each_replay": true,
+        "/replay/one_persisted_rule_after_each_replay": true,
+        "/replay/one_rtvlm_stream_after_each_replay": true,
+        "/replay/one_caption_worker_after_each_replay": true,
+        "/cleanup/exact_unrelated_state_restored": true,
+        "/cleanup/repeated_delete_explicit_not_found": true,
+        "/cleanup/owned_incident_artifacts_absent": true,
+        "/cleanup/final_caption_worker_count": 0
       }
     },
     {

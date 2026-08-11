@@ -1273,6 +1273,54 @@ class TestReplay:
         assert "last_replay_at" in stored
 
     @pytest.mark.asyncio
+    async def test_repeated_replay_resets_captions_before_each_re_onboard(
+        self, persistent_service, mock_rtvi_client
+    ):
+        """Each replay replaces the existing caption query instead of
+        stacking another worker on the same RTVI stream."""
+        await persistent_service.start_alert(make_config())
+        mock_rtvi_client.reset_mock()
+
+        first, first_code = await persistent_service.replay()
+        second, second_code = await persistent_service.replay()
+
+        assert first_code == second_code == 200
+        assert first["replayed"] == second["replayed"] == 1
+        assert mock_rtvi_client.stop_captions.await_count == 2
+        assert mock_rtvi_client.generate_captions.await_count == 2
+        first_reset = mock_rtvi_client.stop_captions.await_args_list[0].args[0]
+        second_reset = mock_rtvi_client.stop_captions.await_args_list[1].args[0]
+        assert first_reset == second_reset
+
+    @pytest.mark.asyncio
+    async def test_replay_resets_shared_stream_once_then_restores_each_rule(
+        self, persistent_service, fake_rule_store, mock_rtvi_client
+    ):
+        """Two rules sharing one camera require one reset followed by two
+        replacement caption queries; per-rule resets would erase siblings."""
+        for rule_id, alert_type in (("rule-a", "fire"), ("rule-b", "smoke")):
+            fake_rule_store.create(rule_id, {
+                "status": RuleStatus.ACTIVE,
+                "created_at": "2025-01-01T00:00:00Z",
+                "live_stream_url": SAMPLE_RTSP_URL,
+                "alert_type": alert_type,
+                "prompt": f"detect {alert_type}",
+                "sensor_id": "shared-camera",
+                "rtvi_stream_id": "shared-camera",
+                "model": "test-model",
+            })
+        mock_rtvi_client.get_stream_info.return_value = [
+            {"id": "shared-camera", "liveStreamUrl": SAMPLE_RTSP_URL},
+        ]
+
+        data, code = await persistent_service.replay()
+
+        assert code == 200
+        assert data["replayed"] == 2
+        mock_rtvi_client.stop_captions.assert_awaited_once_with("shared-camera")
+        assert mock_rtvi_client.generate_captions.await_count == 2
+
+    @pytest.mark.asyncio
     async def test_replay_start_stream_failure_marks_es_failed(
         self, persistent_service, fake_rule_store, mock_rtvi_client
     ):

@@ -728,12 +728,85 @@ class RealtimeAlertService:
                 "details": [],
             }, 200
 
+        # Replay replaces the active caption subscriptions for every
+        # persisted stream.  Merely reusing an existing RTVI asset and issuing
+        # another generate_captions request is not idempotent: RTVI accepts a
+        # second request and runs both caption queries concurrently.  Reset
+        # captions once per distinct stream before the per-rule fan-out, then
+        # recreate exactly one query for each persisted rule.  Grouping the
+        # reset is essential for shared streams: stopping once and then
+        # replaying N rules preserves N subscriptions, whereas stopping in
+        # each rule coroutine would tear down its siblings nondeterministically.
+        replay_stream_ids = sorted({
+            str(stream_id)
+            for rule_doc in items
+            if (stream_id := rule_doc.get("rtvi_stream_id"))
+        })
+        caption_reset_failures: Dict[str, Exception] = {}
+
+        async def _reset_stream_captions(stream_id: str) -> None:
+            reset_ctx = {
+                "correlation_id": correlation_id,
+                "rtvi_stream_id": stream_id,
+                "stage": "replay_reset",
+            }
+            try:
+                await self._client.stop_captions(stream_id)
+                logger.info(
+                    "Replay: reset existing caption subscriptions",
+                    extra={**reset_ctx, "outcome": "success"},
+                )
+            except httpx.HTTPStatusError as exc:
+                # A missing caption query is the expected state after an RTVI
+                # restart.  The stream will be re-onboarded below.
+                if exc.response.status_code == 404:
+                    logger.info(
+                        "Replay: no existing caption subscription to reset",
+                        extra={**reset_ctx, "outcome": "already_absent"},
+                    )
+                    return
+                caption_reset_failures[stream_id] = exc
+                logger.warning(
+                    "Replay: caption reset failed",
+                    extra={
+                        **reset_ctx,
+                        "outcome": "failure",
+                        "error": str(exc),
+                        "error_type": type(exc).__name__,
+                    },
+                )
+            except httpx.HTTPError as exc:
+                caption_reset_failures[stream_id] = exc
+                logger.warning(
+                    "Replay: caption reset failed",
+                    extra={
+                        **reset_ctx,
+                        "outcome": "failure",
+                        "error": str(exc),
+                        "error_type": type(exc).__name__,
+                    },
+                )
+
+        await asyncio.gather(*[
+            _reset_stream_captions(stream_id)
+            for stream_id in replay_stream_ids
+        ])
+
         async def _replay_one(rule_doc: Dict[str, Any]) -> Dict[str, Any]:
             rule_id = rule_doc.get("_id", "")
             entry: Dict[str, Any] = {
                 "id": rule_id,
                 "alert_type": rule_doc.get("alert_type", ""),
             }
+            old_stream_id = rule_doc.get("rtvi_stream_id")
+            if old_stream_id in caption_reset_failures:
+                entry["result"] = "error"
+                entry["error"] = (
+                    "Failed to reset existing caption subscriptions: "
+                    f"{caption_reset_failures[old_stream_id]}"
+                )
+                _inc(REPLAY_RULE_FAILURES)
+                return entry
             try:
                 new_stream_id = await self._re_onboard_rule(
                     rule_id, rule_doc, correlation_id=correlation_id,

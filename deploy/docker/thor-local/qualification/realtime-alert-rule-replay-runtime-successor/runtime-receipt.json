@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-rule-replay-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.02-rule-replay",
+  "contract_sha256": "c6e08fbcbbc83d5781f893d6d1692d3cf53a0d65286f59524c60c75acee7468a",
+  "status": "passed",
+  "run": {
+    "duration_ms": 29874,
+    "fixture_bytes": 2575454,
+    "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "numeric_loopback_http_only": true,
+    "agent_generate_request_count": 0
+  },
+  "replay": {
+    "persisted_rule_created_active": true,
+    "replay_count": 2,
+    "replay_success_count": 2,
+    "immutable_identity_preserved": true,
+    "immutable_config_preserved": true,
+    "created_at_preserved": true,
+    "replay_timestamp_advanced": true,
+    "one_public_rule_after_each_replay": true,
+    "one_persisted_rule_after_each_replay": true,
+    "one_rtvlm_stream_after_each_replay": true,
+    "one_caption_worker_after_each_replay": true,
+    "worker_created_counts": [
+      2,
+      3
+    ],
+    "worker_removed_counts": [
+      1,
+      2
+    ],
+    "rule_identity_sha256": "a4d0733ca5f1e0ae558f9734ea2c8638e178545372527e94477426d8fdb949e6",
+    "stream_identity_sha256": "ee27005a2518fd1ef948fa25ff29ecabd8ff75eb500bd7fd236b8dccecf61eab",
+    "immutable_config_sha256": "565effadbbcc13a75672cdefaf260f45ae22424e7fc8f0459f666e794fe50a16",
+    "replay_timestamp_sha256": [
+      "bde9c7ad85daa54308f12a9da9d22b9c965e5fbec051341c4f3a8550058b99b5",
+      "04703584ed69e1d4060de7ab0c446802258f1935dea4b37ed28077ec4310f89f"
+    ],
+    "mutation_sequence": [
+      "POST /api/v1/realtime",
+      "POST /api/v1/realtime/replay",
+      "POST /api/v1/realtime/replay",
+      "DELETE /api/v1/realtime/<owned>",
+      "DELETE /api/v1/realtime/<owned>"
+    ]
+  },
+  "cleanup": {
+    "exact_unrelated_state_restored": true,
+    "before_sha256": {
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rtvlm_streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "after_sha256": {
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rtvlm_streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "rule_deleted": true,
+    "repeated_delete_explicit_not_found": true,
+    "publisher_stopped": true,
+    "owned_incident_documents_deleted": 0,
+    "owned_incident_artifacts_absent": true,
+    "final_caption_worker_count": 0
+  }
+}

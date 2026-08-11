@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-rule-replay-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.02-rule-replay",
+  "official_indices": [330],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "17200a58ee66ebe723c6e10db403ed19c98666f08a25b354d38a9e2915b8b5b2"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_REALTIME_ALERT_REPLAY",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_loopback_http_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "preexisting_rules_allowed": false,
+    "exact_cleanup_required": true,
+    "maximum_duration_ms": 240000
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "required_runtime_proof": [
+    "create one uniquely owned persisted active realtime rule against a bounded local RTSP fixture",
+    "run the deployed replay endpoint twice and receive one successful outcome for the same rule and stream each time",
+    "preserve the server-generated rule identity, created_at, and immutable configuration across both replays",
+    "retain exactly one public rule, one persisted document, one RT-VLM stream, and one live caption worker after each replay",
+    "delete the owned rule, observe explicit not-found on repeated delete, stop the publisher, and remove owned incidents",
+    "restore exact unrelated rule, persistence, and RT-VLM catalog digests"
+  ],
+  "source_locks": [
+    {
+      "path": "services/alert/alert-agent-web/app/api/realtime_routes.py",
+      "sha256": "352832e8ddf553184419b441b9186000bb7667ee01df6c4afdf885032aca4773"
+    },
+    {
+      "path": "services/alert/realtime/services/realtime_service.py",
+      "sha256": "8d1e1cd3a5b740f1386465996ec86397e8e72850b0c18672ac10b551688ed377"
+    },
+    {
+      "path": "services/alert/realtime/services/rule_store.py",
+      "sha256": "0d5dea8d6d4e048e8c04e5133d4bd1d396626976b7d458e3a2c936b154e3f0c5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/realtime-alert-rule-replay-runtime-successor/harness.mjs",
+      "sha256": "4f436780eea8c477e8204a1fba57e5f7235afc042d4d65fb2619743f8f01af54"
+    },
+    {
+      "path": "services/alert/test/api/test_realtime_service.py",
+      "sha256": "8b61f007c07405a349b998441490c4141d3b59c402e45caf9b1e2d8464bae758"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    }
+  ]
+}
