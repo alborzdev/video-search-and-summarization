@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "capability_ids", "official_indices", "status",
+    "contract_sha256", "duration_seconds", "budget", "runtime_identity",
+    "prometheus_endpoint", "prometheus_scrape", "prometheus_query",
+    "opentelemetry", "cleanup", "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-prometheus-otel-runtime-successor"},
+    "capability_ids": {
+      "const": ["manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry"]
+    },
+    "official_indices": {"const": [366]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 30},
+    "budget": {
+      "const": {
+        "docker_commands": 4, "http_requests": 4, "max_docker_commands": 4,
+        "max_http_requests": 4, "max_model_requests": 0, "max_support_processes": 1,
+        "model_requests": 0, "support_processes_peak": 1
+      }
+    },
+    "runtime_identity": {
+      "const": {
+        "prometheus_healthy": true, "prometheus_image_exact": true,
+        "prometheus_oom_killed": false, "prometheus_restart_count": 0,
+        "rt_vlm_healthy": true, "rt_vlm_image_exact": true,
+        "rt_vlm_oom_killed": false, "rt_vlm_restart_count": 0
+      }
+    },
+    "prometheus_endpoint": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "content_sha256", "http_status", "metric_family_count", "otel_sdk_label_present",
+        "required_metric_families_present", "service_name_exact", "service_version_exact"
+      ],
+      "properties": {
+        "content_sha256": {"$ref": "#/$defs/hash"}, "http_status": {"const": 200},
+        "metric_family_count": {"type": "integer", "minimum": 8},
+        "otel_sdk_label_present": {"const": true},
+        "required_metric_families_present": {"const": true},
+        "service_name_exact": {"const": true}, "service_version_exact": {"const": true}
+      }
+    },
+    "prometheus_scrape": {
+      "const": {"last_error_empty": true, "scrape_url_exact": true, "target_count": 1, "target_up": true}
+    },
+    "prometheus_query": {
+      "const": {"instance_exact": true, "job_exact": true, "series_count": 1, "up_value": 1}
+    },
+    "opentelemetry": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "console_metric_export_present", "console_span_export_present", "export_output_sha256",
+        "initialized", "meter_provider_present", "metrics_flushed", "otel_enabled",
+        "prometheus_reader_present", "service_resource_exact", "span_recording",
+        "trace_flushed", "tracer_present"
+      ],
+      "properties": {
+        "console_metric_export_present": {"const": true},
+        "console_span_export_present": {"const": true},
+        "export_output_sha256": {"$ref": "#/$defs/hash"},
+        "initialized": {"const": true}, "meter_provider_present": {"const": true},
+        "metrics_flushed": {"const": true}, "otel_enabled": {"const": true},
+        "prometheus_reader_present": {"const": true}, "service_resource_exact": {"const": true},
+        "span_recording": {"const": true}, "trace_flushed": {"const": true},
+        "tracer_present": {"const": true}
+      }
+    },
+    "cleanup": {
+      "const": {
+        "isolated_otel_process_exited": true, "main_metrics_contract_preserved": true,
+        "prometheus_identity_preserved": true, "rt_vlm_identity_preserved": true
+      }
+    },
+    "policy": {
+      "const": {
+        "agent_generate_calls": 0, "asset_mutations": 0,
+        "core_service_lifecycle_actions": 0, "credentials_retained": false,
+        "raw_span_ids_retained": false, "raw_trace_ids_retained": false,
+        "stream_mutations": 0, "warehouse_sample_bundle": "excluded"
+      }
+    }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

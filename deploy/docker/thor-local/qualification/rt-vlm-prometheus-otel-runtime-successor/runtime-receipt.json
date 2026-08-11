@@ -1,0 +1,84 @@
+{
+  "budget": {
+    "docker_commands": 4,
+    "http_requests": 4,
+    "max_docker_commands": 4,
+    "max_http_requests": 4,
+    "max_model_requests": 0,
+    "max_support_processes": 1,
+    "model_requests": 0,
+    "support_processes_peak": 1
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry"
+  ],
+  "cleanup": {
+    "isolated_otel_process_exited": true,
+    "main_metrics_contract_preserved": true,
+    "prometheus_identity_preserved": true,
+    "rt_vlm_identity_preserved": true
+  },
+  "contract_sha256": "261ac30d44027cd35cee0b261aa65b884fcfcffb72103a56b1e2a111f2fc2b60",
+  "duration_seconds": 0.695769,
+  "official_indices": [
+    366
+  ],
+  "opentelemetry": {
+    "console_metric_export_present": true,
+    "console_span_export_present": true,
+    "export_output_sha256": "08d8deed0a903fa2226abe29c6b93cbfcd167677585d7265747b757315dbd725",
+    "initialized": true,
+    "meter_provider_present": true,
+    "metrics_flushed": true,
+    "otel_enabled": true,
+    "prometheus_reader_present": true,
+    "service_resource_exact": true,
+    "span_recording": true,
+    "trace_flushed": true,
+    "tracer_present": true
+  },
+  "package_id": "rt-vlm-prometheus-otel-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "asset_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "raw_span_ids_retained": false,
+    "raw_trace_ids_retained": false,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "prometheus_endpoint": {
+    "content_sha256": "9a2572f045c46eeeaec362e0ecc2a40fad7d98af42ef8cc20221015bd99ab4f8",
+    "http_status": 200,
+    "metric_family_count": 14,
+    "otel_sdk_label_present": true,
+    "required_metric_families_present": true,
+    "service_name_exact": true,
+    "service_version_exact": true
+  },
+  "prometheus_query": {
+    "instance_exact": true,
+    "job_exact": true,
+    "series_count": 1,
+    "up_value": 1
+  },
+  "prometheus_scrape": {
+    "last_error_empty": true,
+    "scrape_url_exact": true,
+    "target_count": 1,
+    "target_up": true
+  },
+  "runtime_identity": {
+    "prometheus_healthy": true,
+    "prometheus_image_exact": true,
+    "prometheus_oom_killed": false,
+    "prometheus_restart_count": 0,
+    "rt_vlm_healthy": true,
+    "rt_vlm_image_exact": true,
+    "rt_vlm_oom_killed": false,
+    "rt_vlm_restart_count": 0
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

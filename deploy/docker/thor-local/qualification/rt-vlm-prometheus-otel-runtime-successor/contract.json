@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-prometheus-otel-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry"
+  ],
+  "official_indices": [366],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "runtime": {
+    "rt_vlm_container": "vss-rtvi-vlm",
+    "rt_vlm_endpoint": "http://127.0.0.1:8018",
+    "rt_vlm_image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "prometheus_container": "prometheus",
+    "prometheus_endpoint": "http://127.0.0.1:9090",
+    "prometheus_image_id": "sha256:c0b857aead0d5793aa566adb8f49a9983d6f6031652098759d521a330cfa050f",
+    "prometheus_image_architecture": "arm64"
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/otel_helper.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/utils/otel_helper.py",
+      "sha256": "20b78835e9d87738935258a5807c2b13c05d872609bedf3558813694aa85da60"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py",
+      "sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"
+    },
+    {
+      "path": "deploy/docker/thor-local/observability/prometheus.yml",
+      "sha256": "f9a01612f8a35bedc5a02cccd1db1509bf150734f1c21b39a2e0a135bea83be2"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+      "sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4"
+    }
+  ],
+  "otel_fixture": {
+    "service_name": "rt-vlm-qualification",
+    "service_version": "3.2.1",
+    "span_name": "rt-vlm-qualification-span",
+    "counter_name": "rt-vlm-qualification-counter",
+    "trace_exporter": "console",
+    "metrics_exporter": "console",
+    "metric_export_interval_ms": 100
+  },
+  "execution": {
+    "max_duration_seconds": 30,
+    "max_http_requests": 4,
+    "max_model_requests": 0,
+    "max_docker_commands": 4,
+    "max_support_processes": 1,
+    "acknowledgement": "I_ACK_LOCAL_RT_VLM_PROMETHEUS_AND_OTEL_EXPORT_PROOF"
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "asset_mutations": 0,
+    "stream_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "raw_trace_ids_retained": false,
+    "raw_span_ids_retained": false,
+    "credentials_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

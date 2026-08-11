@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-8",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-9",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -435,6 +435,30 @@
         "/ttl_expiry/ttl/busy_expired_asset_preserved": true,
         "/ttl_expiry/ttl/fresh_asset_preserved": true,
         "/cleanup/main_asset_statistics_restored_exactly": true,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 366,
+      "capability_id": "manifest-entry.rt-vlm-performance-observability.06-prometheus-and-opentelemetry",
+      "advertised_literal": "Prometheus and OpenTelemetry",
+      "package_id": "rt-vlm-prometheus-otel-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-prometheus-otel-runtime-successor/contract.json",
+      "contract_sha256": "261ac30d44027cd35cee0b261aa65b884fcfcffb72103a56b1e2a111f2fc2b60",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-prometheus-otel-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d0139d612d3d7a397c601ba7a0cbe15ecede635992631a5e15bef7b1d6928f4a",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-prometheus-otel-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "53014bb0a5d24621fa1b400c73b250d4379b6be357b1b32d67a1d5ba4926f235",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/prometheus_endpoint/required_metric_families_present": true,
+        "/prometheus_endpoint/otel_sdk_label_present": true,
+        "/prometheus_scrape/target_up": true,
+        "/prometheus_query/up_value": 1,
+        "/opentelemetry/console_span_export_present": true,
+        "/opentelemetry/console_metric_export_present": true,
+        "/opentelemetry/trace_flushed": true,
+        "/opentelemetry/metrics_flushed": true,
         "/policy/agent_generate_calls": 0
       }
     },
