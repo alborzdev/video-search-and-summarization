@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-embed-multimodal-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-embed.00-video-image-text-embedding",
+    "manifest-entry.rt-embed.03-cosmos-embed1"
+  ],
+  "official_indices": [368, 371],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "runtime": {
+    "container": "vss-rtvi-embed",
+    "image_id": "sha256:336dde22db12fe9ebfe3b64130dc593f9a267cbeaf00eea9f958ce0816534699",
+    "origin": "http://127.0.0.1:8017",
+    "host_binding": "127.0.0.1:8017",
+    "release": "3.2.1",
+    "model_id": "cosmos-embed1-448p-anomaly-detection",
+    "model_source": "git:https://huggingface.co/nvidia/Cosmos-Embed1-448p-anomaly-detection",
+    "embedding_dimension": 768,
+    "batch_size": 8
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_embed_server.py",
+      "bytes": 94075,
+      "sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/server/rtvi_stream_handler.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py",
+      "bytes": 140286,
+      "sha256": "9fc4bbe627f460358ac87e261b0219ef20165ce30e9fb915574564467731d70e"
+    },
+    {
+      "path": "services/rtvi/rt-embed/src/models/custom/samples/cosmos-embed1/inference.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1/inference.py",
+      "bytes": 14215,
+      "sha256": "75cb5f44fc599e7782fc86ab9352ab0252d4de735b7ed723d9d126b3a61f75f7"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "bytes": 28120,
+      "sha256": "e4b21e864ab179f86a59864208d778bfc432ccd55b289f4dd3d5ec8880fb8282"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+      "bytes": 818454,
+      "sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4"
+    }
+  ],
+  "fixtures": {
+    "image": {
+      "path": "deploy/docker/scripts/images/vss_ui_home_page.png",
+      "bytes": 172521,
+      "sha256": "69127ae05b1a7d9fece5b9dfa9c3251f590cf6a91f102cf85f83a61df790ce6e",
+      "mime_type": "image/png",
+      "media_type": "image"
+    },
+    "video": {
+      "path": "services/alert/warmup/test.mp4",
+      "bytes": 2575454,
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+      "mime_type": "video/mp4",
+      "media_type": "video",
+      "codec": "h264",
+      "duration_seconds": 10,
+      "chunk_duration_seconds": 5,
+      "expected_chunk_count": 2
+    },
+    "text_marker": "thor-local-multimodal-embedding-proof"
+  },
+  "execution": {
+    "max_duration_seconds": 360,
+    "max_http_requests": 16,
+    "max_model_requests": 3,
+    "max_docker_commands": 3,
+    "max_request_bytes": 4194304,
+    "max_response_bytes": 4194304,
+    "min_free_bytes": 10737418240,
+    "file_mutations": 4,
+    "acknowledgement": "I_ACK_TWO_OWNED_FILES_AND_THREE_LOCAL_RT_EMBED_INFERENCES"
+  },
+  "policy": {
+    "network_scope": "numeric-loopback-http-only",
+    "external_network_requests": 0,
+    "agent_generate_calls": 0,
+    "rt_cv_or_vios_stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "raw_embeddings_retained": false,
+    "raw_text_input_retained": false,
+    "raw_resource_ids_retained": false,
+    "credentials_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

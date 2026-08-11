@@ -1,0 +1,120 @@
+{
+  "budget": {
+    "docker_commands": 3,
+    "file_mutations": 4,
+    "http_requests": 16,
+    "max_docker_commands": 3,
+    "max_file_mutations": 4,
+    "max_http_requests": 16,
+    "max_model_requests": 3,
+    "model_requests": 3
+  },
+  "capability_ids": [
+    "manifest-entry.rt-embed.00-video-image-text-embedding",
+    "manifest-entry.rt-embed.03-cosmos-embed1"
+  ],
+  "cleanup": {
+    "asset_statistics_restored_exactly": true,
+    "file_catalog_restored_exactly": true,
+    "model_catalog_preserved": true,
+    "owned_image_deleted": true,
+    "owned_video_deleted": true,
+    "runtime_identity_preserved": true
+  },
+  "contract_sha256": "9579b84b2d88816bf0ece6bc9f19fbbade902d76e424b9419778fe1c8c68f4a7",
+  "duration_seconds": 1.939396,
+  "image_embedding": {
+    "inference": {
+      "chunk_count": 1,
+      "chunks_chronological": true,
+      "http_status": 200,
+      "media_info_offset": true,
+      "model_exact": true,
+      "query_id_valid": true,
+      "vectors_dimension": 768,
+      "vectors_finite": true,
+      "vectors_nonzero": true
+    },
+    "upload": {
+      "bytes_exact": true,
+      "http_status": 200,
+      "media_type_exact": true,
+      "purpose_exact": true,
+      "stable_file_identity_returned": true
+    }
+  },
+  "model": {
+    "audio_support": false,
+    "cosmos_embed1_source_exact": true,
+    "embedding_dimension": 768,
+    "manifest_model_exact": true,
+    "models_endpoint_exact": true,
+    "release_exact": true
+  },
+  "multimodal_space": {
+    "cross_modal_cosines_finite": true,
+    "modal_vectors_distinct": true,
+    "same_embedding_dimension": true
+  },
+  "official_indices": [368, 371],
+  "package_id": "rt-embed-multimodal-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "external_network_requests": 0,
+    "network_scope": "numeric-loopback-http-only",
+    "raw_embeddings_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_text_input_retained": false,
+    "rt_cv_or_vios_stream_mutations": 0,
+    "service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime_identity": {
+    "credentials_blank": true,
+    "healthy": true,
+    "image_exact": true,
+    "loopback_binding_exact": true,
+    "oom_killed": false,
+    "operator_paused_workloads_preserved": true,
+    "production_sources_exact": true,
+    "restart_count": 0,
+    "safe_model_environment_exact": true
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "text_embedding": {
+    "http_status": 200,
+    "input_count": 1,
+    "input_echo_exact": true,
+    "model_exact": true,
+    "query_id_valid": true,
+    "response_count": 1,
+    "vector_dimension": 768,
+    "vector_finite": true,
+    "vector_nonzero": true
+  },
+  "video_embedding": {
+    "chunk_duration_seconds": 5,
+    "fixture_codec_h264": true,
+    "fixture_duration_seconds": 10,
+    "inference": {
+      "chunk_count": 2,
+      "chunks_chronological": true,
+      "http_status": 200,
+      "media_info_offset": true,
+      "model_exact": true,
+      "query_id_valid": true,
+      "vectors_dimension": 768,
+      "vectors_finite": true,
+      "vectors_nonzero": true
+    },
+    "upload": {
+      "bytes_exact": true,
+      "http_status": 200,
+      "media_type_exact": true,
+      "purpose_exact": true,
+      "stable_file_identity_returned": true
+    }
+  }
+}

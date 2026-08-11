@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-10",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-11",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -507,6 +507,55 @@
         "/oracle/malformed_absolute_timestamp_rejected_before_asset_creation": true,
         "/policy/agent_generate_calls": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 368,
+      "capability_id": "manifest-entry.rt-embed.00-video-image-text-embedding",
+      "advertised_literal": "video/image/text embedding",
+      "package_id": "rt-embed-multimodal-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/contract.json",
+      "contract_sha256": "9579b84b2d88816bf0ece6bc9f19fbbade902d76e424b9419778fe1c8c68f4a7",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "33e7dd3be73b5eaf33b06059842ee4d46459e7cd57daa3a2e46f3927182b5737",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "cbc2627e0858db3789c070e86dcc6230f33219a2b6574c7472b78a1068b09987",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/text_embedding/vector_dimension": 768,
+        "/image_embedding/inference/chunk_count": 1,
+        "/image_embedding/inference/vectors_finite": true,
+        "/video_embedding/inference/chunk_count": 2,
+        "/video_embedding/inference/vectors_finite": true,
+        "/multimodal_space/same_embedding_dimension": true,
+        "/multimodal_space/cross_modal_cosines_finite": true,
+        "/cleanup/file_catalog_restored_exactly": true,
+        "/cleanup/asset_statistics_restored_exactly": true,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 371,
+      "capability_id": "manifest-entry.rt-embed.03-cosmos-embed1",
+      "advertised_literal": "Cosmos-Embed1",
+      "package_id": "rt-embed-multimodal-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/contract.json",
+      "contract_sha256": "9579b84b2d88816bf0ece6bc9f19fbbade902d76e424b9419778fe1c8c68f4a7",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "33e7dd3be73b5eaf33b06059842ee4d46459e7cd57daa3a2e46f3927182b5737",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-embed-multimodal-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "cbc2627e0858db3789c070e86dcc6230f33219a2b6574c7472b78a1068b09987",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/model/release_exact": true,
+        "/model/manifest_model_exact": true,
+        "/model/models_endpoint_exact": true,
+        "/model/cosmos_embed1_source_exact": true,
+        "/model/embedding_dimension": 768,
+        "/runtime_identity/production_sources_exact": true,
+        "/runtime_identity/safe_model_environment_exact": true,
+        "/cleanup/model_catalog_preserved": true,
+        "/policy/agent_generate_calls": 0
       }
     }
   ]

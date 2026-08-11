@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_twenty_two_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_twenty_four_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 371
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -171,6 +171,23 @@ def test_error_publication_receipt_is_bound_to_exact_row() -> None:
     assert receipt["redis"]["backend_switch_routed_to_redis"] is True
     assert receipt["schema_equal_between_backends"] is True
     assert receipt["cleanup"]["kafka_topic_absent"] is True
+
+
+def test_rt_embed_multimodal_receipt_is_bound_to_both_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-embed-multimodal-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [368, 371]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+    assert receipt["text_embedding"]["vector_dimension"] == 768
+    assert receipt["image_embedding"]["inference"]["chunk_count"] == 1
+    assert receipt["video_embedding"]["inference"]["chunk_count"] == 2
+    assert receipt["model"]["cosmos_embed1_source_exact"] is True
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:
