@@ -80,7 +80,7 @@
     "behavior.rt-vlm.system-prompt-cap",
     "behavior.rt-vlm.generate-captions-endpoint-rename"
   ],
-  "captured_at": "2026-08-10T17:11:09.432793Z",
+  "captured_at": "2026-08-11T09:54:46.424656Z",
   "cleanup": {
     "asset_count_after": 0,
     "asset_count_with_storage_after": 0,
@@ -93,8 +93,8 @@
     "owned_asset_absent": true,
     "readiness_after": true
   },
-  "contract_sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc",
-  "duration_seconds": 9.489,
+  "contract_sha256": "d55420ca0f3da9fc82de4ab6d189df7fd41fff4848053fce5b1963b375546748",
+  "duration_seconds": 10.014,
   "endpoint_rename": {
     "current_http_status": 200,
     "current_path_called": true,
@@ -163,7 +163,7 @@
     "container_source_hashes": {
       "/opt/nvidia/rtvi/rtvi/api_models/captions.py": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0",
       "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
-      "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d",
+      "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1",
       "/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91",
       "/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
     },
@@ -188,41 +188,41 @@
     "caption_chunks": [
       {
         "chunk_id": 0,
-        "content_characters": 85,
+        "content_characters": 81,
         "content_nonblank": true,
-        "content_sha256": "3460abb014693fa7457373e0cfe5bcbacc18f716fbaac6538e46e295e59f3841",
+        "content_sha256": "c66b16d596d02e64177d57cc112258799c8c39138b0ba8ea1617cf67c875f56a",
         "end_time": "2.0",
         "start_time": "0.0"
       },
       {
         "chunk_id": 1,
-        "content_characters": 82,
+        "content_characters": 83,
         "content_nonblank": true,
-        "content_sha256": "a9794fccf5982eca315f9c29a40dc2bdea042e0fc3cbe701a324378b8445f7c5",
+        "content_sha256": "0e556b258a0cb39715c18028c99a7f18e9c6084b49e77dd70e4b7c45e074e421",
         "end_time": "4.0",
         "start_time": "2.0"
       },
       {
         "chunk_id": 2,
-        "content_characters": 76,
+        "content_characters": 75,
         "content_nonblank": true,
-        "content_sha256": "73043bfa161da51aca6c9630ad6275b073d7b488d8c33553fd6632e81cbb434f",
+        "content_sha256": "f4eaec32eef57afb3b8f74e72e7e823b36bed97a6f424491862ae6fab00d8667",
         "end_time": "6.0",
         "start_time": "4.0"
       },
       {
         "chunk_id": 3,
-        "content_characters": 80,
+        "content_characters": 81,
         "content_nonblank": true,
-        "content_sha256": "7af53918eaaf45847068355ff2a407977a67531418f77755191d75c08def7cda",
+        "content_sha256": "c66b16d596d02e64177d57cc112258799c8c39138b0ba8ea1617cf67c875f56a",
         "end_time": "8.0",
         "start_time": "6.0"
       },
       {
         "chunk_id": 4,
-        "content_characters": 75,
+        "content_characters": 76,
         "content_nonblank": true,
-        "content_sha256": "f4eaec32eef57afb3b8f74e72e7e823b36bed97a6f424491862ae6fab00d8667",
+        "content_sha256": "958898d24c42303c0887d87d8114d38f6d7e5ceb74512fe2ac55d45eb1265633",
         "end_time": "10.0",
         "start_time": "8.0"
       }
@@ -234,7 +234,7 @@
     "data_event_count": 7,
     "http_status": 200,
     "model_identity_stable": true,
-    "ping_comment_count": 8,
+    "ping_comment_count": 9,
     "positive_vector_id": "rt-vlm-sse-one-owned-clip",
     "request_id_well_formed": true,
     "request_identity_stable": true,
@@ -246,7 +246,7 @@
     "usage_numbers": {
       "completion_tokens": 80,
       "prompt_tokens": 1105,
-      "query_processing_time": 8,
+      "query_processing_time": 9,
       "total_chunks_processed": 5,
       "total_tokens": 1185
     }
@@ -264,7 +264,7 @@
       "deploy/docker/thor-local/official-edge/compose.yml": "8ce9b8eade977f523422ec9f19279686d6267a6009f038caca3ed1bad8c4a5c6",
       "services/rtvi/rt-vlm/src/api_models/captions.py": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0",
       "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d",
-      "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d",
+      "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1",
       "services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py": "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91",
       "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py": "76e8f53931f600cc6c8f05cf7d1f752688f6ed1e574fecf911e8b8dfee84df44"
     },

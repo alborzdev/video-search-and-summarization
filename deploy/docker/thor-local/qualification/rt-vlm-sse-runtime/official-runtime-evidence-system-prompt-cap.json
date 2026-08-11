@@ -60,7 +60,7 @@
   "fixture": {
     "id": "fixture.behavior.rt-vlm.system-prompt-cap",
     "path": "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json",
-    "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc"
+    "sha256": "d55420ca0f3da9fc82de4ab6d189df7fd41fff4848053fce5b1963b375546748"
   },
   "observations": [
     {
@@ -71,7 +71,7 @@
           "default": 10240,
           "environment": "VLM_SYSTEM_PROMPT_MAX_LENGTH"
         },
-        "receipt_sha256": "a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d"
+        "receipt_sha256": "58d02b1aad0b98fdec33824717eb9f59537a3b647b54e1d74b7536aad32fb2dc"
       }
     },
     {
@@ -105,7 +105,7 @@
     }
   ],
   "oracle_id": "oracle.behavior.rt-vlm.system-prompt-cap",
-  "oracle_sha256": "d811c4815ed7f92ae0864d4ee84a62bb28a8c8a3ec9635015f2bce684530ef0b",
+  "oracle_sha256": "024f2b1120a0dbbfcb0fb28f1984d486e90cea67e38a653bbcb91f3b3d91397d",
   "result": "passed_current",
   "scenario_ids": [
     "official-capability-contracts",

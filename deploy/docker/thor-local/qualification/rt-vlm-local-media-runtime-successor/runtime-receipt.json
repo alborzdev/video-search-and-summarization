@@ -1,0 +1,131 @@
+{
+  "adjacent_negatives": {
+    "absolute_outside": {
+      "code_exact": true,
+      "http_status": 400,
+      "model_invoked": false,
+      "request_sha256": "589563eef63f0891058dd8ffd6be996ade7eba4a3a4fd71a2ce7bbe0ca7e5b01",
+      "response_sha256": "9700db14a94eeee9e1162bfe6723e6947ab124ec5d3941e9d5d04a406da211d0",
+      "structured": true
+    },
+    "invalid_base64": {
+      "code_exact": true,
+      "http_status": 400,
+      "model_invoked": false,
+      "request_sha256": "05cb186d1492b7912dda8c9a3999664a6a4cdcb53ddad0944a5bccfdb783c0e5",
+      "response_sha256": "30b71922bfc7fb73674a79564b99de0d5fa5e2ebe40dd71efdd8b437afa37c88",
+      "structured": true
+    },
+    "mime_mismatch": {
+      "code_exact": true,
+      "http_status": 400,
+      "model_invoked": false,
+      "request_sha256": "7678d37be03e081c7e40aa46b6aa69895ca78846ffdcbcc7899150d28ab84820",
+      "response_sha256": "483146754a46a56103bd51fb6464eea95145164d5cf8cda585f871179b206cdf",
+      "structured": true
+    },
+    "symlink_escape": {
+      "code_exact": true,
+      "http_status": 400,
+      "model_invoked": false,
+      "request_sha256": "6f95a3504b527d4e7ddc0a71a3db036afe66b4b6208122b84fd1f6ac0954ab1f",
+      "response_sha256": "9700db14a94eeee9e1162bfe6723e6947ab124ec5d3941e9d5d04a406da211d0",
+      "structured": true
+    },
+    "traversal_escape": {
+      "code_exact": true,
+      "http_status": 400,
+      "model_invoked": false,
+      "request_sha256": "9c6b9d88d47ff4e7171599c6c168924416d6c2e866dbc39d93955a3e648c9ad7",
+      "response_sha256": "9700db14a94eeee9e1162bfe6723e6947ab124ec5d3941e9d5d04a406da211d0",
+      "structured": true
+    }
+  },
+  "allowlisted_file_uri": {
+    "all_primary_markers_present": true,
+    "canonical_allowlisted_root_exact": true,
+    "http_status": 200,
+    "markers_in_chronological_order": true,
+    "model_exact": true,
+    "request_sha256": "c703fa75ea147a7d7a2b092c901360a6c3f475fe8acadaf0058ce8904d395eaa",
+    "response_sha256": "b2b4597ea4317e1aefcfed731648267649ca7c79416a216b6e492b66d4bf1f5d",
+    "semantic_output_sha256": "e17c2606df935359b2ee09e703f53e780dd94a2ef6792e251e5336eca38efa2e",
+    "source_content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "source_preserved_exactly": true
+  },
+  "budget": {
+    "container_commands": 11,
+    "http_requests": 13,
+    "max_container_commands": 11,
+    "max_http_requests": 13,
+    "max_model_requests": 2,
+    "model_requests": 2
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.03-allowlisted-file-uri",
+    "manifest-entry.rt-vlm-media.04-inline-data-uri"
+  ],
+  "cleanup": {
+    "asset_statistics_restored_exactly": true,
+    "cache_inventory_after_count": 2,
+    "cache_inventory_before_count": 2,
+    "cache_inventory_restored_exactly": true,
+    "catalog_after_count": 0,
+    "catalog_before_count": 0,
+    "catalog_restored_exactly": true,
+    "model_inventory_restored_exactly": true,
+    "owned_container_paths_absent": true,
+    "temporary_fixture_root_absent": true
+  },
+  "contract_sha256": "232995e373043611a08cfdcb1d7994896fcd0759ee81b34b9ae4e20d543ba438",
+  "duration_seconds": 3.755182,
+  "fixture": {
+    "byte_count": 75449,
+    "content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "duration_seconds": 9,
+    "primary_markers": [
+      "blue",
+      "green",
+      "red"
+    ]
+  },
+  "inline_data_uri": {
+    "all_primary_markers_present": true,
+    "declared_mime_exact": true,
+    "decoded_byte_count": 75449,
+    "decoded_content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "http_status": 200,
+    "markers_in_chronological_order": true,
+    "model_exact": true,
+    "network_fetches": 0,
+    "request_sha256": "e69fcaf56eca4c7d3e68d3858de36191b64b17eebec91eec3e6d176649b38357",
+    "response_sha256": "3410ce18e04f83b4a1aa40de80b34ce3e8866321e14a3f53a3dde02a2aa57e4e",
+    "semantic_output_sha256": "5b18b4d3e1336639517994fac55efeaaa711f1160b748c5f5d3efe56de35e1a0"
+  },
+  "official_indices": [
+    339,
+    340
+  ],
+  "package_id": "rt-vlm-local-media-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "raw_container_ids_retained": false,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_semantic_output_retained": false,
+    "service_lifecycle_actions": 0,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime_identity": {
+    "audio_support": false,
+    "container_name_exact": true,
+    "endpoint_loopback_exact": true,
+    "live_source_matches_lock": true,
+    "live_source_sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1",
+    "model_exact": true,
+    "release_exact": "3.2.1"
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

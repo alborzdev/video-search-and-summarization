@@ -29,18 +29,22 @@ Tests cover:
 
 import argparse
 import asyncio
+import base64
 import os
 import tempfile
 import uuid
+from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
 
 from api_models.captions import VlmQuery
+from api_models.file import MediaType
 from common.chunk_info import ChunkInfo
 from models.base_vlm_model import VlmModelOutput
 from server.rtvi_stream_handler import RequestInfo
+from common.service_exception import ServiceException
 from server.rtvi_vlm_server import RTVIServer, _build_chat_assistant_message
 from tests.tests_common import TempEnv
 from vlm_pipeline.vlm_pipeline import PipelineChunkResult, VlmModelType
@@ -63,6 +67,90 @@ class TestChatCompletionFormatting:
         assert message.content == "<think>\nparsed reasoning\n</think>"
         assert message.reasoning_description == "parsed reasoning"
 
+
+class TestChatMediaUrlSecurity:
+    def _bare_server(self, asset_root):
+        server = object.__new__(RTVIServer)
+        server._asset_manager = MagicMock()
+        server._asset_manager._asset_dir = str(asset_root)
+        server._asset_manager._asset_map = {}
+        return server
+
+    def test_data_url_is_digest_preserving_and_request_scoped(self, tmp_path):
+        server = self._bare_server(tmp_path)
+        payload = b"bounded-video-bytes"
+        value = "data:video/mp4;base64," + base64.b64encode(payload).decode()
+
+        asset_id, size, file_path = server._register_data_url_asset_sync(
+            value, MediaType.VIDEO, "owned-id"
+        )
+
+        assert asset_id == "owned-id"
+        assert size == len(payload)
+        assert os.path.commonpath([str(tmp_path), file_path]) == str(tmp_path)
+        assert os.path.basename(os.path.dirname(file_path)) == "owned-id"
+        assert Path(file_path).read_bytes() == payload
+        asset = server._asset_manager._asset_map[asset_id]
+        assert asset.asset_dir == os.path.dirname(file_path)
+
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "data:image/png;base64,AAAA",
+            "data:video/mp4;base64,not@base64",
+            "data:video/mp4;base64,",
+        ],
+    )
+    def test_data_url_rejects_mime_mismatch_invalid_base64_and_empty(self, tmp_path, value):
+        server = self._bare_server(tmp_path)
+        with pytest.raises(ServiceException) as exc:
+            server._register_data_url_asset_sync(value, MediaType.VIDEO, "owned-id")
+        assert exc.value.status_code == 400
+        assert server._asset_manager._asset_map == {}
+
+    def test_data_url_rejects_encoded_size_before_decode(self, tmp_path):
+        server = self._bare_server(tmp_path)
+        value = "data:video/mp4;base64," + base64.b64encode(b"12345").decode()
+        with patch.dict(os.environ, {"RTVI_MAX_INLINE_DATA_URL_BYTES": "4"}):
+            with pytest.raises(ServiceException) as exc:
+                server._register_data_url_asset_sync(value, MediaType.VIDEO, "owned-id")
+        assert exc.value.code == "InlineDataTooLarge"
+
+    def test_file_url_resolves_symlinks_before_allowlist_check(self, tmp_path):
+        allowed = tmp_path / "allowed"
+        outside = tmp_path / "outside"
+        allowed.mkdir()
+        outside.mkdir()
+        target = outside / "video.mp4"
+        target.write_bytes(b"video")
+        link = allowed / "escape.mp4"
+        link.symlink_to(target)
+        server = self._bare_server(tmp_path)
+
+        with patch.dict(os.environ, {"RTVI_ALLOWED_LOCAL_MEDIA_PATHS": str(allowed)}):
+            with pytest.raises(ServiceException) as exc:
+                server._register_file_url_asset(
+                    link.as_uri(), MediaType.VIDEO, "owned-id"
+                )
+
+        assert exc.value.code == "InvalidFileUrl"
+        server._asset_manager.add_file.assert_not_called()
+
+    def test_file_url_allows_real_file_below_real_allowlist(self, tmp_path):
+        allowed = tmp_path / "allowed"
+        allowed.mkdir()
+        target = allowed / "video.mp4"
+        target.write_bytes(b"video")
+        server = self._bare_server(tmp_path)
+        server._asset_manager.add_file.return_value = "owned-id"
+
+        with patch.dict(os.environ, {"RTVI_ALLOWED_LOCAL_MEDIA_PATHS": str(allowed)}):
+            asset_id, file_path = server._register_file_url_asset(
+                target.as_uri(), MediaType.VIDEO, "owned-id"
+            )
+
+        assert asset_id == "owned-id"
+        assert file_path == str(target.resolve())
 
 @pytest.fixture
 def mock_args():

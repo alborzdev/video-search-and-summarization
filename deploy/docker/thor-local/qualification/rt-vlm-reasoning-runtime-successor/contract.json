@@ -51,7 +51,7 @@
     },
     {
       "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
-      "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+      "sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"
     },
     {
       "path": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",

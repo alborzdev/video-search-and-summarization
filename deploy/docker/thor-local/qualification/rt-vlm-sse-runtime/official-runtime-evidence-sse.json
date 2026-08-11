@@ -60,7 +60,7 @@
   "fixture": {
     "id": "fixture.protocol.rt-vlm.sse",
     "path": "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json",
-    "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc"
+    "sha256": "d55420ca0f3da9fc82de4ab6d189df7fd41fff4848053fce5b1963b375546748"
   },
   "observations": [
     {
@@ -71,7 +71,7 @@
           "protocol": "sse",
           "role": "streaming-response"
         },
-        "receipt_sha256": "a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d"
+        "receipt_sha256": "58d02b1aad0b98fdec33824717eb9f59537a3b647b54e1d74b7536aad32fb2dc"
       }
     },
     {
@@ -102,7 +102,7 @@
         "data_event_count": 7,
         "model_identity_stable": true,
         "owned_asset_absent_after": true,
-        "ping_comment_count": 8,
+        "ping_comment_count": 9,
         "request_id_well_formed": true,
         "request_identity_stable": true,
         "response_header_identity_match": true,
@@ -112,7 +112,7 @@
     }
   ],
   "oracle_id": "oracle.protocol.rt-vlm.sse",
-  "oracle_sha256": "090e07879bceff0168fa87e8c48b389edfe66930eae74ce44c935bdf79e9af70",
+  "oracle_sha256": "409411772cc71b7592c7b98601b1ef87f26d884c1e20716370f4fee63fa74bf9",
   "protocol_case": {
     "case_id": "protocol-case.rt-vlm.sse",
     "case_sha256": "65848ab6ecb90cae6ed795acf3564c84309abc8fc417ce280e7bcc7ec84faa41",

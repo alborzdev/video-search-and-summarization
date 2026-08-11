@@ -625,7 +625,7 @@ RT_VLM_SSE_RUNTIME_EXECUTOR = (
 )
 RT_VLM_SSE_RUNTIME_FIXTURE = {
     "path": ("deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/contract.json"),
-    "sha256": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc",
+    "sha256": "d55420ca0f3da9fc82de4ab6d189df7fd41fff4848053fce5b1963b375546748",
 }
 RT_VLM_SSE_RUNTIME_EVIDENCE = {
     "model.rt-vlm.default-cosmos3-nano-bf16": [
@@ -634,7 +634,7 @@ RT_VLM_SSE_RUNTIME_EVIDENCE = {
                 "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
                 "official-runtime-evidence-model.json"
             ),
-            "sha256": "a92a884b145f218c0be58111553494371dc1300f7bd0435fe0b412dc636e3409",
+            "sha256": "521fc7654d534f3386226b80f434a07dbc8e5441d41eda5272ca767fcdb5ed37",
         }
     ],
     "protocol.rt-vlm.sse": [
@@ -643,7 +643,7 @@ RT_VLM_SSE_RUNTIME_EVIDENCE = {
                 "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
                 "official-runtime-evidence-sse.json"
             ),
-            "sha256": "6d78857a71168d7e4400bb7d57b24e64e9639d50f461858e17fd4c245bbab56b",
+            "sha256": "0096ad41d24b43245e101a37b7374bed339a9034d412a09308797f2d02623e80",
         }
     ],
     "behavior.rt-vlm.generation-token-cap": [
@@ -652,7 +652,7 @@ RT_VLM_SSE_RUNTIME_EVIDENCE = {
                 "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
                 "official-runtime-evidence-generation-token-cap.json"
             ),
-            "sha256": "d8125f3e06804e39be83bb6931028450e122bc8357df311ddb2d2f2f89debc11",
+            "sha256": "4936c7fae8b31038fc94908b085f3f54e5d0bec7e22d36d2186808d9869164a9",
         }
     ],
     "behavior.rt-vlm.user-prompt-cap": [
@@ -661,7 +661,7 @@ RT_VLM_SSE_RUNTIME_EVIDENCE = {
                 "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
                 "official-runtime-evidence-user-prompt-cap.json"
             ),
-            "sha256": "35d9c234983c137f31ab888367d7d89b4dea4d3db83354fefdec88f6ec8621b1",
+            "sha256": "b72c23be954d6f9ca835ade9ef4d23ab464885a13fffffa5c7cce35e46bc0c0d",
         }
     ],
     "behavior.rt-vlm.system-prompt-cap": [
@@ -670,7 +670,7 @@ RT_VLM_SSE_RUNTIME_EVIDENCE = {
                 "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
                 "official-runtime-evidence-system-prompt-cap.json"
             ),
-            "sha256": "efe38ec8bef437f1717c1811c0d2ec7e06925e14d28a66c6e85220d85bdf46c5",
+            "sha256": "99d4cc8b5de628309fb664d34fd33544cf86cc34de0af7a538ab9ebf20cb2fb0",
         }
     ],
     "behavior.rt-vlm.generate-captions-endpoint-rename": [
@@ -679,7 +679,7 @@ RT_VLM_SSE_RUNTIME_EVIDENCE = {
                 "deploy/docker/thor-local/qualification/rt-vlm-sse-runtime/"
                 "official-runtime-evidence-endpoint-rename.json"
             ),
-            "sha256": "68a010f9812af969985cc8d2f8a828fcd7b5f9d7ecf65a92f1fb23f195c4009e",
+            "sha256": "75489ca7e10002389b7d5d5f6babbcfe5df1264008964f5687c69e7b00c7b81d",
         }
     ],
 }

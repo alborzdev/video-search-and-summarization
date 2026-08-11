@@ -23,23 +23,23 @@ import verify_official_capabilities  # noqa: E402
 
 CAPABILITY_IDS = list(build_official_evidence.OUTPUTS)
 EXPECTED = {
-    "contract": "63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc",
-    "receipt": "a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d",
+    "contract": "d55420ca0f3da9fc82de4ab6d189df7fd41fff4848053fce5b1963b375546748",
+    "receipt": "58d02b1aad0b98fdec33824717eb9f59537a3b647b54e1d74b7536aad32fb2dc",
     "evidence": {
-        "model.rt-vlm.default-cosmos3-nano-bf16": "a92a884b145f218c0be58111553494371dc1300f7bd0435fe0b412dc636e3409",
-        "protocol.rt-vlm.sse": "6d78857a71168d7e4400bb7d57b24e64e9639d50f461858e17fd4c245bbab56b",
-        "behavior.rt-vlm.generation-token-cap": "d8125f3e06804e39be83bb6931028450e122bc8357df311ddb2d2f2f89debc11",
-        "behavior.rt-vlm.user-prompt-cap": "35d9c234983c137f31ab888367d7d89b4dea4d3db83354fefdec88f6ec8621b1",
-        "behavior.rt-vlm.system-prompt-cap": "efe38ec8bef437f1717c1811c0d2ec7e06925e14d28a66c6e85220d85bdf46c5",
-        "behavior.rt-vlm.generate-captions-endpoint-rename": "68a010f9812af969985cc8d2f8a828fcd7b5f9d7ecf65a92f1fb23f195c4009e",
+        "model.rt-vlm.default-cosmos3-nano-bf16": "521fc7654d534f3386226b80f434a07dbc8e5441d41eda5272ca767fcdb5ed37",
+        "protocol.rt-vlm.sse": "0096ad41d24b43245e101a37b7374bed339a9034d412a09308797f2d02623e80",
+        "behavior.rt-vlm.generation-token-cap": "4936c7fae8b31038fc94908b085f3f54e5d0bec7e22d36d2186808d9869164a9",
+        "behavior.rt-vlm.user-prompt-cap": "b72c23be954d6f9ca835ade9ef4d23ab464885a13fffffa5c7cce35e46bc0c0d",
+        "behavior.rt-vlm.system-prompt-cap": "99d4cc8b5de628309fb664d34fd33544cf86cc34de0af7a538ab9ebf20cb2fb0",
+        "behavior.rt-vlm.generate-captions-endpoint-rename": "75489ca7e10002389b7d5d5f6babbcfe5df1264008964f5687c69e7b00c7b81d",
     },
     "oracle": {
-        "model.rt-vlm.default-cosmos3-nano-bf16": "eb8482e1c6356a38a20ee831ef66475156ebe04ebdef39816b7025f64b860f51",
-        "protocol.rt-vlm.sse": "090e07879bceff0168fa87e8c48b389edfe66930eae74ce44c935bdf79e9af70",
-        "behavior.rt-vlm.generation-token-cap": "ca22767d2a208cb6ad02eb95df9b4e2c4e18af7447190204cf7356444cb73467",
-        "behavior.rt-vlm.user-prompt-cap": "81c74e06c25f36bd4a359e9865f6fac39e72f2344c91bfc505c4bf308ab373c9",
-        "behavior.rt-vlm.system-prompt-cap": "d811c4815ed7f92ae0864d4ee84a62bb28a8c8a3ec9635015f2bce684530ef0b",
-        "behavior.rt-vlm.generate-captions-endpoint-rename": "4e7787087ae5c9477372b482a7d3d4cb4a29e00d2abb3db5e0d8e3aab199e141",
+        "model.rt-vlm.default-cosmos3-nano-bf16": "616f6c03305c4e7c6e4273bb7a5cdbe488b48b1b01935cd84ff9c06dcc9a8743",
+        "protocol.rt-vlm.sse": "409411772cc71b7592c7b98601b1ef87f26d884c1e20716370f4fee63fa74bf9",
+        "behavior.rt-vlm.generation-token-cap": "ea148cd858a23203f3a602e07cb907747be150ac9b42f6abe143632d56bbaad1",
+        "behavior.rt-vlm.user-prompt-cap": "47c92fe04ac2f3bc4c92506f603b1a1ef733b2a4295e8253e7df2740a0d3e557",
+        "behavior.rt-vlm.system-prompt-cap": "024f2b1120a0dbbfcb0fb28f1984d486e90cea67e38a653bbcb91f3b3d91397d",
+        "behavior.rt-vlm.generate-captions-endpoint-rename": "c45f780b67fc4e3ad265ebedcce4a8ca792899a3247777a793ece11e8bb537c6",
     },
 }
 

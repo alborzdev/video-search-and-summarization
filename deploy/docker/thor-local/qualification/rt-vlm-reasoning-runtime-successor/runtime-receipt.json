@@ -18,9 +18,9 @@
       "http_status": 200,
       "reasoning_signal_present": true,
       "request_sha256": "80e4fcb3f0c379e68df1c2ab7bd8913f4c67030a511eebad0e93a53df2980098",
-      "response_id_sha256": "8e03c18565564e0f39992d58e98c73437c6c2b0466771b3c216c937b75d3828b",
+      "response_id_sha256": "f015f9639773b032f345946f0356d6d89b16383c3371667f1a92c2cbf38d1167",
       "response_model_exact": true,
-      "response_sha256": "b26a36b32a698d89da10712002b1c5b7b178a63778f6b5846d69c4d701e0791f"
+      "response_sha256": "5bee1325e6fb1f81b51ee3f3cd40a4b293b8edc259f6f0ba66f885f18f10ac97"
     },
     {
       "case_id": "adjacent_negative",
@@ -33,9 +33,9 @@
       "http_status": 200,
       "reasoning_signal_present": true,
       "request_sha256": "f72371da85ecef47cd8965064b22f3b93feb1c0eeabd31731f9c7975d3f9f18b",
-      "response_id_sha256": "2bbaff91ba54a27cbd44e2ff271925932a873a4975072ef685723672fe5a8b9b",
+      "response_id_sha256": "452a927eed4a32a8226e45c4a1c1aa10243b489305a76d36b2bb8e29792fbb4a",
       "response_model_exact": true,
-      "response_sha256": "01e03ba44eee8589f071f0d1c0e78781552184062d34bfe566955818bac5e2b7"
+      "response_sha256": "e9362dd305ebb377239fb0c3a6079fb4dcb93d3febaccb0852f7b61a9b8ab589"
     }
   ],
   "cleanup": {
@@ -43,8 +43,8 @@
     "persistent_resources_deleted": 0,
     "temporary_fixture_root_absent": true
   },
-  "contract_sha256": "a6054f3ef77f1be0dd3d1bd975cf78fb4adac9ea02ce65e6a817e3a26ec10e90",
-  "duration_seconds": 34.870417,
+  "contract_sha256": "86af79dcf1ff47ba68825840bb2e32c44be4dddb49cbece27f6d8141bb8cde35",
+  "duration_seconds": 91.657429,
   "oracle": {
     "hidden_reasoning_excluded_from_all_semantic_oracles": true,
     "opposite_correct_conclusions": true,
@@ -68,8 +68,8 @@
     "model_id_sha256": "0e8a26c59c5f67a47d4c2fafa065c8524243bfac33810fe4c93ea12d20f4bfe6",
     "models_after_sha256": "4b112881badb988172b4b5cbd8be253b5464fa874036b39764bf0d9dca76d9a4",
     "models_before_sha256": "4b112881badb988172b4b5cbd8be253b5464fa874036b39764bf0d9dca76d9a4",
-    "models_post_response_sha256": "2969b6a745c7560bb3c1717c3dc6f9c3a8aced40cfb5415bf968adc90eaae97b",
-    "models_pre_response_sha256": "2969b6a745c7560bb3c1717c3dc6f9c3a8aced40cfb5415bf968adc90eaae97b",
+    "models_post_response_sha256": "d0ecb758191172969cf56c80f57836dadb5c50efddb1f044ecccc593e0247927",
+    "models_pre_response_sha256": "d0ecb758191172969cf56c80f57836dadb5c50efddb1f044ecccc593e0247927",
     "models_unchanged": true
   },
   "schema_version": 1,

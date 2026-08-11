@@ -20,6 +20,7 @@ Translates between requests/responses and RTVIStreamHandler and AssetManager met
 import argparse
 import asyncio
 import base64
+import binascii
 import functools
 import gc
 import hashlib
@@ -116,6 +117,8 @@ _FORCE_GC = bool(os.environ.get("FORCE_PYTHON_GC"))
 _ENABLE_AUDIO = os.environ.get("VLM_MODEL_SUPPORTS_AUDIO", "false").lower() == "true"
 
 VLM_CAPTIONS_ERROR_MESSAGE = "Failed to generate VLM captions: %s"
+DEFAULT_MAX_INLINE_DATA_URL_BYTES = 8 * 1024 * 1024
+HARD_MAX_INLINE_DATA_URL_BYTES = 512 * 1024 * 1024
 
 
 COMMON_ERROR_RESPONSES = {
@@ -1037,7 +1040,7 @@ class RTVIServer:
         media_type: MediaType,
         file_id: str,
     ) -> tuple[str, int, str]:
-        from urllib.parse import unquote
+        from urllib.parse import unquote_to_bytes
 
         try:
             header, encoded_data = media_url.split(",", 1)
@@ -1048,33 +1051,121 @@ class RTVIServer:
                 400,
             ) from e
 
-        file_ext = self._data_url_file_extension(header, media_type)
-        if ";base64" in header:
+        normalized_header = header.casefold()
+        if not normalized_header.startswith("data:"):
+            raise ServiceException(
+                "Inline media must use an RFC 2397 data URL",
+                "InvalidDataUrl",
+                400,
+            )
+        mime_type = normalized_header[5:].split(";", 1)[0]
+        allowed_mime_types = {
+            MediaType.VIDEO: {
+                "video/mp4",
+                "video/quicktime",
+                "video/x-msvideo",
+                "video/webm",
+                "video/mkv",
+                "video/x-matroska",
+            },
+            MediaType.IMAGE: {
+                "image/png",
+                "image/jpeg",
+                "image/jpg",
+                "image/gif",
+                "image/webp",
+            },
+        }
+        if mime_type not in allowed_mime_types[media_type]:
+            raise ServiceException(
+                f"Inline MIME type {mime_type or '<empty>'} does not match {media_type.value}",
+                "InvalidDataUrl",
+                400,
+            )
+
+        raw_limit = os.getenv(
+            "RTVI_MAX_INLINE_DATA_URL_BYTES",
+            str(DEFAULT_MAX_INLINE_DATA_URL_BYTES),
+        )
+        try:
+            decoded_limit = int(raw_limit)
+        except ValueError as e:
+            raise ServiceException(
+                "RTVI_MAX_INLINE_DATA_URL_BYTES must be an integer",
+                "InvalidConfiguration",
+                500,
+            ) from e
+        if not 1 <= decoded_limit <= HARD_MAX_INLINE_DATA_URL_BYTES:
+            raise ServiceException(
+                "RTVI_MAX_INLINE_DATA_URL_BYTES is outside the supported range",
+                "InvalidConfiguration",
+                500,
+            )
+
+        is_base64 = ";base64" in normalized_header
+        encoded_limit = (
+            ((decoded_limit + 2) // 3) * 4 + 4
+            if is_base64
+            else decoded_limit * 3
+        )
+        if len(encoded_data) > encoded_limit:
+            raise ServiceException(
+                "Inline media exceeds RTVI_MAX_INLINE_DATA_URL_BYTES",
+                "InlineDataTooLarge",
+                400,
+            )
+
+        file_ext = self._data_url_file_extension(normalized_header, media_type)
+        if is_base64:
             missing_padding = len(encoded_data) % 4
             if missing_padding:
                 encoded_data += "=" * (4 - missing_padding)
-            media_data = base64.b64decode(encoded_data)
+            try:
+                media_data = base64.b64decode(encoded_data, validate=True)
+            except (binascii.Error, ValueError) as e:
+                raise ServiceException(
+                    "Inline media contains invalid base64 data",
+                    "InvalidDataUrl",
+                    400,
+                ) from e
         else:
-            media_data = unquote(encoded_data).encode()
+            media_data = unquote_to_bytes(encoded_data)
+        if not media_data:
+            raise ServiceException(
+                "Inline media payload is empty",
+                "InvalidDataUrl",
+                400,
+            )
+        if len(media_data) > decoded_limit:
+            raise ServiceException(
+                "Inline media exceeds RTVI_MAX_INLINE_DATA_URL_BYTES",
+                "InlineDataTooLarge",
+                400,
+            )
 
         digest = hashlib.sha256(media_data).hexdigest()
         cache_dir = os.path.join(self._asset_manager._asset_dir, "_data_url_cache")
         os.makedirs(cache_dir, exist_ok=True)
+        asset_dir = os.path.join(cache_dir, file_id)
+        try:
+            os.makedirs(asset_dir, exist_ok=False)
+        except FileExistsError as e:
+            raise ServiceException(
+                "Inline media asset identity already exists",
+                "AssetAlreadyExists",
+                400,
+            ) from e
         file_name = f"data_url_{digest[:16]}{file_ext}"
-        file_path = os.path.join(cache_dir, f"{digest}{file_ext}")
-
-        if not os.path.exists(file_path):
-            tmp_path = os.path.join(cache_dir, f".{digest}.{uuid4()}.tmp")
+        file_path = os.path.join(asset_dir, f"{digest}{file_ext}")
+        try:
+            with open(file_path, "xb") as f:
+                f.write(media_data)
+        except Exception:
             try:
-                with open(tmp_path, "wb") as f:
-                    f.write(media_data)
-                os.replace(tmp_path, file_path)
-            finally:
-                if os.path.exists(tmp_path):
-                    try:
-                        os.remove(tmp_path)
-                    except OSError:
-                        pass
+                os.rmdir(asset_dir)
+            except OSError:
+                pass
+            raise
 
         asset = Asset(
             asset_id=file_id,
@@ -1082,7 +1173,7 @@ class RTVIServer:
             fileName=file_name,
             purpose=Purpose.VISION.value,
             media_type=media_type.value,
-            asset_dir="",
+            asset_dir=asset_dir,
             username="",
             password="",
             description="",
@@ -1126,13 +1217,13 @@ class RTVIServer:
                 400,
             )
 
-        file_path = os.path.abspath(unquote(parsed_url.path))
+        file_path = os.path.realpath(os.path.abspath(unquote(parsed_url.path)))
         allowed_paths = os.getenv(
             "RTVI_ALLOWED_LOCAL_MEDIA_PATHS",
             "/opt/nvidia/rtvi/streams/perf",
         )
         allowed_roots = [
-            os.path.abspath(os.path.expanduser(path.strip()))
+            os.path.realpath(os.path.abspath(os.path.expanduser(path.strip())))
             for path in allowed_paths.split(os.pathsep)
             if path.strip()
         ]

@@ -24,10 +24,10 @@ The 28-operation OpenAPI document contained `POST /v1/generate_captions` and did
 not contain `/v1/generate_captions_alerts`. Final cleanup returned both asset
 counters to zero. RT-VLM remained healthy with zero restarts and no OOM.
 
-- Contract SHA-256: `63dd1f62586621d057c8a962de5dfbef67995f5d9c563cf115311159393dafdc`
-- Receipt SHA-256: `a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d`
+- Contract SHA-256: `d55420ca0f3da9fc82de4ab6d189df7fd41fff4848053fce5b1963b375546748`
+- Receipt SHA-256: `58d02b1aad0b98fdec33824717eb9f59537a3b647b54e1d74b7536aad32fb2dc`
 - Semantic actions: 8
 - Bounded HTTP requests: 22
-- Runtime duration: 9.489 seconds
+- Runtime duration: 10.014 seconds
 - Warehouse sample bundle: excluded
 - RTSP mutation: not performed

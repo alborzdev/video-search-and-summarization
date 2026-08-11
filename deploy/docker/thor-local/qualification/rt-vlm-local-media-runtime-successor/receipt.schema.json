@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "capability_ids", "official_indices", "status",
+    "contract_sha256", "duration_seconds", "budget", "runtime_identity", "fixture",
+    "inline_data_uri", "allowlisted_file_uri", "adjacent_negatives", "cleanup", "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-local-media-runtime-successor"},
+    "capability_ids": {
+      "const": [
+        "manifest-entry.rt-vlm-media.03-allowlisted-file-uri",
+        "manifest-entry.rt-vlm-media.04-inline-data-uri"
+      ]
+    },
+    "official_indices": {"const": [339, 340]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "duration_seconds": {"type": "number", "minimum": 0, "maximum": 300},
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_requests", "max_http_requests", "model_requests", "max_model_requests", "container_commands", "max_container_commands"],
+      "properties": {
+        "http_requests": {"const": 13}, "max_http_requests": {"const": 13},
+        "model_requests": {"const": 2}, "max_model_requests": {"const": 2},
+        "container_commands": {"const": 11}, "max_container_commands": {"const": 11}
+      }
+    },
+    "runtime_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["endpoint_loopback_exact", "container_name_exact", "model_exact", "release_exact", "live_source_sha256", "live_source_matches_lock", "audio_support"],
+      "properties": {
+        "endpoint_loopback_exact": {"const": true}, "container_name_exact": {"const": true},
+        "model_exact": {"const": true}, "release_exact": {"const": "3.2.1"},
+        "live_source_sha256": {"const": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"},
+        "live_source_matches_lock": {"const": true}, "audio_support": {"const": false}
+      }
+    },
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["duration_seconds", "byte_count", "content_sha256", "primary_markers"],
+      "properties": {
+        "duration_seconds": {"const": 9}, "byte_count": {"const": 75449},
+        "content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"},
+        "primary_markers": {"const": ["blue", "green", "red"]}
+      }
+    },
+    "inline_data_uri": {"$ref": "#/$defs/positiveInline"},
+    "allowlisted_file_uri": {"$ref": "#/$defs/positiveFile"},
+    "adjacent_negatives": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mime_mismatch", "invalid_base64", "symlink_escape", "traversal_escape", "absolute_outside"],
+      "properties": {
+        "mime_mismatch": {"$ref": "#/$defs/negative"},
+        "invalid_base64": {"$ref": "#/$defs/negative"},
+        "symlink_escape": {"$ref": "#/$defs/negative"},
+        "traversal_escape": {"$ref": "#/$defs/negative"},
+        "absolute_outside": {"$ref": "#/$defs/negative"}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["catalog_before_count", "catalog_after_count", "catalog_restored_exactly", "asset_statistics_restored_exactly", "model_inventory_restored_exactly", "cache_inventory_before_count", "cache_inventory_after_count", "cache_inventory_restored_exactly", "owned_container_paths_absent", "temporary_fixture_root_absent"],
+      "properties": {
+        "catalog_before_count": {"type": "integer", "minimum": 0},
+        "catalog_after_count": {"type": "integer", "minimum": 0},
+        "catalog_restored_exactly": {"const": true}, "asset_statistics_restored_exactly": {"const": true},
+        "model_inventory_restored_exactly": {"const": true},
+        "cache_inventory_before_count": {"type": "integer", "minimum": 0},
+        "cache_inventory_after_count": {"type": "integer", "minimum": 0},
+        "cache_inventory_restored_exactly": {"const": true}, "owned_container_paths_absent": {"const": true},
+        "temporary_fixture_root_absent": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "raw_prompt_retained", "raw_semantic_output_retained", "raw_resource_ids_retained", "raw_container_ids_retained", "service_lifecycle_actions", "stream_mutations", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "raw_prompt_retained": {"const": false},
+        "raw_semantic_output_retained": {"const": false}, "raw_resource_ids_retained": {"const": false},
+        "raw_container_ids_retained": {"const": false}, "service_lifecycle_actions": {"const": 0},
+        "stream_mutations": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "semantic": {
+      "type": "object",
+      "required": ["http_status", "model_exact", "all_primary_markers_present", "markers_in_chronological_order", "response_sha256", "semantic_output_sha256"],
+      "properties": {
+        "http_status": {"const": 200}, "model_exact": {"const": true},
+        "all_primary_markers_present": {"const": true}, "markers_in_chronological_order": {"const": true},
+        "response_sha256": {"$ref": "#/$defs/digest"}, "semantic_output_sha256": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "positiveInline": {
+      "allOf": [{"$ref": "#/$defs/semantic"}], "type": "object", "additionalProperties": false,
+      "required": ["http_status", "model_exact", "all_primary_markers_present", "markers_in_chronological_order", "response_sha256", "semantic_output_sha256", "request_sha256", "declared_mime_exact", "decoded_byte_count", "decoded_content_sha256", "network_fetches"],
+      "properties": {
+        "http_status": {"const": 200}, "model_exact": {"const": true}, "all_primary_markers_present": {"const": true}, "markers_in_chronological_order": {"const": true},
+        "response_sha256": {"$ref": "#/$defs/digest"}, "semantic_output_sha256": {"$ref": "#/$defs/digest"}, "request_sha256": {"$ref": "#/$defs/digest"},
+        "declared_mime_exact": {"const": true}, "decoded_byte_count": {"const": 75449},
+        "decoded_content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"}, "network_fetches": {"const": 0}
+      }
+    },
+    "positiveFile": {
+      "allOf": [{"$ref": "#/$defs/semantic"}], "type": "object", "additionalProperties": false,
+      "required": ["http_status", "model_exact", "all_primary_markers_present", "markers_in_chronological_order", "response_sha256", "semantic_output_sha256", "request_sha256", "canonical_allowlisted_root_exact", "source_content_sha256", "source_preserved_exactly"],
+      "properties": {
+        "http_status": {"const": 200}, "model_exact": {"const": true}, "all_primary_markers_present": {"const": true}, "markers_in_chronological_order": {"const": true},
+        "response_sha256": {"$ref": "#/$defs/digest"}, "semantic_output_sha256": {"$ref": "#/$defs/digest"}, "request_sha256": {"$ref": "#/$defs/digest"},
+        "canonical_allowlisted_root_exact": {"const": true},
+        "source_content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"}, "source_preserved_exactly": {"const": true}
+      }
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "structured", "code_exact", "request_sha256", "response_sha256", "model_invoked"],
+      "properties": {
+        "http_status": {"const": 400}, "structured": {"const": true}, "code_exact": {"const": true},
+        "request_sha256": {"$ref": "#/$defs/digest"}, "response_sha256": {"$ref": "#/$defs/digest"}, "model_invoked": {"const": false}
+      }
+    }
+  }
+}

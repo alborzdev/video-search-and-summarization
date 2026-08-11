@@ -14,7 +14,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[4]
 PARITY = REPO / "deploy/docker/thor-local/parity"
 RECEIPT_PATH = HERE / "runtime-receipt.json"
-RECEIPT_SHA256 = "a8320800f229625a61fb4381d231fa9dd6cc95464fc0533a37eb7788e7fe9f4d"
+RECEIPT_SHA256 = "58d02b1aad0b98fdec33824717eb9f59537a3b647b54e1d74b7536aad32fb2dc"
 OUTPUTS = {
     "model.rt-vlm.default-cosmos3-nano-bf16": HERE
     / "official-runtime-evidence-model.json",

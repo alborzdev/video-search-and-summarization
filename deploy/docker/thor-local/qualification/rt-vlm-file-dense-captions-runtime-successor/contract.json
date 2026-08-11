@@ -49,7 +49,7 @@
     {"path": "services/rtvi/rt-vlm/README.md", "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"},
     {"path": "services/rtvi/rt-vlm/src/api_models/file.py", "sha256": "e403a7437b77a2d60e45255b3fc46c503d0e12673a2fa7babec38c0880a3f6f3"},
     {"path": "services/rtvi/rt-vlm/src/api_models/captions.py", "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"},
-    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"},
     {"path": "deploy/docker/thor-local/qualification/remaining-advertised-entry-candidates/candidate.json", "sha256": "a3c1b793f976fa384fb4ea588602f225e21c9d2d1fd563f12c0aadfa9d1a56fd"}
   ]
 }
