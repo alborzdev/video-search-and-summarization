@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-17",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-18",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -746,6 +746,38 @@
         "/smart_city_gdino/detection_tracking/person_class_correlated": true,
         "/cleanup/owned_containers_absent": true,
         "/cleanup/main_rt_cv_preserved_exactly": true,
+        "/policy/main_rt_cv_stream_mutations": 0,
+        "/policy/main_vios_stream_mutations": 0
+      }
+    },
+    {
+      "official_index": 377,
+      "capability_id": "manifest-entry.rt-cv-2d.02-radio-clip",
+      "advertised_literal": "RADIO-CLIP",
+      "package_id": "rt-cv-radio-clip-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
+      "contract_sha256": "0e1d3242689ca7ef32bd43fdea817cda5f0fc6119e780a1ab7c5c713ef12d804",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "e700dd0bacb0d89f38829a610b93ce24ea65af3ec168bc84f9684e38101c80cb",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "21a2536395a4f8377bbb8dfacec1e19b46de3326c8d522fc641bd5ab04247672",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/artifact_identity/model": "radio-clip",
+        "/artifact_identity/version": "v1.0",
+        "/artifact_identity/embedding_dimension": 1536,
+        "/artifact_identity/tokenizer_bundle_exact": true,
+        "/configuration/exact_radio_clip_bundle_selected": true,
+        "/configuration/legacy_256d_tracker_embedding_excluded": true,
+        "/negative_preflight/incompatible_dimension_configured": 1024,
+        "/negative_preflight/observed_dimension": 1536,
+        "/negative_preflight/incompatible_dimension_rejected": true,
+        "/reidentification/embedding_dimensions": [1536],
+        "/reidentification/finite_embeddings": true,
+        "/reidentification/embedded_object_types": ["Pallet", "Person"],
+        "/reidentification/object_track_pairs_with_embeddings": 17,
+        "/cleanup/main_rt_cv_preserved_exactly": true,
+        "/cleanup/main_rt_cv_stream_count": 0,
         "/policy/main_rt_cv_stream_mutations": 0,
         "/policy/main_vios_stream_mutations": 0
       }

@@ -1,0 +1,156 @@
+{
+  "artifact_identity": {
+    "embedding_dimension": 1536,
+    "engine_sha256": "a71980ff2921e3b760decd435a24c3604e5580674c89a666eda6b0cc438203e3",
+    "model": "radio-clip",
+    "onnx_sha256": "9372872e1602ff06e29134eb9efc4e1768366045dece86c55b67abbd41de93d1",
+    "tokenizer_bundle_exact": true,
+    "tokenizer_file_count": 5,
+    "version": "v1.0",
+    "weights_sha256": "892a4b41a29bc61ca55c5f21ccf7cb72ca29ad6d232feb30219d35c5d1dc7d1f"
+  },
+  "capability_ids": [
+    "manifest-entry.rt-cv-2d.02-radio-clip"
+  ],
+  "cleanup": {
+    "consumer_group_delete_attempted": true,
+    "failures": [],
+    "main_rt_cv_preserved_exactly": true,
+    "main_rt_cv_stream_count": 0,
+    "owned_containers_absent": true,
+    "owned_topic_absent": true,
+    "paused_workloads_preserved_exactly": true,
+    "temporary_directory_removed": true
+  },
+  "configuration": {
+    "exact_radio_clip_bundle_selected": true,
+    "legacy_256d_tracker_embedding_excluded": true,
+    "legacy_tracker_output_tensor": 0,
+    "legacy_tracker_reid_type": 0,
+    "main_config_sha256": "48222f427c6880bcfa7af0219efc9d8e9556592a4dcf8a83516306402a12ee29",
+    "text_model_name": "siglip2-onnx",
+    "text_onnx_path": "/opt/storage/radio-clip_v1.0.onnx",
+    "tokenizer_path": "/opt/storage/radio-clip_v1.0_tokenizer/",
+    "tracker_config_sha256": "0e30c646ba0d946740830e8f2ab7d98c4643490d724cb1fb863830957312d183",
+    "vision_backend": "tensorrt",
+    "vision_engine_path": "/opt/storage/radio-clip_v1.0.onnx_batch16.plan",
+    "vision_ofa_predict": 1,
+    "vision_onnx_path": "/opt/storage/radio-clip_v1.0.onnx",
+    "vision_smart_infer": 1
+  },
+  "contract_sha256": "0e1d3242689ca7ef32bd43fdea817cda5f0fc6119e780a1ab7c5c713ef12d804",
+  "fixture": {
+    "byte_count": 3586536,
+    "codec_h264": true,
+    "content_sha256": "765de706f16789ac2a653e5f60986daa6949288f46458b803020f5b8cc6fc6cc",
+    "duration_seconds": 14,
+    "expected_frames": 140,
+    "fps": 10,
+    "generation_method_exact": true,
+    "height": 1080,
+    "occlusion_frames": 60,
+    "reentry_start_frame": 100,
+    "source_segment_frames": 40,
+    "tcp_probe_passed": false,
+    "warehouse_sample_bundle": "excluded",
+    "width": 1920
+  },
+  "images": {
+    "consumer": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "mediamtx": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "rt_cv": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    }
+  },
+  "lifecycle": {
+    "active_metrics": {
+      "fps_positive": true,
+      "frame_number_positive": true,
+      "latency_finite": true,
+      "stream_count": 1
+    },
+    "add": {
+      "http_status": 200,
+      "request_sha256": "53fc3d92b739777b3872a587e8677e958b9c2d8a7515edabd7340d60a3e82345",
+      "response_sha256": "42d87d839ef1d8c93c02436b58ef7319a67b0e2af44675dbe59074c8df28640a"
+    },
+    "final_stream_count": 0,
+    "oom_killed": false,
+    "remove": {
+      "http_status": 200,
+      "request_sha256": "593abfe6bb9ef1dd5d0a8253a53a6090c87b51c6cc1ec23de200653e348cc05c",
+      "response_sha256": "1a839da2e13d67c1fe0b991952160dcf0e05d06ab4c46ec89f2396f38562287b"
+    },
+    "restart_count": 0,
+    "runtime_log_sha256": "21500a0bbc0165d2e2e832f3a5fadc3f1bc1be01901220a14f14ec122431922a"
+  },
+  "negative_preflight": {
+    "exact_bundle_still_valid_after_negative": true,
+    "incompatible_dimension_configured": 1024,
+    "incompatible_dimension_rejected": true,
+    "mismatched_tokenizer_rejected": true,
+    "observed_dimension": 1536,
+    "rejected_before_capability_acceptance": true,
+    "rejected_before_container_launch": true
+  },
+  "official_indices": [
+    377
+  ],
+  "package_id": "rt-cv-radio-clip-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "main_rt_cv_stream_mutations": 0,
+    "main_vios_stream_mutations": 0,
+    "network_downloads": 0,
+    "raw_broker_messages_retained": false,
+    "raw_camera_ids_retained": false,
+    "raw_embeddings_retained": false,
+    "raw_stream_urls_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "reidentification": {
+    "bbox_iou_min": 0.9717545425046873,
+    "detection_messages": 156,
+    "distinct_track_ids_reassociated": true,
+    "embedded_object_types": [
+      "Pallet",
+      "Person"
+    ],
+    "embedding_dimensions": [
+      1536
+    ],
+    "finite_embeddings": true,
+    "first_cycle_person_embedding_count": 70,
+    "full_two_cycle_boundary_observed": true,
+    "known_scene_bbox_matches": 70,
+    "negative_comparison_count": 0,
+    "negative_cosine_median": null,
+    "numeric_frame_ids": true,
+    "object_track_pairs_with_embeddings": 17,
+    "occlusion_detection_silence_frames": 62,
+    "positive_cosine_max": 0.9999989304855814,
+    "positive_cosine_median": 0.9999986928972935,
+    "positive_cosine_min": 0.9999958799323881,
+    "positive_negative_median_margin": null,
+    "second_cycle_person_embedding_count": 70,
+    "selected_identity_pair_occurrences": 45,
+    "tracker_identity_preserved": false
+  },
+  "runtime": {
+    "docker_cgroup_driver": "cgroupfs",
+    "docker_commands": 48,
+    "duration_seconds": 99.334343,
+    "free_bytes_after": 16336470016,
+    "http_requests": 70
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-17",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-18",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -693,6 +693,28 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "RADIO-CLIP",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-cv-2d.02-radio-clip",
+      "feature_id": "rt-cv-2d",
+      "official_index": 377,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
+        "contract_sha256": "0e1d3242689ca7ef32bd43fdea817cda5f0fc6119e780a1ab7c5c713ef12d804",
+        "package_id": "rt-cv-radio-clip-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "21a2536395a4f8377bbb8dfacec1e19b46de3326c8d522fc641bd5ab04247672",
+        "receipt_sha256": "e700dd0bacb0d89f38829a610b93ce24ea65af3ec168bc84f9684e38101c80cb",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "SigLIP2 re-identification",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -808,8 +830,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 36,
-    "row_count": 36,
+    "passed_current_thor": 37,
+    "row_count": 37,
     "warehouse_sample_bundle": "excluded"
   }
 }

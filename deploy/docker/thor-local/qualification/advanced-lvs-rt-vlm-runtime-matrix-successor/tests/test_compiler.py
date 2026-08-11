@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_thirty_six_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_thirty_seven_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 378, 379, 380, 381, 382
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -274,6 +274,25 @@ def test_rt_cv_siglip2_reidentification_receipt_is_bound_to_exact_row() -> None:
     assert proof["distinct_track_ids_reassociated"] is True
     assert proof["positive_cosine_min"] >= 0.99
     assert receipt["negative_preflight"]["mismatched_tokenizer_rejected"] is True
+
+
+def test_rt_cv_radio_clip_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-cv-radio-clip-runtime-successor"
+    )
+    assert entry["official_index"] == 377
+    receipt = compiler._validate_receipt(entry)
+    proof = receipt["reidentification"]
+    assert receipt["artifact_identity"]["embedding_dimension"] == 1536
+    assert proof["embedding_dimensions"] == [1536]
+    assert proof["finite_embeddings"] is True
+    assert proof["embedded_object_types"] == ["Pallet", "Person"]
+    assert proof["object_track_pairs_with_embeddings"] >= 2
+    assert receipt["negative_preflight"]["incompatible_dimension_configured"] == 1024
+    assert receipt["negative_preflight"]["incompatible_dimension_rejected"] is True
 
 
 def test_rt_cv_image_embedding_receipt_is_bound_to_exact_row() -> None:
