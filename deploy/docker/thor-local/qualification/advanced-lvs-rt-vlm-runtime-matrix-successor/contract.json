@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-26",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-27",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -61,6 +61,57 @@
         "/reidentification/embedding_dimensions": [1536],
         "/cleanup/main_rt_cv_preserved_exactly": true,
         "/policy/main_rt_cv_stream_mutations": 0
+      }
+    },
+    {
+      "official_index": 204,
+      "capability_id": "configuration.behavior.dynamic-update",
+      "advertised_literal": "Behavior analytics dynamic configuration",
+      "package_id": "behavior-analytics-dynamic-control-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/contract.json",
+      "contract_sha256": "d54d1704e8eaaac1844c4638b6c9aad7a50cef0e14d39d6801075c16f5372325",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "9aa5418bc4db6145e640d3cde7ab9766b16bb6d488461829f35a721b74efa5ac",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "8e93e861e355cb33daea4e650aab414ba97cd80a58fa30cdb62a768b146360fe",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/dynamic_configuration/official_driver_scenarios": 24,
+        "/dynamic_configuration/passed": 24,
+        "/dynamic_configuration/event_types": ["upsert", "upsert-all", "ack", "request-config"],
+        "/dynamic_configuration/ack_statuses": ["success", "partial-success", "failure"],
+        "/dynamic_configuration/accepted_updates_acknowledged": true,
+        "/dynamic_configuration/atomic_persisted_files_observed": true,
+        "/dynamic_configuration/startup_paths/no_reply_15_second_disk_baseline_fallback": "passed",
+        "/cleanup/qualification_topics_absent": true,
+        "/policy/normal_behavior_consumers_stopped": 0
+      }
+    },
+    {
+      "official_index": 205,
+      "capability_id": "calibration.behavior.dynamic",
+      "advertised_literal": "Behavior analytics dynamic calibration",
+      "package_id": "behavior-analytics-dynamic-control-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/contract.json",
+      "contract_sha256": "d54d1704e8eaaac1844c4638b6c9aad7a50cef0e14d39d6801075c16f5372325",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "9aa5418bc4db6145e640d3cde7ab9766b16bb6d488461829f35a721b74efa5ac",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "8e93e861e355cb33daea4e650aab414ba97cd80a58fa30cdb62a768b146360fe",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/dynamic_calibration/official_driver_scenarios": 7,
+        "/dynamic_calibration/passed": 7,
+        "/dynamic_calibration/event_types": ["upsert", "upsert-all", "delete"],
+        "/dynamic_calibration/acknowledgement": false,
+        "/dynamic_calibration/default_type": "image",
+        "/dynamic_calibration/invalid_payload_changed_state": false,
+        "/dynamic_calibration/type_selection/image/implementation": "CalibrationI",
+        "/dynamic_calibration/type_selection/cartesian/implementation": "CalibrationE",
+        "/dynamic_calibration/type_selection/geo/implementation": "Calibration",
+        "/dynamic_calibration/immutable_existing_type/delegated_to": "CalibrationE",
+        "/dynamic_calibration/immutable_existing_type/type_switch_markers_after_update": 0,
+        "/cleanup/qualification_topics_absent": true
       }
     },
     {

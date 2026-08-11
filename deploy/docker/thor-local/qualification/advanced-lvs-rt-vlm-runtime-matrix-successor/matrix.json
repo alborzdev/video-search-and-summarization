@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-26",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-27",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -48,6 +48,50 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
         "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Behavior analytics dynamic configuration",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "configuration.behavior.dynamic-update",
+      "feature_id": "configuration-control-plane",
+      "official_index": 204,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/contract.json",
+        "contract_sha256": "d54d1704e8eaaac1844c4638b6c9aad7a50cef0e14d39d6801075c16f5372325",
+        "package_id": "behavior-analytics-dynamic-control-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "8e93e861e355cb33daea4e650aab414ba97cd80a58fa30cdb62a768b146360fe",
+        "receipt_sha256": "9aa5418bc4db6145e640d3cde7ab9766b16bb6d488461829f35a721b74efa5ac",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Behavior analytics dynamic calibration",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "calibration.behavior.dynamic",
+      "feature_id": "calibration-toolchains",
+      "official_index": 205,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/contract.json",
+        "contract_sha256": "d54d1704e8eaaac1844c4638b6c9aad7a50cef0e14d39d6801075c16f5372325",
+        "package_id": "behavior-analytics-dynamic-control-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-dynamic-control-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "8e93e861e355cb33daea4e650aab414ba97cd80a58fa30cdb62a768b146360fe",
+        "receipt_sha256": "9aa5418bc4db6145e640d3cde7ab9766b16bb6d488461829f35a721b74efa5ac",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1380,8 +1424,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 62,
-    "row_count": 62,
+    "passed_current_thor": 64,
+    "row_count": 64,
     "warehouse_sample_bundle": "excluded"
   }
 }

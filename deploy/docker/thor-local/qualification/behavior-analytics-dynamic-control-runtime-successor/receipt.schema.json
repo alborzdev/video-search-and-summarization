@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "captured_at", "runtime", "transport", "dynamic_configuration", "dynamic_calibration", "topic_observation", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-dynamic-control-runtime-successor"},
+    "capability_ids": {"const": ["configuration.behavior.dynamic-update", "calibration.behavior.dynamic"]},
+    "official_indices": {"const": [204, 205]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["architecture", "image", "image_id", "image_size_bytes", "control_oracle", "normal_containers"],
+      "properties": {
+        "architecture": {"enum": ["aarch64", "arm64"]},
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "image_id": {"const": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"},
+        "image_size_bytes": {"const": 437647573},
+        "control_oracle": {"$ref": "#/$defs/exited_probe"},
+        "normal_containers": {
+          "const": {"names": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"], "running_after": true, "restart_counts_after": [0, 0]}
+        }
+      }
+    },
+    "transport": {"const": {"kind": "Kafka", "bootstrap_servers": "localhost:9092", "notification_topic": "vss-oracle-ba-notification", "isolated": true}},
+    "dynamic_configuration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["official_driver_scenarios", "passed", "failed", "scenario_names", "key", "event_types", "ack_statuses", "accepted_updates_acknowledged", "wire_invalid_timestamp_dropped_before_update", "atomic_persisted_files_observed", "forbidden_sections_filtered", "invalid_updates_created_files", "all_watchdogs_applied_valid_files", "expected_watchdog_applies", "startup_paths", "timeout_probe", "upstream_log_query_timezone_correction"],
+      "properties": {
+        "official_driver_scenarios": {"const": 24}, "passed": {"const": 24}, "failed": {"const": 0},
+        "scenario_names": {"type": "array", "minItems": 24, "maxItems": 24, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "key": {"const": "behavior-analytics-config"},
+        "event_types": {"const": ["upsert", "upsert-all", "ack", "request-config"]},
+        "ack_statuses": {"const": ["success", "partial-success", "failure"]},
+        "accepted_updates_acknowledged": {"const": true},
+        "wire_invalid_timestamp_dropped_before_update": {"const": true},
+        "atomic_persisted_files_observed": {"const": true},
+        "forbidden_sections_filtered": {"const": true},
+        "invalid_updates_created_files": {"const": false},
+        "all_watchdogs_applied_valid_files": {"const": true},
+        "expected_watchdog_applies": {"const": 3},
+        "startup_paths": {"const": {"controller_snapshot": "passed", "empty_failure_reply_within_15_seconds": "passed", "no_reply_15_second_disk_baseline_fallback": "passed"}},
+        "timeout_probe": {
+          "allOf": [
+            {"$ref": "#/$defs/exited_probe"},
+            {"type": "object", "properties": {"timeout_seconds": {"const": 15}, "fallback_marker_found": {"const": true}}, "required": ["timeout_seconds", "fallback_marker_found"]}
+          ]
+        },
+        "upstream_log_query_timezone_correction": {"const": true}
+      }
+    },
+    "dynamic_calibration": {
+      "type": "object", "additionalProperties": false,
+      "required": ["official_driver_scenarios", "passed", "failed", "scenario_names", "key", "event_types", "acknowledgement", "default_type", "invalid_payload_changed_state", "stale_timestamp_changed_state", "type_selection", "immutable_existing_type"],
+      "properties": {
+        "official_driver_scenarios": {"const": 7}, "passed": {"const": 7}, "failed": {"const": 0},
+        "scenario_names": {"const": ["upsert-all-valid", "upsert-valid", "delete-valid", "upsert-all-schema-invalid", "upsert-schema-invalid", "delete-schema-invalid", "stale-timestamp"]},
+        "key": {"const": "calibration"},
+        "event_types": {"const": ["upsert", "upsert-all", "delete"]},
+        "acknowledgement": {"const": false},
+        "default_type": {"const": "image"},
+        "invalid_payload_changed_state": {"const": false},
+        "stale_timestamp_changed_state": {"const": false},
+        "type_selection": {
+          "type": "object", "additionalProperties": false, "required": ["image", "cartesian", "geo"],
+          "properties": {
+            "image": {"allOf": [{"$ref": "#/$defs/type_probe"}, {"type": "object", "properties": {"implementation": {"const": "CalibrationI"}, "sensor_count": {"const": 2}}}]},
+            "cartesian": {"allOf": [{"$ref": "#/$defs/type_probe"}, {"type": "object", "properties": {"implementation": {"const": "CalibrationE"}, "sensor_count": {"const": 3}}}]},
+            "geo": {"allOf": [{"$ref": "#/$defs/type_probe"}, {"type": "object", "properties": {"implementation": {"const": "Calibration"}, "sensor_count": {"const": 50}}}]}
+          }
+        },
+        "immutable_existing_type": {
+          "type": "object", "additionalProperties": false,
+          "required": ["initial_type", "initial_implementation", "update_payload_type", "delegated_to", "type_switch_markers_after_update", "updated_sensor_count", "exit_code", "oom_killed", "restart_count", "log_sha256"],
+          "properties": {
+            "initial_type": {"const": "cartesian"}, "initial_implementation": {"const": "CalibrationE"},
+            "update_payload_type": {"const": "image"}, "delegated_to": {"const": "CalibrationE"},
+            "type_switch_markers_after_update": {"const": 0}, "updated_sensor_count": {"const": 2},
+            "exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0},
+            "log_sha256": {"$ref": "#/$defs/hash"}
+          }
+        }
+      }
+    },
+    "topic_observation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["record_count", "replayed_across_validation_attempts", "key_counts", "event_counts", "ack_statuses", "identifiers_retained"],
+      "properties": {
+        "record_count": {"const": 143}, "replayed_across_validation_attempts": {"const": true},
+        "key_counts": {"const": {"behavior-analytics-config": 136, "calibration": 7}},
+        "event_counts": {"const": {"behavior-analytics-config": {"ack": 105, "request-config": 5, "upsert": 21, "upsert-all": 5}, "calibration": {"delete": 2, "upsert": 3, "upsert-all": 2}}},
+        "ack_statuses": {"const": {"failure": 55, "partial-success": 20, "success": 30}},
+        "identifiers_retained": {"const": false}
+      }
+    },
+    "cleanup": {"const": {"disposable_containers_absent": true, "qualification_topics_absent": true, "timeout_probe_containers_absent": true, "timeout_probe_topics_absent": true, "normal_behavior_containers_running": true, "failures": []}},
+    "policy": {"const": {"agent_generate_calls": 0, "external_requests": 0, "main_rt_cv_mutations": 0, "main_vios_mutations": 0, "normal_behavior_consumers_stopped": 0, "warehouse_sample_bundle": "excluded"}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "exited_probe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "exit_code", "oom_killed", "restart_count", "log_sha256"],
+      "properties": {"name": {"type": "string", "minLength": 1}, "exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}, "log_sha256": {"$ref": "#/$defs/hash"}, "timeout_seconds": {"type": "integer"}, "fallback_marker_found": {"type": "boolean"}}
+    },
+    "type_probe": {
+      "type": "object", "additionalProperties": false,
+      "required": ["implementation", "sensor_count", "started_without_file", "exit_code", "oom_killed", "restart_count", "log_sha256"],
+      "properties": {"implementation": {"type": "string"}, "sensor_count": {"type": "integer", "minimum": 1}, "started_without_file": {"const": true}, "exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}, "log_sha256": {"$ref": "#/$defs/hash"}}
+    }
+  }
+}

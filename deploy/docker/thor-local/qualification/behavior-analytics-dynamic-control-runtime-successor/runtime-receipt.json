@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-dynamic-control-runtime-successor",
+  "capability_ids": [
+    "configuration.behavior.dynamic-update",
+    "calibration.behavior.dynamic"
+  ],
+  "official_indices": [204, 205],
+  "status": "passed",
+  "contract_sha256": "d54d1704e8eaaac1844c4638b6c9aad7a50cef0e14d39d6801075c16f5372325",
+  "captured_at": "2026-08-11T20:08:21Z",
+  "runtime": {
+    "architecture": "arm64",
+    "image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "image_size_bytes": 437647573,
+    "control_oracle": {
+      "name": "vss-behavior-control-oracle",
+      "exit_code": 0,
+      "oom_killed": false,
+      "restart_count": 0,
+      "log_sha256": "97351740d3080a8eb01d784170c0e354141f6015a6193b09aaae20bf9f2f8339"
+    },
+    "normal_containers": {
+      "names": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"],
+      "running_after": true,
+      "restart_counts_after": [0, 0]
+    }
+  },
+  "transport": {
+    "kind": "Kafka",
+    "bootstrap_servers": "localhost:9092",
+    "notification_topic": "vss-oracle-ba-notification",
+    "isolated": true
+  },
+  "dynamic_configuration": {
+    "official_driver_scenarios": 24,
+    "passed": 24,
+    "failed": 0,
+    "scenario_names": [
+      "bootstrap",
+      "upsert-success-app",
+      "upsert-success-sensors",
+      "upsert-success-mixed-types",
+      "upsert-empty-patch",
+      "upsert-non-dict",
+      "upsert-pure-forbidden",
+      "upsert-pure-bad-items",
+      "upsert-sensor-with-empty-configs",
+      "upsert-pure-non-allowlisted",
+      "upsert-pure-invalid-value",
+      "upsert-partial-with-forbidden",
+      "upsert-partial-with-bad-item",
+      "upsert-partial-with-non-allowlisted",
+      "upsert-partial-with-invalid-value",
+      "upsert-kafka-source-type",
+      "upsert-missing-status",
+      "upsert-missing-config",
+      "upsert-null-config",
+      "upsert-config-as-list",
+      "upsert-error-as-object",
+      "upsert-invalid-broker-timestamp",
+      "upsert-extra-envelope-field",
+      "bootstrap-empty-reply-in-window"
+    ],
+    "key": "behavior-analytics-config",
+    "event_types": ["upsert", "upsert-all", "ack", "request-config"],
+    "ack_statuses": ["success", "partial-success", "failure"],
+    "accepted_updates_acknowledged": true,
+    "wire_invalid_timestamp_dropped_before_update": true,
+    "atomic_persisted_files_observed": true,
+    "forbidden_sections_filtered": true,
+    "invalid_updates_created_files": false,
+    "all_watchdogs_applied_valid_files": true,
+    "expected_watchdog_applies": 3,
+    "startup_paths": {
+      "controller_snapshot": "passed",
+      "empty_failure_reply_within_15_seconds": "passed",
+      "no_reply_15_second_disk_baseline_fallback": "passed"
+    },
+    "timeout_probe": {
+      "name": "vss-behavior-config-timeout-oracle",
+      "exit_code": 0,
+      "oom_killed": false,
+      "restart_count": 0,
+      "timeout_seconds": 15,
+      "fallback_marker_found": true,
+      "log_sha256": "8752a1b04322237d94072f25907d3eb51cd5d050aa5bcbcf4f259683c37b2dd3"
+    },
+    "upstream_log_query_timezone_correction": true
+  },
+  "dynamic_calibration": {
+    "official_driver_scenarios": 7,
+    "passed": 7,
+    "failed": 0,
+    "scenario_names": [
+      "upsert-all-valid",
+      "upsert-valid",
+      "delete-valid",
+      "upsert-all-schema-invalid",
+      "upsert-schema-invalid",
+      "delete-schema-invalid",
+      "stale-timestamp"
+    ],
+    "key": "calibration",
+    "event_types": ["upsert", "upsert-all", "delete"],
+    "acknowledgement": false,
+    "default_type": "image",
+    "invalid_payload_changed_state": false,
+    "stale_timestamp_changed_state": false,
+    "type_selection": {
+      "image": {
+        "implementation": "CalibrationI",
+        "sensor_count": 2,
+        "started_without_file": true,
+        "exit_code": 0,
+        "oom_killed": false,
+        "restart_count": 0,
+        "log_sha256": "679909db66c683058040e3401aeaf4c7e915b4cae9c180ccc68f75e88bb96b35"
+      },
+      "cartesian": {
+        "implementation": "CalibrationE",
+        "sensor_count": 3,
+        "started_without_file": true,
+        "exit_code": 0,
+        "oom_killed": false,
+        "restart_count": 0,
+        "log_sha256": "9cd7fb629ff0d9bc6dd375726d9639f1cd533b279e27b419202fafb92f4ab2de"
+      },
+      "geo": {
+        "implementation": "Calibration",
+        "sensor_count": 50,
+        "started_without_file": true,
+        "exit_code": 0,
+        "oom_killed": false,
+        "restart_count": 0,
+        "log_sha256": "88c17537aea1a5ed466b156d0f236f240d585c819b6f7a7b700c60e20109008a"
+      }
+    },
+    "immutable_existing_type": {
+      "initial_type": "cartesian",
+      "initial_implementation": "CalibrationE",
+      "update_payload_type": "image",
+      "delegated_to": "CalibrationE",
+      "type_switch_markers_after_update": 0,
+      "updated_sensor_count": 2,
+      "exit_code": 0,
+      "oom_killed": false,
+      "restart_count": 0,
+      "log_sha256": "44236b908d904f21d64686395da204257a701d147ee6993b3ce9091552958d94"
+    }
+  },
+  "topic_observation": {
+    "record_count": 143,
+    "replayed_across_validation_attempts": true,
+    "key_counts": {"behavior-analytics-config": 136, "calibration": 7},
+    "event_counts": {
+      "behavior-analytics-config": {"ack": 105, "request-config": 5, "upsert": 21, "upsert-all": 5},
+      "calibration": {"delete": 2, "upsert": 3, "upsert-all": 2}
+    },
+    "ack_statuses": {"failure": 55, "partial-success": 20, "success": 30},
+    "identifiers_retained": false
+  },
+  "cleanup": {
+    "disposable_containers_absent": true,
+    "qualification_topics_absent": true,
+    "timeout_probe_containers_absent": true,
+    "timeout_probe_topics_absent": true,
+    "normal_behavior_containers_running": true,
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

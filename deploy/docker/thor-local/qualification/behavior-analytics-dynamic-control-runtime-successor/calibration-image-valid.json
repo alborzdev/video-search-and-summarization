@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "osmURL": "",
+  "calibrationType": "image",
+  "sensors": [
+    {
+      "type": "camera",
+      "id": "qualification-image-A",
+      "origin": {"lat": 0.0, "lng": 0.0},
+      "geoLocation": {"lat": 0.0, "lng": 0.0},
+      "coordinates": {"x": 0.0, "y": 0.0},
+      "scaleFactor": 1.0,
+      "attributes": [],
+      "place": [],
+      "imageCoordinates": [],
+      "globalCoordinates": []
+    },
+    {
+      "type": "camera",
+      "id": "qualification-image-B",
+      "origin": {"lat": 0.0, "lng": 0.0},
+      "geoLocation": {"lat": 0.0, "lng": 0.0},
+      "coordinates": {"x": 0.0, "y": 0.0},
+      "scaleFactor": 1.0,
+      "attributes": [],
+      "place": [],
+      "imageCoordinates": [],
+      "globalCoordinates": []
+    }
+  ]
+}
