@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-search-selected-object-current-runtime-successor-v1",
+  "capability_id": "runtime.ui.search-tab",
+  "supporting_capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.ui.search-tab",
+  "target_commit": "4d7454fc8c0d8295ea8e381366757cd137238577",
+  "mode": "authorization-gated-owned-index-isolated-playwright-numeric-loopback-runtime",
+  "default_execution_enabled": false,
+  "authorization": {
+    "acknowledgement": "I_ACK_UI_SEARCH_SELECTED_OBJECT_CURRENT_RUNTIME_AND_EXACT_INDEX_CLEANUP"
+  },
+  "backend_evidence": {
+    "package_id": "thor-search-semantic-current-runtime-successor-v1",
+    "runtime_receipt_sha256": "57a8d5e9dccaac3d613b842f8aac99c71859734857adb9975bfbbdae54796bae",
+    "official_runtime_evidence_sha256": "ce8810fc78e80b7bd2e2afd19cb58befe71daaab3fde0e3b8a20561a4bb58d07",
+    "verifier_sha256": "1cf1abe5ec90a3a0699a767ed97d87ca6de5205910eb63d309b5fd2cfd4c1dc9",
+    "required_status": "passed"
+  },
+  "capability_contract": {
+    "browser_flow": [
+      "search-tab",
+      "local-recorded-video-filter",
+      "direct-semantic-search",
+      "result-playback",
+      "real-vst-picture",
+      "real-video-analytics-frames",
+      "detected-bbox-selection",
+      "selected-object-search",
+      "non-seed-result-render"
+    ],
+    "canonical_search_route": "/api/v1/search",
+    "selected_object_request": {
+      "agent_mode": false,
+      "source_type": "video_file",
+      "composite_identity_fields": [
+        "object_id",
+        "sensor_name",
+        "sensor_id",
+        "timestamp"
+      ]
+    },
+    "required_result_semantics": {
+      "seed_excluded": true,
+      "candidate_only": true,
+      "rendered_in_ui": true
+    }
+  },
+  "indices": {
+    "behavior_owned": "mdx-behavior-2025-01-01",
+    "raw_owned": "mdx-raw-2025-01-01",
+    "embed_read_only": "mdx-embed-filtered-2025-01-01",
+    "vector_dimensions": 1152
+  },
+  "fixture": {
+    "existing_sensor_name_sha256": "bd2ef5eb47e0c979f1cc85eb2055ab6584f638a575c17ea20155c0b80a02144f",
+    "required_sensor_type": "sensor_file",
+    "required_sensor_state": "online",
+    "minimum_timeline_seconds": 19,
+    "query_contract": {
+      "sha256": "2d7f96d5595fa7bcfb243f81f7eba8fc30d7817174f0d38deaeaeb447cb1d635",
+      "bytes": 22
+    },
+    "reference_bbox_xyxy": [
+      535,
+      165,
+      850,
+      590
+    ],
+    "candidate_bbox_xyxy": [
+      890,
+      130,
+      1165,
+      570
+    ],
+    "frame_dimensions": [
+      1280,
+      720
+    ],
+    "behavior_document_count": 2,
+    "raw_document_count": 1,
+    "persistent_stream_mutation": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "browser": {
+    "ui_origin_sha256": "db604082b8b63636b4ce557eaadc9c91e5c4d9166a79d5c0d7a7969762521bfa",
+    "node_path": "/usr/bin/node",
+    "node_sha256": "2b0f6efd95c31c5538cc0a9042d5d13b7328cffcfdcc409f2e2ef336c4402086",
+    "playwright_entry_path": "/home/nvidia/cti-saa-thor/scene-analyzer-agent/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/index.mjs",
+    "playwright_entry_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+    "browser_executable_path": "/snap/bin/chromium",
+    "browser_executable_sha256": "187b178dc80a432fbe99ecf7e293f39a7fcd2224aef1395472525afcfbf70984",
+    "browser_version_sha256": "08582aa65552ab5710023eb71f08d991b30c9dd710da10949512a0fb20294866"
+  },
+  "bounds": {
+    "max_duration_ms": 360000,
+    "max_fixture_http_requests": 40,
+    "max_persistent_mutations": 9,
+    "max_browser_duration_ms": 240000,
+    "max_browser_actions": 24,
+    "max_loopback_browser_responses": 700,
+    "max_response_bytes": 4194304,
+    "max_harness_output_bytes": 2097152,
+    "max_screenshot_bytes": 16777216,
+    "cleanup_absence_checks": 2
+  },
+  "runtime": {
+    "ui": {
+      "container": "vss-agent-ui",
+      "configured_image": "vss-agent-ui:thor-local",
+      "image_id": "sha256:c8401bb9a31c1ab4f3d016468088f6840ec971b1ce943f3dab3616f2cf5e63a2"
+    },
+    "ui_ingress": {
+      "container": "vss-haproxy-ingress",
+      "configured_image": "haproxy:3.0-alpine",
+      "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f"
+    },
+    "agent": {
+      "container": "vss-agent",
+      "configured_image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+      "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1"
+    },
+    "elasticsearch": {
+      "container": "elasticsearch",
+      "configured_image": "elasticsearch",
+      "image_id": "sha256:f665779df4f52598dc7fca625540a4ddac9aaa098700c34510d37d97e30d265c"
+    },
+    "rtvi_cv": {
+      "container": "vss-rtvi-cv",
+      "configured_image": "nvcr.io/nvidia/vss-core/vss-rt-cv:3.2.1",
+      "image_id": "sha256:1a8b9879686f21cb6b9589d6139b5ac2eb960f1520aa3b4bb5f079d05fee9458"
+    },
+    "analytics_api": {
+      "container": "vss-video-analytics-api",
+      "configured_image": "nvcr.io/nvidia/vss-core/vss-video-analytics-api:3.2.0",
+      "image_id": "sha256:2aef26ab5a7394b42da75c53169a9efaf8d2c9278d19de2a214586aafd5e082d"
+    },
+    "vios_ingress": {
+      "container": "vss-vios-ingress",
+      "configured_image": "cti-vss-vios-ingress:3.2.1-thor-local",
+      "image_id": "sha256:ea2b5c14d12753d1f319d0e808f95d6be3127edcea9674b96c3a9b759bdf1ea4"
+    }
+  },
+  "source_locks": [
+    {
+      "path": "services/agent/src/vss_agents/tools/search.py",
+      "sha256": "6c23fd3854cad838311bcaf4cd5636db3ed02831a659a21b2d8e411841962aca"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/attribute_search.py",
+      "sha256": "00fdfb4c5df910b10ce2e1d149cc603da329e0ba8ddd66e17cb911775e4e2e35"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/SearchComponent.tsx",
+      "sha256": "9ca6bc45a8d6c02831225f9715a2d4e254128cb2304b28ba8ea2a34d3b294143"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/SearchHeader.tsx",
+      "sha256": "b494f8f8eed7775cf7633dcf6de20d85824a44b038e75ae286753f8b75261be5"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/VideoSearchList.tsx",
+      "sha256": "e9696dffbeb68b28020d6ef47aa32c0ed7597e118c977a6adc2efa1cfee3efa8"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/SearchByImageOverlay.tsx",
+      "sha256": "589c9d1623f86c77d60ef2f5e2ef37d8a6cb10020cef573a6365939adfc629c6"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/SearchByImageOverlayInfo.tsx",
+      "sha256": "bac95a79446f4d3e79742f0cad1b7bde25dc1c1958aaec5a93f4d616ca923350"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/SearchVideoModal.tsx",
+      "sha256": "7d7dcea0e3e2597b0fe4090cfa0fc2e6c70692a2dea3e3caad11f1e0c65479f1"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts",
+      "sha256": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearchByImage.ts",
+      "sha256": "24d3fd995dfbf94d96a905a4b68a4e06cdfa06e46bc1ad97418dfb7ccc855a6c"
+    },
+    {
+      "path": "services/ui/packages/common/lib-src/components/VideoModal.tsx",
+      "sha256": "1662eeaf358e0c61a684e0ec3fb331968c0f0dff7ec2f05617638c8bc15d4766"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+      "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/search-semantic-current-runtime-successor/executor.py",
+      "sha256": "dbe0101ecae506cd167cfdf7e677b90495384f5071b111d98d4ff06c742d20c6"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/search-semantic-current-runtime-successor/runtime-receipt.json",
+      "sha256": "57a8d5e9dccaac3d613b842f8aac99c71859734857adb9975bfbbdae54796bae"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/search-semantic-current-runtime-successor/official-runtime-evidence.json",
+      "sha256": "ce8810fc78e80b7bd2e2afd19cb58befe71daaab3fde0e3b8a20561a4bb58d07"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/search-semantic-current-runtime-successor/verify.py",
+      "sha256": "1cf1abe5ec90a3a0699a767ed97d87ca6de5205910eb63d309b5fd2cfd4c1dc9"
+    }
+  ],
+  "runtime_boundary": {
+    "numeric_loopback_browser_only": true,
+    "ambient_proxies_allowed": false,
+    "redirects_allowed": false,
+    "browser_install_allowed": false,
+    "service_lifecycle_allowed": false,
+    "main_vios_sensor_or_stream_mutation_allowed": false,
+    "vss_agent_generate_allowed": false,
+    "temporary_screenshots_outside_repository": true,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "cleanup": {
+    "delete_only_when_index_uuid_matches": true,
+    "delete_index_only_when_exact_owned_document_set_matches": true,
+    "foreign_document_fallback": "delete_exact_owned_documents_only_and_fail_promotion",
+    "postconditions": [
+      "both executor-created fixed indices are absent twice",
+      "the video-analytics frame query is empty",
+      "the pre-existing embedding index UUID and count are unchanged",
+      "the isolated browser and every temporary screenshot are gone",
+      "all related runtime identities and lifecycle counters are unchanged"
+    ]
+  },
+  "forbidden_actions": [
+    "VSS Agent /generate",
+    "VSS service lifecycle mutation",
+    "main VIOS sensor or stream mutation",
+    "RT-CV sample stream mutation",
+    "warehouse sample bundle access",
+    "external network request",
+    "ambient proxy use",
+    "redirect following",
+    "browser installation",
+    "raw vector retention",
+    "raw prompt retention",
+    "raw response retention",
+    "raw endpoint retention",
+    "raw request, session, sensor, stream, or object identifier retention"
+  ]
+}

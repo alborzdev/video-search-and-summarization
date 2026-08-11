@@ -665,10 +665,18 @@ async def enrich_attribute_results(
         if r.metadata and r.metadata.sensor_id and not r.screenshot_url:
             try:
                 ts = r.metadata.start_time or r.metadata.frame_timestamp
-                stream_id = await get_stream_id(r.metadata.sensor_id, resolution_base_url)
+                sensor_name = r.metadata.sensor_id
+                stream_id = await get_stream_id(sensor_name, resolution_base_url)
                 if stream_id:
                     if ts:
                         r.screenshot_url = build_screenshot_url(screenshot_base_url, stream_id, ts)
+                    # Preserve the human-facing MDX sensor name before replacing
+                    # sensor_id with the VST UUID used for media requests.  The
+                    # Search result converter intentionally prefers video_name;
+                    # without this assignment Search-by-Image cards expose the
+                    # internal UUID as their title.
+                    if not r.metadata.video_name:
+                        r.metadata.video_name = sensor_name
                     r.metadata.sensor_id = stream_id
             except Exception as e:
                 logger.warning(f"Failed to enrich result for sensor {r.metadata.sensor_id}: {e}")

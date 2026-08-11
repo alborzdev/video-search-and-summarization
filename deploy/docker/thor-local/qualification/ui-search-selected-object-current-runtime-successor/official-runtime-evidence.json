@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "evidence_id": "thor-ui-search-selected-object-current-runtime-20260810",
+  "package_id": "thor-ui-search-selected-object-current-runtime-successor-v1",
+  "capability_id": "runtime.ui.search-tab",
+  "supporting_capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.ui.search-tab",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "4d7454fc8c0d8295ea8e381366757cd137238577",
+  "captured_at": "2026-08-11T01:42:02.142027+00:00",
+  "status": "passed_current",
+  "promotion_eligible": true,
+  "artifact_digests": {
+    "contract_sha256": "2d5d087e60c132b2d38e2d15a8c6c449dc1020a77309ca9b0ac47d120ad65b64",
+    "executor_sha256": "7a7d7c28dfa57da8f735ebe15e97283f385fce1357801f8ce2f8af766c989e8d",
+    "harness_sha256": "e3e2b9365e0dd8c3711b6aac5a729e59ec04358f61ae6c822e85bf6e6148cf8b",
+    "receipt_schema_sha256": "3f43fbdf81c9a35e22df56993b404d5e9f3eb15722b133800a6424fafc04ac1a",
+    "runtime_receipt_sha256": "04fd46737a84ca85ee81b1a51aa93668b559ebe0a6cde7955974791321b817a9"
+  },
+  "backend_evidence": {
+    "runtime_receipt_sha256": "57a8d5e9dccaac3d613b842f8aac99c71859734857adb9975bfbbdae54796bae",
+    "official_runtime_evidence_sha256": "ce8810fc78e80b7bd2e2afd19cb58befe71daaab3fde0e3b8a20561a4bb58d07",
+    "verifier_sha256": "1cf1abe5ec90a3a0699a767ed97d87ca6de5205910eb63d309b5fd2cfd4c1dc9",
+    "passed": true
+  },
+  "qualification": {
+    "search_tab_rendered": true,
+    "exact_local_recorded_source_selected": true,
+    "direct_semantic_result_count": 1,
+    "playback_modal_opened": true,
+    "playback_metadata_loaded": true,
+    "playback_duration_positive": true,
+    "real_vst_picture_status": 200,
+    "real_video_analytics_frames_status": 200,
+    "frame_count": 1,
+    "selectable_bbox_count": 2,
+    "frame_dimensions": [
+      1280,
+      720
+    ],
+    "reference_bbox_clicked": true,
+    "selected_object_exact_composite_identity": true,
+    "selected_object_agent_mode_false": true,
+    "selected_object_source_type_video_file": true,
+    "selected_object_result_count": 1,
+    "selected_object_seed_excluded": true,
+    "selected_object_candidate_only": true,
+    "human_facing_source_name_preserved": true,
+    "selected_result_card_rerendered": true,
+    "selected_result_similarity": 1.0,
+    "desktop_horizontal_overflow": false,
+    "mobile_horizontal_overflow": false,
+    "browser_actions": 16,
+    "loopback_browser_responses": 43,
+    "fixture_http_requests": 35,
+    "persistent_mutations": 9
+  },
+  "browser_diagnostics": {
+    "console_errors": 0,
+    "console_warnings": 0,
+    "page_errors": 0,
+    "unexpected_request_failures": 0,
+    "expected_modal_media_abort_requests": 1,
+    "failing_http_responses": 0,
+    "non_loopback_requests": 0,
+    "non_loopback_responses": 0,
+    "non_loopback_websockets": 0,
+    "framework_error_overlays": 0
+  },
+  "cleanup": {
+    "owned_indices_absent_twice": true,
+    "analytics_frames_empty": true,
+    "read_only_embedding_index_unchanged": true,
+    "related_runtime_unchanged": true,
+    "isolated_browser_closed": true,
+    "temporary_screenshots_deleted_after_hashing": true,
+    "sensor_or_stream_mutations": 0,
+    "service_lifecycle_mutations": 0
+  },
+  "retention": {
+    "raw_vectors": false,
+    "raw_prompts": false,
+    "raw_responses": false,
+    "raw_urls": false,
+    "raw_runtime_identifiers": false
+  },
+  "warehouse_sample_bundle": "excluded"
+}

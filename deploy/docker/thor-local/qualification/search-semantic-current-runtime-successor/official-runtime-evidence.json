@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "evidence_id": "thor-search-semantic-current-runtime-20260810",
+  "package_id": "thor-search-semantic-current-runtime-successor-v1",
+  "capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.agent.search-profile",
+  "target_release": "VSS 3.2.1",
+  "target_commit": "4d7454fc8c0d8295ea8e381366757cd137238577",
+  "captured_at": "2026-08-11T00:40:56.640922+00:00",
+  "status": "passed_current",
+  "promotion_eligible": true,
+  "artifact_digests": {
+    "contract_sha256": "7276e965e723e8beab3dc443ad70caa5927c5c11c6036817610c117a7dd0b658",
+    "executor_sha256": "dbe0101ecae506cd167cfdf7e677b90495384f5071b111d98d4ff06c742d20c6",
+    "receipt_schema_sha256": "e10789d639c53a0badc0a7d217946a76dd938e6ac7d43247cc7889c1e311d86a",
+    "runtime_receipt_sha256": "57a8d5e9dccaac3d613b842f8aac99c71859734857adb9975bfbbdae54796bae"
+  },
+  "qualification": {
+    "canonical_routes_observed": [
+      "/api/v1/search",
+      "/api/v1/search/attribute",
+      "/api/v1/search/fusion",
+      "/api/v1/search/image"
+    ],
+    "embedding_dimensions": 1152,
+    "selected_bbox_frame_objects": 2,
+    "selected_object_knn_seed_excluded": true,
+    "same_object_segments_merged": true,
+    "minimum_clip_seconds": 1,
+    "multiple_attributes_append_passed": true,
+    "multiple_attributes_fuse_passed": true,
+    "fusion_order": [
+      "embedding",
+      "rerank_or_fallback"
+    ],
+    "rrf_branch_observed": true,
+    "same_video_top_k": 1,
+    "adjacent_invalid_status": 422,
+    "http_requests": 44,
+    "persistent_mutations": 10
+  },
+  "cleanup": {
+    "owned_indices_absent_twice": true,
+    "analytics_frames_empty": true,
+    "read_only_embedding_index_unchanged": true,
+    "related_runtime_unchanged": true,
+    "sensor_or_stream_mutations": 0,
+    "service_lifecycle_mutations": 0
+  },
+  "retention": {
+    "raw_vectors": false,
+    "raw_prompts": false,
+    "raw_responses": false,
+    "raw_urls": false,
+    "raw_runtime_identifiers": false
+  },
+  "warehouse_sample_bundle": "excluded"
+}

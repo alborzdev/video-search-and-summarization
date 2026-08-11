@@ -1,0 +1,326 @@
+{
+  "assertions": [
+    {
+      "expected": true,
+      "id": "contract-01",
+      "observation": "contract_identity/contract/critic/default_enabled",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "ENABLE_CRITIC=false",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/critic/disable_env",
+      "observed": "ENABLE_CRITIC=false",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "confirmed",
+        "unverified",
+        "rejected"
+      ],
+      "id": "contract-03",
+      "observation": "contract_identity/contract/critic/sort_order",
+      "observed": [
+        "confirmed",
+        "unverified",
+        "rejected"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "mediaWithObjectsBbox",
+        "mdx_frames_endpoint",
+        "vst_picture_api"
+      ],
+      "id": "contract-04",
+      "observation": "contract_identity/contract/image_search_requires",
+      "observed": [
+        "mediaWithObjectsBbox",
+        "mdx_frames_endpoint",
+        "vst_picture_api"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        -1,
+        1
+      ],
+      "id": "contract-05",
+      "observation": "contract_identity/contract/similarity_range",
+      "observed": [
+        -1,
+        1
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "Video File",
+      "id": "contract-06",
+      "observation": "contract_identity/contract/sources/default",
+      "observed": "Video File",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "Video File",
+        "RTSP"
+      ],
+      "id": "contract-07",
+      "observation": "contract_identity/contract/sources/values",
+      "observed": [
+        "Video File",
+        "RTSP"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "browser_local_no_conversion",
+      "id": "contract-08",
+      "observation": "contract_identity/contract/time_zone",
+      "observed": "browser_local_no_conversion",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 10,
+      "id": "contract-09",
+      "observation": "contract_identity/contract/top_k/default",
+      "observed": 10,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 1,
+      "id": "contract-10",
+      "observation": "contract_identity/contract/top_k/minimum",
+      "observed": 1,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-11",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-12",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "agent-smartcity",
+      "id": "contract-13",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "agent-smartcity",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "ui-search-api"
+      ],
+      "id": "contract-14",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "ui-search-api"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "runtime.ui.search-tab",
+  "cleanup": {
+    "allowlist": [],
+    "mutation": "read_only",
+    "postconditions": [
+      {
+        "description": "the isolated browser and temporary screenshot are absent",
+        "result": "pass"
+      },
+      {
+        "description": "the UI, ingress, and Agent runtime identities match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "the current selected-object and prior real critic evidence still verify",
+        "result": "pass"
+      },
+      {
+        "description": "no server-side sensor, stream, index, report, rule, incident, image, volume, container, or configuration changed",
+        "result": "pass"
+      },
+      {
+        "description": "all unexpected browser diagnostics and non-loopback traffic remain absent",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": []
+  },
+  "fixture": {
+    "id": "fixture.runtime.ui.search-tab",
+    "path": "deploy/docker/thor-local/qualification/ui-search-contract-current-runtime-successor/contract.json",
+    "sha256": "71dec2ac7077970df573a6d09181db546ff21d58ac7783fb42601eb75e111230"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "critic": {
+            "default_enabled": true,
+            "disable_env": "ENABLE_CRITIC=false",
+            "sort_order": [
+              "confirmed",
+              "unverified",
+              "rejected"
+            ]
+          },
+          "image_search_requires": [
+            "mediaWithObjectsBbox",
+            "mdx_frames_endpoint",
+            "vst_picture_api"
+          ],
+          "similarity_range": [
+            -1,
+            1
+          ],
+          "sources": {
+            "default": "Video File",
+            "values": [
+              "Video File",
+              "RTSP"
+            ]
+          },
+          "time_zone": "browser_local_no_conversion",
+          "top_k": {
+            "default": 10,
+            "minimum": 1
+          },
+          "wave3_acceptance": {
+            "executor_ready": false,
+            "materialized": false,
+            "package": "agent-smartcity",
+            "planning_requirement_ids": [
+              "ui-search-api"
+            ]
+          }
+        },
+        "contract_sha256": "71dec2ac7077970df573a6d09181db546ff21d58ac7783fb42601eb75e111230",
+        "qualification_summary_sha256": "5e0fcda66f79fca334cc03e1e65b54a68e861e47a75ea7c11afcafb372ceab40",
+        "receipt_sha256": "314c314b6250310d6ab2a7cd0ed5d92463a971dac829599e240c506d06fc0867",
+        "source_lock_count": 20
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "critic_default_enabled": true,
+        "critic_disable_env_supported": true,
+        "critic_rendered_order": [
+          "confirmed",
+          "unverified",
+          "rejected"
+        ],
+        "real_local_confirmed_card_count": 1,
+        "real_local_critic_evidence_passed": true,
+        "request_agent_mode_false": true,
+        "request_empty_sources": true,
+        "request_null_time_range": true,
+        "request_top_k": 1,
+        "request_video_file": true,
+        "search_component_visible": true,
+        "selected_object_evidence_passed": true,
+        "similarity_default": -1,
+        "source_default_video_file": true,
+        "source_round_trip": true,
+        "source_values": [
+          "Video File",
+          "RTSP"
+        ],
+        "top_k_default": 10,
+        "top_k_minimum": 1
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "below_minimum_top_k_clamped": true,
+        "browser_local_time_without_conversion": true,
+        "critic_input_order": [
+          "rejected",
+          "confirmed",
+          "unverified"
+        ],
+        "critic_rendered_order": [
+          "confirmed",
+          "unverified",
+          "rejected"
+        ],
+        "critic_similarity_endpoints": [
+          -1,
+          1
+        ],
+        "dependencies_reverified": true,
+        "desktop_horizontal_overflow": false,
+        "expected_audio_probe_abort_count": 1,
+        "mobile_horizontal_overflow": false,
+        "persistent_mutations": 0,
+        "runtime_unchanged": true,
+        "unexpected_browser_failures": 0
+      }
+    }
+  ],
+  "oracle_id": "oracle.runtime.ui.search-tab",
+  "oracle_sha256": "42f3738f383475728ce41bd8eb922dd2a5c499daf04ed89860fc36b65608d5cc",
+  "result": "passed_current",
+  "scenario_ids": [
+    "ui-workflows",
+    "search-archive-workflows",
+    "oracle.runtime.ui.search-tab"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

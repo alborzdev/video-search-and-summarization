@@ -1,16 +1,16 @@
 {
   "available_sets": [
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-ui-global-chat-runtime-289.json",
-      "descriptor_raw_sha256": "00156aab8f5b1f26f3cf5091581da31ca94788fa3b166169827b3b8768eb9118",
-      "set_id": "thor-vss-3.2.1-current-ui-global-chat-runtime-289"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-search-runtime-289.json",
+      "descriptor_raw_sha256": "4d22027f56dedb556394975d4bd1759dd2b9573f1dd06b1983a0e94b89fe76b4",
+      "set_id": "thor-vss-3.2.1-current-search-runtime-289"
     },
     {
-      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-ui-global-chat-runtime-500.json",
-      "descriptor_raw_sha256": "008128229efe8424e8a18ad3e36acddfad461eacad46c3281f9dd0016a48af5d",
-      "set_id": "thor-vss-3.2.1-current-ui-global-chat-runtime-500"
+      "descriptor_path": "deploy/docker/thor-local/parity/metadata_sets/sets/thor-vss-3.2.1-current-search-runtime-500.json",
+      "descriptor_raw_sha256": "b1094e04329ed233969a81b8b6b3d6e11b89aaaaebc8c3a4f40295ed710f4583",
+      "set_id": "thor-vss-3.2.1-current-search-runtime-500"
     }
   ],
   "schema_version": 1,
-  "selected_set": "thor-vss-3.2.1-current-ui-global-chat-runtime-500"
+  "selected_set": "thor-vss-3.2.1-current-search-runtime-500"
 }

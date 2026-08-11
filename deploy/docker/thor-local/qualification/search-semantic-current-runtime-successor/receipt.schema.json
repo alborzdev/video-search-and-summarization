@@ -1,0 +1,380 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "status",
+    "promotion_eligible",
+    "captured_at",
+    "target_commit",
+    "contract_sha256",
+    "executor_sha256",
+    "receipt_schema_sha256",
+    "identity",
+    "pre_state",
+    "bounds",
+    "observations",
+    "semantics",
+    "post_state",
+    "cleanup"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "thor-search-semantic-current-runtime-successor-v1"},
+    "status": {"const": "passed_current_candidate"},
+    "promotion_eligible": {"const": true},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "target_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "executor_sha256": {"$ref": "#/$defs/sha"},
+    "receipt_schema_sha256": {"$ref": "#/$defs/sha"},
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id_sha256",
+        "authorization_id",
+        "authorization_token_sha256",
+        "origin_hashes",
+        "source_hashes",
+        "query_contracts"
+      ],
+      "properties": {
+        "run_id_sha256": {"$ref": "#/$defs/sha"},
+        "authorization_id": {"const": "search-current-runtime"},
+        "authorization_token_sha256": {"$ref": "#/$defs/sha"},
+        "origin_hashes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["elasticsearch", "ingress", "rtvi_cv", "search"],
+          "properties": {
+            "elasticsearch": {"$ref": "#/$defs/sha"},
+            "ingress": {"$ref": "#/$defs/sha"},
+            "rtvi_cv": {"$ref": "#/$defs/sha"},
+            "search": {"$ref": "#/$defs/sha"}
+          }
+        },
+        "source_hashes": {
+          "type": "object",
+          "minProperties": 8,
+          "additionalProperties": {"$ref": "#/$defs/sha"}
+        },
+        "query_contracts": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sha256", "bytes"],
+            "properties": {
+              "sha256": {"$ref": "#/$defs/sha"},
+              "bytes": {"type": "integer", "minimum": 1, "maximum": 256}
+            }
+          }
+        }
+      }
+    },
+    "pre_state": {"$ref": "#/$defs/state"},
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "duration_ms",
+        "http_requests",
+        "persistent_mutations",
+        "max_duration_ms",
+        "max_http_requests",
+        "max_persistent_mutations"
+      ],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 300000},
+        "http_requests": {"const": 44},
+        "persistent_mutations": {"const": 10},
+        "max_duration_ms": {"const": 300000},
+        "max_http_requests": {"const": 48},
+        "max_persistent_mutations": {"const": 14}
+      }
+    },
+    "observations": {
+      "type": "array",
+      "minItems": 44,
+      "maxItems": 44,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sequence",
+          "operation",
+          "target",
+          "method",
+          "path_sha256",
+          "status",
+          "response_bytes",
+          "response_sha256"
+        ],
+        "properties": {
+          "sequence": {"type": "integer", "minimum": 1, "maximum": 44},
+          "operation": {"type": "string", "pattern": "^[A-Za-z0-9_.-]{1,64}$"},
+          "target": {"enum": ["elasticsearch", "ingress", "rtvi_cv", "search"]},
+          "method": {"enum": ["DELETE", "GET", "POST", "PUT"]},
+          "path_sha256": {"$ref": "#/$defs/sha"},
+          "status": {"type": "integer", "minimum": 200, "maximum": 499},
+          "response_bytes": {"type": "integer", "minimum": 1, "maximum": 4194304},
+          "response_sha256": {"$ref": "#/$defs/sha"}
+        }
+      }
+    },
+    "semantics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "embedding_dimensions",
+        "templates_exact_dimensions",
+        "frames",
+        "single_attribute",
+        "append_multiple_attributes",
+        "fuse_multiple_attributes",
+        "selected_object_knn",
+        "fusion",
+        "adjacent_invalid_status",
+        "all_expected_object_id_hashes",
+        "canonical_routes_observed"
+      ],
+      "properties": {
+        "embedding_dimensions": {"const": 1152},
+        "templates_exact_dimensions": {"const": true},
+        "frames": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "object_count", "selected_bbox_present"],
+          "properties": {
+            "count": {"const": 1},
+            "object_count": {"const": 2},
+            "selected_bbox_present": {"const": true}
+          }
+        },
+        "single_attribute": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "result_count",
+            "object_id_hashes",
+            "same_object_merge",
+            "reference_duration_seconds",
+            "minimum_clip_extended"
+          ],
+          "properties": {
+            "result_count": {"const": 2},
+            "object_id_hashes": {"$ref": "#/$defs/twoHashes"},
+            "same_object_merge": {"const": true},
+            "reference_duration_seconds": {"type": "number", "minimum": 0.999, "maximum": 1.001},
+            "minimum_clip_extended": {"const": true}
+          }
+        },
+        "append_multiple_attributes": {"$ref": "#/$defs/twoResultProof"},
+        "fuse_multiple_attributes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["result_count", "object_id_hashes", "all_have_media", "passed"],
+          "properties": {
+            "result_count": {"const": 2},
+            "object_id_hashes": {"$ref": "#/$defs/twoHashes"},
+            "all_have_media": {"const": true},
+            "passed": {"const": true}
+          }
+        },
+        "selected_object_knn": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "base_route_result_count",
+            "image_route_result_count",
+            "candidate_object_id_hash",
+            "seed_object_id_hash",
+            "seed_excluded"
+          ],
+          "properties": {
+            "base_route_result_count": {"const": 1},
+            "image_route_result_count": {"const": 1},
+            "candidate_object_id_hash": {"$ref": "#/$defs/sha"},
+            "seed_object_id_hash": {"$ref": "#/$defs/sha"},
+            "seed_excluded": {"const": true}
+          }
+        },
+        "fusion": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "result_count",
+            "top_k_limited",
+            "similarity",
+            "message_count",
+            "branch_markers",
+            "order_observed"
+          ],
+          "properties": {
+            "result_count": {"const": 1},
+            "top_k_limited": {"const": true},
+            "similarity": {"type": "number"},
+            "message_count": {"const": 0},
+            "branch_markers": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["embed", "fusion", "rerank"],
+              "properties": {
+                "embed": {"type": "integer", "minimum": 1},
+                "fusion": {"type": "integer", "minimum": 1},
+                "rerank": {"type": "integer", "minimum": 1}
+              }
+            },
+            "order_observed": {"const": ["embedding", "rerank_or_fallback"]}
+          }
+        },
+        "adjacent_invalid_status": {"const": 422},
+        "all_expected_object_id_hashes": {"$ref": "#/$defs/twoHashes"},
+        "canonical_routes_observed": {
+          "const": [
+            "/api/v1/search",
+            "/api/v1/search/attribute",
+            "/api/v1/search/fusion",
+            "/api/v1/search/image"
+          ]
+        }
+      }
+    },
+    "post_state": {"$ref": "#/$defs/state"},
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "behavior",
+        "raw",
+        "absence_checks",
+        "embed_read_only_unchanged",
+        "frames_empty",
+        "exact_owned_resources_only",
+        "persistent_stream_mutations",
+        "service_lifecycle_mutations",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "behavior": {"$ref": "#/$defs/ownedCleanup"},
+        "raw": {"$ref": "#/$defs/ownedCleanup"},
+        "absence_checks": {
+          "const": [
+            {"behavior": 404, "raw": 404},
+            {"behavior": 404, "raw": 404}
+          ]
+        },
+        "embed_read_only_unchanged": {"const": true},
+        "frames_empty": {"const": true},
+        "exact_owned_resources_only": {"const": true},
+        "persistent_stream_mutations": {"const": 0},
+        "service_lifecycle_mutations": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "twoHashes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/sha"}
+    },
+    "runtimeRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "configured_image",
+        "image_id",
+        "running",
+        "restart_count",
+        "oom_killed",
+        "started_at_sha256"
+      ],
+      "properties": {
+        "configured_image": {"type": "string", "minLength": 1},
+        "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "running": {"const": true},
+        "restart_count": {"const": 0},
+        "oom_killed": {"const": false},
+        "started_at_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "runtimeSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "vss-agent",
+        "elasticsearch",
+        "vss-rtvi-cv",
+        "vss-video-analytics-api",
+        "vss-vios-ingress"
+      ],
+      "properties": {
+        "vss-agent": {"$ref": "#/$defs/runtimeRow"},
+        "elasticsearch": {"$ref": "#/$defs/runtimeRow"},
+        "vss-rtvi-cv": {"$ref": "#/$defs/runtimeRow"},
+        "vss-video-analytics-api": {"$ref": "#/$defs/runtimeRow"},
+        "vss-vios-ingress": {"$ref": "#/$defs/runtimeRow"}
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime", "owned_index_status", "embed_index"],
+      "properties": {
+        "runtime": {"$ref": "#/$defs/runtimeSnapshot"},
+        "owned_index_status": {
+          "const": {"behavior": 404, "raw": 404}
+        },
+        "embed_index": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["uuid_sha256", "count"],
+          "properties": {
+            "uuid_sha256": {"$ref": "#/$defs/sha"},
+            "count": {"type": "integer", "minimum": 1}
+          }
+        },
+        "fixture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["sensor_name_sha256", "sensor_id_sha256", "timeline_sha256", "timeline_seconds"],
+          "properties": {
+            "sensor_name_sha256": {"$ref": "#/$defs/sha"},
+            "sensor_id_sha256": {"$ref": "#/$defs/sha"},
+            "timeline_sha256": {"$ref": "#/$defs/sha"},
+            "timeline_seconds": {"type": "number", "minimum": 5}
+          }
+        }
+      }
+    },
+    "twoResultProof": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_count", "object_id_hashes", "passed"],
+      "properties": {
+        "result_count": {"const": 2},
+        "object_id_hashes": {"$ref": "#/$defs/twoHashes"},
+        "passed": {"const": true}
+      }
+    },
+    "ownedCleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["created", "deleted", "foreign_documents_observed"],
+      "properties": {
+        "created": {"const": true},
+        "deleted": {"const": true},
+        "foreign_documents_observed": {"const": false}
+      }
+    }
+  }
+}

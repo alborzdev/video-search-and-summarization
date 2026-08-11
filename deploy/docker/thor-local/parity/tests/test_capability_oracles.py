@@ -75,6 +75,8 @@ class CapabilityOracleTests(unittest.TestCase):
             + 1  # current LVS custom-model and custom-prompt runtime receipt
             + 2  # exact official Thor Nemotron and Cosmos3 model runtime receipt
             + 4  # current RT-Embed model, data URL, duplicate-ID, and API receipt
+            + 1  # current Search backend semantic-route runtime receipt
+            + 1  # current complete rendered Search UI runtime receipt
             + 1  # current rendered Dashboard desktop/mobile runtime receipt
             + 1  # current rendered Global Chat sidebar runtime receipt
         )
@@ -255,8 +257,7 @@ class CapabilityOracleTests(unittest.TestCase):
         oracle = next(
             item
             for item in self.plan["oracles"]
-            if item["capability_id"]
-            == verifier.AGENT_WEBSOCKET_RUNTIME_CAPABILITY_ID
+            if item["capability_id"] == verifier.AGENT_WEBSOCKET_RUNTIME_CAPABILITY_ID
         )
         self.assertEqual(
             oracle["fixture"]["materialization"],
@@ -296,8 +297,7 @@ class CapabilityOracleTests(unittest.TestCase):
         oracle = next(
             item
             for item in self.plan["oracles"]
-            if item["capability_id"]
-            == verifier.ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
+            if item["capability_id"] == verifier.ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
         )
         self.assertEqual(
             oracle["fixture"]["materialization"],
@@ -377,8 +377,7 @@ class CapabilityOracleTests(unittest.TestCase):
         oracle = next(
             item
             for item in self.plan["oracles"]
-            if item["capability_id"]
-            == verifier.UI_DASHBOARD_RUNTIME_CAPABILITY_ID
+            if item["capability_id"] == verifier.UI_DASHBOARD_RUNTIME_CAPABILITY_ID
         )
         self.assertEqual(
             oracle["fixture"]["materialization"],
@@ -413,12 +412,96 @@ class CapabilityOracleTests(unittest.TestCase):
         )
         self.assertEqual(oracle["evidence"], [])
 
+    def test_search_backend_runtime_oracle_is_exact_owned_cleanup_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == verifier.SEARCH_BACKEND_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.SEARCH_BACKEND_RUNTIME_FIXTURE["path"],
+                "generator": verifier.SEARCH_BACKEND_RUNTIME_EXECUTOR,
+                "sha256": verifier.SEARCH_BACKEND_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.SEARCH_BACKEND_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(oracle["execution_bounds"]["max_duration_seconds"], 300)
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.SEARCH_BACKEND_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.SEARCH_BACKEND_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["collectors"],
+            [verifier.SEARCH_BACKEND_RUNTIME_VERIFIER],
+        )
+        self.assertEqual(
+            oracle["cleanup"]["targets"],
+            verifier.SEARCH_BACKEND_RUNTIME_NAMESPACES,
+        )
+        self.assertEqual(
+            oracle["cleanup"]["allowlist"],
+            verifier.SEARCH_BACKEND_RUNTIME_NAMESPACES,
+        )
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(oracle["evidence"], [])
+
+    def test_search_ui_runtime_oracle_is_exact_read_only_row(self) -> None:
+        oracle = next(
+            item
+            for item in self.plan["oracles"]
+            if item["capability_id"] == verifier.SEARCH_UI_RUNTIME_CAPABILITY_ID
+        )
+        self.assertEqual(
+            oracle["fixture"]["materialization"],
+            {
+                "path": verifier.SEARCH_UI_RUNTIME_FIXTURE["path"],
+                "generator": verifier.SEARCH_UI_RUNTIME_EXECUTOR,
+                "sha256": verifier.SEARCH_UI_RUNTIME_FIXTURE["sha256"],
+            },
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["workload"],
+            verifier.SEARCH_UI_RUNTIME_WORKLOAD,
+        )
+        self.assertEqual(oracle["execution_bounds"]["max_duration_seconds"], 180)
+        self.assertEqual(
+            oracle["execution_bounds"]["max_actions"],
+            verifier.SEARCH_UI_RUNTIME_MAX_ACTIONS,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["executor"],
+            verifier.SEARCH_UI_RUNTIME_EXECUTOR,
+        )
+        self.assertEqual(
+            oracle["execution_bounds"]["collectors"],
+            [verifier.SEARCH_UI_RUNTIME_VERIFIER],
+        )
+        self.assertEqual(oracle["cleanup"]["mutation"], "read_only")
+        self.assertEqual(oracle["cleanup"]["targets"], [])
+        self.assertEqual(oracle["cleanup"]["allowlist"], [])
+        self.assertEqual(
+            oracle["acceptance_readiness"],
+            {"classification": "executor_ready", "blockers": []},
+        )
+        self.assertEqual(oracle["evidence"], [])
+
     def test_ui_global_chat_runtime_oracle_is_exact_read_only_row(self) -> None:
         oracle = next(
             item
             for item in self.plan["oracles"]
-            if item["capability_id"]
-            == verifier.UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID
+            if item["capability_id"] == verifier.UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID
         )
         self.assertEqual(
             oracle["fixture"]["materialization"],
@@ -1133,11 +1216,15 @@ class CapabilityOracleTests(unittest.TestCase):
                     if item["capability_id"]
                     == verifier.LVS_CUSTOM_MODEL_PROMPT_RUNTIME_CAPABILITY_ID
                     else len(verifier.VIOS_WEBRTC_LIVE_NAMESPACES)
-                    if item["capability_id"]
-                    == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
+                    if item["capability_id"] == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
                     else len(verifier.RT_EMBED_CURRENT_RUNTIME_NAMESPACES)
                     if item["capability_id"]
                     in verifier.RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS
+                    else len(verifier.SEARCH_BACKEND_RUNTIME_NAMESPACES)
+                    if (
+                        item["capability_id"]
+                        == verifier.SEARCH_BACKEND_RUNTIME_CAPABILITY_ID
+                    )
                     else 1
                 )
                 self.assertEqual(len(cleanup["targets"]), expected_target_count)
@@ -1166,18 +1253,12 @@ class CapabilityOracleTests(unittest.TestCase):
                         cleanup["targets"],
                         [verifier.NVSTREAMER_FULL_CONFIG_NAMESPACE],
                     )
-                elif (
-                    item["capability_id"]
-                    == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID
-                ):
+                elif item["capability_id"] == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID:
                     self.assertEqual(
                         cleanup["targets"],
                         [verifier.VIOS_WEBRTC_REPLAY_NAMESPACE],
                     )
-                elif (
-                    item["capability_id"]
-                    == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
-                ):
+                elif item["capability_id"] == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID:
                     self.assertEqual(
                         cleanup["targets"], verifier.VIOS_WEBRTC_LIVE_NAMESPACES
                     )
@@ -1200,8 +1281,7 @@ class CapabilityOracleTests(unittest.TestCase):
                         verifier.ALERT_WEBSOCKET_RUNTIME_NAMESPACES,
                     )
                 elif (
-                    item["capability_id"]
-                    in verifier.RT_VLM_SSE_RUNTIME_CAPABILITY_IDS
+                    item["capability_id"] in verifier.RT_VLM_SSE_RUNTIME_CAPABILITY_IDS
                 ):
                     self.assertEqual(
                         cleanup["targets"],
@@ -1214,6 +1294,14 @@ class CapabilityOracleTests(unittest.TestCase):
                     self.assertEqual(
                         cleanup["targets"],
                         verifier.RT_EMBED_CURRENT_RUNTIME_NAMESPACES,
+                    )
+                elif (
+                    item["capability_id"]
+                    == verifier.SEARCH_BACKEND_RUNTIME_CAPABILITY_ID
+                ):
+                    self.assertEqual(
+                        cleanup["targets"],
+                        verifier.SEARCH_BACKEND_RUNTIME_NAMESPACES,
                     )
                 else:
                     self.assertTrue(cleanup["targets"][0].startswith("vss-oracle-"))
@@ -1353,15 +1441,9 @@ class CapabilityOracleTests(unittest.TestCase):
                     == verifier.NVSTREAMER_FULL_CONFIG_CAPABILITY_ID
                 )
                 else verifier.VIOS_WEBRTC_REPLAY_MAX_ACTIONS
-                if (
-                    item["capability_id"]
-                    == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID
-                )
+                if (item["capability_id"] == verifier.VIOS_WEBRTC_REPLAY_CAPABILITY_ID)
                 else verifier.VIOS_WEBRTC_LIVE_MAX_ACTIONS
-                if (
-                    item["capability_id"]
-                    == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID
-                )
+                if (item["capability_id"] == verifier.VIOS_WEBRTC_LIVE_CAPABILITY_ID)
                 else verifier.VIDEO_ANALYTICS_RUNTIME_MAX_ACTIONS
                 if (
                     item["capability_id"]
@@ -1378,18 +1460,23 @@ class CapabilityOracleTests(unittest.TestCase):
                     == verifier.ALERT_WEBSOCKET_RUNTIME_CAPABILITY_ID
                 )
                 else verifier.RT_VLM_SSE_RUNTIME_MAX_ACTIONS
-                if item["capability_id"]
-                in verifier.RT_VLM_SSE_RUNTIME_CAPABILITY_IDS
+                if item["capability_id"] in verifier.RT_VLM_SSE_RUNTIME_CAPABILITY_IDS
                 else verifier.OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
                 if item["capability_id"]
                 in verifier.OFFICIAL_EDGE_MODEL_RUNTIME_CAPABILITY_IDS
                 else verifier.RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
                 if item["capability_id"]
                 in verifier.RT_EMBED_CURRENT_RUNTIME_CAPABILITY_IDS
-                else verifier.UI_DASHBOARD_RUNTIME_MAX_ACTIONS
+                else verifier.SEARCH_BACKEND_RUNTIME_MAX_ACTIONS
                 if (
                     item["capability_id"]
-                    == verifier.UI_DASHBOARD_RUNTIME_CAPABILITY_ID
+                    == verifier.SEARCH_BACKEND_RUNTIME_CAPABILITY_ID
+                )
+                else verifier.SEARCH_UI_RUNTIME_MAX_ACTIONS
+                if item["capability_id"] == verifier.SEARCH_UI_RUNTIME_CAPABILITY_ID
+                else verifier.UI_DASHBOARD_RUNTIME_MAX_ACTIONS
+                if (
+                    item["capability_id"] == verifier.UI_DASHBOARD_RUNTIME_CAPABILITY_ID
                 )
                 else verifier.UI_GLOBAL_CHAT_RUNTIME_MAX_ACTIONS
                 if (
@@ -1397,10 +1484,7 @@ class CapabilityOracleTests(unittest.TestCase):
                     == verifier.UI_GLOBAL_CHAT_RUNTIME_CAPABILITY_ID
                 )
                 else verifier.LVS_FORMATS_RUNTIME_MAX_ACTIONS
-                if (
-                    item["capability_id"]
-                    == verifier.LVS_FORMATS_RUNTIME_CAPABILITY_ID
-                )
+                if (item["capability_id"] == verifier.LVS_FORMATS_RUNTIME_CAPABILITY_ID)
                 else verifier.LVS_SINGLE_REQUEST_RUNTIME_MAX_ACTIONS
                 if (
                     item["capability_id"]
@@ -1452,6 +1536,11 @@ class CapabilityOracleTests(unittest.TestCase):
             requests,
             actions,
         ) in verifier.LOCAL_RUNTIME_WORKLOAD_OVERRIDES.items():
+            if capability_id in {
+                verifier.SEARCH_BACKEND_RUNTIME_CAPABILITY_ID,
+                verifier.SEARCH_UI_RUNTIME_CAPABILITY_ID,
+            }:
+                continue
             oracle = by_id[capability_id]
             self.assertEqual(oracle["execution_bounds"]["max_requests"], requests)
             self.assertEqual(oracle["execution_bounds"]["max_actions"], actions)

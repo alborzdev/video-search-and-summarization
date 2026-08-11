@@ -851,6 +851,93 @@ RT_EMBED_CURRENT_RUNTIME_WORKLOAD = {
     ],
 }
 RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS = 4
+SEARCH_BACKEND_RUNTIME_CAPABILITY_ID = "runtime.agent.search-profile"
+SEARCH_BACKEND_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "search-semantic-current-runtime-successor/executor.py"
+)
+SEARCH_BACKEND_RUNTIME_VERIFIER = (
+    "deploy/docker/thor-local/qualification/"
+    "search-semantic-current-runtime-successor/verify.py"
+)
+SEARCH_BACKEND_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "search-semantic-current-runtime-successor/contract.json"
+    ),
+    "sha256": "7276e965e723e8beab3dc443ad70caa5927c5c11c6036817610c117a7dd0b658",
+}
+SEARCH_BACKEND_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "search-semantic-current-runtime-successor/"
+            "canonical-runtime-evidence.json"
+        ),
+        "sha256": "1b70532a34bc3d44d6f2a2ec6d773b8c07f55a6ffc6dc6c15b0d34973d5ecd32",
+    }
+]
+SEARCH_BACKEND_RUNTIME_NAMESPACES = [
+    "mdx-behavior-2025-01-01",
+    "mdx-raw-2025-01-01",
+]
+SEARCH_BACKEND_RUNTIME_WORKLOAD = {
+    "units": 1,
+    "requests_per_unit": 48,
+    "overhead_requests": 0,
+    "calculated_max_requests": 48,
+    "phases": [
+        "current_runtime_and_source_locks",
+        "complete_pre_state",
+        "owned_fixture_materialization",
+        "text_attribute_and_fusion_routes",
+        "selected_object_image_knn",
+        "negative_source_boundary",
+        "exact_owned_cleanup",
+        "complete_postcondition",
+    ],
+}
+SEARCH_BACKEND_RUNTIME_MAX_ACTIONS = 14
+SEARCH_UI_RUNTIME_CAPABILITY_ID = "runtime.ui.search-tab"
+SEARCH_UI_RUNTIME_EXECUTOR = (
+    "deploy/docker/thor-local/qualification/"
+    "ui-search-contract-current-runtime-successor/executor.py"
+)
+SEARCH_UI_RUNTIME_VERIFIER = (
+    "deploy/docker/thor-local/qualification/"
+    "ui-search-contract-current-runtime-successor/verify.py"
+)
+SEARCH_UI_RUNTIME_FIXTURE = {
+    "path": (
+        "deploy/docker/thor-local/qualification/"
+        "ui-search-contract-current-runtime-successor/contract.json"
+    ),
+    "sha256": "71dec2ac7077970df573a6d09181db546ff21d58ac7783fb42601eb75e111230",
+}
+SEARCH_UI_RUNTIME_EVIDENCE = [
+    {
+        "path": (
+            "deploy/docker/thor-local/qualification/"
+            "ui-search-contract-current-runtime-successor/"
+            "canonical-runtime-evidence.json"
+        ),
+        "sha256": "becddbdeab6c3d12597adf3acbec2ec161f995bbe2c2704af8d9414bb9670161",
+    }
+]
+SEARCH_UI_RUNTIME_WORKLOAD = {
+    "units": 3,
+    "requests_per_unit": 83,
+    "overhead_requests": 1,
+    "calculated_max_requests": 250,
+    "phases": [
+        "dependency_evidence_verification",
+        "current_runtime_and_source_locks",
+        "desktop_filter_request_and_critic_ordering",
+        "mobile_overflow_and_browser_diagnostics",
+        "read_only_postcondition",
+    ],
+}
+SEARCH_UI_RUNTIME_MAX_ACTIONS = 18
 UI_DASHBOARD_RUNTIME_CAPABILITY_ID = "runtime.ui.dashboard-tab"
 UI_DASHBOARD_RUNTIME_EXECUTOR = (
     "deploy/docker/thor-local/qualification/"
@@ -1167,6 +1254,22 @@ def _is_current_rt_embed_runtime(capability: dict[str, Any]) -> bool:
         and capability.get("runtime_state") == "passed_current"
         and capability.get("runtime_evidence")
         == RT_EMBED_CURRENT_RUNTIME_EVIDENCE[capability_id]
+    )
+
+
+def _is_current_search_backend_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == SEARCH_BACKEND_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == SEARCH_BACKEND_RUNTIME_EVIDENCE
+    )
+
+
+def _is_current_search_ui_runtime(capability: dict[str, Any]) -> bool:
+    return (
+        capability.get("id") == SEARCH_UI_RUNTIME_CAPABILITY_ID
+        and capability.get("runtime_state") == "passed_current"
+        and capability.get("runtime_evidence") == SEARCH_UI_RUNTIME_EVIDENCE
     )
 
 
@@ -1931,6 +2034,10 @@ def _workload(
         return copy.deepcopy(OFFICIAL_EDGE_MODEL_RUNTIME_WORKLOAD)
     if live_integration and _is_current_rt_embed_runtime(capability):
         return copy.deepcopy(RT_EMBED_CURRENT_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_search_backend_runtime(capability):
+        return copy.deepcopy(SEARCH_BACKEND_RUNTIME_WORKLOAD)
+    if live_integration and _is_current_search_ui_runtime(capability):
+        return copy.deepcopy(SEARCH_UI_RUNTIME_WORKLOAD)
     if live_integration and _is_current_ui_dashboard_runtime(capability):
         return copy.deepcopy(UI_DASHBOARD_RUNTIME_WORKLOAD)
     if live_integration and _is_current_ui_global_chat_runtime(capability):
@@ -2018,6 +2125,10 @@ def _max_actions(capability: dict[str, Any], workload: dict[str, Any]) -> int:
         return OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
     if _is_current_rt_embed_runtime(capability):
         return RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
+    if _is_current_search_backend_runtime(capability):
+        return SEARCH_BACKEND_RUNTIME_MAX_ACTIONS
+    if _is_current_search_ui_runtime(capability):
+        return SEARCH_UI_RUNTIME_MAX_ACTIONS
     if _is_current_ui_dashboard_runtime(capability):
         return UI_DASHBOARD_RUNTIME_MAX_ACTIONS
     if _is_current_ui_global_chat_runtime(capability):
@@ -3220,9 +3331,7 @@ def compile_plan(
                 "generator": AGENT_WEBSOCKET_RUNTIME_EXECUTOR,
                 "sha256": AGENT_WEBSOCKET_RUNTIME_FIXTURE["sha256"],
             }
-            oracle["execution_bounds"]["executor"] = (
-                AGENT_WEBSOCKET_RUNTIME_EXECUTOR
-            )
+            oracle["execution_bounds"]["executor"] = AGENT_WEBSOCKET_RUNTIME_EXECUTOR
             oracle["execution_bounds"]["collectors"] = [
                 AGENT_WEBSOCKET_RUNTIME_EXECUTOR
             ]
@@ -3365,6 +3474,80 @@ def compile_plan(
                 "classification": "executor_ready",
                 "blockers": [],
             }
+        if _is_current_search_backend_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": SEARCH_BACKEND_RUNTIME_FIXTURE["path"],
+                "generator": SEARCH_BACKEND_RUNTIME_EXECUTOR,
+                "sha256": SEARCH_BACKEND_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = SEARCH_BACKEND_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [SEARCH_BACKEND_RUNTIME_VERIFIER]
+            oracle["execution_bounds"]["max_duration_seconds"] = 300
+            oracle["cleanup"]["targets"] = copy.deepcopy(
+                SEARCH_BACKEND_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["allowlist"] = copy.deepcopy(
+                SEARCH_BACKEND_RUNTIME_NAMESPACES
+            )
+            oracle["cleanup"]["pre_state"] = (
+                "the complete target-index absence state, read-only embedding "
+                "index identity/count, analytics frame state, source locks, and "
+                "five related runtime identities must be captured before mutation"
+            )
+            oracle["cleanup"]["restore"] = (
+                "delete only the two fixed executor-owned indices after exact "
+                "UUID and complete document-inventory matches; otherwise delete "
+                "only exact owned documents and fail promotion"
+            )
+            oracle["cleanup"]["executor"] = SEARCH_BACKEND_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [
+                SEARCH_BACKEND_RUNTIME_VERIFIER
+            ]
+            oracle["cleanup"]["postconditions"] = [
+                "both fixed executor-owned indices are absent in two delayed checks",
+                "the analytics frame query is empty",
+                "the pre-existing embedding index UUID and document count match pre-state exactly",
+                "all five related runtime identities, start times, health states, restart counts, and OOM states match pre-state exactly",
+                "no sensor, stream, service lifecycle, or Warehouse sample mutation occurred",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
+        if _is_current_search_ui_runtime(capability):
+            oracle["fixture"]["materialization"] = {
+                "path": SEARCH_UI_RUNTIME_FIXTURE["path"],
+                "generator": SEARCH_UI_RUNTIME_EXECUTOR,
+                "sha256": SEARCH_UI_RUNTIME_FIXTURE["sha256"],
+            }
+            oracle["execution_bounds"]["executor"] = SEARCH_UI_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [SEARCH_UI_RUNTIME_VERIFIER]
+            oracle["execution_bounds"]["max_duration_seconds"] = 180
+            oracle["cleanup"]["mutation"] = "read_only"
+            oracle["cleanup"]["targets"] = []
+            oracle["cleanup"]["allowlist"] = []
+            oracle["cleanup"]["pre_state"] = (
+                "the UI, ingress, and Agent identities, source locks, critic "
+                "defaults, and both sealed Search dependency packages must match "
+                "the reviewed contract"
+            )
+            oracle["cleanup"]["restore"] = (
+                "no server restore action: all interception and presentation "
+                "fixtures are isolated to a discarded browser context"
+            )
+            oracle["cleanup"]["executor"] = SEARCH_UI_RUNTIME_EXECUTOR
+            oracle["cleanup"]["postcondition_collectors"] = [SEARCH_UI_RUNTIME_VERIFIER]
+            oracle["cleanup"]["postconditions"] = [
+                "the isolated browser and temporary screenshot are absent",
+                "the UI, ingress, and Agent runtime identities match pre-state exactly",
+                "the current selected-object and prior real critic evidence still verify",
+                "no server-side sensor, stream, index, report, rule, incident, image, volume, container, or configuration changed",
+                "all unexpected browser diagnostics and non-loopback traffic remain absent",
+            ]
+            oracle["acceptance_readiness"] = {
+                "classification": "executor_ready",
+                "blockers": [],
+            }
         if _is_current_ui_dashboard_runtime(capability):
             oracle["fixture"]["materialization"] = {
                 "path": UI_DASHBOARD_RUNTIME_FIXTURE["path"],
@@ -3372,9 +3555,7 @@ def compile_plan(
                 "sha256": UI_DASHBOARD_RUNTIME_FIXTURE["sha256"],
             }
             oracle["execution_bounds"]["executor"] = UI_DASHBOARD_RUNTIME_EXECUTOR
-            oracle["execution_bounds"]["collectors"] = [
-                UI_DASHBOARD_RUNTIME_VERIFIER
-            ]
+            oracle["execution_bounds"]["collectors"] = [UI_DASHBOARD_RUNTIME_VERIFIER]
             oracle["execution_bounds"]["max_duration_seconds"] = 120
             oracle["cleanup"]["mutation"] = "read_only"
             oracle["cleanup"]["targets"] = []
@@ -3406,12 +3587,8 @@ def compile_plan(
                 "generator": UI_GLOBAL_CHAT_RUNTIME_EXECUTOR,
                 "sha256": UI_GLOBAL_CHAT_RUNTIME_FIXTURE["sha256"],
             }
-            oracle["execution_bounds"]["executor"] = (
-                UI_GLOBAL_CHAT_RUNTIME_EXECUTOR
-            )
-            oracle["execution_bounds"]["collectors"] = [
-                UI_GLOBAL_CHAT_RUNTIME_VERIFIER
-            ]
+            oracle["execution_bounds"]["executor"] = UI_GLOBAL_CHAT_RUNTIME_EXECUTOR
+            oracle["execution_bounds"]["collectors"] = [UI_GLOBAL_CHAT_RUNTIME_VERIFIER]
             oracle["execution_bounds"]["max_duration_seconds"] = 180
             oracle["cleanup"]["mutation"] = "read_only"
             oracle["cleanup"]["targets"] = []
@@ -3704,6 +3881,10 @@ def validate(
             )
         capability_id = item["capability_id"]
         override = LOCAL_RUNTIME_WORKLOAD_OVERRIDES.get(capability_id)
+        if _is_current_search_backend_runtime(ledger_by_id[capability_id]) or (
+            _is_current_search_ui_runtime(ledger_by_id[capability_id])
+        ):
+            override = None
         mv3dt_runtime = MV3DT_RUNTIME_FIXTURES.get(capability_id)
         if is_spatial_ai_core_stage1_binding(ledger_by_id[capability_id], item):
             expected_actions = 7
@@ -3729,6 +3910,10 @@ def validate(
             expected_actions = OFFICIAL_EDGE_MODEL_RUNTIME_MAX_ACTIONS
         elif _is_current_rt_embed_runtime(ledger_by_id[capability_id]):
             expected_actions = RT_EMBED_CURRENT_RUNTIME_MAX_ACTIONS
+        elif _is_current_search_backend_runtime(ledger_by_id[capability_id]):
+            expected_actions = SEARCH_BACKEND_RUNTIME_MAX_ACTIONS
+        elif _is_current_search_ui_runtime(ledger_by_id[capability_id]):
+            expected_actions = SEARCH_UI_RUNTIME_MAX_ACTIONS
         elif _is_current_ui_dashboard_runtime(ledger_by_id[capability_id]):
             expected_actions = UI_DASHBOARD_RUNTIME_MAX_ACTIONS
         elif _is_current_ui_global_chat_runtime(ledger_by_id[capability_id]):

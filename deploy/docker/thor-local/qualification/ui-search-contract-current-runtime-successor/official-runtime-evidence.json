@@ -1,0 +1,117 @@
+{
+  "artifact_digests": {
+    "contract_sha256": "71dec2ac7077970df573a6d09181db546ff21d58ac7783fb42601eb75e111230",
+    "evidence_builder_sha256": "07cd40213183e2afb4e6c85df5afa4f214c054d3d0eb85010cce4c1811649297",
+    "executor_sha256": "d9c4a7608f4bb55847f4b46eb00251e298d38b86ba9666e1399dffcecf4d5057",
+    "harness_sha256": "de42182a83702bf5d9960220dd380bd9999fe5f34a2194a2e57c1b6abc4d8537",
+    "receipt_schema_sha256": "a90b00352474426b20815bccdc7bc7e340056ebcd1469b31b42c557a8d8aa413",
+    "runtime_receipt_sha256": "314c314b6250310d6ab2a7cd0ed5d92463a971dac829599e240c506d06fc0867"
+  },
+  "browser_diagnostics": {
+    "console_errors": 0,
+    "console_warnings": 0,
+    "expected_chat_audio_probe_abort_requests": 1,
+    "failing_http_responses": 0,
+    "framework_error_overlays": 0,
+    "non_loopback_requests": 0,
+    "non_loopback_responses": 0,
+    "non_loopback_websockets": 0,
+    "page_errors": 0,
+    "unexpected_request_failures": 0
+  },
+  "capability_id": "runtime.ui.search-tab",
+  "captured_at": "2026-08-11T01:46:23.380469+00:00",
+  "cleanup": {
+    "critic_runtime_evidence_reverified": true,
+    "isolated_browser_closed": true,
+    "mutation": "read_only",
+    "persistent_mutations": 0,
+    "runtime_unchanged": true,
+    "selected_object_evidence_reverified": true,
+    "temporary_screenshot_deleted_after_hashing": true
+  },
+  "dependency_evidence": {
+    "real_local_critic": {
+      "confirmed_card_count": 1,
+      "contract_sha256": "742799e8e476dac50a9e455eb564fea6b6c31fe85aa07dd9776a1f802931d632",
+      "passed": true,
+      "runtime_receipt_sha256": "2beafd270ffcec7d28896af7f1a7eb12692d04dadcb7f7073aec4f8df6923451",
+      "verifier_sha256": "9b38ca5bc0d623d763ea6d6ad28328fa5a2ef70fb9797926fd3fa954d901e9e2"
+    },
+    "selected_object": {
+      "contract_sha256": "2d5d087e60c132b2d38e2d15a8c6c449dc1020a77309ca9b0ac47d120ad65b64",
+      "official_runtime_evidence_sha256": "b24996b847de95e6d573787e971025638a0ba67ec9fca8daaaac7d9e26e4e1a5",
+      "passed": true,
+      "verifier_sha256": "41f4a32eda3a941ef8e835a31af35ecc6a579a5bf145b75a41d0345849905163"
+    }
+  },
+  "evidence_id": "thor-ui-search-contract-current-runtime-20260810",
+  "oracle_id": "oracle.runtime.ui.search-tab",
+  "package_id": "thor-ui-search-contract-current-runtime-successor-v1",
+  "promotion_eligible": true,
+  "qualification": {
+    "below_minimum_clamped": true,
+    "browser_actions": 12,
+    "browser_local_time_without_conversion": true,
+    "critic_default_enabled": true,
+    "critic_disable_env_supported": true,
+    "critic_input_order": [
+      "rejected",
+      "confirmed",
+      "unverified"
+    ],
+    "critic_rendered_card_count": 3,
+    "critic_rendered_order": [
+      "confirmed",
+      "unverified",
+      "rejected"
+    ],
+    "critic_similarities": [
+      -1,
+      0.25,
+      1
+    ],
+    "desktop_horizontal_overflow": false,
+    "human_facing_source_name_preserved": true,
+    "loopback_browser_responses": 35,
+    "mobile_horizontal_overflow": false,
+    "persistent_mutations": 0,
+    "real_local_confirmed_critic_cards": 1,
+    "real_video_analytics_frames_status": 200,
+    "real_vst_picture_status": 200,
+    "search_request_agent_mode_false": true,
+    "search_request_empty_sources": true,
+    "search_request_null_time_range": true,
+    "search_request_top_k": 1,
+    "search_request_video_file": true,
+    "search_tab_rendered": true,
+    "selectable_bbox_count": 2,
+    "selected_object_seed_excluded": true,
+    "similarity_contract_range": [
+      -1,
+      1
+    ],
+    "similarity_default": -1,
+    "source_default_video_file": true,
+    "source_round_trip_passed": true,
+    "source_values": [
+      "Video File",
+      "RTSP"
+    ],
+    "top_k_default": 10,
+    "top_k_minimum": 1
+  },
+  "retention": {
+    "raw_prompts": false,
+    "raw_responses": false,
+    "raw_runtime_identifiers": false,
+    "raw_urls": false,
+    "raw_vectors": false
+  },
+  "schema_version": 1,
+  "status": "passed_current",
+  "supporting_capability_id": "runtime.agent.search-profile",
+  "target_commit": "4d7454fc8c0d8295ea8e381366757cd137238577",
+  "target_release": "VSS 3.2.1",
+  "warehouse_sample_bundle": "excluded"
+}

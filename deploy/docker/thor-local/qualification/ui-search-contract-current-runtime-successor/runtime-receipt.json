@@ -1,0 +1,252 @@
+{
+  "bounds": {
+    "browser_actions": 12,
+    "browser_duration_ms": 7280,
+    "duration_ms": 7968,
+    "loopback_browser_responses": 35,
+    "max_browser_actions": 18,
+    "max_browser_duration_ms": 120000,
+    "max_duration_ms": 180000,
+    "max_loopback_browser_responses": 250,
+    "max_persistent_mutations": 0,
+    "persistent_mutations": 0
+  },
+  "captured_at": "2026-08-11T01:46:23.380469+00:00",
+  "cleanup": {
+    "critic_runtime_evidence_reverified": true,
+    "isolated_browser_closed": true,
+    "mutation": "read_only",
+    "persistent_mutations": 0,
+    "runtime_unchanged": true,
+    "selected_object_evidence_reverified": true,
+    "temporary_screenshot_deleted_after_hashing": true,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "contract_sha256": "71dec2ac7077970df573a6d09181db546ff21d58ac7783fb42601eb75e111230",
+  "executor_sha256": "d9c4a7608f4bb55847f4b46eb00251e298d38b86ba9666e1399dffcecf4d5057",
+  "harness_sha256": "de42182a83702bf5d9960220dd380bd9999fe5f34a2194a2e57c1b6abc4d8537",
+  "identity": {
+    "authorization_token_sha256": "00ec0f7e0760460d16e2f349c740198952da834fe621599c6c8da75397caa7f0",
+    "browser": {
+      "browser_executable_sha256": "187b178dc80a432fbe99ecf7e293f39a7fcd2224aef1395472525afcfbf70984",
+      "browser_version_sha256": "08582aa65552ab5710023eb71f08d991b30c9dd710da10949512a0fb20294866",
+      "node_sha256": "2b0f6efd95c31c5538cc0a9042d5d13b7328cffcfdcc409f2e2ef336c4402086",
+      "playwright_entry_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+      "ui_origin_sha256": "db604082b8b63636b4ce557eaadc9c91e5c4d9166a79d5c0d7a7969762521bfa"
+    },
+    "browser_process": {
+      "exit_code": 0,
+      "stderr_bytes": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_bytes": 2907,
+      "stdout_sha256": "0f9173b2a94a087167f7eb587133672758906a24fc2c12c215436c8ce9a691c7"
+    },
+    "critic_runtime_evidence": {
+      "confirmed_card_count": 1,
+      "contract_sha256": "742799e8e476dac50a9e455eb564fea6b6c31fe85aa07dd9776a1f802931d632",
+      "passed": true,
+      "runtime_receipt_sha256": "2beafd270ffcec7d28896af7f1a7eb12692d04dadcb7f7073aec4f8df6923451",
+      "verifier_output_sha256": "d8225e9630df65520e7d2a883f449d40b8aa29aa9ac0c9d7f71b7b065d117823",
+      "verifier_sha256": "9b38ca5bc0d623d763ea6d6ad28328fa5a2ef70fb9797926fd3fa954d901e9e2"
+    },
+    "selected_object_evidence": {
+      "contract_sha256": "2d5d087e60c132b2d38e2d15a8c6c449dc1020a77309ca9b0ac47d120ad65b64",
+      "official_runtime_evidence_sha256": "b24996b847de95e6d573787e971025638a0ba67ec9fca8daaaac7d9e26e4e1a5",
+      "passed": true,
+      "verifier_output_sha256": "c177b949733f7f18a24ad42186f6723716a30b2163218f3f86d1b9c83750548b",
+      "verifier_sha256": "41f4a32eda3a941ef8e835a31af35ecc6a579a5bf145b75a41d0345849905163"
+    },
+    "source_hashes": {
+      "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca",
+      "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6",
+      "deploy/docker/services/agent/compose.yml": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7",
+      "deploy/docker/thor-local/qualification/ui-search-playwright-runtime-successor/contract.json": "742799e8e476dac50a9e455eb564fea6b6c31fe85aa07dd9776a1f802931d632",
+      "deploy/docker/thor-local/qualification/ui-search-playwright-runtime-successor/runtime-receipt.json": "2beafd270ffcec7d28896af7f1a7eb12692d04dadcb7f7073aec4f8df6923451",
+      "deploy/docker/thor-local/qualification/ui-search-playwright-runtime-successor/verify.py": "9b38ca5bc0d623d763ea6d6ad28328fa5a2ef70fb9797926fd3fa954d901e9e2",
+      "deploy/docker/thor-local/qualification/ui-search-selected-object-current-runtime-successor/contract.json": "2d5d087e60c132b2d38e2d15a8c6c449dc1020a77309ca9b0ac47d120ad65b64",
+      "deploy/docker/thor-local/qualification/ui-search-selected-object-current-runtime-successor/official-runtime-evidence.json": "b24996b847de95e6d573787e971025638a0ba67ec9fca8daaaac7d9e26e4e1a5",
+      "deploy/docker/thor-local/qualification/ui-search-selected-object-current-runtime-successor/verify.py": "41f4a32eda3a941ef8e835a31af35ecc6a579a5bf145b75a41d0345849905163",
+      "services/agent/src/vss_agents/agents/critic_agent.py": "eb9d6f0aa5f9f4d361f7a0f980a89c908c60705dbcd8e437892e08cdbe77448f",
+      "services/agent/src/vss_agents/agents/data_models.py": "9f876e342bb21cd80bcdd292306441f40b6a3686e70c446a2009ab50ab929ed1",
+      "services/agent/src/vss_agents/agents/top_agent.py": "a4aa4a051b589858078a7941cf32de8128d7c22f574bdf718974a70cb0c140c4",
+      "services/agent/src/vss_agents/tools/search.py": "6c23fd3854cad838311bcaf4cd5636db3ed02831a659a21b2d8e411841962aca",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/SearchComponent.tsx": "9ca6bc45a8d6c02831225f9715a2d4e254128cb2304b28ba8ea2a34d3b294143",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/FilterPopover.tsx": "4457be7ee50bef9118ecb05cf9cd1e258a3cd35e5717d8e09056d01326d79d46",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/SearchHeader.tsx": "b494f8f8eed7775cf7633dcf6de20d85824a44b038e75ae286753f8b75261be5",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/VideoSearchList.tsx": "e9696dffbeb68b28020d6ef47aa32c0ed7597e118c977a6adc2efa1cfee3efa8",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useFilter.ts": "076fc93804a93b93bc0c75b20657a732f94615fd74393b0bb8e47b2b607d4b25",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f",
+      "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/utils/Formatter.ts": "09c197c5ef76b9881d541b73fce4c3b9f863fdc58387baee9beb8128c7544036"
+    }
+  },
+  "package_id": "thor-ui-search-contract-current-runtime-successor-v1",
+  "post_state": {
+    "critic": {
+      "compose_default_enabled": true,
+      "disable_env_supported": true,
+      "profile_default_enabled": true,
+      "request_default_enabled": true,
+      "runtime_default_enabled": true
+    },
+    "runtime": {
+      "vss-agent": {
+        "configured_image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+        "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "993cb911ca3b1ee11851c823997df969890b4f8281ecae4383760da70d17980a"
+      },
+      "vss-agent-ui": {
+        "configured_image": "vss-agent-ui:thor-local",
+        "image_id": "sha256:c8401bb9a31c1ab4f3d016468088f6840ec971b1ce943f3dab3616f2cf5e63a2",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "38371f82eaec639ac45ea692a06f031a8720c2082c850ec9eed2ca94f9e58303"
+      },
+      "vss-haproxy-ingress": {
+        "configured_image": "haproxy:3.0-alpine",
+        "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "e568d4a62c11b428b6364e5154181fc0eb9cfe35c465831ff5a28e3165bf89a0"
+      }
+    }
+  },
+  "pre_state": {
+    "critic": {
+      "compose_default_enabled": true,
+      "disable_env_supported": true,
+      "profile_default_enabled": true,
+      "request_default_enabled": true,
+      "runtime_default_enabled": true
+    },
+    "runtime": {
+      "vss-agent": {
+        "configured_image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+        "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "993cb911ca3b1ee11851c823997df969890b4f8281ecae4383760da70d17980a"
+      },
+      "vss-agent-ui": {
+        "configured_image": "vss-agent-ui:thor-local",
+        "image_id": "sha256:c8401bb9a31c1ab4f3d016468088f6840ec971b1ce943f3dab3616f2cf5e63a2",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "38371f82eaec639ac45ea692a06f031a8720c2082c850ec9eed2ca94f9e58303"
+      },
+      "vss-haproxy-ingress": {
+        "configured_image": "haproxy:3.0-alpine",
+        "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true,
+        "started_at_sha256": "e568d4a62c11b428b6364e5154181fc0eb9cfe35c465831ff5a28e3165bf89a0"
+      }
+    }
+  },
+  "promotion_eligible": true,
+  "receipt_schema_sha256": "a90b00352474426b20815bccdc7bc7e340056ebcd1469b31b42c557a8d8aa413",
+  "schema_version": 1,
+  "status": "passed_current_candidate",
+  "target_commit": "4d7454fc8c0d8295ea8e381366757cd137238577",
+  "ui_semantics": {
+    "actions": 12,
+    "critic_contract": {
+      "fixture_response_intercepted_once": true,
+      "fixture_response_sha256": "a8c9c85a483ccfa66c1b0d45007bfebf9037a8a0fd1c6b72b469f0263a2156f5",
+      "fixture_response_status": 200,
+      "input_order": [
+        "rejected",
+        "confirmed",
+        "unverified"
+      ],
+      "rendered_card_count": 3,
+      "rendered_order": [
+        "confirmed",
+        "unverified",
+        "rejected"
+      ],
+      "similarities": [
+        -1,
+        0.25,
+        1
+      ]
+    },
+    "desktop": {
+      "overflow": {
+        "body": 1440,
+        "document": 1440,
+        "viewport": 1440
+      },
+      "screenshot": {
+        "bytes": 81996,
+        "sha256": "c1f6d67a505d196acc02b97f002dee3cf3bd96340df822f3e1098011f992068e"
+      }
+    },
+    "diagnostics": {
+      "console_error_hashes": [],
+      "console_warning_hashes": [],
+      "expected_audio_probe_abort_count": 1,
+      "failing_response_hashes": [],
+      "framework_error_overlay_count": 0,
+      "non_loopback_request_count": 0,
+      "non_loopback_response_count": 0,
+      "non_loopback_websocket_count": 0,
+      "page_error_hashes": [],
+      "request_failure_hashes": [],
+      "response_status_counts": {
+        "200": 34,
+        "206": 1
+      }
+    },
+    "filter_contract": {
+      "defaults": {
+        "similarity": -1,
+        "top_k": 10
+      },
+      "top_k_minimum": 1,
+      "top_k_minimum_selected": true
+    },
+    "mobile": {
+      "overflow": {
+        "body": 390,
+        "document": 390,
+        "viewport": 390
+      }
+    },
+    "page_identity": {
+      "initial_content_bytes": 86,
+      "initial_content_sha256": "cf19fdb7cd317d3c17ed938c77ef559553db6ed6bf843d6cc6a8bc368e0d9e24",
+      "search_component_visible": true
+    },
+    "request_contract": {
+      "agent_mode_false": true,
+      "body_sha256": "cbf42990b950d044fe194d0fd2e73a77d71e7bbc48ab7e8921e131762eed2811",
+      "empty_video_sources": true,
+      "null_time_range": true,
+      "query_bytes": 22,
+      "query_sha256": "7c8a2c020264937e1f1d6e6f40038f7a617e1db116edfc746a45fb5a1d9b52cf",
+      "source_type_video_file": true,
+      "top_k": 1
+    },
+    "source_contract": {
+      "default_video_file": true,
+      "rtsp_and_video_file_round_trip": true,
+      "values": [
+        "Video File",
+        "RTSP"
+      ]
+    },
+    "time_contract": {
+      "browser_time_zone_sha256": "feaa40fb2ab0c6f6d7450a4d2d6007390256a6f0f32ae74878c1cca0e88503ee",
+      "literal_local_time_sha256": "3f6f9d10381c5f4a67ab79993342217baa629000a2f17ca4c4cf57768a9864c6",
+      "local_time_without_offset_conversion": true
+    }
+  }
+}

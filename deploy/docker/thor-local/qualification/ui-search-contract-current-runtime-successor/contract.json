@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "package_id": "thor-ui-search-contract-current-runtime-successor-v1",
+  "capability_id": "runtime.ui.search-tab",
+  "supporting_capability_id": "runtime.agent.search-profile",
+  "oracle_id": "oracle.runtime.ui.search-tab",
+  "target_commit": "4d7454fc8c0d8295ea8e381366757cd137238577",
+  "mode": "authorization-gated-read-only-isolated-playwright-numeric-loopback-runtime",
+  "default_execution_enabled": false,
+  "authorization": {
+    "acknowledgement": "I_ACK_UI_SEARCH_CONTRACT_CURRENT_RUNTIME_READ_ONLY"
+  },
+  "capability_contract": {
+    "critic": {
+      "default_enabled": true,
+      "disable_env": "ENABLE_CRITIC=false",
+      "sort_order": [
+        "confirmed",
+        "unverified",
+        "rejected"
+      ]
+    },
+    "image_search_requires": [
+      "mediaWithObjectsBbox",
+      "mdx_frames_endpoint",
+      "vst_picture_api"
+    ],
+    "similarity_range": [
+      -1,
+      1
+    ],
+    "sources": {
+      "default": "Video File",
+      "values": [
+        "Video File",
+        "RTSP"
+      ]
+    },
+    "time_zone": "browser_local_no_conversion",
+    "top_k": {
+      "default": 10,
+      "minimum": 1
+    }
+  },
+  "browser_flow": [
+    "search-tab",
+    "source-default-and-two-option-round-trip",
+    "top-k-default-and-minimum-request",
+    "three-verdict-critic-render-and-sort",
+    "browser-local-time-without-offset-conversion",
+    "desktop-and-mobile-overflow",
+    "diagnostics-and-read-only-postcondition"
+  ],
+  "selected_object_evidence": {
+    "package_id": "thor-ui-search-selected-object-current-runtime-successor-v1",
+    "contract_sha256": "2d5d087e60c132b2d38e2d15a8c6c449dc1020a77309ca9b0ac47d120ad65b64",
+    "official_runtime_evidence_sha256": "b24996b847de95e6d573787e971025638a0ba67ec9fca8daaaac7d9e26e4e1a5",
+    "verifier_sha256": "41f4a32eda3a941ef8e835a31af35ecc6a579a5bf145b75a41d0345849905163",
+    "required_status": "passed"
+  },
+  "critic_runtime_evidence": {
+    "package_id": "thor-ui-search-playwright-runtime-successor-v1",
+    "contract_sha256": "742799e8e476dac50a9e455eb564fea6b6c31fe85aa07dd9776a1f802931d632",
+    "runtime_receipt_sha256": "2beafd270ffcec7d28896af7f1a7eb12692d04dadcb7f7073aec4f8df6923451",
+    "verifier_sha256": "9b38ca5bc0d623d763ea6d6ad28328fa5a2ef70fb9797926fd3fa954d901e9e2",
+    "required_status": "partial_current_candidate",
+    "required_confirmed_cards": 1
+  },
+  "fixture": {
+    "query_contract": {
+      "sha256": "7c8a2c020264937e1f1d6e6f40038f7a617e1db116edfc746a45fb5a1d9b52cf",
+      "bytes": 22
+    },
+    "response_input_order": [
+      "rejected",
+      "confirmed",
+      "unverified"
+    ],
+    "expected_render_order": [
+      "confirmed",
+      "unverified",
+      "rejected"
+    ],
+    "literal_local_time": "23:45:10",
+    "browser_time_zone": "America/Toronto",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "browser": {
+    "ui_origin_sha256": "db604082b8b63636b4ce557eaadc9c91e5c4d9166a79d5c0d7a7969762521bfa",
+    "node_path": "/usr/bin/node",
+    "node_sha256": "2b0f6efd95c31c5538cc0a9042d5d13b7328cffcfdcc409f2e2ef336c4402086",
+    "playwright_entry_path": "/home/nvidia/cti-saa-thor/scene-analyzer-agent/node_modules/.pnpm/playwright@1.61.1/node_modules/playwright/index.mjs",
+    "playwright_entry_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+    "browser_executable_path": "/snap/bin/chromium",
+    "browser_executable_sha256": "187b178dc80a432fbe99ecf7e293f39a7fcd2224aef1395472525afcfbf70984",
+    "browser_version_sha256": "08582aa65552ab5710023eb71f08d991b30c9dd710da10949512a0fb20294866"
+  },
+  "bounds": {
+    "max_duration_ms": 180000,
+    "max_browser_duration_ms": 120000,
+    "max_browser_actions": 18,
+    "max_loopback_browser_responses": 250,
+    "max_harness_output_bytes": 1048576,
+    "max_screenshot_bytes": 8388608,
+    "max_persistent_mutations": 0
+  },
+  "runtime": {
+    "ui": {
+      "container": "vss-agent-ui",
+      "configured_image": "vss-agent-ui:thor-local",
+      "image_id": "sha256:c8401bb9a31c1ab4f3d016468088f6840ec971b1ce943f3dab3616f2cf5e63a2"
+    },
+    "ui_ingress": {
+      "container": "vss-haproxy-ingress",
+      "configured_image": "haproxy:3.0-alpine",
+      "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f"
+    },
+    "agent": {
+      "container": "vss-agent",
+      "configured_image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+      "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1"
+    }
+  },
+  "source_locks": [
+    {
+      "path": "services/agent/src/vss_agents/agents/top_agent.py",
+      "sha256": "a4aa4a051b589858078a7941cf32de8128d7c22f574bdf718974a70cb0c140c4"
+    },
+    {
+      "path": "services/agent/src/vss_agents/agents/critic_agent.py",
+      "sha256": "eb9d6f0aa5f9f4d361f7a0f980a89c908c60705dbcd8e437892e08cdbe77448f"
+    },
+    {
+      "path": "services/agent/src/vss_agents/agents/data_models.py",
+      "sha256": "9f876e342bb21cd80bcdd292306441f40b6a3686e70c446a2009ab50ab929ed1"
+    },
+    {
+      "path": "services/agent/src/vss_agents/tools/search.py",
+      "sha256": "6c23fd3854cad838311bcaf4cd5636db3ed02831a659a21b2d8e411841962aca"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/SearchComponent.tsx",
+      "sha256": "9ca6bc45a8d6c02831225f9715a2d4e254128cb2304b28ba8ea2a34d3b294143"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/SearchHeader.tsx",
+      "sha256": "b494f8f8eed7775cf7633dcf6de20d85824a44b038e75ae286753f8b75261be5"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/FilterPopover.tsx",
+      "sha256": "4457be7ee50bef9118ecb05cf9cd1e258a3cd35e5717d8e09056d01326d79d46"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/components/VideoSearchList.tsx",
+      "sha256": "e9696dffbeb68b28020d6ef47aa32c0ed7597e118c977a6adc2efa1cfee3efa8"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useFilter.ts",
+      "sha256": "076fc93804a93b93bc0c75b20657a732f94615fd74393b0bb8e47b2b607d4b25"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/hooks/useSearch.ts",
+      "sha256": "0f11b5fd8133a9c0cc0fe7033adb78fb11bbd526ddcaffc49c64f2ac5c9a1f2f"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/search/lib-src/utils/Formatter.ts",
+      "sha256": "09c197c5ef76b9881d541b73fce4c3b9f863fdc58387baee9beb8128c7544036"
+    },
+    {
+      "path": "deploy/docker/services/agent/compose.yml",
+      "sha256": "bf5916a4defa81deb5ff9481a522cc9e1012f92a681b3d713089addaccf0bce7"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
+      "sha256": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+      "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/ui-search-selected-object-current-runtime-successor/contract.json",
+      "sha256": "2d5d087e60c132b2d38e2d15a8c6c449dc1020a77309ca9b0ac47d120ad65b64"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/ui-search-selected-object-current-runtime-successor/official-runtime-evidence.json",
+      "sha256": "b24996b847de95e6d573787e971025638a0ba67ec9fca8daaaac7d9e26e4e1a5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/ui-search-selected-object-current-runtime-successor/verify.py",
+      "sha256": "41f4a32eda3a941ef8e835a31af35ecc6a579a5bf145b75a41d0345849905163"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/ui-search-playwright-runtime-successor/contract.json",
+      "sha256": "742799e8e476dac50a9e455eb564fea6b6c31fe85aa07dd9776a1f802931d632"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/ui-search-playwright-runtime-successor/runtime-receipt.json",
+      "sha256": "2beafd270ffcec7d28896af7f1a7eb12692d04dadcb7f7073aec4f8df6923451"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/ui-search-playwright-runtime-successor/verify.py",
+      "sha256": "9b38ca5bc0d623d763ea6d6ad28328fa5a2ef70fb9797926fd3fa954d901e9e2"
+    }
+  ],
+  "runtime_boundary": {
+    "numeric_loopback_browser_only": true,
+    "ambient_proxies_allowed": false,
+    "redirects_allowed": false,
+    "browser_install_allowed": false,
+    "service_lifecycle_allowed": false,
+    "persistent_mutation_allowed": false,
+    "vss_agent_generate_allowed": false,
+    "temporary_screenshot_outside_repository": true,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "cleanup": {
+    "mutation": "read_only",
+    "postconditions": [
+      "the isolated browser and temporary screenshot are absent",
+      "the UI, ingress, and Agent runtime identities are unchanged",
+      "the current selected-object and prior critic evidence still verify",
+      "no server-side resource or configuration is created, changed, or deleted"
+    ]
+  },
+  "forbidden_actions": [
+    "VSS Agent /generate",
+    "VSS service lifecycle mutation",
+    "sensor, stream, index, report, rule, incident, container, image, or volume mutation",
+    "warehouse sample bundle access",
+    "external network request",
+    "ambient proxy use",
+    "redirect following",
+    "browser installation",
+    "raw prompt, response, endpoint, credential, or runtime identifier retention"
+  ]
+}

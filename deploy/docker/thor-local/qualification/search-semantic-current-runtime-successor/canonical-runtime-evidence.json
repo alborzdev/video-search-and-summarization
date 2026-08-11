@@ -1,0 +1,313 @@
+{
+  "assertions": [
+    {
+      "expected": 1,
+      "id": "contract-01",
+      "observation": "contract_identity/contract/attribute/minimum_clip_seconds",
+      "observed": 1,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "append",
+      "id": "contract-02",
+      "observation": "contract_identity/contract/attribute/multiple_attributes",
+      "observed": "append",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-03",
+      "observation": "contract_identity/contract/attribute/same_object_merge",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "rrf",
+      "id": "contract-04",
+      "observation": "contract_identity/contract/default_rank_fusion",
+      "observed": "rrf",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "fuse",
+      "id": "contract-05",
+      "observation": "contract_identity/contract/fusion/multiple_attributes",
+      "observed": "fuse",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "embedding",
+        "rerank_or_fallback"
+      ],
+      "id": "contract-06",
+      "observation": "contract_identity/contract/fusion/order",
+      "observed": [
+        "embedding",
+        "rerank_or_fallback"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": 1,
+      "id": "contract-07",
+      "observation": "contract_identity/contract/fusion/same_video_top_k",
+      "observed": 1,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "object_level_knn",
+      "id": "contract-08",
+      "observation": "contract_identity/contract/image/retrieval",
+      "observed": "object_level_knn",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "contract-09",
+      "observation": "contract_identity/contract/image/selected_bbox",
+      "observed": true,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "mdx-embed-filtered-*",
+        "mdx-behavior-*",
+        "mdx-raw-*"
+      ],
+      "id": "contract-10",
+      "observation": "contract_identity/contract/indices",
+      "observed": [
+        "mdx-embed-filtered-*",
+        "mdx-behavior-*",
+        "mdx-raw-*"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "/api/v1/search",
+        "/api/v1/search/attribute",
+        "/api/v1/search/fusion",
+        "/api/v1/search/image"
+      ],
+      "id": "contract-11",
+      "observation": "contract_identity/contract/routes",
+      "observed": [
+        "/api/v1/search",
+        "/api/v1/search/attribute",
+        "/api/v1/search/fusion",
+        "/api/v1/search/image"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-12",
+      "observation": "contract_identity/contract/wave3_acceptance/executor_ready",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": false,
+      "id": "contract-13",
+      "observation": "contract_identity/contract/wave3_acceptance/materialized",
+      "observed": false,
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": "agent-smartcity",
+      "id": "contract-14",
+      "observation": "contract_identity/contract/wave3_acceptance/package",
+      "observed": "agent-smartcity",
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": [
+        "search-documents-and-bboxes"
+      ],
+      "id": "contract-15",
+      "observation": "contract_identity/contract/wave3_acceptance/planning_requirement_ids",
+      "observed": [
+        "search-documents-and-bboxes"
+      ],
+      "operator": "equals",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-02",
+      "observation": "semantic_result",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    },
+    {
+      "expected": true,
+      "id": "observation-03",
+      "observation": "boundary_pair",
+      "observed": true,
+      "operator": "recorded_pass",
+      "result": "pass"
+    }
+  ],
+  "capability_id": "runtime.agent.search-profile",
+  "cleanup": {
+    "allowlist": [
+      "mdx-behavior-2025-01-01",
+      "mdx-raw-2025-01-01"
+    ],
+    "mutation": "namespaced_and_reversible",
+    "postconditions": [
+      {
+        "description": "both fixed executor-owned indices are absent in two delayed checks",
+        "result": "pass"
+      },
+      {
+        "description": "the analytics frame query is empty",
+        "result": "pass"
+      },
+      {
+        "description": "the pre-existing embedding index UUID and document count match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "all five related runtime identities, start times, health states, restart counts, and OOM states match pre-state exactly",
+        "result": "pass"
+      },
+      {
+        "description": "no sensor, stream, service lifecycle, or Warehouse sample mutation occurred",
+        "result": "pass"
+      }
+    ],
+    "pre_state_captured": true,
+    "result": "pass",
+    "targets": [
+      "mdx-behavior-2025-01-01",
+      "mdx-raw-2025-01-01"
+    ]
+  },
+  "fixture": {
+    "id": "fixture.runtime.agent.search-profile",
+    "path": "deploy/docker/thor-local/qualification/search-semantic-current-runtime-successor/contract.json",
+    "sha256": "7276e965e723e8beab3dc443ad70caa5927c5c11c6036817610c117a7dd0b658"
+  },
+  "observations": [
+    {
+      "id": "contract_identity",
+      "result": "pass",
+      "value": {
+        "contract": {
+          "attribute": {
+            "minimum_clip_seconds": 1,
+            "multiple_attributes": "append",
+            "same_object_merge": true
+          },
+          "default_rank_fusion": "rrf",
+          "fusion": {
+            "multiple_attributes": "fuse",
+            "order": [
+              "embedding",
+              "rerank_or_fallback"
+            ],
+            "same_video_top_k": 1
+          },
+          "image": {
+            "retrieval": "object_level_knn",
+            "selected_bbox": true
+          },
+          "indices": [
+            "mdx-embed-filtered-*",
+            "mdx-behavior-*",
+            "mdx-raw-*"
+          ],
+          "routes": [
+            "/api/v1/search",
+            "/api/v1/search/attribute",
+            "/api/v1/search/fusion",
+            "/api/v1/search/image"
+          ],
+          "wave3_acceptance": {
+            "executor_ready": false,
+            "materialized": false,
+            "package": "agent-smartcity",
+            "planning_requirement_ids": [
+              "search-documents-and-bboxes"
+            ]
+          }
+        },
+        "contract_sha256": "7276e965e723e8beab3dc443ad70caa5927c5c11c6036817610c117a7dd0b658",
+        "qualification_summary_sha256": "ce8810fc78e80b7bd2e2afd19cb58befe71daaab3fde0e3b8a20561a4bb58d07",
+        "receipt_sha256": "57a8d5e9dccaac3d613b842f8aac99c71859734857adb9975bfbbdae54796bae",
+        "source_lock_count": 8
+      }
+    },
+    {
+      "id": "semantic_result",
+      "result": "pass",
+      "value": {
+        "canonical_routes_observed": [
+          "/api/v1/search",
+          "/api/v1/search/attribute",
+          "/api/v1/search/fusion",
+          "/api/v1/search/image"
+        ],
+        "embedding_dimensions": 1152,
+        "fusion_order": [
+          "embedding",
+          "rerank_or_fallback"
+        ],
+        "fusion_top_k_limited": true,
+        "minimum_clip_extended": true,
+        "multiple_attributes_append": true,
+        "multiple_attributes_fuse": true,
+        "same_object_merge": true,
+        "selected_bbox_present": true,
+        "selected_object_seed_excluded": true
+      }
+    },
+    {
+      "id": "boundary_pair",
+      "result": "pass",
+      "value": {
+        "adjacent_invalid_status": 422,
+        "analytics_frames_empty": true,
+        "exact_owned_resources_only": true,
+        "owned_indices_absent_twice": true,
+        "persistent_stream_mutations": 0,
+        "positive_route_count": 4,
+        "read_only_embedding_index_unchanged": true,
+        "service_lifecycle_mutations": 0
+      }
+    }
+  ],
+  "oracle_id": "oracle.runtime.agent.search-profile",
+  "oracle_sha256": "250642a8fe42d8d8c848a5f4252fb88c4d56f65ad65d49f1e568e4c55ee465b4",
+  "result": "passed_current",
+  "scenario_ids": [
+    "search-archive-workflows",
+    "rest-api-operation-matrix",
+    "oracle.runtime.agent.search-profile"
+  ],
+  "schema_version": 1,
+  "target": {
+    "captured_on": "2026-07-31",
+    "ga_commit": "7640d917047cf7b0fd3085eefb8282754b56bc94",
+    "main_commit": "7732edf8fb38ef896b20f2a0a6a701a4db10dc57",
+    "product_version": "3.2.1"
+  }
+}

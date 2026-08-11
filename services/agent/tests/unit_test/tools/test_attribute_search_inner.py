@@ -64,6 +64,7 @@ class TestEnrichAttributeResults:
             await enrich_attribute_results(results, "http://vst-internal:30888")
 
         assert [r.metadata.sensor_id for r in results] == ["stream-1", "stream-2"]
+        assert [r.metadata.video_name for r in results] == ["camera-1", "camera-2"]
         assert results[0].screenshot_url == (
             "http://vst-internal:30888/vst/api/v1/replay/stream/stream-1/picture?startTime=2025-01-01T00:00:00Z"
         )
@@ -89,6 +90,7 @@ class TestEnrichAttributeResults:
         assert results[0].metadata.sensor_id == "camera-1"
         assert results[0].screenshot_url is None
         assert results[1].metadata.sensor_id == "stream-2"
+        assert results[1].metadata.video_name == "camera-2"
         assert results[1].screenshot_url == (
             "http://vst-internal:30888/vst/api/v1/replay/stream/stream-2/picture?startTime=2025-01-01T00:00:01Z"
         )
@@ -124,6 +126,7 @@ class TestEnrichAttributeResults:
 
         mock_get_stream_id.assert_awaited_once_with("camera-1", "http://vst-internal:30888")
         assert results[0].metadata.sensor_id == "stream-1"
+        assert results[0].metadata.video_name == "camera-1"
         assert results[0].screenshot_url == (
             "https://7777-brev.brevlab.com/vst/api/v1/replay/stream/stream-1/picture?startTime=2025-01-01T00:00:00Z"
         )
@@ -142,6 +145,7 @@ class TestEnrichAttributeResults:
 
         mock_get_stream_id.assert_awaited_once_with("camera-1", "https://7777-brev.brevlab.com")
         assert results[0].metadata.sensor_id == "stream-1"
+        assert results[0].metadata.video_name == "camera-1"
         assert results[0].screenshot_url == (
             "https://7777-brev.brevlab.com/vst/api/v1/replay/stream/stream-1/picture?startTime=2025-01-01T00:00:00Z"
         )
