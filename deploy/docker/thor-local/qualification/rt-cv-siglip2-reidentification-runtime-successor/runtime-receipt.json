@@ -1,0 +1,147 @@
+{
+  "artifact_identity": {
+    "embedding_dimension": 1152,
+    "engine_sha256": "9950c674b3fa4ca48efe5dd433c0236b8c2ae64dcbbdf5d0f6f1b0cc889e5630",
+    "model": "siglip_v2",
+    "onnx_sha256": "425134cfd151d19e15da5cddb2a90d557991964c251f99d874e5f5f7a39a3927",
+    "tokenizer_bundle_exact": true,
+    "tokenizer_file_count": 5,
+    "version": "v1.1",
+    "weights_sha256": "e3dca7562d65a3b97a61ce7d0575d1c64b9248d8d48273ff4eadb666e78cccf3"
+  },
+  "capability_ids": [
+    "manifest-entry.rt-cv-2d.03-siglip2-re-identification"
+  ],
+  "cleanup": {
+    "consumer_group_delete_attempted": true,
+    "failures": [],
+    "main_rt_cv_preserved_exactly": true,
+    "main_rt_cv_stream_count": 0,
+    "owned_containers_absent": true,
+    "owned_topic_absent": true,
+    "paused_workloads_preserved_exactly": true,
+    "temporary_directory_removed": true
+  },
+  "configuration": {
+    "exact_siglip2_bundle_selected": true,
+    "legacy_256d_tracker_embedding_excluded": true,
+    "legacy_tracker_output_tensor": 0,
+    "legacy_tracker_reid_type": 0,
+    "main_config_sha256": "41e689ae72e5369aa7c22328c3f86ead2321fdf97bbcbc38baefd970d84c4ea0",
+    "text_model_name": "siglip2-onnx",
+    "text_onnx_path": "/opt/storage/siglip_v2_v1.1.onnx",
+    "tokenizer_path": "/opt/storage/siglip_v2_v1.1_tokenizer/",
+    "tracker_config_sha256": "0e30c646ba0d946740830e8f2ab7d98c4643490d724cb1fb863830957312d183",
+    "vision_backend": "tensorrt",
+    "vision_engine_path": "/opt/storage/siglip_v2_v1.1.onnx_batch16.plan",
+    "vision_ofa_predict": 1,
+    "vision_onnx_path": "/opt/storage/siglip_v2_v1.1.onnx",
+    "vision_smart_infer": 1
+  },
+  "contract_sha256": "7af6d0b07db3515794f909eacfcd2b8c040961e3edd24ba57e385e77c464242c",
+  "fixture": {
+    "byte_count": 3586536,
+    "codec_h264": true,
+    "content_sha256": "765de706f16789ac2a653e5f60986daa6949288f46458b803020f5b8cc6fc6cc",
+    "duration_seconds": 14,
+    "expected_frames": 140,
+    "fps": 10,
+    "generation_method_exact": true,
+    "height": 1080,
+    "occlusion_frames": 60,
+    "reentry_start_frame": 100,
+    "source_segment_frames": 40,
+    "tcp_probe_passed": false,
+    "warehouse_sample_bundle": "excluded",
+    "width": 1920
+  },
+  "images": {
+    "consumer": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "mediamtx": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "rt_cv": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    }
+  },
+  "lifecycle": {
+    "active_metrics": {
+      "fps_positive": true,
+      "frame_number_positive": true,
+      "latency_finite": true,
+      "stream_count": 1
+    },
+    "add": {
+      "http_status": 200,
+      "request_sha256": "7393bbd6ecd27ee589cb67ee20214d37315ddc54989a5ba8b64991a539355d43",
+      "response_sha256": "42d87d839ef1d8c93c02436b58ef7319a67b0e2af44675dbe59074c8df28640a"
+    },
+    "final_stream_count": 0,
+    "oom_killed": false,
+    "remove": {
+      "http_status": 200,
+      "request_sha256": "3c53798a38d3d7f4f3954ac8de0830dc3af0e2d9818cc480e109b5f4cbf38afd",
+      "response_sha256": "1a839da2e13d67c1fe0b991952160dcf0e05d06ab4c46ec89f2396f38562287b"
+    },
+    "restart_count": 0,
+    "runtime_log_sha256": "07d8bea5db2b51f4a41e475421cedc383113059957160bd2eabf2e808ba9073e"
+  },
+  "negative_preflight": {
+    "exact_bundle_still_valid_after_negative": true,
+    "mismatched_tokenizer_rejected": true,
+    "rejected_before_container_launch": true
+  },
+  "official_indices": [
+    378
+  ],
+  "package_id": "rt-cv-siglip2-reidentification-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "main_rt_cv_stream_mutations": 0,
+    "main_vios_stream_mutations": 0,
+    "network_downloads": 0,
+    "raw_broker_messages_retained": false,
+    "raw_camera_ids_retained": false,
+    "raw_embeddings_retained": false,
+    "raw_stream_urls_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "reidentification": {
+    "bbox_iou_min": 0.9342690020681759,
+    "detection_messages": 156,
+    "distinct_track_ids_reassociated": true,
+    "embedding_dimensions": [
+      1152
+    ],
+    "finite_embeddings": true,
+    "first_cycle_person_embedding_count": 70,
+    "full_two_cycle_boundary_observed": true,
+    "known_scene_bbox_matches": 70,
+    "negative_comparison_count": 0,
+    "negative_cosine_median": null,
+    "numeric_frame_ids": true,
+    "occlusion_detection_silence_frames": 62,
+    "positive_cosine_max": 1.0000000000000002,
+    "positive_cosine_median": 1.0,
+    "positive_cosine_min": 0.9999663695948764,
+    "positive_negative_median_margin": null,
+    "second_cycle_person_embedding_count": 71,
+    "selected_identity_pair_occurrences": 45,
+    "tracker_identity_preserved": false
+  },
+  "runtime": {
+    "docker_cgroup_driver": "cgroupfs",
+    "docker_commands": 48,
+    "duration_seconds": 96.961393,
+    "free_bytes_after": 23232413696,
+    "http_requests": 67
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-cv-siglip2-reidentification-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-cv-2d.03-siglip2-re-identification"
+  ],
+  "official_indices": [378],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "cedb03606",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/executor.py",
+      "sha256": "c9bbf58b566b32861e5bfc8ad3507ed2091ffb70e8c95f42fb57a3dc5e44b8cd"
+    },
+    {
+      "path": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+      "sha256": "83b4cf5836d876a97bbb54a553845e3daaec8908e57440b09fd8154a519abe62"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/scripts/ds-search-start.sh",
+      "sha256": "0ecbfec36d65d534ee7b443a5d91cb96bdbaa918adeb706baf804f33f7e7684a"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-main-config.txt",
+      "sha256": "b6d976e2aaf759e893b7524eaa60148420991d140c41e921609b993963310ce0"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-nvdcf-accuracy-tracker-config.yml",
+      "sha256": "04cfeca34856d41be013fd999b5e2309c63a83d9c80dbd58f36596c33237cd77"
+    },
+    {
+      "path": "tools/message-broker-consumers/schema_pb2.py",
+      "sha256": "bfa3727bc8c72cd1975eb3169caae768a0e6a4e7fb0f72aa610747cf5ddde87c"
+    }
+  ],
+  "assets": {
+    "fixture": {
+      "path": "services/alert/warmup/test.mp4",
+      "bytes": 2575454,
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    },
+    "detector_onnx": {
+      "path": "deploy/docker/data-dir/models/rtdetr_warehouse_v1.0.2.fp16.onnx",
+      "bytes": 87890438,
+      "sha256": "0a22264542514149bead6e8582499d9758d51e3fde2892d9d2cc378a60426267"
+    },
+    "detector_engine": {
+      "path": "deploy/docker/data-dir/models/rtdetr_warehouse_v1.0.2.fp16.onnx_b16_gpu0_fp16.engine",
+      "bytes": 98142212,
+      "sha256": "13bd7a67da81b1a9d59a7a1b5cd577d8208ef1a77b5568f5b02f00590d484e69"
+    },
+    "siglip_onnx": {
+      "path": "deploy/docker/data-dir/models/siglip_v2_v1.1.onnx",
+      "bytes": 1297605,
+      "sha256": "425134cfd151d19e15da5cddb2a90d557991964c251f99d874e5f5f7a39a3927"
+    },
+    "siglip_weights": {
+      "path": "deploy/docker/data-dir/models/siglip_v2_v1.1_weights.bin",
+      "bytes": 4542683848,
+      "sha256": "e3dca7562d65a3b97a61ce7d0575d1c64b9248d8d48273ff4eadb666e78cccf3"
+    },
+    "siglip_engine": {
+      "path": "deploy/docker/data-dir/models/siglip_v2_v1.1.onnx_batch16.plan",
+      "bytes": 862405164,
+      "sha256": "9950c674b3fa4ca48efe5dd433c0236b8c2ae64dcbbdf5d0f6f1b0cc889e5630"
+    }
+  },
+  "tokenizer": {
+    "path": "deploy/docker/data-dir/models/siglip_v2_v1.1_tokenizer",
+    "files": {
+      "chat_template.jinja": {
+        "bytes": 591,
+        "sha256": "ecd6ae513fe103f0eb62e8ab5bfa8d0fe45c1074fa398b089c93a7e70c15cfd6"
+      },
+      "special_tokens_map.json": {
+        "bytes": 636,
+        "sha256": "baec30ea10906f16adb8c18af7a34023002c1746542612b8b41c9f09e1351351"
+      },
+      "tokenizer.json": {
+        "bytes": 34363136,
+        "sha256": "1de36bea24b2b16b25cc27a4b5ea9c86e2e2ecc3c018cb7d5338f0030d84e4bb"
+      },
+      "tokenizer.model": {
+        "bytes": 4241003,
+        "sha256": "61a7b147390c64585d6c3543dd6fc636906c9af3865a5548f27f31aee1d4c8e2"
+      },
+      "tokenizer_config.json": {
+        "bytes": 46594,
+        "sha256": "b8da4388ad2e2cd6d3493ecd75cc703be6b88dabc9fbf1c4681f267a36c28b60"
+      }
+    }
+  },
+  "images": {
+    "rt_cv": {
+      "ref": "nvcr.io/nvidia/vss-core/vss-rt-cv:3.2.1",
+      "id": "sha256:1a8b9879686f21cb6b9589d6139b5ac2eb960f1520aa3b4bb5f079d05fee9458"
+    },
+    "consumer": {
+      "ref": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+      "id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"
+    },
+    "mediamtx": {
+      "ref": "bluenviron/mediamtx:1",
+      "id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06"
+    }
+  },
+  "execution": {
+    "acknowledgement": "I_ACK_ISOLATED_SIGLIP2_REENTRY_EMBEDDING_PROOF_AND_EXACT_CLEANUP",
+    "endpoint": "http://127.0.0.1:19003",
+    "port": 19003,
+    "container": "vss-rtcv-siglip2-reid-qual",
+    "consumer": "vss-rtcv-siglip2-reid-consumer",
+    "mediamtx_container": "vss-rtcv-siglip2-reid-mediamtx",
+    "rtsp_port": 18557,
+    "topic": "rtcv-siglip2-reid-qual-raw",
+    "group": "rtcv-siglip2-reid-qual",
+    "main_container": "vss-rtvi-cv",
+    "main_endpoint": "http://127.0.0.1:9000",
+    "paused_workloads": [
+      "datasheet-vllm-30",
+      "datasheet-embedding",
+      "ctai-vision-playground-api"
+    ],
+    "config_source": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs",
+    "search_start": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/scripts/ds-search-start.sh",
+    "shared_start": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+    "models_dir": "deploy/docker/data-dir/models",
+    "source_segment_frames": 40,
+    "occlusion_frames": 60,
+    "reentry_start_frame": 100,
+    "expected_frames": 140,
+    "minimum_free_bytes": 10737418240,
+    "max_duration_seconds": 300,
+    "max_docker_commands": 80,
+    "max_http_requests": 120
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "main_rt_cv_stream_mutations": 0,
+    "main_vios_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded",
+    "network_downloads": 0,
+    "raw_camera_ids_retained": false,
+    "raw_stream_urls_retained": false,
+    "raw_embeddings_retained": false,
+    "raw_broker_messages_retained": false,
+    "credentials_retained": false
+  }
+}
