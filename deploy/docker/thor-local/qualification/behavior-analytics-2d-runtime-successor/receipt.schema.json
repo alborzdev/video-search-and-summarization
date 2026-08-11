@@ -8,15 +8,13 @@
     "package_id": {"const": "behavior-analytics-2d-runtime-successor"},
     "capability_ids": {
       "const": [
-        "runtime.behavior.pipeline",
-        "runtime.behavior.events-incidents",
         "manifest-entry.behavior-analytics.01-events-and-incidents",
         "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
         "manifest-entry.behavior-analytics.03-tripwires-and-rois",
         "manifest-entry.behavior-analytics.04-proximity-and-clustering"
       ]
     },
-    "official_indices": {"const": [203, 206, 392, 393, 394, 395]},
+    "official_indices": {"const": [392, 393, 394, 395]},
     "status": {"const": "passed"},
     "contract_sha256": {"$ref": "#/$defs/hash"},
     "captured_at": {"type": "string", "format": "date-time"},

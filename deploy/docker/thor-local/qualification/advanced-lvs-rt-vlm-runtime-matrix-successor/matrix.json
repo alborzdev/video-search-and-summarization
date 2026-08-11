@@ -55,50 +55,6 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
-      "advertised_literal": "Behavior analytics processing pipeline",
-      "canonical_runtime_state": "not_qualified",
-      "canonical_state_advanced": false,
-      "capability_id": "runtime.behavior.pipeline",
-      "feature_id": "behavior-analytics",
-      "official_index": 203,
-      "overlay_runtime_state": "passed_current_thor",
-      "runtime_evidence": {
-        "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
-        "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
-        "package_id": "behavior-analytics-2d-runtime-successor",
-        "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
-        "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
-        "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
-        "receipt_status": "passed"
-      },
-      "warehouse_sample_bundle": "excluded"
-    },
-    {
-      "acceptance_class": "required_local",
-      "admission_state": "runtime_evidence_available_not_canonically_admitted",
-      "advertised_literal": "Behavior events and incidents",
-      "canonical_runtime_state": "not_qualified",
-      "canonical_state_advanced": false,
-      "capability_id": "runtime.behavior.events-incidents",
-      "feature_id": "behavior-analytics",
-      "official_index": 206,
-      "overlay_runtime_state": "passed_current_thor",
-      "runtime_evidence": {
-        "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
-        "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
-        "package_id": "behavior-analytics-2d-runtime-successor",
-        "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
-        "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
-        "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
-        "receipt_status": "passed"
-      },
-      "warehouse_sample_bundle": "excluded"
-    },
-    {
-      "acceptance_class": "required_local",
-      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "structured output",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -944,12 +900,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
-        "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+        "contract_sha256": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957",
         "package_id": "behavior-analytics-2d-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
-        "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+        "receipt_schema_sha256": "4ec65b7c87cd7463ab7842c440cbe5e65870a992d3f5157b2cc68410ea68ee16",
+        "receipt_sha256": "b36262e99620b3769f020ef9ef4f4144dd6e0d5280a205c2e10c3e415657cbe0",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -966,12 +922,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
-        "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+        "contract_sha256": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957",
         "package_id": "behavior-analytics-2d-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
-        "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+        "receipt_schema_sha256": "4ec65b7c87cd7463ab7842c440cbe5e65870a992d3f5157b2cc68410ea68ee16",
+        "receipt_sha256": "b36262e99620b3769f020ef9ef4f4144dd6e0d5280a205c2e10c3e415657cbe0",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -988,12 +944,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
-        "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+        "contract_sha256": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957",
         "package_id": "behavior-analytics-2d-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
-        "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+        "receipt_schema_sha256": "4ec65b7c87cd7463ab7842c440cbe5e65870a992d3f5157b2cc68410ea68ee16",
+        "receipt_sha256": "b36262e99620b3769f020ef9ef4f4144dd6e0d5280a205c2e10c3e415657cbe0",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1010,12 +966,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
-        "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+        "contract_sha256": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957",
         "package_id": "behavior-analytics-2d-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
-        "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+        "receipt_schema_sha256": "4ec65b7c87cd7463ab7842c440cbe5e65870a992d3f5157b2cc68410ea68ee16",
+        "receipt_sha256": "b36262e99620b3769f020ef9ef4f4144dd6e0d5280a205c2e10c3e415657cbe0",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1424,8 +1380,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 64,
-    "row_count": 64,
+    "passed_current_thor": 62,
+    "row_count": 62,
     "warehouse_sample_bundle": "excluded"
   }
 }

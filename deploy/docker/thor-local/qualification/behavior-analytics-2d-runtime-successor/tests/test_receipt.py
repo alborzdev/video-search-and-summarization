@@ -16,7 +16,7 @@ SPEC.loader.exec_module(verifier)
 def test_receipt_is_schema_valid_source_locked_and_contract_bound() -> None:
     receipt = verifier.verify()
     assert receipt["contract_sha256"] == verifier._sha(HERE / "contract.json")
-    assert receipt["official_indices"] == [203, 206, 392, 393, 394, 395]
+    assert receipt["official_indices"] == [392, 393, 394, 395]
 
 
 def test_full_replay_reconciles_with_decoded_outputs() -> None:

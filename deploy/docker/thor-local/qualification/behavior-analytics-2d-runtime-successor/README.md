@@ -21,4 +21,5 @@ pytest -q deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-s
 
 This proof is intentionally limited to Kafka-backed `warehouse_2d` behavior. It
 does not claim 3D/MV3DT, Redis/MQTT, dynamic configuration/calibration, 3D space
-utilization, or custom-sink coverage.
+utilization, custom-sink coverage, the complete multi-stage pipeline row, or the
+generic all-violation-types events/incidents row.

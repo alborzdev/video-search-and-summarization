@@ -2,16 +2,14 @@
   "schema_version": 1,
   "package_id": "behavior-analytics-2d-runtime-successor",
   "capability_ids": [
-    "runtime.behavior.pipeline",
-    "runtime.behavior.events-incidents",
     "manifest-entry.behavior-analytics.01-events-and-incidents",
     "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
     "manifest-entry.behavior-analytics.03-tripwires-and-rois",
     "manifest-entry.behavior-analytics.04-proximity-and-clustering"
   ],
-  "official_indices": [203, 206, 392, 393, 394, 395],
+  "official_indices": [392, 393, 394, 395],
   "status": "passed",
-  "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+  "contract_sha256": "61298fb27178909c05866dd0c306c9afbd61e16f5038d1507e15f26c21fa9957",
   "captured_at": "2026-08-11T19:29:23Z",
   "runtime": {
     "architecture": "arm64",

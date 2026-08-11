@@ -3,14 +3,12 @@
   "package_id": "behavior-analytics-2d-runtime-successor",
   "target_release": "VSS 3.2.1",
   "capability_ids": [
-    "runtime.behavior.pipeline",
-    "runtime.behavior.events-incidents",
     "manifest-entry.behavior-analytics.01-events-and-incidents",
     "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
     "manifest-entry.behavior-analytics.03-tripwires-and-rois",
     "manifest-entry.behavior-analytics.04-proximity-and-clustering"
   ],
-  "official_indices": [203, 206, 392, 393, 394, 395],
+  "official_indices": [392, 393, 394, 395],
   "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
   "source_locks": [
     {

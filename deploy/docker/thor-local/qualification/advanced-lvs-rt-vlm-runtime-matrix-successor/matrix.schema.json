@@ -22,12 +22,12 @@
       "type": "object", "additionalProperties": false,
       "required": ["row_count", "passed_current_thor", "canonical_promotions", "agent_generate_calls", "warehouse_sample_bundle"],
       "properties": {
-        "row_count": {"const": 64}, "passed_current_thor": {"const": 64}, "canonical_promotions": {"const": 0},
+        "row_count": {"const": 62}, "passed_current_thor": {"const": 62}, "canonical_promotions": {"const": 0},
         "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
       }
     },
     "rows": {
-      "type": "array", "minItems": 64, "maxItems": 64,
+      "type": "array", "minItems": 62, "maxItems": 62,
       "items": {"$ref": "#/$defs/row"}
     }
   },
