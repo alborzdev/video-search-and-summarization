@@ -35,10 +35,14 @@ class RtCvRadioClipRuntimeQualificationTests(unittest.TestCase):
         Draft202012Validator(self.schema).validate(self.receipt)
 
     def test_contract_and_receipt_bind_exact_row(self) -> None:
-        expected = ["manifest-entry.rt-cv-2d.02-radio-clip"]
-        self.assertEqual(self.contract["official_indices"], [377])
+        expected = [
+            "behavior.rt-cv.smart-infer",
+            "behavior.rt-cv.ofa-predict",
+            "manifest-entry.rt-cv-2d.02-radio-clip",
+        ]
+        self.assertEqual(self.contract["official_indices"], [69, 70, 377])
         self.assertEqual(self.contract["capability_ids"], expected)
-        self.assertEqual(self.receipt["official_indices"], [377])
+        self.assertEqual(self.receipt["official_indices"], [69, 70, 377])
         self.assertEqual(self.receipt["capability_ids"], expected)
         self.assertEqual(self.receipt["status"], "passed")
         self.assertEqual(self.receipt["contract_sha256"], sha(PACKAGE / "contract.json"))
@@ -92,6 +96,8 @@ class RtCvRadioClipRuntimeQualificationTests(unittest.TestCase):
         config = self.receipt["configuration"]
         self.assertTrue(config["exact_radio_clip_bundle_selected"])
         self.assertTrue(config["legacy_256d_tracker_embedding_excluded"])
+        self.assertEqual(config["vision_smart_infer"], 1)
+        self.assertEqual(config["vision_ofa_predict"], 1)
         negative = self.receipt["negative_preflight"]
         self.assertTrue(negative["mismatched_tokenizer_rejected"])
         self.assertTrue(negative["rejected_before_container_launch"])
@@ -141,7 +147,7 @@ class RtCvRadioClipRuntimeQualificationTests(unittest.TestCase):
         )
         plan = json.loads(result.stdout)
         self.assertEqual(plan["status"], "ready")
-        self.assertEqual(plan["official_indices"], [377])
+        self.assertEqual(plan["official_indices"], [69, 70, 377])
         self.assertTrue(plan["exact_radio_clip_bundle_present"])
         self.assertFalse(plan["writes_or_lifecycle_actions"])
 

@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-18",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-19",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -8,6 +8,50 @@
   },
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
   "rows": [
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "RT-CV smart vision-encoder inference default",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "behavior.rt-cv.smart-infer",
+      "feature_id": "release-behavior-contracts",
+      "official_index": 69,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
+        "contract_sha256": "6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e",
+        "package_id": "rt-cv-radio-clip-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
+        "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "RT-CV optical-flow-assisted prediction default",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "behavior.rt-cv.ofa-predict",
+      "feature_id": "release-behavior-contracts",
+      "official_index": 70,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
+        "contract_sha256": "6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e",
+        "package_id": "rt-cv-radio-clip-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
+        "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
@@ -702,12 +746,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
-        "contract_sha256": "0e1d3242689ca7ef32bd43fdea817cda5f0fc6119e780a1ab7c5c713ef12d804",
+        "contract_sha256": "6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e",
         "package_id": "rt-cv-radio-clip-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "21a2536395a4f8377bbb8dfacec1e19b46de3326c8d522fc641bd5ab04247672",
-        "receipt_sha256": "e700dd0bacb0d89f38829a610b93ce24ea65af3ec168bc84f9684e38101c80cb",
+        "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
+        "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -830,8 +874,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 37,
-    "row_count": 37,
+    "passed_current_thor": 39,
+    "row_count": 39,
     "warehouse_sample_bundle": "excluded"
   }
 }

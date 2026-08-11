@@ -2,9 +2,11 @@
   "schema_version": 1,
   "package_id": "rt-cv-radio-clip-runtime-successor",
   "capability_ids": [
+    "behavior.rt-cv.smart-infer",
+    "behavior.rt-cv.ofa-predict",
     "manifest-entry.rt-cv-2d.02-radio-clip"
   ],
-  "official_indices": [377],
+  "official_indices": [69, 70, 377],
   "target_release": "VSS 3.2.1",
   "target_commit": "f548f56af",
   "ngc_source": {

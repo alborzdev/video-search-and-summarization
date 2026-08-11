@@ -6,8 +6,8 @@
   "properties": {
     "schema_version": {"const": 1},
     "package_id": {"const": "rt-cv-radio-clip-runtime-successor"},
-    "capability_ids": {"const": ["manifest-entry.rt-cv-2d.02-radio-clip"]},
-    "official_indices": {"const": [377]},
+    "capability_ids": {"const": ["behavior.rt-cv.smart-infer", "behavior.rt-cv.ofa-predict", "manifest-entry.rt-cv-2d.02-radio-clip"]},
+    "official_indices": {"const": [69, 70, 377]},
     "status": {"const": "passed"},
     "contract_sha256": {"$ref": "#/$defs/hash"},
     "runtime": {

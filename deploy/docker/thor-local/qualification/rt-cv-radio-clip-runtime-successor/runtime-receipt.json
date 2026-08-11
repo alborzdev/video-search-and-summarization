@@ -10,6 +10,8 @@
     "weights_sha256": "892a4b41a29bc61ca55c5f21ccf7cb72ca29ad6d232feb30219d35c5d1dc7d1f"
   },
   "capability_ids": [
+    "behavior.rt-cv.smart-infer",
+    "behavior.rt-cv.ofa-predict",
     "manifest-entry.rt-cv-2d.02-radio-clip"
   ],
   "cleanup": {
@@ -38,7 +40,7 @@
     "vision_onnx_path": "/opt/storage/radio-clip_v1.0.onnx",
     "vision_smart_infer": 1
   },
-  "contract_sha256": "0e1d3242689ca7ef32bd43fdea817cda5f0fc6119e780a1ab7c5c713ef12d804",
+  "contract_sha256": "6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e",
   "fixture": {
     "byte_count": 3586536,
     "codec_h264": true,
@@ -89,7 +91,7 @@
       "response_sha256": "1a839da2e13d67c1fe0b991952160dcf0e05d06ab4c46ec89f2396f38562287b"
     },
     "restart_count": 0,
-    "runtime_log_sha256": "21500a0bbc0165d2e2e832f3a5fadc3f1bc1be01901220a14f14ec122431922a"
+    "runtime_log_sha256": "6d92bb100856d2f40630de3bc0dd1241a12674c4956f90e96c34e9ccba61b215"
   },
   "negative_preflight": {
     "exact_bundle_still_valid_after_negative": true,
@@ -101,6 +103,8 @@
     "rejected_before_container_launch": true
   },
   "official_indices": [
+    69,
+    70,
     377
   ],
   "package_id": "rt-cv-radio-clip-runtime-successor",
@@ -117,7 +121,7 @@
     "warehouse_sample_bundle": "excluded"
   },
   "reidentification": {
-    "bbox_iou_min": 0.9717545425046873,
+    "bbox_iou_min": 0.9056144527691483,
     "detection_messages": 156,
     "distinct_track_ids_reassociated": true,
     "embedded_object_types": [
@@ -134,11 +138,11 @@
     "negative_comparison_count": 0,
     "negative_cosine_median": null,
     "numeric_frame_ids": true,
-    "object_track_pairs_with_embeddings": 17,
+    "object_track_pairs_with_embeddings": 15,
     "occlusion_detection_silence_frames": 62,
-    "positive_cosine_max": 0.9999989304855814,
-    "positive_cosine_median": 0.9999986928972935,
-    "positive_cosine_min": 0.9999958799323881,
+    "positive_cosine_max": 0.9999664492625492,
+    "positive_cosine_median": 0.9998744330310916,
+    "positive_cosine_min": 0.9997989146647734,
     "positive_negative_median_margin": null,
     "second_cycle_person_embedding_count": 70,
     "selected_identity_pair_occurrences": 45,
@@ -147,8 +151,8 @@
   "runtime": {
     "docker_cgroup_driver": "cgroupfs",
     "docker_commands": 48,
-    "duration_seconds": 99.334343,
-    "free_bytes_after": 16336470016,
+    "duration_seconds": 99.12791,
+    "free_bytes_after": 16330854400,
     "http_requests": 70
   },
   "schema_version": 1,

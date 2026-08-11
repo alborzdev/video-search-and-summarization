@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-18",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-19",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -21,6 +21,48 @@
     "warehouse_sample_bundle": "excluded"
   },
   "entries": [
+    {
+      "official_index": 69,
+      "capability_id": "behavior.rt-cv.smart-infer",
+      "advertised_literal": "RT-CV smart vision-encoder inference default",
+      "package_id": "rt-cv-radio-clip-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
+      "contract_sha256": "6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/configuration/vision_smart_infer": 1,
+        "/configuration/exact_radio_clip_bundle_selected": true,
+        "/reidentification/finite_embeddings": true,
+        "/reidentification/embedding_dimensions": [1536],
+        "/cleanup/main_rt_cv_preserved_exactly": true,
+        "/policy/main_rt_cv_stream_mutations": 0
+      }
+    },
+    {
+      "official_index": 70,
+      "capability_id": "behavior.rt-cv.ofa-predict",
+      "advertised_literal": "RT-CV optical-flow-assisted prediction default",
+      "package_id": "rt-cv-radio-clip-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
+      "contract_sha256": "6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/configuration/vision_ofa_predict": 1,
+        "/configuration/exact_radio_clip_bundle_selected": true,
+        "/reidentification/finite_embeddings": true,
+        "/reidentification/embedding_dimensions": [1536],
+        "/cleanup/main_rt_cv_preserved_exactly": true,
+        "/policy/main_rt_cv_stream_mutations": 0
+      }
+    },
     {
       "official_index": 299,
       "capability_id": "manifest-entry.video-summarization-file.03-structured-output",
@@ -756,11 +798,11 @@
       "advertised_literal": "RADIO-CLIP",
       "package_id": "rt-cv-radio-clip-runtime-successor",
       "contract_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/contract.json",
-      "contract_sha256": "0e1d3242689ca7ef32bd43fdea817cda5f0fc6119e780a1ab7c5c713ef12d804",
+      "contract_sha256": "6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e",
       "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/runtime-receipt.json",
-      "receipt_sha256": "e700dd0bacb0d89f38829a610b93ce24ea65af3ec168bc84f9684e38101c80cb",
+      "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
       "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
-      "receipt_schema_sha256": "21a2536395a4f8377bbb8dfacec1e19b46de3326c8d522fc641bd5ab04247672",
+      "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
       "receipt_status": "passed",
       "required_assertions": {
         "/artifact_identity/model": "radio-clip",
@@ -775,7 +817,7 @@
         "/reidentification/embedding_dimensions": [1536],
         "/reidentification/finite_embeddings": true,
         "/reidentification/embedded_object_types": ["Pallet", "Person"],
-        "/reidentification/object_track_pairs_with_embeddings": 17,
+        "/reidentification/object_track_pairs_with_embeddings": 15,
         "/cleanup/main_rt_cv_preserved_exactly": true,
         "/cleanup/main_rt_cv_stream_count": 0,
         "/policy/main_rt_cv_stream_mutations": 0,

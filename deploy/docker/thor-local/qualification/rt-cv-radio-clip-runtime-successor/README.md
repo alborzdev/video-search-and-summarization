@@ -1,6 +1,7 @@
 # RT-CV RADIO-CLIP runtime qualification
 
-This package retains the Thor runtime proof for official VSS 3.2.1 row 377,
+This package retains the Thor runtime proof for official VSS 3.2.1 rows 69,
+70, and 377: `behavior.rt-cv.smart-infer`, `behavior.rt-cv.ofa-predict`, and
 `manifest-entry.rt-cv-2d.02-radio-clip`.
 
 The executor launches an isolated copy of the exact cached VSS 3.2.1 RT-CV

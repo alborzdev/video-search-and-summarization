@@ -148,7 +148,10 @@ def build_matrix() -> dict[str, Any]:
             raise MatrixError("canonical candidate state unexpectedly changed")
         if canonical.get("acceptance_class") != "required_local":
             raise MatrixError("runtime overlay may only contain required-local capabilities")
-        if canonical.get("contract", {}).get("advertised_literal") != entry["advertised_literal"]:
+        canonical_literal = canonical.get("contract", {}).get("advertised_literal")
+        if canonical_literal is None:
+            canonical_literal = canonical.get("title")
+        if canonical_literal != entry["advertised_literal"]:
             raise MatrixError("advertised literal drifted")
         _validate_receipt(entry)
         rows.append(

@@ -80,8 +80,10 @@ def _verify_tokenizer(contract: dict[str, Any], root: Path) -> None:
 
 
 def _verify_static(contract: dict[str, Any]) -> None:
-    if contract["official_indices"] != [377] or contract["capability_ids"] != [
-        "manifest-entry.rt-cv-2d.02-radio-clip"
+    if contract["official_indices"] != [69, 70, 377] or contract["capability_ids"] != [
+        "behavior.rt-cv.smart-infer",
+        "behavior.rt-cv.ofa-predict",
+        "manifest-entry.rt-cv-2d.02-radio-clip",
     ]:
         raise QualificationError("official RADIO-CLIP row binding drifted")
     for lock in contract["source_locks"]:

@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_thirty_seven_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_thirty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382
+        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -281,7 +281,7 @@ def test_rt_cv_radio_clip_receipt_is_bound_to_exact_row() -> None:
     entry = next(
         entry
         for entry in contract["entries"]
-        if entry["package_id"] == "rt-cv-radio-clip-runtime-successor"
+        if entry["capability_id"] == "manifest-entry.rt-cv-2d.02-radio-clip"
     )
     assert entry["official_index"] == 377
     receipt = compiler._validate_receipt(entry)
@@ -293,6 +293,22 @@ def test_rt_cv_radio_clip_receipt_is_bound_to_exact_row() -> None:
     assert proof["object_track_pairs_with_embeddings"] >= 2
     assert receipt["negative_preflight"]["incompatible_dimension_configured"] == 1024
     assert receipt["negative_preflight"]["incompatible_dimension_rejected"] is True
+
+
+def test_rt_cv_smart_infer_and_ofa_receipt_is_bound_to_two_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["capability_id"]
+        in {"behavior.rt-cv.smart-infer", "behavior.rt-cv.ofa-predict"}
+    ]
+    assert [entry["official_index"] for entry in entries] == [69, 70]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+        assert receipt["configuration"]["vision_smart_infer"] == 1
+        assert receipt["configuration"]["vision_ofa_predict"] == 1
 
 
 def test_rt_cv_image_embedding_receipt_is_bound_to_exact_row() -> None:

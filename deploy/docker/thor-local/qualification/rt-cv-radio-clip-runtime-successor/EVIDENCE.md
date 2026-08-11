@@ -1,7 +1,7 @@
 # Evidence
 
-The isolated Thor run passed in 99.334343 seconds with Docker using the required
-`cgroupfs` driver and 16,336,470,016 bytes free afterward. It used the exact
+The isolated Thor run passed in 99.12791 seconds with Docker using the required
+`cgroupfs` driver and 16,330,854,400 bytes free afterward. It used the exact
 cached VSS 3.2.1 arm64 RT-CV, consumer, and MediaMTX images and the signed NGC
 `nvidia/tao/radio-clip:deployable_v1.0` artifact set. The ONNX, 5.49 GB external
 weights, five-file tokenizer, NGC export spec, and 1,336,318,724-byte Thor
@@ -9,14 +9,15 @@ TensorRT plan are byte- and SHA-256-locked.
 
 The real RTSP/Kafka/API run produced 156 detection messages. It attached finite
 1,536-dimensional RADIO-CLIP vectors to both `Pallet` and `Person` detections
-across 17 distinct object/track pairs. The two-cycle proof retained 70 person
+across 15 distinct object/track pairs. The two-cycle proof retained 70 person
 embeddings in each cycle, observed 62 detection-silent occlusion frames, and
 matched 70 known-scene bounding boxes. For the selected cross-cycle identity,
-45 comparisons produced cosine similarity from 0.9999958799323881 to
-0.9999989304855814 with median 0.9999986928972935. RADIO-CLIP appearance
+45 comparisons produced cosine similarity from 0.9997989146647734 to
+0.9999664492625492 with median 0.9998744330310916. RADIO-CLIP appearance
 embeddings re-associated the object even though the tracker assigned a new ID.
 
-The effective runtime configuration selected the documented `siglip2-onnx`
+The same live run proves official rows 69 and 70: the effective runtime
+configuration selected the documented `siglip2-onnx`
 combined-ONNX text path, RADIO-CLIP v1.0 ONNX/tokenizer, TensorRT vision plan,
 smart inference, and OFA prediction. Legacy 256-dimensional tracker embeddings
 were disabled. A corrupted tokenizer was rejected before launch. After runtime
@@ -33,7 +34,7 @@ mutation, or Warehouse sample access and retained no sensitive runtime payloads.
 
 Artifact locks:
 
-- contract: `0e1d3242689ca7ef32bd43fdea817cda5f0fc6119e780a1ab7c5c713ef12d804`
-- receipt schema: `21a2536395a4f8377bbb8dfacec1e19b46de3326c8d522fc641bd5ab04247672`
-- runtime receipt: `e700dd0bacb0d89f38829a610b93ce24ea65af3ec168bc84f9684e38101c80cb`
-- executor: `a8d80557fed8d3f47d259565a9fb2885c7a8682745abf94da43f81a17b6ad254`
+- contract: `6271f0913cab6ce73c4c41fa0b92dc19a3b79d58874e0354a4cff6cb5251c28e`
+- receipt schema: `f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330`
+- runtime receipt: `228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297`
+- executor: `389f4ba406b58e5ef3632abf6e19cd8e9265a79fa420c8c7d25e63a604f936d8`
