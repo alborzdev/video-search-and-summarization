@@ -1,0 +1,105 @@
+{
+  "budget": {
+    "docker_commands": 5,
+    "http_requests": 11,
+    "max_docker_commands": 5,
+    "max_http_requests": 11,
+    "max_model_requests": 1,
+    "max_support_processes": 1,
+    "model_requests": 1,
+    "support_processes_peak": 1
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.07-incidents",
+    "manifest-entry.rt-vlm-media.08-categories"
+  ],
+  "caption": {
+    "http_status": 200,
+    "model_exact": true,
+    "positive_verdict_present": true,
+    "primary_markers_present": [
+      true,
+      true,
+      true
+    ],
+    "request_sha256": "48c3764465f0bf1cb4e514cf18396e82591367bb064abdf8217b25a4efcf1eb4",
+    "response_sha256": "4ee2a43a46fc3d0c70ed2c0a11cb51496a322336789a5cb0f6eed48595cc288d",
+    "semantic_output_sha256": "5f6609f0716ffb206f9cdfbacbc97f177651e7982d58afd71983195637abd968",
+    "single_chunk": true
+  },
+  "cleanup": {
+    "append_only_kafka_record_count": 1,
+    "asset_statistics_restored_exactly": true,
+    "file_catalog_restored_exactly": true,
+    "health_contract_restored_exactly": true,
+    "model_inventory_restored_exactly": true,
+    "observer_stopped": true,
+    "owned_file_deleted": true,
+    "temporary_fixture_root_absent": true
+  },
+  "contract_sha256": "c889d05c1cdb4fab370f1f23e8ec78b50f8c4d0046a84044d0e0a24c5ccbf14d",
+  "duration_seconds": 5.138136,
+  "fixture": {
+    "byte_count": 75449,
+    "content_sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "duration_seconds": 9,
+    "primary_markers": [
+      "blue",
+      "green",
+      "red"
+    ]
+  },
+  "kafka_incident": {
+    "alert_category_info_exact": true,
+    "append_only_record_retained": true,
+    "category_exact": true,
+    "category_sha256": "80d7fa47d8b843c5b4965b81593d527e4bccfe1506341452824792288a61bc5a",
+    "chunk_identity_present": true,
+    "decode_failures": 0,
+    "future_records_seen": 1,
+    "individual_record_deletion_supported": false,
+    "is_anomaly": true,
+    "llm_query_present": true,
+    "llm_response_nonempty": true,
+    "owned_matching_records": 1,
+    "partition_count": 8,
+    "positive_trigger_present": true,
+    "protobuf_decoded": true,
+    "request_identity_present": true,
+    "status": "matched",
+    "stream_identity_present": true,
+    "topic_exact": true,
+    "verdict_confirmed": true
+  },
+  "official_indices": [
+    343,
+    344
+  ],
+  "package_id": "rt-vlm-incidents-categories-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "raw_incident_payload_retained": false,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_semantic_output_retained": false,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime_identity": {
+    "kafka_architecture_exact": true,
+    "kafka_healthy": true,
+    "kafka_image_exact": true,
+    "kafka_oom_killed": false,
+    "kafka_restart_count": 0,
+    "live_source_count": 5,
+    "live_sources_match_locks": true,
+    "rt_vlm_healthy": true,
+    "rt_vlm_image_exact": true,
+    "rt_vlm_oom_killed": false,
+    "rt_vlm_restart_count": 0
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_seventeen_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_nineteen_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 345, 347, 348, 349, 350, 353, 354, 367
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 367
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -115,6 +115,21 @@ def test_rtsp_receipt_is_bound_to_exact_row() -> None:
     assert entry["capability_id"] in receipt["capability_ids"]
     assert receipt["live_caption_sse"]["markers_in_chronological_order"] is True
     assert receipt["cleanup"]["owned_stream_absent"] is True
+
+
+def test_incident_category_receipt_is_bound_to_both_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-vlm-incidents-categories-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [343, 344]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+    assert receipt["kafka_incident"]["owned_matching_records"] == 1
+    assert receipt["cleanup"]["append_only_kafka_record_count"] == 1
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

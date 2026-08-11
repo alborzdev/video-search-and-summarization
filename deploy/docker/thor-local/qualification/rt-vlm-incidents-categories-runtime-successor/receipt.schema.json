@@ -1,0 +1,225 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_ids",
+    "official_indices",
+    "status",
+    "contract_sha256",
+    "duration_seconds",
+    "budget",
+    "runtime_identity",
+    "fixture",
+    "caption",
+    "kafka_incident",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-incidents-categories-runtime-successor"},
+    "capability_ids": {
+      "const": [
+        "manifest-entry.rt-vlm-media.07-incidents",
+        "manifest-entry.rt-vlm-media.08-categories"
+      ]
+    },
+    "official_indices": {"const": [343, 344]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_requests",
+        "max_http_requests",
+        "model_requests",
+        "max_model_requests",
+        "docker_commands",
+        "max_docker_commands",
+        "support_processes_peak",
+        "max_support_processes"
+      ],
+      "properties": {
+        "http_requests": {"const": 11},
+        "max_http_requests": {"const": 11},
+        "model_requests": {"const": 1},
+        "max_model_requests": {"const": 1},
+        "docker_commands": {"const": 5},
+        "max_docker_commands": {"const": 5},
+        "support_processes_peak": {"const": 1},
+        "max_support_processes": {"const": 1}
+      }
+    },
+    "runtime_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rt_vlm_healthy",
+        "rt_vlm_image_exact",
+        "rt_vlm_restart_count",
+        "rt_vlm_oom_killed",
+        "kafka_healthy",
+        "kafka_image_exact",
+        "kafka_architecture_exact",
+        "kafka_restart_count",
+        "kafka_oom_killed",
+        "live_source_count",
+        "live_sources_match_locks"
+      ],
+      "properties": {
+        "rt_vlm_healthy": {"const": true},
+        "rt_vlm_image_exact": {"const": true},
+        "rt_vlm_restart_count": {"const": 0},
+        "rt_vlm_oom_killed": {"const": false},
+        "kafka_healthy": {"const": true},
+        "kafka_image_exact": {"const": true},
+        "kafka_architecture_exact": {"const": true},
+        "kafka_restart_count": {"const": 0},
+        "kafka_oom_killed": {"const": false},
+        "live_source_count": {"const": 5},
+        "live_sources_match_locks": {"const": true}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["byte_count", "content_sha256", "duration_seconds", "primary_markers"],
+      "properties": {
+        "byte_count": {"const": 75449},
+        "content_sha256": {"const": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29"},
+        "duration_seconds": {"const": 9},
+        "primary_markers": {"const": ["blue", "green", "red"]}
+      }
+    },
+    "caption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "http_status",
+        "model_exact",
+        "single_chunk",
+        "positive_verdict_present",
+        "primary_markers_present",
+        "request_sha256",
+        "response_sha256",
+        "semantic_output_sha256"
+      ],
+      "properties": {
+        "http_status": {"const": 200},
+        "model_exact": {"const": true},
+        "single_chunk": {"const": true},
+        "positive_verdict_present": {"const": true},
+        "primary_markers_present": {"const": [true, true, true]},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "response_sha256": {"$ref": "#/$defs/hash"},
+        "semantic_output_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "kafka_incident": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "partition_count",
+        "future_records_seen",
+        "decode_failures",
+        "protobuf_decoded",
+        "category_exact",
+        "alert_category_info_exact",
+        "is_anomaly",
+        "verdict_confirmed",
+        "positive_trigger_present",
+        "request_identity_present",
+        "chunk_identity_present",
+        "stream_identity_present",
+        "llm_query_present",
+        "llm_response_nonempty",
+        "topic_exact",
+        "owned_matching_records",
+        "append_only_record_retained",
+        "individual_record_deletion_supported",
+        "category_sha256"
+      ],
+      "properties": {
+        "status": {"const": "matched"},
+        "partition_count": {"type": "integer", "minimum": 1},
+        "future_records_seen": {"type": "integer", "minimum": 1},
+        "decode_failures": {"type": "integer", "minimum": 0},
+        "protobuf_decoded": {"const": true},
+        "category_exact": {"const": true},
+        "alert_category_info_exact": {"const": true},
+        "is_anomaly": {"const": true},
+        "verdict_confirmed": {"const": true},
+        "positive_trigger_present": {"const": true},
+        "request_identity_present": {"const": true},
+        "chunk_identity_present": {"const": true},
+        "stream_identity_present": {"const": true},
+        "llm_query_present": {"const": true},
+        "llm_response_nonempty": {"const": true},
+        "topic_exact": {"const": true},
+        "owned_matching_records": {"const": 1},
+        "append_only_record_retained": {"const": true},
+        "individual_record_deletion_supported": {"const": false},
+        "category_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "owned_file_deleted",
+        "file_catalog_restored_exactly",
+        "asset_statistics_restored_exactly",
+        "model_inventory_restored_exactly",
+        "health_contract_restored_exactly",
+        "observer_stopped",
+        "temporary_fixture_root_absent",
+        "append_only_kafka_record_count"
+      ],
+      "properties": {
+        "owned_file_deleted": {"const": true},
+        "file_catalog_restored_exactly": {"const": true},
+        "asset_statistics_restored_exactly": {"const": true},
+        "model_inventory_restored_exactly": {"const": true},
+        "health_contract_restored_exactly": {"const": true},
+        "observer_stopped": {"const": true},
+        "temporary_fixture_root_absent": {"const": true},
+        "append_only_kafka_record_count": {"const": 1}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_generate_calls",
+        "stream_mutations",
+        "core_service_lifecycle_actions",
+        "raw_prompt_retained",
+        "raw_semantic_output_retained",
+        "raw_resource_ids_retained",
+        "raw_incident_payload_retained",
+        "credentials_retained",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "stream_mutations": {"const": 0},
+        "core_service_lifecycle_actions": {"const": 0},
+        "raw_prompt_retained": {"const": false},
+        "raw_semantic_output_retained": {"const": false},
+        "raw_resource_ids_retained": {"const": false},
+        "raw_incident_payload_retained": {"const": false},
+        "credentials_retained": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

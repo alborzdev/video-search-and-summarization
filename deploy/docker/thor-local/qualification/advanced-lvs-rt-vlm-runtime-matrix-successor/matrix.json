@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-6",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-7",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -209,6 +209,50 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "incidents",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-media.07-incidents",
+      "feature_id": "rt-vlm-media",
+      "official_index": 343,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-incidents-categories-runtime-successor/contract.json",
+        "contract_sha256": "c889d05c1cdb4fab370f1f23e8ec78b50f8c4d0046a84044d0e0a24c5ccbf14d",
+        "package_id": "rt-vlm-incidents-categories-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-incidents-categories-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-incidents-categories-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "e57095b065fd37455a1495fe71a04ea7a1bf9cb2084fcb7b05aff6f64f224ae4",
+        "receipt_sha256": "86d482b08c38f52af244bb86622d0343354fb17e76322539e912c61b74e4644f",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "categories",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-media.08-categories",
+      "feature_id": "rt-vlm-media",
+      "official_index": 344,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-incidents-categories-runtime-successor/contract.json",
+        "contract_sha256": "c889d05c1cdb4fab370f1f23e8ec78b50f8c4d0046a84044d0e0a24c5ccbf14d",
+        "package_id": "rt-vlm-incidents-categories-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-incidents-categories-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-incidents-categories-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "e57095b065fd37455a1495fe71a04ea7a1bf9cb2084fcb7b05aff6f64f224ae4",
+        "receipt_sha256": "86d482b08c38f52af244bb86622d0343354fb17e76322539e912c61b74e4644f",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "reasoning",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -390,8 +434,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 17,
-    "row_count": 17,
+    "passed_current_thor": 19,
+    "row_count": 19,
     "warehouse_sample_bundle": "excluded"
   }
 }

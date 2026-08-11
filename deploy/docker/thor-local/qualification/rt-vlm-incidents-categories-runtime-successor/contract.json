@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-incidents-categories-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-media.07-incidents",
+    "manifest-entry.rt-vlm-media.08-categories"
+  ],
+  "official_indices": [343, 344],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "model": {
+    "id": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "release": "cosmos3-nano-reasoner:bf16-final",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+  },
+  "fixture": {
+    "bytes": 75449,
+    "sha256": "501ddfa6400f6f717ba2de509122deacbc71abd0de1f4c91f4b0890e38bb3b29",
+    "duration_seconds": 9,
+    "primary_markers": ["blue", "green", "red"]
+  },
+  "kafka": {
+    "container": "kafka",
+    "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436",
+    "architecture": "arm64",
+    "topic": "mdx-vlm-incidents",
+    "category": "thor-rt-vlm-runtime-qualification-v1",
+    "append_only_records_expected": 1,
+    "individual_record_deletion_supported": false
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/rt-vlm-file-dense-captions-runtime-successor/execute.py",
+      "sha256": "62093f4a35520e7f5f687203d714d7db810a9d2800ddb2cf9c8cbfc4d56e1288"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/README.md",
+      "sha256": "13ffef12d3043ed8f9cbdaf874072369f318ef9de856cee60d67f3b0d10f12ab"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/captions.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/captions.py",
+      "sha256": "8d7034e4ff4782f1356ad3747e3ae3375781e5c8e664fd85aabb5b16042f2ef0"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py",
+      "sha256": "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/protos/ext_pb2.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/protos/ext_pb2.py",
+      "sha256": "4e84b9e038b26c651baabc583b35ed05672fe90e09aa8fc62ce46108a982ea81"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/protos/nv_pb2.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/protos/nv_pb2.py",
+      "sha256": "37dc820821577cb4f34011d81686ab8ce0ad42e2e259c2550b4715b31a322a2c"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py",
+      "sha256": "4a6d86bf2a54900a93cc16468565a08de9f560912b2c348f3935ddd535d5a6b1"
+    }
+  ],
+  "execution": {
+    "endpoint": "http://127.0.0.1:8018",
+    "rt_vlm_container": "vss-rtvi-vlm",
+    "max_duration_seconds": 180,
+    "max_http_requests": 11,
+    "max_model_requests": 1,
+    "max_docker_commands": 5,
+    "max_support_processes": 1,
+    "acknowledgement": "I_ACK_ONE_APPEND_ONLY_LOCAL_KAFKA_INCIDENT_RECORD"
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "stream_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "owned_file_cleanup_required": true,
+    "kafka_append_only_evidence_record": true,
+    "raw_prompts_retained": false,
+    "raw_semantic_output_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_incident_payload_retained": false,
+    "credentials_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  }
+}
