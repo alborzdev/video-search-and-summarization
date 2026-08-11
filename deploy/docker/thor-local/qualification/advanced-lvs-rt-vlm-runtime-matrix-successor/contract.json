@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-32",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-33",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -61,6 +61,41 @@
         "/reidentification/embedding_dimensions": [1536],
         "/cleanup/main_rt_cv_preserved_exactly": true,
         "/policy/main_rt_cv_stream_mutations": 0
+      }
+    },
+    {
+      "official_index": 203,
+      "capability_id": "runtime.behavior.pipeline",
+      "advertised_literal": "Behavior analytics processing pipeline",
+      "package_id": "behavior-analytics-pipeline-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-pipeline-runtime-successor/contract.json",
+      "contract_sha256": "5922d378495c4fb61224eeb35b4f0088a7d8e6f92130e67712f622beea2a8046",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-pipeline-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "eca6d7e12ddf01c61b6167a3a279361c80c41dcada36ffbdffca535333a3541b",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-pipeline-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "2053c6a0bc0c7ab7577092d496e3a747ea5a861c2994ea267fd6f67d3a1cd123",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/input/frames": 600,
+        "/input/objects": 4417,
+        "/input/bbox_objects": 4417,
+        "/input/tracking_id_objects": 4417,
+        "/input/embedded_objects": 4417,
+        "/input/embedding_dimensions": [4],
+        "/outputs/frames": 600,
+        "/outputs/enhanced_frame_objects": 4417,
+        "/outputs/behaviors": 971,
+        "/outputs/behaviors_with_locations": 971,
+        "/outputs/behaviors_with_embeddings": 971,
+        "/outputs/behavior_embedding_dimensions": [4],
+        "/outputs/max_behavior_points": 3,
+        "/outputs/positive_fov_metric_entries": 1571,
+        "/outputs/positive_roi_metric_entries": 726,
+        "/control/ack_status": "success",
+        "/control/dynamic_calibration_version": "qualification-kafka-2.0",
+        "/cleanup/container_absent": true,
+        "/cleanup/backend_records_absent": true,
+        "/policy/warehouse_sample_bundle": "excluded"
       }
     },
     {

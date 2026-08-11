@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_sixty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_seventy_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 204, 205, 206, 207, 209, 210, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        69, 70, 203, 204, 205, 206, 207, 209, 210, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -59,6 +59,24 @@ def test_behavior_dynamic_control_receipt_is_bound_to_both_exact_rows() -> None:
     assert receipt["dynamic_configuration"]["passed"] == 24
     assert receipt["dynamic_calibration"]["passed"] == 7
     assert receipt["dynamic_calibration"]["immutable_existing_type"]["type_switch_markers_after_update"] == 0
+
+
+def test_complete_behavior_pipeline_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "behavior-analytics-pipeline-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [203]
+    receipt = compiler._validate_receipt(entries[0])
+    assert entries[0]["capability_id"] in receipt["capability_ids"]
+    assert all(receipt["stage_coverage"].values())
+    assert receipt["input"]["bbox_objects"] == receipt["input"]["objects"]
+    assert receipt["input"]["tracking_id_objects"] == receipt["input"]["objects"]
+    assert receipt["input"]["embedded_objects"] == receipt["input"]["objects"]
+    assert receipt["outputs"]["behaviors_with_embeddings"] == receipt["outputs"]["behaviors"]
+    assert receipt["outputs"]["behaviors_with_locations"] == receipt["outputs"]["behaviors"]
 
 
 def test_behavior_events_incidents_receipt_is_bound_to_exact_row() -> None:

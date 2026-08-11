@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "contract_sha256", "capability_ids", "official_indices", "status", "captured_at", "runtime", "control", "input", "outputs", "stage_coverage", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-pipeline-runtime-successor"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "capability_ids": {"const": ["runtime.behavior.pipeline"]},
+    "official_indices": {"const": [203]},
+    "status": {"const": "passed"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["image", "image_id", "application", "input_protocol", "log_sha256", "container"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "image_id": {"$ref": "#/$defs/image_id"},
+        "application": {"const": "Analytics2DApp"},
+        "input_protocol": {"const": "Kafka nv.Frame protobuf"},
+        "log_sha256": {"$ref": "#/$defs/sha256"},
+        "container": {"$ref": "#/$defs/container"}
+      }
+    },
+    "control": {
+      "type": "object", "additionalProperties": false,
+      "required": ["backend", "request_reference_sha256", "ack_reference_sha256", "ack_status", "source_config_sha256", "baseline_calibration_sha256", "dynamic_calibration_sha256", "dynamic_calibration_version", "baseline_behavior_max_points", "updated_behavior_max_points", "baseline_config_checkpoint_sha256", "updated_config_checkpoint_sha256"],
+      "properties": {
+        "backend": {"const": "kafka"},
+        "request_reference_sha256": {"$ref": "#/$defs/sha256"},
+        "ack_reference_sha256": {"$ref": "#/$defs/sha256"},
+        "ack_status": {"const": "success"},
+        "source_config_sha256": {"const": "1dd295171e050962c2f69499eb657c7656b7bfcd6f183e1b1b94d69d709de625"},
+        "baseline_calibration_sha256": {"const": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"},
+        "dynamic_calibration_sha256": {"const": "e245ac1e4a95d090466c90dc79cc693bdc7e7550f2fce98747a5b7943144c0a1"},
+        "dynamic_calibration_version": {"const": "qualification-kafka-2.0"},
+        "baseline_behavior_max_points": {"const": 200},
+        "updated_behavior_max_points": {"const": 3},
+        "baseline_config_checkpoint_sha256": {"const": "666df9b53d9851062e5648630e427c3b632abeef33499a05b3b192d9881660fa"},
+        "updated_config_checkpoint_sha256": {"const": "569327952a648028fd2a12f7e97dbb4bb0674a0ca928d01fce7b843ddddb59c0"}
+      }
+    },
+    "input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frames", "objects", "sensors", "bbox_objects", "tracking_id_objects", "embedded_objects", "embedding_dimensions", "embedding_finite", "fixture_sha256"],
+      "properties": {
+        "frames": {"const": 600},
+        "objects": {"const": 4417},
+        "sensors": {"const": ["Camera", "Camera_01", "Camera_02"]},
+        "bbox_objects": {"const": 4417},
+        "tracking_id_objects": {"const": 4417},
+        "embedded_objects": {"const": 4417},
+        "embedding_dimensions": {"const": [4]},
+        "embedding_finite": {"const": true},
+        "fixture_sha256": {"const": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef"}
+      }
+    },
+    "outputs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["frames", "enhanced_frame_objects", "frame_sensors", "frames_with_fov_metrics", "frames_with_roi_metrics", "positive_fov_metric_entries", "positive_roi_metric_entries", "behaviors", "behavior_identity_count", "behavior_sensors", "behaviors_with_locations", "behaviors_with_embeddings", "behavior_embedding_dimensions", "behavior_embeddings_finite", "max_behavior_points"],
+      "properties": {
+        "frames": {"const": 600},
+        "enhanced_frame_objects": {"const": 4417},
+        "frame_sensors": {"const": ["Camera", "Camera_01", "Camera_02"]},
+        "frames_with_fov_metrics": {"const": 600},
+        "frames_with_roi_metrics": {"const": 600},
+        "positive_fov_metric_entries": {"const": 1571},
+        "positive_roi_metric_entries": {"const": 726},
+        "behaviors": {"const": 971},
+        "behavior_identity_count": {"const": 5},
+        "behavior_sensors": {"const": ["Camera", "Camera_01", "Camera_02"]},
+        "behaviors_with_locations": {"const": 971},
+        "behaviors_with_embeddings": {"const": 971},
+        "behavior_embedding_dimensions": {"const": [4]},
+        "behavior_embeddings_finite": {"const": true},
+        "max_behavior_points": {"const": 3}
+      }
+    },
+    "stage_coverage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bbox", "tracking", "embedding", "dynamic-config", "calibration", "coordinate-transform", "roi", "behavior-state", "metrics"],
+      "properties": {
+        "bbox": {"const": true}, "tracking": {"const": true}, "embedding": {"const": true},
+        "dynamic-config": {"const": true}, "calibration": {"const": true},
+        "coordinate-transform": {"const": true}, "roi": {"const": true},
+        "behavior-state": {"const": true}, "metrics": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["container_absent", "backend_records_absent", "normal_behavior_containers", "failures"],
+      "properties": {
+        "container_absent": {"const": true},
+        "backend_records_absent": {"const": true},
+        "normal_behavior_containers": {
+          "type": "object", "additionalProperties": false,
+          "required": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"],
+          "properties": {
+            "vss-behavior-analytics": {"$ref": "#/$defs/normal_container"},
+            "vss-behavior-analytics-thor-candidates": {"$ref": "#/$defs/normal_container"}
+          }
+        },
+        "failures": {"type": "array", "maxItems": 0}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "external_requests", "main_rt_cv_mutations", "main_vios_mutations", "normal_behavior_consumers_stopped", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "external_requests": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0}, "main_vios_mutations": {"const": 0},
+        "normal_behavior_consumers_stopped": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "container": {"type": "object", "additionalProperties": false, "required": ["exit_code", "oom_killed", "restart_count"], "properties": {"exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}},
+    "normal_container": {"type": "object", "additionalProperties": false, "required": ["running", "oom_killed", "restart_count"], "properties": {"running": {"const": true}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}}
+  }
+}

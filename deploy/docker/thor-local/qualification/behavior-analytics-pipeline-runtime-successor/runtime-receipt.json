@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-pipeline-runtime-successor",
+  "contract_sha256": "5922d378495c4fb61224eeb35b4f0088a7d8e6f92130e67712f622beea2a8046",
+  "capability_ids": ["runtime.behavior.pipeline"],
+  "official_indices": [203],
+  "status": "passed",
+  "captured_at": "2026-08-11T21:34:19Z",
+  "runtime": {
+    "image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "application": "Analytics2DApp",
+    "input_protocol": "Kafka nv.Frame protobuf",
+    "log_sha256": "17562995989816c6ef02299d63cbfbef27098e4b129d57f7728c507b0d0e5b8b",
+    "container": {"exit_code": 0, "oom_killed": false, "restart_count": 0}
+  },
+  "control": {
+    "backend": "kafka",
+    "request_reference_sha256": "efb156aeaef96ae42725f8e83cc7a76adc9e86784a90d68ab60c3e2718d538f1",
+    "ack_reference_sha256": "5c9f6177f7cbeb8833c14d156c13d783719e37d0084833337bf6d48059332e93",
+    "ack_status": "success",
+    "source_config_sha256": "1dd295171e050962c2f69499eb657c7656b7bfcd6f183e1b1b94d69d709de625",
+    "baseline_calibration_sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1",
+    "dynamic_calibration_sha256": "e245ac1e4a95d090466c90dc79cc693bdc7e7550f2fce98747a5b7943144c0a1",
+    "dynamic_calibration_version": "qualification-kafka-2.0",
+    "baseline_behavior_max_points": 200,
+    "updated_behavior_max_points": 3,
+    "baseline_config_checkpoint_sha256": "666df9b53d9851062e5648630e427c3b632abeef33499a05b3b192d9881660fa",
+    "updated_config_checkpoint_sha256": "569327952a648028fd2a12f7e97dbb4bb0674a0ca928d01fce7b843ddddb59c0"
+  },
+  "input": {
+    "frames": 600,
+    "objects": 4417,
+    "sensors": ["Camera", "Camera_01", "Camera_02"],
+    "bbox_objects": 4417,
+    "tracking_id_objects": 4417,
+    "embedded_objects": 4417,
+    "embedding_dimensions": [4],
+    "embedding_finite": true,
+    "fixture_sha256": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef"
+  },
+  "outputs": {
+    "frames": 600,
+    "enhanced_frame_objects": 4417,
+    "frame_sensors": ["Camera", "Camera_01", "Camera_02"],
+    "frames_with_fov_metrics": 600,
+    "frames_with_roi_metrics": 600,
+    "positive_fov_metric_entries": 1571,
+    "positive_roi_metric_entries": 726,
+    "behaviors": 971,
+    "behavior_identity_count": 5,
+    "behavior_sensors": ["Camera", "Camera_01", "Camera_02"],
+    "behaviors_with_locations": 971,
+    "behaviors_with_embeddings": 971,
+    "behavior_embedding_dimensions": [4],
+    "behavior_embeddings_finite": true,
+    "max_behavior_points": 3
+  },
+  "stage_coverage": {
+    "bbox": true,
+    "tracking": true,
+    "embedding": true,
+    "dynamic-config": true,
+    "calibration": true,
+    "coordinate-transform": true,
+    "roi": true,
+    "behavior-state": true,
+    "metrics": true
+  },
+  "cleanup": {
+    "container_absent": true,
+    "backend_records_absent": true,
+    "normal_behavior_containers": {
+      "vss-behavior-analytics": {"running": true, "oom_killed": false, "restart_count": 0},
+      "vss-behavior-analytics-thor-candidates": {"running": true, "oom_killed": false, "restart_count": 0}
+    },
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

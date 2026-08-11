@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-pipeline-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "runtime.behavior.pipeline"
+  ],
+  "official_indices": [203],
+  "advertised_contract": {
+    "inputs": ["bbox", "tracking", "embedding"],
+    "stages": ["dynamic-config", "calibration", "coordinate-transform", "roi", "behavior-state", "metrics"]
+  },
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-pipeline-runtime-successor/run_pipeline_probe.py", "sha256": "ce0441ea3747ad5d1084216e2ae5f2c6677c25ec7b9fe9a364c4835cc6866516"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/run_broker_probe.py", "sha256": "9a559296167bf5cb09259653d1a828c8f8db08312169a76ed46d75befd00ef1e"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/kafka-config.json", "sha256": "1dd295171e050962c2f69499eb657c7656b7bfcd6f183e1b1b94d69d709de625"},
+    {"path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps/warehouse_2d/calibration.json", "sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"},
+    {"path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps_data/playback/warehouse_2d_playback_data.txt", "sha256": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef"},
+    {"path": "services/analytics/behavior-analytics/apps/analytics/main_analytics_2d_app.py", "sha256": "b6a16e9d4b51e2285ece20ad2d4302a684d9a60910ff4e17ab5800cd9c9dbede"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py", "sha256": "1360a2f79ff360755d6c9b1ffb38c2079ef1ba5e2b7ee3a7396e167d6e513c52"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py", "sha256": "99fad8777a0138e22d01fa7051301669e43c652ba53ee12dc8e540132bd1effc"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/state/behavior/state_management_base.py", "sha256": "55701bd9e7ec4d6ef94ff8434623b01721592343843177b7ab51f0fc937a03aa"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/calibration/calibration_dynamic.py", "sha256": "6d32e117770dd44e188ce828a7978306cfce1bb87a1e319b5107f608289ceb00"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/transform/config/config_monitor.py", "sha256": "183ee2f52d7c6138cd3fd373df1893c32c54af4fa0a2fef2024a0f1959257f61"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/utils/schema_util.py", "sha256": "3c7c8d16b6c58fb01adea07b4dfde27104a62454a545fe0afbd623274f92ecca"}
+  ],
+  "required_assertions": {
+    "application": "Analytics2DApp",
+    "input_protocol": "Kafka nv.Frame protobuf",
+    "all_advertised_inputs_on_every_object": true,
+    "finite_embedding_dimensions": [4],
+    "all_advertised_stages_in_one_run": true,
+    "dynamic_behavior_max_points": 3,
+    "dynamic_calibration_version": "qualification-kafka-2.0",
+    "behavior_outputs_retain_embeddings_and_locations": true,
+    "positive_roi_and_fov_metrics": true
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "3D or MV3DT pipeline",
+    "detector/tracker model quality",
+    "embedding quality or production dimensionality",
+    "throughput envelope",
+    "100 GB Warehouse sample bundle"
+  ]
+}
