@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-13",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-14",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -645,6 +645,94 @@
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "file and stream detection/tracking",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking",
+      "feature_id": "rt-cv-2d",
+      "official_index": 375,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
+        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "package_id": "rt-cv-2d-core-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
+        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "dynamic stream lifecycle",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle",
+      "feature_id": "rt-cv-2d",
+      "official_index": 380,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
+        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "package_id": "rt-cv-2d-core-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
+        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "health and metrics",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-cv-2d.06-health-and-metrics",
+      "feature_id": "rt-cv-2d",
+      "official_index": 381,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
+        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "package_id": "rt-cv-2d-core-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
+        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Thor VPI tracker tuning",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning",
+      "feature_id": "rt-cv-2d",
+      "official_index": 382,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/contract.json",
+        "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+        "package_id": "rt-cv-2d-core-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-2d-core-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "f394594996c200893047622a89224505822c89dea5f9a286841d8d8cd668ffe4",
+        "receipt_sha256": "53ef51cd02dabae837e9d467b5cec874c1a2574d4beff4403f1949cbe8986882",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
     }
   ],
   "schema_version": 1,
@@ -654,8 +742,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 29,
-    "row_count": 29,
+    "passed_current_thor": 33,
+    "row_count": 33,
     "warehouse_sample_bundle": "excluded"
   }
 }

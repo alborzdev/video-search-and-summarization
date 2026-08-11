@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_twenty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_thirty_three_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374
+        299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 380, 381, 382
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -221,6 +221,23 @@ def test_rt_embed_url_brokers_otel_receipt_is_bound_to_two_exact_rows() -> None:
     assert receipt["kafka"]["result_message_count"] == 2
     assert receipt["redis"]["error_message_count"] == 1
     assert receipt["opentelemetry"]["configured_service_name_exact"] is True
+
+
+def test_rt_cv_2d_core_receipt_is_bound_to_four_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-cv-2d-core-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [375, 380, 381, 382]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+    assert receipt["file_detection_tracking"]["detection_tracking"]["frames"] == 8
+    assert receipt["rtsp_detection_tracking"]["detection_tracking"]["frames"] == 8
+    assert receipt["dynamic_stream_lifecycle"]["final_stream_count"] == 0
+    assert receipt["thor_vpi_tracker"]["vpi_error_count_after_clean_start"] == 0
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

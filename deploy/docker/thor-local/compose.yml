@@ -14,6 +14,14 @@ services:
     environment:
       KAFKA_HEAP_OPTS: "${THOR_LOCAL_KAFKA_HEAP_OPTS:--Xms1G -Xmx1G}"
 
+  # The released search RT-CV profile does not pass a hardware identity, so
+  # its shared startup script leaves NvDCF on the legacy CUDA tracker. Declare
+  # Thor explicitly so the effective runtime config selects the advertised
+  # VPI visual-tracker implementation and backend.
+  perception-2d-fusion:
+    environment:
+      HARDWARE_PROFILE: "${THOR_LOCAL_RT_CV_HARDWARE_PROFILE:-AGX-THOR}"
+
   # Elasticsearch's percentage watermarks mark a 1 TB Thor disk red despite
   # tens of GiB remaining. Absolute free-space thresholds retain a 10 GiB
   # flood-stage guard while allowing the single-node demo indices to allocate.

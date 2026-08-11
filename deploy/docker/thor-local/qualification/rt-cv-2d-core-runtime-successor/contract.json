@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-cv-2d-core-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking",
+    "manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle",
+    "manifest-entry.rt-cv-2d.06-health-and-metrics",
+    "manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning"
+  ],
+  "official_indices": [375, 380, 381, 382],
+  "target_release": "VSS 3.2.1",
+  "target_commit": "ae0fceee78a117a418fb4afb73209156a00a32fc",
+  "source_locks": [
+    {
+      "path": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+      "sha256": "86be1e1cd96e0eebc0dabae5e64f7f4bb415322b44559d9aa38c441a90c66f22"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "64c82779db1be10cc7ca9f96362f80b193f0ab3aecd9cc92f04b502c1850711e"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/scripts/ds-search-start.sh",
+      "sha256": "0ecbfec36d65d534ee7b443a5d91cb96bdbaa918adeb706baf804f33f7e7684a"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/config.csv",
+      "sha256": "cb7c2ed11cf49b907fc7348720249e6af1d3178cb116f8fc30c964b1a3d751d6"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-detector-labels.txt",
+      "sha256": "c99e718f3e4ed3840f303b4d57919edafb9ae14e5fd1b4cfb419c8ded1b4461b"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-kafka-config.txt",
+      "sha256": "47bfaeea2ac6743d94cfd75a3bd3981c7c7af30c219f94413b9e2adf79fc10c2"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-main-config.txt",
+      "sha256": "b6d976e2aaf759e893b7524eaa60148420991d140c41e921609b993963310ce0"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-main-redis-config.txt",
+      "sha256": "3337f2799cb8bce904be09d4067a014b1cee7114c1db3f6252ff686f4a0bbe05"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-nvdcf-accuracy-tracker-config.yml",
+      "sha256": "04cfeca34856d41be013fd999b5e2309c63a83d9c80dbd58f36596c33237cd77"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-pgie-config.yml",
+      "sha256": "5b5acc57e39faf6b124ca59c1041020ab726ef47cbc55df9a41f9034de3c4a43"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs/ds-redis-config.txt",
+      "sha256": "e21a6634f37a1319513dfcffc788bb5bc0a06186c967cfc6d6311dea9d2bfee9"
+    },
+    {
+      "path": "tools/message-broker-consumers/schema_pb2.py",
+      "sha256": "bfa3727bc8c72cd1975eb3169caae768a0e6a4e7fb0f72aa610747cf5ddde87c"
+    }
+  ],
+  "assets": {
+    "fixture": {
+      "path": "services/alert/warmup/test.mp4",
+      "bytes": 2575454,
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    },
+    "detector_onnx": {
+      "path": "deploy/docker/data-dir/models/rtdetr_warehouse_v1.0.2.fp16.onnx",
+      "bytes": 87890438,
+      "sha256": "0a22264542514149bead6e8582499d9758d51e3fde2892d9d2cc378a60426267"
+    },
+    "detector_engine": {
+      "path": "deploy/docker/data-dir/models/rtdetr_warehouse_v1.0.2.fp16.onnx_b16_gpu0_fp16.engine",
+      "bytes": 98142212,
+      "sha256": "13bd7a67da81b1a9d59a7a1b5cd577d8208ef1a77b5568f5b02f00590d484e69"
+    },
+    "siglip_onnx": {
+      "path": "deploy/docker/data-dir/models/siglip_v2_v1.1.onnx",
+      "bytes": 1297605,
+      "sha256": "425134cfd151d19e15da5cddb2a90d557991964c251f99d874e5f5f7a39a3927"
+    },
+    "siglip_engine": {
+      "path": "deploy/docker/data-dir/models/siglip_v2_v1.1.onnx_batch16.plan",
+      "bytes": 862405164,
+      "sha256": "9950c674b3fa4ca48efe5dd433c0236b8c2ae64dcbbdf5d0f6f1b0cc889e5630"
+    },
+    "siglip_weights": {
+      "path": "deploy/docker/data-dir/models/siglip_v2_v1.1_weights.bin",
+      "bytes": 4542683848
+    }
+  },
+  "images": {
+    "rt_cv": {
+      "ref": "nvcr.io/nvidia/vss-core/vss-rt-cv:3.2.1",
+      "id": "sha256:1a8b9879686f21cb6b9589d6139b5ac2eb960f1520aa3b4bb5f079d05fee9458"
+    },
+    "consumer": {
+      "ref": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+      "id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"
+    },
+    "mediamtx": {
+      "ref": "bluenviron/mediamtx:1",
+      "id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06"
+    }
+  },
+  "support": {
+    "consumer_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "ffmpeg_path": "/usr/bin/ffmpeg",
+    "ffmpeg_sha256": "dbb8cc21c4b4e0e9bbb750cf74f7af6b023199e1b311eb2f6aec31c9722ceb88"
+  },
+  "execution": {
+    "acknowledgement": "I_ACK_ISOLATED_RT_CV_FILE_RTSP_LIFECYCLE_AND_EXACT_CLEANUP",
+    "endpoint": "http://127.0.0.1:19000",
+    "port": 19000,
+    "container": "vss-rtcv-runtime-qual",
+    "file_consumer": "vss-rtcv-runtime-file-consumer",
+    "rtsp_consumer": "vss-rtcv-runtime-rtsp-consumer",
+    "mediamtx_container": "vss-rtcv-runtime-mediamtx",
+    "rtsp_port": 18554,
+    "topic": "rtcv-runtime-qual-raw",
+    "file_group": "rtcv-runtime-qual-file",
+    "rtsp_group": "rtcv-runtime-qual-rtsp",
+    "main_container": "vss-rtvi-cv",
+    "main_endpoint": "http://127.0.0.1:9000",
+    "paused_workloads": [
+      "datasheet-vllm-30",
+      "datasheet-embedding",
+      "ctai-vision-playground-api"
+    ],
+    "config_source": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/configs",
+    "search_start": "deploy/docker/developer-profiles/dev-profile-search/video-analytics-2d-app/deepstream/scripts/ds-search-start.sh",
+    "shared_start": "deploy/docker/services/rtvi/rtvi-cv/ds-start.sh",
+    "models_dir": "deploy/docker/data-dir/models",
+    "runtime_file_repetitions": 6,
+    "runtime_file_duration_seconds": 60,
+    "minimum_free_bytes": 10737418240,
+    "max_duration_seconds": 360,
+    "max_docker_commands": 120,
+    "max_http_requests": 160
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "main_rt_cv_stream_mutations": 0,
+    "main_vios_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded",
+    "network_downloads": 0,
+    "raw_camera_ids_retained": false,
+    "raw_stream_urls_retained": false,
+    "raw_embeddings_retained": false,
+    "raw_broker_messages_retained": false,
+    "credentials_retained": false
+  }
+}

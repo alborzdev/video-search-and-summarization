@@ -28,6 +28,54 @@ build_extra_flags() {
     echo "$flags"
 }
 
+is_thor_profile()
+{
+    local profile="${HARDWARE_PROFILE:-}"
+    case "${profile^^}" in
+        *THOR*) return 0 ;;
+        *)      return 1 ;;
+    esac
+}
+
+apply_thor_tracker_tuning()
+{
+    local config_file="$1"
+    local tracker_config="$2"
+    local max_sources
+    local max_targets_per_stream
+
+    is_thor_profile || return 0
+
+    echo "##### Applying Thor NvDCF VPI tracker tuning. #####"
+    sed -i '/^\[tracker\]/,/^\[/{/^compute-hw=/d;}' "$config_file"
+    sed -i '/^\[tracker\]/a compute-hw=2' "$config_file"
+    sed -i '/^\[source-list\]/,/^\[/{/^low-latency-mode=/d;}' "$config_file"
+    sed -i '/^\[source-list\]/a low-latency-mode=0' "$config_file"
+
+    if [[ ! -f "$tracker_config" ]]; then
+        echo "ERROR: Thor tracker config not found at $tracker_config"
+        return 1
+    fi
+
+    sed -i '/^VisualTracker:/,/^[A-Z][a-zA-Z]*:/ {/^[[:space:]]*visualTrackerType:/d;}' "$tracker_config"
+    sed -i '/^VisualTracker:/,/^[A-Z][a-zA-Z]*:/ {/^[[:space:]]*vpiBackend4DcfTracker:/d;}' "$tracker_config"
+    sed -i '/^VisualTracker:/a \  visualTrackerType: 2\n\  vpiBackend4DcfTracker: 2' "$tracker_config"
+
+    max_sources=$(sed -n '/^\[source-list\]/,/^\[/{s/^max-batch-size=//p;}' "$config_file" | head -n 1)
+    if [[ ! "$max_sources" =~ ^[1-9][0-9]*$ ]]; then
+        echo "ERROR: Invalid source-list max-batch-size for Thor VPI tuning: ${max_sources:-missing}"
+        return 1
+    fi
+    max_targets_per_stream=$((512 / max_sources))
+    (( max_targets_per_stream > 50 )) && max_targets_per_stream=50
+    (( max_targets_per_stream >= 1 )) || {
+        echo "ERROR: Thor VPI source capacity exceeds the 512-target backend limit"
+        return 1
+    }
+    sed -i "/^TargetManagement:/,/^[A-Z][a-zA-Z]*:/ {s/^[[:space:]]*maxTargetsPerStream:.*/  maxTargetsPerStream: ${max_targets_per_stream}/;}" "$tracker_config"
+    echo "##### Thor VPI capacity: ${max_sources} sources x ${max_targets_per_stream} targets <= 512. #####"
+}
+
 # ---------------------------------------------------------------------------
 # CNN family (warehouse-2d, search)
 # ---------------------------------------------------------------------------
@@ -39,6 +87,10 @@ start_rtdetr_warehouse()
     local config_file="/opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app/configs/ds-main-config.txt"
     local extra_flags
     extra_flags=$(build_extra_flags)
+
+    apply_thor_tracker_tuning \
+        "$config_file" \
+        "/opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app/configs/ds-nvdcf-accuracy-tracker-config.yml"
 
     cat "$config_file"
     echo "Application starting with this command: ./metropolis_perception_app -c "$config_file" -m "$DS_MODE_FLAG" -t 0 -l 5 --message-rate "$DS_MESSAGE_RATE" $extra_flags"
@@ -116,7 +168,7 @@ start_rtdetr_gdino()
     sed -i "/^\[streammux\]/,/^\[/{s/^batch-size=.*/batch-size=${NUM_SENSORS}/;}" "$config_file"
     sed -i "/^\[primary-gie\]/,/^\[/{s/^batch-size=.*/batch-size=${NUM_SENSORS}/;}" "$config_file"
 
-    if [[ "${HARDWARE_PROFILE:-}" == "DGX-SPARK" || "${HARDWARE_PROFILE:-}" == "DGX-THOR" ]]; then
+    if [[ "${HARDWARE_PROFILE:-}" == "DGX-SPARK" ]] || is_thor_profile; then
         # Replace or add msg-conv-msg2p-lib property in sink1 group
         echo "##### Setting msg-conv-msg2p-lib to libnvds_msgconv.so for sink1 group... #####"
         # First, remove any existing msg-conv-msg2p-lib line within [sink1] section
@@ -134,38 +186,8 @@ start_rtdetr_gdino()
         sed -i '/^\[sink1\]/a msg-conv-msg2p-lib=/opt/nvidia/deepstream/deepstream/lib/libnvds_msgconv_mega2d.so' "$config_file"
     fi
 
-    if [[ "${HARDWARE_PROFILE:-}" == "DGX-THOR" ]]; then
-        # Set compute-hw=2 under tracker section in config_file
-        echo "##### Setting compute-hw=2 in tracker section of $config_file... #####"
-        sed -i '/^\[tracker\]/,/^\[/{/^compute-hw=/d;}' "$config_file"
-        sed -i '/^\[tracker\]/a compute-hw=2' "$config_file"
-        # Replace or add low-latency-mode property in source-list section
-        echo "##### Setting low-latency-mode to 0 for source-list section... #####"
-        # Remove any existing low-latency-mode line within [source-list] section
-        sed -i '/^\[source-list\]/,/^\[/{/^low-latency-mode=/d;}' "$config_file"
-        # Then add the new property after [source-list]
-        sed -i '/^\[source-list\]/a low-latency-mode=0' "$config_file"
-        # Update VisualTracker section in config_tracker_NvDCF_accuracy.yml
-        TRACKER_CONFIG="/opt/nvidia/deepstream/deepstream/samples/configs/deepstream-app/config_tracker_NvDCF_accuracy.yml"
-        echo "##### Updating VisualTracker section in $TRACKER_CONFIG... #####"
-        # Add or update visualTrackerType and vpiBackend4DcfTracker under VisualTracker section
-        if [[ -f "$TRACKER_CONFIG" ]]; then
-            # Remove existing visualTrackerType if present
-            sed -i '/^VisualTracker:/,/^[A-Z][a-zA-Z]*:/ {/^[[:space:]]*visualTrackerType:/d;}' "$TRACKER_CONFIG"
-            # Remove existing vpiBackend4DcfTracker if present
-            sed -i '/^VisualTracker:/,/^[A-Z][a-zA-Z]*:/ {/^[[:space:]]*vpiBackend4DcfTracker:/d;}' "$TRACKER_CONFIG"
-            # Add the properties after VisualTracker line with proper YAML indentation (2 spaces)
-            sed -i '/^VisualTracker:/a \  visualTrackerType: 2' "$TRACKER_CONFIG"
-            sed -i '/^[[:space:]]*visualTrackerType: 2/a \  vpiBackend4DcfTracker: 2' "$TRACKER_CONFIG"
-            # Update maxTargetsPerStream to 50 in TargetManagement section
-            sed -i '/^TargetManagement:/,/^[A-Z][a-zA-Z]*:/ {s/^[[:space:]]*maxTargetsPerStream:.*/  maxTargetsPerStream: 50/;}' "$TRACKER_CONFIG"
-            echo "##### Updated maxTargetsPerStream to 50 in TargetManagement section... #####"
-            echo "##### Contents of $TRACKER_CONFIG: #####"
-            cat "$TRACKER_CONFIG"
-        fi
-    fi
-
     TRACKER_CONFIG="/opt/nvidia/deepstream/deepstream/samples/configs/deepstream-app/config_tracker_NvDCF_accuracy.yml"
+    apply_thor_tracker_tuning "$config_file" "$TRACKER_CONFIG"
     echo "##### Updating minTrackerConfidence in $TRACKER_CONFIG... #####"
     if [[ -f "$TRACKER_CONFIG" ]]; then
         sed -i '/^TargetManagement:/,/^[A-Z][a-zA-Z]*:/ {s/^[[:space:]]*minTrackerConfidence:.*/  minTrackerConfidence: 0.2513/;}' "$TRACKER_CONFIG"

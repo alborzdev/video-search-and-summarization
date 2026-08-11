@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds twenty-nine advertised capability rows to current-Thor live receipts. Overlay 13 adds RT-Embed same-byte HTTP URL/inline-base64 transport parity and correlated Kafka/Redis/OpenTelemetry publication to the twenty-seven previously proven rows. The bounded proof generates real embeddings, consumes their Kafka protobuf records, observes an actual Redis error, verifies broker spans against their originating request spans, and restores every owned resource and helper exactly.
+This read-only successor binds thirty-three advertised capability rows to current-Thor live receipts. Overlay 14 adds four isolated RT-CV 2D rows—file and RTSP detection/tracking, dynamic stream lifecycle, health/metrics, and Thor VPI tracker tuning—to the twenty-nine previously proven rows. The bounded proof decodes real protobuf detections and embeddings, verifies stable tracks and metric correlation, exercises exact add/remove lifecycle, and restores every owned resource exactly without mutating the main VSS stream inventory.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 

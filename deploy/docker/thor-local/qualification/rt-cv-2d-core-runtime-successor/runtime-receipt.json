@@ -1,0 +1,236 @@
+{
+  "budget": {
+    "docker_commands": 70,
+    "http_requests": 121,
+    "max_docker_commands": 120,
+    "max_http_requests": 160,
+    "stream_mutations": 4,
+    "support_processes_peak": 4
+  },
+  "capability_ids": [
+    "manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking",
+    "manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle",
+    "manifest-entry.rt-cv-2d.06-health-and-metrics",
+    "manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning"
+  ],
+  "cleanup": {
+    "failures": [],
+    "main_rt_cv_preserved_exactly": true,
+    "owned_consumer_groups_delete_attempted": true,
+    "owned_containers_absent": true,
+    "owned_topic_absent": true,
+    "paused_workloads_preserved_exactly": true,
+    "publisher_stopped": true,
+    "temporary_root_absent": true
+  },
+  "configuration": {
+    "capacity_product": 512,
+    "compute_hw": 2,
+    "hardware_profile": "AGX-THOR",
+    "low_latency_mode": 0,
+    "main_config_sha256": "160c5d3b204b5794a0fed592c58aa02f237a01b5f83e7c669ba886e95c8bfdc7",
+    "max_batch_size": 16,
+    "max_targets_per_stream": 32,
+    "tracker_config_sha256": "0e30c646ba0d946740830e8f2ab7d98c4643490d724cb1fb863830957312d183",
+    "visual_tracker_type": 2,
+    "vpi_backend_4dcf_tracker": 2
+  },
+  "contract_sha256": "abda606c44cc3136f56d7822628a6fabd49067fc1081d428ee382792d95af2a8",
+  "duration_seconds": 134.028764,
+  "dynamic_stream_lifecycle": {
+    "active_state_observed_for_each": true,
+    "file_add_http_status": 200,
+    "file_remove_http_status": 200,
+    "final_stream_count": 0,
+    "planned_pipeline_restart_between_input_lanes": true,
+    "pre_existing_streams_touched": 0,
+    "rtsp_add_http_status": 200,
+    "rtsp_remove_http_status": 200,
+    "terminal_state_observed_for_each": true
+  },
+  "file_detection_tracking": {
+    "active_metrics": {
+      "fps_positive": true,
+      "frame_number_positive": true,
+      "latency_finite": true,
+      "stream_count": 1
+    },
+    "add": {
+      "http_status": 200,
+      "request_sha256": "077e5649d38e4609169601eb5b405298f86a02a937635f42eba73fa59cf92927",
+      "response_sha256": "42d87d839ef1d8c93c02436b58ef7319a67b0e2af44675dbe59074c8df28640a"
+    },
+    "detection_tracking": {
+      "embedding_dimensions": [
+        1152
+      ],
+      "finite_bboxes": true,
+      "finite_confidences": true,
+      "finite_embeddings": true,
+      "frames": 8,
+      "maximum_objects_per_frame": 6,
+      "minimum_objects_per_frame": 4,
+      "objects": 38,
+      "repeated_track_ids": 6,
+      "sensor_value_present": true,
+      "single_sensor_value": true,
+      "types": [
+        "Pallet",
+        "Person"
+      ],
+      "unique_track_ids": 6
+    },
+    "input_type": "finite_local_file",
+    "remove": {
+      "http_status": 200,
+      "request_sha256": "fe96d76b995dde5f2da78e405d76596093064f00419294de4cc93ae775f4eda3",
+      "response_sha256": "1a839da2e13d67c1fe0b991952160dcf0e05d06ab4c46ec89f2396f38562287b"
+    },
+    "runtime_fixture": {
+      "byte_count": 15448559,
+      "codec_h264": true,
+      "content_sha256": "3976bead22c1384c09a3efe6c9e77831ac59e5d259f0ca769ab24abea04f2588",
+      "duration_seconds": 60,
+      "fps": 10,
+      "generation_method_exact": true,
+      "height": 1080,
+      "source_repetitions": 6,
+      "tcp_probe_passed": false,
+      "width": 1920
+    },
+    "source_replay_until_explicit_remove": false,
+    "terminated_cleanly": true
+  },
+  "fixture": {
+    "byte_count": 2575454,
+    "codec_h264": true,
+    "content_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "duration_seconds": 10,
+    "fps": 10,
+    "height": 1080,
+    "tcp_probe_passed": false,
+    "warehouse_sample_bundle": "excluded",
+    "width": 1920
+  },
+  "health_metrics": {
+    "file_detection_metric_correlated": true,
+    "file_frame_metric_correlated": true,
+    "live_http_status": 200,
+    "metadata_http_status": 200,
+    "prometheus": {
+      "body_sha256": "a5cbd6dcb637c2de1caea6b982a2ed79f0c5342740fb1dfda7b99f94265d8468",
+      "http_status": 200,
+      "metric_families": [
+        "fps_metrics",
+        "frame_number_metrics",
+        "latency_metrics",
+        "memory_metrics",
+        "stream_count",
+        "utilization_metrics"
+      ],
+      "required_metric_families_present": true
+    },
+    "ready_http_status": 200,
+    "rtsp_detection_metric_correlated": true,
+    "rtsp_frame_metric_correlated": true,
+    "startup_http_status": 200
+  },
+  "official_indices": [
+    375,
+    380,
+    381,
+    382
+  ],
+  "package_id": "rt-cv-2d-core-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "credentials_retained": false,
+    "main_rt_cv_stream_mutations": 0,
+    "main_vios_stream_mutations": 0,
+    "network_downloads": 0,
+    "raw_broker_messages_retained": false,
+    "raw_camera_ids_retained": false,
+    "raw_embeddings_retained": false,
+    "raw_stream_urls_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "rtsp_detection_tracking": {
+    "active_metrics": {
+      "fps_positive": true,
+      "frame_number_positive": true,
+      "latency_finite": true,
+      "stream_count": 1
+    },
+    "add": {
+      "http_status": 200,
+      "request_sha256": "9828844703a40fbc388784ef1c48e9e1e443727069fa0290d6ddf5a8806bcde1",
+      "response_sha256": "42d87d839ef1d8c93c02436b58ef7319a67b0e2af44675dbe59074c8df28640a"
+    },
+    "detection_tracking": {
+      "embedding_dimensions": [
+        1152
+      ],
+      "finite_bboxes": true,
+      "finite_confidences": true,
+      "finite_embeddings": true,
+      "frames": 8,
+      "maximum_objects_per_frame": 6,
+      "minimum_objects_per_frame": 4,
+      "objects": 42,
+      "repeated_track_ids": 7,
+      "sensor_value_present": true,
+      "single_sensor_value": true,
+      "types": [
+        "Pallet",
+        "Person"
+      ],
+      "unique_track_ids": 7
+    },
+    "input_type": "loopback_rtsp",
+    "media_probe": {
+      "codec_h264": true,
+      "duration_seconds": null,
+      "fps": 10,
+      "height": 1080,
+      "tcp_probe_passed": true,
+      "width": 1920
+    },
+    "publisher_running": true,
+    "remove": {
+      "http_status": 200,
+      "request_sha256": "7f5c807cde596ca62e87a38db1e1e5665920a3aa1ea2fe960e78669260448b4c",
+      "response_sha256": "1a839da2e13d67c1fe0b991952160dcf0e05d06ab4c46ec89f2396f38562287b"
+    },
+    "support_image_exact": true,
+    "terminated_cleanly": true
+  },
+  "runtime_identity": {
+    "consumer_image": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "docker_cgroup_driver": "cgroupfs",
+    "main_rt_cv_preserved_exactly": true,
+    "main_rt_cv_stream_count": 0,
+    "mediamtx_image": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    },
+    "paused_workloads_preserved_exactly": true,
+    "rt_cv_image": {
+      "architecture": "arm64",
+      "image_id_exact": true
+    }
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "thor_vpi_tracker": {
+    "effective_configuration_exact": true,
+    "isolated_log_sha256": "8eac15f5d330b79de02c70b3bf00e1499d054ec9b024b1f74ed1235c42ce4bfb",
+    "oom_killed": false,
+    "restart_count": 0,
+    "stable_tracks_file": true,
+    "stable_tracks_rtsp": true,
+    "vpi_error_count_after_clean_start": 0
+  }
+}

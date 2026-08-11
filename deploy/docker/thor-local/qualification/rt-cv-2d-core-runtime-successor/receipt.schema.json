@@ -1,0 +1,427 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "capability_ids",
+    "official_indices",
+    "status",
+    "contract_sha256",
+    "duration_seconds",
+    "budget",
+    "runtime_identity",
+    "configuration",
+    "fixture",
+    "file_detection_tracking",
+    "rtsp_detection_tracking",
+    "dynamic_stream_lifecycle",
+    "health_metrics",
+    "thor_vpi_tracker",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-cv-2d-core-runtime-successor"},
+    "capability_ids": {
+      "const": [
+        "manifest-entry.rt-cv-2d.00-file-and-stream-detection-tracking",
+        "manifest-entry.rt-cv-2d.05-dynamic-stream-lifecycle",
+        "manifest-entry.rt-cv-2d.06-health-and-metrics",
+        "manifest-entry.rt-cv-2d.07-thor-vpi-tracker-tuning"
+      ]
+    },
+    "official_indices": {"const": [375, 380, 381, 382]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 360},
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "docker_commands",
+        "max_docker_commands",
+        "http_requests",
+        "max_http_requests",
+        "support_processes_peak",
+        "stream_mutations"
+      ],
+      "properties": {
+        "docker_commands": {"type": "integer", "minimum": 25, "maximum": 120},
+        "max_docker_commands": {"const": 120},
+        "http_requests": {"type": "integer", "minimum": 16, "maximum": 160},
+        "max_http_requests": {"const": 160},
+        "support_processes_peak": {"const": 4},
+        "stream_mutations": {"const": 4}
+      }
+    },
+    "runtime_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "docker_cgroup_driver",
+        "rt_cv_image",
+        "consumer_image",
+        "mediamtx_image",
+        "main_rt_cv_preserved_exactly",
+        "main_rt_cv_stream_count",
+        "paused_workloads_preserved_exactly"
+      ],
+      "properties": {
+        "docker_cgroup_driver": {"const": "cgroupfs"},
+        "rt_cv_image": {"$ref": "#/$defs/imageIdentity"},
+        "consumer_image": {"$ref": "#/$defs/imageIdentity"},
+        "mediamtx_image": {"$ref": "#/$defs/imageIdentity"},
+        "main_rt_cv_preserved_exactly": {"const": true},
+        "main_rt_cv_stream_count": {"type": "integer", "minimum": 0},
+        "paused_workloads_preserved_exactly": {"const": true}
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hardware_profile",
+        "compute_hw",
+        "low_latency_mode",
+        "max_batch_size",
+        "max_targets_per_stream",
+        "visual_tracker_type",
+        "vpi_backend_4dcf_tracker",
+        "main_config_sha256",
+        "tracker_config_sha256",
+        "capacity_product"
+      ],
+      "properties": {
+        "hardware_profile": {"const": "AGX-THOR"},
+        "compute_hw": {"const": 2},
+        "low_latency_mode": {"const": 0},
+        "max_batch_size": {"const": 16},
+        "max_targets_per_stream": {"const": 32},
+        "visual_tracker_type": {"const": 2},
+        "vpi_backend_4dcf_tracker": {"const": 2},
+        "main_config_sha256": {"$ref": "#/$defs/hash"},
+        "tracker_config_sha256": {"$ref": "#/$defs/hash"},
+        "capacity_product": {"const": 512}
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "byte_count",
+        "content_sha256",
+        "codec_h264",
+        "width",
+        "height",
+        "fps",
+        "duration_seconds",
+        "tcp_probe_passed",
+        "warehouse_sample_bundle"
+      ],
+      "properties": {
+        "byte_count": {"const": 2575454},
+        "content_sha256": {"const": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"},
+        "codec_h264": {"const": true},
+        "width": {"const": 1920},
+        "height": {"const": 1080},
+        "fps": {"const": 10},
+        "duration_seconds": {"const": 10},
+        "tcp_probe_passed": {"const": false},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    },
+    "file_detection_tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input_type", "source_replay_until_explicit_remove", "runtime_fixture", "add", "active_metrics", "detection_tracking", "remove", "terminated_cleanly"],
+      "properties": {
+        "input_type": {"const": "finite_local_file"},
+        "source_replay_until_explicit_remove": {"const": false},
+        "runtime_fixture": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["generation_method_exact", "source_repetitions", "content_sha256", "byte_count", "codec_h264", "width", "height", "fps", "duration_seconds", "tcp_probe_passed"],
+          "properties": {
+            "generation_method_exact": {"const": true},
+            "source_repetitions": {"const": 6},
+            "content_sha256": {"$ref": "#/$defs/hash"},
+            "byte_count": {"type": "integer", "minimum": 10000000, "maximum": 20000000},
+            "codec_h264": {"const": true},
+            "width": {"const": 1920},
+            "height": {"const": 1080},
+            "fps": {"const": 10},
+            "duration_seconds": {"const": 60},
+            "tcp_probe_passed": {"const": false}
+          }
+        },
+        "add": {"$ref": "#/$defs/streamCall"},
+        "active_metrics": {"$ref": "#/$defs/activeMetrics"},
+        "detection_tracking": {"$ref": "#/$defs/detectionTracking"},
+        "remove": {"$ref": "#/$defs/streamCall"},
+        "terminated_cleanly": {"const": true}
+      }
+    },
+    "rtsp_detection_tracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "input_type",
+        "support_image_exact",
+        "publisher_running",
+        "media_probe",
+        "add",
+        "active_metrics",
+        "detection_tracking",
+        "remove",
+        "terminated_cleanly"
+      ],
+      "properties": {
+        "input_type": {"const": "loopback_rtsp"},
+        "support_image_exact": {"const": true},
+        "publisher_running": {"const": true},
+        "media_probe": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["codec_h264", "width", "height", "fps", "duration_seconds", "tcp_probe_passed"],
+          "properties": {
+            "codec_h264": {"const": true},
+            "width": {"const": 1920},
+            "height": {"const": 1080},
+            "fps": {"const": 10},
+            "duration_seconds": {"const": null},
+            "tcp_probe_passed": {"const": true}
+          }
+        },
+        "add": {"$ref": "#/$defs/streamCall"},
+        "active_metrics": {"$ref": "#/$defs/activeMetrics"},
+        "detection_tracking": {"$ref": "#/$defs/detectionTracking"},
+        "remove": {"$ref": "#/$defs/streamCall"},
+        "terminated_cleanly": {"const": true}
+      }
+    },
+    "dynamic_stream_lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "file_add_http_status",
+        "file_remove_http_status",
+        "rtsp_add_http_status",
+        "rtsp_remove_http_status",
+        "active_state_observed_for_each",
+        "terminal_state_observed_for_each",
+        "final_stream_count",
+        "pre_existing_streams_touched",
+        "planned_pipeline_restart_between_input_lanes"
+      ],
+      "properties": {
+        "file_add_http_status": {"const": 200},
+        "file_remove_http_status": {"const": 200},
+        "rtsp_add_http_status": {"const": 200},
+        "rtsp_remove_http_status": {"const": 200},
+        "active_state_observed_for_each": {"const": true},
+        "terminal_state_observed_for_each": {"const": true},
+        "final_stream_count": {"const": 0},
+        "pre_existing_streams_touched": {"const": 0},
+        "planned_pipeline_restart_between_input_lanes": {"const": true}
+      }
+    },
+    "health_metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "live_http_status",
+        "ready_http_status",
+        "startup_http_status",
+        "metadata_http_status",
+        "file_frame_metric_correlated",
+        "file_detection_metric_correlated",
+        "rtsp_frame_metric_correlated",
+        "rtsp_detection_metric_correlated",
+        "prometheus"
+      ],
+      "properties": {
+        "live_http_status": {"const": 200},
+        "ready_http_status": {"const": 200},
+        "startup_http_status": {"const": 200},
+        "metadata_http_status": {"const": 200},
+        "file_frame_metric_correlated": {"const": true},
+        "file_detection_metric_correlated": {"const": true},
+        "rtsp_frame_metric_correlated": {"const": true},
+        "rtsp_detection_metric_correlated": {"const": true},
+        "prometheus": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["http_status", "required_metric_families_present", "metric_families", "body_sha256"],
+          "properties": {
+            "http_status": {"const": 200},
+            "required_metric_families_present": {"const": true},
+            "metric_families": {
+              "type": "array",
+              "uniqueItems": true,
+              "allOf": [
+                {"contains": {"const": "fps_metrics"}},
+                {"contains": {"const": "frame_number_metrics"}},
+                {"contains": {"const": "latency_metrics"}},
+                {"contains": {"const": "memory_metrics"}},
+                {"contains": {"const": "stream_count"}},
+                {"contains": {"const": "utilization_metrics"}}
+              ]
+            },
+            "body_sha256": {"$ref": "#/$defs/hash"}
+          }
+        }
+      }
+    },
+    "thor_vpi_tracker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effective_configuration_exact",
+        "stable_tracks_file",
+        "stable_tracks_rtsp",
+        "vpi_error_count_after_clean_start",
+        "isolated_log_sha256",
+        "oom_killed",
+        "restart_count"
+      ],
+      "properties": {
+        "effective_configuration_exact": {"const": true},
+        "stable_tracks_file": {"const": true},
+        "stable_tracks_rtsp": {"const": true},
+        "vpi_error_count_after_clean_start": {"const": 0},
+        "isolated_log_sha256": {"$ref": "#/$defs/hash"},
+        "oom_killed": {"const": false},
+        "restart_count": {"const": 0}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "failures",
+        "owned_containers_absent",
+        "owned_topic_absent",
+        "owned_consumer_groups_delete_attempted",
+        "publisher_stopped",
+        "temporary_root_absent",
+        "main_rt_cv_preserved_exactly",
+        "paused_workloads_preserved_exactly"
+      ],
+      "properties": {
+        "failures": {"const": []},
+        "owned_containers_absent": {"const": true},
+        "owned_topic_absent": {"const": true},
+        "owned_consumer_groups_delete_attempted": {"const": true},
+        "publisher_stopped": {"const": true},
+        "temporary_root_absent": {"const": true},
+        "main_rt_cv_preserved_exactly": {"const": true},
+        "paused_workloads_preserved_exactly": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "agent_generate_calls",
+        "main_rt_cv_stream_mutations",
+        "main_vios_stream_mutations",
+        "warehouse_sample_bundle",
+        "network_downloads",
+        "raw_camera_ids_retained",
+        "raw_stream_urls_retained",
+        "raw_embeddings_retained",
+        "raw_broker_messages_retained",
+        "credentials_retained"
+      ],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "main_rt_cv_stream_mutations": {"const": 0},
+        "main_vios_stream_mutations": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "network_downloads": {"const": 0},
+        "raw_camera_ids_retained": {"const": false},
+        "raw_stream_urls_retained": {"const": false},
+        "raw_embeddings_retained": {"const": false},
+        "raw_broker_messages_retained": {"const": false},
+        "credentials_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "imageIdentity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image_id_exact", "architecture"],
+      "properties": {
+        "image_id_exact": {"const": true},
+        "architecture": {"const": "arm64"}
+      }
+    },
+    "streamCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http_status", "request_sha256", "response_sha256"],
+      "properties": {
+        "http_status": {"const": 200},
+        "request_sha256": {"$ref": "#/$defs/hash"},
+        "response_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "activeMetrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stream_count", "frame_number_positive", "fps_positive", "latency_finite"],
+      "properties": {
+        "stream_count": {"const": 1},
+        "frame_number_positive": {"const": true},
+        "fps_positive": {"const": true},
+        "latency_finite": {"const": true}
+      }
+    },
+    "detectionTracking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frames",
+        "objects",
+        "minimum_objects_per_frame",
+        "maximum_objects_per_frame",
+        "types",
+        "unique_track_ids",
+        "repeated_track_ids",
+        "embedding_dimensions",
+        "finite_bboxes",
+        "finite_confidences",
+        "finite_embeddings",
+        "single_sensor_value",
+        "sensor_value_present"
+      ],
+      "properties": {
+        "frames": {"const": 8},
+        "objects": {"type": "integer", "minimum": 1},
+        "minimum_objects_per_frame": {"type": "integer", "minimum": 1},
+        "maximum_objects_per_frame": {"type": "integer", "minimum": 1},
+        "types": {
+          "type": "array",
+          "uniqueItems": true,
+          "allOf": [
+            {"contains": {"const": "Person"}},
+            {"contains": {"const": "Pallet"}}
+          ]
+        },
+        "unique_track_ids": {"type": "integer", "minimum": 1},
+        "repeated_track_ids": {"type": "integer", "minimum": 1},
+        "embedding_dimensions": {"const": [1152]},
+        "finite_bboxes": {"const": true},
+        "finite_confidences": {"const": true},
+        "finite_embeddings": {"const": true},
+        "single_sensor_value": {"const": true},
+        "sensor_value_present": {"const": true}
+      }
+    }
+  }
+}

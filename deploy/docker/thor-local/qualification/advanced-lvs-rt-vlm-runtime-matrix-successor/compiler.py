@@ -212,7 +212,7 @@ def _render(value: dict[str, Any]) -> bytes:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=("compile", "check"), nargs="?", default="check")
+    parser.add_argument("mode", choices=("compile", "write", "check"), nargs="?", default="check")
     args = parser.parse_args(argv)
     try:
         value = build_matrix()
@@ -222,6 +222,8 @@ def main(argv: list[str] | None = None) -> int:
         rendered = _render(value)
         if args.mode == "compile":
             sys.stdout.buffer.write(rendered)
+        elif args.mode == "write":
+            MATRIX_PATH.write_bytes(rendered)
         elif not MATRIX_PATH.is_file() or MATRIX_PATH.read_bytes() != rendered:
             raise MatrixError("checked matrix.json drifted; run compile and review the result")
         return 0
