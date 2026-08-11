@@ -1,0 +1,79 @@
+{
+  "audio_rtsp_republish": {
+    "direct_bframe_aac_limitation_observed": true,
+    "hardware_h264_aac": true,
+    "hardware_h265_aac": true,
+    "sample_rate_hz": 48000,
+    "software_h264_aac": true,
+    "software_h265_aac": true,
+    "working_transcode_substitute": true
+  },
+  "b_frame_handling": {
+    "decoded_frames": 120,
+    "input_b_frames": 2,
+    "input_codec": "h264",
+    "presentation_order_decode_completed": true,
+    "snapshot_decoded": true
+  },
+  "capability_ids": [
+    "manifest-entry.vios-codecs-audio.00-b-frame-handling",
+    "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
+    "manifest-entry.vios-codecs-audio.02-h-264-h-265",
+    "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish"
+  ],
+  "cleanup": {
+    "isolated_sensor_list_empty": true,
+    "main_vios_unchanged": true,
+    "owned_container_absent": true,
+    "six_owned_streams_deleted": true,
+    "temporary_trees_absent": true
+  },
+  "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+  "h264_h265": {
+    "hardware_h264_decode": true,
+    "hardware_h265_decode": true,
+    "software_h264_snapshot": true,
+    "software_h264_transcode": true,
+    "software_h265_snapshot": true,
+    "software_h265_transcode": true,
+    "software_output_b_frames": 0
+  },
+  "hevc_multislice_rfc7798": {
+    "codec": "hevc",
+    "continuation_slices": 360,
+    "pictures": 120,
+    "rtsp_decoded_frames": 120,
+    "slices_per_picture": 4,
+    "snapshot_decoded": true
+  },
+  "official_indices": [
+    420,
+    421,
+    422,
+    424
+  ],
+  "package_id": "vios-codecs-manifest-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "audio_recording_claimed": false,
+    "main_vios_configuration_mutations": 0,
+    "main_vios_sensor_additions": 0,
+    "raw_stream_identifiers_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "captured_at": "2026-08-10T12:05:58.709929Z",
+    "gstreamer_dependency_closure": true,
+    "image_architecture": "arm64",
+    "image_id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+    "networkless_derivative": true,
+    "product_version": "3.2.1"
+  },
+  "schema_version": 1,
+  "source_identity": {
+    "capture_sha256": "24bbac525b0562e56aa78bce8f38aa3e8568d6ff990180f066718c238fb7e10f",
+    "cleanup_wrapper_sha256": "a4bfd3a6562f95214624f7f84f8115162031285dc231b3f2e168ecb7233addab",
+    "raw_receipt_sha256": "c850adad8fe65bfe4a40741fa24f86de3abbc80baf8de54cf903c034bfe6f93c"
+  },
+  "status": "passed"
+}

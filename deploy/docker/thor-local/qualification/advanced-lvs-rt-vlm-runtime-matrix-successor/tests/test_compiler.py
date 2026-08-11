@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_forty_three_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_forty_seven_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 415, 416, 417
+        69, 70, 299, 300, 302, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 415, 416, 417, 420, 421, 422, 424
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -366,6 +366,25 @@ def test_vios_live_replay_receipt_is_bound_to_exact_row() -> None:
     assert receipt["replay"]["ui_seek_status"] == 200
     assert receipt["replay"]["invalid_seek_status"] == 501
     assert receipt["cleanup"]["main_vios_restored"] is True
+
+
+def test_vios_codec_receipt_is_bound_to_four_exact_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "vios-codecs-manifest-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [420, 421, 422, 424]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+        assert receipt["cleanup"]["main_vios_unchanged"] is True
+    receipt = compiler._validate_receipt(entries[0])
+    assert receipt["b_frame_handling"]["decoded_frames"] == 120
+    assert receipt["hevc_multislice_rfc7798"]["slices_per_picture"] == 4
+    assert receipt["audio_rtsp_republish"]["working_transcode_substitute"] is True
+    assert receipt["policy"]["audio_recording_claimed"] is False
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

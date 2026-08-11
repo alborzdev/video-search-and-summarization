@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-21",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-22",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -1057,6 +1057,94 @@
         "/cleanup/replay_session_stopped": true,
         "/cleanup/main_vios_restored": true,
         "/policy/agent_generate_calls": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 420,
+      "capability_id": "manifest-entry.vios-codecs-audio.00-b-frame-handling",
+      "advertised_literal": "B-frame handling",
+      "package_id": "vios-codecs-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+      "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+      "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/b_frame_handling/input_codec": "h264",
+        "/b_frame_handling/input_b_frames": 2,
+        "/b_frame_handling/decoded_frames": 120,
+        "/b_frame_handling/snapshot_decoded": true,
+        "/b_frame_handling/presentation_order_decode_completed": true,
+        "/cleanup/main_vios_unchanged": true
+      }
+    },
+    {
+      "official_index": 421,
+      "capability_id": "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
+      "advertised_literal": "HEVC multislice/RFC7798",
+      "package_id": "vios-codecs-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+      "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+      "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/hevc_multislice_rfc7798/codec": "hevc",
+        "/hevc_multislice_rfc7798/pictures": 120,
+        "/hevc_multislice_rfc7798/slices_per_picture": 4,
+        "/hevc_multislice_rfc7798/continuation_slices": 360,
+        "/hevc_multislice_rfc7798/rtsp_decoded_frames": 120,
+        "/hevc_multislice_rfc7798/snapshot_decoded": true
+      }
+    },
+    {
+      "official_index": 422,
+      "capability_id": "manifest-entry.vios-codecs-audio.02-h-264-h-265",
+      "advertised_literal": "H.264/H.265",
+      "package_id": "vios-codecs-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+      "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+      "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/h264_h265/hardware_h264_decode": true,
+        "/h264_h265/hardware_h265_decode": true,
+        "/h264_h265/software_h264_snapshot": true,
+        "/h264_h265/software_h265_snapshot": true,
+        "/h264_h265/software_h264_transcode": true,
+        "/h264_h265/software_h265_transcode": true,
+        "/h264_h265/software_output_b_frames": 0
+      }
+    },
+    {
+      "official_index": 424,
+      "capability_id": "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish",
+      "advertised_literal": "audio RTSP republish",
+      "package_id": "vios-codecs-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+      "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+      "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/audio_rtsp_republish/hardware_h264_aac": true,
+        "/audio_rtsp_republish/hardware_h265_aac": true,
+        "/audio_rtsp_republish/software_h264_aac": true,
+        "/audio_rtsp_republish/software_h265_aac": true,
+        "/audio_rtsp_republish/sample_rate_hz": 48000,
+        "/audio_rtsp_republish/direct_bframe_aac_limitation_observed": true,
+        "/audio_rtsp_republish/working_transcode_substitute": true,
+        "/policy/audio_recording_claimed": false,
         "/policy/warehouse_sample_bundle": "excluded"
       }
     }

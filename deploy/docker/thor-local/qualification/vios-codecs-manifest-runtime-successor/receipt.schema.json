@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "source_identity", "runtime", "b_frame_handling", "hevc_multislice_rfc7798", "h264_h265", "audio_rtsp_republish", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "vios-codecs-manifest-runtime-successor"},
+    "capability_ids": {"const": ["manifest-entry.vios-codecs-audio.00-b-frame-handling", "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798", "manifest-entry.vios-codecs-audio.02-h-264-h-265", "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish"]},
+    "official_indices": {"const": [420, 421, 422, 424]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "source_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["raw_receipt_sha256", "cleanup_wrapper_sha256", "capture_sha256"],
+      "properties": {
+        "raw_receipt_sha256": {"const": "c850adad8fe65bfe4a40741fa24f86de3abbc80baf8de54cf903c034bfe6f93c"},
+        "cleanup_wrapper_sha256": {"const": "a4bfd3a6562f95214624f7f84f8115162031285dc231b3f2e168ecb7233addab"},
+        "capture_sha256": {"const": "24bbac525b0562e56aa78bce8f38aa3e8568d6ff990180f066718c238fb7e10f"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["product_version", "captured_at", "image_id", "image_architecture", "networkless_derivative", "gstreamer_dependency_closure"],
+      "properties": {
+        "product_version": {"const": "3.2.1"},
+        "captured_at": {"type": "string", "minLength": 20},
+        "image_id": {"const": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563"},
+        "image_architecture": {"const": "arm64"},
+        "networkless_derivative": {"const": true},
+        "gstreamer_dependency_closure": {"const": true}
+      }
+    },
+    "b_frame_handling": {
+      "type": "object", "additionalProperties": false,
+      "required": ["input_codec", "input_b_frames", "decoded_frames", "snapshot_decoded", "presentation_order_decode_completed"],
+      "properties": {
+        "input_codec": {"const": "h264"}, "input_b_frames": {"const": 2},
+        "decoded_frames": {"const": 120}, "snapshot_decoded": {"const": true},
+        "presentation_order_decode_completed": {"const": true}
+      }
+    },
+    "hevc_multislice_rfc7798": {
+      "type": "object", "additionalProperties": false,
+      "required": ["codec", "pictures", "slices_per_picture", "continuation_slices", "rtsp_decoded_frames", "snapshot_decoded"],
+      "properties": {
+        "codec": {"const": "hevc"}, "pictures": {"const": 120},
+        "slices_per_picture": {"const": 4}, "continuation_slices": {"const": 360},
+        "rtsp_decoded_frames": {"const": 120}, "snapshot_decoded": {"const": true}
+      }
+    },
+    "h264_h265": {
+      "type": "object", "additionalProperties": false,
+      "required": ["hardware_h264_decode", "hardware_h265_decode", "software_h264_snapshot", "software_h265_snapshot", "software_h264_transcode", "software_h265_transcode", "software_output_b_frames"],
+      "properties": {
+        "hardware_h264_decode": {"const": true}, "hardware_h265_decode": {"const": true},
+        "software_h264_snapshot": {"const": true}, "software_h265_snapshot": {"const": true},
+        "software_h264_transcode": {"const": true}, "software_h265_transcode": {"const": true},
+        "software_output_b_frames": {"const": 0}
+      }
+    },
+    "audio_rtsp_republish": {
+      "type": "object", "additionalProperties": false,
+      "required": ["hardware_h264_aac", "hardware_h265_aac", "software_h264_aac", "software_h265_aac", "sample_rate_hz", "direct_bframe_aac_limitation_observed", "working_transcode_substitute"],
+      "properties": {
+        "hardware_h264_aac": {"const": true}, "hardware_h265_aac": {"const": true},
+        "software_h264_aac": {"const": true}, "software_h265_aac": {"const": true},
+        "sample_rate_hz": {"const": 48000}, "direct_bframe_aac_limitation_observed": {"const": true},
+        "working_transcode_substitute": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["six_owned_streams_deleted", "isolated_sensor_list_empty", "owned_container_absent", "temporary_trees_absent", "main_vios_unchanged"],
+      "properties": {
+        "six_owned_streams_deleted": {"const": true}, "isolated_sensor_list_empty": {"const": true},
+        "owned_container_absent": {"const": true}, "temporary_trees_absent": {"const": true},
+        "main_vios_unchanged": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "warehouse_sample_bundle", "main_vios_configuration_mutations", "main_vios_sensor_additions", "audio_recording_claimed", "raw_stream_identifiers_retained"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"},
+        "main_vios_configuration_mutations": {"const": 0}, "main_vios_sensor_additions": {"const": 0},
+        "audio_recording_claimed": {"const": false}, "raw_stream_identifiers_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

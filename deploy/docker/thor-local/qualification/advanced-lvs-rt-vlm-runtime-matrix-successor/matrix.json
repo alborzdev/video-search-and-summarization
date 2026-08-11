@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-21",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-22",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -953,6 +953,94 @@
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "B-frame handling",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-codecs-audio.00-b-frame-handling",
+      "feature_id": "vios-codecs-audio",
+      "official_index": 420,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+        "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+        "package_id": "vios-codecs-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+        "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "HEVC multislice/RFC7798",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
+      "feature_id": "vios-codecs-audio",
+      "official_index": 421,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+        "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+        "package_id": "vios-codecs-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+        "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "H.264/H.265",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-codecs-audio.02-h-264-h-265",
+      "feature_id": "vios-codecs-audio",
+      "official_index": 422,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+        "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+        "package_id": "vios-codecs-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+        "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "audio RTSP republish",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish",
+      "feature_id": "vios-codecs-audio",
+      "official_index": 424,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/contract.json",
+        "contract_sha256": "e626886e20fbdf4b473bf29fdd697af9c0652b3ee370ff9e4246cc5eb5acdf0c",
+        "package_id": "vios-codecs-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-codecs-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "557ab4ef19eb22eed44ba87b2e3ece7dfeb43ec7adf4749fe8a7f63da0d866c3",
+        "receipt_sha256": "46dad305ff28d2a445f8f9f9f2ec9d86b2685bb13553dddd3a0f0bc6142c4aba",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
     }
   ],
   "schema_version": 1,
@@ -962,8 +1050,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 43,
-    "row_count": 43,
+    "passed_current_thor": 47,
+    "row_count": 47,
     "warehouse_sample_bundle": "excluded"
   }
 }

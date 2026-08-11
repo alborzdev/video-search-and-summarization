@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "package_id": "vios-codecs-manifest-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.vios-codecs-audio.00-b-frame-handling",
+    "manifest-entry.vios-codecs-audio.01-hevc-multislice-rfc7798",
+    "manifest-entry.vios-codecs-audio.02-h-264-h-265",
+    "manifest-entry.vios-codecs-audio.04-audio-rtsp-republish"
+  ],
+  "official_indices": [420, 421, 422, 424],
+  "target_release": "VSS 3.2.1",
+  "image": {
+    "tag": "vss-vios-nvstreamer:3.2.1-thor-local",
+    "id": "sha256:b3e5b92fa2546e9b69a3dba7cac324ce36a3cce65f2e0d61ad41a8a84a74a563",
+    "architecture": "arm64",
+    "codec_package_set": "ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4"
+  },
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-codecs-runtime/runtime-receipt.json",
+      "sha256": "c850adad8fe65bfe4a40741fa24f86de3abbc80baf8de54cf903c034bfe6f93c"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-codecs-runtime/official-runtime-evidence.json",
+      "sha256": "a4bfd3a6562f95214624f7f84f8115162031285dc231b3f2e168ecb7233addab"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-codecs-runtime/capture.py",
+      "sha256": "24bbac525b0562e56aa78bce8f38aa3e8568d6ff990180f066718c238fb7e10f"
+    }
+  ],
+  "policy": {
+    "agent_generate_calls": 0,
+    "warehouse_sample_bundle": "excluded",
+    "main_vios_configuration_mutations": 0,
+    "main_vios_sensor_additions": 0,
+    "audio_recording_claimed": false,
+    "raw_stream_identifiers_retained": false
+  }
+}
