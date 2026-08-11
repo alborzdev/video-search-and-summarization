@@ -6,7 +6,7 @@
   "properties": {
     "schema_version": {"const": 1},
     "package_id": {"const": "advanced-lvs-rt-vlm-runtime-matrix-successor"},
-    "matrix_id": {"const": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-31"},
+    "matrix_id": {"const": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-32"},
     "selected_metadata_set": {"const": "thor-vss-3.2.1-current-lvs-rest-runtime-500"},
     "selected_ledger_path": {"type": "string", "minLength": 1},
     "selected_ledger_sha256": {"$ref": "#/$defs/sha256"},
@@ -22,12 +22,12 @@
       "type": "object", "additionalProperties": false,
       "required": ["row_count", "passed_current_thor", "canonical_promotions", "agent_generate_calls", "warehouse_sample_bundle"],
       "properties": {
-        "row_count": {"const": 68}, "passed_current_thor": {"const": 68}, "canonical_promotions": {"const": 0},
+        "row_count": {"const": 69}, "passed_current_thor": {"const": 69}, "canonical_promotions": {"const": 0},
         "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
       }
     },
     "rows": {
-      "type": "array", "minItems": 68, "maxItems": 68,
+      "type": "array", "minItems": 69, "maxItems": 69,
       "items": {"$ref": "#/$defs/row"}
     }
   },
@@ -48,7 +48,7 @@
       "required": ["official_index", "capability_id", "feature_id", "advertised_literal", "acceptance_class", "canonical_runtime_state", "overlay_runtime_state", "admission_state", "canonical_state_advanced", "runtime_evidence", "warehouse_sample_bundle"],
       "properties": {
         "official_index": {"type": "integer", "minimum": 0, "maximum": 499},
-        "capability_id": {"type": "string", "pattern": "^(manifest-entry\\.|behavior\\.|runtime\\.|configuration\\.|calibration\\.)"}, "feature_id": {"type": "string", "minLength": 1},
+        "capability_id": {"type": "string", "pattern": "^(manifest-entry\\.|behavior\\.|runtime\\.|configuration\\.|calibration\\.|customization\\.)"}, "feature_id": {"type": "string", "minLength": 1},
         "advertised_literal": {"type": "string", "minLength": 1}, "acceptance_class": {"const": "required_local"},
         "canonical_runtime_state": {"const": "not_qualified"}, "overlay_runtime_state": {"const": "passed_current_thor"},
         "admission_state": {"const": "runtime_evidence_available_not_canonically_admitted"}, "canonical_state_advanced": {"const": false},

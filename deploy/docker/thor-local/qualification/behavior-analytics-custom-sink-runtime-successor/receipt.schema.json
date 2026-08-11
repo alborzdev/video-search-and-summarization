@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "contract_sha256", "capability_ids", "official_indices", "status", "captured_at", "runtime", "interface", "batch_write", "single_write", "protobuf_write", "outputs", "integration_boundary", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-custom-sink-runtime-successor"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "capability_ids": {"const": ["customization.behavior.sink-extension"]},
+    "official_indices": {"const": [210]},
+    "status": {"const": "passed"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["image", "image_id", "log_sha256", "container"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "image_id": {"$ref": "#/$defs/image_id"},
+        "log_sha256": {"$ref": "#/$defs/sha256"},
+        "container": {"$ref": "#/$defs/container"}
+      }
+    },
+    "interface": {
+      "type": "object", "additionalProperties": false,
+      "required": ["base_class", "concrete", "implemented_methods"],
+      "properties": {
+        "base_class": {"const": "Sink"},
+        "concrete": {"const": true},
+        "implemented_methods": {"const": ["write", "write_msg", "close"]}
+      }
+    },
+    "batch_write": {
+      "type": "object", "additionalProperties": false,
+      "required": ["records", "event_ids", "event_types", "keys", "json_bytes_serializer", "binary_header_preserved"],
+      "properties": {
+        "records": {"const": 2},
+        "event_ids": {"const": ["event-1", "event-2"]},
+        "event_types": {"const": ["roi:ENTRY", "tripwire:OUT"]},
+        "keys": {"const": ["event-1", "event-2"]},
+        "json_bytes_serializer": {"const": true},
+        "binary_header_preserved": {"const": true}
+      }
+    },
+    "single_write": {
+      "type": "object", "additionalProperties": false,
+      "required": ["records", "key", "payload_sha256", "opaque_bytes_preserved"],
+      "properties": {
+        "records": {"const": 1},
+        "key": {"const": "raw-1"},
+        "payload_sha256": {"const": "6af4f5e0c195b1ce5ee91b52060e6628cea782c3be2a5d167b0972439aa49495"},
+        "opaque_bytes_preserved": {"const": true}
+      }
+    },
+    "protobuf_write": {
+      "type": "object", "additionalProperties": false,
+      "required": ["records", "key", "category", "sensor_id", "object_ids", "proto_bytes_serializer"],
+      "properties": {
+        "records": {"const": 1},
+        "key": {"const": "Camera_01"},
+        "category": {"const": "FOV Count Violation"},
+        "sensor_id": {"const": "Camera_01"},
+        "object_ids": {"const": ["person-1"]},
+        "proto_bytes_serializer": {"const": true}
+      }
+    },
+    "outputs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["destinations", "event_records", "incident_records", "events_sha256", "incidents_sha256", "double_close_safe"],
+      "properties": {
+        "destinations": {"const": ["events", "incidents"]},
+        "event_records": {"const": 3},
+        "incident_records": {"const": 1},
+        "events_sha256": {"$ref": "#/$defs/sha256"},
+        "incidents_sha256": {"$ref": "#/$defs/sha256"},
+        "double_close_safe": {"const": true}
+      }
+    },
+    "integration_boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["factory_registration_claimed", "usage"],
+      "properties": {
+        "factory_registration_claimed": {"const": false},
+        "usage": {"const": "application constructs JsonlFileSink or adds an explicit get_sink factory branch"}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["disposable_container_absent", "normal_behavior_containers", "failures"],
+      "properties": {
+        "disposable_container_absent": {"const": true},
+        "normal_behavior_containers": {
+          "type": "object", "additionalProperties": false,
+          "required": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"],
+          "properties": {
+            "vss-behavior-analytics": {"$ref": "#/$defs/normal_container"},
+            "vss-behavior-analytics-thor-candidates": {"$ref": "#/$defs/normal_container"}
+          }
+        },
+        "failures": {"type": "array", "maxItems": 0}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "external_requests", "main_rt_cv_mutations", "main_vios_mutations", "normal_behavior_consumers_stopped", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "external_requests": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0}, "main_vios_mutations": {"const": 0},
+        "normal_behavior_consumers_stopped": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["exit_code", "oom_killed", "restart_count"],
+      "properties": {"exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}
+    },
+    "normal_container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["running", "oom_killed", "restart_count"],
+      "properties": {"running": {"const": true}, "oom_killed": {"const": false}, "restart_count": {"const": 0}}
+    }
+  }
+}

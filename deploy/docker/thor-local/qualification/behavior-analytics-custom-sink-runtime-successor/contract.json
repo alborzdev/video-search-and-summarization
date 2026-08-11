@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-custom-sink-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "customization.behavior.sink-extension"
+  ],
+  "official_indices": [210],
+  "advertised_contract": {
+    "documented": true,
+    "extension_interface": "Sink"
+  },
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-custom-sink-runtime-successor/custom_sink.py",
+      "sha256": "1f49e90f7a97247e986c585526ebcb692be1b1304b49d5401952eeb8630728f6"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-custom-sink-runtime-successor/in_container_probe.py",
+      "sha256": "acd3d921983dadb87d8934199daeca799e6051b02630266c00bbd6035fa49d4e"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-custom-sink-runtime-successor/run_probe.py",
+      "sha256": "46313e8429b12b97b88408a52eb33cfa80b207ffe53a7e095935e7e508e5d393"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_base.py",
+      "sha256": "4c33fe5aec0133456939a5cb0d420f2f0cf22873ffb6e60e7944b1aef4fce72a"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py",
+      "sha256": "8a5c59dd9d8a604716a9113c8dfc144f5e61c951161b2cfd7e913aa0f97936c2"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_base.py",
+      "sha256": "1360a2f79ff360755d6c9b1ffb38c2079ef1ba5e2b7ee3a7396e167d6e513c52"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/docs/modules-overview.md",
+      "sha256": "fd90761cfeba0b46ded786032f37c58536912e35a5661ce1e6b9dc6df791e843"
+    }
+  ],
+  "required_assertions": {
+    "base_class": "Sink",
+    "concrete": true,
+    "implemented_methods": ["write", "write_msg", "close"],
+    "batch_and_single_write": true,
+    "json_and_protobuf_serializers": true,
+    "keys_and_binary_headers_preserved": true,
+    "destination_routing": ["events", "incidents"],
+    "double_close_safe": true
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "built-in sinkType factory registration",
+    "production durability or throughput envelope",
+    "network delivery backend",
+    "100 GB Warehouse sample bundle"
+  ]
+}

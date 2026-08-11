@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_sixty_eight_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_sixty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 204, 205, 206, 207, 209, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        69, 70, 204, 205, 206, 207, 209, 210, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -132,6 +132,25 @@ def test_space_utilization_receipt_is_bound_to_exact_row() -> None:
     assert all(value > 0 for value in receipt["outputs"]["positive_records"].values())
     assert receipt["outputs"]["free_plus_occupied_max_error"] <= 0.02
     assert receipt["outputs"]["ratio_max_error"] <= 0.02
+
+
+def test_custom_behavior_sink_receipt_is_bound_to_exact_row() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "behavior-analytics-custom-sink-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [210]
+    receipt = compiler._validate_receipt(entries[0])
+    assert entries[0]["capability_id"] in receipt["capability_ids"]
+    assert receipt["interface"] == {
+        "base_class": "Sink",
+        "concrete": True,
+        "implemented_methods": ["write", "write_msg", "close"],
+    }
+    assert receipt["outputs"]["destinations"] == ["events", "incidents"]
+    assert receipt["integration_boundary"]["factory_registration_claimed"] is False
 
 
 def test_receipts_are_source_locked_schema_valid_and_privacy_safe() -> None:

@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-custom-sink-runtime-successor",
+  "contract_sha256": "a59a7f35ec274fa324a3e8dacfd782c6ab092331a906886d87ce64a04ec2b97a",
+  "capability_ids": [
+    "customization.behavior.sink-extension"
+  ],
+  "official_indices": [210],
+  "status": "passed",
+  "captured_at": "2026-08-11T21:24:49Z",
+  "runtime": {
+    "image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "log_sha256": "39b90f7a4ef83b3bf55e48811dae5dde32c0a764645c5d6eed854d5bbb648063",
+    "container": {
+      "exit_code": 0,
+      "oom_killed": false,
+      "restart_count": 0
+    }
+  },
+  "interface": {
+    "base_class": "Sink",
+    "concrete": true,
+    "implemented_methods": ["write", "write_msg", "close"]
+  },
+  "batch_write": {
+    "records": 2,
+    "event_ids": ["event-1", "event-2"],
+    "event_types": ["roi:ENTRY", "tripwire:OUT"],
+    "keys": ["event-1", "event-2"],
+    "json_bytes_serializer": true,
+    "binary_header_preserved": true
+  },
+  "single_write": {
+    "records": 1,
+    "key": "raw-1",
+    "payload_sha256": "6af4f5e0c195b1ce5ee91b52060e6628cea782c3be2a5d167b0972439aa49495",
+    "opaque_bytes_preserved": true
+  },
+  "protobuf_write": {
+    "records": 1,
+    "key": "Camera_01",
+    "category": "FOV Count Violation",
+    "sensor_id": "Camera_01",
+    "object_ids": ["person-1"],
+    "proto_bytes_serializer": true
+  },
+  "outputs": {
+    "destinations": ["events", "incidents"],
+    "event_records": 3,
+    "incident_records": 1,
+    "events_sha256": "6526f3166d9084bf117865784d5b7f341f1b26b533f65da86a92bf72c01a273b",
+    "incidents_sha256": "3a4f19e196ab173b2a607e0baf9ce0693f36f19c601cf64cc8a658279799af94",
+    "double_close_safe": true
+  },
+  "integration_boundary": {
+    "factory_registration_claimed": false,
+    "usage": "application constructs JsonlFileSink or adds an explicit get_sink factory branch"
+  },
+  "cleanup": {
+    "disposable_container_absent": true,
+    "normal_behavior_containers": {
+      "vss-behavior-analytics": {"running": true, "oom_killed": false, "restart_count": 0},
+      "vss-behavior-analytics-thor-candidates": {"running": true, "oom_killed": false, "restart_count": 0}
+    },
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

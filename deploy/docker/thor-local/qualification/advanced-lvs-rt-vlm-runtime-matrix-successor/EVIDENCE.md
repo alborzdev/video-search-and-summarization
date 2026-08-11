@@ -1,6 +1,8 @@
 # Evidence
 
-`matrix.json` binds sixty-eight exact VSS 3.2.1 advertised candidate rows in the selected Metadata500 ledger to schema-valid live Thor receipts. Overlay 31 adds index 206. The retained Behavior Analytics evidence decodes all four directional ROI/tripwire event forms plus proximity, restricted-area, confined-area, and FOV-count incidents. The supplemental FOV run emitted 18 ongoing incidents across two sensors with contributing object IDs and valid time bounds; it does not claim their expiry/completion lifecycle. The disposable container exited zero without OOM/restart and its isolated topics were removed. The proof still excludes the complete multi-stage pipeline row, 3D detector/MV3DT runtime, all output families on all three sinks, and custom sinks.
+`matrix.json` binds sixty-nine exact VSS 3.2.1 advertised candidate rows in the selected Metadata500 ledger to schema-valid live Thor receipts. Overlay 32 adds index 210. A concrete `JsonlFileSink(Sink)` ran inside the released Behavior Analytics image and preserved batch JSON, single opaque bytes, protobuf data, extracted keys, binary headers, two-destination routing, and idempotent close. The container exited zero without OOM/restart and was removed. This proves the extension interface and local implementation without claiming a new built-in factory key or production durability/throughput.
+
+Overlay 31's retained events/incidents evidence covers all four directional ROI/tripwire event forms plus proximity, restricted-area, confined-area, and FOV-count incidents. Its FOV incidents were ongoing at capture, so expiry/completion remains explicitly unclaimed. The proof still excludes the complete multi-stage pipeline row, 3D detector/MV3DT runtime, and all output families on all three built-in sinks.
 
 Overlay 30's retained space-utilization evidence covers all six advertised metric families, three calibrated zones, both layout families, and arithmetic consistency.
 

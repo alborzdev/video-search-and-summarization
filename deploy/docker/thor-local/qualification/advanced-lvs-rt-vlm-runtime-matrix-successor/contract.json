@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-31",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-32",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -199,6 +199,36 @@
         "/outputs/free_layout_records": 9,
         "/outputs/utilizable_layout_records": 9,
         "/cleanup/qualification_topics_absent": true,
+        "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 210,
+      "capability_id": "customization.behavior.sink-extension",
+      "advertised_literal": "Custom behavior sink extension",
+      "package_id": "behavior-analytics-custom-sink-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-custom-sink-runtime-successor/contract.json",
+      "contract_sha256": "a59a7f35ec274fa324a3e8dacfd782c6ab092331a906886d87ce64a04ec2b97a",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-custom-sink-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "cf0a591e72d1883ef8be27e7c2cece389a51b8e67dca57c4b5917115263b7a0e",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-custom-sink-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "ce4855feadae78a5b6251ef0e63c8ea91a275dd96ac12048c0839d7d276c9bea",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/interface/base_class": "Sink",
+        "/interface/concrete": true,
+        "/interface/implemented_methods": ["write", "write_msg", "close"],
+        "/batch_write/records": 2,
+        "/batch_write/json_bytes_serializer": true,
+        "/batch_write/binary_header_preserved": true,
+        "/single_write/opaque_bytes_preserved": true,
+        "/protobuf_write/proto_bytes_serializer": true,
+        "/outputs/destinations": ["events", "incidents"],
+        "/outputs/event_records": 3,
+        "/outputs/incident_records": 1,
+        "/outputs/double_close_safe": true,
+        "/integration_boundary/factory_registration_claimed": false,
+        "/cleanup/disposable_container_absent": true,
         "/policy/warehouse_sample_bundle": "excluded"
       }
     },
