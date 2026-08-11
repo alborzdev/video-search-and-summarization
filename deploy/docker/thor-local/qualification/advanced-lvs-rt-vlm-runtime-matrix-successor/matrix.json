@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-35",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-36",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -136,6 +136,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-cv-radio-clip-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "f535c2ad287acb64b648d54c3898d195a6565662d568794a0295bf4d6a06a330",
         "receipt_sha256": "228a8d041398ae5f9bfbc65437c0250bede3f722493e2bc6b47c0f30c6613297",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Alerts view and rule-management semantics",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "runtime.ui.alerts-tab",
+      "feature_id": "main-ui",
+      "official_index": 169,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/ui-alerts-rule-lifecycle-runtime-successor/contract.json",
+        "contract_sha256": "fb1cdb041ac67019e9f1dad4672b6c1ae87889b36bd9114635b1ef98df664cb4",
+        "package_id": "ui-alerts-rule-lifecycle-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/ui-alerts-rule-lifecycle-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/ui-alerts-rule-lifecycle-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "9c06d64559b0d57aea80bc002073da553f19bc1d6ca2cf38bc464712a856eb32",
+        "receipt_sha256": "6ad5ac77d7ee632f7c8e6eb72b60387191a302ca52a935fae3fa6394753dc204",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1666,8 +1688,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 75,
-    "row_count": 75,
+    "passed_current_thor": 76,
+    "row_count": 76,
     "warehouse_sample_bundle": "excluded"
   }
 }

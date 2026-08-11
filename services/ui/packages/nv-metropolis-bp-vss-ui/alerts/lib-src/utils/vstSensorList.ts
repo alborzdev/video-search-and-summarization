@@ -4,10 +4,11 @@
  *
  *  - `GET /v1/sensor/list` maps friendly sensor `name` → `sensorId` for online
  *    sensors. Used by the thumbnail component.
- *  - `GET /v1/live/streams` returns the live-stream catalog — each entry
- *    carries `name`, RTSP `url`, and `streamId`. Used by the realtime alert
- *    creator so users can pick a sensor by name (matching the chat flow in
- *    `services/agent/.../rtvi_vlm_alert.py`) instead of pasting an RTSP URL.
+ *  - `GET /v1/live/streams` returns the user-facing live-stream catalog.
+ *  - `GET /v1/sensor/streams` returns the canonical ingest URL used when the
+ *    Agent registered that same sensor with RTVI-VLM. VIOS can expose the two
+ *    endpoints on different proxy ports, so alert creation reconciles them by
+ *    `streamId` before calling Alert Bridge.
  */
 
 export interface VstSensorListEntry {
@@ -26,6 +27,12 @@ export interface ResolvedVstStream {
   sensor_name: string;
   live_stream_url: string;
 }
+
+type NestedVstStream = {
+  name: string;
+  url: string;
+  streamId: string;
+};
 
 // TTL ensures sensors registered elsewhere appear without a hard reload.
 const SENSOR_LIST_TTL_MS = 60_000;
@@ -142,17 +149,18 @@ export const deriveSensorNameFromLiveStreamUrl = (
  * those changes immediately. The wire shape nests one entry per stream key —
  * `[{<key>: [{name, url, streamId}]}, …]` — so we flatten to `VstLiveStream[]`.
  */
-export const fetchVstLiveStreamCatalog = async (
-  vstApiUrl: string,
-): Promise<VstLiveStream[]> => {
-  const response = await fetch(`${stripTrailingSlashes(vstApiUrl)}/v1/live/streams`);
+const fetchNestedStreamCatalog = async (
+  url: string,
+  endpoint: string,
+): Promise<NestedVstStream[]> => {
+  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`VST /v1/live/streams returned ${response.status}`);
+    throw new Error(`VST ${endpoint} returned ${response.status}`);
   }
   // VST returns text/plain content-type but the body is JSON.
   const text = await response.text();
   const data = JSON.parse(text) as unknown;
-  const result: VstLiveStream[] = [];
+  const result: NestedVstStream[] = [];
   if (Array.isArray(data)) {
     for (const item of data) {
       if (!item || typeof item !== 'object') continue;
@@ -175,6 +183,27 @@ export const fetchVstLiveStreamCatalog = async (
     }
   }
   return result;
+};
+
+export const fetchVstLiveStreamCatalog = async (
+  vstApiUrl: string,
+): Promise<VstLiveStream[]> => {
+  const base = stripTrailingSlashes(vstApiUrl);
+  // Keep the documented live-catalog refresh, then reconcile each sensor with
+  // the canonical ingest URL. On Thor, /live/streams advertises the public
+  // proxy port while /sensor/streams advertises the URL already registered in
+  // RTVI-VLM. Alert Bridge deliberately rejects one sensor id with two URLs.
+  const [liveStreams, sensorStreams] = await Promise.all([
+    fetchNestedStreamCatalog(`${base}/v1/live/streams`, '/v1/live/streams'),
+    fetchNestedStreamCatalog(`${base}/v1/sensor/streams`, '/v1/sensor/streams'),
+  ]);
+  const canonicalUrlByStreamId = new Map(
+    sensorStreams.map((stream) => [stream.streamId, stream.url]),
+  );
+  return liveStreams.map((stream) => ({
+    ...stream,
+    url: canonicalUrlByStreamId.get(stream.streamId) ?? stream.url,
+  }));
 };
 
 /**

@@ -53,6 +53,25 @@ describe('CreateAlertRulesView realtime rules', () => {
             ),
         } as Response);
       }
+      if (url.includes('/v1/sensor/streams')) {
+        return Promise.resolve({
+          ok: true,
+          text: () =>
+            Promise.resolve(
+              JSON.stringify([
+                {
+                  '8c7338ec-2266-4eea-aeb4-c568d8944b05': [
+                    {
+                      name: 'warehouse-cam-1',
+                      url: liveRtspUrl,
+                      streamId: '8c7338ec-2266-4eea-aeb4-c568d8944b05',
+                    },
+                  ],
+                },
+              ]),
+            ),
+        } as Response);
+      }
       if (init?.method === 'POST') {
         const body = JSON.parse(init.body as string);
         rules = [
@@ -142,6 +161,12 @@ describe('CreateAlertRulesView realtime rules', () => {
     let rules: RealtimeAlertRule[] = [];
     global.fetch = jest.fn().mockImplementation((url: string, init?: RequestInit) => {
       if (url.includes('/v1/live/streams')) {
+        return Promise.resolve({
+          ok: true,
+          text: () => Promise.resolve(JSON.stringify([])),
+        } as Response);
+      }
+      if (url.includes('/v1/sensor/streams')) {
         return Promise.resolve({
           ok: true,
           text: () => Promise.resolve(JSON.stringify([])),

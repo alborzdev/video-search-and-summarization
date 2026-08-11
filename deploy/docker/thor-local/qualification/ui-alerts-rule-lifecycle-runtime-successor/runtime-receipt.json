@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "package_id": "ui-alerts-rule-lifecycle-runtime-successor",
+  "capability_id": "runtime.ui.alerts-tab",
+  "contract_sha256": "fb1cdb041ac67019e9f1dad4672b6c1ae87889b36bd9114635b1ef98df664cb4",
+  "status": "passed",
+  "run": {
+    "duration_ms": 48270,
+    "fixture_bytes": 2575454,
+    "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "playwright_module_sha256": "a0f5715ea22354f922791a9c53dc012d5d5c067ff9cc4cd35ffb7cd272071a9f",
+    "numeric_loopback_http_only": true
+  },
+  "browser": {
+    "title": "THOR LOCAL VSS",
+    "console_error_count": 0,
+    "screenshot_sha256": {
+      "alert_rule": "5df7c7b00cb90b4f92972cc55b07bd53242f187971a137240a3dec16b66c5fc5",
+      "video_management_cleanup": "39d994e576765f968ac7cda77cf74a32a4db8023b93713439abc425ee8da9f39"
+    }
+  },
+  "lifecycle": {
+    "sensor_created_through_ui": true,
+    "rule_created_through_ui": true,
+    "rule_persisted_active_and_rendered": true,
+    "canonical_sensor_stream_url_used": true,
+    "differing_live_catalog_url_rejected": true,
+    "rule_deleted_through_ui": true,
+    "sensor_deleted_through_ui": true,
+    "mutation_sequence": [
+      "POST /api/v1/rtsp-streams/<owned>",
+      "POST /alert-bridge/api/v1/<owned>",
+      "DELETE /alert-bridge/api/v1/realtime/<owned>",
+      "DELETE /api/v1/rtsp-streams/delete/<owned>"
+    ],
+    "agent_generate_request_count": 0
+  },
+  "cleanup": {
+    "exact_unrelated_state_restored": true,
+    "before_sha256": {
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sensors": "773bfafa15e593f83d5ff65b12217f59b1a3e3b4531ab76343d31ed4bd0caf4d",
+      "sensor_streams": "88fe5747f74f0de23c79ec2ce2263e3b7cffe3ccf189b4e0a8d6daa0fbb279b8",
+      "live_streams": "88fe5747f74f0de23c79ec2ce2263e3b7cffe3ccf189b4e0a8d6daa0fbb279b8",
+      "rtvlm_streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "after_sha256": {
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "sensors": "773bfafa15e593f83d5ff65b12217f59b1a3e3b4531ab76343d31ed4bd0caf4d",
+      "sensor_streams": "88fe5747f74f0de23c79ec2ce2263e3b7cffe3ccf189b4e0a8d6daa0fbb279b8",
+      "live_streams": "88fe5747f74f0de23c79ec2ce2263e3b7cffe3ccf189b4e0a8d6daa0fbb279b8",
+      "rtvlm_streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "owned_absent_from_active_catalogs": true,
+    "publisher_stopped": true,
+    "owned_incident_documents_deleted": 2,
+    "owned_vst_temp_files_deleted": 5,
+    "owned_incident_artifacts_absent": true
+  }
+}

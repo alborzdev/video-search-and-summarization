@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-35",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-36",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -158,6 +158,34 @@
         "/reidentification/embedding_dimensions": [1536],
         "/cleanup/main_rt_cv_preserved_exactly": true,
         "/policy/main_rt_cv_stream_mutations": 0
+      }
+    },
+    {
+      "official_index": 169,
+      "capability_id": "runtime.ui.alerts-tab",
+      "advertised_literal": "Alerts view and rule-management semantics",
+      "package_id": "ui-alerts-rule-lifecycle-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/ui-alerts-rule-lifecycle-runtime-successor/contract.json",
+      "contract_sha256": "fb1cdb041ac67019e9f1dad4672b6c1ae87889b36bd9114635b1ef98df664cb4",
+      "receipt_path": "deploy/docker/thor-local/qualification/ui-alerts-rule-lifecycle-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "6ad5ac77d7ee632f7c8e6eb72b60387191a302ca52a935fae3fa6394753dc204",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/ui-alerts-rule-lifecycle-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "9c06d64559b0d57aea80bc002073da553f19bc1d6ca2cf38bc464712a856eb32",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/browser/title": "THOR LOCAL VSS",
+        "/browser/console_error_count": 0,
+        "/lifecycle/sensor_created_through_ui": true,
+        "/lifecycle/rule_created_through_ui": true,
+        "/lifecycle/rule_persisted_active_and_rendered": true,
+        "/lifecycle/canonical_sensor_stream_url_used": true,
+        "/lifecycle/differing_live_catalog_url_rejected": true,
+        "/lifecycle/rule_deleted_through_ui": true,
+        "/lifecycle/sensor_deleted_through_ui": true,
+        "/lifecycle/agent_generate_request_count": 0,
+        "/cleanup/exact_unrelated_state_restored": true,
+        "/cleanup/owned_absent_from_active_catalogs": true,
+        "/cleanup/owned_incident_artifacts_absent": true
       }
     },
     {

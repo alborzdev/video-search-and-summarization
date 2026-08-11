@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thor Alerts UI rule lifecycle runtime receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "capability_id", "contract_sha256",
+    "status", "run", "browser", "lifecycle", "cleanup"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "ui-alerts-rule-lifecycle-runtime-successor"},
+    "capability_id": {"const": "runtime.ui.alerts-tab"},
+    "contract_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "status": {"const": "passed"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "fixture_bytes", "fixture_sha256", "playwright_module_sha256", "numeric_loopback_http_only"],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 240000},
+        "fixture_bytes": {"const": 2575454},
+        "fixture_sha256": {"const": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"},
+        "playwright_module_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "numeric_loopback_http_only": {"const": true}
+      }
+    },
+    "browser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "console_error_count", "screenshot_sha256"],
+      "properties": {
+        "title": {"const": "THOR LOCAL VSS"},
+        "console_error_count": {"const": 0},
+        "screenshot_sha256": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["alert_rule", "video_management_cleanup"],
+          "properties": {
+            "alert_rule": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+            "video_management_cleanup": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+          }
+        }
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sensor_created_through_ui", "rule_created_through_ui",
+        "rule_persisted_active_and_rendered", "canonical_sensor_stream_url_used",
+        "differing_live_catalog_url_rejected", "rule_deleted_through_ui",
+        "sensor_deleted_through_ui", "mutation_sequence", "agent_generate_request_count"
+      ],
+      "properties": {
+        "sensor_created_through_ui": {"const": true},
+        "rule_created_through_ui": {"const": true},
+        "rule_persisted_active_and_rendered": {"const": true},
+        "canonical_sensor_stream_url_used": {"const": true},
+        "differing_live_catalog_url_rejected": {"const": true},
+        "rule_deleted_through_ui": {"const": true},
+        "sensor_deleted_through_ui": {"const": true},
+        "mutation_sequence": {
+          "const": [
+            "POST /api/v1/rtsp-streams/<owned>",
+            "POST /alert-bridge/api/v1/<owned>",
+            "DELETE /alert-bridge/api/v1/realtime/<owned>",
+            "DELETE /api/v1/rtsp-streams/delete/<owned>"
+          ]
+        },
+        "agent_generate_request_count": {"const": 0}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exact_unrelated_state_restored", "before_sha256", "after_sha256",
+        "owned_absent_from_active_catalogs", "publisher_stopped",
+        "owned_incident_documents_deleted", "owned_vst_temp_files_deleted",
+        "owned_incident_artifacts_absent"
+      ],
+      "properties": {
+        "exact_unrelated_state_restored": {"const": true},
+        "before_sha256": {"$ref": "#/$defs/stateDigests"},
+        "after_sha256": {"$ref": "#/$defs/stateDigests"},
+        "owned_absent_from_active_catalogs": {"const": true},
+        "publisher_stopped": {"const": true},
+        "owned_incident_documents_deleted": {"type": "integer", "minimum": 0},
+        "owned_vst_temp_files_deleted": {"type": "integer", "minimum": 0},
+        "owned_incident_artifacts_absent": {"const": true}
+      }
+    }
+  },
+  "$defs": {
+    "stateDigests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rules", "sensors", "sensor_streams", "live_streams", "rtvlm_streams"],
+      "properties": {
+        "rules": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sensors": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "sensor_streams": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "live_streams": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "rtvlm_streams": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  }
+}

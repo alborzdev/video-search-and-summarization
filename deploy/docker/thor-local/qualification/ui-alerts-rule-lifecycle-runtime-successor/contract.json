@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "package_id": "ui-alerts-rule-lifecycle-runtime-successor",
+  "capability_id": "runtime.ui.alerts-tab",
+  "official_indices": [169],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "589f582ee4ce08d0b1df27313a47e99a6bdedbfcb8177863d9fbf193a48e3496"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_UI_ALERT_RULE_LIFECYCLE",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_loopback_http_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "exact_cleanup_required": true,
+    "maximum_duration_ms": 240000,
+    "browser": "fresh_headless_chromium",
+    "ui_origin": "numeric_loopback_port_3001"
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "deployed_ui": {
+    "container": "vss-agent-ui",
+    "image": "vss-agent-ui:thor-local",
+    "image_id": "sha256:806909627021358ea064e60c63f77e9f346822d5a3ee3d83ace03d423d7756a5",
+    "title": "THOR LOCAL VSS"
+  },
+  "required_runtime_proof": [
+    "Video Management creates one uniquely owned RTSP sensor through the rendered UI",
+    "Alerts View and Manage navigation render from the deployed production image",
+    "the friendly sensor name is selected from the VIOS catalog",
+    "the rule POST uses the canonical sensor-stream URL already registered with RT-VLM",
+    "the active persisted rule and server-generated identity render in the UI",
+    "the rule and sensor are deleted through their rendered UI controls",
+    "owned incident documents and VST media are removed",
+    "all unrelated active catalogs have identical before and after digests"
+  ],
+  "source_locks": [
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/lib-src/utils/vstSensorList.ts",
+      "sha256": "7bf7a8d869b3ab1ea8b5e5253f351dfcb0603f7291db040ffe96bcea93443ccc"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/__tests__/utils/vstSensorList.test.ts",
+      "sha256": "7080f39ab3b6338fd4386b60e7dd1cbb9d3a66a0805587f2b69bf79b607a8b17"
+    },
+    {
+      "path": "services/ui/packages/nv-metropolis-bp-vss-ui/alerts/__tests__/components/CreateAlertRulesView.test.tsx",
+      "sha256": "c6c020e23ffac4f3418aac3321d298608c45e1d9e191a76a3f442d7e245a8854"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/ui-alerts-rule-lifecycle-runtime-successor/harness.mjs",
+      "sha256": "964ec612a7fb1640c16ffb999216290f1ee298e4522e92aa4c86da1246ab5a08"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    }
+  ]
+}

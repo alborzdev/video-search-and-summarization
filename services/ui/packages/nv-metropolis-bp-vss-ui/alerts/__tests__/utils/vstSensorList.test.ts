@@ -39,8 +39,7 @@ describe('vstSensorList', () => {
   });
 
   it('flattens the nested VST /v1/live/streams payload', async () => {
-    global.fetch = jest.fn().mockResolvedValue(
-      textResponse([
+    const livePayload = [
         {
           '8c7338ec-2266-4eea-aeb4-c568d8944b05': [
             {
@@ -68,11 +67,15 @@ describe('vstSensorList', () => {
             },
           ],
         },
-      ]),
-    );
+      ];
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(textResponse(livePayload))
+      .mockResolvedValueOnce(textResponse(livePayload));
 
     const catalog = await fetchVstLiveStreamCatalog('http://vst.test');
     expect(global.fetch).toHaveBeenCalledWith('http://vst.test/v1/live/streams');
+    expect(global.fetch).toHaveBeenCalledWith('http://vst.test/v1/sensor/streams');
     expect(catalog).toEqual([
       {
         name: 'warehouse-cam-1',
@@ -93,12 +96,51 @@ describe('vstSensorList', () => {
     await fetchVstLiveStreamCatalog('http://vst.test');
     await fetchVstLiveStreamCatalog('http://vst.test');
 
-    expect(global.fetch).toHaveBeenCalledTimes(2);
+    expect(global.fetch).toHaveBeenCalledTimes(4);
+  });
+
+  it('uses the canonical sensor-stream URL when VIOS proxy ports differ', async () => {
+    const streamId = '8c7338ec-2266-4eea-aeb4-c568d8944b05';
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        textResponse([
+          {
+            [streamId]: [
+              {
+                name: 'warehouse-cam-1',
+                url: `rtsp://vst.example:30561/live/${streamId}`,
+                streamId,
+              },
+            ],
+          },
+        ]),
+      )
+      .mockResolvedValueOnce(
+        textResponse([
+          {
+            [streamId]: [
+              {
+                name: 'warehouse-cam-1',
+                url: `rtsp://vst.example:30560/live/${streamId}`,
+                streamId,
+              },
+            ],
+          },
+        ]),
+      );
+
+    await expect(fetchVstLiveStreamCatalog('http://vst.test')).resolves.toEqual([
+      {
+        name: 'warehouse-cam-1',
+        url: `rtsp://vst.example:30560/live/${streamId}`,
+        streamId,
+      },
+    ]);
   });
 
   it('resolves sensor_name and live_stream_url by sensor name', async () => {
-    global.fetch = jest.fn().mockResolvedValue(
-      textResponse([
+    const payload = [
         {
           '8c7338ec-2266-4eea-aeb4-c568d8944b05': [
             {
@@ -108,8 +150,11 @@ describe('vstSensorList', () => {
             },
           ],
         },
-      ]),
-    );
+      ];
+    global.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(textResponse(payload))
+      .mockResolvedValueOnce(textResponse(payload));
 
     await expect(
       resolveSensorByName('http://vst.test', 'warehouse-cam-1'),
