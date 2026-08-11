@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "captured_at", "runtime", "fixture", "backends", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-broker-control-runtime-successor"},
+    "capability_ids": {"const": ["manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration"]},
+    "official_indices": {"const": [396]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["architecture", "behavior_image", "behavior_image_id", "infrastructure", "normal_containers"],
+      "properties": {
+        "architecture": {"enum": ["aarch64", "arm64"]},
+        "behavior_image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "behavior_image_id": {"const": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"},
+        "infrastructure": {"type": "object", "required": ["kafka", "redis", "mqtt"]},
+        "normal_containers": {"const": {"names": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"], "running_after": true, "restart_counts_after": [0, 0]}}
+      }
+    },
+    "fixture": {"const": {"mode": "warehouse_2d", "sample_bundle": "compact repository fixture", "input_frames_per_backend": 300, "sensor_names": ["Camera", "Camera_01", "Camera_02"], "baseline_behavior_max_points": "200", "updated_behavior_max_points": "3", "calibration_type": "cartesian", "baseline_calibration_sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"}},
+    "backends": {
+      "type": "object", "additionalProperties": false, "required": ["kafka", "redis", "mqtt"],
+      "properties": {"kafka": {"$ref": "#/$defs/backend"}, "redis": {"$ref": "#/$defs/backend"}, "mqtt": {"$ref": "#/$defs/backend"}}
+    },
+    "cleanup": {"const": {"disposable_behavior_containers_absent": true, "kafka_topics_absent": true, "redis_streams_absent": true, "mqtt_broker_absent": true, "normal_behavior_containers_running": true, "failures": []}},
+    "policy": {"const": {"agent_generate_calls": 0, "external_requests": 0, "main_rt_cv_mutations": 0, "main_vios_mutations": 0, "normal_behavior_consumers_stopped": 0, "warehouse_sample_bundle": "excluded"}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "checkpoint_config": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name_sha256", "content_sha256", "behavior_max_points"],
+      "properties": {"name_sha256": {"$ref": "#/$defs/hash"}, "content_sha256": {"$ref": "#/$defs/hash"}, "behavior_max_points": {"enum": ["200", "3"]}}
+    },
+    "backend": {
+      "type": "object", "additionalProperties": false,
+      "required": ["request_reference_sha256", "ack_reference_sha256", "ack_status", "source_config_sha256", "dynamic_calibration_version", "dynamic_calibration_sha256", "checkpoint", "post_update", "container"],
+      "properties": {
+        "request_reference_sha256": {"$ref": "#/$defs/hash"}, "ack_reference_sha256": {"$ref": "#/$defs/hash"},
+        "ack_status": {"const": "success"}, "source_config_sha256": {"$ref": "#/$defs/hash"},
+        "dynamic_calibration_version": {"type": "string", "pattern": "^qualification-(kafka|redis|mqtt)-2\\.0$"},
+        "dynamic_calibration_sha256": {"$ref": "#/$defs/hash"},
+        "checkpoint": {
+          "type": "object", "additionalProperties": false, "required": ["config", "calibration"],
+          "properties": {
+            "config": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"$ref": "#/$defs/checkpoint_config"}},
+            "calibration": {
+              "type": "object", "additionalProperties": false, "required": ["name_sha256", "content_sha256", "version"],
+              "properties": {"name_sha256": {"$ref": "#/$defs/hash"}, "content_sha256": {"$ref": "#/$defs/hash"}, "version": {"type": "string", "minLength": 1}}
+            }
+          }
+        },
+        "post_update": {
+          "type": "object", "additionalProperties": false,
+          "required": ["input_frames", "enhanced_frames", "behaviors", "sensors", "max_behavior_points", "frames_with_fov_metrics", "frames_with_roi_metrics"],
+          "properties": {
+            "input_frames": {"const": 300}, "enhanced_frames": {"type": "integer", "minimum": 1}, "behaviors": {"type": "integer", "minimum": 1},
+            "sensors": {"const": ["Camera", "Camera_01", "Camera_02"]}, "max_behavior_points": {"const": 3},
+            "frames_with_fov_metrics": {"type": "integer", "minimum": 1}, "frames_with_roi_metrics": {"type": "integer", "minimum": 1}
+          }
+        },
+        "container": {
+          "type": "object", "additionalProperties": false, "required": ["exit_code", "oom_killed", "restart_count", "log_sha256"],
+          "properties": {"exit_code": {"const": 0}, "oom_killed": {"const": false}, "restart_count": {"const": 0}, "log_sha256": {"$ref": "#/$defs/hash"}}
+        }
+      }
+    }
+  }
+}

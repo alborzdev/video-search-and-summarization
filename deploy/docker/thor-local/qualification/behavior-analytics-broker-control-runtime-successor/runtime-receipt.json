@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-broker-control-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration"
+  ],
+  "official_indices": [396],
+  "status": "passed",
+  "contract_sha256": "0617986c37f665de6e09b35167f7206e280fdcabaf49f010ad2d6bfe4eff778e",
+  "captured_at": "2026-08-11T20:30:58Z",
+  "runtime": {
+    "architecture": "arm64",
+    "behavior_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "behavior_image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "infrastructure": {
+      "kafka": {"image": "confluentinc/cp-kafka:8.2.0", "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436", "running_after": true, "healthy_after": true, "restart_count": 0},
+      "redis": {"image": "redis:8.6.2-alpine", "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17", "running_after": true, "healthy_after": true, "restart_count": 0},
+      "mqtt": {"image": "eclipse-mosquitto:2.0", "image_id": "sha256:6852da90a65dfff7aa3a1c8b249e92bb83c17ea8bbcce56bedff8707332a1a29", "exit_code": 0, "oom_killed": false, "restart_count": 0, "log_sha256": "2e7f4c4201b68ddbcce9f29035c0a595f7148b7774ea2a6155af6806b6f7594b"}
+    },
+    "normal_containers": {"names": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"], "running_after": true, "restart_counts_after": [0, 0]}
+  },
+  "fixture": {
+    "mode": "warehouse_2d",
+    "sample_bundle": "compact repository fixture",
+    "input_frames_per_backend": 300,
+    "sensor_names": ["Camera", "Camera_01", "Camera_02"],
+    "baseline_behavior_max_points": "200",
+    "updated_behavior_max_points": "3",
+    "calibration_type": "cartesian",
+    "baseline_calibration_sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"
+  },
+  "backends": {
+    "kafka": {
+      "request_reference_sha256": "6c201320d2a92f0116bab400d408f957a7d358014b0f2ca6caf527782571fccf",
+      "ack_reference_sha256": "dbdb038ab817f3451d2e20530bf1dfbb4736c0a845ffc8fc79292c00981ac1fe",
+      "ack_status": "success",
+      "source_config_sha256": "1dd295171e050962c2f69499eb657c7656b7bfcd6f183e1b1b94d69d709de625",
+      "dynamic_calibration_version": "qualification-kafka-2.0",
+      "dynamic_calibration_sha256": "e245ac1e4a95d090466c90dc79cc693bdc7e7550f2fce98747a5b7943144c0a1",
+      "checkpoint": {
+        "config": [
+          {"name_sha256": "cc74cef1d9b9908f37f793d11a75efff78770a419dfb3609e91623f5d0f7d9a0", "content_sha256": "666df9b53d9851062e5648630e427c3b632abeef33499a05b3b192d9881660fa", "behavior_max_points": "200"},
+          {"name_sha256": "88331cd590b6ffb6e8cf4f5888d43c5408bdeb07ddfb4d096b2d05d25fbc7425", "content_sha256": "569327952a648028fd2a12f7e97dbb4bb0674a0ca928d01fce7b843ddddb59c0", "behavior_max_points": "3"}
+        ],
+        "calibration": {"name_sha256": "c5cb57cf4406fa3263b184288c3707d6ea29f245eb8266c0f7c0e2b972ef992a", "content_sha256": "e245ac1e4a95d090466c90dc79cc693bdc7e7550f2fce98747a5b7943144c0a1", "version": "qualification-kafka-2.0"}
+      },
+      "post_update": {"input_frames": 300, "enhanced_frames": 300, "behaviors": 471, "sensors": ["Camera", "Camera_01", "Camera_02"], "max_behavior_points": 3, "frames_with_fov_metrics": 300, "frames_with_roi_metrics": 300},
+      "container": {"exit_code": 0, "oom_killed": false, "restart_count": 0, "log_sha256": "0311d4d14621a7c05d56f33dbb8c41e8294484a721d728826b23bce0a1d07816"}
+    },
+    "redis": {
+      "request_reference_sha256": "2e5f194eb4988dec952a7b34dc3fd88b925dbc9a128477f6d3b4d29d15eb2397",
+      "ack_reference_sha256": "999471d8eb72f08522e4a5e3599de668ca1ef5f16cbc60794c7f7d975eadbd91",
+      "ack_status": "success",
+      "source_config_sha256": "e969023ea79d574cb7b9394faaffa833ac29ce176163614b1997741a2900392e",
+      "dynamic_calibration_version": "qualification-redis-2.0",
+      "dynamic_calibration_sha256": "e191f688e6f0a832f3f9dca9f6e2c0815b4bfd5e05dcae5b61dc0d278d12be4b",
+      "checkpoint": {
+        "config": [
+          {"name_sha256": "9f86144cfdb6d26f5639a82a2a49d041c3c06c918aa5b676cf51407d99e4d9f0", "content_sha256": "666df9b53d9851062e5648630e427c3b632abeef33499a05b3b192d9881660fa", "behavior_max_points": "200"},
+          {"name_sha256": "24dd7295a72e5e8b719be3f156f6d2f92be510cf5cd457a3b0fc74d59fccc45a", "content_sha256": "569327952a648028fd2a12f7e97dbb4bb0674a0ca928d01fce7b843ddddb59c0", "behavior_max_points": "3"}
+        ],
+        "calibration": {"name_sha256": "549a458555f50be55c2fc2fa5eff262808ea267aee10ee08f80204d21beef15c", "content_sha256": "e191f688e6f0a832f3f9dca9f6e2c0815b4bfd5e05dcae5b61dc0d278d12be4b", "version": "qualification-redis-2.0"}
+      },
+      "post_update": {"input_frames": 300, "enhanced_frames": 240, "behaviors": 127, "sensors": ["Camera", "Camera_01", "Camera_02"], "max_behavior_points": 3, "frames_with_fov_metrics": 240, "frames_with_roi_metrics": 240},
+      "container": {"exit_code": 0, "oom_killed": false, "restart_count": 0, "log_sha256": "283738c06a7f8de470a70cc347019633c92db1bcf3390fc68219ab5b6043a5b8"}
+    },
+    "mqtt": {
+      "request_reference_sha256": "ae757f62a799b562ae88c4f4a652e2ca84f86ab6e8b861531896fc5f2fe0a849",
+      "ack_reference_sha256": "b92364b110c04cb1fce32ee2edd0d35d0f8dc7719a2c18c4e0c8ef44e5a0588b",
+      "ack_status": "success",
+      "source_config_sha256": "212a7d83b36ffa160157b1c4bf13f1b641ac501764d8ea28fd5fe2519399d1bb",
+      "dynamic_calibration_version": "qualification-mqtt-2.0",
+      "dynamic_calibration_sha256": "8e384042293fd0adc02939a836ec0c5511648af157c2312e45dddff8daf79e74",
+      "checkpoint": {
+        "config": [
+          {"name_sha256": "6834b04584aa7392501941b9d20976cd2df58ba6f365314f4540aad4e847a04b", "content_sha256": "666df9b53d9851062e5648630e427c3b632abeef33499a05b3b192d9881660fa", "behavior_max_points": "200"},
+          {"name_sha256": "c690fd26772799aba6eb995723fefcbe1e1f8a351191a7f8b419697a28606ee6", "content_sha256": "569327952a648028fd2a12f7e97dbb4bb0674a0ca928d01fce7b843ddddb59c0", "behavior_max_points": "3"}
+        ],
+        "calibration": {"name_sha256": "c6193d69a0a097778f69856f1d8f6e026212d6ddad8ec9ecc64bafb47dd076e8", "content_sha256": "8e384042293fd0adc02939a836ec0c5511648af157c2312e45dddff8daf79e74", "version": "qualification-mqtt-2.0"}
+      },
+      "post_update": {"input_frames": 300, "enhanced_frames": 298, "behaviors": 469, "sensors": ["Camera", "Camera_01", "Camera_02"], "max_behavior_points": 3, "frames_with_fov_metrics": 298, "frames_with_roi_metrics": 298},
+      "container": {"exit_code": 0, "oom_killed": false, "restart_count": 0, "log_sha256": "308aec164f374220f720fe088084d71a546650440ecd7c3c0b3fe6b32d6f9bf9"}
+    }
+  },
+  "cleanup": {
+    "disposable_behavior_containers_absent": true,
+    "kafka_topics_absent": true,
+    "redis_streams_absent": true,
+    "mqtt_broker_absent": true,
+    "normal_behavior_containers_running": true,
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

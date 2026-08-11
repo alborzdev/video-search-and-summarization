@@ -1,0 +1,38 @@
+{
+  "kafka": {
+    "brokers": "localhost:9092",
+    "consumer": {
+      "autoOffsetReset": "earliest",
+      "enableAutoCommit": false,
+      "maxPollIntervalMs": 900000,
+      "maxPartitionFetchBytes": 10485760,
+      "fetchMaxBytes": 104857600,
+      "maxPollRecords": 3,
+      "timeout": 0.01,
+      "retryMaxAttempts": 3,
+      "retryIntervalSec": 1
+    },
+    "producer": {"lingerMs": 0},
+    "topics": [
+      {"name": "raw", "value": "vss-oracle-ba-kafka-raw"},
+      {"name": "behavior", "value": "vss-oracle-ba-kafka-behavior"},
+      {"name": "frames", "value": "vss-oracle-ba-kafka-frames"},
+      {"name": "notification", "value": "vss-oracle-ba-kafka-notification"},
+      {"name": "events", "value": "vss-oracle-ba-kafka-events"},
+      {"name": "incidents", "value": "vss-oracle-ba-kafka-incidents"}
+    ],
+    "group": "vss-oracle-ba-kafka-group"
+  },
+  "sensors": [{"id": "default", "configs": []}],
+  "app": [
+    {"name": "behaviorWatermarkSec", "value": "1"},
+    {"name": "behaviorStateTimeout", "value": "1"},
+    {"name": "behaviorMaxPoints", "value": "200"},
+    {"name": "coordinateSystem", "value": "euclidean"},
+    {"name": "sourceType", "value": "kafka"},
+    {"name": "sinkType", "value": "kafka"},
+    {"name": "numWorkersForBehaviorCreation", "value": "1"},
+    {"name": "numWorkersForFrameEnhancement", "value": "1"},
+    {"name": "stateManagementFilter", "value": "[\"Person\",\"Forklift\"]"}
+  ]
+}

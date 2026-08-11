@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-27",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-28",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -1023,6 +1023,28 @@
     {
       "acceptance_class": "required_local",
       "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Kafka/Redis/MQTT dynamic configuration and calibration",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration",
+      "feature_id": "behavior-analytics",
+      "official_index": 396,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/contract.json",
+        "contract_sha256": "0617986c37f665de6e09b35167f7206e280fdcabaf49f010ad2d6bfe4eff778e",
+        "package_id": "behavior-analytics-broker-control-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "c8d02372688ab3739899b70f77cd6da9e09ba4a049172e8bce35c5e91244be18",
+        "receipt_sha256": "79a627f7eabe7ce1215fbc5054ddf43170ba651eb388fd4f7ed3da8d61495b74",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
       "advertised_literal": "speed/flow/travel time/occupancy/space metrics",
       "canonical_runtime_state": "not_qualified",
       "canonical_state_advanced": false,
@@ -1424,8 +1446,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 64,
-    "row_count": 64,
+    "passed_current_thor": 65,
+    "row_count": 65,
     "warehouse_sample_bundle": "excluded"
   }
 }

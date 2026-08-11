@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-27",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-28",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -1113,6 +1113,34 @@
         "/outputs/proximity_and_clustering/cluster_entries": 426,
         "/outputs/incidents/categories/Proximity Violation": 95,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 396,
+      "capability_id": "manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration",
+      "advertised_literal": "Kafka/Redis/MQTT dynamic configuration and calibration",
+      "package_id": "behavior-analytics-broker-control-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/contract.json",
+      "contract_sha256": "0617986c37f665de6e09b35167f7206e280fdcabaf49f010ad2d6bfe4eff778e",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "79a627f7eabe7ce1215fbc5054ddf43170ba651eb388fd4f7ed3da8d61495b74",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "c8d02372688ab3739899b70f77cd6da9e09ba4a049172e8bce35c5e91244be18",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/backends/kafka/ack_status": "success",
+        "/backends/redis/ack_status": "success",
+        "/backends/mqtt/ack_status": "success",
+        "/backends/kafka/post_update/max_behavior_points": 3,
+        "/backends/redis/post_update/max_behavior_points": 3,
+        "/backends/mqtt/post_update/max_behavior_points": 3,
+        "/backends/kafka/dynamic_calibration_version": "qualification-kafka-2.0",
+        "/backends/redis/dynamic_calibration_version": "qualification-redis-2.0",
+        "/backends/mqtt/dynamic_calibration_version": "qualification-mqtt-2.0",
+        "/cleanup/kafka_topics_absent": true,
+        "/cleanup/redis_streams_absent": true,
+        "/cleanup/mqtt_broker_absent": true,
+        "/policy/normal_behavior_consumers_stopped": 0
       }
     },
     {

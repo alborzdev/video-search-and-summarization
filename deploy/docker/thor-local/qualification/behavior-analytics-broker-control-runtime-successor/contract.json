@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-broker-control-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "manifest-entry.behavior-analytics.05-kafka-redis-mqtt-dynamic-configuration-and-calibration"
+  ],
+  "official_indices": [396],
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/kafka-config.json", "sha256": "1dd295171e050962c2f69499eb657c7656b7bfcd6f183e1b1b94d69d709de625"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/redis-config.json", "sha256": "e969023ea79d574cb7b9394faaffa833ac29ce176163614b1997741a2900392e"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/mqtt-config.json", "sha256": "212a7d83b36ffa160157b1c4bf13f1b641ac501764d8ea28fd5fe2519399d1bb"},
+    {"path": "deploy/docker/thor-local/qualification/behavior-analytics-broker-control-runtime-successor/run_broker_probe.py", "sha256": "9a559296167bf5cb09259653d1a828c8f8db08312169a76ed46d75befd00ef1e"},
+    {"path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps/warehouse_2d/calibration.json", "sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"},
+    {"path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps_data/playback/warehouse_2d_playback_data.txt", "sha256": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/app/app_runner.py", "sha256": "99fad8777a0138e22d01fa7051301669e43c652ba53ee12dc8e540132bd1effc"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_factory.py", "sha256": "c37f0632173b96b75f0e33401966d85294ad2ea8b00fc7ffc6049a18066e22ec"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_kafka.py", "sha256": "5ae27627e82bee3a48cf98400fb667b78a6915c12e2526640c5d0021e8e97539"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_redis_stream.py", "sha256": "aa492dc6a84be49025564759d04280291548017d37ca2872a4bd4c0180531a44"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_mqtt.py", "sha256": "ff25e386580f782ac687c1c23a89bc168ad6f6513f1ab8b5ccdadcdde6b8f62f"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_factory.py", "sha256": "8a5c59dd9d8a604716a9113c8dfc144f5e61c951161b2cfd7e913aa0f97936c2"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_kafka.py", "sha256": "c2fcff09f30c8090aa066a68f527957500a4aadfc8a7c571adef471943063e5f"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_redis_stream.py", "sha256": "6166976af25c8ee37fcc6ec80875289840f44b5dc8752cfbab780c126609589e"},
+    {"path": "services/analytics/behavior-analytics/src/mdx/analytics/core/stream/sink/sink_mqtt.py", "sha256": "280710b441bd33609553ab7ea8e920e2b43382e8158452b8fe25665677b7286b"}
+  ],
+  "required_assertions": {
+    "backends": ["kafka", "redis", "mqtt"],
+    "dynamic_configuration": {
+      "bootstrap_snapshot": true,
+      "direct_update_ack": "success",
+      "atomic_prior_new_checkpoint_identity": true,
+      "post_update_behavior_max_points": 3
+    },
+    "dynamic_calibration": {
+      "event_type": "upsert-all",
+      "type": "cartesian",
+      "version_per_backend": true,
+      "atomic_prior_new_checkpoint_identity": true,
+      "post_update_fov_and_roi_metrics": true
+    }
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "all output families on all three broker sinks",
+    "3D or MV3DT application modes",
+    "multi-replica fan-out",
+    "disk-full injection"
+  ]
+}

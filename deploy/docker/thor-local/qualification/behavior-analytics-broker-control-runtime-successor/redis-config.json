@@ -1,0 +1,36 @@
+{
+  "redisStream": {
+    "host": "localhost",
+    "port": 6379,
+    "db": 0,
+    "consumer": {
+      "readCount": 3,
+      "readBlockMs": 10,
+      "mkstream": true,
+      "retryMaxAttempts": 3,
+      "retryIntervalSec": 1
+    },
+    "producer": {"maxLen": 10000},
+    "streams": [
+      {"name": "raw", "value": "vss-oracle-ba-redis-raw"},
+      {"name": "behavior", "value": "vss-oracle-ba-redis-behavior"},
+      {"name": "frames", "value": "vss-oracle-ba-redis-frames"},
+      {"name": "notification", "value": "vss-oracle-ba-redis-notification"},
+      {"name": "events", "value": "vss-oracle-ba-redis-events"},
+      {"name": "incidents", "value": "vss-oracle-ba-redis-incidents"}
+    ],
+    "group": "vss-oracle-ba-redis-group"
+  },
+  "sensors": [{"id": "default", "configs": []}],
+  "app": [
+    {"name": "behaviorWatermarkSec", "value": "1"},
+    {"name": "behaviorStateTimeout", "value": "1"},
+    {"name": "behaviorMaxPoints", "value": "200"},
+    {"name": "coordinateSystem", "value": "euclidean"},
+    {"name": "sourceType", "value": "redisStream"},
+    {"name": "sinkType", "value": "redisStream"},
+    {"name": "numWorkersForBehaviorCreation", "value": "1"},
+    {"name": "numWorkersForFrameEnhancement", "value": "1"},
+    {"name": "stateManagementFilter", "value": "[\"Person\",\"Forklift\"]"}
+  ]
+}
