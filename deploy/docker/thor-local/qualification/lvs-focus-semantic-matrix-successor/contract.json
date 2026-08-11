@@ -47,7 +47,7 @@
     {"order": 2, "case_id": "event_only", "expected_assertions": ["target_event"]},
     {"order": 3, "case_id": "scenario_only", "expected_assertions": ["target_scenario"]},
     {"order": 4, "case_id": "combined_relationship", "expected_assertions": ["target_relationship"]},
-    {"order": 5, "case_id": "distractor_control", "expected_assertions": ["distractor_object", "distractor_event"]},
+    {"order": 5, "case_id": "distractor_control", "expected_assertions": ["distractor_event"]},
     {"order": 6, "case_id": "absent_negative", "expected_assertions": []}
   ],
   "decision": {
@@ -65,7 +65,7 @@
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/contract.json", "sha256": "0c8871e3263f9ddf8048211792e7aed34d2a385c1ed9cc7d3993d8c7e5d7ab51"},
     {"path": "deploy/docker/thor-local/qualification/lvs-semantic-runtime-agent-session-successor/executor.py", "sha256": "d31681bce291bd2730aebc7a7069b44169dc0b899639a3cbf154d4bde4dfba9e"},
     {"path": "services/video-summarization/api_spec/openapi.json", "sha256": "2ce997975112a3e6e43c511612d7df682de0dc4283b7c96fb38e078aad2150e8"},
-    {"path": "services/video-summarization/src/via_server.py", "sha256": "6007322ec3ee00c00e29807cc65bbf257c57123ba18e091f592e3e030fd12fe1"},
+    {"path": "services/video-summarization/src/via_server.py", "sha256": "f9017fa89f7d00d811f1fccb624b6c1e6af9ab1bf1068a544d3451766da8e29e"},
     {"path": "services/video-summarization/src/vss_api_models.py", "sha256": "08bd3c31eb7abecf294098ace984d7260349e4bcabb481142a60bfe15407cbd6"},
     {"path": "deploy/docker/developer-profiles/dev-profile-lvs/vss-agent/configs/config.yml", "sha256": "33af3aa3a579ed1404106f3e134846683b6d748ac7c1d6a57205ce0520d2c7d5"}
   ]

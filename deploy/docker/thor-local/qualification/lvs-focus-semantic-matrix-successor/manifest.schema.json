@@ -20,9 +20,10 @@
     },
     "semantic_fixture": {
       "type": "object", "additionalProperties": false,
-      "required": ["neutral_scenario", "target_object", "target_event", "target_scenario", "target_relationship", "distractor_object", "distractor_event", "absent_object", "absent_event"],
+      "required": ["neutral_scenario", "neutral_event", "target_object", "target_event", "target_scenario", "target_relationship", "distractor_object", "distractor_event", "absent_object", "absent_event"],
       "properties": {
         "neutral_scenario": {"$ref": "#/$defs/term"},
+        "neutral_event": {"$ref": "#/$defs/term"},
         "target_object": {"$ref": "#/$defs/term"},
         "target_event": {"$ref": "#/$defs/term"},
         "target_scenario": {"$ref": "#/$defs/term"},

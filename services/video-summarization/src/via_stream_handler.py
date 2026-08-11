@@ -4185,14 +4185,14 @@ This is very important and you must follow this strictly.
 
                     _agg_parent_ctx = getattr(req_info, "_e2e_span_context", None)
                     if req_info.summarize:
-                        # Decide whether to aggregate from in-process SSE
-                        # captions (start_index/end_index) or from the
-                        # Elastic DB populated by Kafka->Logstash->ES
-                        # (uuids). Controlled by LVS_CAPTION_SOURCE env
-                        # var: "sse" (default) uses the SSE captions
-                        # already accumulated via add_doc; "db" retrieves
-                        # from the database.
-                        _use_db = self._is_file_path_kafka_mode() and self._caption_source == "db"
+                        # Decide whether to aggregate from in-process captions
+                        # (start_index/end_index) or from the Elastic DB
+                        # populated by Kafka->Logstash->ES (uuids). The normal
+                        # structured-VLM path follows LVS_CAPTION_SOURCE. The
+                        # custom-schema structured_inference function only
+                        # supports the index-range call contract, so it must
+                        # use the captions already accumulated via add_doc.
+                        _use_db = self._use_db_caption_aggregation(req_info)
                         if _use_db:
                             logger.info(
                                 "Aggregation for %s: reading captions from "
@@ -4223,11 +4223,22 @@ This is very important and you must follow this strictly.
                                     pass
                         else:
                             if self._is_file_path_kafka_mode():
-                                logger.info(
-                                    "Aggregation for %s: using SSE captions "
-                                    "(LVS_CAPTION_SOURCE=sse)",
-                                    req_info.source_id,
-                                )
+                                if (
+                                    not req_info.enable_vlm_structured_output
+                                    and self._caption_source == "db"
+                                ):
+                                    logger.info(
+                                        "Aggregation for %s: using in-process "
+                                        "caption range because structured_inference "
+                                        "requires start_index/end_index",
+                                        req_info.source_id,
+                                    )
+                                else:
+                                    logger.info(
+                                        "Aggregation for %s: using SSE captions "
+                                        "(LVS_CAPTION_SOURCE=sse)",
+                                        req_info.source_id,
+                                    )
                             sum_state = {
                                 "start_index": (
                                     2 * chunk_responses[0].chunk.chunkIdx
@@ -4580,6 +4591,25 @@ This is very important and you must follow this strictly.
                 ca_rag_config["functions"]["summarization"]["params"]["events"] = req_info.events
 
             if not req_info.enable_vlm_structured_output:
+                # Plain-text VLM captions require CA-RAG's schema-aware
+                # aggregation function.  The public API has exposed schema,
+                # batch_response_method and auto_generate_prompt for this mode
+                # since 3.2, but changing only the params left the default
+                # vlm_structured_summarization_online function selected, where
+                # those fields are ignored.  ContextManager.configure rebuilds
+                # functions per request, so select the matching implementation
+                # while preserving the stable public function name used below.
+                ca_rag_config["functions"]["summarization"][
+                    "type"
+                ] = "structured_inference"
+                # StructuredInferenceConfig marks prompts optional, while its
+                # setup path calls ``.get`` on the resolved value whenever
+                # automatic prompt generation is disabled.  Supply the
+                # smallest valid inherited Prompts model so both documented
+                # auto_generate_prompt modes configure successfully.
+                ca_rag_config["functions"]["summarization"]["params"].setdefault(
+                    "prompts", {"caption": ""}
+                )
                 if req_info.schema:
                     ca_rag_config["functions"]["summarization"]["params"][
                         "schema"
@@ -4694,6 +4724,24 @@ This is very important and you must follow this strictly.
             return False
         summ = (self._ca_rag_config or {}).get("functions", {}).get("summarization", {})
         return bool(summ.get("params", {}).get("kafka_enabled", False))
+
+    def _use_db_caption_aggregation(self, req_info: RequestInfo) -> bool:
+        """Whether this request can use the UUID-based Elasticsearch call.
+
+        ``vlm_structured_summarization_online`` accepts the UUID state used by
+        Thor's Kafka -> Logstash -> Elasticsearch path.  The public custom
+        schema mode instead selects CA-RAG's ``structured_inference``
+        function, whose call contract is strictly ``start_index/end_index``.
+        Captions have already been added to the request's context manager, so
+        keep schema requests on that supported in-process range while leaving
+        the normal DB-backed path unchanged.
+        """
+
+        return bool(
+            req_info.enable_vlm_structured_output
+            and self._is_file_path_kafka_mode()
+            and self._caption_source == "db"
+        )
 
     def _kafka_settle_secs(self) -> float:
         """Seconds to sleep after RTVI SSE ``[DONE]`` in file-path Kafka mode.

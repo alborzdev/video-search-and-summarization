@@ -1,0 +1,104 @@
+{
+  "budget": {
+    "actions": 14,
+    "max_actions": 14,
+    "max_duration_seconds": 2400,
+    "max_requests": 14,
+    "requests": 14
+  },
+  "canonical_runtime_evidence": false,
+  "canonical_state_advanced": false,
+  "caption_source_sha256": "a2104a083439cf7dc03a70f56c612ceed82e3e31eb1a416c983771304040eb20",
+  "cleanup": {
+    "deleted_owned_files": 1,
+    "exact_delete_confirmation": true,
+    "owned_absent": true,
+    "registered_owned_files": 1,
+    "unrelated_state_restored": true
+  },
+  "contract_sha256": "031eea335caaad8a851b189a64f0eb12be29f2ffdab227e3619b73ca528ffb4e",
+  "executor_ready": false,
+  "fixture_sha256": "9910fd38af6f550c18be25e5498e1f3033b3c553463fd1219f756f4c25102fa4",
+  "matrix": [
+    {
+      "case_id": "object_only",
+      "evidence_count": 1,
+      "expected_assertion_count": 1,
+      "forbidden_terms_excluded": true,
+      "observed_assertion_count": 1,
+      "order": 1,
+      "request_sha256": "4fd4603e4d6f1b8c0532441657e7845f1cebddb3677205de0e589472f146b7f4",
+      "response_id_sha256": "0c8c876967057ec3eb7fba7ba56150c37c7db679b2aec1e0f2ab4da3eb6b8612",
+      "response_sha256": "0f4942ca8221b525d19c333db561b32470a415d4a7728d554230b8523c4d64aa",
+      "source_identity_correlated": true
+    },
+    {
+      "case_id": "event_only",
+      "evidence_count": 1,
+      "expected_assertion_count": 1,
+      "forbidden_terms_excluded": true,
+      "observed_assertion_count": 1,
+      "order": 2,
+      "request_sha256": "fac93e8b29d937e503fa3efb4a7b193017da942f34be98d955edf32bc6fe31b6",
+      "response_id_sha256": "f05b7600fce2737722e4ba3afcc3d193c43b6eb8d96f84405b0be16b27f83390",
+      "response_sha256": "f27079c7109866f129e46ff560b35bb36f7ab48d4ca91ee7c3e5db2b84a0e4d3",
+      "source_identity_correlated": true
+    },
+    {
+      "case_id": "scenario_only",
+      "evidence_count": 1,
+      "expected_assertion_count": 1,
+      "forbidden_terms_excluded": true,
+      "observed_assertion_count": 1,
+      "order": 3,
+      "request_sha256": "1a81398c46efe864e2dd5ec2fc944d5142df8ccd9903f4271a042b8657bec9e9",
+      "response_id_sha256": "d3b5208270793844e18a7d8d667398c430112e45322351ba1cf6853ec5ea57a7",
+      "response_sha256": "a335a6cce600d48e3a2b515313e72a1c7f8155d736a137038aabaee346a87ddc",
+      "source_identity_correlated": true
+    },
+    {
+      "case_id": "combined_relationship",
+      "evidence_count": 1,
+      "expected_assertion_count": 1,
+      "forbidden_terms_excluded": true,
+      "observed_assertion_count": 1,
+      "order": 4,
+      "request_sha256": "45279589cafc0ec49f4a9d3337d8869d0f6d23b7891e07f7785f56fe65e37ec7",
+      "response_id_sha256": "ed221d5ca05945011e9798e4e4f9ed4ef2c7344130e1d392b2f79e1ac33f5d55",
+      "response_sha256": "5d2b5a5222e1e319bf29b87ac21cfe767f3b68cf22778cc051a6be5174380458",
+      "source_identity_correlated": true
+    },
+    {
+      "case_id": "distractor_control",
+      "evidence_count": 1,
+      "expected_assertion_count": 1,
+      "forbidden_terms_excluded": true,
+      "observed_assertion_count": 1,
+      "order": 5,
+      "request_sha256": "364be8b4834861c537e3e9c91c0be8775b0e26c671af4a6a1f46a6d916195f85",
+      "response_id_sha256": "60b28e11254e8f0478e56ab1c8c536764302344a9de56f667ed48181a6b8e630",
+      "response_sha256": "6048054a8c3917e02108ae3f8f72926d00a179e5fb61b56db719ceb69f5d2b01",
+      "source_identity_correlated": true
+    },
+    {
+      "case_id": "absent_negative",
+      "evidence_count": 0,
+      "expected_assertion_count": 0,
+      "forbidden_terms_excluded": true,
+      "observed_assertion_count": 0,
+      "order": 6,
+      "request_sha256": "93ae3f58ccefc51168c08851e5a06a34434938ec7b32046021486179ac9db2bc",
+      "response_id_sha256": "f2a6488e7ddfd7316f95e2b271784b96e29ff53e3d046af784376d13dd2ab664",
+      "response_sha256": "1b0838fb5d56bd594d95d031b141b0a4a3e58a5ff11d8e29490c43de8e4b32ba",
+      "source_identity_correlated": true
+    }
+  ],
+  "model_sha256": "0e8a26c59c5f67a47d4c2fafa065c8524243bfac33810fe4c93ea12d20f4bfe6",
+  "origin_sha256": "c60a70ecc1c4d0a7333b24a285c7dbfde34db073ff6ac34922e1227896c45d73",
+  "package_id": "lvs-focus-semantic-matrix-successor",
+  "promotion_eligible": false,
+  "run_id_sha256": "248120ef41dc4c1a08b21d81ae756f51a583fd9c9d0d1853e63975c915a2f284",
+  "schema_version": 1,
+  "status": "candidate_focus_matrix_pass_non_promoting",
+  "warehouse_sample_bundle": "excluded"
+}

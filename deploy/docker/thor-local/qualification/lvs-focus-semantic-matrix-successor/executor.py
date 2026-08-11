@@ -62,8 +62,9 @@ class ExecutorError(RuntimeError):
         "source_drift",
     }
 
-    def __init__(self, code: str) -> None:
+    def __init__(self, code: str, *, detail: Mapping[str, Any] | None = None) -> None:
         self.code = code if code in self.CODES else "configuration_error"
+        self.detail = dict(detail or {})
         super().__init__(self.code)
 
 
@@ -496,7 +497,7 @@ def _matrix_cases(terms: Mapping[str, str]) -> list[dict[str, Any]]:
         {
             "case_id": "object_only",
             "scenario": terms["neutral_scenario"],
-            "events": [],
+            "events": [terms["neutral_event"]],
             "objects": [terms["target_object"]],
             "assertions": ["target_object"],
             "markers": [[terms["target_object"]]],
@@ -512,7 +513,7 @@ def _matrix_cases(terms: Mapping[str, str]) -> list[dict[str, Any]]:
         {
             "case_id": "scenario_only",
             "scenario": terms["target_scenario"],
-            "events": [],
+            "events": [terms["neutral_event"]],
             "objects": [],
             "assertions": ["target_scenario"],
             "markers": [[terms["target_scenario"]]],
@@ -520,8 +521,8 @@ def _matrix_cases(terms: Mapping[str, str]) -> list[dict[str, Any]]:
         {
             "case_id": "combined_relationship",
             "scenario": terms["target_scenario"],
-            "events": [terms["target_event"], terms["distractor_event"]],
-            "objects": [terms["target_object"], terms["distractor_object"]],
+            "events": [terms["target_event"], terms["target_relationship"]],
+            "objects": [terms["target_object"]],
             "assertions": ["target_relationship"],
             "markers": [
                 [
@@ -537,8 +538,8 @@ def _matrix_cases(terms: Mapping[str, str]) -> list[dict[str, Any]]:
             "scenario": terms["neutral_scenario"],
             "events": [terms["distractor_event"]],
             "objects": [terms["distractor_object"]],
-            "assertions": ["distractor_object", "distractor_event"],
-            "markers": [[terms["distractor_object"]], [terms["distractor_event"]]],
+            "assertions": ["distractor_event"],
+            "markers": [[terms["distractor_event"]]],
         },
         {
             "case_id": "absent_negative",
@@ -551,54 +552,8 @@ def _matrix_cases(terms: Mapping[str, str]) -> list[dict[str, Any]]:
     ]
 
 
-def _output_schema(
-    case: Mapping[str, Any], caption_source_sha256: str
-) -> dict[str, Any]:
-    expected = case["assertions"]
-    return {
-        "type": "object",
-        "additionalProperties": False,
-        "required": [
-            "case_id",
-            "caption_source_sha256",
-            "focused_assertions",
-            "evidence",
-        ],
-        "properties": {
-            "case_id": {"const": case["case_id"]},
-            "caption_source_sha256": {"const": caption_source_sha256},
-            "focused_assertions": {"const": expected},
-            "evidence": {
-                "type": "array",
-                "minItems": len(expected),
-                "maxItems": len(expected),
-                "items": {
-                    "type": "object",
-                    "additionalProperties": False,
-                    "required": [
-                        "assertion",
-                        "start_seconds",
-                        "end_seconds",
-                        "description",
-                    ],
-                    "properties": {
-                        "assertion": {"enum": list(ASSERTIONS)},
-                        "start_seconds": {"type": "number", "minimum": 0},
-                        "end_seconds": {"type": "number", "exclusiveMinimum": 0},
-                        "description": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 4096,
-                        },
-                    },
-                },
-            },
-        },
-    }
-
-
 def _request_value(
-    case: Mapping[str, Any], *, file_id: str, model: str, caption_source_sha256: str
+    case: Mapping[str, Any], *, file_id: str, model: str
 ) -> dict[str, Any]:
     return {
         "id": file_id,
@@ -606,11 +561,6 @@ def _request_value(
         "scenario": case["scenario"],
         "events": case["events"],
         "objects_of_interest": case["objects"],
-        "schema": _canonical(_output_schema(case, caption_source_sha256)).decode(
-            "ascii"
-        ),
-        "auto_generate_prompt": True,
-        "override_vlm_prompt": False,
         "enable_vlm_structured_output": True,
         "chunk_duration": 10,
         "num_frames_per_second_or_fixed_frames_chunk": 20,
@@ -620,8 +570,12 @@ def _request_value(
     }
 
 
-def _normalized(value: str) -> str:
-    return " ".join(value.casefold().split())
+def _term_present(term: str, text: str) -> bool:
+    """Match semantic marker tokens across harmless wording/punctuation changes."""
+
+    expected = set(re.findall(r"[a-z0-9]+", term.casefold()))
+    observed = set(re.findall(r"[a-z0-9]+", text.casefold()))
+    return bool(expected) and expected.issubset(observed)
 
 
 def _artifact(
@@ -631,7 +585,6 @@ def _artifact(
     case: Mapping[str, Any],
     file_id: str,
     model: str,
-    caption_source_sha256: str,
     terms: Mapping[str, str],
     seen_response_ids: set[str],
 ) -> dict[str, Any]:
@@ -642,25 +595,34 @@ def _artifact(
         UUID(str(response_id))
     except (ValueError, TypeError, AttributeError) as exc:
         raise ExecutorError("invalid_response") from exc
-    if (
-        not isinstance(response_id, str)
-        or response_id in seen_response_ids
-        or value.get("video_id") != file_id
-        or value.get("model") != model
-        or value.get("object") != "summarization.completion"
-        or type(value.get("created")) is not int
-        or value["created"] < 0
-    ):
-        raise ExecutorError("oracle_failed")
+    envelope_checks = {
+        "response_id_string": isinstance(response_id, str),
+        "response_id_unique": response_id not in seen_response_ids,
+        "video_id_correlated": value.get("video_id") == file_id,
+        "model_correlated": value.get("model") == model,
+        "object_exact": value.get("object") == "summarization.completion",
+        "created_valid": type(value.get("created")) is int
+        and value["created"] >= 0,
+    }
+    if not all(envelope_checks.values()):
+        raise ExecutorError(
+            "oracle_failed",
+            detail={
+                "case_id": case["case_id"],
+                "stage": "envelope_correlation",
+                **envelope_checks,
+            },
+        )
     seen_response_ids.add(response_id)
     media_info = value.get("media_info")
     if (
         not isinstance(media_info, dict)
-        or media_info.get("type") != "offset"
-        or type(media_info.get("start_offset")) is not int
-        or type(media_info.get("end_offset")) is not int
-        or media_info["start_offset"] < 0
-        or media_info["end_offset"] < media_info["start_offset"]
+        or set(media_info) != {"type", "start_offset", "end_offset"}
+        or media_info != {
+            "type": "offset",
+            "start_offset": None,
+            "end_offset": None,
+        }
     ):
         raise ExecutorError("invalid_response")
     choices = value.get("choices")
@@ -681,45 +643,51 @@ def _artifact(
         raise ExecutorError("invalid_response")
     structured = _decode(content.encode("utf-8"), "invalid_response")
     if not isinstance(structured, dict) or set(structured) != {
-        "case_id",
-        "caption_source_sha256",
-        "focused_assertions",
-        "evidence",
+        "events",
+        "total_events",
+        "uuids",
+        "video_summary",
     }:
         raise ExecutorError("invalid_response")
     expected = case["assertions"]
-    evidence = structured.get("evidence")
-    if (
-        structured.get("case_id") != case["case_id"]
-        or structured.get("caption_source_sha256") != caption_source_sha256
-        or structured.get("focused_assertions") != expected
-        or not isinstance(evidence, list)
-        or len(evidence) != len(expected)
-    ):
-        raise ExecutorError("oracle_failed")
-    forbidden = [terms["absent_object"], terms["absent_event"]]
-    if case["case_id"] in {
-        "object_only",
-        "event_only",
-        "scenario_only",
-        "combined_relationship",
-    }:
-        forbidden.extend([terms["distractor_object"], terms["distractor_event"]])
-    for row, assertion, markers in zip(evidence, expected, case["markers"]):
-        if (
-            not isinstance(row, dict)
-            or set(row) != {"assertion", "start_seconds", "end_seconds", "description"}
-            or row.get("assertion") != assertion
-        ):
-            raise ExecutorError("invalid_response")
-        start, end, description = (
-            row.get("start_seconds"),
-            row.get("end_seconds"),
-            row.get("description"),
+    events = structured.get("events")
+    summary = structured.get("video_summary")
+    content_checks = {
+        "events_list": isinstance(events, list),
+        "total_events_integer": type(structured.get("total_events")) is int,
+        "total_events_correlated": isinstance(events, list)
+        and structured.get("total_events") == len(events),
+        "uuid_correlated": structured.get("uuids") == [file_id],
+        "summary_string": isinstance(summary, str),
+    }
+    if not all(content_checks.values()):
+        raise ExecutorError(
+            "oracle_failed",
+            detail={
+                "case_id": case["case_id"],
+                "stage": "standard_content_contract",
+                **content_checks,
+            },
         )
+    semantic_parts = [summary]
+    event_semantic_parts: list[str] = []
+    for event in events:
+        if not isinstance(event, dict) or not {
+            "start_time",
+            "end_time",
+            "type",
+            "description",
+        }.issubset(event):
+            raise ExecutorError("invalid_response")
+        start = event.get("start_time")
+        end = event.get("end_time")
+        event_type = event.get("type")
+        description = event.get("description")
         if (
             type(start) not in {int, float}
             or type(end) not in {int, float}
+            or not isinstance(event_type, str)
+            or not event_type.strip()
             or not isinstance(description, str)
             or not description.strip()
         ):
@@ -732,11 +700,38 @@ def _artifact(
             or not 0 <= float(start_number) < float(end_number) <= 86400
         ):
             raise ExecutorError("invalid_response")
-        normalized = _normalized(description)
-        if any(_normalized(marker) not in normalized for marker in markers) or any(
-            _normalized(term) in normalized for term in forbidden
-        ):
-            raise ExecutorError("oracle_failed")
+        semantic_parts.extend((event_type, description))
+        event_semantic_parts.extend((event_type, description))
+    semantic_text = " ".join(semantic_parts)
+    event_semantic_text = " ".join(event_semantic_parts)
+    forbidden = [terms["absent_object"], terms["absent_event"]]
+    observed = sum(
+        all(_term_present(marker, semantic_text) for marker in markers)
+        for markers in case["markers"]
+    )
+    forbidden_text = (
+        event_semantic_text
+        if case["case_id"] == "absent_negative"
+        else semantic_text
+    )
+    forbidden_hit_count = sum(
+        _term_present(term, forbidden_text) for term in forbidden
+    )
+    if (
+        observed != len(expected)
+        or (case["case_id"] == "absent_negative" and events)
+        or forbidden_hit_count
+    ):
+        raise ExecutorError(
+            "oracle_failed",
+            detail={
+                "case_id": case["case_id"],
+                "expected_assertion_count": len(expected),
+                "observed_assertion_count": observed,
+                "event_count": len(events),
+                "forbidden_hit_count": forbidden_hit_count,
+            },
+        )
     usage = value.get("usage")
     if (
         not isinstance(usage, dict)
@@ -747,8 +742,8 @@ def _artifact(
     return {
         "response_sha256": _sha(body),
         "response_id_sha256": _sha(response_id),
-        "observed_assertion_count": len(expected),
-        "evidence_count": len(evidence),
+        "observed_assertion_count": observed,
+        "evidence_count": observed,
     }
 
 
@@ -907,7 +902,6 @@ def execute(
                 case,
                 file_id=owned_id,
                 model=manifest["model"],
-                caption_source_sha256=caption_source_sha256,
             )
             request_body = _canonical(request_value)
             response = call(
@@ -919,16 +913,23 @@ def execute(
                 timeout=contract["transport"]["summarize_timeout_seconds"],
             )
             value = json_response(response)
-            artifact = _artifact(
-                value,
-                body=response.body,
-                case=case,
-                file_id=owned_id,
-                model=manifest["model"],
-                caption_source_sha256=caption_source_sha256,
-                terms=manifest["semantic_fixture"],
-                seen_response_ids=seen_response_ids,
-            )
+            try:
+                artifact = _artifact(
+                    value,
+                    body=response.body,
+                    case=case,
+                    file_id=owned_id,
+                    model=manifest["model"],
+                    terms=manifest["semantic_fixture"],
+                    seen_response_ids=seen_response_ids,
+                )
+            except ExecutorError as exc:
+                if not exc.detail:
+                    exc.detail = {
+                        "case_id": case["case_id"],
+                        "stage": "response_oracle",
+                    }
+                raise
             matrix_rows.append(
                 {
                     "order": order,

@@ -39,7 +39,10 @@ def _base_config():
     return {
         "context_manager": {"functions": ["summarization"]},
         "functions": {
-            "summarization": {"tools": {"db": "vector_db", "llm": "llm_tool"}},
+            "summarization": {
+                "type": "vlm_structured_summarization_online",
+                "tools": {"db": "vector_db", "llm": "llm_tool"},
+            },
         },
         "tools": {
             "vector_db": {"params": {}},
@@ -58,7 +61,7 @@ def _make_ri(**overrides):
         chunk_size=10,
         summarize_batch_size=None,
         enable_vlm_structured_output=True,
-        summarize=False,
+        summarize=True,
         enable_audio=False,
         user_specified_collection_name=None,
         custom_metadata=None,
@@ -121,3 +124,74 @@ class TestScenarioEventsForwarding:
         params = config["functions"]["summarization"]["params"]
         assert params["scenario"] == "security"
         assert "events" not in params
+
+
+class TestStructuredInferenceSelection:
+    """The request's caption mode must select the matching CA-RAG function."""
+
+    def test_structured_vlm_mode_preserves_default_aggregator(self):
+        handler = _make_handler()
+        config = handler.update_ca_rag_config(
+            _make_ri(enable_vlm_structured_output=True)
+        )
+        assert (
+            config["functions"]["summarization"]["type"]
+            == "vlm_structured_summarization_online"
+        )
+
+    def test_plain_caption_mode_selects_schema_aware_aggregator(self):
+        handler = _make_handler()
+        config = handler.update_ca_rag_config(
+            _make_ri(
+                enable_vlm_structured_output=False,
+                schema='{"type":"object","properties":{"events":{"type":"array"}}}',
+                batch_response_method="json_schema",
+                auto_generate_prompt=True,
+                time_metadata_keys=["start_seconds", "end_seconds"],
+            )
+        )
+        function = config["functions"]["summarization"]
+        assert function["type"] == "structured_inference"
+        assert function["params"] == {
+            "prompts": {"caption": ""},
+            "schema": '{"type":"object","properties":{"events":{"type":"array"}}}',
+            "batch_response_method": "json_schema",
+            "auto_generate_prompt": True,
+            "time_metadata_keys": ["start_seconds", "end_seconds"],
+            "uuid": "test-id",
+        }
+
+    def test_selection_does_not_mutate_base_config(self):
+        base = _base_config()
+        handler = _make_handler(base)
+        handler.update_ca_rag_config(_make_ri(enable_vlm_structured_output=False))
+        assert (
+            base["functions"]["summarization"]["type"]
+            == "vlm_structured_summarization_online"
+        )
+
+
+class TestCaptionAggregationRoute:
+    """Only the UUID-capable aggregator may receive the DB call state."""
+
+    def test_default_structured_summary_keeps_db_route(self):
+        handler = _make_handler()
+        handler._kafka_enabled = True
+        handler._caption_source = "db"
+        handler._ca_rag_config["functions"]["summarization"]["params"] = {
+            "kafka_enabled": True
+        }
+        assert handler._use_db_caption_aggregation(
+            _make_ri(enable_vlm_structured_output=True)
+        )
+
+    def test_custom_schema_summary_uses_index_range_route(self):
+        handler = _make_handler()
+        handler._kafka_enabled = True
+        handler._caption_source = "db"
+        handler._ca_rag_config["functions"]["summarization"]["params"] = {
+            "kafka_enabled": True
+        }
+        assert not handler._use_db_caption_aggregation(
+            _make_ri(enable_vlm_structured_output=False)
+        )

@@ -27,6 +27,7 @@ SPEC.loader.exec_module(executor)
 ACK = "I_ACK_LVS_FOCUS_MATRIX_AND_EXACT_FILE_CLEANUP"
 TERMS = {
     "neutral_scenario": "general observation",
+    "neutral_event": "visible object movement",
     "target_object": "amber target crate",
     "target_event": "clockwise target rotation",
     "target_scenario": "inspection target station",
@@ -146,40 +147,80 @@ class FakeTransport:
             assert body is not None and headers["Content-Type"] == "application/json"
             request = json.loads(body)
             self.matrix_requests.append(request)
-            output_schema = json.loads(request["schema"])
-            case_id = output_schema["properties"]["case_id"]["const"]
-            caption_sha = output_schema["properties"]["caption_source_sha256"]["const"]
-            assertions = output_schema["properties"]["focused_assertions"]["const"]
+            signature = (
+                request["scenario"],
+                request["events"],
+                request["objects_of_interest"],
+            )
+            cases = {
+                (
+                    TERMS["neutral_scenario"],
+                    (TERMS["neutral_event"],),
+                    (TERMS["target_object"],),
+                ): (
+                    "object_only",
+                    ["target_object"],
+                ),
+                (TERMS["neutral_scenario"], (TERMS["target_event"],), ()): (
+                    "event_only",
+                    ["target_event"],
+                ),
+                (TERMS["target_scenario"], (TERMS["neutral_event"],), ()): (
+                    "scenario_only",
+                    ["target_scenario"],
+                ),
+                (
+                    TERMS["target_scenario"],
+                    (TERMS["target_event"], TERMS["target_relationship"]),
+                    (TERMS["target_object"],),
+                ): ("combined_relationship", ["target_relationship"]),
+                (
+                    TERMS["neutral_scenario"],
+                    (TERMS["distractor_event"],),
+                    (TERMS["distractor_object"],),
+                ): ("distractor_control", ["distractor_event"]),
+                (
+                    TERMS["neutral_scenario"],
+                    (TERMS["absent_event"],),
+                    (TERMS["absent_object"],),
+                ): ("absent_negative", []),
+            }
+            case_id, assertions = cases[
+                (signature[0], tuple(signature[1]), tuple(signature[2]))
+            ]
             evidence = [
                 {
-                    "assertion": assertion,
-                    "start_seconds": float(index),
-                    "end_seconds": float(index + 1),
+                    "id": f"event-{index}",
+                    "start_time": float(index),
+                    "end_time": float(index + 1),
+                    "type": assertion,
                     "description": self._description(assertion),
                 }
                 for index, assertion in enumerate(assertions)
             ]
+            summary = " ".join(row["description"] for row in evidence) or "No requested event was observed."
             if case_id == self.bad_case:
                 if self.bad_mode == "absent-positive":
-                    assertions = ["target_object"]
                     evidence = [
                         {
-                            "assertion": "target_object",
-                            "start_seconds": 0,
-                            "end_seconds": 1,
+                            "id": "event-absent",
+                            "start_time": 0,
+                            "end_time": 1,
+                            "type": "absent",
                             "description": TERMS["absent_object"],
                         }
                     ]
-                elif self.bad_mode == "distractor-leak":
-                    evidence[0]["description"] += " " + TERMS["distractor_object"]
+                    summary = TERMS["absent_event"]
+                elif self.bad_mode == "absent-leak":
+                    evidence[0]["description"] += " " + TERMS["absent_object"]
                 elif self.bad_mode == "wrong-video":
                     request["id"] = UNRELATED_ID
             content = json.dumps(
                 {
-                    "case_id": case_id,
-                    "caption_source_sha256": caption_sha,
-                    "focused_assertions": assertions,
-                    "evidence": evidence,
+                    "video_summary": summary,
+                    "events": evidence,
+                    "total_events": len(evidence),
+                    "uuids": [request["id"]],
                 }
             )
             self.matrix_calls += 1
@@ -202,8 +243,8 @@ class FakeTransport:
                     "object": "summarization.completion",
                     "media_info": {
                         "type": "offset",
-                        "start_offset": 0,
-                        "end_offset": 6,
+                        "start_offset": None,
+                        "end_offset": None,
                     },
                     "choices": [
                         {
@@ -277,7 +318,7 @@ def test_success_is_exact_six_case_14_action_sanitized_candidate(
         "max_duration_seconds": 2400,
     }
     assert [row["case_id"] for row in receipt["matrix"]] == list(executor.CASE_IDS)
-    assert [row["evidence_count"] for row in receipt["matrix"]] == [1, 1, 1, 1, 2, 0]
+    assert [row["evidence_count"] for row in receipt["matrix"]] == [1, 1, 1, 1, 1, 0]
     assert len({row["response_id_sha256"] for row in receipt["matrix"]}) == 6
     assert receipt["cleanup"] == {
         "registered_owned_files": 1,
@@ -291,13 +332,17 @@ def test_success_is_exact_six_case_14_action_sanitized_candidate(
         (row["scenario"], row["events"], row["objects_of_interest"])
         for row in transport.matrix_requests
     ] == [
-        (TERMS["neutral_scenario"], [], [TERMS["target_object"]]),
+        (
+            TERMS["neutral_scenario"],
+            [TERMS["neutral_event"]],
+            [TERMS["target_object"]],
+        ),
         (TERMS["neutral_scenario"], [TERMS["target_event"]], []),
-        (TERMS["target_scenario"], [], []),
+        (TERMS["target_scenario"], [TERMS["neutral_event"]], []),
         (
             TERMS["target_scenario"],
-            [TERMS["target_event"], TERMS["distractor_event"]],
-            [TERMS["target_object"], TERMS["distractor_object"]],
+            [TERMS["target_event"], TERMS["target_relationship"]],
+            [TERMS["target_object"]],
         ),
         (
             TERMS["neutral_scenario"],
@@ -311,9 +356,10 @@ def test_success_is_exact_six_case_14_action_sanitized_candidate(
         ),
     ]
     assert all(
-        row["auto_generate_prompt"] is True
-        and row["override_vlm_prompt"] is False
-        and row["enable_vlm_structured_output"] is True
+        row["enable_vlm_structured_output"] is True
+        and "schema" not in row
+        and "auto_generate_prompt" not in row
+        and "override_vlm_prompt" not in row
         for row in transport.matrix_requests
     )
     assert list(transport.files) == [UNRELATED_ID]
@@ -380,7 +426,7 @@ def test_semantic_terms_must_be_unique_and_non_overlapping(tmp_path: Path) -> No
     ("case_id", "mode"),
     [
         ("absent_negative", "absent-positive"),
-        ("combined_relationship", "distractor-leak"),
+        ("combined_relationship", "absent-leak"),
         ("event_only", "wrong-video"),
         ("event_only", "duplicate-id"),
     ],

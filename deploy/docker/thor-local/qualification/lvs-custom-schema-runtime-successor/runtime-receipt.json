@@ -1,0 +1,57 @@
+{
+  "actions": 10,
+  "capability_id": "manifest-entry.video-summarization-file.03-structured-output",
+  "cleanup": {
+    "catalog_restored": true,
+    "owned_absent": true,
+    "owned_deleted": true,
+    "ready_after": true
+  },
+  "contract_sha256": "de38fe5c05954e9be07e1f1c05fbb3267b8caffddc88517f7ffbd270705b52e5",
+  "duration_seconds": 11.441193,
+  "fixture": {
+    "bytes": 60555,
+    "owned_id_sha256": "5189f9bdb8fe4a3ac2c0cdd82d76b78c2fbf8bb6b59d68b84a2bd8c59326a27d",
+    "sha256": "e85a4dfcec3d3a9bd8ce74ef4284d79b5b2caf3452b9cb25bb0e4b22d59b540e"
+  },
+  "negative": {
+    "event_count": null,
+    "http_status": 500,
+    "json_parseable": true,
+    "malformed_success_rejected": true,
+    "response_sha256": "d82fe34ecddc6a534c6d5d2600eed79e8aa3c39596d5c1b3c34d0140f01ece15"
+  },
+  "package_id": "lvs-custom-schema-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "raw_ids_retained": false,
+    "raw_prompts_retained": false,
+    "raw_semantic_output_retained": false,
+    "rt_cv_or_vios_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "positive": {
+    "chunks_processed": 1,
+    "content_sha256": "d787c30d1bf6dc9e4dd9b37d87299ee25b6ce4ea4366d0fff0d4b600dd65c083",
+    "event_count": 1,
+    "event_keys_exact": true,
+    "fixture_grounded": true,
+    "http_status": 200,
+    "response_sha256": "b5bb61c584f829a01ddb6a96ebcf3dfd8ada65e27e7d6f938293cf133664d3f2",
+    "schema_markers_exact": true,
+    "timestamps_valid": true,
+    "types_exact": true
+  },
+  "runtime": {
+    "after_sha256": "447aab41c96c8d295a617be2c079643374c66642df84aae33d0da06f642b9b36",
+    "before_sha256": "447aab41c96c8d295a617be2c079643374c66642df84aae33d0da06f642b9b36",
+    "healthy": true,
+    "unchanged": true
+  },
+  "schema_version": 1,
+  "schemas": {
+    "negative_sha256": "a1e4fde0f3b489c1f46fc29cb8a39c6b161669b45df24c7d7b2b62915c28aaca",
+    "positive_sha256": "083fa11423571548ef044389c661df8830d3e5be9f4d78890339309ff39d183b"
+  },
+  "status": "passed"
+}

@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_id", "status", "contract_sha256", "duration_seconds", "actions", "runtime", "fixture", "schemas", "positive", "negative", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "lvs-custom-schema-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.video-summarization-file.03-structured-output"},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/sha"},
+    "duration_seconds": {"type": "number", "minimum": 0, "maximum": 900},
+    "actions": {"type": "integer", "const": 10},
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["before_sha256", "after_sha256", "unchanged", "healthy"],
+      "properties": {
+        "before_sha256": {"$ref": "#/$defs/sha"},
+        "after_sha256": {"$ref": "#/$defs/sha"},
+        "unchanged": {"const": true},
+        "healthy": {"const": true}
+      }
+    },
+    "fixture": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bytes", "sha256", "owned_id_sha256"],
+      "properties": {
+        "bytes": {"type": "integer", "minimum": 12, "maximum": 8388608},
+        "sha256": {"$ref": "#/$defs/sha"},
+        "owned_id_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "schemas": {
+      "type": "object", "additionalProperties": false,
+      "required": ["positive_sha256", "negative_sha256"],
+      "properties": {
+        "positive_sha256": {"$ref": "#/$defs/sha"},
+        "negative_sha256": {"$ref": "#/$defs/sha"}
+      }
+    },
+    "positive": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "response_sha256", "content_sha256", "event_count", "event_keys_exact", "schema_markers_exact", "types_exact", "timestamps_valid", "fixture_grounded", "chunks_processed"],
+      "properties": {
+        "http_status": {"const": 200},
+        "response_sha256": {"$ref": "#/$defs/sha"},
+        "content_sha256": {"$ref": "#/$defs/sha"},
+        "event_count": {"type": "integer", "minimum": 1},
+        "event_keys_exact": {"const": true},
+        "schema_markers_exact": {"const": true},
+        "types_exact": {"const": true},
+        "timestamps_valid": {"const": true},
+        "fixture_grounded": {"const": true},
+        "chunks_processed": {"type": "integer", "minimum": 1}
+      }
+    },
+    "negative": {
+      "type": "object", "additionalProperties": false,
+      "required": ["http_status", "response_sha256", "json_parseable", "malformed_success_rejected", "event_count"],
+      "properties": {
+        "http_status": {"type": "integer", "minimum": 200, "maximum": 599},
+        "response_sha256": {"$ref": "#/$defs/sha"},
+        "json_parseable": {"const": true},
+        "malformed_success_rejected": {"const": true},
+        "event_count": {"type": ["integer", "null"], "minimum": 0, "maximum": 0}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["owned_deleted", "owned_absent", "catalog_restored", "ready_after"],
+      "properties": {
+        "owned_deleted": {"const": true},
+        "owned_absent": {"const": true},
+        "catalog_restored": {"const": true},
+        "ready_after": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "rt_cv_or_vios_stream_mutations", "warehouse_sample_bundle", "raw_ids_retained", "raw_prompts_retained", "raw_semantic_output_retained"],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "rt_cv_or_vios_stream_mutations": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "raw_ids_retained": {"const": false},
+        "raw_prompts_retained": {"const": false},
+        "raw_semantic_output_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}
