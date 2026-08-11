@@ -1,0 +1,59 @@
+{
+  "kafka": {
+    "brokers": "localhost:9092",
+    "consumer": {
+      "autoOffsetReset": "earliest",
+      "enableAutoCommit": false,
+      "maxPollIntervalMs": 900000,
+      "maxPartitionFetchBytes": 10485760,
+      "fetchMaxBytes": 104857600,
+      "maxPollRecords": 10000,
+      "timeout": 0.01
+    },
+    "producer": {"lingerMs": 0},
+    "topics": [
+      {"name": "raw", "value": "vss-oracle-ba-raw"},
+      {"name": "behavior", "value": "vss-oracle-ba-behavior"},
+      {"name": "frames", "value": "vss-oracle-ba-frames"},
+      {"name": "notification", "value": "vss-oracle-ba-notification"},
+      {"name": "events", "value": "vss-oracle-ba-events"},
+      {"name": "incidents", "value": "vss-oracle-ba-incidents"}
+    ],
+    "group": "vss-oracle-ba-2d-group"
+  },
+  "sensors": [
+    {
+      "id": "default",
+      "configs": [
+        {"name": "proximityDetectionEnable", "value": "true"},
+        {"name": "proximityDetectionThreshold", "value": "1.8"},
+        {"name": "proximityDetectionCenterClasses", "value": "[\"Forklift\"]"},
+        {"name": "proximityDetectionSurroundingClasses", "value": "[\"Person\"]"},
+        {"name": "tripwireMinPoints", "value": "4"}
+      ]
+    }
+  ],
+  "app": [
+    {"name": "behaviorWatermarkSec", "value": "2"},
+    {"name": "behaviorStateTimeout", "value": "3"},
+    {"name": "behaviorMaxPoints", "value": "200"},
+    {"name": "playbackLoop", "value": "1"},
+    {"name": "playbackFilterEmptyObjects", "value": "true"},
+    {"name": "playbackStartUpDelaySec", "value": "2"},
+    {"name": "playbackInSimulationMode", "value": "true"},
+    {"name": "playbackSimulationTimedeltaInMin", "value": "1"},
+    {"name": "playbackSimulationFps", "value": "60"},
+    {"name": "coordinateSystem", "value": "euclidean"},
+    {"name": "sourceType", "value": "kafka"},
+    {"name": "sinkType", "value": "kafka"},
+    {"name": "numWorkersForBehaviorCreation", "value": "1"},
+    {"name": "numWorkersForFrameEnhancement", "value": "1"},
+    {"name": "stateManagementFilter", "value": "[\"Person\",\"Forklift\"]"},
+    {"name": "restrictedAreaViolationIncidentEnable", "value": "true"},
+    {"name": "confinedAreaViolationIncidentEnable", "value": "true"},
+    {"name": "proximityViolationIncidentEnable", "value": "true"},
+    {"name": "restrictedAreaViolationIncidentThreshold", "value": "2"},
+    {"name": "confinedAreaViolationIncidentThreshold", "value": "2"},
+    {"name": "proximityViolationIncidentThreshold", "value": "2"}
+  ]
+}

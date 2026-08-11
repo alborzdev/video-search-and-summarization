@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-2d-runtime-successor",
+  "capability_ids": [
+    "runtime.behavior.pipeline",
+    "runtime.behavior.events-incidents",
+    "manifest-entry.behavior-analytics.01-events-and-incidents",
+    "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
+    "manifest-entry.behavior-analytics.03-tripwires-and-rois",
+    "manifest-entry.behavior-analytics.04-proximity-and-clustering"
+  ],
+  "official_indices": [203, 206, 392, 393, 394, 395],
+  "status": "passed",
+  "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+  "captured_at": "2026-08-11T19:29:23Z",
+  "runtime": {
+    "architecture": "arm64",
+    "image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "image_size_bytes": 437647573,
+    "oracle": {"name": "vss-behavior-2d-oracle", "exit_code": 0, "oom_killed": false, "restart_count": 0},
+    "playback": {"name": "vss-behavior-2d-playback", "exit_code": 0, "oom_killed": false, "restart_count": 0},
+    "normal_containers": {
+      "names": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"],
+      "running_after": true,
+      "restart_counts_after": [0, 0]
+    }
+  },
+  "input": {
+    "mode": "warehouse_2d",
+    "coordinate_system": "euclidean",
+    "transport": "Kafka",
+    "playback_bytes": 29679130,
+    "playback_frames": 20000,
+    "playback_objects": 171436,
+    "sensor_names": ["Camera", "Camera_01", "Camera_02"],
+    "simulation_fps": 60,
+    "calibration_type": "Cartesian CalibrationE"
+  },
+  "outputs": {
+    "topic_counts": {
+      "vss-oracle-ba-behavior": 38286,
+      "vss-oracle-ba-events": 121,
+      "vss-oracle-ba-frames": 20000,
+      "vss-oracle-ba-incidents": 24924
+    },
+    "sensor_coverage": {
+      "vss-oracle-ba-behavior": ["Camera", "Camera_01", "Camera_02"],
+      "vss-oracle-ba-events": ["Camera", "Camera_01", "Camera_02"],
+      "vss-oracle-ba-frames": ["Camera", "Camera_01", "Camera_02"],
+      "vss-oracle-ba-incidents": ["Camera", "Camera_01", "Camera_02"]
+    },
+    "events": {
+      "total": 121,
+      "types": {"roi:ENTRY": 56, "roi:EXIT": 53, "tripwire:IN": 6, "tripwire:OUT": 6}
+    },
+    "incidents": {
+      "total": 24924,
+      "categories": {"Confined Area Violation": 14786, "Proximity Violation": 95, "Restricted Area Violation": 10043}
+    },
+    "trajectories": {
+      "identity_count": 12,
+      "location_points": 1778483,
+      "multi_point_count": 13084,
+      "max_points": 200
+    },
+    "occupancy": {
+      "frame_objects": 171436,
+      "fov_metric_entries": 58323,
+      "fov_positive_count_entries": 58323,
+      "roi_metric_entries": 32983,
+      "roi_positive_count_entries": 32983
+    },
+    "proximity_and_clustering": {"proximity_detections": 426, "cluster_entries": 426},
+    "oracle_log_sha256": "75c514a33b8c334e962db6ad9bbb16b921ca5781703155fb8486ddc772354177",
+    "playback_log_sha256": "907055368fd733fe294513cdf2f8b1ff86b256e7f48fdf303d6ae30e74adcd4c",
+    "protobuf_decoded": true
+  },
+  "cleanup": {
+    "disposable_containers_absent": true,
+    "qualification_topics_absent": true,
+    "normal_behavior_containers_running": true,
+    "failures": []
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

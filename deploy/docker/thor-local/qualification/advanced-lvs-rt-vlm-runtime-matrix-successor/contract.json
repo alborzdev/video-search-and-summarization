@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-25",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-26",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -61,6 +61,53 @@
         "/reidentification/embedding_dimensions": [1536],
         "/cleanup/main_rt_cv_preserved_exactly": true,
         "/policy/main_rt_cv_stream_mutations": 0
+      }
+    },
+    {
+      "official_index": 203,
+      "capability_id": "runtime.behavior.pipeline",
+      "advertised_literal": "Behavior analytics processing pipeline",
+      "package_id": "behavior-analytics-2d-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
+      "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/input/mode": "warehouse_2d",
+        "/input/playback_frames": 20000,
+        "/input/playback_objects": 171436,
+        "/outputs/topic_counts/vss-oracle-ba-behavior": 38286,
+        "/outputs/topic_counts/vss-oracle-ba-frames": 20000,
+        "/outputs/protobuf_decoded": true,
+        "/runtime/oracle/exit_code": 0,
+        "/runtime/playback/exit_code": 0,
+        "/cleanup/disposable_containers_absent": true,
+        "/cleanup/qualification_topics_absent": true
+      }
+    },
+    {
+      "official_index": 206,
+      "capability_id": "runtime.behavior.events-incidents",
+      "advertised_literal": "Behavior events and incidents",
+      "package_id": "behavior-analytics-2d-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
+      "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/outputs/events/total": 121,
+        "/outputs/incidents/total": 24924,
+        "/outputs/events/types/roi:ENTRY": 56,
+        "/outputs/events/types/tripwire:IN": 6,
+        "/outputs/incidents/categories/Proximity Violation": 95,
+        "/cleanup/normal_behavior_containers_running": true,
+        "/policy/normal_behavior_consumers_stopped": 0
       }
     },
     {
@@ -983,6 +1030,85 @@
         "/thor_vpi_tracker/vpi_error_count_after_clean_start": 0,
         "/thor_vpi_tracker/oom_killed": false,
         "/thor_vpi_tracker/restart_count": 0
+      }
+    },
+    {
+      "official_index": 392,
+      "capability_id": "manifest-entry.behavior-analytics.01-events-and-incidents",
+      "advertised_literal": "events and incidents",
+      "package_id": "behavior-analytics-2d-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
+      "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/outputs/events/total": 121,
+        "/outputs/incidents/total": 24924,
+        "/outputs/incidents/categories/Restricted Area Violation": 10043,
+        "/outputs/incidents/categories/Confined Area Violation": 14786,
+        "/outputs/incidents/categories/Proximity Violation": 95
+      }
+    },
+    {
+      "official_index": 393,
+      "capability_id": "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
+      "advertised_literal": "trajectories and occupancy",
+      "package_id": "behavior-analytics-2d-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
+      "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/outputs/trajectories/location_points": 1778483,
+        "/outputs/trajectories/multi_point_count": 13084,
+        "/outputs/trajectories/max_points": 200,
+        "/outputs/occupancy/fov_positive_count_entries": 58323,
+        "/outputs/occupancy/roi_positive_count_entries": 32983
+      }
+    },
+    {
+      "official_index": 394,
+      "capability_id": "manifest-entry.behavior-analytics.03-tripwires-and-rois",
+      "advertised_literal": "tripwires and ROIs",
+      "package_id": "behavior-analytics-2d-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
+      "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/outputs/events/types/roi:ENTRY": 56,
+        "/outputs/events/types/roi:EXIT": 53,
+        "/outputs/events/types/tripwire:IN": 6,
+        "/outputs/events/types/tripwire:OUT": 6,
+        "/outputs/occupancy/roi_metric_entries": 32983
+      }
+    },
+    {
+      "official_index": 395,
+      "capability_id": "manifest-entry.behavior-analytics.04-proximity-and-clustering",
+      "advertised_literal": "proximity and clustering",
+      "package_id": "behavior-analytics-2d-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/contract.json",
+      "contract_sha256": "2c89aa8a57b5b6aa197d61c55e99c2cc8f46568e479e9ff6332f20d374849183",
+      "receipt_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "864748ebbc8b77e4d6527af1c03453710036cd033d3f3cd0a60dec0beb6ca137",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "b6ef34cc00298b371e8464e2e12dd107bff92b6837fbb58b344563c791fe9c7c",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/outputs/proximity_and_clustering/proximity_detections": 426,
+        "/outputs/proximity_and_clustering/cluster_entries": 426,
+        "/outputs/incidents/categories/Proximity Violation": 95,
+        "/policy/warehouse_sample_bundle": "excluded"
       }
     },
     {

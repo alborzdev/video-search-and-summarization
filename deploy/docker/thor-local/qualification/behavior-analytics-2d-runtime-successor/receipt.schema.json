@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "captured_at", "runtime", "input", "outputs", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "behavior-analytics-2d-runtime-successor"},
+    "capability_ids": {
+      "const": [
+        "runtime.behavior.pipeline",
+        "runtime.behavior.events-incidents",
+        "manifest-entry.behavior-analytics.01-events-and-incidents",
+        "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
+        "manifest-entry.behavior-analytics.03-tripwires-and-rois",
+        "manifest-entry.behavior-analytics.04-proximity-and-clustering"
+      ]
+    },
+    "official_indices": {"const": [203, 206, 392, 393, 394, 395]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["architecture", "image", "image_id", "image_size_bytes", "oracle", "playback", "normal_containers"],
+      "properties": {
+        "architecture": {"enum": ["aarch64", "arm64"]},
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1"},
+        "image_id": {"const": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"},
+        "image_size_bytes": {"const": 437647573},
+        "oracle": {"$ref": "#/$defs/exited_container"},
+        "playback": {"$ref": "#/$defs/exited_container"},
+        "normal_containers": {
+          "type": "object", "additionalProperties": false,
+          "required": ["names", "running_after", "restart_counts_after"],
+          "properties": {
+            "names": {"const": ["vss-behavior-analytics", "vss-behavior-analytics-thor-candidates"]},
+            "running_after": {"const": true},
+            "restart_counts_after": {"const": [0, 0]}
+          }
+        }
+      }
+    },
+    "input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["mode", "coordinate_system", "transport", "playback_bytes", "playback_frames", "playback_objects", "sensor_names", "simulation_fps", "calibration_type"],
+      "properties": {
+        "mode": {"const": "warehouse_2d"},
+        "coordinate_system": {"const": "euclidean"},
+        "transport": {"const": "Kafka"},
+        "playback_bytes": {"const": 29679130},
+        "playback_frames": {"const": 20000},
+        "playback_objects": {"const": 171436},
+        "sensor_names": {"const": ["Camera", "Camera_01", "Camera_02"]},
+        "simulation_fps": {"const": 60},
+        "calibration_type": {"const": "Cartesian CalibrationE"}
+      }
+    },
+    "outputs": {
+      "type": "object", "additionalProperties": false,
+      "required": ["topic_counts", "sensor_coverage", "events", "incidents", "trajectories", "occupancy", "proximity_and_clustering", "oracle_log_sha256", "playback_log_sha256", "protobuf_decoded"],
+      "properties": {
+        "topic_counts": {
+          "const": {
+            "vss-oracle-ba-behavior": 38286,
+            "vss-oracle-ba-events": 121,
+            "vss-oracle-ba-frames": 20000,
+            "vss-oracle-ba-incidents": 24924
+          }
+        },
+        "sensor_coverage": {
+          "type": "object", "additionalProperties": {"const": ["Camera", "Camera_01", "Camera_02"]},
+          "required": ["vss-oracle-ba-behavior", "vss-oracle-ba-events", "vss-oracle-ba-frames", "vss-oracle-ba-incidents"],
+          "minProperties": 4, "maxProperties": 4
+        },
+        "events": {
+          "type": "object", "additionalProperties": false,
+          "required": ["total", "types"],
+          "properties": {
+            "total": {"const": 121},
+            "types": {"const": {"roi:ENTRY": 56, "roi:EXIT": 53, "tripwire:IN": 6, "tripwire:OUT": 6}}
+          }
+        },
+        "incidents": {
+          "type": "object", "additionalProperties": false,
+          "required": ["total", "categories"],
+          "properties": {
+            "total": {"const": 24924},
+            "categories": {"const": {"Confined Area Violation": 14786, "Proximity Violation": 95, "Restricted Area Violation": 10043}}
+          }
+        },
+        "trajectories": {
+          "type": "object", "additionalProperties": false,
+          "required": ["identity_count", "location_points", "multi_point_count", "max_points"],
+          "properties": {
+            "identity_count": {"const": 12}, "location_points": {"const": 1778483},
+            "multi_point_count": {"const": 13084}, "max_points": {"const": 200}
+          }
+        },
+        "occupancy": {
+          "type": "object", "additionalProperties": false,
+          "required": ["frame_objects", "fov_metric_entries", "fov_positive_count_entries", "roi_metric_entries", "roi_positive_count_entries"],
+          "properties": {
+            "frame_objects": {"const": 171436}, "fov_metric_entries": {"const": 58323},
+            "fov_positive_count_entries": {"const": 58323}, "roi_metric_entries": {"const": 32983},
+            "roi_positive_count_entries": {"const": 32983}
+          }
+        },
+        "proximity_and_clustering": {
+          "const": {"proximity_detections": 426, "cluster_entries": 426}
+        },
+        "oracle_log_sha256": {"const": "75c514a33b8c334e962db6ad9bbb16b921ca5781703155fb8486ddc772354177"},
+        "playback_log_sha256": {"const": "907055368fd733fe294513cdf2f8b1ff86b256e7f48fdf303d6ae30e74adcd4c"},
+        "protobuf_decoded": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["disposable_containers_absent", "qualification_topics_absent", "normal_behavior_containers_running", "failures"],
+      "properties": {
+        "disposable_containers_absent": {"const": true},
+        "qualification_topics_absent": {"const": true},
+        "normal_behavior_containers_running": {"const": true},
+        "failures": {"const": []}
+      }
+    },
+    "policy": {
+      "const": {
+        "agent_generate_calls": 0,
+        "external_requests": 0,
+        "main_rt_cv_mutations": 0,
+        "main_vios_mutations": 0,
+        "normal_behavior_consumers_stopped": 0,
+        "warehouse_sample_bundle": "excluded"
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "exited_container": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "exit_code", "oom_killed", "restart_count"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1}, "exit_code": {"const": 0},
+        "oom_killed": {"const": false}, "restart_count": {"const": 0}
+      }
+    }
+  }
+}

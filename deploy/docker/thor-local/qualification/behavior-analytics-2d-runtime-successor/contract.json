@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "package_id": "behavior-analytics-2d-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "runtime.behavior.pipeline",
+    "runtime.behavior.events-incidents",
+    "manifest-entry.behavior-analytics.01-events-and-incidents",
+    "manifest-entry.behavior-analytics.02-trajectories-and-occupancy",
+    "manifest-entry.behavior-analytics.03-tripwires-and-rois",
+    "manifest-entry.behavior-analytics.04-proximity-and-clustering"
+  ],
+  "official_indices": [203, 206, 392, 393, 394, 395],
+  "runtime_image": "nvcr.io/nvidia/vss-core/vss-behavior-analytics:3.2.1",
+  "source_locks": [
+    {
+      "path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps_data/playback/warehouse_2d_playback_data.txt",
+      "sha256": "749412282be483b2636dd4e1a7de1ed8750fdf413a15a10344991de547b090ef"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/tests/integration/docker_compose/apps/warehouse_2d/calibration.json",
+      "sha256": "94cf50e81ab0653b636c2b386fb19807a0c20754da9a4d22208b79fdf89f63a1"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/oracle-config.json",
+      "sha256": "a810d851845bf6b3f082167773727e2d45294560a61ef9013fd8e31e6c14b3fb"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/behavior-analytics-2d-runtime-successor/inspect_topics.py",
+      "sha256": "3f10747e2bee7454a1f5c1ce7f8dca2bce64f6e03bf9945af98178bd9affdfc5"
+    }
+  ],
+  "qualification_topics": [
+    "vss-oracle-ba-raw",
+    "vss-oracle-ba-behavior",
+    "vss-oracle-ba-frames",
+    "vss-oracle-ba-notification",
+    "vss-oracle-ba-events",
+    "vss-oracle-ba-incidents"
+  ],
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "normal_behavior_consumers_stopped": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "explicit_nonclaims": [
+    "3D or MV3DT behavior mode",
+    "Redis or MQTT source/sink coverage",
+    "dynamic configuration or calibration",
+    "3D space-utilization metrics",
+    "custom sink plugins"
+  ]
+}
