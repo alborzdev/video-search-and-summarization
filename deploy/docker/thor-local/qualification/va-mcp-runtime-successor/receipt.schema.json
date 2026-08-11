@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "status",
+    "contract_sha256",
+    "captured_at",
+    "runtime",
+    "transport",
+    "tool_surface",
+    "queries",
+    "state",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "va-mcp-runtime-successor"},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "captured_at": {"type": "string", "minLength": 20},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["architecture", "container", "image", "image_id", "running", "healthy"],
+      "properties": {
+        "architecture": {"enum": ["aarch64", "arm64"]},
+        "container": {"const": "vss-va-mcp"},
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1"},
+        "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "running": {"const": true},
+        "healthy": {"const": true}
+      }
+    },
+    "transport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["endpoint", "protocol", "session_header", "session_per_query", "initialize_count", "all_http_200"],
+      "properties": {
+        "endpoint": {"const": "http://127.0.0.1:9901/mcp"},
+        "protocol": {"const": "JSON-RPC 2.0 over SSE"},
+        "session_header": {"const": "mcp-session-id"},
+        "session_per_query": {"const": true},
+        "initialize_count": {"const": 10},
+        "all_http_200": {"const": true}
+      }
+    },
+    "tool_surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tool_count", "tool_names", "schemas_present", "react_agent_advertised_not_invoked"],
+      "properties": {
+        "tool_count": {"const": 9},
+        "tool_names": {
+          "const": [
+            "react_agent",
+            "video_analytics__analyze",
+            "video_analytics__get_average_speeds",
+            "video_analytics__get_fov_histogram",
+            "video_analytics__get_incident",
+            "video_analytics__get_incidents",
+            "video_analytics__get_places",
+            "video_analytics__get_sensor_ids",
+            "vst_sensor_list"
+          ]
+        },
+        "schemas_present": {"const": true},
+        "react_agent_advertised_not_invoked": {"const": true}
+      }
+    },
+    "queries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["invoked_tools", "unique_tool_count", "tool_call_count", "all_succeeded", "sensor_ids", "vst_sensors", "sensor_overlap", "incidents", "specific_incident", "places", "fov_histogram", "average_speeds", "analysis"],
+      "properties": {
+        "invoked_tools": {"type": "array", "minItems": 8, "maxItems": 8, "uniqueItems": true, "items": {"type": "string"}},
+        "unique_tool_count": {"const": 8},
+        "tool_call_count": {"const": 9},
+        "all_succeeded": {"const": true},
+        "sensor_ids": {"$ref": "#/$defs/named_result"},
+        "vst_sensors": {"$ref": "#/$defs/named_result"},
+        "sensor_overlap": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "incidents": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["count", "has_more", "first_id_sha256", "output_sha256"],
+          "properties": {
+            "count": {"type": "integer", "minimum": 1},
+            "has_more": {"type": "boolean"},
+            "first_id_sha256": {"$ref": "#/$defs/hash"},
+            "output_sha256": {"$ref": "#/$defs/hash"}
+          }
+        },
+        "specific_incident": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["matched_first_incident", "field_names", "output_sha256"],
+          "properties": {
+            "matched_first_incident": {"const": true},
+            "field_names": {"type": "array", "minItems": 4, "uniqueItems": true, "items": {"type": "string"}},
+            "output_sha256": {"$ref": "#/$defs/hash"}
+          }
+        },
+        "places": {"$ref": "#/$defs/probe_result"},
+        "fov_histogram": {"$ref": "#/$defs/probe_result"},
+        "average_speeds": {"$ref": "#/$defs/probe_result"},
+        "analysis": {"$ref": "#/$defs/probe_result"}
+      }
+    },
+    "state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["docker_running_set_exact", "vst_sensor_set_exact", "writes_observed"],
+      "properties": {
+        "docker_running_set_exact": {"const": true},
+        "vst_sensor_set_exact": {"const": true},
+        "writes_observed": {"const": false}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["read_only", "react_agent_calls", "agent_generate_calls", "stream_mutations", "external_requests", "warehouse_sample_bundle"],
+      "properties": {
+        "read_only": {"const": true},
+        "react_agent_calls": {"const": 0},
+        "agent_generate_calls": {"const": 0},
+        "stream_mutations": {"const": 0},
+        "external_requests": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "named_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "names", "output_sha256"],
+      "properties": {
+        "count": {"type": "integer", "minimum": 1},
+        "names": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "output_sha256": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "probe_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nonempty_response", "output_sha256", "output_length"],
+      "properties": {
+        "nonempty_response": {"const": true},
+        "output_sha256": {"$ref": "#/$defs/hash"},
+        "output_length": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

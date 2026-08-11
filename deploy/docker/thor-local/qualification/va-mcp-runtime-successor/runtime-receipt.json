@@ -1,0 +1,128 @@
+{
+  "captured_at": "2026-08-11T19:10:46.694449Z",
+  "contract_sha256": "53f8c2da074ab100eee453d23b06eb4915994011b1c80d1eebdd319603131f51",
+  "package_id": "va-mcp-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "react_agent_calls": 0,
+    "read_only": true,
+    "stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "queries": {
+    "all_succeeded": true,
+    "analysis": {
+      "nonempty_response": true,
+      "output_length": 92,
+      "output_sha256": "10ab5f9e8185821f0f967261fbd9ca5446b28128eaabd35778166de88c638dc0"
+    },
+    "average_speeds": {
+      "nonempty_response": true,
+      "output_length": 15,
+      "output_sha256": "34c88a863d3e939ea28381abff4e04607313ede48b33492df0b0daab5775eefb"
+    },
+    "fov_histogram": {
+      "nonempty_response": true,
+      "output_length": 935,
+      "output_sha256": "b26d94df6e63ee360a5e0a55b907403ab5513612cb27044d2b32265c023abcd6"
+    },
+    "incidents": {
+      "count": 3,
+      "first_id_sha256": "56cdeed5895879ce64d1ab6d18e8c2c0069360eff53314a6bfa42fcb4df2aab7",
+      "has_more": true,
+      "output_sha256": "30b313cc964fa0b5c9ece66cc14eafe6ac4f0963379d69e538cf094b62d6e33d"
+    },
+    "invoked_tools": [
+      "video_analytics__get_sensor_ids",
+      "vst_sensor_list",
+      "video_analytics__get_places",
+      "video_analytics__get_incidents",
+      "video_analytics__get_incident",
+      "video_analytics__get_fov_histogram",
+      "video_analytics__get_average_speeds",
+      "video_analytics__analyze"
+    ],
+    "places": {
+      "nonempty_response": true,
+      "output_length": 2,
+      "output_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    "sensor_ids": {
+      "count": 3,
+      "names": [
+        "pit-POV",
+        "sample-sim-jaywalking",
+        "sample-sim-traffic"
+      ],
+      "output_sha256": "98fc9a0d53d5756b1bc9c3d2d66cb344c1373a42a34f32dc9977b775a2f448cf"
+    },
+    "sensor_overlap": [
+      "pit-POV",
+      "sample-sim-jaywalking",
+      "sample-sim-traffic"
+    ],
+    "specific_incident": {
+      "field_names": [
+        "Id",
+        "end",
+        "info",
+        "objectIds",
+        "sensorId",
+        "timestamp"
+      ],
+      "matched_first_incident": true,
+      "output_sha256": "ec2dd433321b2a100c5e9073ef35e72854b4e6151729dd554634e5a37f128df2"
+    },
+    "tool_call_count": 9,
+    "unique_tool_count": 8,
+    "vst_sensors": {
+      "count": 3,
+      "names": [
+        "pit-POV",
+        "sample-sim-jaywalking",
+        "sample-sim-traffic"
+      ],
+      "output_sha256": "d0ec3bc5d3f0f654a5671a90c3f0b86b33e8f2fb1d635f2dac785e7fdde344f2"
+    }
+  },
+  "runtime": {
+    "architecture": "aarch64",
+    "container": "vss-va-mcp",
+    "healthy": true,
+    "image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+    "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+    "running": true
+  },
+  "schema_version": 1,
+  "state": {
+    "docker_running_set_exact": true,
+    "vst_sensor_set_exact": true,
+    "writes_observed": false
+  },
+  "status": "passed",
+  "tool_surface": {
+    "react_agent_advertised_not_invoked": true,
+    "schemas_present": true,
+    "tool_count": 9,
+    "tool_names": [
+      "react_agent",
+      "video_analytics__analyze",
+      "video_analytics__get_average_speeds",
+      "video_analytics__get_fov_histogram",
+      "video_analytics__get_incident",
+      "video_analytics__get_incidents",
+      "video_analytics__get_places",
+      "video_analytics__get_sensor_ids",
+      "vst_sensor_list"
+    ]
+  },
+  "transport": {
+    "all_http_200": true,
+    "endpoint": "http://127.0.0.1:9901/mcp",
+    "initialize_count": 10,
+    "protocol": "JSON-RPC 2.0 over SSE",
+    "session_header": "mcp-session-id",
+    "session_per_query": true
+  }
+}

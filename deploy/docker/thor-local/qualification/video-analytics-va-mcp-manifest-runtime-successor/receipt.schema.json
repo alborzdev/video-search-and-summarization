@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "source_identity", "video_analytics_api", "va_mcp", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "video-analytics-va-mcp-manifest-runtime-successor"},
+    "capability_ids": {"type": "array", "minItems": 9, "maxItems": 9, "uniqueItems": true, "items": {"type": "string"}},
+    "official_indices": {"const": [397, 398, 399, 400, 401, 402, 403, 404, 467]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "source_identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_receipt_sha256", "api_query_wrapper_sha256", "api_optional_kafka_wrapper_sha256", "va_mcp_receipt_sha256"],
+      "properties": {
+        "api_receipt_sha256": {"const": "5917fead7e3c57a4f34ab4fb26a4c19489b534f01050f7d1c7d9be1d00fa1222"},
+        "api_query_wrapper_sha256": {"const": "895962811784eb8b03897f048fb9ed5d31156fc0443384ad39c49c1ed13bf8f5"},
+        "api_optional_kafka_wrapper_sha256": {"const": "125f3ab237b425c3d0bbd530755f26040d66fc13664fab43626da26d563eb1b3"},
+        "va_mcp_receipt_sha256": {"const": "d64d9fb73a087e78308d5997da28b7102525e2a9186f22bdf81edd4291112eac"}
+      }
+    },
+    "video_analytics_api": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image", "openapi_operations", "get_operations", "post_operations", "data_bearing_gets_nonempty", "positive_posts_201", "adjacent_negative_posts", "http_5xx", "semantic_document_count", "semantic_index_count", "query_families", "dynamic_config_checkpoint", "dynamic_calibration_checkpoints", "optional_kafka_contract"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-video-analytics-api:3.2.0"},
+        "openapi_operations": {"const": 56},
+        "get_operations": {"const": 48},
+        "post_operations": {"const": 8},
+        "data_bearing_gets_nonempty": {"const": 40},
+        "positive_posts_201": {"const": 8},
+        "adjacent_negative_posts": {"const": 8},
+        "http_5xx": {"const": 0},
+        "semantic_document_count": {"const": 14},
+        "semantic_index_count": {"const": 13},
+        "query_families": {
+          "const": ["speed-flow-travel-occupancy-space", "objects-locations", "frames-bev-alerts-proximity", "behaviors-incidents-clustering", "tripwire-roi-amr-events", "dynamic-config-audit", "calibration-road-network-usd-images", "sensor-lookup"]
+        },
+        "dynamic_config_checkpoint": {"const": true},
+        "dynamic_calibration_checkpoints": {"const": true},
+        "optional_kafka_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["brokerless_started", "non_kafka_read_status", "kafka_required_status", "exact_error_contract", "connection_attempt_observed"],
+          "properties": {
+            "brokerless_started": {"const": true},
+            "non_kafka_read_status": {"const": 200},
+            "kafka_required_status": {"const": 422},
+            "exact_error_contract": {"const": true},
+            "connection_attempt_observed": {"const": false}
+          }
+        }
+      }
+    },
+    "va_mcp": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image", "healthy", "transport", "tool_count", "read_only_unique_tools", "read_only_tool_calls", "all_succeeded", "sensor_count", "vst_sensor_count", "sensor_overlap_count", "incident_count", "specific_incident_matched", "metric_probes_nonempty", "react_agent_advertised_not_invoked", "session_per_query"],
+      "properties": {
+        "image": {"const": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1"},
+        "healthy": {"const": true},
+        "transport": {"const": "JSON-RPC 2.0 over SSE"},
+        "tool_count": {"const": 9},
+        "read_only_unique_tools": {"const": 8},
+        "read_only_tool_calls": {"const": 9},
+        "all_succeeded": {"const": true},
+        "sensor_count": {"type": "integer", "minimum": 1},
+        "vst_sensor_count": {"type": "integer", "minimum": 1},
+        "sensor_overlap_count": {"type": "integer", "minimum": 1},
+        "incident_count": {"type": "integer", "minimum": 1},
+        "specific_incident_matched": {"const": true},
+        "metric_probes_nonempty": {"const": true},
+        "react_agent_advertised_not_invoked": {"const": true},
+        "session_per_query": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["api_qualifier_state_absent", "api_consumers_restored", "va_docker_running_set_exact", "va_vst_sensor_set_exact"],
+      "properties": {
+        "api_qualifier_state_absent": {"const": true},
+        "api_consumers_restored": {"const": true},
+        "va_docker_running_set_exact": {"const": true},
+        "va_vst_sensor_set_exact": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_generate_calls", "react_agent_calls", "warehouse_sample_bundle", "main_vios_mutations", "main_rt_cv_mutations", "external_requests"],
+      "properties": {
+        "agent_generate_calls": {"const": 0},
+        "react_agent_calls": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "main_vios_mutations": {"const": 0},
+        "main_rt_cv_mutations": {"const": 0},
+        "external_requests": {"const": 0}
+      }
+    }
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

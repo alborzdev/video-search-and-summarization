@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+  "target_release": "VSS 3.2.1",
+  "capability_ids": [
+    "manifest-entry.video-analytics-api.00-speed-flow-travel-time-occupancy-space-metrics",
+    "manifest-entry.video-analytics-api.01-objects-and-locations",
+    "manifest-entry.video-analytics-api.02-frames-bev-alerts-proximity",
+    "manifest-entry.video-analytics-api.03-behaviors-incidents-clustering",
+    "manifest-entry.video-analytics-api.04-tripwire-roi-amr-events",
+    "manifest-entry.video-analytics-api.05-dynamic-config-and-audit",
+    "manifest-entry.video-analytics-api.06-calibration-road-network-usd-images",
+    "manifest-entry.video-analytics-api.07-sensor-lookup",
+    "manifest-entry.agent-and-mcp-apis.05-va-mcp"
+  ],
+  "official_indices": [397, 398, 399, 400, 401, 402, 403, 404, 467],
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/video-analytics-api-runtime/runtime-receipt.json",
+      "sha256": "5917fead7e3c57a4f34ab4fb26a4c19489b534f01050f7d1c7d9be1d00fa1222"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/video-analytics-api-runtime/official-runtime-evidence-query-library.json",
+      "sha256": "895962811784eb8b03897f048fb9ed5d31156fc0443384ad39c49c1ed13bf8f5"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/video-analytics-api-runtime/official-runtime-evidence-optional-kafka.json",
+      "sha256": "125f3ab237b425c3d0bbd530755f26040d66fc13664fab43626da26d563eb1b3"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/video-analytics-api-runtime/contract.json",
+      "sha256": "7cbe3cdb682e0180e835eddb703920afc3538645e2669d73076ef3e6c123502b"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/va-mcp-runtime-successor/runtime-receipt.json",
+      "sha256": "d64d9fb73a087e78308d5997da28b7102525e2a9186f22bdf81edd4291112eac"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/va-mcp-runtime-successor/contract.json",
+      "sha256": "53f8c2da074ab100eee453d23b06eb4915994011b1c80d1eebdd319603131f51"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/va-mcp-runtime-successor/receipt.schema.json",
+      "sha256": "16b8d11693285c347baa67b58bc2b87ea85a1deed648e959020dcfb132d3650b"
+    }
+  ],
+  "policy": {
+    "agent_generate_calls": 0,
+    "react_agent_calls": 0,
+    "warehouse_sample_bundle": "excluded",
+    "main_vios_mutations": 0,
+    "main_rt_cv_mutations": 0,
+    "external_requests": 0
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-24",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-25",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -986,6 +986,158 @@
       }
     },
     {
+      "official_index": 397,
+      "capability_id": "manifest-entry.video-analytics-api.00-speed-flow-travel-time-occupancy-space-metrics",
+      "advertised_literal": "speed/flow/travel time/occupancy/space metrics",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/video_analytics_api/openapi_operations": 56,
+        "/video_analytics_api/data_bearing_gets_nonempty": 40,
+        "/video_analytics_api/http_5xx": 0,
+        "/va_mcp/metric_probes_nonempty": true,
+        "/cleanup/api_qualifier_state_absent": true
+      }
+    },
+    {
+      "official_index": 398,
+      "capability_id": "manifest-entry.video-analytics-api.01-objects-and-locations",
+      "advertised_literal": "objects and locations",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/video_analytics_api/get_operations": 48,
+        "/video_analytics_api/semantic_document_count": 14,
+        "/video_analytics_api/semantic_index_count": 13,
+        "/va_mcp/sensor_overlap_count": 3
+      }
+    },
+    {
+      "official_index": 399,
+      "capability_id": "manifest-entry.video-analytics-api.02-frames-bev-alerts-proximity",
+      "advertised_literal": "frames/BEV/alerts/proximity",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/video_analytics_api/get_operations": 48,
+        "/video_analytics_api/data_bearing_gets_nonempty": 40,
+        "/video_analytics_api/http_5xx": 0
+      }
+    },
+    {
+      "official_index": 400,
+      "capability_id": "manifest-entry.video-analytics-api.03-behaviors-incidents-clustering",
+      "advertised_literal": "behaviors/incidents/clustering",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/video_analytics_api/data_bearing_gets_nonempty": 40,
+        "/va_mcp/incident_count": 3,
+        "/va_mcp/specific_incident_matched": true,
+        "/va_mcp/all_succeeded": true
+      }
+    },
+    {
+      "official_index": 401,
+      "capability_id": "manifest-entry.video-analytics-api.04-tripwire-roi-amr-events",
+      "advertised_literal": "tripwire/ROI/AMR events",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/video_analytics_api/get_operations": 48,
+        "/video_analytics_api/data_bearing_gets_nonempty": 40,
+        "/video_analytics_api/semantic_document_count": 14
+      }
+    },
+    {
+      "official_index": 402,
+      "capability_id": "manifest-entry.video-analytics-api.05-dynamic-config-and-audit",
+      "advertised_literal": "dynamic config and audit",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/video_analytics_api/post_operations": 8,
+        "/video_analytics_api/positive_posts_201": 8,
+        "/video_analytics_api/adjacent_negative_posts": 8,
+        "/video_analytics_api/dynamic_config_checkpoint": true,
+        "/cleanup/api_consumers_restored": true
+      }
+    },
+    {
+      "official_index": 403,
+      "capability_id": "manifest-entry.video-analytics-api.06-calibration-road-network-usd-images",
+      "advertised_literal": "calibration/road network/USD/images",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/video_analytics_api/dynamic_calibration_checkpoints": true,
+        "/video_analytics_api/positive_posts_201": 8,
+        "/video_analytics_api/http_5xx": 0,
+        "/cleanup/api_qualifier_state_absent": true
+      }
+    },
+    {
+      "official_index": 404,
+      "capability_id": "manifest-entry.video-analytics-api.07-sensor-lookup",
+      "advertised_literal": "sensor lookup",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/va_mcp/sensor_count": 3,
+        "/va_mcp/vst_sensor_count": 3,
+        "/va_mcp/sensor_overlap_count": 3,
+        "/cleanup/va_vst_sensor_set_exact": true
+      }
+    },
+    {
       "official_index": 412,
       "capability_id": "manifest-entry.vios-core.01-file-upload-and-registration",
       "advertised_literal": "file upload and registration",
@@ -1200,6 +1352,32 @@
         "/audio_rtsp_republish/working_transcode_substitute": true,
         "/policy/audio_recording_claimed": false,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 467,
+      "capability_id": "manifest-entry.agent-and-mcp-apis.05-va-mcp",
+      "advertised_literal": "VA-MCP",
+      "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/contract.json",
+      "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+      "receipt_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "d702925304658e3ea568365f4023c9d9ebafbac82e15a120fb12ae99b594b656",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/video-analytics-va-mcp-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "412953e2fa071fa51f72c806678516f32c576370db868e192ae5246d33c0589d",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/va_mcp/healthy": true,
+        "/va_mcp/transport": "JSON-RPC 2.0 over SSE",
+        "/va_mcp/tool_count": 9,
+        "/va_mcp/read_only_unique_tools": 8,
+        "/va_mcp/read_only_tool_calls": 9,
+        "/va_mcp/all_succeeded": true,
+        "/va_mcp/react_agent_advertised_not_invoked": true,
+        "/va_mcp/session_per_query": true,
+        "/cleanup/va_docker_running_set_exact": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/react_agent_calls": 0
       }
     }
   ]

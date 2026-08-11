@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_forty_nine_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_fifty_eight_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        69, 70, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 412, 413, 415, 416, 417, 420, 421, 422, 424
+        69, 70, 299, 300, 302, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -421,6 +421,28 @@ def test_alert_websocket_receipt_is_bound_to_exact_candidate_row() -> None:
     assert "protocol.alert.websocket" in receipt["capability_ids"]
     assert receipt["negative"]["socket_remained_open"] is True
     assert receipt["policy"]["slack_dependency"] == "excluded"
+
+
+def test_video_analytics_and_va_mcp_receipt_is_bound_to_nine_rows() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "video-analytics-va-mcp-manifest-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [
+        397, 398, 399, 400, 401, 402, 403, 404, 467
+    ]
+    for entry in entries:
+        receipt = compiler._validate_receipt(entry)
+        assert entry["capability_id"] in receipt["capability_ids"]
+    receipt = compiler._validate_receipt(entries[0])
+    assert receipt["video_analytics_api"]["openapi_operations"] == 56
+    assert receipt["video_analytics_api"]["data_bearing_gets_nonempty"] == 40
+    assert receipt["va_mcp"]["tool_count"] == 9
+    assert receipt["va_mcp"]["read_only_unique_tools"] == 8
+    assert receipt["va_mcp"]["react_agent_advertised_not_invoked"] is True
+    assert all(receipt["cleanup"].values())
 
 
 def test_policy_excludes_agent_generate_and_warehouse_sample() -> None:

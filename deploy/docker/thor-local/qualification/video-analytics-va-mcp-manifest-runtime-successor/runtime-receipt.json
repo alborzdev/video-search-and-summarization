@@ -1,0 +1,96 @@
+{
+  "capability_ids": [
+    "manifest-entry.video-analytics-api.00-speed-flow-travel-time-occupancy-space-metrics",
+    "manifest-entry.video-analytics-api.01-objects-and-locations",
+    "manifest-entry.video-analytics-api.02-frames-bev-alerts-proximity",
+    "manifest-entry.video-analytics-api.03-behaviors-incidents-clustering",
+    "manifest-entry.video-analytics-api.04-tripwire-roi-amr-events",
+    "manifest-entry.video-analytics-api.05-dynamic-config-and-audit",
+    "manifest-entry.video-analytics-api.06-calibration-road-network-usd-images",
+    "manifest-entry.video-analytics-api.07-sensor-lookup",
+    "manifest-entry.agent-and-mcp-apis.05-va-mcp"
+  ],
+  "cleanup": {
+    "api_consumers_restored": true,
+    "api_qualifier_state_absent": true,
+    "va_docker_running_set_exact": true,
+    "va_vst_sensor_set_exact": true
+  },
+  "contract_sha256": "ea5e4efae11b4e291343230658a60c437456d2992bf3a47a8526f0334adfef76",
+  "official_indices": [
+    397,
+    398,
+    399,
+    400,
+    401,
+    402,
+    403,
+    404,
+    467
+  ],
+  "package_id": "video-analytics-va-mcp-manifest-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "external_requests": 0,
+    "main_rt_cv_mutations": 0,
+    "main_vios_mutations": 0,
+    "react_agent_calls": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "schema_version": 1,
+  "source_identity": {
+    "api_optional_kafka_wrapper_sha256": "125f3ab237b425c3d0bbd530755f26040d66fc13664fab43626da26d563eb1b3",
+    "api_query_wrapper_sha256": "895962811784eb8b03897f048fb9ed5d31156fc0443384ad39c49c1ed13bf8f5",
+    "api_receipt_sha256": "5917fead7e3c57a4f34ab4fb26a4c19489b534f01050f7d1c7d9be1d00fa1222",
+    "va_mcp_receipt_sha256": "d64d9fb73a087e78308d5997da28b7102525e2a9186f22bdf81edd4291112eac"
+  },
+  "status": "passed",
+  "va_mcp": {
+    "all_succeeded": true,
+    "healthy": true,
+    "image": "nvcr.io/nvidia/vss-core/vss-agent:3.2.1",
+    "incident_count": 3,
+    "metric_probes_nonempty": true,
+    "react_agent_advertised_not_invoked": true,
+    "read_only_tool_calls": 9,
+    "read_only_unique_tools": 8,
+    "sensor_count": 3,
+    "sensor_overlap_count": 3,
+    "session_per_query": true,
+    "specific_incident_matched": true,
+    "tool_count": 9,
+    "transport": "JSON-RPC 2.0 over SSE",
+    "vst_sensor_count": 3
+  },
+  "video_analytics_api": {
+    "adjacent_negative_posts": 8,
+    "data_bearing_gets_nonempty": 40,
+    "dynamic_calibration_checkpoints": true,
+    "dynamic_config_checkpoint": true,
+    "get_operations": 48,
+    "http_5xx": 0,
+    "image": "nvcr.io/nvidia/vss-core/vss-video-analytics-api:3.2.0",
+    "openapi_operations": 56,
+    "optional_kafka_contract": {
+      "brokerless_started": true,
+      "connection_attempt_observed": false,
+      "exact_error_contract": true,
+      "kafka_required_status": 422,
+      "non_kafka_read_status": 200
+    },
+    "positive_posts_201": 8,
+    "post_operations": 8,
+    "query_families": [
+      "speed-flow-travel-occupancy-space",
+      "objects-locations",
+      "frames-bev-alerts-proximity",
+      "behaviors-incidents-clustering",
+      "tripwire-roi-amr-events",
+      "dynamic-config-audit",
+      "calibration-road-network-usd-images",
+      "sensor-lookup"
+    ],
+    "semantic_document_count": 14,
+    "semantic_index_count": 13
+  }
+}
