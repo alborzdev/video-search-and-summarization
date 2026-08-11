@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "package_id": "vios-webrtc-live-replay-manifest-runtime-successor",
+  "capability_ids": ["manifest-entry.vios-core.06-live-replay-webrtc"],
+  "official_indices": [417],
+  "target_release": "VSS 3.2.1",
+  "service_version": "2.1.0-26.05.4",
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-webrtc-live-runtime/fixture-contract.json",
+      "sha256": "b8b1436835a8db5f7cfc29f8eb12cda959e3df1056b9a3003123a44f3eaffc89"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-webrtc-live-runtime/refresh-receipt.json",
+      "sha256": "6b104db176e3dc0d2bc747ef7529c30d4bc97cc62eab0c7d428109a7b8389e2d"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-webrtc-replay-runtime/fixture-contract.json",
+      "sha256": "0cdf3e7196e191f0a0f68c24c7b93eb06b223991372ec625443c40f7c19aeebd"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/vios-webrtc-replay-runtime/refresh-receipt.json",
+      "sha256": "ba798733711413dc592ff8c12dd6753592174048b5a617479030ca78a0e37830"
+    }
+  ],
+  "required_semantics": {
+    "live": "real Chromium WebRTC decodes current frames and observes PLAYING state",
+    "replay": "real Chromium WebRTC decodes a recorded interval and continues after positive and negative seeks",
+    "separation": "live and replay use distinct route families, timing operations, session lifecycles, and teardown"
+  },
+  "policy": {
+    "agent_generate_calls": 0,
+    "warehouse_sample_bundle": "excluded",
+    "main_vios_configuration_mutations": 0,
+    "main_rt_cv_stream_mutations": 0,
+    "raw_session_identifiers_retained": false,
+    "sdp_or_ice_retained": false
+  }
+}

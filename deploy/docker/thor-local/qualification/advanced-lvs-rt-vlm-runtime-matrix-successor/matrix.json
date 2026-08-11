@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-20",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-21",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -931,6 +931,28 @@
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "live/replay WebRTC",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.vios-core.06-live-replay-webrtc",
+      "feature_id": "vios-core",
+      "official_index": 417,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/vios-webrtc-live-replay-manifest-runtime-successor/contract.json",
+        "contract_sha256": "7267692c470b5cadb983fe83ea1d22d7f5c0382f3faab1a367c6d58c1e816220",
+        "package_id": "vios-webrtc-live-replay-manifest-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/vios-webrtc-live-replay-manifest-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-webrtc-live-replay-manifest-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "e658170e383de67f214a1173d2174272dfdaff94c1d32cb03c6cd2555bae276a",
+        "receipt_sha256": "dc9df69e579f17de8494e6c23f9ad4f10677e40bb3f4a5039ad3b604f6815585",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
     }
   ],
   "schema_version": 1,
@@ -940,8 +962,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 42,
-    "row_count": 42,
+    "passed_current_thor": 43,
+    "row_count": 43,
     "warehouse_sample_bundle": "excluded"
   }
 }

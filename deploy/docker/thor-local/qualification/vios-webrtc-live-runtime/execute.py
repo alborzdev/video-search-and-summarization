@@ -641,6 +641,7 @@ def main() -> int:
         if output.parent != HERE or output.name not in {
             "runtime-receipt.json",
             "plan-receipt.json",
+            "refresh-receipt.json",
         }:
             raise QualificationError("output must be a reserved package receipt path")
         _write_json(output, receipt)

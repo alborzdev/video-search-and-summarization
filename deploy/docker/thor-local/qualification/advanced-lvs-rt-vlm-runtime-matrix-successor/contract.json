@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-20",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-21",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -1027,6 +1027,37 @@
         "/snapshot/visual_marker_correlated": true,
         "/cleanup/exact_file_list_restored": true,
         "/cleanup/exact_sensor_list_restored": true
+      }
+    },
+    {
+      "official_index": 417,
+      "capability_id": "manifest-entry.vios-core.06-live-replay-webrtc",
+      "advertised_literal": "live/replay WebRTC",
+      "package_id": "vios-webrtc-live-replay-manifest-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/vios-webrtc-live-replay-manifest-runtime-successor/contract.json",
+      "contract_sha256": "7267692c470b5cadb983fe83ea1d22d7f5c0382f3faab1a367c6d58c1e816220",
+      "receipt_path": "deploy/docker/thor-local/qualification/vios-webrtc-live-replay-manifest-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "dc9df69e579f17de8494e6c23f9ad4f10677e40bb3f4a5039ad3b604f6815585",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/vios-webrtc-live-replay-manifest-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "e658170e383de67f214a1173d2174272dfdaff94c1d32cb03c6cd2555bae276a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/live/signaling_complete": true,
+        "/live/live_unmuted_video_track": true,
+        "/replay/signaling_complete": true,
+        "/replay/live_unmuted_video_track": true,
+        "/replay/frames_continued_after_all_seeks": true,
+        "/replay/seek_forward_status": 200,
+        "/replay/ui_seek_status": 200,
+        "/replay/invalid_seek_status": 501,
+        "/separation/distinct_route_families": true,
+        "/separation/distinct_timing_semantics": true,
+        "/separation/independent_session_lifecycles": true,
+        "/cleanup/live_session_stopped": true,
+        "/cleanup/replay_session_stopped": true,
+        "/cleanup/main_vios_restored": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
       }
     }
   ]

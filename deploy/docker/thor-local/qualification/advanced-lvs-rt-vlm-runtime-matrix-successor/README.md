@@ -1,6 +1,6 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-This read-only successor binds forty-two advertised capability rows to current-Thor live receipts. Overlay 20 adds three VIOS rows: file upload/registration, clip plus raw/full-file download, and historical snapshots. One namespaced live transaction exercised 15 VIOS API calls, produced a distinct 1.2-second H.264 clip and a timestamped source-correlated MJPEG snapshot, and restored exact file and sensor inventories. The prior 39 rows retain their exact RT-VLM, RT-Embed, LVS, RT-CV, and behavior evidence.
+This read-only successor binds forty-three advertised capability rows to current-Thor live receipts. Overlay 21 adds VIOS live/replay WebRTC row 417. Fresh Chromium/Playwright sessions completed real WebRTC signaling, decoded live and recorded frames, exercised API and UI replay seeks plus an expected unsupported seek, proved the live/replay route and lifecycle separation, and restored the main VIOS state. Overlay 20's three VIOS file-lifecycle rows and the prior 39 RT-VLM, RT-Embed, LVS, RT-CV, and behavior rows retain their exact evidence.
 
 Each receipt is hash-locked, validated against its own JSON Schema, bound to its exact package contract, checked for required cleanup and policy assertions, and mapped to the exact row/index in the selected 500-row metadata set. The resulting `matrix.json` truthfully records `passed_current_thor` runtime evidence.
 

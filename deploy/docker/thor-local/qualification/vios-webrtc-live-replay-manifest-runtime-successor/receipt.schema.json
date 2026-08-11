@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_ids", "official_indices", "status", "contract_sha256", "source_identity", "runtime", "live", "replay", "separation", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "vios-webrtc-live-replay-manifest-runtime-successor"},
+    "capability_ids": {"const": ["manifest-entry.vios-core.06-live-replay-webrtc"]},
+    "official_indices": {"const": [417]},
+    "status": {"const": "passed"},
+    "contract_sha256": {"$ref": "#/$defs/hash"},
+    "source_identity": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_receipt_sha256", "replay_receipt_sha256", "live_contract_sha256", "replay_contract_sha256"],
+      "properties": {
+        "live_receipt_sha256": {"const": "6b104db176e3dc0d2bc747ef7529c30d4bc97cc62eab0c7d428109a7b8389e2d"},
+        "replay_receipt_sha256": {"const": "ba798733711413dc592ff8c12dd6753592174048b5a617479030ca78a0e37830"},
+        "live_contract_sha256": {"const": "b8b1436835a8db5f7cfc29f8eb12cda959e3df1056b9a3003123a44f3eaffc89"},
+        "replay_contract_sha256": {"const": "0cdf3e7196e191f0a0f68c24c7b93eb06b223991372ec625443c40f7c19aeebd"}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["product_version", "service_version", "live_captured_at", "replay_captured_at", "browser_engine"],
+      "properties": {
+        "product_version": {"const": "3.2.1"}, "service_version": {"const": "2.1.0-26.05.4"},
+        "live_captured_at": {"type": "string"}, "replay_captured_at": {"type": "string"},
+        "browser_engine": {"const": "Chromium via Playwright"}
+      }
+    },
+    "live": {"$ref": "#/$defs/mode"},
+    "replay": {
+      "allOf": [
+        {"$ref": "#/$defs/mode"},
+        {
+          "type": "object",
+          "required": ["seek_forward_status", "ui_seek_status", "invalid_seek_status", "frames_continued_after_all_seeks"],
+          "properties": {
+            "seek_forward_status": {"const": 200}, "ui_seek_status": {"const": 200},
+            "invalid_seek_status": {"const": 501}, "frames_continued_after_all_seeks": {"const": true}
+          }
+        }
+      ]
+    },
+    "separation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["distinct_route_families", "distinct_timing_semantics", "independent_session_lifecycles", "live_websocket_path", "replay_websocket_path"],
+      "properties": {
+        "distinct_route_families": {"const": true}, "distinct_timing_semantics": {"const": true},
+        "independent_session_lifecycles": {"const": true},
+        "live_websocket_path": {"const": "/api/v1/live/ws"},
+        "replay_websocket_path": {"const": "/vst/api/v1/replay/ws"}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["live_session_stopped", "replay_session_stopped", "live_inventory_restored", "replay_inventory_restored", "main_vios_restored"],
+      "properties": {
+        "live_session_stopped": {"const": true}, "replay_session_stopped": {"const": true},
+        "live_inventory_restored": {"const": true}, "replay_inventory_restored": {"const": true},
+        "main_vios_restored": {"const": true}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["agent_generate_calls", "warehouse_sample_bundle", "main_vios_configuration_mutations", "main_rt_cv_stream_mutations", "raw_session_identifiers_retained", "sdp_or_ice_retained"],
+      "properties": {
+        "agent_generate_calls": {"const": 0}, "warehouse_sample_bundle": {"const": "excluded"},
+        "main_vios_configuration_mutations": {"const": 0}, "main_rt_cv_stream_mutations": {"const": 0},
+        "raw_session_identifiers_retained": {"const": false}, "sdp_or_ice_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "mode": {
+      "type": "object", "additionalProperties": true,
+      "required": ["signaling_complete", "decoded_frame_delta", "decoded_frames_final", "ready_state", "live_unmuted_video_track", "presentation_time_nondecreasing", "websocket_closed"],
+      "properties": {
+        "signaling_complete": {"const": true}, "decoded_frame_delta": {"type": "integer", "minimum": 1},
+        "decoded_frames_final": {"type": "integer", "minimum": 2}, "ready_state": {"const": 4},
+        "live_unmuted_video_track": {"const": true}, "presentation_time_nondecreasing": {"const": true},
+        "websocket_closed": {"const": true}
+      }
+    }
+  }
+}
