@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-46",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-47",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -416,12 +416,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/contract.json",
-        "contract_sha256": "053fd1d307b9f7ae357a3765652588430e235999cad51cb093b33cdb373aaf85",
+        "contract_sha256": "bfb8ca0c686be0c7221cee65ab3bfc1fef1eb5a50cfa1cdbb156dd8ee0c80781",
         "package_id": "cv-behavior-vlm-verification-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "0fc443efbffb5a6e348b81ba84e95cf657d96b8bc0ff0f84ad5537fd1c52f9ec",
-        "receipt_sha256": "854673f69fcfa25d7785186fd3219d3686342eaaa201512725e24e917df4dd5a",
+        "receipt_sha256": "32091be1b9f0b351368a382bb5b0d57c712cc3a357f7a2ecce0025eb23b9f92a",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -438,12 +438,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/contract.json",
-        "contract_sha256": "053fd1d307b9f7ae357a3765652588430e235999cad51cb093b33cdb373aaf85",
+        "contract_sha256": "bfb8ca0c686be0c7221cee65ab3bfc1fef1eb5a50cfa1cdbb156dd8ee0c80781",
         "package_id": "cv-behavior-vlm-verification-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "0fc443efbffb5a6e348b81ba84e95cf657d96b8bc0ff0f84ad5537fd1c52f9ec",
-        "receipt_sha256": "854673f69fcfa25d7785186fd3219d3686342eaaa201512725e24e917df4dd5a",
+        "receipt_sha256": "32091be1b9f0b351368a382bb5b0d57c712cc3a357f7a2ecce0025eb23b9f92a",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -460,12 +460,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/contract.json",
-        "contract_sha256": "053fd1d307b9f7ae357a3765652588430e235999cad51cb093b33cdb373aaf85",
+        "contract_sha256": "bfb8ca0c686be0c7221cee65ab3bfc1fef1eb5a50cfa1cdbb156dd8ee0c80781",
         "package_id": "cv-behavior-vlm-verification-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "0fc443efbffb5a6e348b81ba84e95cf657d96b8bc0ff0f84ad5537fd1c52f9ec",
-        "receipt_sha256": "854673f69fcfa25d7785186fd3219d3686342eaaa201512725e24e917df4dd5a",
+        "receipt_sha256": "32091be1b9f0b351368a382bb5b0d57c712cc3a357f7a2ecce0025eb23b9f92a",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -482,12 +482,12 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/contract.json",
-        "contract_sha256": "fc10168a346121b17c1703a9050ba400c1ca8e9237fed239fcbcabb1ec80e039",
+        "contract_sha256": "d4d2742687f84b9e3b14e063addeaea70aaf2b0189a542070053ba5ba3c0d427",
         "package_id": "ondemand-alert-verification-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "9a3eec4985b81066abbc3d104c48e880af0a3fdc5ceb08844687cb5c367cff98",
-        "receipt_sha256": "644b90c893f198c580600335b176d076b6b6b17111063e79ccb2ec8bbbe012d5",
+        "receipt_sha256": "cdfa191574b1a8e5769efceb3353fb98597a160337d18d7815d556a6cab7d781",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -504,12 +504,34 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/contract.json",
-        "contract_sha256": "fc10168a346121b17c1703a9050ba400c1ca8e9237fed239fcbcabb1ec80e039",
+        "contract_sha256": "d4d2742687f84b9e3b14e063addeaea70aaf2b0189a542070053ba5ba3c0d427",
         "package_id": "ondemand-alert-verification-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "9a3eec4985b81066abbc3d104c48e880af0a3fdc5ceb08844687cb5c367cff98",
-        "receipt_sha256": "644b90c893f198c580600335b176d076b6b6b17111063e79ccb2ec8bbbe012d5",
+        "receipt_sha256": "cdfa191574b1a8e5769efceb3353fb98597a160337d18d7815d556a6cab7d781",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "custom VLM parsing",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.alert-verification.05-custom-vlm-parsing",
+      "feature_id": "alert-verification",
+      "official_index": 326,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/custom-vlm-parser-runtime-successor/contract.json",
+        "contract_sha256": "35b09e43b9a0fac06b613565d8e32e09a8be4d58dde484397264f8fc95e6ec22",
+        "package_id": "custom-vlm-parser-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/custom-vlm-parser-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/custom-vlm-parser-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "9e0e2e2974aa3031ed21974c7956614489754af73c15d3e3292a55b8b534dffa",
+        "receipt_sha256": "23fc377b607dadfd67121c63029879cc151cbd21f7694d06123d80ad320bc548",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1908,8 +1930,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 86,
-    "row_count": 86,
+    "passed_current_thor": 87,
+    "row_count": 87,
     "warehouse_sample_bundle": "excluded"
   }
 }

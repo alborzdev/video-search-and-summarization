@@ -5,11 +5,11 @@
     "manifest-entry.alert-verification.02-contextualization"
   ],
   "cleanup": {
-    "after_sha256": "cdf7052b6bbf8bb315965a5373becd612d034efc17115c720fb3f08a8a8d6ef0",
-    "before_sha256": "cdf7052b6bbf8bb315965a5373becd612d034efc17115c720fb3f08a8a8d6ef0",
+    "after_sha256": "51db47feb8cae08f6d74d96ae16e7369458558d9574bc9aa49bc760a56d9b9fc",
+    "before_sha256": "51db47feb8cae08f6d74d96ae16e7369458558d9574bc9aa49bc760a56d9b9fc",
     "exact_live_state_restored": true,
     "owned_elastic_documents_absent": true,
-    "owned_elastic_documents_deleted": 146,
+    "owned_elastic_documents_deleted": 151,
     "owned_proxy_absent": true,
     "owned_publisher_stopped": true,
     "owned_recording_absent": true,
@@ -25,28 +25,28 @@
     "media_context_traceable": true,
     "object_context_traceable": true,
     "scene_context_present": true,
-    "scene_context_sha256": "cba14b015ed531631985d6ce549f135df111ecd73680e785d480102981dba44b",
+    "scene_context_sha256": "7e7d17e2b1e9c3a7d1d738d719788fbce13e6f37ae2edf2506e7c15e6a0a9681",
     "source_alert_preceded_contextualization": true,
     "source_metadata_preserved": true,
     "time_context_traceable": true
   },
-  "contract_sha256": "053fd1d307b9f7ae357a3765652588430e235999cad51cb093b33cdb373aaf85",
+  "contract_sha256": "bfb8ca0c686be0c7221cee65ab3bfc1fef1eb5a50cfa1cdbb156dd8ee0c80781",
   "package_id": "cv-behavior-vlm-verification-runtime-successor",
   "pipeline": {
     "behavior_candidate_observed": true,
     "candidate_category": "FOV Count Violation",
-    "candidate_id_sha256": "7df3b1a2f8f10e578f37be21a60943d048633b520827ade96656642d2a0ef4da",
+    "candidate_id_sha256": "348addab367e18a1168243aaa63bea37a5d31b05e9e868a7dd1607ca66cf6946",
     "cv_raw_observed": true,
     "evidence_interval_preserved": true,
-    "evidence_interval_sha256": "7a5a1a8ad5cfffcd23b3117ddc435db6ab96d0181397405d80cbb89c6e731a8c",
+    "evidence_interval_sha256": "a6c01fdd369141c9fc7c0b7adbbadd3911319091ed7bfde78fad5e33187c8dd2",
     "final_category": "Person in Monitored Zone",
     "final_verdict": "confirmed",
     "object_ids_preserved": true,
     "object_timeline_preserved": true,
     "observation_ms": [
-      9051,
-      12071,
-      21642
+      9558,
+      12576,
+      22150
     ],
     "observation_order": [
       "cv_raw",
@@ -56,9 +56,9 @@
     "reasoning_present": true,
     "same_candidate_document_id": true,
     "same_source_id": true,
-    "sensor_id_sha256": "cfda2ddd1b26dfec9900bb6f20d553cdb4dcfcabb63a8bbdecf07f0a277a0f20",
+    "sensor_id_sha256": "c8313afdd7719493306ba774851e4aa88758a600c0cd4fe8fb085c3f7c46d63b",
     "sensor_identity_preserved": true,
-    "sensor_name_sha256": "c29c314808f53c6bdee5c387e93b0b44492860222fe00546d24c2c3959d1898b",
+    "sensor_name_sha256": "42d345aa5be74282cfa4a2eb38e4d40fa7b703128c63ba8fca27b155f08618ee",
     "verification_response_code": 200,
     "verification_response_status": "OK",
     "vlm_verification_observed": true
@@ -70,15 +70,15 @@
     "warehouse_sample_bundle": "excluded"
   },
   "run": {
-    "completed_at": "2026-08-12T03:06:14.184221Z",
-    "duration_ms": 47668,
-    "run_id_sha256": "42d1d7fd29b79c7145a755cd13efb47f2b5c24cb3e4781edd0ed4f995df98d60"
+    "completed_at": "2026-08-12T03:20:34.219555Z",
+    "duration_ms": 47719,
+    "run_id_sha256": "fb90a8a39b33850c2dd91dc4293925fe3f4dc5b717f7369c248d117eff9e8c3c"
   },
   "runtime": {
     "cgroup_driver": "cgroupfs",
     "containers": {
       "vss-alert-bridge": {
-        "image_id": "sha256:daa7d123f7aff56fdf4bdfa5533e8ad0df6fa506ebff9aa34a758d94e114e894",
+        "image_id": "sha256:3083aa7265d6f12e7a7a2ef3d5106ef3b2b8bbf28e80e8caf85eb41a0b79b090",
         "oom_killed": false,
         "restart_count": 0,
         "running": true
@@ -108,8 +108,8 @@
         "running": true
       }
     },
-    "free_bytes_after": 20353949696,
-    "free_bytes_before": 20386942976,
+    "free_bytes_after": 20332597248,
+    "free_bytes_before": 20366770176,
     "live_source_lock_count": 12,
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
     "source_lock_count": 18

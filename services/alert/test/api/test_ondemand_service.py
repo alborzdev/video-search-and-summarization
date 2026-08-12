@@ -46,9 +46,12 @@ finally:
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _stub_config(max_media_count=5):
+def _stub_config(max_media_count=5, response_parser=None):
+    vlm = {"model": "test-model", "vlm_media_source_using_base64": False}
+    if response_parser is not None:
+        vlm["response_parser"] = response_parser
     return {
-        "vlm": {"model": "test-model", "vlm_media_source_using_base64": False},
+        "vlm": vlm,
         "alert_agent": {
             "media_download": {
                 "enabled": True,
@@ -76,19 +79,36 @@ def _make_payload(media_urls=None, media_type="video", category="collision", **e
 class _ServiceContext:
     """Keeps patches active for the lifetime of a test."""
 
-    def __init__(self, user_prompt="Detect collisions", system_prompt="Be concise", max_media_count=5):
+    def __init__(
+        self,
+        user_prompt="Detect collisions",
+        system_prompt="Be concise",
+        max_media_count=5,
+        response_parser=None,
+    ):
         self.prompt_mgr = MagicMock()
         self.prompt_mgr.get_prompts_for_message.return_value = (user_prompt, system_prompt)
         self.mock_handler = MagicMock()
         self.mock_sink = MagicMock()
+        self.mock_parser = MagicMock()
+        self.mock_parser_loader = MagicMock(return_value=self.mock_parser)
 
         self._patches = [
-            patch.object(_svc_mod, "load_config", return_value=_stub_config(max_media_count)),
+            patch.object(
+                _svc_mod,
+                "load_config",
+                return_value=_stub_config(max_media_count, response_parser),
+            ),
             patch.object(_svc_mod, "load_config_path", return_value="config.yaml"),
             patch.object(_svc_mod, "VLMClient"),
             patch.object(_svc_mod, "PromptManager", return_value=self.prompt_mgr),
             patch.object(_svc_mod, "build_vlm_enhanced_sink", return_value=self.mock_sink),
             patch.object(_svc_mod, "DirectMediaHandler", return_value=self.mock_handler),
+            patch.object(
+                _svc_mod,
+                "load_response_parser",
+                self.mock_parser_loader,
+            ),
         ]
 
     def start(self):
@@ -282,3 +302,19 @@ class TestInit:
         _svc_mod.DirectMediaHandler.assert_called_once()
         call_kwargs = _svc_mod.DirectMediaHandler.call_args.kwargs
         assert call_kwargs["vlm_enhanced_event_sink"] is ctx.mock_sink
+
+    def test_unconfigured_parser_is_not_loaded_or_passed(self, ctx):
+        ctx.mock_parser_loader.assert_not_called()
+        call_kwargs = _svc_mod.DirectMediaHandler.call_args.kwargs
+        assert call_kwargs["pluggable_parser"] is None
+
+    def test_configured_parser_is_loaded_and_passed_to_handler(self):
+        dotted_path = "external_parsers.ppe.PPEClassifier"
+        c = _ServiceContext(response_parser=dotted_path).start()
+        try:
+            c.mock_parser_loader.assert_called_once_with(dotted_path)
+            call_kwargs = _svc_mod.DirectMediaHandler.call_args.kwargs
+            assert call_kwargs["pluggable_parser"] is c.mock_parser
+            assert c.svc.pluggable_parser is c.mock_parser
+        finally:
+            c.stop()

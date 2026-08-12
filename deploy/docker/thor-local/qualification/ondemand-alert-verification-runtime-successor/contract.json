@@ -39,7 +39,7 @@
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
     "containers": {
       "vss-alert-bridge": {
-        "image_id": "sha256:daa7d123f7aff56fdf4bdfa5533e8ad0df6fa506ebff9aa34a758d94e114e894"
+        "image_id": "sha256:3083aa7265d6f12e7a7a2ef3d5106ef3b2b8bbf28e80e8caf85eb41a0b79b090"
       },
       "vss-rtvi-vlm": {
         "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
@@ -110,7 +110,7 @@
     },
     {
       "path": "services/alert/alert-agent-web/app/service/ondemand_verification_service.py",
-      "sha256": "a17cf630af890cf3417ecb294468c4dc5bb14de941dfbf4e21b91b37da62e6d1",
+      "sha256": "daf70f35d05a7160c18e31114bad015d025d120c72d446fbe1f76a07ad9db03d",
       "container": "vss-alert-bridge",
       "container_path": "/app/alert-agent-web/app/service/ondemand_verification_service.py"
     },

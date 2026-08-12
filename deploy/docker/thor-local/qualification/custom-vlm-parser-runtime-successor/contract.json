@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "package_id": "custom-vlm-parser-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.alert-verification.05-custom-vlm-parsing"
+  ],
+  "official_indices": [326],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256_by_index": {
+      "326": "8574f341835df46826c4286265e27f55f9bbf21de4f1829d7f76dfe754120d44"
+    }
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_CUSTOM_VLM_PARSER_QUALIFICATION",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_local_endpoints_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "exact_external_state_cleanup_required": true,
+    "minimum_free_bytes": 10737418240,
+    "terminal_poll_attempts": 90,
+    "terminal_poll_seconds": 1,
+    "maximum_duration_seconds": 180
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "bytes": 2575454,
+    "duration_seconds": 10,
+    "semantic_oracle": "one or more people visibly wearing bright yellow high-visibility vests and yellow hard hats in a warehouse aisle"
+  },
+  "parser": {
+    "module_path": "thor_custom_parser.py",
+    "module_sha256": "aa216279a5974c85445c1a95dcb694947294b3daa017b4a83f7d5aedcc5f002e",
+    "dotted_path": "thor_custom_parser.ThorStructuredAlertParser",
+    "parser_id": "thor-structured-alert-parser-v1"
+  },
+  "runtime": {
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:3083aa7265d6f12e7a7a2ef3d5106ef3b2b8bbf28e80e8caf85eb41a0b79b090",
+        "image_name": "cti-vss-alert-bridge:thor-local"
+      },
+      "vss-rtvi-vlm": {
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+      }
+    }
+  },
+  "required_runtime_proof": [
+    "load an operator-owned external parser class from the configured dotted path in both the Kafka worker and on-demand API processes",
+    "submit the checked-in warehouse fixture to the isolated Alert REST API and use the current local Thor RT-VLM endpoint",
+    "normalize the local VLM verdict and reasoning into an explicit parser-owned response with parser identity",
+    "persist the exact correlated response through the local Elasticsearch sink with the pluggable response schema",
+    "prove the default reasoning slot is absent and the parser JSON occupies info.vlm_response with outer verdict empty",
+    "reject an unapproved or nonexistent parser import path at startup before a health endpoint becomes reachable",
+    "remove only uniquely prefixed containers, indices, configs, and RT-VLM publications and restore the exact main runtime projection"
+  ],
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/custom-vlm-parser-runtime-successor/harness.py",
+      "sha256": "fd7880551ae49e9955cc48a1e7c63cb7bb6c09428721400729c3352c2ec47844"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/custom-vlm-parser-runtime-successor/thor_custom_parser.py",
+      "sha256": "aa216279a5974c85445c1a95dcb694947294b3daa017b4a83f7d5aedcc5f002e"
+    },
+    {
+      "path": "services/alert/models/base_response_parser.py",
+      "sha256": "a62893a9092a502d136b428b9bc5ad61f4d6a5544a2edeff6b887831636a56ce",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/models/base_response_parser.py"
+    },
+    {
+      "path": "services/alert/models/pluggable_parser_runtime.py",
+      "sha256": "6570afd986167b918acc7262de8e805176e39824897aa9cb8c48b7896a0b9535",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/models/pluggable_parser_runtime.py"
+    },
+    {
+      "path": "services/alert/handlers/direct_media/direct_media_handler.py",
+      "sha256": "ee5aebc68166ac3aac2c2d924dd1a9ddd8389d3f54e2a1a6981a47afaabf8cfd",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/handlers/direct_media/direct_media_handler.py"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/service/ondemand_verification_service.py",
+      "sha256": "daf70f35d05a7160c18e31114bad015d025d120c72d446fbe1f76a07ad9db03d",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/alert-agent-web/app/service/ondemand_verification_service.py"
+    },
+    {
+      "path": "services/alert/config.yaml",
+      "sha256": "46d131768244706deda72b30fb394d6aedf2d91f73a0e74ab9a0dab0e6d1784b"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
+      "sha256": "b60b1f3232216618969d61cf67d0e404ecb1598e703b814622dfae83b3b76212"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    }
+  ]
+}

@@ -41,7 +41,7 @@
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
     "containers": {
       "vss-alert-bridge": {
-        "image_id": "sha256:daa7d123f7aff56fdf4bdfa5533e8ad0df6fa506ebff9aa34a758d94e114e894"
+        "image_id": "sha256:3083aa7265d6f12e7a7a2ef3d5106ef3b2b8bbf28e80e8caf85eb41a0b79b090"
       },
       "vss-behavior-analytics-thor-candidates": {
         "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"

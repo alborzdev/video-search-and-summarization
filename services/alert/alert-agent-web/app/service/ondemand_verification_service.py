@@ -36,6 +36,7 @@ from typing import Any, Dict, Optional, Tuple
 from handlers.direct_media.direct_media_handler import DirectMediaHandler
 from handlers.prompt_handler.prompt_manager import PromptManager
 from mdx.anomaly.sink.vlm_enhanced_sink import build_vlm_enhanced_sink
+from models.base_response_parser import load_response_parser
 from vlm.vlm_client import VLMClient
 
 from ..core.dependencies import load_config, load_config_path
@@ -70,6 +71,19 @@ class OnDemandVerificationService:
         self.vlm_client = VLMClient(self.config.get("vlm", {}))
         self.prompt_manager = PromptManager(self.config_file)
 
+        # The FastAPI process constructs its own DirectMediaHandler rather
+        # than reusing the handler owned by the Kafka worker process.  Load
+        # the configured parser here as well so on-demand REST requests obey
+        # the same ``vlm.response_parser`` contract as Kafka/VST traffic.
+        parser_path = self.config.get("vlm", {}).get("response_parser")
+        self.pluggable_parser = (
+            load_response_parser(parser_path) if parser_path else None
+        )
+        if parser_path:
+            self.logger.info(
+                "On-demand pluggable response parser active: '%s'", parser_path
+            )
+
         # Pass the PromptManager's AlertConfigStore so the sink resolves
         # ``output_category`` from Redis on each publish (hot-reload of
         # PUT /verification/config edits) rather than the file-loaded
@@ -82,6 +96,7 @@ class OnDemandVerificationService:
             vlm_client=self.vlm_client,
             vlm_enhanced_event_sink=self.vlm_enhanced_event_sink,
             config=self.config,
+            pluggable_parser=self.pluggable_parser,
         )
 
         self.max_media_count = (

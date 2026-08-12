@@ -1,0 +1,112 @@
+{
+  "api": {
+    "config_create_http_status": 201,
+    "config_readback_exact": true,
+    "event_id_sha256": "3ef59cc3c7df80a08717c2733d26eed71b53544a4c0fb714e29e34a800a7a4b6",
+    "health_http_status": 200,
+    "persisted_source_sha256": "8e90e4183017f44c273690a6148acfdabb26a87d1b37e65f66c320f3563ace7c",
+    "poll_states": [
+      "running",
+      "running",
+      "running",
+      "running",
+      "running",
+      "running",
+      "running",
+      "completed"
+    ],
+    "processing_outcome": "verified",
+    "server_generated_job_id": true,
+    "sink_outcome": "acknowledged",
+    "sink_transport": "elastic",
+    "submission_http_status": 202,
+    "terminal_state": "completed",
+    "verification_response_code": 200
+  },
+  "capability_ids": [
+    "manifest-entry.alert-verification.05-custom-vlm-parsing"
+  ],
+  "cleanup": {
+    "after_sha256": "1ae614a7191883e5a80354b0d9c78ed59a6f0c8d37e1a5f2203bdd8a01e06fbf",
+    "before_sha256": "1ae614a7191883e5a80354b0d9c78ed59a6f0c8d37e1a5f2203bdd8a01e06fbf",
+    "exact_main_runtime_restored": true,
+    "fixture_server_stopped": true,
+    "negative_container_removed": true,
+    "owned_indices_absent": true,
+    "owned_indices_deleted": 2,
+    "owned_rtvlm_documents_absent": true,
+    "owned_rtvlm_documents_deleted": 1,
+    "positive_container_removed": true,
+    "running_container_set_preserved": true
+  },
+  "contract_sha256": "35b09e43b9a0fac06b613565d8e32e09a8be4d58dde484397264f8fc95e6ec22",
+  "fixture": {
+    "bytes": 2575454,
+    "http_get_count": 1,
+    "media_url_sha256": "b03e7d39ac78ec65ff038de1aaac051000d1c9e0b2101aa8bb47a60d8d853040",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "negative": {
+    "dotted_path_sha256": "cdcf03d8c833b99eef61bc7ede8ad713f17608ff39e411c8c74b72920ae9d7d8",
+    "health_never_reachable": true,
+    "import_failure_observed": true,
+    "startup_rejected": true
+  },
+  "output": {
+    "default_reasoning_field_absent": true,
+    "mapped_category_sha256": "dafcb34c6325798f78c974781a2058c91ac5ab00e7c6cfdb74a7e0a9d088707d",
+    "normalized_reasoning_present": true,
+    "normalized_verdict": "confirmed",
+    "outer_verdict_empty": true,
+    "parser_id": "thor-structured-alert-parser-v1",
+    "raw_response_sha256_present": true,
+    "service_response_schema_conformant": true,
+    "verification_response_status": "OK",
+    "vlm_response_json_present": true
+  },
+  "package_id": "custom-vlm-parser-runtime-successor",
+  "parser": {
+    "api_loader_observed": true,
+    "config_exposed": true,
+    "config_projection_sha256": "db8758d66e41cb2dc612d921e16ea239c442f5c531b199351d2de70d8a6ed447",
+    "dotted_path": "thor_custom_parser.ThorStructuredAlertParser",
+    "identity_exposed": true,
+    "module_sha256": "aa216279a5974c85445c1a95dcb694947294b3daa017b4a83f7d5aedcc5f002e",
+    "parser_id": "thor-structured-alert-parser-v1",
+    "shared_instance_contract": true,
+    "worker_loader_observed": true
+  },
+  "run": {
+    "agent_generate_request_count": 0,
+    "completed_at": "2026-08-12T03:34:42.584833Z",
+    "duration_ms": 15485,
+    "numeric_local_endpoints_only": true,
+    "run_id_sha256": "646f7f182871c7d1474fa459903ede4aa43439b4882391a8bb417c4ccd12c061",
+    "status": "passed",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:3083aa7265d6f12e7a7a2ef3d5106ef3b2b8bbf28e80e8caf85eb41a0b79b090",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true
+      },
+      "vss-rtvi-vlm": {
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true
+      }
+    },
+    "free_bytes_after": 20344733696,
+    "free_bytes_before": 20344905728,
+    "isolated_alert_image_id": "sha256:3083aa7265d6f12e7a7a2ef3d5106ef3b2b8bbf28e80e8caf85eb41a0b79b090",
+    "live_source_lock_count": 4,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "source_lock_count": 9
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

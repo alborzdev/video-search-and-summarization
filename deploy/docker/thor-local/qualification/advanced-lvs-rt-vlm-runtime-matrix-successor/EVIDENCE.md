@@ -1,5 +1,17 @@
 # Evidence
 
+Overlay 47 adds official row 326, `custom VLM parsing`, using the retained
+`custom-vlm-parser-runtime-successor` receipt. An isolated Alert Bridge from
+the exact active image loaded an operator-owned parser class by dotted path in
+both its worker and FastAPI processes. The checked-in clip traversed the real
+on-demand REST API and local Cosmos 3 RT-VLM; the parser normalized the result
+to a parser-identified `confirmed` verdict with reasoning, and Elasticsearch
+acknowledged the correlated `info.vlm_response` document without the default
+`info.reasoning` slot. A nonexistent parser import failed before health. Two
+owned indices, one RT-VLM publication, both disposable containers, and all
+temporary state were removed; the exact 38-container main runtime projection
+matched before and after.
+
 Overlay 42 adds official row 325 from the retained `ondemand-alert-verification-runtime-successor` receipt. A numeric-loopback 10-second warehouse clip was submitted directly to Alert Bridge, independently of the realtime candidate consumer. The server-generated job reached `completed / verified / confirmed`, and its acknowledged Elasticsearch document was read back with exact event, sensor, category, verdict, response-code, and reasoning correlation. A separate job was cancelled before publication and remained terminal without an Alert Bridge sink document after 20 seconds; an unknown category failed before job allocation. Cleanup removed the one owned sink document and two uniquely tagged RT-VLM backend publications, and the exact pre/post digest across 19 incidents, one unrelated config, zero realtime rules, zero RT-VLM streams, and 38 running containers matched.
 
 Overlay 41 adds official row 328, `live-stream VLM rules`, using the retained
