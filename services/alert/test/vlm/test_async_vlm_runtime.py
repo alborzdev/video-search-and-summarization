@@ -17,8 +17,54 @@ from unittest.mock import Mock, patch
 
 import asyncio
 import pytest
+import threading
+import time
 
 from vlm.vlm_client import AsyncVLMRuntime
+
+
+def test_concurrent_starters_share_startup_barrier():
+    runtime = AsyncVLMRuntime({})
+    entered = threading.Event()
+    release = threading.Event()
+    finished = []
+    errors = []
+
+    def delayed_start():
+        entered.set()
+        assert release.wait(timeout=2)
+        with runtime._lock:
+            runtime._loop = Mock()
+            runtime._client = Mock()
+        runtime._started_event.set()
+
+    runtime._run_event_loop = delayed_start
+
+    def start(label):
+        try:
+            runtime._ensure_started()
+            finished.append(label)
+        except BaseException as exc:  # pragma: no cover - asserted below
+            errors.append(exc)
+
+    first = threading.Thread(target=start, args=("first",))
+    second = threading.Thread(target=start, args=("second",))
+    first.start()
+    assert entered.wait(timeout=2)
+    second.start()
+    time.sleep(0.05)
+
+    # The second caller sees an alive startup thread, but it must not return
+    # until that thread publishes the loop/client and sets the shared barrier.
+    assert finished == []
+
+    release.set()
+    first.join(timeout=2)
+    second.join(timeout=2)
+    assert not first.is_alive()
+    assert not second.is_alive()
+    assert errors == []
+    assert sorted(finished) == ["first", "second"]
 
 
 def test_submit_coroutine_uses_stable_loop_reference():

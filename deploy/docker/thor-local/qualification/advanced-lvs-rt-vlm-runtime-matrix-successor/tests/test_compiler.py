@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_eighty_seven_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_eighty_eight_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 321, 322, 323, 324, 325, 326, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -87,6 +87,22 @@ def test_custom_vlm_parser_receipt_proves_config_schema_and_negative() -> None:
     assert receipt["output"]["vlm_response_json_present"] is True
     assert receipt["output"]["default_reasoning_field_absent"] is True
     assert receipt["negative"]["startup_rejected"] is True
+    assert receipt["cleanup"]["before_sha256"] == receipt["cleanup"]["after_sha256"]
+
+
+def test_alert_concurrency_receipt_proves_nonblocking_per_candidate_execution() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(
+        entry for entry in contract["entries"] if entry["official_index"] == 327
+    )
+    receipt = compiler._validate_receipt(entry)
+    assert receipt["concurrency"]["maximum_parallel_vlm_calls"] == 3
+    assert receipt["concurrency"]["queue_events_before_slowest_completed"] == 6
+    assert receipt["concurrency"]["fast_candidates_completed_before_slow"] == [1, 2, 3, 4, 5]
+    assert receipt["concurrency"]["completion_order"][-1] == 0
+    assert receipt["concurrency"]["inline_fallbacks"] == 0
+    assert receipt["candidates"]["count"] == 6
+    assert receipt["metrics"]["per_candidate_terminal_metrics"] is True
     assert receipt["cleanup"]["before_sha256"] == receipt["cleanup"]["after_sha256"]
 
 

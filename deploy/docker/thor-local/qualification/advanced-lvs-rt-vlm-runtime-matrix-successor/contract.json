@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-47",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-48",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -700,6 +700,48 @@
         "/run/agent_generate_request_count": 0,
         "/run/numeric_local_endpoints_only": true,
         "/run/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 327,
+      "capability_id": "manifest-entry.alert-verification.06-non-blocking-multithreaded-execution",
+      "advertised_literal": "non-blocking multithreaded execution",
+      "package_id": "alert-nonblocking-multithread-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/alert-nonblocking-multithread-runtime-successor/contract.json",
+      "contract_sha256": "f4cae4ad3a08a212b581201e524fc11ac4c408f4b0ea77f603f81b13fe5efcaf",
+      "receipt_path": "deploy/docker/thor-local/qualification/alert-nonblocking-multithread-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "a2b7757a10ea4f63c5db95340e856b85d3df320a3ed2332cbffc5a121b61fc6f",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/alert-nonblocking-multithread-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "e703a6c83c74be78115c4381104e0bec6fae47c912a62bd73c08355c2b16bb0e",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/configuration/num_workers": 1,
+        "/configuration/async_io_enabled": true,
+        "/configuration/dispatch_workers": 3,
+        "/configuration/max_in_flight": 6,
+        "/ingestion/transport": "kafka-protobuf",
+        "/ingestion/candidate_count": 6,
+        "/concurrency/maximum_parallel_vlm_calls": 3,
+        "/concurrency/queue_events_before_slowest_completed": 6,
+        "/concurrency/fast_candidates_completed_before_slow": [1, 2, 3, 4, 5],
+        "/concurrency/completion_order": [1, 2, 3, 4, 5, 0],
+        "/concurrency/inline_fallbacks": 0,
+        "/candidates/count": 6,
+        "/candidates/all_persisted": true,
+        "/candidates/all_media_correlated": true,
+        "/candidates/all_parser_schemas_conformant": true,
+        "/candidates/all_categories_preserved": true,
+        "/metrics/per_candidate_terminal_metrics": true,
+        "/metrics/dispatch_fallbacks": 0,
+        "/cleanup/exact_main_runtime_restored": true,
+        "/cleanup/owned_container_absent": true,
+        "/cleanup/owned_indices_absent": true,
+        "/cleanup/owned_redis_keys_absent": true,
+        "/cleanup/owned_kafka_topics_absent": true,
+        "/cleanup/running_container_set_preserved": true,
+        "/policy/external_requests": 0,
+        "/policy/agent_generate_calls": 0,
+        "/policy/warehouse_sample_bundle": "excluded"
       }
     },
     {

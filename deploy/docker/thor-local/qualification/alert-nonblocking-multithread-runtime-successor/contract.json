@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "package_id": "alert-nonblocking-multithread-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.alert-verification.06-non-blocking-multithreaded-execution"
+  ],
+  "official_indices": [
+    327
+  ],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256_by_index": {
+      "327": "42b27f8a62d1e89d7dc396c560a7ced0a1af81ca71daa1dc540a80e74d1eeb51"
+    }
+  },
+  "advertised_literal": "non-blocking multithreaded execution",
+  "required_semantics": [
+    "Execute independent candidates concurrently without blocking ingestion on the slowest VLM call.",
+    "Preserve per-candidate media, parser, category, verdict, and terminal metrics."
+  ],
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/alert-nonblocking-multithread-runtime-successor/harness.py",
+      "sha256": "7988eb009ab81572d5128a040fc7ed302e76c0f6f7665d87dacf8e56db7a64b0"
+    },
+    {
+      "path": "services/alert/test/vlm/test_async_vlm_runtime.py",
+      "sha256": "71536cba843b111b036a57ce2a5bb17e85eb0e5768ca573493feee66a26c2ff0"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
+      "sha256": "b60b1f3232216618969d61cf67d0e404ecb1598e703b814622dfae83b3b76212"
+    },
+    {
+      "path": "services/alert/enhance_alert_with_vlm.py",
+      "sha256": "83ba77cc3d45acd68db47210e316afc552f918e6a6c3a6813a66d0eed8987c01",
+      "container": "vss-alert-bridge",
+      "live_path": "/app/enhance_alert_with_vlm.py",
+      "live_sha256": "83ba77cc3d45acd68db47210e316afc552f918e6a6c3a6813a66d0eed8987c01"
+    },
+    {
+      "path": "services/alert/vlm/vlm_client.py",
+      "sha256": "019fdf43ac66ee4f000e8dc12fdafc5f477eb02e7a7a3cd645dfdd4a3d6f370a",
+      "container": "vss-alert-bridge",
+      "live_path": "/app/vlm/vlm_client.py",
+      "live_sha256": "019fdf43ac66ee4f000e8dc12fdafc5f477eb02e7a7a3cd645dfdd4a3d6f370a"
+    },
+    {
+      "path": "services/alert/handlers/async_dispatch_mixin.py",
+      "sha256": "dd1eddaf3193f069c045ed75a58f9b34d30e9fadd74d8c04e28edec20689b09e",
+      "container": "vss-alert-bridge",
+      "live_path": "/app/handlers/async_dispatch_mixin.py",
+      "semantic_ast_sha256": "e4a902d5b630065df5a749d3f1d278a6a9a6217b0c2e3b35324c5081553a4cad"
+    },
+    {
+      "path": "services/alert/handlers/async_vlm_mode_mixin.py",
+      "sha256": "442020ef17bc7ff1312eaf14cc2a8b612e221d7aeb58de993398a4ae00079fcc",
+      "container": "vss-alert-bridge",
+      "live_path": "/app/handlers/async_vlm_mode_mixin.py",
+      "semantic_ast_sha256": "e86fe3256a06485b154e1d780b53c38ff8f403f6632b3a81bb54f36783a590c7"
+    },
+    {
+      "path": "services/alert/metrics/recorder.py",
+      "sha256": "d3adf24eeaf7690ab70468dfcc7f1a2d5b848b03ff2d89b9bfeabe21874f7005",
+      "container": "vss-alert-bridge",
+      "live_path": "/app/metrics/recorder.py",
+      "semantic_ast_sha256": "ca45e3d7776c64904fc2f6bf09f466eadb9fd233b1635a0c5c2f9d145f954b01"
+    },
+    {
+      "path": "services/alert/metrics/prometheus_metrics.py",
+      "sha256": "468db0ff806ea807ed3ba38ca3e18d76a3041a917b15839eda6cd9f397b86df2",
+      "container": "vss-alert-bridge",
+      "live_path": "/app/metrics/prometheus_metrics.py",
+      "semantic_ast_sha256": "266f2c8c1b5ea372ed991cae80a65ec5f191b523a69648e82b6a57408166500c"
+    },
+    {
+      "path": "services/alert/config.yaml",
+      "sha256": "46d131768244706deda72b30fb394d6aedf2d91f73a0e74ab9a0dab0e6d1784b"
+    },
+    {
+      "path": "services/alert/test/functional/p1/test_async_kafka_non_blocking/run.sh",
+      "sha256": "691601dd61d1b7424b6006c514bf283d2f9923a495f4a76130481f6fe503de89"
+    },
+    {
+      "path": "services/alert/test/protobuf/produce_incident.py",
+      "sha256": "86ed76d5cef14bca9bb8d65aed9340f98b19b36d4ab7dbecc502c5755ca699d1"
+    }
+  ],
+  "runtime": {
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:b807a559e0979e2f40aca9ac9796087439c529c6f478f9386fc3c73bcb323112",
+        "image_name": "cti-vss-alert-bridge:thor-local"
+      },
+      "kafka": {
+        "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436",
+        "image_name": "confluentinc/cp-kafka:8.2.0"
+      },
+      "elasticsearch": {
+        "image_id": "sha256:f665779df4f52598dc7fca625540a4ddac9aaa098700c34510d37d97e30d265c",
+        "image_name": "elasticsearch"
+      }
+    },
+    "docker_cgroup_driver": "cgroupfs"
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "bytes": 2575454,
+    "boundary": "checked-in small local clip; VLM behavior is a deterministic loopback latency fixture"
+  },
+  "execution": {
+    "minimum_free_bytes": 10737418240,
+    "startup_attempts": 60,
+    "terminal_poll_attempts": 120,
+    "terminal_poll_seconds": 0.5,
+    "slow_vlm_seconds": 4.0,
+    "fast_vlm_seconds": 0.8,
+    "burst_count": 6,
+    "dispatch_workers": 3,
+    "max_in_flight": 6
+  },
+  "acceptance": {
+    "minimum_parallel_vlm_calls": 3,
+    "minimum_dispatch_threads": 3,
+    "all_six_queued_before_slowest_completion": true,
+    "all_five_fast_candidates_complete_before_slowest": true,
+    "one_persisted_correlated_output_per_candidate": true,
+    "one_terminal_metric_observation_per_candidate": true,
+    "dispatch_fallbacks": 0,
+    "exact_cleanup": true
+  },
+  "policy": {
+    "network": "loopback-only",
+    "external_requests": 0,
+    "agent_generate_calls": 0,
+    "warehouse_sample_bundle": "excluded",
+    "main_runtime_mutations": 0
+  }
+}

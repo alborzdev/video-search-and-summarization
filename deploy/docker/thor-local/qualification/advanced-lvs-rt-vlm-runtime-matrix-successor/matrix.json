@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-47",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-48",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -532,6 +532,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/custom-vlm-parser-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "9e0e2e2974aa3031ed21974c7956614489754af73c15d3e3292a55b8b534dffa",
         "receipt_sha256": "23fc377b607dadfd67121c63029879cc151cbd21f7694d06123d80ad320bc548",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "non-blocking multithreaded execution",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.alert-verification.06-non-blocking-multithreaded-execution",
+      "feature_id": "alert-verification",
+      "official_index": 327,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/alert-nonblocking-multithread-runtime-successor/contract.json",
+        "contract_sha256": "f4cae4ad3a08a212b581201e524fc11ac4c408f4b0ea77f603f81b13fe5efcaf",
+        "package_id": "alert-nonblocking-multithread-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/alert-nonblocking-multithread-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/alert-nonblocking-multithread-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "e703a6c83c74be78115c4381104e0bec6fae47c912a62bd73c08355c2b16bb0e",
+        "receipt_sha256": "a2b7757a10ea4f63c5db95340e856b85d3df320a3ed2332cbffc5a121b61fc6f",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1930,8 +1952,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 87,
-    "row_count": 87,
+    "passed_current_thor": 88,
+    "row_count": 88,
     "warehouse_sample_bundle": "excluded"
   }
 }

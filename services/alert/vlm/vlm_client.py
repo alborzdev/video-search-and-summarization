@@ -759,18 +759,24 @@ class AsyncVLMRuntime:
         with self._lock:
             if self._stopping:
                 raise RuntimeError("Async VLM runtime is stopping")
-            if self._thread is not None and self._thread.is_alive():
-                return
 
-            self._started_event.clear()
-            self._startup_error = None
-            self._stopping = False
-            self._thread = threading.Thread(
-                target=self._run_event_loop,
-                name="ab-vlm-async-runtime",
-                daemon=True,
-            )
-            self._thread.start()
+            # Another dispatch thread may have started the runtime but not yet
+            # published ``_loop``/``_client``.  Returning merely because the
+            # thread is alive lets that caller reach ``submit_coroutine`` with
+            # ``_loop is None`` and drops an otherwise valid candidate as
+            # "Async VLM event loop is not initialized".  Every caller must
+            # cross the same startup barrier; an already-ready runtime returns
+            # immediately because the Event remains set.
+            if self._thread is None or not self._thread.is_alive():
+                self._started_event.clear()
+                self._startup_error = None
+                self._stopping = False
+                self._thread = threading.Thread(
+                    target=self._run_event_loop,
+                    name="ab-vlm-async-runtime",
+                    daemon=True,
+                )
+                self._thread.start()
 
         if not self._started_event.wait(timeout=10):
             raise RuntimeError("Timed out while starting async VLM runtime")

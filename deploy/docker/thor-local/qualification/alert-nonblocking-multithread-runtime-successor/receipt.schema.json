@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "status",
+    "capability_ids",
+    "official_indices",
+    "contract_sha256",
+    "run",
+    "runtime",
+    "configuration",
+    "ingestion",
+    "concurrency",
+    "candidates",
+    "metrics",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "alert-nonblocking-multithread-runtime-successor"},
+    "status": {"const": "passed"},
+    "capability_ids": {
+      "const": ["manifest-entry.alert-verification.06-non-blocking-multithreaded-execution"]
+    },
+    "official_indices": {"const": [327]},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id_sha256", "duration_seconds", "free_bytes_before", "free_bytes_after"],
+      "properties": {
+        "id_sha256": {"$ref": "#/$defs/sha256"},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "free_bytes_before": {"type": "integer", "minimum": 10737418240},
+        "free_bytes_after": {"type": "integer", "minimum": 10737418240}
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "containers",
+        "exact_live_source_locks",
+        "semantic_live_source_locks",
+        "owned_image_id",
+        "owned_image_name"
+      ],
+      "properties": {
+        "containers": {"type": "object", "minProperties": 3},
+        "exact_live_source_locks": {"const": 2},
+        "semantic_live_source_locks": {"const": 4},
+        "owned_image_id": {"pattern": "^sha256:[0-9a-f]{64}$"},
+        "owned_image_name": {"const": "cti-vss-alert-bridge:thor-local"}
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "num_workers",
+        "async_io_enabled",
+        "dispatch_workers",
+        "max_in_flight",
+        "per_sensor_metrics",
+        "vlm_base_url_loopback",
+        "vlm_response_format",
+        "source_type",
+        "sink_type"
+      ],
+      "properties": {
+        "num_workers": {"const": 1},
+        "async_io_enabled": {"const": true},
+        "dispatch_workers": {"const": 3},
+        "max_in_flight": {"const": 6},
+        "per_sensor_metrics": {"const": true},
+        "vlm_base_url_loopback": {"const": true},
+        "vlm_response_format": {"const": "json"},
+        "source_type": {"const": "kafka"},
+        "sink_type": {"const": "elastic"}
+      }
+    },
+    "ingestion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transport",
+        "candidate_count",
+        "topic_count",
+        "publish_duration_seconds",
+        "all_vst_requests_correlated",
+        "all_media_requests_correlated"
+      ],
+      "properties": {
+        "transport": {"const": "kafka-protobuf"},
+        "candidate_count": {"const": 6},
+        "topic_count": {"const": 2},
+        "publish_duration_seconds": {"type": "number", "minimum": 0},
+        "all_vst_requests_correlated": {"const": true},
+        "all_media_requests_correlated": {"const": true}
+      }
+    },
+    "concurrency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dispatch_workers",
+        "maximum_parallel_vlm_calls",
+        "dispatch_threads",
+        "queue_events_total",
+        "queue_events_before_slowest_completed",
+        "slow_candidate",
+        "slow_duration_seconds",
+        "fast_candidates_completed_before_slow",
+        "completion_order",
+        "all_independent_fast_candidates_overtook_slow",
+        "inline_fallbacks",
+        "container_log_sha256"
+      ],
+      "properties": {
+        "dispatch_workers": {"const": 3},
+        "maximum_parallel_vlm_calls": {"type": "integer", "minimum": 3, "maximum": 3},
+        "dispatch_threads": {
+          "type": "array",
+          "minItems": 3,
+          "uniqueItems": true,
+          "items": {"pattern": "^ab-vlm-dispatch_[0-9]+$"}
+        },
+        "queue_events_total": {"const": 6},
+        "queue_events_before_slowest_completed": {"type": "integer", "minimum": 6},
+        "slow_candidate": {"const": 0},
+        "slow_duration_seconds": {"type": "number", "minimum": 3.8},
+        "fast_candidates_completed_before_slow": {"const": [1, 2, 3, 4, 5]},
+        "completion_order": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "uniqueItems": true,
+          "items": {"type": "integer", "minimum": 0, "maximum": 5}
+        },
+        "all_independent_fast_candidates_overtook_slow": {"const": true},
+        "inline_fallbacks": {"const": 0},
+        "container_log_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "candidates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "count",
+        "all_persisted",
+        "all_media_correlated",
+        "all_parser_schemas_conformant",
+        "all_categories_preserved",
+        "confirmed_count",
+        "rejected_count",
+        "records"
+      ],
+      "properties": {
+        "count": {"const": 6},
+        "all_persisted": {"const": true},
+        "all_media_correlated": {"const": true},
+        "all_parser_schemas_conformant": {"const": true},
+        "all_categories_preserved": {"const": true},
+        "confirmed_count": {"const": 3},
+        "rejected_count": {"const": 3},
+        "records": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {"$ref": "#/$defs/candidate"}
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "per_candidate_terminal_metrics",
+        "events_total",
+        "vlm_duration_observations",
+        "worker_processing_observations",
+        "worker_queue_wait_observations",
+        "dispatch_fallbacks",
+        "scrape_sha256"
+      ],
+      "properties": {
+        "per_candidate_terminal_metrics": {"const": true},
+        "events_total": {"const": 6},
+        "vlm_duration_observations": {"const": 6},
+        "worker_processing_observations": {"const": 6},
+        "worker_queue_wait_observations": {"const": 6},
+        "dispatch_fallbacks": {"const": 0},
+        "scrape_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before_sha256",
+        "after_sha256",
+        "exact_main_runtime_restored",
+        "running_container_set_preserved",
+        "owned_container_absent",
+        "owned_indices_absent",
+        "owned_redis_keys_absent",
+        "owned_kafka_topics_absent",
+        "fixture_port_closed",
+        "api_port_closed",
+        "metrics_port_closed",
+        "api_configs_deleted",
+        "redis_keys_deleted_by_fallback",
+        "indices_deleted",
+        "topics_deleted"
+      ],
+      "properties": {
+        "before_sha256": {"$ref": "#/$defs/sha256"},
+        "after_sha256": {"$ref": "#/$defs/sha256"},
+        "exact_main_runtime_restored": {"const": true},
+        "running_container_set_preserved": {"const": true},
+        "owned_container_absent": {"const": true},
+        "owned_indices_absent": {"const": true},
+        "owned_redis_keys_absent": {"const": true},
+        "owned_kafka_topics_absent": {"const": true},
+        "fixture_port_closed": {"const": true},
+        "api_port_closed": {"const": true},
+        "metrics_port_closed": {"const": true},
+        "api_configs_deleted": {"type": "integer", "minimum": 0, "maximum": 6},
+        "redis_keys_deleted_by_fallback": {"type": "integer", "minimum": 0, "maximum": 6},
+        "indices_deleted": {"type": "integer", "minimum": 1},
+        "topics_deleted": {"const": 2}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "network",
+        "external_requests",
+        "agent_generate_calls",
+        "warehouse_sample_bundle",
+        "main_alert_mutations",
+        "main_rtvlm_mutations"
+      ],
+      "properties": {
+        "network": {"const": "loopback-only"},
+        "external_requests": {"const": 0},
+        "agent_generate_calls": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "main_alert_mutations": {"const": 0},
+        "main_rtvlm_mutations": {"const": 0}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate",
+        "sensor_id",
+        "input_category",
+        "output_category",
+        "verdict",
+        "media_correlated",
+        "parser_schema_conformant",
+        "latency_terminal",
+        "terminal_metric_counts",
+        "event_metric_count",
+        "after_dedup_metric_count"
+      ],
+      "properties": {
+        "candidate": {"type": "integer", "minimum": 0, "maximum": 5},
+        "sensor_id": {"pattern": "^thor-row327-sensor-[0-9a-f]{16}-[0-5]$"},
+        "input_category": {"pattern": "^thor_row327_[0-9a-f]{16}_[0-5]$"},
+        "output_category": {"pattern": "^Thor Row327 Output [0-9a-f]{16} [0-5]$"},
+        "verdict": {"enum": ["confirmed", "rejected"]},
+        "media_correlated": {"const": true},
+        "parser_schema_conformant": {"const": true},
+        "latency_terminal": {"const": true},
+        "terminal_metric_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["worker_queue_wait", "vlm_duration", "worker_processing"],
+          "properties": {
+            "worker_queue_wait": {"const": 1.0},
+            "vlm_duration": {"const": 1.0},
+            "worker_processing": {"const": 1.0}
+          }
+        },
+        "event_metric_count": {"const": 1.0},
+        "after_dedup_metric_count": {"const": 1.0}
+      }
+    }
+  }
+}
