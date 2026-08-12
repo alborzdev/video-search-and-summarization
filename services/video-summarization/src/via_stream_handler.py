@@ -91,9 +91,8 @@ def _safe_collection_name(stream_id) -> str:
 MAX_MILVUS_STRING_LEN = 65535
 
 # Extra attempts at a CA-RAG aggregation call when it returns neither events nor
-# a video summary. The aggregation LLM intermittently samples an unparseable
-# response, which surfaces to the caller as HTTP 200 with total_events=0 and
-# video_summary="". Override with LVS_AGGREGATION_EMPTY_RETRIES; 0 disables.
+# a video summary, or (for a complete file) event timestamps outside the media.
+# Override with LVS_AGGREGATION_EMPTY_RETRIES; 0 disables.
 DEFAULT_AGGREGATION_EMPTY_RETRIES = 2
 
 @dataclass
@@ -1021,6 +1020,40 @@ class ViaStreamHandler:
                 changed = True
         return json.dumps(parsed, ensure_ascii=False) if changed else aggregation
 
+    @staticmethod
+    def _structured_inference_document(
+        req_info: RequestInfo, chunk: ChunkInfo, caption: str
+    ) -> str:
+        """Ground plain-text file inference in the chunk's real media interval.
+
+        CA-RAG's ``structured_inference`` implementation receives document
+        metadata but builds its LLM input from document text alone.  Without a
+        timestamp in that text, the model must guess event intervals and can
+        return times beyond the video.  Add the exact already-normalized PTS
+        window only for the plain-text file path that selects that function.
+        Structured JSON captions and live/NTP documents retain their released
+        representation.
+        """
+
+        if (
+            getattr(req_info, "enable_vlm_structured_output", True)
+            or getattr(req_info, "is_live", False)
+            or not isinstance(caption, str)
+        ):
+            return caption
+        try:
+            start = float(chunk.start_pts) / 1e9
+            end = float(chunk.end_pts) / 1e9
+        except (AttributeError, TypeError, ValueError):
+            return caption
+        if not 0 <= start < end:
+            return caption
+        return (
+            f"Video interval: {start:.3f} to {end:.3f} seconds. "
+            "Any event timestamps must stay within this interval. "
+            f"Caption: {caption}"
+        )
+
     def _on_vlm_chunk_response(self, response: VlmChunkResponse, req_info: RequestInfo):
         """Gather chunks processed by the pipeline and run any further post-processing"""
         if not self._running or req_info.cancel_event.is_set():
@@ -1162,6 +1195,9 @@ class ViaStreamHandler:
             response.vlm_response = vlm_response
             # Add the chunk VLM response to the milvus DB
             if req_info._ctx_mgr:
+                ctx_document = self._structured_inference_document(
+                    req_info, chunk, vlm_response
+                )
                 # Along with chunk, add cv metadata for the chunk
                 # get cv metadata present in file chunk.cv_metadata_json_file
                 # for duration chunk.start_pts to chunk.end_pts
@@ -1196,7 +1232,7 @@ class ViaStreamHandler:
                     ):
                         try:
                             req_info._ctx_mgr.add_doc(
-                                vlm_response,
+                                ctx_document,
                                 doc_i=(
                                     chunk.chunkIdx * 2 if req_info.enable_audio else chunk.chunkIdx
                                 ),
@@ -1249,7 +1285,9 @@ class ViaStreamHandler:
                         ):
                             try:
                                 req_info._ctx_mgr.add_doc(
-                                    transcript,
+                                    self._structured_inference_document(
+                                        req_info, chunk, transcript
+                                    ),
                                     doc_i=chunk.chunkIdx * 2 + 1,
                                     doc_meta=(
                                         vars(chunk)
@@ -4109,10 +4147,63 @@ This is very important and you must follow this strictly.
         video_summary = parsed.get("video_summary") or ""
         return not events and not str(video_summary).strip()
 
+    @staticmethod
+    def _aggregation_has_out_of_range_event_timestamps(
+        result, event_time_bounds: tuple[float, float] | None
+    ) -> bool:
+        """Reject numeric event intervals outside one full-file request window.
+
+        Aggregation is model-generated and can occasionally emit timestamps
+        beyond the media it summarized.  Validate only standard event objects
+        that provide both numeric bounds, and only when the caller supplies an
+        unambiguous numeric full-file interval.  Live timestamps, partial-file
+        rebasing, free-form summaries, and custom event schemas stay untouched.
+        """
+
+        if event_time_bounds is None:
+            return False
+        if isinstance(result, str):
+            try:
+                parsed = json.loads(result)
+            except (json.JSONDecodeError, TypeError, ValueError):
+                return False
+        elif isinstance(result, dict):
+            parsed = result
+        else:
+            return False
+        if not isinstance(parsed, dict) or not isinstance(parsed.get("events"), list):
+            return False
+        lower, upper = event_time_bounds
+        if not 0 <= lower < upper:
+            return False
+        tolerance = 1e-3
+        for event in parsed["events"]:
+            if not isinstance(event, dict) or not {
+                "start_time", "end_time"
+            }.issubset(event):
+                continue
+            start = event["start_time"]
+            end = event["end_time"]
+            if type(start) not in {int, float} or type(end) not in {int, float}:
+                return True
+            if not (
+                lower - tolerance
+                <= float(start)
+                < float(end)
+                <= upper + tolerance
+            ):
+                return True
+        return False
+
     def _call_aggregation_with_empty_guard(
-        self, ctx_mgr, function_name: str, state: dict, source_id
+        self,
+        ctx_mgr,
+        function_name: str,
+        state: dict,
+        source_id,
+        event_time_bounds: tuple[float, float] | None = None,
     ):
-        """Run a CA-RAG aggregation function, retrying while the result is empty.
+        """Run CA-RAG aggregation, retrying empty or out-of-range samples.
 
         Aggregation reads already-persisted captions and runs an LLM over them,
         so it holds no state of its own and re-running it is safe. When every
@@ -4127,16 +4218,30 @@ This is very important and you must follow this strictly.
             if response.get("error"):
                 return response
             result = (response.get(function_name, {}) or {}).get("result", "")
-            if not self._is_empty_aggregation_result(result):
+            empty = self._is_empty_aggregation_result(result)
+            out_of_range = self._aggregation_has_out_of_range_event_timestamps(
+                result, event_time_bounds
+            )
+            if not empty and not out_of_range:
                 return response
             if attempt < attempts:
                 logger.warning(
-                    "%s returned no events and no summary for %s "
-                    "(attempt %d of %d); retrying aggregation",
+                    "%s returned an unusable aggregation for %s "
+                    "(empty=%s out_of_range_timestamps=%s, attempt %d of %d); "
+                    "retrying aggregation",
                     function_name,
                     source_id,
+                    empty,
+                    out_of_range,
                     attempt,
                     attempts,
+                )
+            elif out_of_range:
+                raise ViaException(
+                    "Aggregation returned event timestamps outside the processed "
+                    "media interval",
+                    "InvalidAggregationResponse",
+                    502,
                 )
             else:
                 logger.warning(
@@ -4343,6 +4448,17 @@ This is very important and you must follow this strictly.
                                     else chunk_responses[-1].chunk.chunkIdx
                                 ),
                             }
+                        aggregation_event_bounds = None
+                        if (
+                            not req_info.is_live
+                            and req_info.start_timestamp is None
+                            and req_info.end_timestamp is None
+                            and chunk_responses
+                        ):
+                            aggregation_event_bounds = (
+                                float(chunk_responses[0].chunk.start_pts) / 1e9,
+                                float(chunk_responses[-1].chunk.end_pts) / 1e9,
+                            )
                         with TimeMeasure("Context Manager Summarize/call - summarize"):
                             with trace_operation(
                                 "CTX-RAG Call - Summarize",
@@ -4355,6 +4471,7 @@ This is very important and you must follow this strictly.
                                     "summarization",
                                     sum_state,
                                     req_info.source_id,
+                                    event_time_bounds=aggregation_event_bounds,
                                 )
                         if agg_response.get("error"):
                             logger.error(

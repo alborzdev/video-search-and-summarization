@@ -1,0 +1,142 @@
+{
+  "capability_ids": [
+    "manifest-entry.video-summarization-file.00-chunked-dense-captions",
+    "manifest-entry.video-summarization-file.01-file-summarization"
+  ],
+  "chunked_dense_captions": {
+    "absent_forklift_excluded": true,
+    "chronological_and_contiguous": true,
+    "chunk_count": 4,
+    "chunk_duration": 3,
+    "content_sha256": [
+      "54338cf8e91e1fe1285da2e24950ae26fa0e5c50de17f206b9ddd4919a1b31fa",
+      "00dcb64c154ebe161dc6169993c32ccbe4e334bc6eb502feab28ecf9683d8806",
+      "236a02007bbe9da1464ab8ef063e0a20f6642b91f9f6e903f780b8f74212f2ce",
+      "07f94e0247145a36682e165ff6dcb7d4cf1ab894a01c0f76bbd20b4f9ee25d88"
+    ],
+    "first_event_carrying_box": true,
+    "http_status": 200,
+    "intervals": [
+      [
+        0.0,
+        3.0
+      ],
+      [
+        3.0,
+        6.0
+      ],
+      [
+        6.0,
+        9.0
+      ],
+      [
+        9.0,
+        10.0
+      ]
+    ],
+    "last_event_on_ladder_at_shelf": true,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "reasoning_fields_empty": true,
+    "response_sha256": "2976559a7c01fe857ccf59af45e6a0c9684d8f9322e4df703f7d6d8eee55daeb",
+    "route": "/generate_vlm_captions",
+    "usage_total_chunks_processed": 4
+  },
+  "cleanup": {
+    "delete_status": 200,
+    "failures": [],
+    "file_catalog_after_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac",
+    "file_catalog_before_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac",
+    "file_catalog_restored_exactly": true,
+    "graph_after": {
+      "nodes": 4,
+      "relationships": 0
+    },
+    "graph_before": {
+      "nodes": 4,
+      "relationships": 0
+    },
+    "graph_restored_exactly": true,
+    "owned_graph_nodes_absent": true,
+    "running_container_set_preserved": true,
+    "runtime_state_preserved": true
+  },
+  "contract_sha256": "114e5f2308fd27ce19b581420278029ba845f09d38441f521464bd1f13d73ae6",
+  "file_summarization": {
+    "absent_forklift_excluded": true,
+    "aggregation_tokens_positive": true,
+    "beginning_box_event_present": true,
+    "chronological": true,
+    "chunk_duration": 3,
+    "content_sha256": "da0889b7af325078f05301045fcfd3b97d68904841222e1cf95bd59d8e584e79",
+    "ending_ladder_event_present": true,
+    "event_count": 2,
+    "event_intervals": [
+      [
+        0.0,
+        9.0
+      ],
+      [
+        9.0,
+        10.0
+      ]
+    ],
+    "http_status": 200,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "object": "summarization.completion",
+    "response_keys": [
+      "events",
+      "video_summary"
+    ],
+    "response_sha256": "59d29c5364e9f4d2694f1aaae4f6a012571684340984a5ff18e3dc5904fe4e1f",
+    "route": "/v1/summarize",
+    "summary_requests": 1,
+    "summary_tokens_positive": true,
+    "usage_total_chunks_processed": 4
+  },
+  "fixture": {
+    "duration_seconds": 10.0,
+    "ground_truth": {
+      "absent_control": "forklift",
+      "beginning": "worker_carries_box_across_foreground",
+      "ending": "worker_on_green_ladder_at_shelf"
+    },
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "official_indices": [
+    296,
+    297
+  ],
+  "package_id": "lvs-file-caption-summary-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "external_requests": 0,
+    "inference_api_requests": 2,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_semantic_output_retained": false,
+    "vios_or_rt_cv_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "run": {
+    "duration_seconds": 40.327382,
+    "free_bytes_after": 20297916416,
+    "free_bytes_before": 20299100160,
+    "id_sha256": "ca8573dd08ad8f4c14d648601e83916f54004a9426cac39a297a78a06af36470"
+  },
+  "runtime": {
+    "container": "vss-lvs",
+    "endpoint_loopback": true,
+    "healthy": true,
+    "image_id": "sha256:598dc5123f949dd0f495d1e93d85450df6045fee30dc9c98a4eab1226fe39b7d",
+    "image_name": "cti-vss-video-summarization:thor-local",
+    "live_source_locks_exact": true,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "oom_killed": false,
+    "restart_count": 0,
+    "started_at_sha256": "fe05eeba15739ef3dd68965bdb88978e1ab1aac06f843da686365f8eb99a43c5"
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

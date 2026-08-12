@@ -184,6 +184,151 @@ class TestCallAggregationWithEmptyGuard:
         assert response["summarization_online"]["metadata"] == {"total_tokens": 1234}
         assert len(ctx_mgr.calls) == 2
 
+    def test_out_of_range_timestamp_sample_is_retried(self):
+        handler = _make_handler(retries=2)
+        invalid = _summary(
+            events=[
+                {
+                    "start_time": 0,
+                    "end_time": 20,
+                    "type": "movement",
+                    "description": "movement",
+                }
+            ],
+            video_summary="Movement occurred.",
+        )
+        valid = _summary(
+            events=[
+                {
+                    "start_time": 0,
+                    "end_time": 10,
+                    "type": "movement",
+                    "description": "movement",
+                }
+            ],
+            video_summary="Movement occurred.",
+        )
+        expected = _response("summarization", valid)
+        ctx_mgr = _FakeCtxMgr([_response("summarization", invalid), expected])
+
+        response = handler._call_aggregation_with_empty_guard(
+            ctx_mgr,
+            "summarization",
+            {"start_index": 0, "end_index": 3},
+            "test-id",
+            event_time_bounds=(0.0, 10.0),
+        )
+
+        assert response is expected
+        assert len(ctx_mgr.calls) == 2
+
+    def test_all_out_of_range_timestamp_samples_fail_closed(self):
+        handler = _make_handler(retries=2)
+        invalid = _response(
+            "summarization",
+            _summary(
+                events=[
+                    {
+                        "start_time": 10,
+                        "end_time": 15,
+                        "type": "movement",
+                        "description": "movement",
+                    }
+                ],
+                video_summary="Movement occurred.",
+            ),
+        )
+        ctx_mgr = _FakeCtxMgr([invalid, invalid, invalid])
+
+        with pytest.raises(Exception, match="outside the processed media interval"):
+            handler._call_aggregation_with_empty_guard(
+                ctx_mgr,
+                "summarization",
+                {"start_index": 0, "end_index": 3},
+                "test-id",
+                event_time_bounds=(0.0, 10.0),
+            )
+        assert len(ctx_mgr.calls) == 3
+
+
+class TestAggregationTimestampBounds:
+    def test_valid_numeric_events_are_accepted(self):
+        handler = _make_handler()
+        result = _summary(
+            events=[
+                {"start_time": 0, "end_time": 5},
+                {"start_time": 5, "end_time": 10},
+            ]
+        )
+        assert handler._aggregation_has_out_of_range_event_timestamps(
+            result, (0.0, 10.0)
+        ) is False
+
+    @pytest.mark.parametrize(
+        "event",
+        [
+            {"start_time": -1, "end_time": 5},
+            {"start_time": 0, "end_time": 11},
+            {"start_time": 5, "end_time": 5},
+            {"start_time": "0", "end_time": 5},
+        ],
+    )
+    def test_invalid_numeric_events_are_rejected(self, event):
+        handler = _make_handler()
+        assert handler._aggregation_has_out_of_range_event_timestamps(
+            _summary(events=[event]), (0.0, 10.0)
+        ) is True
+
+    def test_unbounded_custom_or_live_result_is_unchanged(self):
+        handler = _make_handler()
+        assert handler._aggregation_has_out_of_range_event_timestamps(
+            _summary(events=[{"start_time": 0, "end_time": 20}]), None
+        ) is False
+        assert handler._aggregation_has_out_of_range_event_timestamps(
+            _summary(events=[{"custom": "value"}]), (0.0, 10.0)
+        ) is False
+
+
+class TestStructuredInferenceDocument:
+    class _Chunk:
+        start_pts = 3_000_000_000
+        end_pts = 6_000_000_000
+
+    def test_plain_text_file_caption_includes_exact_media_interval(self):
+        handler = _make_handler()
+        req_info = type(
+            "Request",
+            (),
+            {"enable_vlm_structured_output": False, "is_live": False},
+        )()
+
+        value = handler._structured_inference_document(
+            req_info, self._Chunk(), "A worker carries a box."
+        )
+
+        assert value == (
+            "Video interval: 3.000 to 6.000 seconds. "
+            "Any event timestamps must stay within this interval. "
+            "Caption: A worker carries a box."
+        )
+
+    @pytest.mark.parametrize(
+        "structured,is_live",
+        [(True, False), (False, True), (True, True)],
+    )
+    def test_structured_or_live_caption_is_unchanged(self, structured, is_live):
+        handler = _make_handler()
+        req_info = type(
+            "Request",
+            (),
+            {"enable_vlm_structured_output": structured, "is_live": is_live},
+        )()
+
+        assert (
+            handler._structured_inference_document(req_info, self._Chunk(), "caption")
+            == "caption"
+        )
+
 
 class TestReadAggregationEmptyRetries:
     """LVS_AGGREGATION_EMPTY_RETRIES overrides the default retry budget."""

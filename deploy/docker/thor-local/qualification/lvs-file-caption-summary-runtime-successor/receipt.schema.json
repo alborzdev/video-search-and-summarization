@@ -1,0 +1,465 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "package_id",
+    "status",
+    "capability_ids",
+    "official_indices",
+    "contract_sha256",
+    "run",
+    "runtime",
+    "fixture",
+    "chunked_dense_captions",
+    "file_summarization",
+    "cleanup",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "package_id": {
+      "const": "lvs-file-caption-summary-runtime-successor"
+    },
+    "status": {
+      "const": "passed"
+    },
+    "capability_ids": {
+      "const": [
+        "manifest-entry.video-summarization-file.00-chunked-dense-captions",
+        "manifest-entry.video-summarization-file.01-file-summarization"
+      ]
+    },
+    "official_indices": {
+      "const": [
+        296,
+        297
+      ]
+    },
+    "contract_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id_sha256",
+        "duration_seconds",
+        "free_bytes_before",
+        "free_bytes_after"
+      ],
+      "properties": {
+        "id_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "duration_seconds": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 240
+        },
+        "free_bytes_before": {
+          "type": "integer",
+          "minimum": 10737418240
+        },
+        "free_bytes_after": {
+          "type": "integer",
+          "minimum": 10737418240
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container",
+        "image_id",
+        "image_name",
+        "healthy",
+        "restart_count",
+        "oom_killed",
+        "started_at_sha256",
+        "endpoint_loopback",
+        "model",
+        "live_source_locks_exact"
+      ],
+      "properties": {
+        "container": {
+          "const": "vss-lvs"
+        },
+        "image_id": {
+          "const": "sha256:598dc5123f949dd0f495d1e93d85450df6045fee30dc9c98a4eab1226fe39b7d"
+        },
+        "image_name": {
+          "const": "cti-vss-video-summarization:thor-local"
+        },
+        "healthy": {
+          "const": true
+        },
+        "restart_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "oom_killed": {
+          "const": false
+        },
+        "started_at_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "endpoint_loopback": {
+          "const": true
+        },
+        "model": {
+          "const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        },
+        "live_source_locks_exact": {
+          "const": true
+        }
+      }
+    },
+    "fixture": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "duration_seconds",
+        "sha256",
+        "ground_truth"
+      ],
+      "properties": {
+        "duration_seconds": {
+          "const": 10.0
+        },
+        "sha256": {
+          "const": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+        },
+        "ground_truth": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "beginning",
+            "ending",
+            "absent_control"
+          ],
+          "properties": {
+            "beginning": {
+              "const": "worker_carries_box_across_foreground"
+            },
+            "ending": {
+              "const": "worker_on_green_ladder_at_shelf"
+            },
+            "absent_control": {
+              "const": "forklift"
+            }
+          }
+        }
+      }
+    },
+    "chunked_dense_captions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route",
+        "http_status",
+        "model",
+        "chunk_duration",
+        "response_sha256",
+        "usage_total_chunks_processed",
+        "chunk_count",
+        "intervals",
+        "chronological_and_contiguous",
+        "first_event_carrying_box",
+        "last_event_on_ladder_at_shelf",
+        "absent_forklift_excluded",
+        "content_sha256",
+        "reasoning_fields_empty"
+      ],
+      "properties": {
+        "route": {
+          "const": "/generate_vlm_captions"
+        },
+        "http_status": {
+          "const": 200
+        },
+        "model": {
+          "const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        },
+        "chunk_duration": {
+          "const": 3
+        },
+        "response_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "usage_total_chunks_processed": {
+          "const": 4
+        },
+        "chunk_count": {
+          "const": 4
+        },
+        "intervals": {
+          "const": [
+            [
+              0.0,
+              3.0
+            ],
+            [
+              3.0,
+              6.0
+            ],
+            [
+              6.0,
+              9.0
+            ],
+            [
+              9.0,
+              10.0
+            ]
+          ]
+        },
+        "chronological_and_contiguous": {
+          "const": true
+        },
+        "first_event_carrying_box": {
+          "const": true
+        },
+        "last_event_on_ladder_at_shelf": {
+          "const": true
+        },
+        "absent_forklift_excluded": {
+          "const": true
+        },
+        "content_sha256": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "$ref": "#/$defs/sha256"
+          }
+        },
+        "reasoning_fields_empty": {
+          "const": true
+        }
+      }
+    },
+    "file_summarization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route",
+        "http_status",
+        "model",
+        "object",
+        "chunk_duration",
+        "response_sha256",
+        "usage_total_chunks_processed",
+        "summary_requests",
+        "summary_tokens_positive",
+        "aggregation_tokens_positive",
+        "response_keys",
+        "event_count",
+        "event_intervals",
+        "beginning_box_event_present",
+        "ending_ladder_event_present",
+        "absent_forklift_excluded",
+        "chronological",
+        "content_sha256"
+      ],
+      "properties": {
+        "route": {
+          "const": "/v1/summarize"
+        },
+        "http_status": {
+          "const": 200
+        },
+        "model": {
+          "const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+        },
+        "object": {
+          "const": "summarization.completion"
+        },
+        "chunk_duration": {
+          "const": 3
+        },
+        "response_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "usage_total_chunks_processed": {
+          "const": 4
+        },
+        "summary_requests": {
+          "const": 1
+        },
+        "summary_tokens_positive": {
+          "const": true
+        },
+        "aggregation_tokens_positive": {
+          "const": true
+        },
+        "response_keys": {
+          "const": [
+            "events",
+            "video_summary"
+          ]
+        },
+        "event_count": {
+          "const": 2
+        },
+        "event_intervals": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            }
+          }
+        },
+        "beginning_box_event_present": {
+          "const": true
+        },
+        "ending_ladder_event_present": {
+          "const": true
+        },
+        "absent_forklift_excluded": {
+          "const": true
+        },
+        "chronological": {
+          "const": true
+        },
+        "content_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "delete_status",
+        "file_catalog_before_sha256",
+        "file_catalog_after_sha256",
+        "file_catalog_restored_exactly",
+        "graph_before",
+        "graph_after",
+        "graph_restored_exactly",
+        "owned_graph_nodes_absent",
+        "running_container_set_preserved",
+        "runtime_state_preserved",
+        "failures"
+      ],
+      "properties": {
+        "delete_status": {
+          "const": 200
+        },
+        "file_catalog_before_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "file_catalog_after_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "file_catalog_restored_exactly": {
+          "const": true
+        },
+        "graph_before": {
+          "$ref": "#/$defs/graph"
+        },
+        "graph_after": {
+          "$ref": "#/$defs/graph"
+        },
+        "graph_restored_exactly": {
+          "const": true
+        },
+        "owned_graph_nodes_absent": {
+          "const": true
+        },
+        "running_container_set_preserved": {
+          "const": true
+        },
+        "runtime_state_preserved": {
+          "const": true
+        },
+        "failures": {
+          "const": []
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "external_requests",
+        "agent_generate_calls",
+        "inference_api_requests",
+        "vios_or_rt_cv_stream_mutations",
+        "core_service_lifecycle_actions",
+        "warehouse_sample_bundle",
+        "raw_resource_ids_retained",
+        "raw_prompt_retained",
+        "raw_semantic_output_retained",
+        "credentials_retained"
+      ],
+      "properties": {
+        "external_requests": {
+          "const": 0
+        },
+        "agent_generate_calls": {
+          "const": 0
+        },
+        "inference_api_requests": {
+          "const": 2
+        },
+        "vios_or_rt_cv_stream_mutations": {
+          "const": 0
+        },
+        "core_service_lifecycle_actions": {
+          "const": 0
+        },
+        "warehouse_sample_bundle": {
+          "const": "excluded"
+        },
+        "raw_resource_ids_retained": {
+          "const": false
+        },
+        "raw_prompt_retained": {
+          "const": false
+        },
+        "raw_semantic_output_retained": {
+          "const": false
+        },
+        "credentials_retained": {
+          "const": false
+        }
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "graph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "nodes",
+        "relationships"
+      ],
+      "properties": {
+        "nodes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "relationships": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
