@@ -2205,7 +2205,7 @@ doctor_check_gpu_and_resources() {
   if read -r disk_available_kib disk_used_pct <<< "${disk_values}" &&
      [[ "${disk_available_kib}" =~ ^[0-9]+$ && "${disk_used_pct}" =~ ^[0-9]+$ ]]; then
     disk_available_gib=$(( disk_available_kib / 1024 / 1024 ))
-    if (( disk_available_kib < 10485760 || disk_used_pct >= 98 )); then
+    if (( disk_available_kib < 10485760 )); then
       doctor_fail "VSS data disk is critically full (${disk_available_gib} GiB free, ${disk_used_pct}% used)."
     elif (( disk_available_kib < 52428800 || disk_used_pct >= 90 )); then
       doctor_warn "VSS data disk headroom is low (${disk_available_gib} GiB free, ${disk_used_pct}% used)."

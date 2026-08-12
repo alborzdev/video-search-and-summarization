@@ -50,7 +50,7 @@
       "method": "GET",
       "operation_id": "list_incidents_api_v1_realtime_incidents_get",
       "path": "/api/v1/realtime/incidents",
-      "schema_hash": "5ece76fff53a1e5edf517283f11c9da62a30297414eb9d885295dd03164ef12a"
+      "schema_hash": "07d6d7cd5504990311b81c77f7a4e0ab5c973c2aae6dab97c8aea29e520cdce4"
     },
     {
       "method": "POST",
@@ -141,7 +141,7 @@
   "source_files": [
     {
       "path": "services/alert/openapi.json",
-      "sha256": "eb01f609af9fbefda9a92924f9ccd217a9a4a048033439d415f004ac8692a1c3"
+      "sha256": "1b0bff4c54a322dbba2897ac0b32f67ca6d10f39dfb479a979daf588e0338b09"
     }
   ],
   "surface": "alerts"

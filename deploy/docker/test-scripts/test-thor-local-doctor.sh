@@ -123,6 +123,42 @@ doctor_is_explicitly_offline_and_secret_safe() {
     ! sed -n '/^doctor()/,/^}/p' "${thor_local}" | grep -Eq 'curl .*https?://[^$]*\.(com|io|ai|org)'
 }
 
+disk_percentage_does_not_override_ten_gib_floor() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    nvidia-smi() {
+      printf "NVIDIA Thor, 43, 0\n"
+    }
+    df() {
+      printf "Filesystem 1024-blocks Used Available Capacity Mounted on\n"
+      printf "/dev/test 1000000000 981125632 18874368 98%% /\n"
+    }
+    data_directory="$2"
+    doctor_reset
+    doctor_check_gpu_and_resources >"$2/disk-warning.out"
+    [[ ${doctor_failures} -eq 0 && ${doctor_warnings} -eq 1 ]] &&
+      grep -q "18 GiB free, 98% used" "$2/disk-warning.out"
+  ' _ "${thor_local}" "${temporary_root}"
+}
+
+disk_below_ten_gib_remains_fatal() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    nvidia-smi() {
+      printf "NVIDIA Thor, 43, 0\n"
+    }
+    df() {
+      printf "Filesystem 1024-blocks Used Available Capacity Mounted on\n"
+      printf "/dev/test 1000000000 990562816 9437184 99%% /\n"
+    }
+    data_directory="$2"
+    doctor_reset
+    doctor_check_gpu_and_resources >"$2/disk-failure.out"
+    [[ ${doctor_failures} -eq 1 ]] &&
+      grep -q "9 GiB free, 99% used" "$2/disk-failure.out"
+  ' _ "${thor_local}" "${temporary_root}"
+}
+
 check "shell syntax" bash -n "${thor_local}"
 check "help exposes the operator doctor" help_has_doctor
 check "source-only mode loads doctor helpers without dispatch" source_mode_loads_without_dispatch
@@ -132,6 +168,8 @@ check "doctor reports a noncompliant Docker cgroup driver" doctor_reports_cgroup
 check "warnings exit zero and failures exit nonzero" severity_contract_is_stable
 check "startup provisioner creates a private report directory" report_directory_is_private
 check "doctor is offline-only and does not disclose secrets" doctor_is_explicitly_offline_and_secret_safe
+check "98% usage with 18 GiB free is a warning" disk_percentage_does_not_override_ten_gib_floor
+check "less than 10 GiB free remains fatal" disk_below_ten_gib_remains_fatal
 
 if (( failures > 0 )); then
   printf '%d doctor test(s) failed\n' "${failures}" >&2

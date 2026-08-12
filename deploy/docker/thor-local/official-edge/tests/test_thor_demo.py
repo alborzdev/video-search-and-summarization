@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import official_edge as oe  # noqa: E402
 import thor_demo as td  # noqa: E402
 
-from test_official_edge import make_edge_cache  # noqa: E402
+from test_official_edge import make_edge_cache, make_runtime_env  # noqa: E402
 
 
 class ThorDemoStaticTests(unittest.TestCase):
@@ -89,9 +89,7 @@ class ThorDemoStaticTests(unittest.TestCase):
             edge, _ = make_edge_cache(root)
             cosmos = root / "ngc" / oe.COSMOS_CACHE_DIRECTORY
             cosmos.mkdir(parents=True)
-            tracked_env = (
-                oe.DEPLOY_DOCKER / "developer-profiles/dev-profile-thor-full/.env"
-            )
+            tracked_env = make_runtime_env(root)
             with mock.patch.dict(
                 os.environ,
                 {

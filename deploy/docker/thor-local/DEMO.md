@@ -9,15 +9,25 @@ Nothing in this runbook requires a cloud service.
 After a host reboot, start the cache cleaner before the models and VSS stack:
 
 ```bash
-sudo -b /usr/local/bin/sys-cache-cleaner.sh
+pgrep -af /usr/local/bin/sys-cache-cleaner.sh || \
+  sudo -b /usr/local/bin/sys-cache-cleaner.sh
 cd /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker
-./scripts/thor-local.sh restart
+./scripts/thor-local.sh status
 ./scripts/thor-local.sh doctor
 ```
+
+The exact Nemotron 3 + Cosmos3 demo lane normally returns automatically through
+its Docker restart policy. Generic `thor-local.sh up/restart` is intentionally
+blocked while that lane is installed because it would replace its model and
+consumer wiring. If `doctor` reports a failure after reboot, use the exact
+**Verify identity** and **Render recovery** commands that it prints, run the
+single pull-free command emitted by **Render recovery**, then rerun `doctor`.
 
 Do not begin the demonstration unless `doctor` ends with zero failures. A
 unified-memory warning is informational; close unrelated GPU or browser
 workloads if available memory is approaching the documented capacity floor.
+A disk-usage warning is acceptable only while at least 10 GiB remains free;
+`doctor` fails below that hard floor.
 
 Open the operator UI at `http://127.0.0.1:3001`. The supported public ingress
 is `http://127.0.0.1:7777`; internal service ports are not customer-facing
@@ -91,8 +101,9 @@ workflow.
 - Keep one known-good pre-indexed video. Live RTSP depends on the camera and
   venue network even though all inference remains local.
 - If a model or service becomes unavailable, run `doctor`, inspect the named
-  container with `docker logs --tail 150 <name>`, then use the offline-safe
-  `restart`. Do not run connected bootstrap on a show floor.
+  container with `docker logs --tail 150 <name>`, and follow the exact-model
+  recovery commands printed by `doctor`. Do not use generic `restart` for the
+  active exact-model lane, and do not run connected bootstrap on a show floor.
 - Return to the neutral configuration after a customer-specific demo with
   `./scripts/thor-local.sh domain apply general`.
 

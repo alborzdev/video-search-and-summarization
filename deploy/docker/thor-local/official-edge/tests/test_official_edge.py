@@ -30,6 +30,19 @@ def make_edge_cache(root: Path) -> tuple[Path, Path]:
     return snapshot, blobs
 
 
+def make_runtime_env(root: Path) -> Path:
+    """Copy the secret-free fixture and supply required test-only values."""
+
+    tracked = oe.DEPLOY_DOCKER / "developer-profiles/dev-profile-thor-full/.env"
+    runtime = root / "runtime.env"
+    runtime.write_text(
+        tracked.read_text(encoding="utf-8")
+        + "\nGRAPH_DB_PASSWORD=official-edge-unit-test\n",
+        encoding="utf-8",
+    )
+    return runtime
+
+
 def reviewed_provenance(
     root: Path, filename: str, identity: dict[str, str]
 ) -> dict[str, object]:
@@ -202,9 +215,7 @@ class OfficialEdgeStaticTests(unittest.TestCase):
             edge, _ = make_edge_cache(root)
             cosmos = root / "ngc" / oe.COSMOS_CACHE_DIRECTORY
             cosmos.mkdir(parents=True)
-            tracked_env = (
-                oe.DEPLOY_DOCKER / "developer-profiles/dev-profile-thor-full/.env"
-            )
+            tracked_env = make_runtime_env(root)
             with mock.patch.dict(
                 os.environ,
                 {
@@ -245,9 +256,7 @@ class OfficialEdgeStaticTests(unittest.TestCase):
             edge, _ = make_edge_cache(root)
             cosmos = root / "ngc" / oe.COSMOS_CACHE_DIRECTORY
             cosmos.mkdir(parents=True)
-            tracked_env = (
-                oe.DEPLOY_DOCKER / "developer-profiles/dev-profile-thor-full/.env"
-            )
+            tracked_env = make_runtime_env(root)
             with mock.patch.dict(
                 os.environ,
                 {

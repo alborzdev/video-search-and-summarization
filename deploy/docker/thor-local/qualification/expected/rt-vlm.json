@@ -182,7 +182,7 @@
   "source_files": [
     {
       "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
-      "sha256": "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+      "sha256": "a160cd74f7f645a7610bdb0a56424749d2b5a157187188eb93d961c49d1e4118"
     }
   ],
   "surface": "rt-vlm"

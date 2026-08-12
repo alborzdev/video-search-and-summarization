@@ -158,7 +158,7 @@
   "source_files": [
     {
       "path": "services/rtvi/rt-embed/src/server/rtvi_embed_server.py",
-      "sha256": "938235f869ff4bc7c3c5932f8708d8df0d9afd0dcb2cc986dac23ca64020e86e"
+      "sha256": "36069c0d8b164d4d5c61c1aebaeed6250473c87a128ccad0cbb993390372a1cf"
     }
   ],
   "surface": "rt-embed"

@@ -75,14 +75,14 @@ RTVLM_SERVER_OVERLAY = (
     REPO_ROOT / "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py"
 )
 RTVLM_SERVER_OVERLAY_SHA256 = (
-    "24f6f968cbfac481dd1d310f4fe278b9db2311ec16f3f613c0525e8b77834a0d"
+    "a160cd74f7f645a7610bdb0a56424749d2b5a157187188eb93d961c49d1e4118"
 )
 RTVLM_SERVER_CONTAINER = "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py"
 RTVLM_STREAM_HANDLER_OVERLAY = (
     REPO_ROOT / "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py"
 )
 RTVLM_STREAM_HANDLER_OVERLAY_SHA256 = (
-    "0a76e5e574d9466662d3424f45fc62ca26313577e87379e25fc4940d1c9bc52d"
+    "7eca96161a3d5dd92665be6c10487832f273dabca05ed08be4341a340a439188"
 )
 RTVLM_STREAM_HANDLER_CONTAINER = (
     "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py"
@@ -101,7 +101,40 @@ RTVLM_PROCESS_BASE_OVERLAY_SHA256 = (
     "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"
 )
 RTVLM_PROCESS_BASE_CONTAINER = "/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py"
+RTVLM_CAPTIONS_OVERLAY = (
+    REPO_ROOT / "services/rtvi/rt-vlm/src/api_models/captions.py"
+)
+RTVLM_CAPTIONS_OVERLAY_SHA256 = (
+    "7e7fc698441f6702fb43fb4f064c976e9520fdffb238dd0155abc464fc5b7692"
+)
+RTVLM_CAPTIONS_CONTAINER = "/opt/nvidia/rtvi/rtvi/api_models/captions.py"
+RTVLM_LIVE_STREAM_OVERLAY = (
+    REPO_ROOT / "services/rtvi/rt-vlm/src/api_models/live_stream.py"
+)
+RTVLM_LIVE_STREAM_OVERLAY_SHA256 = (
+    "569c34990905cab6c0b6f78fab95332d0a4d540fe342652fde52974e064593dc"
+)
+RTVLM_LIVE_STREAM_CONTAINER = "/opt/nvidia/rtvi/rtvi/api_models/live_stream.py"
+RTVLM_ASSET_MANAGER_OVERLAY = (
+    REPO_ROOT / "services/rtvi/rt-vlm/src/utils/asset_manager.py"
+)
+RTVLM_ASSET_MANAGER_OVERLAY_SHA256 = (
+    "2024514002f652dda4af41378030282f54e410d518eeaff2d27965291a167860"
+)
+RTVLM_ASSET_MANAGER_CONTAINER = "/opt/nvidia/rtvi/rtvi/utils/asset_manager.py"
 RTVLM_REQUEST_CANCELLATION_OVERLAYS = {
+    RTVLM_CAPTIONS_CONTAINER: (
+        RTVLM_CAPTIONS_OVERLAY,
+        RTVLM_CAPTIONS_OVERLAY_SHA256,
+    ),
+    RTVLM_LIVE_STREAM_CONTAINER: (
+        RTVLM_LIVE_STREAM_OVERLAY,
+        RTVLM_LIVE_STREAM_OVERLAY_SHA256,
+    ),
+    RTVLM_ASSET_MANAGER_CONTAINER: (
+        RTVLM_ASSET_MANAGER_OVERLAY,
+        RTVLM_ASSET_MANAGER_OVERLAY_SHA256,
+    ),
     RTVLM_SERVER_CONTAINER: (
         RTVLM_SERVER_OVERLAY,
         RTVLM_SERVER_OVERLAY_SHA256,
@@ -651,6 +684,9 @@ def verify_compose_contract() -> None:
         raise ContractError("compose Alert Bridge model environment differs")
     if rtvlm.get("volumes") != [
         "${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/api_models/captions.py:/opt/nvidia/rtvi/rtvi/api_models/captions.py:ro",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/api_models/live_stream.py:/opt/nvidia/rtvi/rtvi/api_models/live_stream.py:ro",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/utils/asset_manager.py:/opt/nvidia/rtvi/rtvi/utils/asset_manager.py:ro",
         "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py:/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py:ro",
         "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py:/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py:ro",
         "${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py:/opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py:ro",
