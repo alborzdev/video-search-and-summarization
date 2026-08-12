@@ -21,6 +21,7 @@ Mocks the RTVI VLM microservice endpoints used by RealtimeAlertService:
   GET    /v1/streams/get-stream-info         — list registered streams
   DELETE /v1/streams/delete/{stream_id}      — remove a stream
   POST   /v1/generate_captions               — start caption generation
+  DELETE /v1/generate_captions/requests/{id} — stop one caption request
   DELETE /v1/generate_captions/{stream_id}   — stop caption generation
   GET    /v1/ready                           — health check
 
@@ -52,6 +53,8 @@ def create_app():
     # reuse logic against a state that mirrors a real RTVI deployment.
     streams_registry = {}
     streams_registry_lock = threading.Lock()
+    caption_requests = {}
+    caption_requests_lock = threading.Lock()
 
     # {endpoint_key: {"status_code": int, "body": dict}}
     faults = {}
@@ -151,7 +154,32 @@ def create_app():
         if fault:
             return jsonify(fault["body"]), fault["status_code"]
 
-        return jsonify({"status": "started", "stream_id": body.get("id", "")})
+        request_id = str(uuid.uuid4())
+        with caption_requests_lock:
+            caption_requests[request_id] = body.get("id", "")
+        response = jsonify({
+            "status": "started",
+            "stream_id": body.get("id", ""),
+            "request_id": request_id,
+        })
+        response.headers["x-request-id"] = request_id
+        return response
+
+    @app.route(
+        "/v1/generate_captions/requests/<request_id>", methods=["DELETE"]
+    )
+    def stop_caption_request(request_id):
+        record_call(
+            "DELETE", f"/v1/generate_captions/requests/{request_id}"
+        )
+
+        fault = check_fault("stop_caption_request")
+        if fault:
+            return jsonify(fault["body"]), fault["status_code"]
+
+        with caption_requests_lock:
+            caption_requests.pop(request_id, None)
+        return jsonify({"status": "stopped", "request_id": request_id})
 
     @app.route("/v1/generate_captions/<stream_id>", methods=["DELETE"])
     def stop_captions(stream_id):
@@ -161,6 +189,12 @@ def create_app():
         if fault:
             return jsonify(fault["body"]), fault["status_code"]
 
+        with caption_requests_lock:
+            for request_id in [
+                rid for rid, sid in caption_requests.items()
+                if sid == stream_id
+            ]:
+                caption_requests.pop(request_id, None)
         return jsonify({"status": "stopped", "stream_id": stream_id})
 
     # ------------------------------------------------------------------

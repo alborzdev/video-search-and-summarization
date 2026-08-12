@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-39",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-40",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -485,6 +485,40 @@
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 329,
+      "capability_id": "manifest-entry.realtime-alerts.01-rule-crud",
+      "advertised_literal": "rule CRUD",
+      "package_id": "realtime-alert-rule-crud-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/realtime-alert-rule-crud-runtime-successor/contract.json",
+      "contract_sha256": "1215b08170580f51a9d2481571c88b2d72646bcece5b4587c5ca9dc821d1168e",
+      "receipt_path": "deploy/docker/thor-local/qualification/realtime-alert-rule-crud-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "ef76ddf2ace32d497c5b3d1fbed32967df1daf5e7ceea6208370a1000196dee3",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-rule-crud-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "d5b1b026fa160ab31a695c07a431d9b497e161d0dbdc9cdee91a035547421af3",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/run/agent_generate_request_count": 0,
+        "/lifecycle/prompt_source_validation": true,
+        "/lifecycle/unknown_update_no_create": true,
+        "/lifecycle/replacement_semantics": "create-replacement-then-delete-old",
+        "/lifecycle/immutable_distinct_rule_ids": true,
+        "/lifecycle/immutable_config_preserved": true,
+        "/lifecycle/public_internal_fields_hidden": true,
+        "/lifecycle/one_shared_stream": true,
+        "/lifecycle/distinct_request_ids": true,
+        "/lifecycle/replacement_active_after_old_delete": true,
+        "/lifecycle/old_rule_absent_after_delete": true,
+        "/lifecycle/repeated_delete_explicit_not_found": true,
+        "/lifecycle/replacement_incident_count": 1,
+        "/lifecycle/replacement_incident_correlated": true,
+        "/cleanup/exact_unrelated_state_restored": true,
+        "/cleanup/owned_raw_index_absent": true,
+        "/cleanup/owned_artifacts_absent": true,
+        "/cleanup/publisher_stopped": true,
+        "/cleanup/running_container_set_preserved": true
       }
     },
     {

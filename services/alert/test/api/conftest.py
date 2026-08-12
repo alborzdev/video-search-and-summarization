@@ -67,6 +67,7 @@ def mock_rtvi_client():
         "status": "started", "stream_id": "stream-abc-123"
     }
     client.stop_captions.return_value = {"status": "stopped"}
+    client.stop_caption_request.return_value = {"status": "stopped"}
     client.stop_stream.return_value = {"status": "deleted"}
     client.aclose.return_value = None
     return client

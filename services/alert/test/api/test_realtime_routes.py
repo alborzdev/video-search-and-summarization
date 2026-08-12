@@ -284,6 +284,32 @@ class TestPostRealtimeAlert:
         })
         assert resp.status_code == 422
 
+    @pytest.mark.parametrize("prompt", ["", "   ", "\n\t"])
+    def test_empty_prompt_returns_422_without_starting_rule(
+        self, client, mocks, prompt,
+    ):
+        resp = client.post("/api/v1/realtime", json={
+            "live_stream_url": "rtsp://host/stream",
+            "sensor_id": "test-sensor",
+            "alert_type": "test",
+            "prompt": prompt,
+        })
+        assert resp.status_code == 422
+        mocks["realtime"].start_alert.assert_not_awaited()
+
+    @pytest.mark.parametrize("alert_type", ["", "   ", "\n\t"])
+    def test_empty_alert_type_returns_422_without_starting_rule(
+        self, client, mocks, alert_type,
+    ):
+        resp = client.post("/api/v1/realtime", json={
+            "live_stream_url": "rtsp://host/stream",
+            "sensor_id": "test-sensor",
+            "alert_type": alert_type,
+            "prompt": "test",
+        })
+        assert resp.status_code == 422
+        mocks["realtime"].start_alert.assert_not_awaited()
+
     def test_chunk_duration_below_min_returns_422(self, client):
         """`chunk_duration: Field(ge=1)` — zero is invalid."""
         resp = client.post("/api/v1/realtime", json={

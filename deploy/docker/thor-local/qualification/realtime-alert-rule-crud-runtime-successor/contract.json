@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-rule-crud-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.01-rule-crud",
+  "official_indices": [329],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "ecac96de1a258a040d62167ba080080e9d0a1175133870ef7385506695f5201f"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_REALTIME_RULE_CRUD",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_local_endpoints_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "preexisting_rules_allowed": false,
+    "exact_cleanup_required": true,
+    "maximum_duration_ms": 300000
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "required_runtime_proof": [
+    "reject empty prompt and non-RTSP source before creating any rule",
+    "create, get, and list an initial rule with one immutable UUID and hidden internal request identity",
+    "implement documented update semantics by creating a distinct replacement rule on the same RT-VLM stream before deleting the old rule",
+    "delete only the old RT-VLM request and prove the replacement still emits a request-correlated incident",
+    "return explicit not-found for repeated delete and reject unknown PATCH without implicit creation",
+    "restore exact unrelated rule, stream, incident, raw-index, and running-container state"
+  ],
+  "source_locks": [
+    {"path": "services/alert/realtime/services/rtvi_client.py", "sha256": "ae4050e2a438959ec567dc6231dbf4d628592829ec63422be4f52f0e8dc0c6c0"},
+    {"path": "services/alert/realtime/services/realtime_service.py", "sha256": "156608ad0dd7851e057d75a268b04103bfac17e12bd50946894a8722c3efaa51"},
+    {"path": "services/alert/alert-agent-web/app/api/realtime_schemas.py", "sha256": "5038bd5d43f2352f1485db9180913cd13d6bf5d99afd590d4ffe6aa2c02bc36a"},
+    {"path": "services/alert/alert-agent-web/app/api/realtime_routes.py", "sha256": "8107f25da5002b49314109ae9ac89b537a48f331e3c0d59184e519cd3baa7532"},
+    {"path": "services/alert/realtime/services/rule_store.py", "sha256": "0d5dea8d6d4e048e8c04e5133d4bd1d396626976b7d458e3a2c936b154e3f0c5"},
+    {"path": "services/alert/test/api/test_realtime_service.py", "sha256": "887978ea6771cf32ac3a079eed22416ff2047363e26e1b136c8e3e2e3cfdbafd"},
+    {"path": "services/alert/test/api/test_realtime_routes.py", "sha256": "1324337f49c0e65534def841a50fe9810947aa2f0622c7dd553bea88a6a18815"},
+    {"path": "services/alert/test/sim_scripts/rtvi/rtvi_vlm_sim.py", "sha256": "ae370afd0f914185cf3c51213c56c3c41811dae47fa651e862cefbe7a60b9cb7"},
+    {"path": "deploy/docker/thor-local/Dockerfile.alert-bridge", "sha256": "f4b5adf99e67c8a88207ee17c5bd9546768c6334b05d6016f35083f679d21ae5"},
+    {"path": "deploy/docker/thor-local/official-edge/compose.yml", "sha256": "f271e17f11bc3550e3fba853be9902b55c629f6f56e0be37bf78bee84ab9e88d"},
+    {"path": "deploy/docker/thor-local/qualification/realtime-alert-rule-crud-runtime-successor/harness.py", "sha256": "d42eb2cbe7fefad169cb3e07fea5f561f74b5f0eea5e55be82b124ed557467eb"},
+    {"path": "services/alert/warmup/test.mp4", "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"}
+  ]
+}

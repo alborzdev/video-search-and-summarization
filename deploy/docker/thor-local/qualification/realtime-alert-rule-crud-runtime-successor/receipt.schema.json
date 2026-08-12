@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thor realtime alert immutable rule CRUD receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_id", "contract_sha256", "status", "run", "lifecycle", "cleanup"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "realtime-alert-rule-crud-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.realtime-alerts.01-rule-crud"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "status": {"const": "passed"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "fixture_bytes", "fixture_sha256", "numeric_local_endpoints_only", "agent_generate_request_count", "disk_free_before_bytes", "disk_free_after_bytes"],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 300000},
+        "fixture_bytes": {"const": 2575454},
+        "fixture_sha256": {"const": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"},
+        "numeric_local_endpoints_only": {"const": true},
+        "agent_generate_request_count": {"const": 0},
+        "disk_free_before_bytes": {"type": "integer", "minimum": 15000000000},
+        "disk_free_after_bytes": {"type": "integer", "minimum": 15000000000}
+      }
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prompt_source_validation", "unknown_update_no_create", "replacement_semantics", "immutable_distinct_rule_ids", "immutable_config_preserved", "public_internal_fields_hidden", "one_shared_stream", "distinct_request_ids", "replacement_active_after_old_delete", "old_rule_absent_after_delete", "repeated_delete_explicit_not_found", "replacement_incident_count", "replacement_incident_correlated", "rule_identity_sha256", "request_identity_sha256", "stream_identity_sha256", "old_config_sha256", "replacement_config_sha256", "mutation_sequence"],
+      "properties": {
+        "prompt_source_validation": {"const": true},
+        "unknown_update_no_create": {"const": true},
+        "replacement_semantics": {"const": "create-replacement-then-delete-old"},
+        "immutable_distinct_rule_ids": {"const": true},
+        "immutable_config_preserved": {"const": true},
+        "public_internal_fields_hidden": {"const": true},
+        "one_shared_stream": {"const": true},
+        "distinct_request_ids": {"const": true},
+        "replacement_active_after_old_delete": {"const": true},
+        "old_rule_absent_after_delete": {"const": true},
+        "repeated_delete_explicit_not_found": {"const": true},
+        "replacement_incident_count": {"type": "integer", "minimum": 1},
+        "replacement_incident_correlated": {"const": true},
+        "rule_identity_sha256": {"$ref": "#/$defs/twoHashes"},
+        "request_identity_sha256": {"$ref": "#/$defs/twoHashes"},
+        "stream_identity_sha256": {"$ref": "#/$defs/sha256"},
+        "old_config_sha256": {"$ref": "#/$defs/sha256"},
+        "replacement_config_sha256": {"$ref": "#/$defs/sha256"},
+        "mutation_sequence": {
+          "const": [
+            "POST invalid source rejected",
+            "POST empty prompt rejected",
+            "PATCH unknown rule rejected without create",
+            "POST initial immutable rule",
+            "POST replacement immutable rule",
+            "DELETE superseded rule by immutable identity",
+            "GET replacement-correlated incident after old delete",
+            "DELETE replacement rule"
+          ]
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exact_unrelated_state_restored", "before_sha256", "after_sha256", "owned_incidents_deleted", "owned_raw_index_absent", "owned_artifacts_absent", "publisher_stopped", "running_container_set_preserved", "running_container_count"],
+      "properties": {
+        "exact_unrelated_state_restored": {"const": true},
+        "before_sha256": {"$ref": "#/$defs/stateDigests"},
+        "after_sha256": {"$ref": "#/$defs/stateDigests"},
+        "owned_incidents_deleted": {"type": "integer", "minimum": 1},
+        "owned_raw_index_absent": {"const": true},
+        "owned_artifacts_absent": {"const": true},
+        "publisher_stopped": {"const": true},
+        "running_container_set_preserved": {"const": true},
+        "running_container_count": {"type": "integer", "minimum": 1}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "twoHashes": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/sha256"}
+    },
+    "stateDigests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["incidents", "persisted_rules", "rules", "streams"],
+      "properties": {
+        "incidents": {"$ref": "#/$defs/sha256"},
+        "persisted_rules": {"$ref": "#/$defs/sha256"},
+        "rules": {"$ref": "#/$defs/sha256"},
+        "streams": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

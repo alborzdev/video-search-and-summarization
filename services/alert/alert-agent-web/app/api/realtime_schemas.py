@@ -185,6 +185,20 @@ class RealtimeAlertRequest(BaseModel):
         ...,
         description="User prompt describing what to detect / analyse",
     )
+
+    @field_validator("alert_type", "prompt")
+    @classmethod
+    def validate_required_text(cls, value: str, info) -> str:
+        """Reject empty rule identity and detection text at the API boundary.
+
+        Keep the caller's non-empty text byte-for-byte so the documented
+        prompt-passthrough contract remains true; whitespace is used only to
+        decide whether the value contains meaningful content.
+        """
+        if not value or not value.strip():
+            raise ValueError(f"{info.field_name} cannot be empty")
+        return value
+
     system_prompt: str = Field(
         default="",
         description="Optional system prompt for the VLM",

@@ -653,6 +653,24 @@ class TestAlertRuleConfig:
 # RTVIVLMClient.generate_captions — payload filtering
 # ---------------------------------------------------------------------------
 
+def _install_caption_stream_mock(client, request_id="request-1"):
+    """Install a finite SSE response on an RTVIVLMClient test instance."""
+    response = MagicMock()
+    response.is_success = True
+    response.headers = {"x-request-id": request_id}
+    response.raise_for_status = MagicMock()
+
+    async def _bytes():
+        yield b"data: [DONE]\n\n"
+
+    response.aiter_bytes = _bytes
+    context = MagicMock()
+    context.__aenter__ = AsyncMock(return_value=response)
+    context.__aexit__ = AsyncMock(return_value=False)
+    client._client = MagicMock()
+    client._client.stream.return_value = context
+    return response
+
 class TestRTVIVLMClientGenerateCaptions:
     """RTVIVLMClient.generate_captions builds the correct RTVI JSON payload.
 
@@ -667,16 +685,15 @@ class TestRTVIVLMClientGenerateCaptions:
         from realtime.services.rtvi_client import RTVIVLMClient
 
         client = RTVIVLMClient("http://rtvi")
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        client._client = AsyncMock()
-        client._client.post.return_value = mock_resp
+        _install_caption_stream_mock(client)
 
-        await client.generate_captions(
+        request_id_future = asyncio.get_running_loop().create_future()
+        result = await client.generate_captions(
             stream_id="sid-1", prompt="detect fire", model="cosmos",
+            request_id_future=request_id_future,
         )
 
-        _, kwargs = client._client.post.call_args
+        _, kwargs = client._client.stream.call_args
         payload = kwargs["json"]
         for key in ("id", "prompt", "model", "system_prompt",
                     "chunk_duration", "chunk_overlap_duration",
@@ -686,6 +703,20 @@ class TestRTVIVLMClientGenerateCaptions:
             assert key in payload, f"required key {key!r} missing from payload"
         assert payload["id"] == "sid-1"
         assert payload["stream"] is True
+        assert request_id_future.result() == "request-1"
+        assert result["request_id"] == "request-1"
+
+    @pytest.mark.asyncio
+    async def test_missing_request_identity_is_protocol_error(self):
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        client = RTVIVLMClient("http://rtvi")
+        _install_caption_stream_mock(client, request_id="")
+
+        with pytest.raises(httpx.RemoteProtocolError):
+            await client.generate_captions(
+                stream_id="sid-1", prompt="detect fire", model="cosmos",
+            )
 
     @pytest.mark.asyncio
     async def test_optional_fields_absent_when_none(self):
@@ -695,16 +726,13 @@ class TestRTVIVLMClientGenerateCaptions:
         from realtime.services.rtvi_client import RTVIVLMClient
 
         client = RTVIVLMClient("http://rtvi")
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        client._client = AsyncMock()
-        client._client.post.return_value = mock_resp
+        _install_caption_stream_mock(client)
 
         await client.generate_captions(
             stream_id="sid-1", prompt="p", model="m",
         )
 
-        _, kwargs = client._client.post.call_args
+        _, kwargs = client._client.stream.call_args
         payload = kwargs["json"]
         for key in (
             "api_type", "response_format", "stream_options", "max_tokens",
@@ -720,10 +748,7 @@ class TestRTVIVLMClientGenerateCaptions:
         from realtime.services.rtvi_client import RTVIVLMClient
 
         client = RTVIVLMClient("http://rtvi")
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        client._client = AsyncMock()
-        client._client.post.return_value = mock_resp
+        _install_caption_stream_mock(client)
 
         await client.generate_captions(
             stream_id="sid-1",
@@ -743,7 +768,7 @@ class TestRTVIVLMClientGenerateCaptions:
             mm_processor_kwargs={"k": "v"},
         )
 
-        _, kwargs = client._client.post.call_args
+        _, kwargs = client._client.stream.call_args
         payload = kwargs["json"]
         assert payload["api_type"] == "internal"
         assert payload["response_format"] == {"type": "text"}
@@ -765,10 +790,7 @@ class TestRTVIVLMClientGenerateCaptions:
         from realtime.services.rtvi_client import RTVIVLMClient
 
         client = RTVIVLMClient("http://rtvi")
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        client._client = AsyncMock()
-        client._client.post.return_value = mock_resp
+        _install_caption_stream_mock(client)
 
         await client.generate_captions(
             stream_id="s", prompt="p", model="m",
@@ -776,7 +798,7 @@ class TestRTVIVLMClientGenerateCaptions:
             enable_audio=False,
         )
 
-        _, kwargs = client._client.post.call_args
+        _, kwargs = client._client.stream.call_args
         payload = kwargs["json"]
         assert "ignore_eos" in payload and payload["ignore_eos"] is False
         assert "enable_audio" in payload and payload["enable_audio"] is False
@@ -788,17 +810,14 @@ class TestRTVIVLMClientGenerateCaptions:
         from realtime.services.rtvi_client import RTVIVLMClient
 
         client = RTVIVLMClient("http://rtvi")
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        client._client = AsyncMock()
-        client._client.post.return_value = mock_resp
+        _install_caption_stream_mock(client)
 
         await client.generate_captions(
             stream_id="s", prompt="p", model="m",
             alert_category="Worker PPE Violation",
         )
 
-        _, kwargs = client._client.post.call_args
+        _, kwargs = client._client.stream.call_args
         payload = kwargs["json"]
         assert payload["alert_category"] == "Worker PPE Violation"
 
@@ -809,17 +828,14 @@ class TestRTVIVLMClientGenerateCaptions:
         from realtime.services.rtvi_client import RTVIVLMClient
 
         client = RTVIVLMClient("http://rtvi")
-        mock_resp = MagicMock()
-        mock_resp.raise_for_status = MagicMock()
-        client._client = AsyncMock()
-        client._client.post.return_value = mock_resp
+        _install_caption_stream_mock(client)
         rule_id = "00000000-0000-4000-8000-000000000001"
 
         await client.generate_captions(
             stream_id="s", prompt="p", model="m", alert_rule_id=rule_id,
         )
 
-        payload = client._client.post.call_args.kwargs["json"]
+        payload = client._client.stream.call_args.kwargs["json"]
         assert payload["alert_rule_id"] == rule_id
 
 
@@ -842,6 +858,24 @@ class TestRTVIVLMClientTeardown:
 
         client._client.delete.assert_awaited_once_with(
             "http://rtvi/generate_captions/stream-1", timeout=120,
+        )
+
+    @pytest.mark.asyncio
+    async def test_stop_exact_caption_request_uses_request_endpoint(self):
+        from unittest.mock import AsyncMock, MagicMock
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        client = RTVIVLMClient("http://rtvi", timeout=10)
+        response = MagicMock()
+        response.text = ""
+        response.raise_for_status = MagicMock()
+        client._client = AsyncMock()
+        client._client.delete.return_value = response
+
+        await client.stop_caption_request("request-1")
+
+        client._client.delete.assert_awaited_once_with(
+            "http://rtvi/generate_captions/requests/request-1", timeout=120,
         )
 
     @pytest.mark.asyncio
@@ -2232,8 +2266,13 @@ class TestStreamReadinessCheck:
     ):
         """When generate_captions is still running after readiness window → 201."""
         async def _long_running_stream(**kwargs):
+            kwargs["request_id_future"].set_result("request-long-running")
             await asyncio.sleep(5.0)
-            return {"status": "started", "stream_id": "stream-abc-123"}
+            return {
+                "status": "started",
+                "stream_id": "stream-abc-123",
+                "request_id": "request-long-running",
+            }
 
         mock_rtvi_client.generate_captions.side_effect = _long_running_stream
 
@@ -2250,6 +2289,7 @@ class TestStreamReadinessCheck:
     ):
         """Legacy behavior (readiness_timeout=0): timeout treated as success."""
         async def _delayed_failure(**kwargs):
+            kwargs["request_id_future"].set_result("request-delayed-failure")
             await asyncio.sleep(0.15)
             raise httpx.ReadError("GStreamer: Could not open resource")
 
@@ -2562,11 +2602,68 @@ class TestStreamReuse:
 
         await realtime_service.stop_alert(data_a["id"])
 
-        mock_rtvi_client.stop_captions.assert_awaited_once()
+        # Legacy rows without request-scoped identity must not use the
+        # stream-wide stop while a sibling remains.
+        mock_rtvi_client.stop_captions.assert_not_awaited()
         mock_rtvi_client.stop_stream.assert_not_awaited()
 
         # Deleting the last sibling now tears the stream down too.
         await realtime_service.stop_alert(data_b["id"])
+        mock_rtvi_client.stop_captions.assert_awaited_once()
+        mock_rtvi_client.stop_stream.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_replacement_delete_aborts_only_exact_rule_request(
+        self, realtime_service, mock_rtvi_client,
+    ):
+        """Create replacement first, then deleting the superseded rule
+        preserves the replacement's independent caption worker."""
+        mock_rtvi_client.get_stream_info.return_value = [
+            {"id": "test-sensor-001", "liveStreamUrl": SAMPLE_RTSP_URL},
+        ]
+        request_ids = iter(("request-old", "request-replacement"))
+
+        async def _captions(**kwargs):
+            request_id = next(request_ids)
+            kwargs["request_id_future"].set_result(request_id)
+            return {
+                "status": "started",
+                "stream_id": kwargs["stream_id"],
+                "request_id": request_id,
+            }
+
+        mock_rtvi_client.generate_captions.side_effect = _captions
+        old, old_code = await realtime_service.start_alert(
+            make_config(alert_type="intrusion", prompt="Detect intrusion"),
+        )
+        replacement, replacement_code = await realtime_service.start_alert(
+            make_config(alert_type="restricted_entry", prompt="Detect restricted entry"),
+        )
+
+        assert old_code == replacement_code == 201
+        assert old["id"] != replacement["id"]
+        assert realtime_service._rules[old["id"]]["rtvi_request_id"] == "request-old"
+        assert (
+            realtime_service._rules[replacement["id"]]["rtvi_request_id"]
+            == "request-replacement"
+        )
+
+        listed, _ = await realtime_service.list_alerts()
+        assert all("rtvi_request_id" not in rule for rule in listed["rules"])
+
+        _, delete_code = await realtime_service.stop_alert(old["id"])
+
+        assert delete_code == 200
+        mock_rtvi_client.stop_caption_request.assert_awaited_once_with("request-old")
+        mock_rtvi_client.stop_captions.assert_not_awaited()
+        mock_rtvi_client.stop_stream.assert_not_awaited()
+        assert replacement["id"] in realtime_service._rules
+
+        await realtime_service.stop_alert(replacement["id"])
+        assert [call.args[0] for call in mock_rtvi_client.stop_caption_request.await_args_list] == [
+            "request-old", "request-replacement",
+        ]
+        mock_rtvi_client.stop_captions.assert_not_awaited()
         mock_rtvi_client.stop_stream.assert_awaited_once()
 
     @pytest.mark.asyncio
@@ -2622,6 +2719,40 @@ class TestStreamReuse:
 
         await persistent_service.stop_alert(data_b["id"])
         mock_rtvi_client.stop_stream.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_persistent_replacement_keeps_exact_request_identity_internal(
+        self, persistent_service, fake_rule_store, mock_rtvi_client,
+    ):
+        """ES stores request ownership while GET hides the internal id."""
+        mock_rtvi_client.get_stream_info.return_value = [
+            {"id": "test-sensor-001", "liveStreamUrl": SAMPLE_RTSP_URL},
+        ]
+        request_ids = iter(("persisted-old", "persisted-new"))
+
+        async def _captions(**kwargs):
+            request_id = next(request_ids)
+            kwargs["request_id_future"].set_result(request_id)
+            return {"request_id": request_id, "stream_id": kwargs["stream_id"]}
+
+        mock_rtvi_client.generate_captions.side_effect = _captions
+        old, _ = await persistent_service.start_alert(
+            make_config(alert_type="old_rule"),
+        )
+        new, _ = await persistent_service.start_alert(
+            make_config(alert_type="new_rule"),
+        )
+
+        assert fake_rule_store.get(old["id"])["rtvi_request_id"] == "persisted-old"
+        assert fake_rule_store.get(new["id"])["rtvi_request_id"] == "persisted-new"
+        public, public_code = await persistent_service.get_alert(new["id"])
+        assert public_code == 200
+        assert "rtvi_request_id" not in public["rule"]
+
+        await persistent_service.stop_alert(old["id"])
+        mock_rtvi_client.stop_caption_request.assert_awaited_once_with("persisted-old")
+        mock_rtvi_client.stop_stream.assert_not_awaited()
+        assert fake_rule_store.get(new["id"])["status"] == RuleStatus.ACTIVE
 
     @pytest.mark.asyncio
     async def test_persistent_delete_drains_captions_before_stream_delete(

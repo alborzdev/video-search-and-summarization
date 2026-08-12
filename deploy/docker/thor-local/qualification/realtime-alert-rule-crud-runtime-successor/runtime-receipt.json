@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-rule-crud-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.01-rule-crud",
+  "contract_sha256": "1215b08170580f51a9d2481571c88b2d72646bcece5b4587c5ca9dc821d1168e",
+  "status": "passed",
+  "run": {
+    "duration_ms": 29437,
+    "fixture_bytes": 2575454,
+    "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "numeric_local_endpoints_only": true,
+    "agent_generate_request_count": 0,
+    "disk_free_before_bytes": 20666707968,
+    "disk_free_after_bytes": 20666155008
+  },
+  "lifecycle": {
+    "prompt_source_validation": true,
+    "unknown_update_no_create": true,
+    "replacement_semantics": "create-replacement-then-delete-old",
+    "immutable_distinct_rule_ids": true,
+    "immutable_config_preserved": true,
+    "public_internal_fields_hidden": true,
+    "one_shared_stream": true,
+    "distinct_request_ids": true,
+    "replacement_active_after_old_delete": true,
+    "old_rule_absent_after_delete": true,
+    "repeated_delete_explicit_not_found": true,
+    "replacement_incident_count": 1,
+    "replacement_incident_correlated": true,
+    "rule_identity_sha256": [
+      "00bb560f567a71f3b2fbdd12c686cad3c1c77deda50c517a89a720920de81611",
+      "c8791da270ed8c39a752d3b106793756bc18f4b9c7d4822e218b71d829ad0072"
+    ],
+    "request_identity_sha256": [
+      "27213312f0086ec922e7bd7f43f750f5a47a1358576a7b34093a559eac7569c0",
+      "2bad943f1b6223ae3eee8d8bcd8c0dd6b2b55998ae2fc1f663813fe9c2a55bcc"
+    ],
+    "stream_identity_sha256": "f801c23aab63e9204796e8ff34b96f8d68ae13f6d251d3129cc7f27c6ab4c480",
+    "old_config_sha256": "a0d32f25eba09db5c5d6bfbbf3d9b905b5ac358af8c36462eb2d6ce28f86243f",
+    "replacement_config_sha256": "1e931258d2903dfec1fcfeb83eba4ccec9bd3db3d04700e3976ee2b8050dd57e",
+    "mutation_sequence": [
+      "POST invalid source rejected",
+      "POST empty prompt rejected",
+      "PATCH unknown rule rejected without create",
+      "POST initial immutable rule",
+      "POST replacement immutable rule",
+      "DELETE superseded rule by immutable identity",
+      "GET replacement-correlated incident after old delete",
+      "DELETE replacement rule"
+    ]
+  },
+  "cleanup": {
+    "exact_unrelated_state_restored": true,
+    "before_sha256": {
+      "incidents": "b9aa49848010579d584485b148f07675e2e239b20daf8fe7fc5690146ce2a242",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "after_sha256": {
+      "incidents": "b9aa49848010579d584485b148f07675e2e239b20daf8fe7fc5690146ce2a242",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "owned_incidents_deleted": 1,
+    "owned_raw_index_absent": true,
+    "owned_artifacts_absent": true,
+    "publisher_stopped": true,
+    "running_container_set_preserved": true,
+    "running_container_count": 38
+  }
+}

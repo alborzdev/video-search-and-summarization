@@ -22,6 +22,7 @@ block the asyncio event loop. A single client instance is reused across
 calls (one TCP connection pool per :class:`RTVIVLMClient` instance).
 """
 
+import asyncio
 import copy
 import logging
 import re
@@ -60,7 +61,8 @@ class RTVIVLMClient:
     - GET    /streams/get-stream-info           — List registered live streams
     - DELETE /streams/delete/{stream_id}        — Remove a live stream
     - POST   /generate_captions                 — Start caption generation
-    - DELETE /generate_captions/{stream_id}     — Stop caption generation
+    - DELETE /generate_captions/requests/{id}   — Stop one caption request
+    - DELETE /generate_captions/{stream_id}     — Stop all captions for stream
     - GET    /ready                             — Health check
     """
 
@@ -205,6 +207,7 @@ class RTVIVLMClient:
         media_info: Optional[Dict[str, Any]] = None,
         enable_audio: Optional[bool] = None,
         mm_processor_kwargs: Optional[Dict[str, Any]] = None,
+        request_id_future: Optional["asyncio.Future[str]"] = None,
     ) -> Dict[str, Any]:
         """POST to /generate_captions with stream=true to trigger VLM analysis.
 
@@ -245,17 +248,54 @@ class RTVIVLMClient:
 
         logger.info("Calling RTVI VLM generate_captions: %s (stream_id=%s)", url, stream_id)
         logger.debug("generate_captions payload: %s", payload)
-        resp = await self._client.post(
-            url, json=payload, timeout=max(self.timeout, 120),
+        # ``generate_captions`` is an SSE response that remains open for the
+        # lifetime of the rule.  Streaming the response is essential: a
+        # regular ``post`` buffers until disconnect and therefore hides the
+        # request-scoped identity returned in the response headers.  Alert
+        # Bridge persists that identity so deleting one of several rules on
+        # the same camera aborts only that rule's VLM worker.
+        stream_timeout = httpx.Timeout(
+            max(self.timeout, 120),
+            read=None,
         )
-        if not resp.is_success:
-            logger.error(
-                "RTVI generate_captions returned %s: %s",
-                resp.status_code,
-                resp.text,
-            )
+        async with self._client.stream(
+            "POST", url, json=payload, timeout=stream_timeout,
+        ) as resp:
+            if not resp.is_success:
+                await resp.aread()
+                logger.error(
+                    "RTVI generate_captions returned %s: %s",
+                    resp.status_code,
+                    resp.text,
+                )
+            resp.raise_for_status()
+
+            request_id = resp.headers.get("x-request-id")
+            if not request_id:
+                raise httpx.RemoteProtocolError(
+                    "RTVI generate_captions response did not include x-request-id"
+                )
+            if request_id_future is not None and not request_id_future.done():
+                request_id_future.set_result(request_id)
+
+            async for _ in resp.aiter_bytes():
+                pass
+
+        return {
+            "status": "started",
+            "stream_id": stream_id,
+            "request_id": request_id,
+        }
+
+    async def stop_caption_request(self, request_id: str) -> Dict[str, Any]:
+        """Abort one exact caption request without affecting stream siblings."""
+        url = f"{self.base_url}/generate_captions/requests/{request_id}"
+        logger.info("Calling RTVI VLM exact caption-request abort: %s", url)
+        resp = await self._client.delete(url, timeout=max(self.timeout, 120))
         resp.raise_for_status()
-        return {"status": "started", "stream_id": stream_id}
+        if resp.text.strip():
+            return resp.json()
+        return {"status": "stopped", "request_id": request_id}
 
     async def stop_captions(self, stream_id: str) -> Dict[str, Any]:
         """DELETE /generate_captions/{stream_id} to stop caption generation."""
