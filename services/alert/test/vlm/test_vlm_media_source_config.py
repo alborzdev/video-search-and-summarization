@@ -210,6 +210,36 @@ class TestDirectMediaHandlerConfig:
         )
         assert handler.vlm_media_source_using_base64 is False
 
+    def test_thor_environment_can_force_inline_media(self, monkeypatch):
+        from handlers.direct_media.direct_media_handler import DirectMediaHandler
+
+        monkeypatch.setenv("ALERT_VLM_MEDIA_SOURCE_USING_BASE64", "true")
+        handler = DirectMediaHandler(
+            vlm_client=MagicMock(),
+            vlm_enhanced_event_sink=MagicMock(),
+            config={
+                "vlm": {"vlm_media_source_using_base64": False},
+                "alert_agent": {"media_download": {}},
+                "vst_config": {},
+            },
+        )
+        assert handler.vlm_media_source_using_base64 is True
+
+    def test_invalid_environment_override_fails_closed(self, monkeypatch):
+        from handlers.direct_media.direct_media_handler import DirectMediaHandler
+
+        monkeypatch.setenv("ALERT_VLM_MEDIA_SOURCE_USING_BASE64", "sometimes")
+        with pytest.raises(ValueError, match="must be a boolean"):
+            DirectMediaHandler(
+                vlm_client=MagicMock(),
+                vlm_enhanced_event_sink=MagicMock(),
+                config={
+                    "vlm": {},
+                    "alert_agent": {"media_download": {}},
+                    "vst_config": {},
+                },
+            )
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

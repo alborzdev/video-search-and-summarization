@@ -589,6 +589,10 @@ services:
       # The local JSON verifier must produce confirmed/rejected incidents;
       # upstream keeps direct-media parsing in freestyle mode by default.
       ALERT_DIRECT_MEDIA_USE_VERDICT: "true"
+      # The local VLM endpoint enforces SSRF protection and cannot fetch the
+      # loopback/private media URLs used by Alert Bridge. Download in Alert
+      # Bridge and send an inline data URL instead.
+      ALERT_VLM_MEDIA_SOURCE_USING_BASE64: "true"
 
   # Stored-caption Q&A uses the graph backend selected by NVIDIA's LVS 3.2.1
   # config. Keep the authenticated Community instance strictly on loopback;

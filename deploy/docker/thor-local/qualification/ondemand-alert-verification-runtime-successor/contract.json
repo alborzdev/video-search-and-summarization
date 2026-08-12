@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "package_id": "ondemand-alert-verification-runtime-successor",
+  "capability_id": "manifest-entry.alert-verification.04-on-demand-verification",
+  "official_indices": [325],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "79faf59350bdd2ebc3ad32b6f54bcd08ca0dd549984ac20f0da45cf0dda632b0"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_ONDEMAND_ALERT_VERIFICATION",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_local_endpoints_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "exact_external_state_cleanup_required": true,
+    "minimum_free_bytes": 10737418240,
+    "terminal_poll_attempts": 90,
+    "terminal_poll_seconds": 1,
+        "cancellation_settle_seconds": 20,
+        "expected_rtvlm_publications": 2,
+        "maximum_duration_seconds": 180
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "bytes": 2575454,
+    "duration_seconds": 10,
+    "semantic_oracle": "one or more people visibly wearing bright yellow high-visibility vests and yellow hard hats in a warehouse aisle"
+  },
+  "runtime": {
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:c4200659cb6766ac4a4542268c9b0fd354e412a6ca8237fe63862b9128849184"
+      },
+      "vss-rtvi-vlm": {
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+      }
+    }
+  },
+  "required_runtime_proof": [
+    "submit operator-owned media directly to the on-demand verification API without the real-time candidate consumer",
+    "receive a server-generated job ID and poll it to a deterministic completed, verified, confirmed terminal verdict",
+    "persist and read the exact correlated verdict through the configured local Elasticsearch sink with an acknowledged receipt",
+    "accept pre-publish cancellation for an independent job and prove that it produces no sink document",
+    "reject an unknown category before allocating a job",
+        "remove uniquely tagged RT-VLM backend publications created by the qualification requests",
+        "restore the exact pre-existing config, incident, realtime-rule, RT-VLM-stream, and running-container projections"
+  ],
+    "source_locks": [
+        {
+            "path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/harness.py",
+            "sha256": "348c58542e3d3abead48986a60423c2f74d9d8ca22bff7152b8e90e0f5b94793"
+        },
+        {
+      "path": "services/alert/handlers/direct_media/direct_media_handler.py",
+      "sha256": "961a7d67003b5c73de4cc9606c41ad23e60507c7e1538320dfed2e3f1c3e4409",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/handlers/direct_media/direct_media_handler.py"
+    },
+    {
+      "path": "services/alert/handlers/direct_media/media_analyzer.py",
+      "sha256": "7881f9f1a0e209cb6a06692d56f5c3d3a8d4f3a86ab8669159f1964ff7332002",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/handlers/direct_media/media_analyzer.py"
+    },
+    {
+      "path": "services/alert/vlm/vlm_client.py",
+      "sha256": "81bb482256c4b84f89ce9410f34201027fa30c9930eeb3c7bff744453a57be1a",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/vlm/vlm_client.py"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/service/ondemand_verification_service.py",
+      "sha256": "a17cf630af890cf3417ecb294468c4dc5bb14de941dfbf4e21b91b37da62e6d1",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/alert-agent-web/app/service/ondemand_verification_service.py"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/service/terminal_job_store.py",
+      "sha256": "e2bd209a442aa9acce8b14525ca8525927cd85b9fa3aba119889e4a3c0e862c7",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/alert-agent-web/app/service/terminal_job_store.py"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/api/verification_routes.py",
+      "sha256": "17fc24551c4c7651923917caa51cf52371237760d1b4f6900dfbef8e28980386",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/alert-agent-web/app/api/verification_routes.py"
+    },
+    {
+      "path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py",
+      "sha256": "51802fbe9dba4b97ef45ed44707058f05fad00f32ee49f020e4f10f313f782c0",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py"
+    },
+    {
+      "path": "services/alert/elastic/elastic.py",
+      "sha256": "7e570ce20a52115269daab0e3744437fbcb010e0b3953929a8576ca38ca64d43"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "72ccfd941847359d1ee502d80aee221f1f1b8edfbf35e85d0ad1fec9357daacb"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
+      "sha256": "f4b5adf99e67c8a88207ee17c5bd9546768c6334b05d6016f35083f679d21ae5"
+    }
+  ]
+}

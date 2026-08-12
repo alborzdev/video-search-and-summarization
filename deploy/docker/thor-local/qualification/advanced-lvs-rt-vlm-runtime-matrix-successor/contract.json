@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-41",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-42",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -485,6 +485,40 @@
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 325,
+      "capability_id": "manifest-entry.alert-verification.04-on-demand-verification",
+      "advertised_literal": "on-demand verification",
+      "package_id": "ondemand-alert-verification-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/contract.json",
+      "contract_sha256": "1b2cf51332ad56116f50576ed5a5a0990e9abeb48d6cb1c980d11e239a0fad3f",
+      "receipt_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "bcb4a6f003f358f08bdb87d0e33cc61c695683b7b1bfcc080812da0261a508a8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "38f02cc160b59cc18559b0e34c042b930720f7d1e176499db4ea09acb26d3302",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/run/agent_generate_request_count": 0,
+        "/run/numeric_local_endpoints_only": true,
+        "/run/warehouse_sample_bundle": "excluded",
+        "/positive/server_generated_job_id": true,
+        "/positive/terminal_state": "completed",
+        "/positive/processing_outcome": "verified",
+        "/positive/verdict": "confirmed",
+        "/positive/sink_outcome": "acknowledged",
+        "/cancellation/cancellation_accepted": true,
+        "/cancellation/terminal_state": "cancelled",
+        "/cancellation/sink_hit_count": 0,
+        "/negative/error": "unknown_category",
+        "/cleanup/before_sha256": "6780abd208fc3977cbdce748ded350643bbf5599b8fb85dfe282f0af7ba1680b",
+        "/cleanup/after_sha256": "6780abd208fc3977cbdce748ded350643bbf5599b8fb85dfe282f0af7ba1680b",
+        "/cleanup/owned_incident_documents_deleted": 1,
+        "/cleanup/owned_rtvlm_documents_deleted": 2,
+        "/cleanup/owned_config_absent": true,
+        "/cleanup/owned_sink_documents_absent": true,
+        "/cleanup/running_container_set_preserved": true
       }
     },
     {

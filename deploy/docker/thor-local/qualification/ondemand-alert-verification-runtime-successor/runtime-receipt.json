@@ -1,0 +1,101 @@
+{
+  "cancellation": {
+    "cancellation_accepted": true,
+    "correlation_id_sha256": "f6f7866795095a79d26e699885a25aedb9bf77221c6cbf3927abdd0acda4127d",
+    "delete_http_status": 202,
+    "event_id_sha256": "0a83867c7a7f920994394f4da7afd745f9f98328ea1c2a6171995f76b9d15ff1",
+    "result_absent": true,
+    "settle_seconds": 20,
+    "sink_hit_count": 0,
+    "status_url_sha256": "efaa395a3f62211423e107fc948ed277bcd3f3452587a567d8556a04bbc9739d",
+    "terminal_state": "cancelled"
+  },
+  "capability_id": "manifest-entry.alert-verification.04-on-demand-verification",
+  "cleanup": {
+    "after_sha256": "6780abd208fc3977cbdce748ded350643bbf5599b8fb85dfe282f0af7ba1680b",
+    "before_sha256": "6780abd208fc3977cbdce748ded350643bbf5599b8fb85dfe282f0af7ba1680b",
+    "config_count_after": 1,
+    "config_count_before": 1,
+    "fixture_server_stopped": true,
+    "incident_count_after": 19,
+    "incident_count_before": 19,
+    "owned_config_absent": true,
+    "owned_incident_documents_deleted": 1,
+    "owned_rtvlm_documents_deleted": 2,
+    "owned_sink_documents_absent": true,
+    "running_container_count": 38,
+    "running_container_set_preserved": true,
+    "terminal_job_delete_api_available": false,
+    "terminal_records_retained_until_ttl_or_restart": true
+  },
+  "contract_sha256": "1b2cf51332ad56116f50576ed5a5a0990e9abeb48d6cb1c980d11e239a0fad3f",
+  "fixture": {
+    "bytes": 2575454,
+    "http_get_count": 2,
+    "media_url_sha256": "a96f32ef27161eb02b3aa89d60effbabdb151f3f3fbe92a1fbc4792a375dc9a4",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "negative": {
+    "error": "unknown_category",
+    "job_id_absent": true,
+    "unknown_category_http_status": 400
+  },
+  "package_id": "ondemand-alert-verification-runtime-successor",
+  "positive": {
+    "correlation_id_sha256": "794d1a074b0efb4a38f9639a3f4f8c3f8eb1d216ee4082967a4d3a00972c5628",
+    "event_id_sha256": "a03215dbbc4172e92febddc49486de95837fc3e5778c1ae12d3f84c7360ec9c3",
+    "mapped_category_sha256": "e5afaaffb8e0e431c11283f1b5caa2ae6792e4ff97c59614959fa108eb14f4c3",
+    "persisted_source_sha256": "efa68c7514bffc06498ad0e839df8a382edd12b7d4df0ae1ed14482562349266",
+    "poll_states": [
+      "running",
+      "running",
+      "running",
+      "running",
+      "running",
+      "running",
+      "running",
+      "completed"
+    ],
+    "processing_outcome": "verified",
+    "reasoning_present": true,
+    "server_generated_job_id": true,
+    "sink_document_id_sha256": "d5d40a7fb5ba5b4a80cf40af91b2edde7a787a4897fe0ee0276bee2be4295950",
+    "sink_index_sha256": "adee7a1a83e9dc1bea92284822edc85deb5fca282ec7918470e14e2a722897c3",
+    "sink_outcome": "acknowledged",
+    "sink_transport": "elastic",
+    "status_url_sha256": "15f5a4b263a79fb621d985267bb9cae35214a53e89e47d528c367c8b72af5f5d",
+    "terminal_state": "completed",
+    "verdict": "confirmed",
+    "verification_response_code": 200
+  },
+  "run": {
+    "agent_generate_request_count": 0,
+    "completed_at": "2026-08-12T01:46:28.881380Z",
+    "duration_ms": 28789,
+    "numeric_local_endpoints_only": true,
+    "run_id_sha256": "bc829c9ec1d4e15c104789a3fd09a6aac16c83dc07d0c6b2a382d88ce0b29a23",
+    "status": "passed",
+    "warehouse_sample_bundle": "excluded"
+  },
+  "runtime": {
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:c4200659cb6766ac4a4542268c9b0fd354e412a6ca8237fe63862b9128849184",
+        "oom_killed": false,
+        "running": true
+      },
+      "vss-rtvi-vlm": {
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "oom_killed": false,
+        "running": true
+      }
+    },
+    "free_bytes_after": 20680552448,
+    "free_bytes_before": 20681621504,
+    "live_source_lock_count": 7,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "source_lock_count": 12
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

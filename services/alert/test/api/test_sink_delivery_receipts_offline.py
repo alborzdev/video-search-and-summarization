@@ -110,6 +110,22 @@ def test_elastic_concrete_index_response_is_acknowledged():
     }
 
 
+def test_elastic_object_api_response_body_is_acknowledged():
+    class _ObjectApiResponse:
+        body = {
+            "result": "updated",
+            "_id": "doc-2",
+            "_index": "events-2026",
+        }
+
+    assert VLMEnhancedElasticSink._delivery_receipt(_ObjectApiResponse()) == {
+        "transport": "elastic",
+        "outcome": "acknowledged",
+        "documentId": "doc-2",
+        "index": "events-2026",
+    }
+
+
 class _DeliveredMessage:
     def topic(self):
         return "events"

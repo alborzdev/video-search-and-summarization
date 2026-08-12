@@ -205,11 +205,18 @@ class VLMEnhancedElasticSink(VLMEnhancedSink):
             "transport": "elastic",
             "outcome": "unconfirmed",
         }
-        if not isinstance(write_result, Mapping):
+        response: Any = write_result
+        if not isinstance(response, Mapping):
+            # Elasticsearch 8.x returns ObjectApiResponse rather than a plain
+            # dict.  Its ``body`` contains the same acknowledgement mapping;
+            # normalize that wrapper without trusting arbitrary attributes as
+            # proof of delivery.
+            response = getattr(write_result, "body", None)
+        if not isinstance(response, Mapping):
             return receipt
-        document_id = write_result.get("_id")
-        index = write_result.get("_index")
-        result = write_result.get("result")
+        document_id = response.get("_id")
+        index = response.get("_index")
+        result = response.get("result")
         if (
             result in {"created", "updated", "noop"}
             and document_id is not None
