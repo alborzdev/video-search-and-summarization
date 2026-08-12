@@ -58,6 +58,45 @@ class TestListIncidentsSuccess:
         assert any(c.get("term", {}).get("sensorId.keyword") == "cam-1" for c in must)
 
     @pytest.mark.asyncio
+    async def test_alert_rule_id_filter(self, incident_service, mock_es_client):
+        rule_id = "00000000-0000-4000-8000-000000000001"
+        await incident_service.list_incidents(alert_rule_id=rule_id)
+
+        query = mock_es_client.client.search.call_args.kwargs["query"]
+        assert {"term": {"info.alertRuleId.keyword": rule_id}} in query["bool"]["must"]
+
+    @pytest.mark.asyncio
+    async def test_stream_id_filter(self, incident_service, mock_es_client):
+        await incident_service.list_incidents(stream_id="stream-1")
+
+        query = mock_es_client.client.search.call_args.kwargs["query"]
+        assert {"term": {"info.streamId.keyword": "stream-1"}} in query["bool"]["must"]
+
+    @pytest.mark.asyncio
+    async def test_every_filter_is_combined_with_must(
+        self, incident_service, mock_es_client
+    ):
+        rule_id = "00000000-0000-4000-8000-000000000001"
+        await incident_service.list_incidents(
+            alert_rule_id=rule_id,
+            stream_id="stream-1",
+            sensor_id="cam-1",
+            category="fire",
+            start_time="2025-01-01T00:00:00Z",
+            end_time="2025-01-02T00:00:00Z",
+        )
+
+        must = mock_es_client.client.search.call_args.kwargs["query"]["bool"]["must"]
+        assert {"term": {"info.alertRuleId.keyword": rule_id}} in must
+        assert {"term": {"info.streamId.keyword": "stream-1"}} in must
+        assert {"term": {"sensorId.keyword": "cam-1"}} in must
+        assert {"term": {"category.keyword": "fire"}} in must
+        assert {"range": {"timestamp": {
+            "gte": "2025-01-01T00:00:00Z",
+            "lte": "2025-01-02T00:00:00Z",
+        }}} in must
+
+    @pytest.mark.asyncio
     async def test_sensor_id_filter_uses_keyword_for_hyphenated_ids(
         self,
         incident_service,

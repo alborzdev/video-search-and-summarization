@@ -646,3 +646,10 @@ class VlmQuery(CommonBaseModel):
         description="Alert type identifier (e.g., 'Worker PPE Violation'). Used for incident.category.",
         examples=["Worker PPE Violation", "Pathway Obstruction"],
     )
+    alert_rule_id: Optional[UUID] = Field(
+        default=None,
+        description=(
+            "Stable realtime alert rule UUID. Propagated to generated incident "
+            "metadata for exact rule-scoped retrieval."
+        ),
+    )

@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-incident-retrieval-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.04-incident-retrieval",
+  "official_indices": [332],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "38dd39aad755487ea993dce4f040f1cfa2bdc638dde39f145b8f1023da7d2f42"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_REALTIME_INCIDENT_RETRIEVAL",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_local_endpoints_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "preexisting_rules_allowed": false,
+    "exact_cleanup_required": true,
+    "maximum_duration_ms": 300000
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "bytes": 2575454,
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+  },
+  "required_runtime_proof": [
+    "create one owned local RTSP rule and persist a real RT-VLM incident carrying its stable rule UUID",
+    "combine exact rule, stream, sensor, category, and start/end time filters in one retrieval",
+    "exclude four candidate-owned controls that each violate a distinct bound while returning generated evidence references",
+    "return an empty result for a valid unknown rule and reject a malformed rule UUID",
+    "restore exact unrelated rule, stream, incident, and running-container state"
+  ],
+  "source_locks": [
+    {"path": "services/alert/realtime/services/rtvi_client.py", "sha256": "92952eb35c1b93afeba55c247dde85444a92ea779105af012657935d30e6639a"},
+    {"path": "services/alert/realtime/services/realtime_service.py", "sha256": "1833dfdb120360c8cc58a68a468d0c5de0a96bdc1d06e1390f71e70e4fbe646a"},
+    {"path": "services/alert/realtime/services/incident_service.py", "sha256": "314b0236320c6ff64d308d1b822c0d61057363caf57b04f95cab175698a00782"},
+    {"path": "services/alert/alert-agent-web/app/api/realtime_routes.py", "sha256": "8107f25da5002b49314109ae9ac89b537a48f331e3c0d59184e519cd3baa7532"},
+    {"path": "services/alert/test/api/test_incident_service.py", "sha256": "4ff3956526b368f726d321c2e07c796352f1b714ecc188684f4bd7ebe20aae3d"},
+    {"path": "services/alert/test/api/test_realtime_service.py", "sha256": "d64990820d36a2115fb3a512e8b8e30c6af6532eb63dd7afdc2477b452e97cbe"},
+    {"path": "services/alert/test/api/test_realtime_routes.py", "sha256": "cd42c148e5bb45b098fbfba023237ca5a8168738b0e30f0beb249dc1a38d03e5"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/captions.py", "sha256": "7e7fc698441f6702fb43fb4f064c976e9520fdffb238dd0155abc464fc5b7692"},
+    {"path": "services/rtvi/rt-vlm/src/api_models/live_stream.py", "sha256": "569c34990905cab6c0b6f78fab95332d0a4d540fe342652fde52974e064593dc"},
+    {"path": "services/rtvi/rt-vlm/src/utils/asset_manager.py", "sha256": "2024514002f652dda4af41378030282f54e410d518eeaff2d27965291a167860"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py", "sha256": "a160cd74f7f645a7610bdb0a56424749d2b5a157187188eb93d961c49d1e4118"},
+    {"path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py", "sha256": "7eca96161a3d5dd92665be6c10487832f273dabca05ed08be4341a340a439188"},
+    {"path": "services/rtvi/rt-vlm/tests/rtvi_vlm/test_rtvi_vlm_server.py", "sha256": "8999c2d9f269b6d5d23e764ca08fc2dbe6462101188ab67baec20c44e2f2e8b0"},
+    {"path": "services/rtvi/rt-vlm/tests/rtvi_vlm/test_rtvi_stream_handler.py", "sha256": "927286d194d0f1fa3a1335eb4a5e71f63c04ce6fb491854f692c92be8fe9cb45"},
+    {"path": "deploy/docker/thor-local/Dockerfile.alert-bridge", "sha256": "f4b5adf99e67c8a88207ee17c5bd9546768c6334b05d6016f35083f679d21ae5"},
+    {"path": "deploy/docker/thor-local/official-edge/compose.yml", "sha256": "f271e17f11bc3550e3fba853be9902b55c629f6f56e0be37bf78bee84ab9e88d"},
+    {"path": "deploy/docker/thor-local/qualification/realtime-alert-incident-retrieval-runtime-successor/harness.py", "sha256": "f844fc3584d14a29e9ca009f7fbf6687c6442861d7e01d3b44803631ee78868b"},
+    {"path": "services/alert/warmup/test.mp4", "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"}
+  ]
+}

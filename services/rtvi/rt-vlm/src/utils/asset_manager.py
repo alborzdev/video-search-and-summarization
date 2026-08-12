@@ -1277,19 +1277,6 @@ class AssetManager:
         Returns:
             A unique id for the asset.
         """
-        if camera_id:
-            existing_asset_id = self._camera_id_map.get(camera_id)
-            if existing_asset_id and existing_asset_id in self._asset_map:
-                raise ServiceException(
-                    f"Live stream with camera_id '{camera_id}' already exists",
-                    "DuplicateCameraId",
-                    409,
-                )
-            if existing_asset_id:
-                # Defensive cleanup for stale camera_id mappings left by an
-                # interrupted or legacy cleanup path.
-                self._camera_id_map.pop(camera_id, None)
-
         if stream_id:
             asset_id = str(stream_id)
             if asset_id in self._asset_map:
@@ -1303,6 +1290,25 @@ class AssetManager:
             asset_id = str(uuid.uuid4())
             while asset_id in self._asset_map:
                 asset_id = str(uuid.uuid4())
+
+        # Check the endpoint-native stream identity first.  The legacy
+        # ``/streams/add`` API intentionally uses the caller's UUID for both
+        # ``stream_id`` and ``camera_id`` so emitted nv-schema records retain
+        # stable sensor identity.  Keeping stream-id precedence preserves the
+        # API's established ``DuplicateStreamId`` response for that case,
+        # while CV-only callers still receive ``DuplicateCameraId``.
+        if camera_id:
+            existing_asset_id = self._camera_id_map.get(camera_id)
+            if existing_asset_id and existing_asset_id in self._asset_map:
+                raise ServiceException(
+                    f"Live stream with camera_id '{camera_id}' already exists",
+                    "DuplicateCameraId",
+                    409,
+                )
+            if existing_asset_id:
+                # Defensive cleanup for stale camera_id mappings left by an
+                # interrupted or legacy cleanup path.
+                self._camera_id_map.pop(camera_id, None)
 
         # No directory needed for live streams since there's no file to store
         asset = Asset(

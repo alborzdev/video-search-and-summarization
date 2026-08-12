@@ -1318,6 +1318,7 @@ class RTVIServer:
             "enable_reasoning",
             "enable_audio",
             "alert_category",
+            "alert_rule_id",
             "mm_processor_kwargs",
         ]
         for field in optional_fields:
@@ -2250,6 +2251,12 @@ class RTVIServer:
                         place_coordinate_y=query.place_coordinate_y,
                         stream_id=query.id,
                         sensor_name=query.sensor_name,
+                        # The legacy API's optional id is the external sensor
+                        # UUID supplied by VIOS / Alert Bridge.  Preserve it
+                        # as camera identity as well as RTVI stream identity
+                        # so nv-schema incidents use the stable sensor UUID
+                        # rather than a human-readable sensor_name fallback.
+                        camera_id=str(query.id) if query.id else None,
                     )
 
                     # Cache video FPS in the asset if media info was retrieved

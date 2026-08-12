@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-incident-retrieval-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.04-incident-retrieval",
+  "contract_sha256": "93a4cbd0162fe54b0c3d52e6f96efafa6ca39519587ce5b419762595fd0b98a2",
+  "status": "passed",
+  "run": {
+    "duration_ms": 26476,
+    "fixture_bytes": 2575454,
+    "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "numeric_local_endpoints_only": true,
+    "agent_generate_request_count": 0
+  },
+  "retrieval": {
+    "rule_identity_propagated": true,
+    "generated_incident_count": 1,
+    "control_incident_count": 4,
+    "all_bound_result_count": 1,
+    "all_filters_combined": true,
+    "stable_incident_and_rule_identity": true,
+    "evidence_references_only_for_matching_records": true,
+    "unknown_rule_returns_empty": true,
+    "malformed_rule_rejected": true,
+    "filter_names": [
+      "alert_rule_id",
+      "stream_id",
+      "sensor_id",
+      "category",
+      "start_time",
+      "end_time"
+    ],
+    "rule_identity_sha256": "fc7e36cab683ac3557efe9c2c06a6cf57e70331cb8b3b8c830a319efe0d15b7f",
+    "stream_identity_sha256": "05dacd13ce03d74c12039546c0b0d0103be467664242d1aec1beb3a597639694",
+    "mutation_sequence": [
+      "POST /api/v1/realtime",
+      "PUT four owned Elasticsearch control incidents",
+      "GET /api/v1/realtime/incidents all bounds",
+      "DELETE /api/v1/realtime/{owned-rule}",
+      "DELETE owned incident documents"
+    ]
+  },
+  "cleanup": {
+    "exact_unrelated_state_restored": true,
+    "before_sha256": {
+      "incidents": "cec0bbdd4ec691fab262f090fdc6fa7d08b826eef961d78fe81c2f274a84c568",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "after_sha256": {
+      "incidents": "cec0bbdd4ec691fab262f090fdc6fa7d08b826eef961d78fe81c2f274a84c568",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "owned_artifacts_absent": true,
+    "publisher_stopped": true,
+    "running_container_set_preserved": true,
+    "running_container_count": 38
+  }
+}

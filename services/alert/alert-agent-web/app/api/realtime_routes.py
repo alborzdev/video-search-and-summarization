@@ -544,8 +544,9 @@ async def delete_realtime_alert(
     response_model=IncidentListResponse,
     summary="List incidents from Elasticsearch",
     description=(
-        "Query incidents from Elasticsearch with optional filtering by sensor_id, "
-        "category, and time range. Supports pagination via limit and offset."
+        "Query incidents from Elasticsearch with optional exact filtering by "
+        "alert_rule_id, stream_id, sensor_id, category, and time range. "
+        "All supplied filters are combined. Supports pagination via limit and offset."
     ),
     responses={
         200: {"description": "Incidents list", "model": IncidentListResponse},
@@ -555,6 +556,14 @@ async def delete_realtime_alert(
     },
 )
 async def list_incidents(
+    alert_rule_id: Optional[UUID] = Query(
+        default=None,
+        description="Filter by the stable realtime alert rule UUID",
+    ),
+    stream_id: Optional[str] = Query(
+        default=None,
+        description="Filter by RT-VLM stream ID",
+    ),
     sensor_id: Optional[str] = Query(
         default=None,
         description="Filter by sensor ID",
@@ -585,13 +594,18 @@ async def list_incidents(
     service: IncidentService = Depends(get_incident_service),
 ):
     logger.info(
-        "GET /api/v1/realtime/incidents — sensor_id=%s category=%s limit=%d offset=%d",
+        "GET /api/v1/realtime/incidents — alert_rule_id=%s stream_id=%s "
+        "sensor_id=%s category=%s limit=%d offset=%d",
+        alert_rule_id,
+        stream_id,
         sensor_id,
         category,
         limit,
         offset,
     )
     response_data, status_code = await service.list_incidents(
+        alert_rule_id=str(alert_rule_id) if alert_rule_id else None,
+        stream_id=stream_id,
         sensor_id=sensor_id,
         category=category,
         start_time=start_time.isoformat() if start_time else None,

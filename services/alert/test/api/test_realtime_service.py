@@ -177,6 +177,10 @@ class TestStartAlert:
         assert "created_at" in data
         mock_rtvi_client.start_stream.assert_awaited_once()
         mock_rtvi_client.generate_captions.assert_awaited_once()
+        assert (
+            mock_rtvi_client.generate_captions.await_args.kwargs["alert_rule_id"]
+            == data["id"]
+        )
 
     @pytest.mark.asyncio
     async def test_rule_registered_after_create(self, realtime_service):
@@ -797,6 +801,26 @@ class TestRTVIVLMClientGenerateCaptions:
         _, kwargs = client._client.post.call_args
         payload = kwargs["json"]
         assert payload["alert_category"] == "Worker PPE Violation"
+
+    @pytest.mark.asyncio
+    async def test_alert_rule_id_included_when_set(self):
+        """Stable rule identity is forwarded into the RT-VLM request."""
+        from unittest.mock import AsyncMock, MagicMock
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        client = RTVIVLMClient("http://rtvi")
+        mock_resp = MagicMock()
+        mock_resp.raise_for_status = MagicMock()
+        client._client = AsyncMock()
+        client._client.post.return_value = mock_resp
+        rule_id = "00000000-0000-4000-8000-000000000001"
+
+        await client.generate_captions(
+            stream_id="s", prompt="p", model="m", alert_rule_id=rule_id,
+        )
+
+        payload = client._client.post.call_args.kwargs["json"]
+        assert payload["alert_rule_id"] == rule_id
 
 
 class TestRTVIVLMClientTeardown:

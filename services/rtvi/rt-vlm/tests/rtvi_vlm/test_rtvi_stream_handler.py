@@ -35,6 +35,7 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 
 from common.chunk_info import ChunkInfo
+from api_models.captions import VlmQuery
 from models.base_vlm_model import VlmModelOutput
 from server.rtvi_stream_handler import (
     RequestInfo,
@@ -702,6 +703,57 @@ class TestKafkaIntegration:
         assert incident is not None
         assert incident.info["reasoning"] == "The person crosses the marked boundary."
         assert incident.info["reasoningDescription"] == "The person crosses the marked boundary."
+
+    def test_incident_carries_stable_alert_rule_identity(self, stream_handler):
+        """The rule UUID survives through protobuf metadata used by Elasticsearch."""
+        asset_id = uuid.UUID("00000000-0000-4000-8000-000000000010")
+        rule_id = uuid.UUID("00000000-0000-4000-8000-000000000011")
+        asset = Asset(
+            asset_id=str(asset_id),
+            path="rtsp://example.com/warehouse",
+            purpose="",
+            media_type="",
+            asset_dir="",
+            camera_id="cam-rule-test",
+        )
+        req_info = RequestInfo(
+            request_id="request-rule-identity",
+            assets=[asset],
+            is_live=True,
+            query=VlmQuery(
+                id=asset_id,
+                prompt="Is a person visible?",
+                model="test-model",
+                stream=True,
+                alert_category="person_visible",
+                alert_rule_id=rule_id,
+            ),
+        )
+        chunk = ChunkInfo(
+            file=asset.path,
+            chunkIdx=7,
+            start_pts=0,
+            end_pts=1_000_000_000,
+        )
+        chunk.streamId = str(asset_id)
+        chunk_result = PipelineChunkResult(
+            chunk=chunk,
+            vlm_model_output=VlmModelOutput(
+                output="Yes",
+                input_tokens=4,
+                output_tokens=1,
+            ),
+            frame_times=[0.0],
+        )
+
+        vision_llm, incident = stream_handler._chunk_result_to_vision_llm(
+            chunk_result, req_info
+        )
+
+        assert incident is not None
+        assert incident.info["alertRuleId"] == str(rule_id)
+        assert incident.analyticsModule.info["alertRuleId"] == str(rule_id)
+        assert vision_llm.llm.queries[0].params["alertRuleId"] == str(rule_id)
 
 
 class TestUtilityMethods:

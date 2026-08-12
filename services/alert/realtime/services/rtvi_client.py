@@ -184,6 +184,7 @@ class RTVIVLMClient:
         chunk_duration: int = 30,
         chunk_overlap_duration: int = 5,
         alert_category: Optional[str] = None,
+        alert_rule_id: Optional[str] = None,
         *,
         num_frames_per_second_or_fixed_frames_chunk: int = 10,
         use_fps_for_chunking: bool = True,
@@ -230,6 +231,8 @@ class RTVIVLMClient:
         }
         if alert_category:
             payload["alert_category"] = alert_category
+        if alert_rule_id:
+            payload["alert_rule_id"] = alert_rule_id
 
         # Include optional fields only when set (None → omit, let RTVI default).
         # Driven by EXTENDED_OPTIONAL_FIELDS so adding a new field to

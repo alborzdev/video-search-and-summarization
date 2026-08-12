@@ -1377,6 +1377,14 @@ class RTVIStreamHandler:
         if alert_category:
             incident.info["alertCategory"] = alert_category
 
+        alert_rule_id = None
+        if req_info.query:
+            raw = getattr(req_info.query, "alert_rule_id", None)
+            alert_rule_id = str(raw).strip() if raw else None
+        if alert_rule_id:
+            incident.info["alertRuleId"] = alert_rule_id
+            incident.analyticsModule.info["alertRuleId"] = alert_rule_id
+
         incident.llm.CopyFrom(llm_msg)
 
         stream_id = req_info.stream_id or chunk.streamId or ""
@@ -1555,6 +1563,9 @@ class RTVIStreamHandler:
             query_msg.params["endNtp"] = end_ntp_val
 
         if req_info.query:
+            alert_rule_id = getattr(req_info.query, "alert_rule_id", None)
+            if alert_rule_id:
+                query_msg.params["alertRuleId"] = str(alert_rule_id)
             # map <string, string> prompts = 3;
             if req_info.query.prompt:
                 query_msg.prompts["user"] = req_info.query.prompt

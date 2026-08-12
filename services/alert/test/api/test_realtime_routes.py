@@ -669,15 +669,19 @@ class TestGetIncidents:
 
     def test_filters_forwarded_to_service(self, client, mocks):
         """All query-string filters must reach `IncidentService.list_incidents`."""
+        rule_id = "00000000-0000-4000-8000-000000000001"
         resp = client.get(
             "/api/v1/realtime/incidents"
-            "?sensor_id=cam-1&category=fire"
+            f"?alert_rule_id={rule_id}&stream_id=stream-1"
+            "&sensor_id=cam-1&category=fire"
             "&start_time=2025-01-01T00:00:00Z"
             "&end_time=2025-01-02T00:00:00Z"
             "&limit=50&offset=10"
         )
         assert resp.status_code == 200
         kwargs = mocks["incident"].list_incidents.await_args.kwargs
+        assert kwargs["alert_rule_id"] == rule_id
+        assert kwargs["stream_id"] == "stream-1"
         assert kwargs["sensor_id"] == "cam-1"
         assert kwargs["category"] == "fire"
         assert kwargs["start_time"] == "2025-01-01T00:00:00+00:00"
@@ -688,6 +692,12 @@ class TestGetIncidents:
     def test_valid_iso_timestamp_accepted(self, client):
         resp = client.get("/api/v1/realtime/incidents?start_time=2025-01-01T00:00:00Z")
         assert resp.status_code == 200
+
+    def test_malformed_alert_rule_id_returns_422(self, client, mocks):
+        resp = client.get("/api/v1/realtime/incidents?alert_rule_id=not-a-uuid")
+
+        assert resp.status_code == 422
+        mocks["incident"].list_incidents.assert_not_awaited()
 
     def test_pagination_params(self, client):
         resp = client.get("/api/v1/realtime/incidents?limit=10&offset=5")

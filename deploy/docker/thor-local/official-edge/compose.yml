@@ -88,6 +88,8 @@ services:
       NUM_VLM_PROCS: "1"
     volumes:
       - ${THOR_OFFICIAL_COSMOS3_CACHE_ROOT:?Set the parent of the exact verified Cosmos3 NGC cache path}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/api_models/captions.py:/opt/nvidia/rtvi/rtvi/api_models/captions.py:ro
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/api_models/live_stream.py:/opt/nvidia/rtvi/rtvi/api_models/live_stream.py:ro
       - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/utils/asset_manager.py:/opt/nvidia/rtvi/rtvi/utils/asset_manager.py:ro
       - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py:/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py:ro
       - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py:/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py:ro

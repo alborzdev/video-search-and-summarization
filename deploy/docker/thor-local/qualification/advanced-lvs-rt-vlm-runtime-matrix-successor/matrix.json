@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-38",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-39",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -444,6 +444,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-always-on-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "80b03ba183a400d0d8cbfb9c5ccebafefb3631a89c52a74285798f21aeb8eea7",
         "receipt_sha256": "9076e6c1c4990541c1dc46c71b12937b1f39595739f61bc4529e124008eb5db5",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "incident retrieval",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.realtime-alerts.04-incident-retrieval",
+      "feature_id": "realtime-alerts",
+      "official_index": 332,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/realtime-alert-incident-retrieval-runtime-successor/contract.json",
+        "contract_sha256": "93a4cbd0162fe54b0c3d52e6f96efafa6ca39519587ce5b419762595fd0b98a2",
+        "package_id": "realtime-alert-incident-retrieval-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/realtime-alert-incident-retrieval-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-incident-retrieval-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "33f6b28e58a96fd1c1ea2340cbe670b2129a1118de422e91081a72cf8cf35f9a",
+        "receipt_sha256": "66f8680f51318d71fea83643bb8ee8dc576f901d3b613ccef168a5bd7c8feefd",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1732,8 +1754,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 78,
-    "row_count": 78,
+    "passed_current_thor": 79,
+    "row_count": 79,
     "warehouse_sample_bundle": "excluded"
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-38",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-39",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -546,6 +546,35 @@
         "/cleanup/owned_artifacts_absent": true,
         "/cleanup/running_container_set_preserved": true,
         "/cleanup/final_caption_worker_count": 0
+      }
+    },
+    {
+      "official_index": 332,
+      "capability_id": "manifest-entry.realtime-alerts.04-incident-retrieval",
+      "advertised_literal": "incident retrieval",
+      "package_id": "realtime-alert-incident-retrieval-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/realtime-alert-incident-retrieval-runtime-successor/contract.json",
+      "contract_sha256": "93a4cbd0162fe54b0c3d52e6f96efafa6ca39519587ce5b419762595fd0b98a2",
+      "receipt_path": "deploy/docker/thor-local/qualification/realtime-alert-incident-retrieval-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "66f8680f51318d71fea83643bb8ee8dc576f901d3b613ccef168a5bd7c8feefd",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-incident-retrieval-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "33f6b28e58a96fd1c1ea2340cbe670b2129a1118de422e91081a72cf8cf35f9a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/run/agent_generate_request_count": 0,
+        "/retrieval/rule_identity_propagated": true,
+        "/retrieval/generated_incident_count": 1,
+        "/retrieval/control_incident_count": 4,
+        "/retrieval/all_bound_result_count": 1,
+        "/retrieval/all_filters_combined": true,
+        "/retrieval/stable_incident_and_rule_identity": true,
+        "/retrieval/evidence_references_only_for_matching_records": true,
+        "/retrieval/unknown_rule_returns_empty": true,
+        "/retrieval/malformed_rule_rejected": true,
+        "/cleanup/exact_unrelated_state_restored": true,
+        "/cleanup/owned_artifacts_absent": true,
+        "/cleanup/publisher_stopped": true,
+        "/cleanup/running_container_set_preserved": true
       }
     },
     {

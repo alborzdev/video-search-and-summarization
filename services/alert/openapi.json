@@ -275,9 +275,46 @@
                     "realtime"
                 ],
                 "summary": "List incidents from Elasticsearch",
-                "description": "Query incidents from Elasticsearch with optional filtering by sensor_id, category, and time range. Supports pagination via limit and offset.",
+                "description": "Query incidents from Elasticsearch with optional exact filtering by alert_rule_id, stream_id, sensor_id, category, and time range. All supplied filters are combined. Supports pagination via limit and offset.",
                 "operationId": "list_incidents_api_v1_realtime_incidents_get",
                 "parameters": [
+                    {
+                        "name": "alert_rule_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string",
+                                    "format": "uuid"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter by the stable realtime alert rule UUID",
+                            "title": "Alert Rule Id"
+                        },
+                        "description": "Filter by the stable realtime alert rule UUID"
+                    },
+                    {
+                        "name": "stream_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Filter by RT-VLM stream ID",
+                            "title": "Stream Id"
+                        },
+                        "description": "Filter by RT-VLM stream ID"
+                    },
                     {
                         "name": "sensor_id",
                         "in": "query",

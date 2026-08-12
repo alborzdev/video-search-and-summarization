@@ -71,6 +71,8 @@ class IncidentService:
 
     async def list_incidents(
         self,
+        alert_rule_id: Optional[str] = None,
+        stream_id: Optional[str] = None,
         sensor_id: Optional[str] = None,
         category: Optional[str] = None,
         start_time: Optional[str] = None,
@@ -81,6 +83,8 @@ class IncidentService:
         """Query incidents from Elasticsearch."""
         now = datetime.now(timezone.utc).isoformat()
         ctx = {
+            "alert_rule_id": alert_rule_id,
+            "stream_id": stream_id,
             "sensor_id": sensor_id,
             "category": category,
             "limit": limit,
@@ -98,6 +102,14 @@ class IncidentService:
         t0 = time.monotonic()
         try:
             must_clauses = []
+
+            if alert_rule_id:
+                must_clauses.append(
+                    {"term": {"info.alertRuleId.keyword": alert_rule_id}}
+                )
+
+            if stream_id:
+                must_clauses.append({"term": {"info.streamId.keyword": stream_id}})
 
             if sensor_id:
                 must_clauses.append({"term": {"sensorId.keyword": sensor_id}})

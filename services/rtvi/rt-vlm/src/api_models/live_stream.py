@@ -564,6 +564,13 @@ class StreamMetadata(CommonBaseModel):
         pattern=ANY_CHAR_PATTERN,
         description="Alert category. Not used by RTVI Embed.",
     )
+    alert_rule_id: Optional[UUID] = Field(
+        default=None,
+        description=(
+            "Stable realtime alert rule UUID. Propagated to VLM incident metadata; "
+            "not used by RTVI Embed."
+        ),
+    )
     mm_processor_kwargs: Optional[dict] = Field(
         default=None, description="Extra multimodal processor kwargs. Not used by RTVI Embed."
     )

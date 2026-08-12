@@ -347,11 +347,13 @@ class TestLiveStreamEndpoints:
         assert "deleted" in data
         assert "errors" in data
 
-    def test_add_live_stream_rejects_duplicate_stream_id(self, monkeypatch, test_client):
-        """POST /v1/streams/add must reject duplicate caller-provided stream IDs."""
-        import server.rtvi_vlm_server as rtvi_vlm_server
+    def test_add_live_stream_rejects_duplicate_stream_id(
+        self, monkeypatch, test_client, rtvi_server
+    ):
+        """Caller UUID is stable stream/camera identity and remains unique."""
+        import server.rtvi_vlm_server as server_module
 
-        monkeypatch.setattr(rtvi_vlm_server, "_SKIP_INPUT_MEDIA_VERIFICATION", False)
+        monkeypatch.setattr(server_module, "_SKIP_INPUT_MEDIA_VERIFICATION", False)
         stream_id = str(uuid.uuid4())
         body = {
             "streams": [
@@ -366,6 +368,9 @@ class TestLiveStreamEndpoints:
         first_response = test_client.post(f"{API_PREFIX}/streams/add", json=body)
         assert first_response.status_code == 200
         assert first_response.json()["results"] == [{"id": stream_id}]
+        asset = rtvi_server._asset_manager.get_asset(stream_id)
+        assert asset.asset_id == stream_id
+        assert asset.camera_id == stream_id
 
         duplicate_response = test_client.post(f"{API_PREFIX}/streams/add", json=body)
         assert duplicate_response.status_code == 200

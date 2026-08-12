@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Thor realtime alert incident retrieval receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "capability_id", "contract_sha256", "status", "run", "retrieval", "cleanup"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "realtime-alert-incident-retrieval-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.realtime-alerts.04-incident-retrieval"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "status": {"const": "passed"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duration_ms", "fixture_bytes", "fixture_sha256", "numeric_local_endpoints_only", "agent_generate_request_count"],
+      "properties": {
+        "duration_ms": {"type": "integer", "minimum": 1, "maximum": 300000},
+        "fixture_bytes": {"const": 2575454},
+        "fixture_sha256": {"const": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"},
+        "numeric_local_endpoints_only": {"const": true},
+        "agent_generate_request_count": {"const": 0}
+      }
+    },
+    "retrieval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_identity_propagated", "generated_incident_count", "control_incident_count", "all_bound_result_count", "all_filters_combined", "stable_incident_and_rule_identity", "evidence_references_only_for_matching_records", "unknown_rule_returns_empty", "malformed_rule_rejected", "filter_names", "rule_identity_sha256", "stream_identity_sha256", "mutation_sequence"],
+      "properties": {
+        "rule_identity_propagated": {"const": true},
+        "generated_incident_count": {"type": "integer", "minimum": 1},
+        "control_incident_count": {"const": 4},
+        "all_bound_result_count": {"type": "integer", "minimum": 1},
+        "all_filters_combined": {"const": true},
+        "stable_incident_and_rule_identity": {"const": true},
+        "evidence_references_only_for_matching_records": {"const": true},
+        "unknown_rule_returns_empty": {"const": true},
+        "malformed_rule_rejected": {"const": true},
+        "filter_names": {"const": ["alert_rule_id", "stream_id", "sensor_id", "category", "start_time", "end_time"]},
+        "rule_identity_sha256": {"$ref": "#/$defs/sha256"},
+        "stream_identity_sha256": {"$ref": "#/$defs/sha256"},
+        "mutation_sequence": {
+          "const": [
+            "POST /api/v1/realtime",
+            "PUT four owned Elasticsearch control incidents",
+            "GET /api/v1/realtime/incidents all bounds",
+            "DELETE /api/v1/realtime/{owned-rule}",
+            "DELETE owned incident documents"
+          ]
+        }
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exact_unrelated_state_restored", "before_sha256", "after_sha256", "owned_artifacts_absent", "publisher_stopped", "running_container_set_preserved", "running_container_count"],
+      "properties": {
+        "exact_unrelated_state_restored": {"const": true},
+        "before_sha256": {"$ref": "#/$defs/stateDigests"},
+        "after_sha256": {"$ref": "#/$defs/stateDigests"},
+        "owned_artifacts_absent": {"const": true},
+        "publisher_stopped": {"const": true},
+        "running_container_set_preserved": {"const": true},
+        "running_container_count": {"type": "integer", "minimum": 1}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "stateDigests": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["incidents", "persisted_rules", "rules", "streams"],
+      "properties": {
+        "incidents": {"$ref": "#/$defs/sha256"},
+        "persisted_rules": {"$ref": "#/$defs/sha256"},
+        "rules": {"$ref": "#/$defs/sha256"},
+        "streams": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}
