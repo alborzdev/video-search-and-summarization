@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-40",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-41",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -485,6 +485,39 @@
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 328,
+      "capability_id": "manifest-entry.realtime-alerts.00-live-stream-vlm-rules",
+      "advertised_literal": "live-stream VLM rules",
+      "package_id": "realtime-alert-live-stream-rule-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/realtime-alert-live-stream-rule-runtime-successor/contract.json",
+      "contract_sha256": "dc8d3f4dc010c1f16821dacae479d912e7f1c8cebf37210ca26ecd2c28977d0b",
+      "receipt_path": "deploy/docker/thor-local/qualification/realtime-alert-live-stream-rule-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "4d1f79101163f3fee5cd1842979fbbe3f7e5fc0c0dc163acef02e1967857766d",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/realtime-alert-live-stream-rule-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "a88b4b03f18e45e6544c4ef2aa2efa1d6b6d1f014518021609c62e673e3574cc",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/run/agent_generate_request_count": 0,
+        "/runtime_identity/container_images_exact": true,
+        "/runtime_identity/live_sources_match_locks": true,
+        "/window_oracle/bounded_window_seconds": 4,
+        "/window_oracle/raw_window_count": 9,
+        "/window_oracle/positive_window_count": 3,
+        "/window_oracle/negative_window_count": 6,
+        "/window_oracle/positive_windows_cyclically_contiguous": true,
+        "/window_oracle/raw_incident_flags_match_verdicts": true,
+        "/window_oracle/incident_count": 3,
+        "/window_oracle/no_negative_window_emitted_alert": true,
+        "/window_oracle/only_matching_windows_emitted_alerts": true,
+        "/window_oracle/rule_stream_request_incident_correlated": true,
+        "/cleanup/exact_unrelated_state_restored": true,
+        "/cleanup/owned_raw_index_absent": true,
+        "/cleanup/owned_artifacts_absent": true,
+        "/cleanup/publisher_stopped": true,
+        "/cleanup/running_container_set_preserved": true
       }
     },
     {

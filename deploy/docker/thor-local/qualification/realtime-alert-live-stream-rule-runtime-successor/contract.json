@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-live-stream-rule-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.00-live-stream-vlm-rules",
+  "official_indices": [328],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "a61ed1d2e49dc854b7e431da2cc42c652dd8291959d9e0bc1fae20d6bf535daf"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_LIVE_STREAM_VLM_RULE",
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "numeric_local_endpoints_only": true,
+    "warehouse_sample_bundle": "excluded",
+    "preexisting_rules_allowed": false,
+    "exact_cleanup_required": true,
+    "minimum_free_bytes": 10737418240,
+    "minimum_raw_windows": 9,
+    "expected_positive_windows": 3,
+    "expected_negative_windows": 6,
+    "window_wait_seconds": 180,
+    "maximum_duration_ms": 300000
+  },
+  "fixture": {
+    "bytes": 81772,
+    "sha256": "62d0a5a3a00d6d50a440ab32540740c9c8c35cccb3bd7483684cd8c121b6c3e8",
+    "duration_seconds": 36,
+    "width": 1280,
+    "height": 720,
+    "fps": 8,
+    "phase_seconds": 12,
+    "phases": ["full-frame-blue-negative", "full-frame-green-positive", "full-frame-red-negative"],
+    "ffmpeg_path": "/usr/bin/ffmpeg",
+    "ffmpeg_sha256": "dbb8cc21c4b4e0e9bbb750cf74f7af6b023199e1b311eb2f6aec31c9722ceb88"
+  },
+  "runtime": {
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:77f17aa17447d31dcb3c4dd3016e7131361d19cea66b10bbd3f097eb9a931901"
+      },
+      "vss-rtvi-vlm": {
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+      }
+    }
+  },
+  "required_runtime_proof": [
+    "apply one natural-language rule to nine consecutive bounded four-second windows covering a complete local RTSP visual cycle",
+    "observe exactly three cyclically contiguous positive windows for the fixture's one twelve-second full-frame green phase and six negative windows for its blue and red phases",
+    "emit incidents for exactly the three matching windows and never for any of the six non-matching windows",
+    "correlate every incident to the exact rule, request, stream, sensor, category, and chunk identities",
+    "restore exact unrelated rule, stream, incident, raw-index, and running-container state"
+  ],
+  "source_locks": [
+    {
+      "path": "services/alert/realtime/services/rtvi_client.py",
+      "sha256": "d54f0f67cad7bebd90883bfd9f80bd529193a7df2c191379b47eda17a732ee15",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/realtime/services/rtvi_client.py",
+      "container_python": "/usr/local/bin/python"
+    },
+    {
+      "path": "services/alert/realtime/services/realtime_service.py",
+      "sha256": "156608ad0dd7851e057d75a268b04103bfac17e12bd50946894a8722c3efaa51",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/realtime/services/realtime_service.py",
+      "container_python": "/usr/local/bin/python"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/api/realtime_schemas.py",
+      "sha256": "5038bd5d43f2352f1485db9180913cd13d6bf5d99afd590d4ffe6aa2c02bc36a",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/alert-agent-web/app/api/realtime_schemas.py",
+      "container_python": "/usr/local/bin/python"
+    },
+    {
+      "path": "services/alert/alert-agent-web/app/api/realtime_routes.py",
+      "sha256": "8107f25da5002b49314109ae9ac89b537a48f331e3c0d59184e519cd3baa7532",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/alert-agent-web/app/api/realtime_routes.py",
+      "container_python": "/usr/local/bin/python"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py",
+      "sha256": "7eca96161a3d5dd92665be6c10487832f273dabca05ed08be4341a340a439188",
+      "container": "vss-rtvi-vlm",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/captions.py",
+      "sha256": "7e7fc698441f6702fb43fb4f064c976e9520fdffb238dd0155abc464fc5b7692",
+      "container": "vss-rtvi-vlm",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/captions.py"
+    },
+    {
+      "path": "services/alert/test/api/test_realtime_service.py",
+      "sha256": "18c1d26527b117fc8e85e3e5f7bb9b8ef182939ee8706e7c8e08340f53a2901b"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
+      "sha256": "f4b5adf99e67c8a88207ee17c5bd9546768c6334b05d6016f35083f679d21ae5"
+    },
+    {
+      "path": "deploy/docker/thor-local/official-edge/compose.yml",
+      "sha256": "f271e17f11bc3550e3fba853be9902b55c629f6f56e0be37bf78bee84ab9e88d"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/realtime-alert-live-stream-rule-runtime-successor/harness.py",
+      "sha256": "5a7d6b8a4fc9447149afd6d8aa4ab0ba0a4f752b1f5e654ed5a8627568247baf"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "package_id": "realtime-alert-live-stream-rule-runtime-successor",
+  "capability_id": "manifest-entry.realtime-alerts.00-live-stream-vlm-rules",
+  "contract_sha256": "dc8d3f4dc010c1f16821dacae479d912e7f1c8cebf37210ca26ecd2c28977d0b",
+  "status": "passed",
+  "run": {
+    "duration_ms": 77017,
+    "fixture_bytes": 81772,
+    "fixture_sha256": "62d0a5a3a00d6d50a440ab32540740c9c8c35cccb3bd7483684cd8c121b6c3e8",
+    "numeric_local_endpoints_only": true,
+    "agent_generate_request_count": 0,
+    "disk_free_before_bytes": 20722102272,
+    "disk_free_after_bytes": 20724518912
+  },
+  "runtime_identity": {
+    "container_count": 2,
+    "container_images_exact": true,
+    "containers_running": true,
+    "restart_count_zero": true,
+    "oom_killed_false": true,
+    "live_source_count": 6,
+    "live_sources_match_locks": true
+  },
+  "window_oracle": {
+    "bounded_window_seconds": 4,
+    "raw_window_count": 9,
+    "complete_visual_cycle_seconds": 36,
+    "visual_phase_seconds": 12,
+    "expected_positive_window_count": 3,
+    "expected_negative_window_count": 6,
+    "observed_match_sequence": [
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false
+    ],
+    "positive_window_indices": [
+      4,
+      5,
+      6
+    ],
+    "negative_window_indices": [
+      0,
+      1,
+      2,
+      3,
+      7,
+      8
+    ],
+    "positive_windows_cyclically_contiguous": true,
+    "positive_window_count": 3,
+    "negative_window_count": 6,
+    "raw_incident_flags_match_verdicts": true,
+    "incident_count": 3,
+    "incident_window_indices": [
+      4,
+      5,
+      6
+    ],
+    "no_negative_window_emitted_alert": true,
+    "only_matching_windows_emitted_alerts": true,
+    "rule_stream_request_incident_correlated": true,
+    "rule_identity_sha256": "97b46d52feaa37f6a556ad03f89e2ddf14c2331a6a12448b7a5bfbd2954623e8",
+    "request_identity_sha256": "0d63990a24d12152a26734ef972f8713dbe81706375d3b151d967e5be012701a",
+    "stream_identity_sha256": "f5d1233658e4921aa6feecb660af6a1c39c151854a3c5d9afc18358570e72b79",
+    "prompt_configuration_sha256": "0226a5659cd2bcde54eefdf520c4c2eb99730ff5ec439ae508c6374be8295c4e"
+  },
+  "cleanup": {
+    "exact_unrelated_state_restored": true,
+    "before_sha256": {
+      "incidents": "b9aa49848010579d584485b148f07675e2e239b20daf8fe7fc5690146ce2a242",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "after_sha256": {
+      "incidents": "b9aa49848010579d584485b148f07675e2e239b20daf8fe7fc5690146ce2a242",
+      "persisted_rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "rules": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "streams": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "owned_incidents_deleted": 3,
+    "owned_raw_index_absent": true,
+    "owned_artifacts_absent": true,
+    "publisher_stopped": true,
+    "running_container_set_preserved": true,
+    "running_container_count": 38
+  }
+}

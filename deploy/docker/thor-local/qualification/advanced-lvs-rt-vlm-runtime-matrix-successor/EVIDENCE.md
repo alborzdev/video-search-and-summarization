@@ -1,5 +1,13 @@
 # Evidence
 
+Overlay 41 adds official row 328, `live-stream VLM rules`, using the retained
+`realtime-alert-live-stream-rule-runtime-successor` receipt. One natural-
+language rule covered nine four-second windows across a complete deterministic
+blue/green/red RTSP cycle. The local Cosmos model returned exactly three
+cyclically contiguous green matches and six blue/red non-matches; only the
+three matching chunks emitted fully correlated incidents. Exact unrelated
+runtime and the 38-container running set were restored.
+
 Overlay 40 adds official row 329, `rule CRUD`, using the retained
 `realtime-alert-rule-crud-runtime-successor` receipt. Invalid prompt/source and
 unknown-update requests caused no mutation. A replacement was created with a
@@ -31,7 +39,7 @@ public API, Elasticsearch, and RT-VLM each exposed exactly one matching
 object. Exact unrelated state was restored and no Agent `/generate` call was
 made.
 
-`matrix.json` binds eighty exact VSS 3.2.1 advertised candidate rows in the selected Metadata500 ledger to schema-valid live Thor receipts. Overlay 40 adds index 329: immutable rule replacement, exact per-request teardown, correlated incident delivery, validation, negative behavior, and exact cleanup. Overlay 39 adds index 332: rule-scoped incident retrieval combined rule, stream, sensor, category, and time bounds over genuine generated evidence. Overlay 38 adds index 331: the configured always-on rule converged to one RT-VLM worker across duplicate events and Alert Bridge restart recovery, then cleanly stopped. Overlay 37 adds index 330: two successful replay cycles preserved one rule's identity, configuration, creation time, and single RT-VLM stream. Overlay 36 added index 169: the deployed Alerts View/Manage surface and a complete create, persist, render, and delete rule lifecycle using one UI-created temporary RTSP sensor. The browser submitted the canonical VIOS sensor-stream URL already registered in RT-VLM despite a different live-catalog proxy URL, produced no console error or Agent generation call, and removed all owned rule, sensor, incident, temporary-media, and stream state. Overlay 35's indices 60–63 and all earlier receipts remain unchanged.
+`matrix.json` binds eighty-one exact VSS 3.2.1 advertised candidate rows in the selected Metadata500 ledger to schema-valid live Thor receipts. Overlay 41 adds index 328: one natural-language rule discriminated nine bounded windows over a complete live blue/green/red RTSP cycle and emitted alerts only for the three matching green windows. Overlay 40 adds index 329: immutable rule replacement, exact per-request teardown, correlated incident delivery, validation, negative behavior, and exact cleanup. Overlay 39 adds index 332: rule-scoped incident retrieval combined rule, stream, sensor, category, and time bounds over genuine generated evidence. Overlay 38 adds index 331: the configured always-on rule converged to one RT-VLM worker across duplicate events and Alert Bridge restart recovery, then cleanly stopped. Overlay 37 adds index 330: two successful replay cycles preserved one rule's identity, configuration, creation time, and single RT-VLM stream. Overlay 36 added index 169: the deployed Alerts View/Manage surface and a complete create, persist, render, and delete rule lifecycle using one UI-created temporary RTSP sensor. The browser submitted the canonical VIOS sensor-stream URL already registered in RT-VLM despite a different live-catalog proxy URL, produced no console error or Agent generation call, and removed all owned rule, sensor, incident, temporary-media, and stream state. Overlay 35's indices 60–63 and all earlier receipts remain unchanged.
 
 Overlay 34 adds index 208. The released Behavior Analytics image instantiated `SinkKafka`, `SinkRedisStream`, and `SinkMQTT` through the real factory and routed frames, behaviors, events, incidents, anomalies, cluster, and space-utilization through each backend. All 21 records were observed at their exact destination, keys and headers were retained, payload bytes matched across backends, and all protobufs decoded to the expected identities. Namespaced records and disposable containers were removed while normal services remained running.
 

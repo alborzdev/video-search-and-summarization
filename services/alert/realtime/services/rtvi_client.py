@@ -107,7 +107,16 @@ class RTVIVLMClient:
         rtvi_payload: Dict[str, Any] = {"streams": [stream_entry]}
 
         logger.info("Calling RTVI VLM streams/add: %s  payload=%s", url, _redact_stream_payload(rtvi_payload))
-        resp = await self._client.post(url, json=rtvi_payload)
+        # RT-VLM validates a newly registered RTSP source before returning.
+        # Decoder startup on a busy Thor can legitimately take longer than
+        # the normal control-plane timeout; timing out here is particularly
+        # dangerous because RT-VLM may finish adding the stream after Alert
+        # Bridge has already rolled the pending rule back.  Give this
+        # lifecycle operation the same bounded allowance as other stream
+        # mutations so the caller receives the authoritative add result.
+        resp = await self._client.post(
+            url, json=rtvi_payload, timeout=max(self.timeout, 60),
+        )
         if not resp.is_success:
             logger.error(
                 "RTVI streams/add returned %s: %s",

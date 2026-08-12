@@ -843,6 +843,35 @@ class TestRTVIVLMClientTeardown:
     """RTVI teardown calls allow in-flight local VLM work to drain."""
 
     @pytest.mark.asyncio
+    async def test_start_stream_uses_decoder_startup_timeout(self):
+        from unittest.mock import AsyncMock, MagicMock
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        client = RTVIVLMClient("http://rtvi", timeout=10)
+        response = MagicMock()
+        response.is_success = True
+        response.raise_for_status = MagicMock()
+        response.json.return_value = {"results": [{"id": "stream-1"}]}
+        client._client = AsyncMock()
+        client._client.post.return_value = response
+
+        await client.start_stream({
+            "id": "stream-1", "liveStreamUrl": "rtsp://camera/live",
+        })
+
+        client._client.post.assert_awaited_once_with(
+            "http://rtvi/streams/add",
+            json={
+                "streams": [{
+                    "id": "stream-1",
+                    "liveStreamUrl": "rtsp://camera/live",
+                    "description": "",
+                }]
+            },
+            timeout=60,
+        )
+
+    @pytest.mark.asyncio
     async def test_stop_captions_uses_long_running_timeout(self):
         from unittest.mock import AsyncMock, MagicMock
         from realtime.services.rtvi_client import RTVIVLMClient
