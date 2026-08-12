@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-48",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-49",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -972,6 +972,50 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-openai-api-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "f3d3192e8ae5d05babe3467e8b255a6d5879dd0fbcdc0828b03de1ee0aff9c5c",
         "receipt_sha256": "029e617cfa8f234deeac71fdf4ef9196a7bf11742dabb9230797621da2ad23f0",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "original stream API",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-api.04-original-stream-api",
+      "feature_id": "rt-vlm-api",
+      "official_index": 351,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/contract.json",
+        "contract_sha256": "1a59e56906d0e8ece67bd0bd921edcd578f26f336ce39f60a3b3c89d1bf12c60",
+        "package_id": "rt-vlm-stream-apis-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "6fbc0d896d4056c96297e9d81fdce055939dd476532f51e2703fe370d1bd629a",
+        "receipt_sha256": "450222affc198a1ded9ad5751c81b159cc4136b8fab47b2e8055d780910f7972",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "CV-compatible stream API",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api",
+      "feature_id": "rt-vlm-api",
+      "official_index": 352,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/contract.json",
+        "contract_sha256": "1a59e56906d0e8ece67bd0bd921edcd578f26f336ce39f60a3b3c89d1bf12c60",
+        "package_id": "rt-vlm-stream-apis-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "6fbc0d896d4056c96297e9d81fdce055939dd476532f51e2703fe370d1bd629a",
+        "receipt_sha256": "450222affc198a1ded9ad5751c81b159cc4136b8fab47b2e8055d780910f7972",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1952,8 +1996,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 88,
-    "row_count": 88,
+    "passed_current_thor": 90,
+    "row_count": 90,
     "warehouse_sample_bundle": "excluded"
   }
 }

@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "package_id", "status", "capability_ids", "official_indices",
+    "contract_sha256", "run", "runtime", "authoritative_api_mapping", "publisher",
+    "original_api", "cv_compatible_api", "operations", "cleanup", "policy"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "rt-vlm-stream-apis-runtime-successor"},
+    "status": {"const": "passed"},
+    "capability_ids": {"const": [
+      "manifest-entry.rt-vlm-api.04-original-stream-api",
+      "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api"
+    ]},
+    "official_indices": {"const": [351, 352]},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "run": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id_sha256", "duration_seconds", "free_bytes_before", "free_bytes_after"],
+      "properties": {
+        "id_sha256": {"$ref": "#/$defs/sha256"},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 180},
+        "free_bytes_before": {"type": "integer", "minimum": 10737418240},
+        "free_bytes_after": {"type": "integer", "minimum": 10737418240}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["image_id", "healthy", "restart_count", "oom_killed", "network_attached",
+        "container", "endpoint_loopback", "docker_cgroup_driver", "live_source_locks_exact"],
+      "properties": {
+        "image_id": {"const": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"},
+        "healthy": {"const": true},
+        "restart_count": {"type": "integer", "minimum": 0},
+        "oom_killed": {"const": false},
+        "network_attached": {"const": true},
+        "container": {"const": "vss-rtvi-vlm"},
+        "endpoint_loopback": {"const": true},
+        "docker_cgroup_driver": {"const": "cgroupfs"},
+        "live_source_locks_exact": {"const": true}
+      }
+    },
+    "authoritative_api_mapping": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ledger_endpoint_semantics_reversed", "source_declares_original_plural",
+        "source_declares_cv_compatible_singular", "openapi_status", "openapi_sha256",
+        "stream_route_set_exact", "original_routes", "cv_compatible_routes"],
+      "properties": {
+        "ledger_endpoint_semantics_reversed": {"const": true},
+        "source_declares_original_plural": {"const": true},
+        "source_declares_cv_compatible_singular": {"const": true},
+        "openapi_status": {"const": 200},
+        "openapi_sha256": {"$ref": "#/$defs/sha256"},
+        "stream_route_set_exact": {"const": true},
+        "original_routes": {"const": [
+          "/v1/streams/add", "/v1/streams/delete-batch",
+          "/v1/streams/delete/{stream_id}", "/v1/streams/get-stream-info"
+        ]},
+        "cv_compatible_routes": {"const": [
+          "/v1/stream/add", "/v1/stream/get-stream-info", "/v1/stream/remove"
+        ]}
+      }
+    },
+    "publisher": {
+      "type": "object", "additionalProperties": false,
+      "required": ["image_id", "architecture", "network", "host_ports_published", "codec",
+        "width", "height", "publisher_running_during_calls"],
+      "properties": {
+        "image_id": {"const": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06"},
+        "architecture": {"const": "arm64"},
+        "network": {"const": "mdx_default"},
+        "host_ports_published": {"const": 0},
+        "codec": {"const": "h264"},
+        "width": {"const": 1920},
+        "height": {"const": 1080},
+        "publisher_running_during_calls": {"const": true}
+      }
+    },
+    "original_api": {
+      "type": "object", "additionalProperties": false,
+      "required": ["add_status", "single_owned_result", "stable_owned_identity",
+        "metadata_round_trip_exact", "batch_delete_status", "batch_deleted_count",
+        "batch_error_count", "batch_per_item_outcomes_exact"],
+      "properties": {
+        "add_status": {"const": 200},
+        "single_owned_result": {"const": true},
+        "stable_owned_identity": {"const": true},
+        "metadata_round_trip_exact": {"const": true},
+        "batch_delete_status": {"const": 200},
+        "batch_deleted_count": {"const": 1},
+        "batch_error_count": {"const": 1},
+        "batch_per_item_outcomes_exact": {"const": true}
+      }
+    },
+    "cv_compatible_api": {
+      "type": "object", "additionalProperties": false,
+      "required": ["add_status", "identity_round_trip_exact", "camera_metadata_schema_accepted",
+        "headers_schema_accepted", "inference_not_requested", "duplicate_status", "remove_status",
+        "missing_remove_status", "removed_asset_identity_exact"],
+      "properties": {
+        "add_status": {"const": 200},
+        "identity_round_trip_exact": {"const": true},
+        "camera_metadata_schema_accepted": {"const": true},
+        "headers_schema_accepted": {"const": true},
+        "inference_not_requested": {"const": true},
+        "duplicate_status": {"const": 409},
+        "remove_status": {"const": 200},
+        "missing_remove_status": {"const": 404},
+        "removed_asset_identity_exact": {"const": true}
+      }
+    },
+    "operations": {
+      "type": "array", "minItems": 8, "maxItems": 8,
+      "items": {"$ref": "#/$defs/operation"}
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["before_sha256", "after_sha256", "catalogs_restored_exactly",
+        "owned_streams_absent", "support_container_absent", "publisher_stopped",
+        "running_container_set_preserved", "runtime_state_preserved", "failures"],
+      "properties": {
+        "before_sha256": {"$ref": "#/$defs/sha256"},
+        "after_sha256": {"$ref": "#/$defs/sha256"},
+        "catalogs_restored_exactly": {"const": true},
+        "owned_streams_absent": {"const": true},
+        "support_container_absent": {"const": true},
+        "publisher_stopped": {"const": true},
+        "running_container_set_preserved": {"const": true},
+        "runtime_state_preserved": {"const": true},
+        "failures": {"const": []}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["external_requests", "agent_generate_calls", "model_inference_requests",
+        "main_vios_mutations", "core_service_lifecycle_actions", "warehouse_sample_bundle",
+        "raw_resource_ids_retained", "credentials_retained"],
+      "properties": {
+        "external_requests": {"const": 0},
+        "agent_generate_calls": {"const": 0},
+        "model_inference_requests": {"const": 0},
+        "main_vios_mutations": {"const": 0},
+        "core_service_lifecycle_actions": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "raw_resource_ids_retained": {"const": false},
+        "credentials_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "operation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["action", "method", "path", "status", "request_sha256", "response_sha256"],
+      "properties": {
+        "action": {"enum": ["original-add", "original-info", "cv-add", "cv-info",
+          "cv-duplicate", "original-batch-delete", "cv-remove", "cv-missing"]},
+        "method": {"enum": ["GET", "POST", "DELETE"]},
+        "path": {"enum": ["/v1/streams/add", "/v1/streams/get-stream-info",
+          "/v1/streams/delete-batch", "/v1/stream/add", "/v1/stream/get-stream-info",
+          "/v1/stream/remove"]},
+        "status": {"enum": [200, 404, 409]},
+        "request_sha256": {"$ref": "#/$defs/sha256"},
+        "response_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

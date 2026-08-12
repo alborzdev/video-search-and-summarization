@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "package_id": "rt-vlm-stream-apis-runtime-successor",
+  "capability_ids": [
+    "manifest-entry.rt-vlm-api.04-original-stream-api",
+    "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api"
+  ],
+  "official_indices": [351, 352],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256_by_index": {
+      "351": "6a13eeb5e13bf5d1253ad75891e338621d7aaefa9aab56b0b779b6342eb8c23b",
+      "352": "eae474a72d2dd311a798f9f06934f142d377cd61a87c96ce90365e64a3ef0e2a"
+    }
+  },
+  "source_discrepancy": {
+    "ledger_semantics": "Rows 351-352 reverse the endpoint families in their generated required_semantics.",
+    "authoritative_resolution": "The released implementation, models, module docstring, explicit CV-Compatible source comment, live OpenAPI, and NVIDIA API reference identify /v1/streams/* as original and /v1/stream/* as CV-compatible.",
+    "claim_policy": "Qualify the advertised labels against authoritative released behavior; retain the generated-ledger reversal as a disclosed metadata defect."
+  },
+  "source_locks": [
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py",
+      "sha256": "a160cd74f7f645a7610bdb0a56424749d2b5a157187188eb93d961c49d1e4118"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/api_models/live_stream.py",
+      "container_path": "/opt/nvidia/rtvi/rtvi/api_models/live_stream.py",
+      "sha256": "569c34990905cab6c0b6f78fab95332d0a4d540fe342652fde52974e064593dc"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/harness.py",
+      "sha256": "a42b35cc66a4d80a039fe31d1f48d625265efe9ee4f83c9deb440002faef0c3b"
+    }
+  ],
+  "runtime": {
+    "endpoint": "http://127.0.0.1:8018",
+    "container": "vss-rtvi-vlm",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "support_image_id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "network": "mdx_default",
+    "minimum_free_bytes": 10737418240
+  },
+  "acceptance": {
+    "original_plural_add_info_batch_delete": true,
+    "original_stable_identity_and_place_metadata": true,
+    "original_batch_per_item_outcomes": true,
+    "cv_singular_add_info_remove": true,
+    "cv_camera_identity_and_metadata_schema": true,
+    "cv_duplicate_and_missing_negatives": true,
+    "exact_catalog_cleanup": true,
+    "running_container_set_preserved": true
+  },
+  "policy": {
+    "external_requests": 0,
+    "agent_generate_calls": 0,
+    "model_inference_requests": 0,
+    "main_vios_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

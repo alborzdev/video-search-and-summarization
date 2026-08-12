@@ -1,0 +1,168 @@
+{
+  "authoritative_api_mapping": {
+    "cv_compatible_routes": [
+      "/v1/stream/add",
+      "/v1/stream/get-stream-info",
+      "/v1/stream/remove"
+    ],
+    "ledger_endpoint_semantics_reversed": true,
+    "openapi_sha256": "7390d159538a882f866f7eb74f6d14af42f5b74bbf32eebc70d9071bc6927db0",
+    "openapi_status": 200,
+    "original_routes": [
+      "/v1/streams/add",
+      "/v1/streams/delete-batch",
+      "/v1/streams/delete/{stream_id}",
+      "/v1/streams/get-stream-info"
+    ],
+    "source_declares_cv_compatible_singular": true,
+    "source_declares_original_plural": true,
+    "stream_route_set_exact": true
+  },
+  "capability_ids": [
+    "manifest-entry.rt-vlm-api.04-original-stream-api",
+    "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api"
+  ],
+  "cleanup": {
+    "after_sha256": "82cfa1964c1aa5cb112534b0bef6773f039790c180d806e1eade42f38cc50b4f",
+    "before_sha256": "82cfa1964c1aa5cb112534b0bef6773f039790c180d806e1eade42f38cc50b4f",
+    "catalogs_restored_exactly": true,
+    "failures": [],
+    "owned_streams_absent": true,
+    "publisher_stopped": true,
+    "running_container_set_preserved": true,
+    "runtime_state_preserved": true,
+    "support_container_absent": true
+  },
+  "contract_sha256": "1a59e56906d0e8ece67bd0bd921edcd578f26f336ce39f60a3b3c89d1bf12c60",
+  "cv_compatible_api": {
+    "add_status": 200,
+    "camera_metadata_schema_accepted": true,
+    "duplicate_status": 409,
+    "headers_schema_accepted": true,
+    "identity_round_trip_exact": true,
+    "inference_not_requested": true,
+    "missing_remove_status": 404,
+    "remove_status": 200,
+    "removed_asset_identity_exact": true
+  },
+  "official_indices": [
+    351,
+    352
+  ],
+  "operations": [
+    {
+      "action": "original-add",
+      "method": "POST",
+      "path": "/v1/streams/add",
+      "request_sha256": "65a3a9271c700b116adc30ec65be0c69be37469e21359709b42951aa7c29331b",
+      "response_sha256": "0a7b7f7b2537f65907ea4295c503a97ee25e173c098d502d4a10489d01877a91",
+      "status": 200
+    },
+    {
+      "action": "original-info",
+      "method": "GET",
+      "path": "/v1/streams/get-stream-info",
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "b61e40b07bd4bfefb3da23fa66ee064471f4ed4825b49cdb90b52de43c2dc075",
+      "status": 200
+    },
+    {
+      "action": "cv-add",
+      "method": "POST",
+      "path": "/v1/stream/add",
+      "request_sha256": "d26343a54788802e58ee9561c6a32b7ec2115905eced50efe4fb6624fbfaf347",
+      "response_sha256": "cd6acb7bc3c01fe87381ccb8b5887bc23d08b01fc1d15b5de2bf623f46701bf3",
+      "status": 200
+    },
+    {
+      "action": "cv-info",
+      "method": "GET",
+      "path": "/v1/stream/get-stream-info",
+      "request_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "response_sha256": "94277f480df1b2f7ccd7076c5de999e08749decb2dfb2b290780251b13c3d359",
+      "status": 200
+    },
+    {
+      "action": "cv-duplicate",
+      "method": "POST",
+      "path": "/v1/stream/add",
+      "request_sha256": "d26343a54788802e58ee9561c6a32b7ec2115905eced50efe4fb6624fbfaf347",
+      "response_sha256": "39b1ae3286f8c0b65cb12548c63997fe65ac070fa3c98e8d7cc88118160be642",
+      "status": 409
+    },
+    {
+      "action": "original-batch-delete",
+      "method": "DELETE",
+      "path": "/v1/streams/delete-batch",
+      "request_sha256": "d18391bbcacbf2a4412a3a329f1ed8d0767139b958234645cf04b968c7645d64",
+      "response_sha256": "586e8327e3fb3807a7026373aeacc8f459c2cf025987725e62bdbab6e8d5e390",
+      "status": 200
+    },
+    {
+      "action": "cv-remove",
+      "method": "POST",
+      "path": "/v1/stream/remove",
+      "request_sha256": "9cf73a531b7ba79f729f553c3ae09a457d36b47159e7a546fee46ff322eb4771",
+      "response_sha256": "96ebdc85862b39909cf44f8a3347f075186fc0710f59838d66ab66fab8a54396",
+      "status": 200
+    },
+    {
+      "action": "cv-missing",
+      "method": "POST",
+      "path": "/v1/stream/remove",
+      "request_sha256": "9cf73a531b7ba79f729f553c3ae09a457d36b47159e7a546fee46ff322eb4771",
+      "response_sha256": "5eb738697196de9d98a7217046c12b690c942d05e0d706c1a02bc67affce9374",
+      "status": 404
+    }
+  ],
+  "original_api": {
+    "add_status": 200,
+    "batch_delete_status": 200,
+    "batch_deleted_count": 1,
+    "batch_error_count": 1,
+    "batch_per_item_outcomes_exact": true,
+    "metadata_round_trip_exact": true,
+    "single_owned_result": true,
+    "stable_owned_identity": true
+  },
+  "package_id": "rt-vlm-stream-apis-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "external_requests": 0,
+    "main_vios_mutations": 0,
+    "model_inference_requests": 0,
+    "raw_resource_ids_retained": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "publisher": {
+    "architecture": "arm64",
+    "codec": "h264",
+    "height": 1080,
+    "host_ports_published": 0,
+    "image_id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "network": "mdx_default",
+    "publisher_running_during_calls": true,
+    "width": 1920
+  },
+  "run": {
+    "duration_seconds": 11.74684,
+    "free_bytes_after": 20285775872,
+    "free_bytes_before": 20285988864,
+    "id_sha256": "3393b3f415d65039339c6b06b6a30e0e0699b49de75b7269dd288db9db5c4505"
+  },
+  "runtime": {
+    "container": "vss-rtvi-vlm",
+    "docker_cgroup_driver": "cgroupfs",
+    "endpoint_loopback": true,
+    "healthy": true,
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "live_source_locks_exact": true,
+    "network_attached": true,
+    "oom_killed": false,
+    "restart_count": 0
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

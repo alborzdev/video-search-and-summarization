@@ -1,5 +1,15 @@
 # Evidence
 
+Overlay 49 adds official rows 351-352, `original stream API` and
+`CV-compatible stream API`. A real local H.264 RTSP publisher drove the live
+RT-VLM container through plural add/info/batch-delete and singular
+add/info/remove. The run proved fixed ownership and place metadata, per-item
+batch outcomes, CV camera identity and metadata schema acceptance, duplicate
+and missing-camera negatives, authoritative OpenAPI coverage, and exact
+cleanup without inference. The retained discrepancy explains that the
+generated row semantics reverse NVIDIA's endpoint-family labels relative to
+the released source and live OpenAPI.
+
 Overlay 48 adds official row 327, `non-blocking multithreaded execution`,
 using the retained `alert-nonblocking-multithread-runtime-successor` receipt.
 Six protobuf candidates entered one Kafka ingestion worker; all six queued

@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_eighty_eight_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_ninety_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 351, 352, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -103,6 +103,25 @@ def test_alert_concurrency_receipt_proves_nonblocking_per_candidate_execution() 
     assert receipt["concurrency"]["inline_fallbacks"] == 0
     assert receipt["candidates"]["count"] == 6
     assert receipt["metrics"]["per_candidate_terminal_metrics"] is True
+    assert receipt["cleanup"]["before_sha256"] == receipt["cleanup"]["after_sha256"]
+
+
+def test_rt_vlm_stream_api_receipt_proves_both_authoritative_families() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entries = [
+        entry
+        for entry in contract["entries"]
+        if entry["package_id"] == "rt-vlm-stream-apis-runtime-successor"
+    ]
+    assert [entry["official_index"] for entry in entries] == [351, 352]
+    receipt = compiler._validate_receipt(entries[0])
+    assert all(entry["capability_id"] in receipt["capability_ids"] for entry in entries)
+    assert receipt["authoritative_api_mapping"]["ledger_endpoint_semantics_reversed"] is True
+    assert receipt["authoritative_api_mapping"]["stream_route_set_exact"] is True
+    assert receipt["original_api"]["metadata_round_trip_exact"] is True
+    assert receipt["original_api"]["batch_per_item_outcomes_exact"] is True
+    assert receipt["cv_compatible_api"]["identity_round_trip_exact"] is True
+    assert receipt["cv_compatible_api"]["duplicate_status"] == 409
     assert receipt["cleanup"]["before_sha256"] == receipt["cleanup"]["after_sha256"]
 
 

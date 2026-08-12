@@ -1,7 +1,16 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-Overlay 48 binds eighty-eight advertised candidate rows to current-Thor live
-receipts. Its new row proves non-blocking multithreaded Alert execution: six
+Overlay 49 binds ninety advertised candidate rows to current-Thor live
+receipts. Its two new rows prove both RT-VLM stream-management API families
+against one genuine local RTSP publisher. The original plural API preserved a
+fixed external identity and place metadata and returned mixed batch-delete
+outcomes; the CV-compatible singular API preserved camera identity, accepted
+CV metadata/headers, rejected a duplicate, and removed by camera ID. The
+generated ledger reverses those endpoint families, so the package records that
+metadata defect and follows the released source and live OpenAPI. Exact stream
+catalog and container baselines were restored with zero inference calls.
+
+Overlay 48's row proves non-blocking multithreaded Alert execution: six
 protobuf candidates entered a one-worker ingestion path, all queued before a
 deliberately slow VLM response completed, three VLM calls overlapped, and all
 five independent fast candidates overtook the slow one. Every candidate kept

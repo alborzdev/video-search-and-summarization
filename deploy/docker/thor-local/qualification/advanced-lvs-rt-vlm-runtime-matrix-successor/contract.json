@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-48",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-49",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -1213,6 +1213,56 @@
         "/token_sse/finish_reason_stop_once": true,
         "/token_sse/identity_stable": true,
         "/token_sse/errors": 0
+      }
+    },
+    {
+      "official_index": 351,
+      "capability_id": "manifest-entry.rt-vlm-api.04-original-stream-api",
+      "advertised_literal": "original stream API",
+      "package_id": "rt-vlm-stream-apis-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/contract.json",
+      "contract_sha256": "1a59e56906d0e8ece67bd0bd921edcd578f26f336ce39f60a3b3c89d1bf12c60",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "450222affc198a1ded9ad5751c81b159cc4136b8fab47b2e8055d780910f7972",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "6fbc0d896d4056c96297e9d81fdce055939dd476532f51e2703fe370d1bd629a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/authoritative_api_mapping/ledger_endpoint_semantics_reversed": true,
+        "/authoritative_api_mapping/source_declares_original_plural": true,
+        "/authoritative_api_mapping/stream_route_set_exact": true,
+        "/original_api/stable_owned_identity": true,
+        "/original_api/metadata_round_trip_exact": true,
+        "/original_api/batch_per_item_outcomes_exact": true,
+        "/cleanup/catalogs_restored_exactly": true,
+        "/cleanup/running_container_set_preserved": true,
+        "/policy/model_inference_requests": 0,
+        "/policy/agent_generate_calls": 0
+      }
+    },
+    {
+      "official_index": 352,
+      "capability_id": "manifest-entry.rt-vlm-api.05-cv-compatible-stream-api",
+      "advertised_literal": "CV-compatible stream API",
+      "package_id": "rt-vlm-stream-apis-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/contract.json",
+      "contract_sha256": "1a59e56906d0e8ece67bd0bd921edcd578f26f336ce39f60a3b3c89d1bf12c60",
+      "receipt_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "450222affc198a1ded9ad5751c81b159cc4136b8fab47b2e8055d780910f7972",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/rt-vlm-stream-apis-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "6fbc0d896d4056c96297e9d81fdce055939dd476532f51e2703fe370d1bd629a",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/authoritative_api_mapping/ledger_endpoint_semantics_reversed": true,
+        "/authoritative_api_mapping/source_declares_cv_compatible_singular": true,
+        "/authoritative_api_mapping/stream_route_set_exact": true,
+        "/cv_compatible_api/identity_round_trip_exact": true,
+        "/cv_compatible_api/camera_metadata_schema_accepted": true,
+        "/cv_compatible_api/duplicate_status": 409,
+        "/cv_compatible_api/missing_remove_status": 404,
+        "/cleanup/catalogs_restored_exactly": true,
+        "/policy/model_inference_requests": 0,
+        "/policy/agent_generate_calls": 0
       }
     },
     {
