@@ -34,6 +34,7 @@ def test_exact_candidate_identity_and_interval_are_preserved() -> None:
     assert receipt["capability_ids"] == [
         "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
         "manifest-entry.alert-verification.01-post-alert-verification",
+        "manifest-entry.alert-verification.02-contextualization",
     ]
     pipeline = receipt["pipeline"]
     assert pipeline["observation_order"] == ["cv_raw", "behavior_candidate", "vlm_verification"]
@@ -46,6 +47,18 @@ def test_exact_candidate_identity_and_interval_are_preserved() -> None:
     assert pipeline["object_timeline_preserved"] is True
     assert pipeline["reasoning_present"] is True
     assert pipeline["verification_response_status"] == "OK"
+
+
+def test_context_is_traceable_and_separate_from_decision() -> None:
+    receipt = json.loads((HERE / "runtime-receipt.json").read_text())
+    context = receipt["contextualization"]
+    assert context["source_alert_preceded_contextualization"] is True
+    assert context["scene_context_present"] is True
+    assert context["time_context_traceable"] is True
+    assert context["object_context_traceable"] is True
+    assert context["media_context_traceable"] is True
+    assert context["source_metadata_preserved"] is True
+    assert context["context_fields_separate_from_decision"] is True
 
 
 def test_local_base64_transport_and_cleanup_are_proven() -> None:

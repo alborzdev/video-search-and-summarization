@@ -33,7 +33,7 @@ def main() -> int:
     Draft202012Validator(schema, format_checker=FormatChecker()).validate(receipt)
 
     assert receipt["contract_sha256"] == sha(contract_path)
-    assert contract["official_indices"] == [321, 322]
+    assert contract["official_indices"] == [321, 322, 323]
     ledger_path = REPO / contract["official_source"]["path"]
     assert sha(ledger_path) == contract["official_source"]["ledger_sha256"]
     rows = json.loads(ledger_path.read_text())["capabilities"]
@@ -61,6 +61,7 @@ def main() -> int:
     assert receipt["pipeline"]["object_ids_preserved"] is True
     assert receipt["pipeline"]["object_timeline_preserved"] is True
     assert receipt["pipeline"]["final_verdict"] == "confirmed"
+    assert all(receipt["contextualization"].values())
     assert receipt["transport"]["rtvlm_data_url_logged"] is True
     assert receipt["transport"]["local_chat_completion_200"] is True
     assert receipt["cleanup"]["before_sha256"] == receipt["cleanup"]["after_sha256"]
@@ -69,7 +70,7 @@ def main() -> int:
     assert receipt["policy"]["external_network_requests"] == 0
 
     print(json.dumps({
-        "official_indices": [321, 322],
+        "official_indices": [321, 322, 323],
         "package_id": contract["package_id"],
         "receipt_sha256": sha(receipt_path),
         "status": "passed",

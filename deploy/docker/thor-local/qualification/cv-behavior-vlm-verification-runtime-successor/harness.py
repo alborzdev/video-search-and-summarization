@@ -654,12 +654,22 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
             raise QualificationFailure("candidate identity or evidence interval was not preserved")
 
         snapshot_urls = json.loads(info.get("snapshotUrls", "[]"))
+        reasoning = info["reasoning"].strip()
+        video_source = info.get("videoSource")
+        decision_values = {
+            str(final.get("category", "")).strip().casefold(),
+            str(info.get("verdict", "")).strip().casefold(),
+            str(info.get("verificationResponseStatus", "")).strip().casefold(),
+        }
         if (
             not isinstance(snapshot_urls, list)
             or len(snapshot_urls) != contract["execution"]["expected_snapshot_count"]
             or any(sensor_name not in str(value) for value in snapshot_urls)
+            or not isinstance(video_source, str)
+            or not video_source.strip()
+            or reasoning.casefold() in decision_values
         ):
-            raise QualificationFailure("VLM snapshot evidence was not correlated")
+            raise QualificationFailure("VLM contextual evidence was not correlated")
 
         alert_logs = logs_since("vss-alert-bridge", since)
         behavior_logs = logs_since("vss-behavior-analytics-thor-candidates", since)
@@ -787,6 +797,18 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
             "verification_response_code": 200,
             "verification_response_status": "OK",
             "reasoning_present": True,
+        },
+        "contextualization": {
+            "source_alert_preceded_contextualization": (
+                candidate_observed_ms < final_observed_ms
+            ),
+            "scene_context_present": True,
+            "scene_context_sha256": sha(final_info["reasoning"].strip()),
+            "time_context_traceable": True,
+            "object_context_traceable": True,
+            "media_context_traceable": True,
+            "source_metadata_preserved": True,
+            "context_fields_separate_from_decision": True,
         },
         "transport": {
             "fixture_sha256": sha(fixture_raw),

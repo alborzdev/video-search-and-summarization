@@ -1,41 +1,52 @@
 {
   "capability_ids": [
     "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
-    "manifest-entry.alert-verification.01-post-alert-verification"
+    "manifest-entry.alert-verification.01-post-alert-verification",
+    "manifest-entry.alert-verification.02-contextualization"
   ],
   "cleanup": {
     "after_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
     "before_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
     "exact_live_state_restored": true,
     "owned_elastic_documents_absent": true,
-    "owned_elastic_documents_deleted": 126,
+    "owned_elastic_documents_deleted": 136,
     "owned_proxy_absent": true,
     "owned_publisher_stopped": true,
     "owned_recording_absent": true,
     "owned_sensor_absent_from_active_catalog": true,
     "owned_temp_files_absent": true,
-    "owned_temp_files_deleted": 5,
+    "owned_temp_files_deleted": 10,
     "recording_space_saved_mb": 3,
     "rtcv_stream_set_preserved": true,
     "running_container_set_preserved": true
   },
-  "contract_sha256": "ad166f5bf337ac865bf2775290809a07b32e1f0e4ad2a0fa95aca0e35dec1e28",
+  "contextualization": {
+    "context_fields_separate_from_decision": true,
+    "media_context_traceable": true,
+    "object_context_traceable": true,
+    "scene_context_present": true,
+    "scene_context_sha256": "c0a5496f20dc94498b71557434c95386bd9304a5190dac042661fa08ad190230",
+    "source_alert_preceded_contextualization": true,
+    "source_metadata_preserved": true,
+    "time_context_traceable": true
+  },
+  "contract_sha256": "427493398c657ff54af8a0f4a8d154d0d30be146481e91aeb621cfcc99dcb235",
   "package_id": "cv-behavior-vlm-verification-runtime-successor",
   "pipeline": {
     "behavior_candidate_observed": true,
     "candidate_category": "FOV Count Violation",
-    "candidate_id_sha256": "d254be4fd4a16480260a03098b6744691828c07fef074eb13cc071af17c565ba",
+    "candidate_id_sha256": "e14b6174c7402a4a3c58f33ea3327d34b3c05314723a14a283f368176497ea5a",
     "cv_raw_observed": true,
     "evidence_interval_preserved": true,
-    "evidence_interval_sha256": "cab93fdcef459ddbb13b1a3f74164ba31f249909966ea769b8213b05d2ac1985",
+    "evidence_interval_sha256": "55168065c5f7ed72913756c58f55099c44333d13febd14999752d1d1904a9b91",
     "final_category": "Person in Monitored Zone",
     "final_verdict": "confirmed",
     "object_ids_preserved": true,
     "object_timeline_preserved": true,
     "observation_ms": [
-      9556,
-      12072,
-      19648
+      9045,
+      12059,
+      20626
     ],
     "observation_order": [
       "cv_raw",
@@ -45,9 +56,9 @@
     "reasoning_present": true,
     "same_candidate_document_id": true,
     "same_source_id": true,
-    "sensor_id_sha256": "e1c95d55602a470529ebf9fd2277425c505def5154a61f0284dd040060fe974e",
+    "sensor_id_sha256": "8a3db0162063ca2d6b6c6f2f146ce2f1506e242c11e7979001349aec578b15c1",
     "sensor_identity_preserved": true,
-    "sensor_name_sha256": "c94b2c17fa5adf87d85900262c2d124c5fe145a0c9411b95050c242f09617aaa",
+    "sensor_name_sha256": "de1b0c4fa792d6bbbb018897e3d9753b263e2434f58dfabe029529524f2b56cb",
     "verification_response_code": 200,
     "verification_response_status": "OK",
     "vlm_verification_observed": true
@@ -59,9 +70,9 @@
     "warehouse_sample_bundle": "excluded"
   },
   "run": {
-    "completed_at": "2026-08-12T02:47:21.196325Z",
-    "duration_ms": 44897,
-    "run_id_sha256": "361ec6391434d467486c5e21be5f840ae9a238f7a0841d80cb62fc7f04fa574e"
+    "completed_at": "2026-08-12T02:53:48.984021Z",
+    "duration_ms": 46678,
+    "run_id_sha256": "86a83c5e14f4c6abf87336a09fd70583ebb2086ab7b866be682cd39cbffa57dc"
   },
   "runtime": {
     "cgroup_driver": "cgroupfs",
@@ -97,11 +108,11 @@
         "running": true
       }
     },
-    "free_bytes_after": 20378087424,
-    "free_bytes_before": 20406226944,
-    "live_source_lock_count": 9,
+    "free_bytes_after": 20379758592,
+    "free_bytes_before": 20413779968,
+    "live_source_lock_count": 11,
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
-    "source_lock_count": 15
+    "source_lock_count": 18
   },
   "schema_version": 1,
   "status": "passed",
