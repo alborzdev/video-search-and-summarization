@@ -38,6 +38,7 @@ from models.pluggable_parser_runtime import (
     apply_pluggable_parser_error as _apply_pluggable_parser_error,
     apply_pluggable_parser_output as _apply_pluggable_parser_output,
 )
+from media_transport_config import resolve_vlm_media_source_using_base64
 from .media_downloader import MediaDownloader, DownloadConfig
 from .media_analyzer import analyze_single_media, analyze_multiple_images
 
@@ -217,25 +218,9 @@ class DirectMediaHandler:
         self.max_media_count = media_config.get('max_media_count', 5)
         self.model_name = config.get('vlm', {}).get('model', '')
         
-        # Reuse vlm_media_source_using_base64 from vlm config.  Thor's local
-        # OpenAI-compatible endpoint deliberately refuses to fetch loopback or
-        # private URLs, so the local profile can force the safe download +
-        # inline-data path without modifying NVIDIA's shared profile config.
-        # Invalid values fail startup instead of silently selecting the wrong
-        # media transport.
-        base64_env = os.getenv('ALERT_VLM_MEDIA_SOURCE_USING_BASE64')
-        if base64_env is None:
-            self.vlm_media_source_using_base64 = config.get(
-                'vlm', {}
-            ).get('vlm_media_source_using_base64', False)
-        elif base64_env.lower() in ('1', 'true', 'yes'):
-            self.vlm_media_source_using_base64 = True
-        elif base64_env.lower() in ('0', 'false', 'no'):
-            self.vlm_media_source_using_base64 = False
-        else:
-            raise ValueError(
-                'ALERT_VLM_MEDIA_SOURCE_USING_BASE64 must be a boolean value'
-            )
+        self.vlm_media_source_using_base64 = (
+            resolve_vlm_media_source_using_base64(config)
+        )
         
         self.downloader = MediaDownloader(DownloadConfig(
             download_dir=config.get('vst_config', {}).get('download_dir', '/tmp/alert_bridge_media'),
@@ -309,6 +294,31 @@ class DirectMediaHandler:
             return valid_urls
         return []
 
+    def analyze_image_urls(
+        self,
+        media_urls: List[str],
+        user_prompt: str,
+        system_prompt: Optional[str],
+        config_overrides: Optional[Dict[str, Any]] = None,
+    ):
+        """Analyze sampled image URLs with the configured media transport.
+
+        The Kafka/VST verification path uses this method for sampled VIOS
+        snapshots.  Keeping it on the direct-media handler makes URL policy,
+        local download, inline encoding, and temporary-file cleanup identical
+        for both ingestion modes.
+        """
+
+        return analyze_multiple_images(
+            vlm_client=self.vlm_client,
+            downloader=self.downloader,
+            media_urls=media_urls,
+            user_prompt=user_prompt,
+            system_prompt=system_prompt,
+            use_base64=self.vlm_media_source_using_base64,
+            config_overrides=config_overrides,
+        )
+
     # ── Evaluate methods ───────────────────────────────────────────────
 
     def _evaluate_video(
@@ -379,13 +389,10 @@ class DirectMediaHandler:
 
             start_time = time.time()
 
-            vlm_response = analyze_multiple_images(
-                vlm_client=self.vlm_client,
-                downloader=self.downloader,
-                media_urls=media_urls,
-                user_prompt=user_prompt,
-                system_prompt=system_prompt,
-                use_base64=self.vlm_media_source_using_base64,
+            vlm_response = self.analyze_image_urls(
+                media_urls,
+                user_prompt,
+                system_prompt,
                 config_overrides=config_overrides,
             )
 

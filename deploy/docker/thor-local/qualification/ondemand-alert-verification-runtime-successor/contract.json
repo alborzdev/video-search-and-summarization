@@ -33,7 +33,7 @@
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
     "containers": {
       "vss-alert-bridge": {
-        "image_id": "sha256:c4200659cb6766ac4a4542268c9b0fd354e412a6ca8237fe63862b9128849184"
+        "image_id": "sha256:6539bbf8201148c65ac76b50a1e752e148ed62808022f561de90f3963719f15f"
       },
       "vss-rtvi-vlm": {
         "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
@@ -54,11 +54,17 @@
             "path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/harness.py",
             "sha256": "348c58542e3d3abead48986a60423c2f74d9d8ca22bff7152b8e90e0f5b94793"
         },
-        {
+    {
       "path": "services/alert/handlers/direct_media/direct_media_handler.py",
-      "sha256": "961a7d67003b5c73de4cc9606c41ad23e60507c7e1538320dfed2e3f1c3e4409",
+      "sha256": "ee5aebc68166ac3aac2c2d924dd1a9ddd8389d3f54e2a1a6981a47afaabf8cfd",
       "container": "vss-alert-bridge",
       "container_path": "/app/handlers/direct_media/direct_media_handler.py"
+    },
+    {
+      "path": "services/alert/media_transport_config.py",
+      "sha256": "e05aefad74a3f92214cce80c2006c1877060399034ee576ac41818801ae92269",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/media_transport_config.py"
     },
     {
       "path": "services/alert/handlers/direct_media/media_analyzer.py",
@@ -110,7 +116,7 @@
     },
     {
       "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
-      "sha256": "f4b5adf99e67c8a88207ee17c5bd9546768c6334b05d6016f35083f679d21ae5"
+      "sha256": "d518c854070161c77f708f285b77c2c2d950b5b01a78eccd291532d573e9c7d8"
     }
   ]
 }

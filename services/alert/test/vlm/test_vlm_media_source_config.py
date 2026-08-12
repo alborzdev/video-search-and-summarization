@@ -30,6 +30,7 @@ from handlers.direct_media.media_analyzer import (
     analyze_single_media,
     analyze_multiple_images,
 )
+from media_transport_config import resolve_vlm_media_source_using_base64
 
 
 def _make_vlm() -> MagicMock:
@@ -239,6 +240,72 @@ class TestDirectMediaHandlerConfig:
                     "vst_config": {},
                 },
             )
+
+    def test_sampled_snapshots_use_inline_transport(self, monkeypatch):
+        from handlers.direct_media.direct_media_handler import DirectMediaHandler
+
+        monkeypatch.setenv("ALERT_VLM_MEDIA_SOURCE_USING_BASE64", "true")
+        vlm = _make_vlm()
+        handler = DirectMediaHandler(
+            vlm_client=vlm,
+            vlm_enhanced_event_sink=MagicMock(),
+            config={
+                "vlm": {"vlm_media_source_using_base64": False},
+                "alert_agent": {
+                    "media_download": {"allow_private_urls": True}
+                },
+                "vst_config": {},
+            },
+        )
+        handler.downloader = _make_downloader("/tmp/snapshot.jpg")
+
+        with patch(
+            "handlers.direct_media.media_analyzer.MediaDownloader.cleanup"
+        ) as cleanup:
+            handler.analyze_image_urls(
+                ["http://localhost/snapshot-1", "http://localhost/snapshot-2"],
+                "prompt",
+                None,
+            )
+
+        assert handler.downloader.download.call_count == 2
+        vlm.analyze_multiple_images.assert_called_once_with(
+            ["/tmp/snapshot.jpg", "/tmp/snapshot.jpg"],
+            "prompt",
+            None,
+            config_overrides=None,
+        )
+        assert cleanup.call_count == 2
+
+
+class TestSharedMediaTransportConfig:
+    """Kafka/VST and direct-media routes share one environment resolver."""
+
+    def test_config_default_is_preserved(self, monkeypatch):
+        monkeypatch.delenv("ALERT_VLM_MEDIA_SOURCE_USING_BASE64", raising=False)
+        assert resolve_vlm_media_source_using_base64({"vlm": {}}) is False
+        assert resolve_vlm_media_source_using_base64({
+            "vlm": {"vlm_media_source_using_base64": True}
+        }) is True
+
+    @pytest.mark.parametrize("value", ["1", "true", "TRUE", "yes", "YES"])
+    def test_true_environment_values(self, monkeypatch, value):
+        monkeypatch.setenv("ALERT_VLM_MEDIA_SOURCE_USING_BASE64", value)
+        assert resolve_vlm_media_source_using_base64({
+            "vlm": {"vlm_media_source_using_base64": False}
+        }) is True
+
+    @pytest.mark.parametrize("value", ["0", "false", "FALSE", "no", "NO"])
+    def test_false_environment_values(self, monkeypatch, value):
+        monkeypatch.setenv("ALERT_VLM_MEDIA_SOURCE_USING_BASE64", value)
+        assert resolve_vlm_media_source_using_base64({
+            "vlm": {"vlm_media_source_using_base64": True}
+        }) is False
+
+    def test_invalid_environment_value_fails_closed(self, monkeypatch):
+        monkeypatch.setenv("ALERT_VLM_MEDIA_SOURCE_USING_BASE64", "sometimes")
+        with pytest.raises(ValueError, match="must be a boolean"):
+            resolve_vlm_media_source_using_base64({"vlm": {}})
 
 
 if __name__ == "__main__":

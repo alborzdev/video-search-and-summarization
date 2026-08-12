@@ -20,6 +20,7 @@ COPY services/alert/alert-agent-web/app/api/realtime_schemas.py /app/alert-agent
 COPY services/alert/alert-agent-web/app/api/realtime_routes.py /app/alert-agent-web/app/api/realtime_routes.py
 COPY services/alert/alert-agent-web/app/api/alert_config_schemas.py /app/alert-agent-web/app/api/alert_config_schemas.py
 COPY services/alert/enhance_alert_with_vlm.py /app/enhance_alert_with_vlm.py
+COPY services/alert/media_transport_config.py /app/media_transport_config.py
 COPY services/alert/vlm/vlm_client.py /app/vlm/vlm_client.py
 COPY services/alert/models/responses.py /app/models/responses.py
 COPY services/alert/vst/snapshot_sampler.py /app/vst/snapshot_sampler.py

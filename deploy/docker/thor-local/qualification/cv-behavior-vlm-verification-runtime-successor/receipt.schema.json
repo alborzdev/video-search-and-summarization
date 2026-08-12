@@ -1,0 +1,131 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "package_id", "capability_id", "contract_sha256", "run", "runtime", "pipeline", "transport", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "status": {"const": "passed"},
+    "package_id": {"const": "cv-behavior-vlm-verification-runtime-successor"},
+    "capability_id": {"const": "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification"},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completed_at", "duration_ms", "run_id_sha256"],
+      "properties": {
+        "completed_at": {"type": "string", "format": "date-time"},
+        "duration_ms": {"type": "integer", "minimum": 1},
+        "run_id_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["containers", "cgroup_driver", "free_bytes_before", "free_bytes_after", "source_lock_count", "live_source_lock_count", "model"],
+      "properties": {
+        "containers": {
+          "type": "object",
+          "minProperties": 5,
+          "additionalProperties": {"$ref": "#/$defs/container"}
+        },
+        "cgroup_driver": {"const": "cgroupfs"},
+        "free_bytes_before": {"type": "integer", "minimum": 10737418240},
+        "free_bytes_after": {"type": "integer", "minimum": 10737418240},
+        "source_lock_count": {"type": "integer", "minimum": 12},
+        "live_source_lock_count": {"type": "integer", "minimum": 7},
+        "model": {"const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"}
+      }
+    },
+    "pipeline": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cv_raw_observed", "behavior_candidate_observed", "vlm_verification_observed", "observation_order", "observation_ms", "same_candidate_document_id", "same_source_id", "candidate_id_sha256", "sensor_identity_preserved", "sensor_name_sha256", "sensor_id_sha256", "evidence_interval_preserved", "evidence_interval_sha256", "object_ids_preserved", "object_timeline_preserved", "candidate_category", "final_category", "final_verdict", "verification_response_code", "verification_response_status", "reasoning_present"],
+      "properties": {
+        "cv_raw_observed": {"const": true},
+        "behavior_candidate_observed": {"const": true},
+        "vlm_verification_observed": {"const": true},
+        "observation_order": {"const": ["cv_raw", "behavior_candidate", "vlm_verification"]},
+        "observation_ms": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "integer", "minimum": 0}},
+        "same_candidate_document_id": {"const": true},
+        "same_source_id": {"const": true},
+        "candidate_id_sha256": {"$ref": "#/$defs/sha256"},
+        "sensor_identity_preserved": {"const": true},
+        "sensor_name_sha256": {"$ref": "#/$defs/sha256"},
+        "sensor_id_sha256": {"$ref": "#/$defs/sha256"},
+        "evidence_interval_preserved": {"const": true},
+        "evidence_interval_sha256": {"$ref": "#/$defs/sha256"},
+        "object_ids_preserved": {"const": true},
+        "object_timeline_preserved": {"const": true},
+        "candidate_category": {"const": "FOV Count Violation"},
+        "final_category": {"const": "Person in Monitored Zone"},
+        "final_verdict": {"const": "confirmed"},
+        "verification_response_code": {"const": 200},
+        "verification_response_status": {"const": "OK"},
+        "reasoning_present": {"const": true}
+      }
+    },
+    "transport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fixture_sha256", "fixture_bytes", "viOS_proxy_rtsp", "snapshot_count", "snapshot_urls_correlated", "alert_bridge_base64_enabled", "alert_bridge_base64_request_logged", "rtvlm_data_url_logged", "local_chat_completion_200"],
+      "properties": {
+        "fixture_sha256": {"$ref": "#/$defs/sha256"},
+        "fixture_bytes": {"const": 2575454},
+        "viOS_proxy_rtsp": {"const": true},
+        "snapshot_count": {"const": 4},
+        "snapshot_urls_correlated": {"const": true},
+        "alert_bridge_base64_enabled": {"const": true},
+        "alert_bridge_base64_request_logged": {"const": true},
+        "rtvlm_data_url_logged": {"const": true},
+        "local_chat_completion_200": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["before_sha256", "after_sha256", "exact_live_state_restored", "owned_elastic_documents_deleted", "owned_elastic_documents_absent", "owned_temp_files_deleted", "owned_temp_files_absent", "owned_publisher_stopped", "owned_sensor_absent_from_active_catalog", "owned_proxy_absent", "owned_recording_absent", "rtcv_stream_set_preserved", "running_container_set_preserved", "recording_space_saved_mb"],
+      "properties": {
+        "before_sha256": {"$ref": "#/$defs/sha256"},
+        "after_sha256": {"$ref": "#/$defs/sha256"},
+        "exact_live_state_restored": {"const": true},
+        "owned_elastic_documents_deleted": {"type": "integer", "minimum": 3},
+        "owned_elastic_documents_absent": {"const": true},
+        "owned_temp_files_deleted": {"type": "integer", "minimum": 4},
+        "owned_temp_files_absent": {"const": true},
+        "owned_publisher_stopped": {"const": true},
+        "owned_sensor_absent_from_active_catalog": {"const": true},
+        "owned_proxy_absent": {"const": true},
+        "owned_recording_absent": {"const": true},
+        "rtcv_stream_set_preserved": {"const": true},
+        "running_container_set_preserved": {"const": true},
+        "recording_space_saved_mb": {"type": "integer", "minimum": 0}
+      }
+    },
+    "policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_generate_request_count", "external_network_requests", "numeric_local_endpoints_only", "warehouse_sample_bundle"],
+      "properties": {
+        "agent_generate_request_count": {"const": 0},
+        "external_network_requests": {"const": 0},
+        "numeric_local_endpoints_only": {"const": true},
+        "warehouse_sample_bundle": {"const": "excluded"}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "container": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["image_id", "running", "oom_killed", "restart_count"],
+      "properties": {
+        "image_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "running": {"const": true},
+        "oom_killed": {"const": false},
+        "restart_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

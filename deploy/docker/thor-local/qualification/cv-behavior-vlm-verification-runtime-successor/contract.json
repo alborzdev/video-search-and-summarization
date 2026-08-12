@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "package_id": "cv-behavior-vlm-verification-runtime-successor",
+  "capability_id": "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+  "official_indices": [321],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256": "9b02135848053453310181968ea8df620b586ac8c7fdf6df57c5a235bb0f48d8"
+  },
+  "execution": {
+    "acknowledgement": "I_AUTHORIZE_OWNED_CV_BEHAVIOR_VLM_VERIFICATION",
+    "minimum_free_bytes": 10737418240,
+    "sensor_poll_attempts": 60,
+    "sensor_poll_seconds": 1,
+    "poll_attempts": 180,
+    "poll_seconds": 0.5,
+    "expected_snapshot_count": 4,
+    "maximum_duration_seconds": 180,
+    "exact_external_state_cleanup_required": true,
+    "agent_generate_allowed": false,
+    "external_network_allowed": false,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "fixture": {
+    "path": "services/alert/warmup/test.mp4",
+    "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "bytes": 2575454,
+    "duration_seconds": 10,
+    "semantic_oracle": "one or more visible people in a warehouse aisle"
+  },
+  "runtime": {
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:6539bbf8201148c65ac76b50a1e752e148ed62808022f561de90f3963719f15f"
+      },
+      "vss-behavior-analytics-thor-candidates": {
+        "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"
+      },
+      "vss-rtvi-cv": {
+        "image_id": "sha256:1a8b9879686f21cb6b9589d6139b5ac2eb960f1520aa3b4bb5f079d05fee9458"
+      },
+      "vss-rtvi-vlm": {
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
+      },
+      "vss-vios-streamprocessing": {
+        "image_id": "sha256:3c9cd12bf4c1199def87215586e1fb5404cae41f1125b11414f0cfd94e1da0a4"
+      }
+    }
+  },
+  "required_runtime_proof": [
+    "publish the bounded checked-in clip as a temporary local RTSP camera and onboard it through VIOS",
+    "register the exact VIOS proxy URL with RT-CV and observe tracked person metadata in mdx-raw",
+    "observe the real Behavior Analytics state machine emit a FOV Count Violation candidate",
+    "observe Alert Bridge sample four VIOS snapshots, inline them as base64, and receive HTTP 200 from the local RT-VLM",
+    "prove the Behavior Analytics candidate and persisted VLM verdict share the same document ID, source ID, sensor identity, evidence interval, object IDs, and object timeline",
+    "restore the exact active sensor, proxy, alert config, realtime rule, RT-CV stream, RT-VLM stream, and running-container projections",
+    "remove every uniquely owned Elasticsearch document, VIOS recording, temporary snapshot, and publisher process"
+  ],
+  "source_locks": [
+    {
+      "path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/harness.py",
+      "sha256": "883379fa1b6c08ac427fc6fb62715e9bd4f161fead0cb36eb15d49b7a6d4a602"
+    },
+    {
+      "path": "services/alert/media_transport_config.py",
+      "sha256": "e05aefad74a3f92214cce80c2006c1877060399034ee576ac41818801ae92269",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/media_transport_config.py"
+    },
+    {
+      "path": "services/alert/enhance_alert_with_vlm.py",
+      "sha256": "83ba77cc3d45acd68db47210e316afc552f918e6a6c3a6813a66d0eed8987c01",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/enhance_alert_with_vlm.py"
+    },
+    {
+      "path": "services/alert/handlers/direct_media/direct_media_handler.py",
+      "sha256": "ee5aebc68166ac3aac2c2d924dd1a9ddd8389d3f54e2a1a6981a47afaabf8cfd",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/handlers/direct_media/direct_media_handler.py"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/thor_candidate/main_thor_candidate_app.py",
+      "sha256": "968ba09c33a64e8fdbfedd13c9a39aef8324a46f50910f15101839d397c78df7",
+      "container": "vss-behavior-analytics-thor-candidates",
+      "container_path": "/behavior-analytics/apps/thor_candidate/main_thor_candidate_app.py"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/thor_candidate/fov_adapter.py",
+      "sha256": "1201cec4cbc20501e3c1afcd0a2471a288e80c2e2677f7d8d54771429f192695",
+      "container": "vss-behavior-analytics-thor-candidates",
+      "container_path": "/behavior-analytics/apps/thor_candidate/fov_adapter.py"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/thor_candidate/incident_gate.py",
+      "sha256": "d109d4183b5ace44ec82f18df6f380312704fbc53e06462c0b9626ca4a0ba3cf",
+      "container": "vss-behavior-analytics-thor-candidates",
+      "container_path": "/behavior-analytics/apps/thor_candidate/incident_gate.py"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-behavior-analytics/configs/vss-candidate-alerts-config.json",
+      "sha256": "e3711cfa9e7fdd9936bdcfcccb41fb2fcd5567c5ccb0c96e16be4c3aded058e9",
+      "container": "vss-behavior-analytics-thor-candidates",
+      "container_path": "/resources/vss-candidate-alerts-config.json"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/compose.yml",
+      "sha256": "1c847e7c526c3444a64f9df04c35df303a2fed8fb0a95bbb450a22687aeaecca"
+    },
+    {
+      "path": "deploy/docker/thor-local/compose.yml",
+      "sha256": "72ccfd941847359d1ee502d80aee221f1f1b8edfbf35e85d0ad1fec9357daacb"
+    },
+    {
+      "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
+      "sha256": "d518c854070161c77f708f285b77c2c2d950b5b01a78eccd291532d573e9c7d8"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "capability_id": "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+  "cleanup": {
+    "after_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
+    "before_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
+    "exact_live_state_restored": true,
+    "owned_elastic_documents_absent": true,
+    "owned_elastic_documents_deleted": 136,
+    "owned_proxy_absent": true,
+    "owned_publisher_stopped": true,
+    "owned_recording_absent": true,
+    "owned_sensor_absent_from_active_catalog": true,
+    "owned_temp_files_absent": true,
+    "owned_temp_files_deleted": 10,
+    "recording_space_saved_mb": 3,
+    "rtcv_stream_set_preserved": true,
+    "running_container_set_preserved": true
+  },
+  "contract_sha256": "f65c1735308be3c80bcb424fdc0b7ea0d002d83516ea52d208c6d6eeacd02b28",
+  "package_id": "cv-behavior-vlm-verification-runtime-successor",
+  "pipeline": {
+    "behavior_candidate_observed": true,
+    "candidate_category": "FOV Count Violation",
+    "candidate_id_sha256": "2fac81c98476421b2bef9e1890ca4b25106840c6a0501514b177d83cc86c9e2d",
+    "cv_raw_observed": true,
+    "evidence_interval_preserved": true,
+    "evidence_interval_sha256": "adb7de4f35e011a5069a4f5c43d42f34c02ba4aa12512b0a861a49e518b030e6",
+    "final_category": "Person in Monitored Zone",
+    "final_verdict": "confirmed",
+    "object_ids_preserved": true,
+    "object_timeline_preserved": true,
+    "observation_ms": [
+      9553,
+      12568,
+      20643
+    ],
+    "observation_order": [
+      "cv_raw",
+      "behavior_candidate",
+      "vlm_verification"
+    ],
+    "reasoning_present": true,
+    "same_candidate_document_id": true,
+    "same_source_id": true,
+    "sensor_id_sha256": "600895bb22d1b90a8393d2f4f4884427ded56edd1d6ded9c7fcfd9489ce5df8a",
+    "sensor_identity_preserved": true,
+    "sensor_name_sha256": "98e56730c1371ed7c29fabab6bd0aeb4cabc17b6be70c10603e397b88b825e81",
+    "verification_response_code": 200,
+    "verification_response_status": "OK",
+    "vlm_verification_observed": true
+  },
+  "policy": {
+    "agent_generate_request_count": 0,
+    "external_network_requests": 0,
+    "numeric_local_endpoints_only": true,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "run": {
+    "completed_at": "2026-08-12T02:31:07.618937Z",
+    "duration_ms": 46379,
+    "run_id_sha256": "4eb346da537c549bbd2ea21cf046c021ed36796dd530522d76045a694caca424"
+  },
+  "runtime": {
+    "cgroup_driver": "cgroupfs",
+    "containers": {
+      "vss-alert-bridge": {
+        "image_id": "sha256:6539bbf8201148c65ac76b50a1e752e148ed62808022f561de90f3963719f15f",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true
+      },
+      "vss-behavior-analytics-thor-candidates": {
+        "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true
+      },
+      "vss-rtvi-cv": {
+        "image_id": "sha256:1a8b9879686f21cb6b9589d6139b5ac2eb960f1520aa3b4bb5f079d05fee9458",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true
+      },
+      "vss-rtvi-vlm": {
+        "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true
+      },
+      "vss-vios-streamprocessing": {
+        "image_id": "sha256:3c9cd12bf4c1199def87215586e1fb5404cae41f1125b11414f0cfd94e1da0a4",
+        "oom_killed": false,
+        "restart_count": 0,
+        "running": true
+      }
+    },
+    "free_bytes_after": 20340887552,
+    "free_bytes_before": 20350140416,
+    "live_source_lock_count": 7,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "source_lock_count": 12
+  },
+  "schema_version": 1,
+  "status": "passed",
+  "transport": {
+    "alert_bridge_base64_enabled": true,
+    "alert_bridge_base64_request_logged": true,
+    "fixture_bytes": 2575454,
+    "fixture_sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205",
+    "local_chat_completion_200": true,
+    "rtvlm_data_url_logged": true,
+    "snapshot_count": 4,
+    "snapshot_urls_correlated": true,
+    "viOS_proxy_rtsp": true
+  }
+}

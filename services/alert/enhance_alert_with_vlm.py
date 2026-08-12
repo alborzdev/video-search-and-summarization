@@ -71,6 +71,7 @@ from models.pluggable_parser_runtime import (
     apply_pluggable_parser_output as _apply_pluggable_parser_output,
     safe_json_dumps_parser_output as _safe_json_dumps_parser_output,
 )
+from media_transport_config import resolve_vlm_media_source_using_base64
 if TYPE_CHECKING:
     from webhook import OpenClawNotifier, WebhookKafkaForwarder
 
@@ -308,7 +309,12 @@ class AnomalyEnhancer(AsyncDispatchMixin, AsyncExternalIOMixin, AsyncVLMModeMixi
         self.include_latency_info = self.config.get('alert_agent', {}).get('include_latency_info', False)
         self.url_transform_enabled = self.config.get('alert_agent', {}).get('url_transform', {}).get('enabled', True)
         
-        self.vlm_media_source_using_base64 = self.config.get('vlm', {}).get('vlm_media_source_using_base64', False)
+        # Use the same transport policy as direct-media/on-demand requests.
+        # Thor's local VLM cannot fetch the private VIOS clip URL itself, so
+        # the compose override selects the download-and-inline path here too.
+        self.vlm_media_source_using_base64 = (
+            resolve_vlm_media_source_using_base64(self.config)
+        )
         
         # Initialize DirectMediaHandler for Mode 3
         self.direct_media_handler = DirectMediaHandler(
@@ -1571,7 +1577,7 @@ class AnomalyEnhancer(AsyncDispatchMixin, AsyncExternalIOMixin, AsyncVLMModeMixi
                                 sensor_id, message.get('category', 'N/A'), message.get('timestamp', 'N/A'), message.get('end', 'N/A'))
                     start = time.time()
                     if snapshot_urls:
-                        vlm_response = self.vlm_client.analyze_multiple_image_urls(
+                        vlm_response = self.direct_media_handler.analyze_image_urls(
                             snapshot_urls,
                             user_prompt,
                             system_prompt,
