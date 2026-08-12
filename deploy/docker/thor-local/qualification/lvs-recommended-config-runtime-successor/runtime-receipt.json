@@ -1,0 +1,120 @@
+{
+  "authoritative_api": {
+    "chunk_maximum": 86400,
+    "chunk_minimum": 0,
+    "frame_setting_advertised_by_api": false,
+    "generated_ledger_semantics_overstate_frame_token_and_model_context": true,
+    "model_context_field_advertised_by_api": false,
+    "openapi_sha256": "9fe960eb769e6699cba6c1e3b12606c46b32e3b928ce79f8185da61c6a162a97",
+    "operation_id": "recommended_config_recommended_config_post",
+    "released_contract_followed": true,
+    "request_fields": [
+      "target_response_time",
+      "usecase_event_duration",
+      "video_length"
+    ],
+    "request_minimums": {
+      "target_response_time": 1,
+      "usecase_event_duration": 1,
+      "video_length": 1
+    },
+    "response_fields": [
+      "chunk_size",
+      "text"
+    ],
+    "route": "/recommended_config",
+    "token_setting_advertised_by_api": false
+  },
+  "capability_ids": [
+    "manifest-entry.video-summarization-file.07-recommended-configuration"
+  ],
+  "cleanup": {
+    "delete_status": 200,
+    "failures": [],
+    "file_catalog_after_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac",
+    "file_catalog_before_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac",
+    "file_catalog_restored_exactly": true,
+    "graph_after": {
+      "nodes": 4,
+      "relationships": 0
+    },
+    "graph_before": {
+      "nodes": 4,
+      "relationships": 0
+    },
+    "graph_restored_exactly": true,
+    "owned_graph_nodes_absent": true,
+    "running_container_set_preserved": true,
+    "runtime_state_preserved": true
+  },
+  "contract_sha256": "5f9ba70be6bc187365c8fa7de928eaa748a6cb0f9acb2e0c18195af67a67f733",
+  "follow_on": {
+    "accepted_unchanged": true,
+    "chunk_count": 1,
+    "http_status": 200,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "prompt_sha256": "43253d607e80935a21341caf79a0a4639b50737f8954a34fc12b1b2454b2ec6a",
+    "recommended_chunk_size": 60,
+    "response_content_nonempty": true,
+    "response_sha256": "cdfae5aa0410f203e060f793d62bb14cee01af6bcc73d9345a73f063d75ea77b",
+    "route": "/generate_vlm_captions",
+    "submitted_chunk_duration": 60
+  },
+  "official_indices": [
+    303
+  ],
+  "package_id": "lvs-recommended-config-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "external_requests": 0,
+    "model_inference_requests": 1,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_semantic_output_retained": false,
+    "vios_or_rt_cv_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "recommendation": {
+    "chunk_size": 60,
+    "http_status": 200,
+    "lower_bound_negative_statuses": {
+      "target_response_time": 422,
+      "usecase_event_duration": 422,
+      "video_length": 422
+    },
+    "request": {
+      "target_response_time": 60,
+      "usecase_event_duration": 5,
+      "video_length": 10
+    },
+    "response_fields": [
+      "chunk_size",
+      "text"
+    ],
+    "response_sha256": "da540b272d0640e6f1a086b2d4870072c557667373b5408801a3547fb62339d0",
+    "text_sha256": "20ef0f0c8d0eea98772412cea9b3b92612e3e53cb5e59152b5703165f56e8a53",
+    "within_declared_bounds": true
+  },
+  "run": {
+    "duration_seconds": 3.679263,
+    "free_bytes_after": 20268105728,
+    "free_bytes_before": 20268429312,
+    "id_sha256": "0dafb9522c3f83ffbfa4026980a10b0f7e5416fc581dc93fb382ca888f8ac6d3"
+  },
+  "runtime": {
+    "container": "vss-lvs",
+    "endpoint_loopback": true,
+    "healthy": true,
+    "image_id": "sha256:6d7ccfb9f2c8901e37395f147d96635ec3c8f333532cc7cbace43bfeaab62c64",
+    "image_name": "cti-vss-video-summarization:thor-local",
+    "live_source_locks_exact": true,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "oom_killed": false,
+    "restart_count": 0,
+    "started_at_sha256": "20ee1376c8bdc0faa4c28606b5f7951a185a19e65ce99c865f38d1731a0098b3"
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

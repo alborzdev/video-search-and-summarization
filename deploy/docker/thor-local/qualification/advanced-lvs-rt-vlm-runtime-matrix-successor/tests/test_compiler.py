@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_ninety_one_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_ninety_two_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 304, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 351, 352, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 303, 304, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 351, 352, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -54,6 +54,25 @@ def test_lvs_prometheus_receipt_proves_request_metrics_and_cardinality() -> None
     assert receipt["prometheus"]["pending_before"] == 0.0
     assert receipt["prometheus"]["pending_after"] == 0.0
     assert receipt["prometheus"]["resource_id_cardinality_absent"] is True
+    assert receipt["cleanup"]["file_catalog_before_sha256"] == (
+        receipt["cleanup"]["file_catalog_after_sha256"]
+    )
+    assert receipt["cleanup"]["graph_before"] == receipt["cleanup"]["graph_after"]
+
+
+def test_lvs_recommended_config_receipt_follows_released_contract() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(entry for entry in contract["entries"] if entry["official_index"] == 303)
+    receipt = compiler._validate_receipt(entry)
+    assert receipt["authoritative_api"]["response_fields"] == ["chunk_size", "text"]
+    assert receipt["authoritative_api"]["frame_setting_advertised_by_api"] is False
+    assert receipt["authoritative_api"]["token_setting_advertised_by_api"] is False
+    assert receipt["authoritative_api"]["model_context_field_advertised_by_api"] is False
+    assert receipt["recommendation"]["within_declared_bounds"] is True
+    assert receipt["follow_on"]["recommended_chunk_size"] == (
+        receipt["follow_on"]["submitted_chunk_duration"]
+    )
+    assert receipt["follow_on"]["accepted_unchanged"] is True
     assert receipt["cleanup"]["file_catalog_before_sha256"] == (
         receipt["cleanup"]["file_catalog_after_sha256"]
     )

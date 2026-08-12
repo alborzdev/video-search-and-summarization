@@ -1,7 +1,15 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-Overlay 50 binds ninety-one advertised candidate rows to current-Thor live
-receipts. Its new row proves LVS Prometheus metrics around one bounded local
+Overlay 51 binds ninety-two advertised candidate rows to current-Thor live
+receipts. Its new row proves the released LVS recommended-configuration API:
+the live OpenAPI exposes three bounded media/timing inputs and returns only
+`chunk_size` plus `text`; all zero-valued inputs were rejected, and the exact
+returned chunk size was accepted unchanged by one successful local Cosmos
+caption request. The generated ledger's added frame, token, and model-context
+semantics are recorded as a metadata discrepancy rather than fabricated into
+the NVIDIA API. Exact file, graph, runtime, and container state was restored.
+
+Overlay 50's row proves LVS Prometheus metrics around one bounded local
 Cosmos caption request: the completed-query gauge and six VLM histogram counts
 advanced exactly once, pending returned to zero, latest latency gauges were
 positive, and the metrics carried no resource-ID label cardinality. File,

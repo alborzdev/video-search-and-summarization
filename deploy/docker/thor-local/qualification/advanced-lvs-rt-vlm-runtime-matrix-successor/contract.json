@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-50",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-51",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -485,6 +485,36 @@
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 303,
+      "capability_id": "manifest-entry.video-summarization-file.07-recommended-configuration",
+      "advertised_literal": "recommended configuration",
+      "package_id": "lvs-recommended-config-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/lvs-recommended-config-runtime-successor/contract.json",
+      "contract_sha256": "5f9ba70be6bc187365c8fa7de928eaa748a6cb0f9acb2e0c18195af67a67f733",
+      "receipt_path": "deploy/docker/thor-local/qualification/lvs-recommended-config-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "393f13dd81b6e09b594d2e6117aa6ae5cb291b67a90accea8fe4e918aecfc1d8",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-recommended-config-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "895fef22174808e2eb919b2bbdc4ee01cba07a0f7eb1c60fff95cfe4df6cb881",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/authoritative_api/response_fields": ["chunk_size", "text"],
+        "/authoritative_api/frame_setting_advertised_by_api": false,
+        "/authoritative_api/token_setting_advertised_by_api": false,
+        "/authoritative_api/model_context_field_advertised_by_api": false,
+        "/authoritative_api/generated_ledger_semantics_overstate_frame_token_and_model_context": true,
+        "/recommendation/http_status": 200,
+        "/recommendation/within_declared_bounds": true,
+        "/follow_on/http_status": 200,
+        "/follow_on/accepted_unchanged": true,
+        "/follow_on/response_content_nonempty": true,
+        "/cleanup/file_catalog_restored_exactly": true,
+        "/cleanup/graph_restored_exactly": true,
+        "/cleanup/running_container_set_preserved": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/external_requests": 0
       }
     },
     {

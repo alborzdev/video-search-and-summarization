@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-50",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-51",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -400,6 +400,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "43fedafac31e6a94791c27551834ff50e144f63cb73535c5d3bebddce6762860",
         "receipt_sha256": "3c5ed18630c465a95a5f4c55561d59d0b5bfed3176089465c7b99db8388a7340",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "recommended configuration",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.video-summarization-file.07-recommended-configuration",
+      "feature_id": "video-summarization-file",
+      "official_index": 303,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/lvs-recommended-config-runtime-successor/contract.json",
+        "contract_sha256": "5f9ba70be6bc187365c8fa7de928eaa748a6cb0f9acb2e0c18195af67a67f733",
+        "package_id": "lvs-recommended-config-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/lvs-recommended-config-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-recommended-config-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "895fef22174808e2eb919b2bbdc4ee01cba07a0f7eb1c60fff95cfe4df6cb881",
+        "receipt_sha256": "393f13dd81b6e09b594d2e6117aa6ae5cb291b67a90accea8fe4e918aecfc1d8",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -2018,8 +2040,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 91,
-    "row_count": 91,
+    "passed_current_thor": 92,
+    "row_count": 92,
     "warehouse_sample_bundle": "excluded"
   }
 }

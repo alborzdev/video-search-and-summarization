@@ -1,5 +1,15 @@
 # Evidence
 
+Overlay 51 adds official row 303, `recommended configuration`. The released
+VSS 3.2.1 source and live OpenAPI expose bounded `video_length`,
+`target_response_time`, and `usecase_event_duration` inputs and return only
+`chunk_size` and `text`. A live request returned chunk size 60; zero for each
+input was independently rejected with HTTP 422, and the exact 60 was accepted
+unchanged by a successful local Cosmos caption request. The generated ledger's
+extra frame, token, and model-context semantics are explicitly recorded as a
+metadata discrepancy. File catalog, Neo4j, runtime, and running-container
+state were restored exactly.
+
 Overlay 50 adds official row 304, `Prometheus metrics`. The live LVS metrics
 route parsed before and after one successful owned-file caption request. The
 completed-query gauge plus six VLM request/latency/processing histogram counts
