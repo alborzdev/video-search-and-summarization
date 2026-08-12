@@ -751,7 +751,7 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
         "schema_version": 1,
         "status": "passed",
         "package_id": contract["package_id"],
-        "capability_id": contract["capability_id"],
+        "capability_ids": contract["capability_ids"],
         "contract_sha256": sha(contract_raw),
         "run": {
             "completed_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),

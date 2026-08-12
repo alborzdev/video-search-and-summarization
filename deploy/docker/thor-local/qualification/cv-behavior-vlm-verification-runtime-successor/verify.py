@@ -33,13 +33,20 @@ def main() -> int:
     Draft202012Validator(schema, format_checker=FormatChecker()).validate(receipt)
 
     assert receipt["contract_sha256"] == sha(contract_path)
-    assert contract["official_indices"] == [321]
+    assert contract["official_indices"] == [321, 322]
     ledger_path = REPO / contract["official_source"]["path"]
     assert sha(ledger_path) == contract["official_source"]["ledger_sha256"]
-    row = json.loads(ledger_path.read_text())["capabilities"][321]
-    assert hashlib.sha256(canonical(row)).hexdigest() == contract["official_source"]["row_canonical_sha256"]
-    assert row["id"] == contract["capability_id"]
-    assert row["runtime_state"] == "not_qualified"
+    rows = json.loads(ledger_path.read_text())["capabilities"]
+    for index, capability_id in zip(
+        contract["official_indices"], contract["capability_ids"], strict=True,
+    ):
+        row = rows[index]
+        assert hashlib.sha256(canonical(row)).hexdigest() == (
+            contract["official_source"]["row_canonical_sha256_by_index"][str(index)]
+        )
+        assert row["id"] == capability_id
+        assert row["runtime_state"] == "not_qualified"
+    assert receipt["capability_ids"] == contract["capability_ids"]
 
     for lock in contract["source_locks"]:
         path = REPO / lock["path"]
@@ -62,7 +69,7 @@ def main() -> int:
     assert receipt["policy"]["external_network_requests"] == 0
 
     print(json.dumps({
-        "official_indices": [321],
+        "official_indices": [321, 322],
         "package_id": contract["package_id"],
         "receipt_sha256": sha(receipt_path),
         "status": "passed",

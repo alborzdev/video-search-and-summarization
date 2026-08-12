@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-43",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-44",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -416,12 +416,34 @@
       "overlay_runtime_state": "passed_current_thor",
       "runtime_evidence": {
         "contract_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/contract.json",
-        "contract_sha256": "f65c1735308be3c80bcb424fdc0b7ea0d002d83516ea52d208c6d6eeacd02b28",
+        "contract_sha256": "ad166f5bf337ac865bf2775290809a07b32e1f0e4ad2a0fa95aca0e35dec1e28",
         "package_id": "cv-behavior-vlm-verification-runtime-successor",
         "receipt_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/runtime-receipt.json",
         "receipt_schema_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/receipt.schema.json",
-        "receipt_schema_sha256": "481eddde3ce5ccd006694d021ce467ce418eac75d1814fb51fc9b49c6bf70753",
-        "receipt_sha256": "07a1c5f7c68739e180db7d0fea989b3187d616763ba1466fcd1b8f63e04f731b",
+        "receipt_schema_sha256": "1be8200c525ede3018a8c19f299700fb8a687c0527a8b12c05639a083f557592",
+        "receipt_sha256": "3c7446bf1389d1fe10617d5c0af737e705b7e969c25875d9792df32b3e9bc6f3",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "post-alert verification",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.alert-verification.01-post-alert-verification",
+      "feature_id": "alert-verification",
+      "official_index": 322,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/contract.json",
+        "contract_sha256": "ad166f5bf337ac865bf2775290809a07b32e1f0e4ad2a0fa95aca0e35dec1e28",
+        "package_id": "cv-behavior-vlm-verification-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "1be8200c525ede3018a8c19f299700fb8a687c0527a8b12c05639a083f557592",
+        "receipt_sha256": "3c7446bf1389d1fe10617d5c0af737e705b7e969c25875d9792df32b3e9bc6f3",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1842,8 +1864,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 83,
-    "row_count": 83,
+    "passed_current_thor": 84,
+    "row_count": 84,
     "warehouse_sample_bundle": "excluded"
   }
 }

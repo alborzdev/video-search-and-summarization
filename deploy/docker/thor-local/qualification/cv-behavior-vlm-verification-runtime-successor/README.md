@@ -1,8 +1,8 @@
 # Thor CV → Behavior Analytics → VLM verification qualification
 
-This package proves official capability row 321 against the live unified Thor profile. It publishes the small checked-in Alert Bridge warmup clip as a temporary local RTSP camera, onboards it through VIOS, registers the VIOS proxy with RT-CV, and observes one tracked person candidate flow through the real Thor Behavior Analytics adapter and Alert Bridge into the local RT-VLM.
+This package proves official capability rows 321 and 322 against the live unified Thor profile. It publishes the small checked-in Alert Bridge warmup clip as a temporary local RTSP camera, onboards it through VIOS, registers the VIOS proxy with RT-CV, and observes one tracked person candidate flow through the real Thor Behavior Analytics adapter and Alert Bridge into the local RT-VLM. The ordered candidate-before-verdict observation also proves post-alert verification: Alert Bridge re-evaluates an already-created upstream alert over its associated interval.
 
-The retained receipt requires the Behavior Analytics candidate and final Elasticsearch verdict to keep the same document/source ID, sensor identity, timestamp interval, object IDs, and object timeline. It also proves four VIOS snapshots were downloaded and sent to the local RT-VLM as base64 data URLs, avoiding localhost URL/SSRF ambiguity.
+The retained receipt requires the Behavior Analytics candidate and final Elasticsearch verdict to keep the same document/source ID, sensor identity, timestamp interval, object IDs, and object timeline while adding a confirmed verdict, reasoning, response code, and status. It also proves four VIOS snapshots were downloaded and sent to the local RT-VLM as base64 data URLs, avoiding localhost URL/SSRF ambiguity.
 
 Run from the repository root:
 

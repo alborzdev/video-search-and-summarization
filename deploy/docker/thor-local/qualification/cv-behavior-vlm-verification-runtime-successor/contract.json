@@ -1,12 +1,18 @@
 {
   "schema_version": 1,
   "package_id": "cv-behavior-vlm-verification-runtime-successor",
-  "capability_id": "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
-  "official_indices": [321],
+  "capability_ids": [
+    "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+    "manifest-entry.alert-verification.01-post-alert-verification"
+  ],
+  "official_indices": [321, 322],
   "official_source": {
     "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
     "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
-    "row_canonical_sha256": "9b02135848053453310181968ea8df620b586ac8c7fdf6df57c5a235bb0f48d8"
+    "row_canonical_sha256_by_index": {
+      "321": "9b02135848053453310181968ea8df620b586ac8c7fdf6df57c5a235bb0f48d8",
+      "322": "164054bc2ea17a6b2265fa80bbff1eed0962f321fda582d9a245e3f6a32b8186"
+    }
   },
   "execution": {
     "acknowledgement": "I_AUTHORIZE_OWNED_CV_BEHAVIOR_VLM_VERIFICATION",
@@ -54,6 +60,7 @@
     "register the exact VIOS proxy URL with RT-CV and observe tracked person metadata in mdx-raw",
     "observe the real Behavior Analytics state machine emit a FOV Count Violation candidate",
     "observe Alert Bridge sample four VIOS snapshots, inline them as base64, and receive HTTP 200 from the local RT-VLM",
+    "prove Alert Bridge re-evaluates the already-created Behavior Analytics alert over its associated interval and adds verdict, reasoning, response code, and status",
     "prove the Behavior Analytics candidate and persisted VLM verdict share the same document ID, source ID, sensor identity, evidence interval, object IDs, and object timeline",
     "restore the exact active sensor, proxy, alert config, realtime rule, RT-CV stream, RT-VLM stream, and running-container projections",
     "remove every uniquely owned Elasticsearch document, VIOS recording, temporary snapshot, and publisher process"
@@ -61,7 +68,7 @@
   "source_locks": [
     {
       "path": "deploy/docker/thor-local/qualification/cv-behavior-vlm-verification-runtime-successor/harness.py",
-      "sha256": "883379fa1b6c08ac427fc6fb62715e9bd4f161fead0cb36eb15d49b7a6d4a602"
+      "sha256": "159b6e610f9ab0ad2754f9c18d7028a328bbebc505dc3245bcd51b195bf34c0c"
     },
     {
       "path": "services/alert/media_transport_config.py",
@@ -80,6 +87,22 @@
       "sha256": "ee5aebc68166ac3aac2c2d924dd1a9ddd8389d3f54e2a1a6981a47afaabf8cfd",
       "container": "vss-alert-bridge",
       "container_path": "/app/handlers/direct_media/direct_media_handler.py"
+    },
+    {
+      "path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py",
+      "sha256": "ff3daca60d0528ff47fbda929ed802bb707d814f191d7f983508b50cda42ccb4",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py"
+    },
+    {
+      "path": "services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py",
+      "sha256": "51802fbe9dba4b97ef45ed44707058f05fad00f32ee49f020e4f10f313f782c0",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py"
+    },
+    {
+      "path": "services/alert/elastic/elastic.py",
+      "sha256": "7e570ce20a52115269daab0e3744437fbcb010e0b3953929a8576ca38ca64d43"
     },
     {
       "path": "services/analytics/behavior-analytics/apps/thor_candidate/main_thor_candidate_app.py",

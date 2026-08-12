@@ -2,12 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "status", "package_id", "capability_id", "contract_sha256", "run", "runtime", "pipeline", "transport", "cleanup", "policy"],
+  "required": ["schema_version", "status", "package_id", "capability_ids", "contract_sha256", "run", "runtime", "pipeline", "transport", "cleanup", "policy"],
   "properties": {
     "schema_version": {"const": 1},
     "status": {"const": "passed"},
     "package_id": {"const": "cv-behavior-vlm-verification-runtime-successor"},
-    "capability_id": {"const": "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification"},
+    "capability_ids": {
+      "const": [
+        "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+        "manifest-entry.alert-verification.01-post-alert-verification"
+      ]
+    },
     "contract_sha256": {"$ref": "#/$defs/sha256"},
     "run": {
       "type": "object",
@@ -32,8 +37,8 @@
         "cgroup_driver": {"const": "cgroupfs"},
         "free_bytes_before": {"type": "integer", "minimum": 10737418240},
         "free_bytes_after": {"type": "integer", "minimum": 10737418240},
-        "source_lock_count": {"type": "integer", "minimum": 12},
-        "live_source_lock_count": {"type": "integer", "minimum": 7},
+        "source_lock_count": {"type": "integer", "minimum": 15},
+        "live_source_lock_count": {"type": "integer", "minimum": 9},
         "model": {"const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"}
       }
     },

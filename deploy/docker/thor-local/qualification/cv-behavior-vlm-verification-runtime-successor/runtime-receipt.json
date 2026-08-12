@@ -1,38 +1,41 @@
 {
-  "capability_id": "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+  "capability_ids": [
+    "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+    "manifest-entry.alert-verification.01-post-alert-verification"
+  ],
   "cleanup": {
     "after_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
     "before_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
     "exact_live_state_restored": true,
     "owned_elastic_documents_absent": true,
-    "owned_elastic_documents_deleted": 136,
+    "owned_elastic_documents_deleted": 126,
     "owned_proxy_absent": true,
     "owned_publisher_stopped": true,
     "owned_recording_absent": true,
     "owned_sensor_absent_from_active_catalog": true,
     "owned_temp_files_absent": true,
-    "owned_temp_files_deleted": 10,
+    "owned_temp_files_deleted": 5,
     "recording_space_saved_mb": 3,
     "rtcv_stream_set_preserved": true,
     "running_container_set_preserved": true
   },
-  "contract_sha256": "f65c1735308be3c80bcb424fdc0b7ea0d002d83516ea52d208c6d6eeacd02b28",
+  "contract_sha256": "ad166f5bf337ac865bf2775290809a07b32e1f0e4ad2a0fa95aca0e35dec1e28",
   "package_id": "cv-behavior-vlm-verification-runtime-successor",
   "pipeline": {
     "behavior_candidate_observed": true,
     "candidate_category": "FOV Count Violation",
-    "candidate_id_sha256": "2fac81c98476421b2bef9e1890ca4b25106840c6a0501514b177d83cc86c9e2d",
+    "candidate_id_sha256": "d254be4fd4a16480260a03098b6744691828c07fef074eb13cc071af17c565ba",
     "cv_raw_observed": true,
     "evidence_interval_preserved": true,
-    "evidence_interval_sha256": "adb7de4f35e011a5069a4f5c43d42f34c02ba4aa12512b0a861a49e518b030e6",
+    "evidence_interval_sha256": "cab93fdcef459ddbb13b1a3f74164ba31f249909966ea769b8213b05d2ac1985",
     "final_category": "Person in Monitored Zone",
     "final_verdict": "confirmed",
     "object_ids_preserved": true,
     "object_timeline_preserved": true,
     "observation_ms": [
-      9553,
-      12568,
-      20643
+      9556,
+      12072,
+      19648
     ],
     "observation_order": [
       "cv_raw",
@@ -42,9 +45,9 @@
     "reasoning_present": true,
     "same_candidate_document_id": true,
     "same_source_id": true,
-    "sensor_id_sha256": "600895bb22d1b90a8393d2f4f4884427ded56edd1d6ded9c7fcfd9489ce5df8a",
+    "sensor_id_sha256": "e1c95d55602a470529ebf9fd2277425c505def5154a61f0284dd040060fe974e",
     "sensor_identity_preserved": true,
-    "sensor_name_sha256": "98e56730c1371ed7c29fabab6bd0aeb4cabc17b6be70c10603e397b88b825e81",
+    "sensor_name_sha256": "c94b2c17fa5adf87d85900262c2d124c5fe145a0c9411b95050c242f09617aaa",
     "verification_response_code": 200,
     "verification_response_status": "OK",
     "vlm_verification_observed": true
@@ -56,9 +59,9 @@
     "warehouse_sample_bundle": "excluded"
   },
   "run": {
-    "completed_at": "2026-08-12T02:31:07.618937Z",
-    "duration_ms": 46379,
-    "run_id_sha256": "4eb346da537c549bbd2ea21cf046c021ed36796dd530522d76045a694caca424"
+    "completed_at": "2026-08-12T02:47:21.196325Z",
+    "duration_ms": 44897,
+    "run_id_sha256": "361ec6391434d467486c5e21be5f840ae9a238f7a0841d80cb62fc7f04fa574e"
   },
   "runtime": {
     "cgroup_driver": "cgroupfs",
@@ -94,11 +97,11 @@
         "running": true
       }
     },
-    "free_bytes_after": 20340887552,
-    "free_bytes_before": 20350140416,
-    "live_source_lock_count": 7,
+    "free_bytes_after": 20378087424,
+    "free_bytes_before": 20406226944,
+    "live_source_lock_count": 9,
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
-    "source_lock_count": 12
+    "source_lock_count": 15
   },
   "schema_version": 1,
   "status": "passed",

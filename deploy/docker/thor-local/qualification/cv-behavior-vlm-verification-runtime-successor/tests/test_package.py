@@ -31,6 +31,10 @@ def test_full_verifier_passes() -> None:
 
 def test_exact_candidate_identity_and_interval_are_preserved() -> None:
     receipt = json.loads((HERE / "runtime-receipt.json").read_text())
+    assert receipt["capability_ids"] == [
+        "manifest-entry.alert-verification.00-cv-perception-to-behavior-analytics-to-vlm-verification",
+        "manifest-entry.alert-verification.01-post-alert-verification",
+    ]
     pipeline = receipt["pipeline"]
     assert pipeline["observation_order"] == ["cv_raw", "behavior_candidate", "vlm_verification"]
     assert pipeline["observation_ms"] == sorted(pipeline["observation_ms"])
@@ -40,6 +44,8 @@ def test_exact_candidate_identity_and_interval_are_preserved() -> None:
     assert pipeline["evidence_interval_preserved"] is True
     assert pipeline["object_ids_preserved"] is True
     assert pipeline["object_timeline_preserved"] is True
+    assert pipeline["reasoning_present"] is True
+    assert pipeline["verification_response_status"] == "OK"
 
 
 def test_local_base64_transport_and_cleanup_are_proven() -> None:
