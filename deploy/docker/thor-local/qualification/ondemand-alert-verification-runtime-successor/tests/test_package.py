@@ -31,11 +31,33 @@ def test_full_verifier_passes() -> None:
 
 def test_receipt_proves_job_verdict_sink_and_cancellation() -> None:
     receipt = json.loads((HERE / "runtime-receipt.json").read_text())
+    assert receipt["capability_ids"] == [
+        "manifest-entry.alert-verification.03-multi-category-classification",
+        "manifest-entry.alert-verification.04-on-demand-verification",
+    ]
     assert receipt["positive"]["server_generated_job_id"] is True
     assert receipt["positive"]["verdict"] == "confirmed"
     assert receipt["positive"]["sink_outcome"] == "acknowledged"
     assert receipt["cancellation"]["cancellation_accepted"] is True
     assert receipt["cancellation"]["sink_hit_count"] == 0
+
+
+def test_two_category_mappings_and_alias_are_persisted() -> None:
+    receipt = json.loads((HERE / "runtime-receipt.json").read_text())
+    classification = receipt["classification"]
+    assert classification["configured_category_count"] == 2
+    assert classification["input_alias_count"] == 2
+    assert classification["case_normalized_alias_observed"] is True
+    assert classification["distinct_output_categories"] is True
+    assert classification["all_terminal_states_completed"] is True
+    assert classification["all_processing_outcomes_verified"] is True
+    assert classification["all_verdicts_confirmed"] is True
+    assert classification["all_reasoning_present"] is True
+    assert classification["all_parse_statuses_ok"] is True
+    assert (
+        classification["primary_output_category_sha256"]
+        != classification["secondary_output_category_sha256"]
+    )
 
 
 def test_exact_external_state_cleanup_and_local_boundary() -> None:

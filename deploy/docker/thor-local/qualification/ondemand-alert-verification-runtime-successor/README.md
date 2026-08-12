@@ -1,6 +1,6 @@
-# Thor on-demand alert-verification runtime evidence
+# Thor multi-category and on-demand alert-verification runtime evidence
 
-This package qualifies official capability row 325, `on-demand verification`, against the running Thor-local Alert Bridge, local Cosmos 3 VLM, and local Elasticsearch sink. It serves only the bundled 10-second warehouse fixture on numeric loopback, creates a uniquely owned verifier config, submits and polls a positive job, proves its correlated persisted `confirmed` verdict, proves pre-publish cancellation for an independent job, rejects an unknown category, removes uniquely tagged backend publications produced by the local RT-VLM, and restores every externally observable pre-state projection exactly.
+This package qualifies official capability rows 324 and 325, `multi-category classification` and `on-demand verification`, against the running Thor-local Alert Bridge, local Cosmos 3 VLM, and local Elasticsearch sink. It serves only the bundled 10-second warehouse fixture on numeric loopback, creates two uniquely owned verifier configs, and submits two positive jobs. Both mappings—including a case-normalized input alias—produce distinct persisted output categories with deterministic `completed / verified / confirmed` results, reasoning, and `OK` parse status. The run also proves pre-publish cancellation for an independent job, rejects an unknown category, removes uniquely tagged backend publications produced by the local RT-VLM, and restores every externally observable pre-state projection exactly.
 
 Run from the repository root:
 

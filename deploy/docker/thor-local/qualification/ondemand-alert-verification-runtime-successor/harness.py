@@ -423,23 +423,28 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
     before_digest = sha(canonical(before))
     suffix = sha(run_id)[:16]
     category = f"thor_ondemand_{suffix}"
+    secondary_category = f"thor_ondemand_secondary_{suffix}"
     missing_category = f"thor_ondemand_missing_{suffix}"
     sensor_id = f"thor-fixture-{suffix}"
     positive_event = f"thor-positive-{suffix}"
+    secondary_event = f"thor-secondary-{suffix}"
     cancel_event = f"thor-cancel-{suffix}"
-    event_ids = [positive_event, cancel_event]
-    if any(item.get("alert_type") == category for item in before["configs"]):
+    event_ids = [positive_event, secondary_event, cancel_event]
+    owned_categories = {category, secondary_category}
+    if any(item.get("alert_type") in owned_categories for item in before["configs"]):
         raise QualificationFailure("owned config already exists")
     if owned_event_hits(event_ids):
         raise QualificationFailure("owned incident already exists")
 
-    marker = f"Thor On-Demand PPE {suffix}"
+    marker = f"Thor Multi-Category {suffix}"
+    primary_output = f"{marker} Primary"
+    secondary_output = f"{marker} Secondary"
     prompt = (
         "Across these time-ordered warehouse frames, is at least one person "
         "visibly wearing both a bright yellow high-visibility safety vest and "
         "a yellow hard hat? Return only JSON with prediction_answer exactly "
         "YES or NO and reasoning as one concise evidence-based sentence. "
-        f"Qualification token: {marker}."
+        f"Qualification token: {marker}; class: primary."
     )
     expected_config = {
         "alert_type": category,
@@ -449,7 +454,7 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
             "Return exactly one valid JSON object with keys prediction_answer and "
             "reasoning. prediction_answer must be exactly YES or NO."
         ),
-        "output_category": marker,
+        "output_category": primary_output,
         "vlm_params": {
             "media_mode": "snapshots",
             "response_format": "json",
@@ -464,15 +469,26 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
             "request_timeout": 60,
         },
     }
+    secondary_config = {
+        **expected_config,
+        "alert_type": secondary_category,
+        "prompt": prompt.replace("class: primary", "class: secondary"),
+        "output_category": secondary_output,
+    }
     media_url = f"{MEDIA_ORIGIN}{MEDIA_PATH}"
     fixture_server = FixtureServer(fixture_path)
-    config_owned = False
+    configs_owned: set[str] = set()
     positive_id = ""
     positive_status_url = ""
     cancel_id = ""
     cancel_status_url = ""
     positive_terminal: dict[str, Any] | None = None
     positive_states: list[str] = []
+    secondary_id = ""
+    secondary_status_url = ""
+    secondary_terminal: dict[str, Any] | None = None
+    secondary_states: list[str] = []
+    secondary_sink_source: dict[str, Any] | None = None
     cancel_snapshot: dict[str, Any] | None = None
     sink_source: dict[str, Any] | None = None
     primary: BaseException | None = None
@@ -486,11 +502,22 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
         )
         if status != 201 or created.get("alert_type") != category:
             raise QualificationFailure("owned config creation failed")
-        config_owned = True
+        configs_owned.add(category)
         exact_path = urllib.parse.quote(category, safe="")
         status, inspected = request_json(f"{ALERT}/api/v1/verification/config/{exact_path}")
         if status != 200 or any(inspected.get(key) != value for key, value in expected_config.items()):
             raise QualificationFailure("owned config inspection failed")
+
+        status, created = request_json(
+            f"{ALERT}/api/v1/verification/config", method="POST", body=secondary_config,
+        )
+        if status != 201 or created.get("alert_type") != secondary_category:
+            raise QualificationFailure("secondary config creation failed")
+        configs_owned.add(secondary_category)
+        secondary_path = urllib.parse.quote(secondary_category, safe="")
+        status, inspected = request_json(f"{ALERT}/api/v1/verification/config/{secondary_path}")
+        if status != 200 or any(inspected.get(key) != value for key, value in secondary_config.items()):
+            raise QualificationFailure("secondary config inspection failed")
 
         payload = {
             "id": positive_event,
@@ -529,7 +556,7 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
             status != 200
             or sink_source.get("id") != positive_event
             or sink_source.get("sensorId") != sensor_id
-            or sink_source.get("category") != marker
+            or sink_source.get("category") != primary_output
             or not isinstance(info, dict)
             or info.get("verdict") != "confirmed"
             or str(info.get("verificationResponseCode")) != "200"
@@ -537,6 +564,72 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
             or not info["reasoning"].strip()
         ):
             raise QualificationFailure("persisted positive verdict was not correlated")
+
+        secondary_payload = {
+            "id": secondary_event,
+            "sensorId": sensor_id,
+            "category": secondary_category.upper(),
+            "info": {"media_urls": [media_url], "media_type": "video"},
+        }
+        status, admitted = request_json(
+            f"{ALERT}/api/v1/verification/ondemand",
+            method="POST",
+            body=secondary_payload,
+        )
+        if status != 202:
+            raise QualificationFailure("secondary category submission failed")
+        secondary_id, secondary_status_url = accepted_job(admitted, secondary_event)
+        if secondary_id == positive_id:
+            raise QualificationFailure("server reused a multi-category job ID")
+        secondary_terminal, secondary_states = terminal_job(
+            secondary_status_url, contract,
+        )
+        secondary_result = secondary_terminal.get("result")
+        secondary_sink = (
+            secondary_result.get("sinkDelivery")
+            if isinstance(secondary_result, dict) else None
+        )
+        if (
+            secondary_terminal.get("state") != "completed"
+            or secondary_terminal.get("terminal") is not True
+            or secondary_result.get("processingOutcome") != "verified"
+            or secondary_result.get("verdict") != "confirmed"
+            or secondary_result.get("verificationResponseCode") != 200
+            or not isinstance(secondary_sink, dict)
+            or secondary_sink.get("transport") != "elastic"
+            or secondary_sink.get("outcome") != "acknowledged"
+            or not isinstance(secondary_sink.get("index"), str)
+            or not isinstance(secondary_sink.get("documentId"), str)
+        ):
+            raise QualificationFailure("secondary category verdict was not exact")
+        secondary_index = urllib.parse.quote(secondary_sink["index"], safe="-_.")
+        secondary_document = urllib.parse.quote(
+            secondary_sink["documentId"], safe="-_.",
+        )
+        status, stored = request_json(
+            f"{ELASTIC}/{secondary_index}/_doc/{secondary_document}",
+        )
+        secondary_sink_source = (
+            stored.get("_source") if isinstance(stored, dict) else None
+        )
+        secondary_info = (
+            secondary_sink_source.get("info")
+            if isinstance(secondary_sink_source, dict) else None
+        )
+        if (
+            status != 200
+            or not isinstance(secondary_sink_source, dict)
+            or secondary_sink_source.get("id") != secondary_event
+            or secondary_sink_source.get("sensorId") != sensor_id
+            or secondary_sink_source.get("category") != secondary_output
+            or not isinstance(secondary_info, dict)
+            or secondary_info.get("verdict") != "confirmed"
+            or str(secondary_info.get("verificationResponseCode")) != "200"
+            or secondary_info.get("verificationResponseStatus") != "OK"
+            or not isinstance(secondary_info.get("reasoning"), str)
+            or not secondary_info["reasoning"].strip()
+        ):
+            raise QualificationFailure("secondary persisted mapping was not correlated")
 
         cancel_payload = {
             "id": cancel_event,
@@ -597,8 +690,8 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
         try:
             cleanup_deleted = delete_owned_hits(event_ids, sensor_id)
             cleanup_rtvlm_deleted = delete_owned_rtvlm_hits(marker)
-            if config_owned:
-                exact_path = urllib.parse.quote(category, safe="")
+            for owned_category in sorted(configs_owned):
+                exact_path = urllib.parse.quote(owned_category, safe="")
                 status, body = request_json(
                     f"{ALERT}/api/v1/verification/config/{exact_path}", method="DELETE",
                 )
@@ -631,21 +724,27 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
         raise QualificationFailure(
             f"exact runtime state was not restored: {snapshot_delta(before, after)}"
         )
-    if config_owned and any(item.get("alert_type") == category for item in after["configs"]):
+    if any(item.get("alert_type") in owned_categories for item in after["configs"]):
         raise QualificationFailure("owned config remains")
     if fixture_server.get_count < 1:
         raise QualificationFailure("fixture was not downloaded")
     if time.monotonic() - started > contract["execution"]["maximum_duration_seconds"]:
         raise QualificationFailure("qualification duration exceeded")
 
-    assert positive_terminal is not None and cancel_snapshot is not None and sink_source is not None
+    assert (
+        positive_terminal is not None
+        and secondary_terminal is not None
+        and cancel_snapshot is not None
+        and sink_source is not None
+        and secondary_sink_source is not None
+    )
     result = positive_terminal["result"]
     sink = result["sinkDelivery"]
     return {
         "schema_version": 1,
         "status": "passed",
         "package_id": contract["package_id"],
-        "capability_id": contract["capability_id"],
+        "capability_ids": contract["capability_ids"],
         "contract_sha256": sha(contract_raw),
         "run": {
             "status": "passed",
@@ -682,8 +781,28 @@ def execute(contract: dict[str, Any], contract_raw: bytes, run_id: str) -> dict[
             "sink_index_sha256": sha(sink["index"]),
             "sink_document_id_sha256": sha(sink["documentId"]),
             "persisted_source_sha256": sha(canonical(sink_source)),
-            "mapped_category_sha256": sha(marker),
+            "mapped_category_sha256": sha(primary_output),
             "reasoning_present": True,
+        },
+        "classification": {
+            "configured_category_count": 2,
+            "input_alias_count": 2,
+            "case_normalized_alias_observed": True,
+            "distinct_output_categories": True,
+            "all_terminal_states_completed": True,
+            "all_processing_outcomes_verified": True,
+            "all_verdicts_confirmed": True,
+            "all_reasoning_present": True,
+            "all_parse_statuses_ok": True,
+            "primary_output_category_sha256": sha(primary_output),
+            "secondary_output_category_sha256": sha(secondary_output),
+            "secondary_event_id_sha256": sha(secondary_event),
+            "secondary_correlation_id_sha256": sha(secondary_id),
+            "secondary_status_url_sha256": sha(secondary_status_url),
+            "secondary_poll_states": secondary_states,
+            "secondary_persisted_source_sha256": sha(
+                canonical(secondary_sink_source)
+            ),
         },
         "cancellation": {
             "event_id_sha256": sha(cancel_event),

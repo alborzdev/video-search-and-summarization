@@ -33,15 +33,22 @@ def main() -> int:
     Draft202012Validator.check_schema(schema)
     Draft202012Validator(schema).validate(receipt)
     assert receipt["contract_sha256"] == sha(contract_path)
-    assert contract["official_indices"] == [325]
+    assert contract["official_indices"] == [324, 325]
 
     ledger_path = REPO / contract["official_source"]["path"]
     assert sha(ledger_path) == contract["official_source"]["ledger_sha256"]
     ledger = json.loads(ledger_path.read_text())
-    row = ledger["capabilities"][325]
-    assert hashlib.sha256(canonical(row)).hexdigest() == contract["official_source"]["row_canonical_sha256"]
-    assert row["id"] == contract["capability_id"]
-    assert row["runtime_state"] == "not_qualified"
+    rows = ledger["capabilities"]
+    for index, capability_id in zip(
+        contract["official_indices"], contract["capability_ids"], strict=True,
+    ):
+        row = rows[index]
+        assert hashlib.sha256(canonical(row)).hexdigest() == (
+            contract["official_source"]["row_canonical_sha256_by_index"][str(index)]
+        )
+        assert row["id"] == capability_id
+        assert row["runtime_state"] == "not_qualified"
+    assert receipt["capability_ids"] == contract["capability_ids"]
 
     for lock in contract["source_locks"]:
         source = REPO / lock["path"]
@@ -52,6 +59,9 @@ def main() -> int:
     assert receipt["positive"]["terminal_state"] == "completed"
     assert receipt["positive"]["verdict"] == "confirmed"
     assert receipt["positive"]["sink_outcome"] == "acknowledged"
+    assert receipt["classification"]["configured_category_count"] == 2
+    assert receipt["classification"]["case_normalized_alias_observed"] is True
+    assert receipt["classification"]["all_parse_statuses_ok"] is True
     assert receipt["cancellation"]["terminal_state"] == "cancelled"
     assert receipt["cancellation"]["sink_hit_count"] == 0
     assert receipt["negative"]["error"] == "unknown_category"

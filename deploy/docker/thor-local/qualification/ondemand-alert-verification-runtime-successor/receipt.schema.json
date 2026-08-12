@@ -2,12 +2,17 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schema_version", "status", "package_id", "capability_id", "contract_sha256", "run", "runtime", "fixture", "positive", "cancellation", "negative", "cleanup"],
+  "required": ["schema_version", "status", "package_id", "capability_ids", "contract_sha256", "run", "runtime", "fixture", "positive", "classification", "cancellation", "negative", "cleanup"],
   "properties": {
     "schema_version": {"const": 1},
     "status": {"const": "passed"},
     "package_id": {"const": "ondemand-alert-verification-runtime-successor"},
-    "capability_id": {"const": "manifest-entry.alert-verification.04-on-demand-verification"},
+    "capability_ids": {
+      "const": [
+        "manifest-entry.alert-verification.03-multi-category-classification",
+        "manifest-entry.alert-verification.04-on-demand-verification"
+      ]
+    },
     "contract_sha256": {"$ref": "#/$defs/sha"},
     "run": {
       "type": "object",
@@ -45,6 +50,29 @@
         "persisted_source_sha256": {"$ref": "#/$defs/sha"},
         "mapped_category_sha256": {"$ref": "#/$defs/sha"},
         "reasoning_present": {"const": true}
+      },
+      "additionalProperties": false
+    },
+    "classification": {
+      "type": "object",
+      "required": ["configured_category_count", "input_alias_count", "case_normalized_alias_observed", "distinct_output_categories", "all_terminal_states_completed", "all_processing_outcomes_verified", "all_verdicts_confirmed", "all_reasoning_present", "all_parse_statuses_ok", "primary_output_category_sha256", "secondary_output_category_sha256", "secondary_event_id_sha256", "secondary_correlation_id_sha256", "secondary_status_url_sha256", "secondary_poll_states", "secondary_persisted_source_sha256"],
+      "properties": {
+        "configured_category_count": {"const": 2},
+        "input_alias_count": {"const": 2},
+        "case_normalized_alias_observed": {"const": true},
+        "distinct_output_categories": {"const": true},
+        "all_terminal_states_completed": {"const": true},
+        "all_processing_outcomes_verified": {"const": true},
+        "all_verdicts_confirmed": {"const": true},
+        "all_reasoning_present": {"const": true},
+        "all_parse_statuses_ok": {"const": true},
+        "primary_output_category_sha256": {"$ref": "#/$defs/sha"},
+        "secondary_output_category_sha256": {"$ref": "#/$defs/sha"},
+        "secondary_event_id_sha256": {"$ref": "#/$defs/sha"},
+        "secondary_correlation_id_sha256": {"$ref": "#/$defs/sha"},
+        "secondary_status_url_sha256": {"$ref": "#/$defs/sha"},
+        "secondary_poll_states": {"type": "array", "minItems": 1, "maxItems": 90, "items": {"enum": ["queued", "running", "publishing", "completed"]}},
+        "secondary_persisted_source_sha256": {"$ref": "#/$defs/sha"}
       },
       "additionalProperties": false
     },

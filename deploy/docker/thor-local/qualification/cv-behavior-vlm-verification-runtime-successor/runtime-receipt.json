@@ -5,17 +5,17 @@
     "manifest-entry.alert-verification.02-contextualization"
   ],
   "cleanup": {
-    "after_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
-    "before_sha256": "7aaddaf2cfbc5f88bb1c3e2c307b7dfa92e279373099e858370f23558dc75906",
+    "after_sha256": "cdf7052b6bbf8bb315965a5373becd612d034efc17115c720fb3f08a8a8d6ef0",
+    "before_sha256": "cdf7052b6bbf8bb315965a5373becd612d034efc17115c720fb3f08a8a8d6ef0",
     "exact_live_state_restored": true,
     "owned_elastic_documents_absent": true,
-    "owned_elastic_documents_deleted": 136,
+    "owned_elastic_documents_deleted": 146,
     "owned_proxy_absent": true,
     "owned_publisher_stopped": true,
     "owned_recording_absent": true,
     "owned_sensor_absent_from_active_catalog": true,
     "owned_temp_files_absent": true,
-    "owned_temp_files_deleted": 10,
+    "owned_temp_files_deleted": 5,
     "recording_space_saved_mb": 3,
     "rtcv_stream_set_preserved": true,
     "running_container_set_preserved": true
@@ -25,28 +25,28 @@
     "media_context_traceable": true,
     "object_context_traceable": true,
     "scene_context_present": true,
-    "scene_context_sha256": "c0a5496f20dc94498b71557434c95386bd9304a5190dac042661fa08ad190230",
+    "scene_context_sha256": "cba14b015ed531631985d6ce549f135df111ecd73680e785d480102981dba44b",
     "source_alert_preceded_contextualization": true,
     "source_metadata_preserved": true,
     "time_context_traceable": true
   },
-  "contract_sha256": "427493398c657ff54af8a0f4a8d154d0d30be146481e91aeb621cfcc99dcb235",
+  "contract_sha256": "053fd1d307b9f7ae357a3765652588430e235999cad51cb093b33cdb373aaf85",
   "package_id": "cv-behavior-vlm-verification-runtime-successor",
   "pipeline": {
     "behavior_candidate_observed": true,
     "candidate_category": "FOV Count Violation",
-    "candidate_id_sha256": "e14b6174c7402a4a3c58f33ea3327d34b3c05314723a14a283f368176497ea5a",
+    "candidate_id_sha256": "7df3b1a2f8f10e578f37be21a60943d048633b520827ade96656642d2a0ef4da",
     "cv_raw_observed": true,
     "evidence_interval_preserved": true,
-    "evidence_interval_sha256": "55168065c5f7ed72913756c58f55099c44333d13febd14999752d1d1904a9b91",
+    "evidence_interval_sha256": "7a5a1a8ad5cfffcd23b3117ddc435db6ab96d0181397405d80cbb89c6e731a8c",
     "final_category": "Person in Monitored Zone",
     "final_verdict": "confirmed",
     "object_ids_preserved": true,
     "object_timeline_preserved": true,
     "observation_ms": [
-      9045,
-      12059,
-      20626
+      9051,
+      12071,
+      21642
     ],
     "observation_order": [
       "cv_raw",
@@ -56,9 +56,9 @@
     "reasoning_present": true,
     "same_candidate_document_id": true,
     "same_source_id": true,
-    "sensor_id_sha256": "8a3db0162063ca2d6b6c6f2f146ce2f1506e242c11e7979001349aec578b15c1",
+    "sensor_id_sha256": "cfda2ddd1b26dfec9900bb6f20d553cdb4dcfcabb63a8bbdecf07f0a277a0f20",
     "sensor_identity_preserved": true,
-    "sensor_name_sha256": "de1b0c4fa792d6bbbb018897e3d9753b263e2434f58dfabe029529524f2b56cb",
+    "sensor_name_sha256": "c29c314808f53c6bdee5c387e93b0b44492860222fe00546d24c2c3959d1898b",
     "verification_response_code": 200,
     "verification_response_status": "OK",
     "vlm_verification_observed": true
@@ -70,15 +70,15 @@
     "warehouse_sample_bundle": "excluded"
   },
   "run": {
-    "completed_at": "2026-08-12T02:53:48.984021Z",
-    "duration_ms": 46678,
-    "run_id_sha256": "86a83c5e14f4c6abf87336a09fd70583ebb2086ab7b866be682cd39cbffa57dc"
+    "completed_at": "2026-08-12T03:06:14.184221Z",
+    "duration_ms": 47668,
+    "run_id_sha256": "42d1d7fd29b79c7145a755cd13efb47f2b5c24cb3e4781edd0ed4f995df98d60"
   },
   "runtime": {
     "cgroup_driver": "cgroupfs",
     "containers": {
       "vss-alert-bridge": {
-        "image_id": "sha256:6539bbf8201148c65ac76b50a1e752e148ed62808022f561de90f3963719f15f",
+        "image_id": "sha256:daa7d123f7aff56fdf4bdfa5533e8ad0df6fa506ebff9aa34a758d94e114e894",
         "oom_killed": false,
         "restart_count": 0,
         "running": true
@@ -108,9 +108,9 @@
         "running": true
       }
     },
-    "free_bytes_after": 20379758592,
-    "free_bytes_before": 20413779968,
-    "live_source_lock_count": 11,
+    "free_bytes_after": 20353949696,
+    "free_bytes_before": 20386942976,
+    "live_source_lock_count": 12,
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
     "source_lock_count": 18
   },

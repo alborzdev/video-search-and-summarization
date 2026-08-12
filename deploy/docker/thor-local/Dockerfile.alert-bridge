@@ -23,6 +23,9 @@ COPY services/alert/enhance_alert_with_vlm.py /app/enhance_alert_with_vlm.py
 COPY services/alert/media_transport_config.py /app/media_transport_config.py
 COPY services/alert/vlm/vlm_client.py /app/vlm/vlm_client.py
 COPY services/alert/models/responses.py /app/models/responses.py
+COPY services/alert/models/base_response_parser.py /app/models/base_response_parser.py
+COPY services/alert/models/pluggable_parser_runtime.py /app/models/pluggable_parser_runtime.py
+COPY services/alert/alert_type_config.json /app/alert_type_config.json
 COPY services/alert/vst/snapshot_sampler.py /app/vst/snapshot_sampler.py
 COPY services/alert/handlers/prompt_handler/alert_type_config_loader.py /app/handlers/prompt_handler/alert_type_config_loader.py
 COPY services/alert/handlers/direct_media/direct_media_handler.py /app/handlers/direct_media/direct_media_handler.py
@@ -36,6 +39,7 @@ COPY services/alert/alert-agent-web/app/websocket/websocket_service.py /app/aler
 COPY services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py /app/mdx/anomaly/sink/vlm_enhanced_sink/sink_base.py
 COPY services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py /app/mdx/anomaly/sink/vlm_enhanced_sink/sink_elastic.py
 COPY services/alert/mdx/anomaly/sink/vlm_enhanced_sink/sink_kafka.py /app/mdx/anomaly/sink/vlm_enhanced_sink/sink_kafka.py
+COPY services/alert/utils/field_extractor.py /app/utils/field_extractor.py
 COPY services/alert/utils/schema_util.py /app/utils/schema_util.py
 
 USER 65532:65532

@@ -39,7 +39,7 @@
         "free_bytes_before": {"type": "integer", "minimum": 10737418240},
         "free_bytes_after": {"type": "integer", "minimum": 10737418240},
         "source_lock_count": {"type": "integer", "minimum": 18},
-        "live_source_lock_count": {"type": "integer", "minimum": 11},
+        "live_source_lock_count": {"type": "integer", "minimum": 12},
         "model": {"const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"}
       }
     },

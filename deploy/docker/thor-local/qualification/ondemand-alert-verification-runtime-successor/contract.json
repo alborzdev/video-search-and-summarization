@@ -1,12 +1,18 @@
 {
   "schema_version": 1,
   "package_id": "ondemand-alert-verification-runtime-successor",
-  "capability_id": "manifest-entry.alert-verification.04-on-demand-verification",
-  "official_indices": [325],
+  "capability_ids": [
+    "manifest-entry.alert-verification.03-multi-category-classification",
+    "manifest-entry.alert-verification.04-on-demand-verification"
+  ],
+  "official_indices": [324, 325],
   "official_source": {
     "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
     "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
-    "row_canonical_sha256": "79faf59350bdd2ebc3ad32b6f54bcd08ca0dd549984ac20f0da45cf0dda632b0"
+    "row_canonical_sha256_by_index": {
+      "324": "79acc0fa29f130680b576059780296b9085314398e44057915a8a0722318a92c",
+      "325": "79faf59350bdd2ebc3ad32b6f54bcd08ca0dd549984ac20f0da45cf0dda632b0"
+    }
   },
   "execution": {
     "acknowledgement": "I_AUTHORIZE_OWNED_ONDEMAND_ALERT_VERIFICATION",
@@ -19,7 +25,7 @@
     "terminal_poll_attempts": 90,
     "terminal_poll_seconds": 1,
         "cancellation_settle_seconds": 20,
-        "expected_rtvlm_publications": 2,
+        "expected_rtvlm_publications": 3,
         "maximum_duration_seconds": 180
   },
   "fixture": {
@@ -33,7 +39,7 @@
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
     "containers": {
       "vss-alert-bridge": {
-        "image_id": "sha256:6539bbf8201148c65ac76b50a1e752e148ed62808022f561de90f3963719f15f"
+        "image_id": "sha256:daa7d123f7aff56fdf4bdfa5533e8ad0df6fa506ebff9aa34a758d94e114e894"
       },
       "vss-rtvi-vlm": {
         "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
@@ -41,6 +47,8 @@
     }
   },
   "required_runtime_proof": [
+    "configure two independent category mappings and persist distinct canonical output categories",
+    "resolve a case-normalized category alias and retain deterministic verdict, reasoning, and parse status",
     "submit operator-owned media directly to the on-demand verification API without the real-time candidate consumer",
     "receive a server-generated job ID and poll it to a deterministic completed, verified, confirmed terminal verdict",
     "persist and read the exact correlated verdict through the configured local Elasticsearch sink with an acknowledged receipt",
@@ -52,7 +60,7 @@
     "source_locks": [
         {
             "path": "deploy/docker/thor-local/qualification/ondemand-alert-verification-runtime-successor/harness.py",
-            "sha256": "348c58542e3d3abead48986a60423c2f74d9d8ca22bff7152b8e90e0f5b94793"
+            "sha256": "be0f6f5777e5c2f78ffc10b408dd7964b6866f19df6ef9538d8fe02cfb6c25ad"
         },
     {
       "path": "services/alert/handlers/direct_media/direct_media_handler.py",
@@ -65,6 +73,28 @@
       "sha256": "e05aefad74a3f92214cce80c2006c1877060399034ee576ac41818801ae92269",
       "container": "vss-alert-bridge",
       "container_path": "/app/media_transport_config.py"
+    },
+    {
+      "path": "services/alert/models/pluggable_parser_runtime.py",
+      "sha256": "6570afd986167b918acc7262de8e805176e39824897aa9cb8c48b7896a0b9535",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/models/pluggable_parser_runtime.py"
+    },
+    {
+      "path": "services/alert/models/base_response_parser.py",
+      "sha256": "a62893a9092a502d136b428b9bc5ad61f4d6a5544a2edeff6b887831636a56ce",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/models/base_response_parser.py"
+    },
+    {
+      "path": "services/alert/alert_type_config.json",
+      "sha256": "9426cfe069c92b86176d10180fbfb0b7aaa83a439ae25ba79d132f7fe519e7e5"
+    },
+    {
+      "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vlm-as-verifier/configs/alert_type_config.json",
+      "sha256": "847a7647552c34928f216c3360ebb44296dbad3d514fd8c9f0c93fc864eafebc",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/alert_type_config.json"
     },
     {
       "path": "services/alert/handlers/direct_media/media_analyzer.py",
@@ -116,7 +146,7 @@
     },
     {
       "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
-      "sha256": "d518c854070161c77f708f285b77c2c2d950b5b01a78eccd291532d573e9c7d8"
+      "sha256": "b60b1f3232216618969d61cf67d0e404ecb1598e703b814622dfae83b3b76212"
     }
   ]
 }

@@ -41,7 +41,7 @@
     "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
     "containers": {
       "vss-alert-bridge": {
-        "image_id": "sha256:6539bbf8201148c65ac76b50a1e752e148ed62808022f561de90f3963719f15f"
+        "image_id": "sha256:daa7d123f7aff56fdf4bdfa5533e8ad0df6fa506ebff9aa34a758d94e114e894"
       },
       "vss-behavior-analytics-thor-candidates": {
         "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6"
@@ -99,7 +99,9 @@
     },
     {
       "path": "services/alert/utils/field_extractor.py",
-      "sha256": "3b25d3c88f8883554e25212a6725ec5288b495539b104ab3d9c207eb51849120"
+      "sha256": "3b25d3c88f8883554e25212a6725ec5288b495539b104ab3d9c207eb51849120",
+      "container": "vss-alert-bridge",
+      "container_path": "/app/utils/field_extractor.py"
     },
     {
       "path": "services/alert/models/responses.py",
@@ -157,7 +159,7 @@
     },
     {
       "path": "deploy/docker/thor-local/Dockerfile.alert-bridge",
-      "sha256": "d518c854070161c77f708f285b77c2c2d950b5b01a78eccd291532d573e9c7d8"
+      "sha256": "b60b1f3232216618969d61cf67d0e404ecb1598e703b814622dfae83b3b76212"
     },
     {
       "path": "services/alert/warmup/test.mp4",
