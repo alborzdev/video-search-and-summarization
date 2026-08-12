@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "package_id", "status", "capability_ids",
+    "official_indices", "contract_sha256", "run", "runtime", "request",
+    "prometheus", "cleanup", "policy"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "package_id": {"const": "lvs-prometheus-metrics-runtime-successor"},
+    "status": {"const": "passed"},
+    "capability_ids": {"const": ["manifest-entry.video-summarization-file.08-prometheus-metrics"]},
+    "official_indices": {"const": [304]},
+    "contract_sha256": {"$ref": "#/$defs/sha256"},
+    "run": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id_sha256", "duration_seconds", "free_bytes_before", "free_bytes_after"],
+      "properties": {
+        "id_sha256": {"$ref": "#/$defs/sha256"},
+        "duration_seconds": {"type": "number", "exclusiveMinimum": 0, "maximum": 300},
+        "free_bytes_before": {"type": "integer", "minimum": 10737418240},
+        "free_bytes_after": {"type": "integer", "minimum": 10737418240}
+      }
+    },
+    "runtime": {
+      "type": "object", "additionalProperties": false,
+      "required": ["container", "image_id", "image_name", "healthy", "restart_count",
+        "oom_killed", "started_at_sha256", "endpoint_loopback", "model",
+        "live_source_locks_exact"],
+      "properties": {
+        "container": {"const": "vss-lvs"},
+        "image_id": {"const": "sha256:6d7ccfb9f2c8901e37395f147d96635ec3c8f333532cc7cbace43bfeaab62c64"},
+        "image_name": {"const": "cti-vss-video-summarization:thor-local"},
+        "healthy": {"const": true},
+        "restart_count": {"type": "integer", "minimum": 0},
+        "oom_killed": {"const": false},
+        "started_at_sha256": {"$ref": "#/$defs/sha256"},
+        "endpoint_loopback": {"const": true},
+        "model": {"const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"},
+        "live_source_locks_exact": {"const": true}
+      }
+    },
+    "request": {
+      "type": "object", "additionalProperties": false,
+      "required": ["route", "http_status", "model", "chunk_duration", "chunk_count",
+        "prompt_sha256", "response_sha256", "response_content_nonempty"],
+      "properties": {
+        "route": {"const": "/generate_vlm_captions"},
+        "http_status": {"const": 200},
+        "model": {"const": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"},
+        "chunk_duration": {"const": 0},
+        "chunk_count": {"const": 1},
+        "prompt_sha256": {"$ref": "#/$defs/sha256"},
+        "response_sha256": {"$ref": "#/$defs/sha256"},
+        "response_content_nonempty": {"const": true}
+      }
+    },
+    "prometheus": {
+      "type": "object", "additionalProperties": false,
+      "required": ["route", "http_status_before", "http_status_after", "content_type_text_plain",
+        "parser", "parseable_before", "parseable_after", "family_count_before",
+        "family_count_after", "sample_count_before", "sample_count_after", "before_sha256",
+        "after_sha256", "processed_query_delta", "histogram_count_deltas", "pending_before",
+        "pending_after", "latest_latencies_positive", "observed_label_names",
+        "forbidden_resource_labels", "resource_id_cardinality_absent"],
+      "properties": {
+        "route": {"const": "/metrics"},
+        "http_status_before": {"const": 200},
+        "http_status_after": {"const": 200},
+        "content_type_text_plain": {"const": true},
+        "parser": {"const": "prometheus_client.parser.text_string_to_metric_families"},
+        "parseable_before": {"const": true},
+        "parseable_after": {"const": true},
+        "family_count_before": {"type": "integer", "minimum": 10},
+        "family_count_after": {"type": "integer", "minimum": 10},
+        "sample_count_before": {"type": "integer", "minimum": 50},
+        "sample_count_after": {"type": "integer", "minimum": 50},
+        "before_sha256": {"$ref": "#/$defs/sha256"},
+        "after_sha256": {"$ref": "#/$defs/sha256"},
+        "processed_query_delta": {"const": 1.0},
+        "histogram_count_deltas": {
+          "type": "object", "additionalProperties": false,
+          "required": ["vlm_latency_seconds_count", "vlm_input_tokens_per_chunk_count",
+            "vlm_output_tokens_per_chunk_count", "vlm_queue_time_seconds_count",
+            "vlm_chunk_total_latency_seconds_count", "vlm_frames_per_chunk_count"],
+          "properties": {
+            "vlm_latency_seconds_count": {"const": 1.0},
+            "vlm_input_tokens_per_chunk_count": {"const": 1.0},
+            "vlm_output_tokens_per_chunk_count": {"const": 1.0},
+            "vlm_queue_time_seconds_count": {"const": 1.0},
+            "vlm_chunk_total_latency_seconds_count": {"const": 1.0},
+            "vlm_frames_per_chunk_count": {"const": 1.0}
+          }
+        },
+        "pending_before": {"const": 0.0},
+        "pending_after": {"const": 0.0},
+        "latest_latencies_positive": {"const": true},
+        "observed_label_names": {"const": ["le"]},
+        "forbidden_resource_labels": {"const": []},
+        "resource_id_cardinality_absent": {"const": true}
+      }
+    },
+    "cleanup": {
+      "type": "object", "additionalProperties": false,
+      "required": ["delete_status", "file_catalog_before_sha256", "file_catalog_after_sha256",
+        "file_catalog_restored_exactly", "graph_before", "graph_after", "graph_restored_exactly",
+        "owned_graph_nodes_absent", "running_container_set_preserved", "runtime_state_preserved",
+        "failures"],
+      "properties": {
+        "delete_status": {"const": 200},
+        "file_catalog_before_sha256": {"$ref": "#/$defs/sha256"},
+        "file_catalog_after_sha256": {"$ref": "#/$defs/sha256"},
+        "file_catalog_restored_exactly": {"const": true},
+        "graph_before": {"$ref": "#/$defs/graph"},
+        "graph_after": {"$ref": "#/$defs/graph"},
+        "graph_restored_exactly": {"const": true},
+        "owned_graph_nodes_absent": {"const": true},
+        "running_container_set_preserved": {"const": true},
+        "runtime_state_preserved": {"const": true},
+        "failures": {"const": []}
+      }
+    },
+    "policy": {
+      "type": "object", "additionalProperties": false,
+      "required": ["external_requests", "agent_generate_calls", "model_inference_requests",
+        "vios_or_rt_cv_stream_mutations", "core_service_lifecycle_actions",
+        "warehouse_sample_bundle", "raw_resource_ids_retained", "raw_prompt_retained",
+        "raw_semantic_output_retained", "credentials_retained"],
+      "properties": {
+        "external_requests": {"const": 0},
+        "agent_generate_calls": {"const": 0},
+        "model_inference_requests": {"const": 1},
+        "vios_or_rt_cv_stream_mutations": {"const": 0},
+        "core_service_lifecycle_actions": {"const": 0},
+        "warehouse_sample_bundle": {"const": "excluded"},
+        "raw_resource_ids_retained": {"const": false},
+        "raw_prompt_retained": {"const": false},
+        "raw_semantic_output_retained": {"const": false},
+        "credentials_retained": {"const": false}
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "graph": {
+      "type": "object", "additionalProperties": false,
+      "required": ["nodes", "relationships"],
+      "properties": {
+        "nodes": {"type": "integer", "minimum": 0},
+        "relationships": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

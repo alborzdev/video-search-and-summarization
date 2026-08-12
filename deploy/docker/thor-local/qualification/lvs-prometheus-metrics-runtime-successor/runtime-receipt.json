@@ -1,0 +1,103 @@
+{
+  "capability_ids": [
+    "manifest-entry.video-summarization-file.08-prometheus-metrics"
+  ],
+  "cleanup": {
+    "delete_status": 200,
+    "failures": [],
+    "file_catalog_after_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac",
+    "file_catalog_before_sha256": "49c64eb258b2e815adaa6659b3b88661bf7379c254b63407784dc15b8769f1ac",
+    "file_catalog_restored_exactly": true,
+    "graph_after": {
+      "nodes": 4,
+      "relationships": 0
+    },
+    "graph_before": {
+      "nodes": 4,
+      "relationships": 0
+    },
+    "graph_restored_exactly": true,
+    "owned_graph_nodes_absent": true,
+    "running_container_set_preserved": true,
+    "runtime_state_preserved": true
+  },
+  "contract_sha256": "a5132ceb4111df14c5033d3cf823b8b3cb2e5abbd0cf2d4b5df10220dd3ffd8c",
+  "official_indices": [
+    304
+  ],
+  "package_id": "lvs-prometheus-metrics-runtime-successor",
+  "policy": {
+    "agent_generate_calls": 0,
+    "core_service_lifecycle_actions": 0,
+    "credentials_retained": false,
+    "external_requests": 0,
+    "model_inference_requests": 1,
+    "raw_prompt_retained": false,
+    "raw_resource_ids_retained": false,
+    "raw_semantic_output_retained": false,
+    "vios_or_rt_cv_stream_mutations": 0,
+    "warehouse_sample_bundle": "excluded"
+  },
+  "prometheus": {
+    "after_sha256": "67fa3c287489f39f4e75525d53167e850c43a796e2b6f3fd5d6f4db7c9530256",
+    "before_sha256": "a1081a59bcae562d7517333bc189298f64f853209ae37132de82b8ab561c163d",
+    "content_type_text_plain": true,
+    "family_count_after": 22,
+    "family_count_before": 22,
+    "forbidden_resource_labels": [],
+    "histogram_count_deltas": {
+      "vlm_chunk_total_latency_seconds_count": 1.0,
+      "vlm_frames_per_chunk_count": 1.0,
+      "vlm_input_tokens_per_chunk_count": 1.0,
+      "vlm_latency_seconds_count": 1.0,
+      "vlm_output_tokens_per_chunk_count": 1.0,
+      "vlm_queue_time_seconds_count": 1.0
+    },
+    "http_status_after": 200,
+    "http_status_before": 200,
+    "latest_latencies_positive": true,
+    "observed_label_names": [
+      "le"
+    ],
+    "parseable_after": true,
+    "parseable_before": true,
+    "parser": "prometheus_client.parser.text_string_to_metric_families",
+    "pending_after": 0.0,
+    "pending_before": 0.0,
+    "processed_query_delta": 1.0,
+    "resource_id_cardinality_absent": true,
+    "route": "/metrics",
+    "sample_count_after": 105,
+    "sample_count_before": 105
+  },
+  "request": {
+    "chunk_count": 1,
+    "chunk_duration": 0,
+    "http_status": 200,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "prompt_sha256": "43253d607e80935a21341caf79a0a4639b50737f8954a34fc12b1b2454b2ec6a",
+    "response_content_nonempty": true,
+    "response_sha256": "36fecf97dd21e57204445f2c20972cbb3db3cb8884cf7a83292548fa0c40f201",
+    "route": "/generate_vlm_captions"
+  },
+  "run": {
+    "duration_seconds": 5.201254,
+    "free_bytes_after": 20276621312,
+    "free_bytes_before": 20276670464,
+    "id_sha256": "26f7312c875d2d5a7e8583e6acdb3b95eca8876d73b713e581772a20da4630c7"
+  },
+  "runtime": {
+    "container": "vss-lvs",
+    "endpoint_loopback": true,
+    "healthy": true,
+    "image_id": "sha256:6d7ccfb9f2c8901e37395f147d96635ec3c8f333532cc7cbace43bfeaab62c64",
+    "image_name": "cti-vss-video-summarization:thor-local",
+    "live_source_locks_exact": true,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "oom_killed": false,
+    "restart_count": 0,
+    "started_at_sha256": "20ee1376c8bdc0faa4c28606b5f7951a185a19e65ce99c865f38d1731a0098b3"
+  },
+  "schema_version": 1,
+  "status": "passed"
+}

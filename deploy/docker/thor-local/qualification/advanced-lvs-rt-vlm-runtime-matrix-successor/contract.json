@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "package_id": "advanced-lvs-rt-vlm-runtime-matrix-successor",
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-49",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-50",
   "selected_metadata": {
     "selector_path": "deploy/docker/thor-local/parity/metadata_sets/selector.json",
     "selector_sha256": "bf2e8c88f08fc7a06dded17ebc3e6965b9d0202b1fe2d5f7d1eb169d4a57a9c3",
@@ -485,6 +485,33 @@
         "/policy/agent_generate_calls": 0,
         "/policy/rt_cv_or_vios_stream_mutations": 0,
         "/policy/warehouse_sample_bundle": "excluded"
+      }
+    },
+    {
+      "official_index": 304,
+      "capability_id": "manifest-entry.video-summarization-file.08-prometheus-metrics",
+      "advertised_literal": "Prometheus metrics",
+      "package_id": "lvs-prometheus-metrics-runtime-successor",
+      "contract_path": "deploy/docker/thor-local/qualification/lvs-prometheus-metrics-runtime-successor/contract.json",
+      "contract_sha256": "a5132ceb4111df14c5033d3cf823b8b3cb2e5abbd0cf2d4b5df10220dd3ffd8c",
+      "receipt_path": "deploy/docker/thor-local/qualification/lvs-prometheus-metrics-runtime-successor/runtime-receipt.json",
+      "receipt_sha256": "dc552ac05f93568a2be3a7cc49aa11a97038d62e4d15c8b129aa3364a4f6a12c",
+      "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-prometheus-metrics-runtime-successor/receipt.schema.json",
+      "receipt_schema_sha256": "a428cca0b97fc3cb646f6b7998f4f5424ccf6678c4302bc6b11469d4cbc03ebe",
+      "receipt_status": "passed",
+      "required_assertions": {
+        "/request/http_status": 200,
+        "/request/chunk_count": 1,
+        "/prometheus/parseable_before": true,
+        "/prometheus/parseable_after": true,
+        "/prometheus/processed_query_delta": 1.0,
+        "/prometheus/latest_latencies_positive": true,
+        "/prometheus/resource_id_cardinality_absent": true,
+        "/cleanup/file_catalog_restored_exactly": true,
+        "/cleanup/graph_restored_exactly": true,
+        "/cleanup/running_container_set_preserved": true,
+        "/policy/agent_generate_calls": 0,
+        "/policy/external_requests": 0
       }
     },
     {

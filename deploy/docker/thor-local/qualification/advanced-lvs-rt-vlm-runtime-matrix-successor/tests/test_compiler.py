@@ -28,10 +28,10 @@ def test_matrix_validates_against_strict_schema() -> None:
     Draft202012Validator(schema).validate(value)
 
 
-def test_ninety_exact_official_rows_have_current_runtime_evidence() -> None:
+def test_ninety_one_exact_official_rows_have_current_runtime_evidence() -> None:
     matrix = compiler.build_matrix()
     assert [row["official_index"] for row in matrix["rows"]] == [
-        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 351, 352, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
+        60, 61, 62, 63, 69, 70, 169, 203, 204, 205, 206, 207, 208, 209, 210, 299, 300, 302, 304, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 336, 337, 339, 340, 341, 342, 343, 344, 345, 347, 348, 349, 350, 351, 352, 353, 354, 364, 365, 366, 367, 368, 369, 370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381, 382, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 403, 404, 412, 413, 415, 416, 417, 420, 421, 422, 424, 467
     ]
     assert all(row["overlay_runtime_state"] == "passed_current_thor" for row in matrix["rows"])
     assert all(row["runtime_evidence"]["receipt_sha256"] for row in matrix["rows"])
@@ -43,6 +43,21 @@ def test_overlay_does_not_falsify_canonical_admission() -> None:
     assert matrix["matrix_semantics"]["canonical_admission_claimed"] is False
     assert all(row["canonical_runtime_state"] == "not_qualified" for row in matrix["rows"])
     assert all(row["canonical_state_advanced"] is False for row in matrix["rows"])
+
+
+def test_lvs_prometheus_receipt_proves_request_metrics_and_cardinality() -> None:
+    contract = compiler._load_json(compiler.CONTRACT_PATH)
+    entry = next(entry for entry in contract["entries"] if entry["official_index"] == 304)
+    receipt = compiler._validate_receipt(entry)
+    assert receipt["prometheus"]["processed_query_delta"] == 1.0
+    assert set(receipt["prometheus"]["histogram_count_deltas"].values()) == {1.0}
+    assert receipt["prometheus"]["pending_before"] == 0.0
+    assert receipt["prometheus"]["pending_after"] == 0.0
+    assert receipt["prometheus"]["resource_id_cardinality_absent"] is True
+    assert receipt["cleanup"]["file_catalog_before_sha256"] == (
+        receipt["cleanup"]["file_catalog_after_sha256"]
+    )
+    assert receipt["cleanup"]["graph_before"] == receipt["cleanup"]["graph_after"]
 
 
 def test_on_demand_verification_receipt_is_bound_to_exact_row() -> None:

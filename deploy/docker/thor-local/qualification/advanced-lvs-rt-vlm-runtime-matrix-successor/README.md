@@ -1,7 +1,13 @@
 # Advanced LVS and RT-VLM runtime matrix successor
 
-Overlay 49 binds ninety advertised candidate rows to current-Thor live
-receipts. Its two new rows prove both RT-VLM stream-management API families
+Overlay 50 binds ninety-one advertised candidate rows to current-Thor live
+receipts. Its new row proves LVS Prometheus metrics around one bounded local
+Cosmos caption request: the completed-query gauge and six VLM histogram counts
+advanced exactly once, pending returned to zero, latest latency gauges were
+positive, and the metrics carried no resource-ID label cardinality. File,
+Neo4j, LVS runtime, and running-container baselines were restored exactly.
+
+Overlay 49's two rows prove both RT-VLM stream-management API families
 against one genuine local RTSP publisher. The original plural API preserved a
 fixed external identity and place metadata and returned mixed batch-delete
 outcomes; the CV-compatible singular API preserved camera identity, accepted

@@ -1,5 +1,12 @@
 # Evidence
 
+Overlay 50 adds official row 304, `Prometheus metrics`. The live LVS metrics
+route parsed before and after one successful owned-file caption request. The
+completed-query gauge plus six VLM request/latency/processing histogram counts
+each advanced once; pending returned to zero, latest latencies were positive,
+and no resource identity appeared as a label. File catalog, Neo4j, runtime, and
+running-container state were restored exactly.
+
 Overlay 49 adds official rows 351-352, `original stream API` and
 `CV-compatible stream API`. A real local H.264 RTSP publisher drove the live
 RT-VLM container through plural add/info/batch-delete and singular

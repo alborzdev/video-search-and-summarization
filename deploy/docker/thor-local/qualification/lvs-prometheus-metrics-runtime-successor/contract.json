@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "package_id": "lvs-prometheus-metrics-runtime-successor",
+  "capability_ids": ["manifest-entry.video-summarization-file.08-prometheus-metrics"],
+  "official_indices": [304],
+  "official_source": {
+    "path": "deploy/docker/thor-local/qualification/metadata-500-current-lvs-rest-runtime-successor/post-state-official-capabilities.json",
+    "ledger_sha256": "348ee105e2e7a97c8b45995869a4a48c6b9e5bc6d9b36865d15360559da052c4",
+    "row_canonical_sha256_by_index": {
+      "304": "a6caef7dd79991b630415943e77b9873cfa88aa57257e8bde9c8c04e501a09d8"
+    }
+  },
+  "advertised_literal": "Prometheus metrics",
+  "required_semantics": [
+    "Expose parseable Prometheus request, latency, and processing metrics through the LVS metrics route.",
+    "One bounded successful request must change the intended series without candidate-ID cardinality."
+  ],
+  "source_locks": [
+    {
+      "path": "services/video-summarization/src/via_server.py",
+      "container_path": "/opt/nvidia/via/via-engine/via_server.py",
+      "sha256": "f9017fa89f7d00d811f1fccb624b6c1e6af9ab1bf1068a544d3451766da8e29e"
+    },
+    {
+      "path": "services/video-summarization/src/via_stream_handler.py",
+      "container_path": "/opt/nvidia/via/via-engine/via_stream_handler.py",
+      "sha256": "d128b7271d34b41045e535276af96790976f96e6fbd024471c7fdbf9a4f92542"
+    },
+    {
+      "path": "services/video-summarization/src/rtvi_vlm_client.py",
+      "container_path": "/opt/nvidia/via/via-engine/rtvi_vlm_client.py",
+      "sha256": "0dd7c999fe7a60121ecaf0d635e391f4a5a585cf5e3040d6aee9fb4866855514"
+    },
+    {
+      "path": "services/alert/warmup/test.mp4",
+      "sha256": "f2c16bf02e1d43fa52faf902ff981185c62df092189b41c735c5c27647b44205"
+    },
+    {
+      "path": "deploy/docker/thor-local/qualification/lvs-prometheus-metrics-runtime-successor/harness.py",
+      "sha256": "8d1a90e74c04046c6df67a2a5623998d6f75076b925a16c0ab428774d7ed7cdb"
+    }
+  ],
+  "runtime": {
+    "endpoint": "http://127.0.0.1:38111",
+    "container": "vss-lvs",
+    "image_id": "sha256:6d7ccfb9f2c8901e37395f147d96635ec3c8f333532cc7cbace43bfeaab62c64",
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "minimum_free_bytes": 10737418240
+  },
+  "execution": {
+    "maximum_duration_seconds": 300,
+    "model_inference_requests": 1,
+    "owned_files": 1,
+    "acknowledgement": "I_ACK_ONE_OWNED_LVS_FILE_AND_ONE_LOCAL_VLM_CAPTION_REQUEST"
+  },
+  "acceptance": {
+    "prometheus_parseable_before_after": true,
+    "processed_query_delta": 1,
+    "six_vlm_histogram_count_deltas": 1,
+    "pending_query_gauge_returns_zero": true,
+    "resource_id_cardinality_absent": true,
+    "exact_file_and_graph_cleanup": true,
+    "running_container_set_preserved": true
+  },
+  "policy": {
+    "external_requests": 0,
+    "agent_generate_calls": 0,
+    "vios_or_rt_cv_stream_mutations": 0,
+    "core_service_lifecycle_actions": 0,
+    "warehouse_sample_bundle": "excluded"
+  }
+}

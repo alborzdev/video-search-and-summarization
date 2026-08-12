@@ -1,5 +1,5 @@
 {
-  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-49",
+  "matrix_id": "thor-vss-3.2.1-advanced-lvs-rt-vlm-runtime-overlay-50",
   "matrix_semantics": {
     "canonical_admission_claimed": false,
     "canonical_state_advanced": false,
@@ -400,6 +400,28 @@
         "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-partial-offsets-runtime-successor/receipt.schema.json",
         "receipt_schema_sha256": "43fedafac31e6a94791c27551834ff50e144f63cb73535c5d3bebddce6762860",
         "receipt_sha256": "3c5ed18630c465a95a5f4c55561d59d0b5bfed3176089465c7b99db8388a7340",
+        "receipt_status": "passed"
+      },
+      "warehouse_sample_bundle": "excluded"
+    },
+    {
+      "acceptance_class": "required_local",
+      "admission_state": "runtime_evidence_available_not_canonically_admitted",
+      "advertised_literal": "Prometheus metrics",
+      "canonical_runtime_state": "not_qualified",
+      "canonical_state_advanced": false,
+      "capability_id": "manifest-entry.video-summarization-file.08-prometheus-metrics",
+      "feature_id": "video-summarization-file",
+      "official_index": 304,
+      "overlay_runtime_state": "passed_current_thor",
+      "runtime_evidence": {
+        "contract_path": "deploy/docker/thor-local/qualification/lvs-prometheus-metrics-runtime-successor/contract.json",
+        "contract_sha256": "a5132ceb4111df14c5033d3cf823b8b3cb2e5abbd0cf2d4b5df10220dd3ffd8c",
+        "package_id": "lvs-prometheus-metrics-runtime-successor",
+        "receipt_path": "deploy/docker/thor-local/qualification/lvs-prometheus-metrics-runtime-successor/runtime-receipt.json",
+        "receipt_schema_path": "deploy/docker/thor-local/qualification/lvs-prometheus-metrics-runtime-successor/receipt.schema.json",
+        "receipt_schema_sha256": "a428cca0b97fc3cb646f6b7998f4f5424ccf6678c4302bc6b11469d4cbc03ebe",
+        "receipt_sha256": "dc552ac05f93568a2be3a7cc49aa11a97038d62e4d15c8b129aa3364a4f6a12c",
         "receipt_status": "passed"
       },
       "warehouse_sample_bundle": "excluded"
@@ -1996,8 +2018,8 @@
   "summary": {
     "agent_generate_calls": 0,
     "canonical_promotions": 0,
-    "passed_current_thor": 90,
-    "row_count": 90,
+    "passed_current_thor": 91,
+    "row_count": 91,
     "warehouse_sample_bundle": "excluded"
   }
 }
