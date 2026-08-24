@@ -151,7 +151,7 @@
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs",
-      "sha256": "6a8a7ee3dfa7ea55908056274a50d1d3983f4b58e0d85a1acb29b815bdc644aa"
+      "sha256": "74c13fc4f130be73dfde4652b9e36e3651fdef2b2f0f1ea7e086d7ddd8943f55"
     },
     {
       "path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/manifest.schema.json",

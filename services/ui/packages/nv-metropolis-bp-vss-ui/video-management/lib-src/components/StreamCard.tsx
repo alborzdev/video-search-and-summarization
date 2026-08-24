@@ -1,11 +1,21 @@
 // SPDX-License-Identifier: MIT
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button } from '@nvidia/foundations-react-core';
-import type { StreamInfo, ChatSidebarQueryContext } from '../types';
-import { getFileExtension, isRtspStream, fetchPictureWithQueue, getStreamType } from '../utils';
-import { createApiEndpoints } from '../api';
-import { copyToClipboard } from '@nemo-agent-toolkit/ui';
-import { IconCheck } from '@tabler/icons-react';
+
+import { createApiEndpoints } from "../api";
+import type { StreamInfo, ChatSidebarQueryContext } from "../types";
+import {
+  getFileExtension,
+  getStreamDisplayName,
+  isRtspStream,
+  fetchPictureWithQueue,
+  getStreamType,
+} from "../utils";
+import { copyToClipboard } from "@nemo-agent-toolkit/ui";
+import { Button } from "@nvidia/foundations-react-core";
+import { IconCheck } from "@tabler/icons-react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
+
+const TIMELINE_RETRY_COUNT = 5;
+const TIMELINE_RETRY_DELAY_MS = 500;
 
 interface StreamCardProps {
   stream: StreamInfo;
@@ -30,6 +40,7 @@ export const StreamCard: React.FC<StreamCardProps> = ({
   onAddChatQueryContext,
 }) => {
   const extension = getFileExtension(stream.url);
+  const displayName = getStreamDisplayName(stream.name);
   const isRtsp = isRtspStream(stream);
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(true);
@@ -55,15 +66,36 @@ export const StreamCard: React.FC<StreamCardProps> = ({
         let pictureUrl: string;
 
         if (isRtsp) {
-          pictureUrl = apiEndpoints.LIVE_PICTURE(stream.streamId);
+          // VST's live-picture endpoint can block until its server timeout
+          // when an RTSP source is disconnected even though retained footage
+          // and the source record are still valid. Prefer the latest retained
+          // frame whenever a timeline exists; it is stable for active, paused,
+          // and recently disconnected cameras and keeps the source grid fast.
+          const endTime = getEndTimeForStream(stream.streamId);
+          if (!endTime && retryCount < TIMELINE_RETRY_COUNT && isMounted) {
+            // Stream cards mount before the shared timeline request normally
+            // completes. Do not launch a slow live-picture request during
+            // that brief race; re-read the ref-backed timeline getter first.
+            retryTimer = setTimeout(
+              () => fetchThumbnail(retryCount + 1),
+              TIMELINE_RETRY_DELAY_MS
+            );
+            return;
+          }
+          pictureUrl = endTime
+            ? apiEndpoints.REPLAY_PICTURE(stream.streamId, endTime)
+            : apiEndpoints.LIVE_PICTURE(stream.streamId);
         } else {
           const endTime = getEndTimeForStream(stream.streamId);
           if (!endTime) {
             if (retryCount < 5 && isMounted) {
-              retryTimer = setTimeout(() => fetchThumbnail(retryCount + 1), 1000);
+              retryTimer = setTimeout(
+                () => fetchThumbnail(retryCount + 1),
+                1000
+              );
               return;
             }
-            throw new Error('No timeline available');
+            throw new Error("No timeline available");
           }
           pictureUrl = apiEndpoints.REPLAY_PICTURE(stream.streamId, endTime);
         }
@@ -103,7 +135,9 @@ export const StreamCard: React.FC<StreamCardProps> = ({
     };
   }, []);
 
-  const [copyState, setCopyState] = useState<'idle' | 'success' | 'error'>('idle');
+  const [copyState, setCopyState] = useState<"idle" | "success" | "error">(
+    "idle"
+  );
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -130,39 +164,42 @@ export const StreamCard: React.FC<StreamCardProps> = ({
       id: `video-mgmt-stream:${stream.streamId}`,
       label: stream.name,
       // contextType: UI-only (chip tooltip / future grouping); not sent to the backend — see Chat onSend.
-      contextType: 'media/video',
+      contextType: "media/video",
       data,
     });
 
     try {
       await copyToClipboard(text);
-      setCopyState('success');
+      setCopyState("success");
     } catch {
-      setCopyState('error');
+      setCopyState("error");
     }
     if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current);
     copyTimeoutRef.current = setTimeout(() => {
-      setCopyState('idle');
+      setCopyState("idle");
       copyTimeoutRef.current = null;
     }, 2000);
   }, [stream, onAddChatQueryContext]);
 
   return (
     <div
-      className={`rounded-lg border overflow-hidden bg-white dark:bg-neutral-900 border-gray-200 dark:border-gray-700 ${isSelected ? 'ring-2 ring-green-500' : ''}`}
+      className={`vm-stream-card rounded-lg border overflow-hidden bg-white dark:bg-neutral-900 border-gray-200 dark:border-gray-700 ${
+        isSelected ? "is-selected" : ""
+      }`}
     >
-      <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-neutral-900">
+      <div className="vm-stream-card__header flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-neutral-900">
         <input
           type="checkbox"
           checked={isSelected}
           onChange={handleCheckboxChange}
+          aria-label={`Select ${stream.name}`}
           className="w-4 h-4 rounded border-2 cursor-pointer bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-500 focus:ring-green-500"
         />
         <p
           className="text-sm font-medium truncate flex-1 text-gray-800 dark:text-gray-200 min-w-0"
-          title={stream.name}
+          title={`${displayName} · ${stream.name}`}
         >
-          {stream.name}
+          {displayName}
         </p>
         {onAddChatQueryContext ? (
           <Button
@@ -172,12 +209,15 @@ export const StreamCard: React.FC<StreamCardProps> = ({
             onClick={handleCopyContext}
             title="Add sensor context to chat"
           >
-            {copyState === 'success' ? (
+            {copyState === "success" ? (
               <>
-                <IconCheck className="w-2.5 h-2.5 shrink-0" style={{ color: 'inherit' }} />
+                <IconCheck
+                  className="w-2.5 h-2.5 shrink-0"
+                  style={{ color: "inherit" }}
+                />
                 <span>Added</span>
               </>
-            ) : copyState === 'error' ? (
+            ) : copyState === "error" ? (
               <span>Failed</span>
             ) : (
               <span>+ Chat</span>
@@ -186,11 +226,13 @@ export const StreamCard: React.FC<StreamCardProps> = ({
         ) : null}
       </div>
 
-      <div
-        className="group relative flex items-center justify-center bg-gray-100 dark:bg-neutral-900 pb-[56.25%]"
-      >
+      <div className="group relative flex items-center justify-center bg-gray-100 dark:bg-neutral-900 pb-[56.25%]">
         {thumbnailUrl && !thumbnailError ? (
-          <img src={thumbnailUrl} alt={stream.name} className="absolute inset-0 w-full h-full object-cover" />
+          <img
+            src={thumbnailUrl}
+            alt={displayName}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         ) : isLoadingThumbnail ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="animate-pulse w-8 h-8 rounded-full bg-gray-600" />
@@ -217,8 +259,22 @@ export const StreamCard: React.FC<StreamCardProps> = ({
           </div>
         )}
 
-        <div className="absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
-          {isRtsp ? 'RTSP' : extension || 'VIDEO'}
+        <div className={`vm-stream-kind ${isRtsp ? "is-live" : ""}`}>
+          {isRtsp && (
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              aria-hidden
+            >
+              <circle cx="12" cy="12" r="2" fill="currentColor" />
+              <path d="M8.5 8.5a5 5 0 010 7M15.5 8.5a5 5 0 010 7" />
+            </svg>
+          )}
+          {isRtsp ? "LIVE · RTSP" : extension || "VIDEO"}
         </div>
 
         {onPlay && (
@@ -228,21 +284,48 @@ export const StreamCard: React.FC<StreamCardProps> = ({
             disabled={isLoadingPlay}
             className={`absolute inset-0 flex items-center justify-center transition-colors duration-200 ${
               isLoadingPlay
-                ? 'bg-black/40 cursor-wait'
-                : 'bg-black/0 group-hover:bg-black/40 cursor-pointer'
+                ? "bg-black/40 cursor-wait"
+                : "bg-black/0 group-hover:bg-black/40 cursor-pointer"
             }`}
-            aria-label={isLoadingPlay ? `Loading ${stream.name}` : `Play ${stream.name}`}
+            aria-label={
+              isLoadingPlay ? `Loading ${stream.name}` : `Play ${stream.name}`
+            }
           >
-            <div className={`w-12 h-12 flex items-center justify-center rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg transition-opacity duration-200 ${
-              isLoadingPlay ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-            }`}>
+            <div
+              className={`vm-stream-play w-12 h-12 flex items-center justify-center rounded-full shadow-lg transition-opacity duration-200 ${
+                isLoadingPlay
+                  ? "opacity-100"
+                  : "opacity-90 group-hover:opacity-100"
+              }`}
+            >
               {isLoadingPlay ? (
-                <svg className="w-6 h-6 text-gray-800 dark:text-white animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                <svg
+                  className="w-6 h-6 text-gray-800 dark:text-white animate-spin"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
                 </svg>
               ) : (
-                <svg className="w-6 h-6 text-gray-800 dark:text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="21"
+                  height="21"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden
+                >
                   <path d="M8 5v14l11-7z" />
                 </svg>
               )}
@@ -251,7 +334,12 @@ export const StreamCard: React.FC<StreamCardProps> = ({
         )}
       </div>
 
-      <div className="px-3 py-2">
+      <div className="vm-stream-card__footer px-3 py-2">
+        <span
+          className={isRtsp ? "vm-source-state is-live" : "vm-source-state"}
+        >
+          <i /> {isRtsp ? "Live source" : "Recorded source"}
+        </span>
         <div className="flex items-center justify-end gap-2">
           {stream.metadata.codec && (
             <span className="text-xs text-gray-500 dark:text-gray-400">

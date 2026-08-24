@@ -169,6 +169,10 @@ def test_harness_connects_only_to_preexisting_cdp_and_never_launches() -> None:
     assert "`${agentOrigin}/api/v1${path}`" in source
     assert "`${vstApiBase}/v1/storage/file`" in source
     assert "`${vstApiBase}/v1/replay/streams`" in source
+    assert "postDataBuffer" not in source
+    assert "XMLHttpRequest.prototype.send" in source
+    assert 'crypto.subtle.digest("SHA-256", payload)' in source
+    assert "chunk.payloadSha !== sha(expectedPayload)" in source
     assert "MAX_AGENT_DELETE_RESPONSE_BYTES = 64 * 1024" in source
     assert 'response.headers.get("content-length")' in source
     assert "new TextEncoder().encode(text).byteLength" in source

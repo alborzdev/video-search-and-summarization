@@ -183,6 +183,10 @@ class VideoResult(BaseModel):
         default=None,
         description="A dictionary of the user prompt's criteria for each parameter and whether the video meets it or not.",
     )
+    failure_reason: Literal["media_unavailable", "verification_failed"] | None = Field(
+        default=None,
+        description="Why verification could not complete. None when the critic reached a verdict.",
+    )
 
 
 class CriticAgentOutput(BaseModel):
@@ -203,6 +207,21 @@ def _convert_to_seconds(timestamp: str, video_start_dt: datetime) -> float:
     """Convert timestamp to seconds since video start timestamp."""
     timestamp_dt = iso8601_to_datetime(timestamp)
     return (timestamp_dt - video_start_dt).total_seconds()
+
+
+def _verification_failure_reason(error: Exception) -> Literal["media_unavailable", "verification_failed"]:
+    """Distinguish expired/unplayable evidence from an unavailable VLM."""
+    message = str(error).lower()
+    media_markers = (
+        "failed to get video clip url",
+        "no videourl in response",
+        "no timeline found",
+        "out of the video timeline",
+        "synchronous video generation failed",
+    )
+    if any(marker in message for marker in media_markers):
+        return "media_unavailable"
+    return "verification_failed"
 
 
 @register_function(config_type=CriticAgentConfig, framework_wrappers=[LLMFrameworkEnum.LANGCHAIN])
@@ -231,7 +250,12 @@ async def critic_agent(config: CriticAgentConfig, builder: Builder) -> AsyncGene
 
         async def evaluate_video(video: VideoInfo) -> VideoResult:
             if not config.video_analysis_tool:
-                return VideoResult(video_info=video, result=CriticAgentResult.UNVERIFIED, criteria_met={})
+                return VideoResult(
+                    video_info=video,
+                    result=CriticAgentResult.UNVERIFIED,
+                    criteria_met={},
+                    failure_reason="verification_failed",
+                )
 
             async with semaphore:
                 formatted_prompt = config.critic_prompt.format(user_prompt=critic_input.query)
@@ -272,7 +296,12 @@ async def critic_agent(config: CriticAgentConfig, builder: Builder) -> AsyncGene
                 except Exception as e:
                     # Failing one video analysis call is not a critical error, so we return UNVERIFIED.
                     logger.error(f"Error calling video analysis tool: {e}")
-                    return VideoResult(video_info=video, result=CriticAgentResult.UNVERIFIED, criteria_met={})
+                    return VideoResult(
+                        video_info=video,
+                        result=CriticAgentResult.UNVERIFIED,
+                        criteria_met={},
+                        failure_reason=_verification_failure_reason(e),
+                    )
 
                 try:
                     criteria_dict: dict[str, bool] = json.loads(get_json_from_string(vlm_response))
@@ -287,7 +316,12 @@ async def critic_agent(config: CriticAgentConfig, builder: Builder) -> AsyncGene
                 except Exception as e:
                     # Failing one video analysis call is not a critical error, so we return None.
                     logger.error(f"Error parsing VLM response: {e}")
-                    return VideoResult(video_info=video, result=CriticAgentResult.UNVERIFIED, criteria_met={})
+                    return VideoResult(
+                        video_info=video,
+                        result=CriticAgentResult.UNVERIFIED,
+                        criteria_met={},
+                        failure_reason="verification_failed",
+                    )
 
         tasks = [evaluate_video(video) for video in critic_input.videos[:video_count] if video.sensor_id]
         video_results = await asyncio.gather(*tasks)

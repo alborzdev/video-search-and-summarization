@@ -52,7 +52,15 @@ export async function notifyUploadComplete(
   // Body = full upload response + filename + custom_params (if any).
   // custom_params is omitted entirely when formData is undefined/empty so the
   // body stays minimal on profiles that don't use the dialog's config template.
-  const body: Record<string, any> = { ...videoUploadApiResponse, filename };
+  const analysisProfileId =
+    formData && typeof formData.analysisProfileId === 'string'
+      ? formData.analysisProfileId
+      : undefined;
+  const body: Record<string, any> = {
+    ...videoUploadApiResponse,
+    filename,
+    ...(analysisProfileId ? { analysisProfileId } : {}),
+  };
   if (formData && Object.keys(formData).length > 0) {
     body.custom_params = formData;
   }

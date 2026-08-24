@@ -39,8 +39,9 @@ def test_patch_preserves_optional_rows_for_entity_free_and_summary_free_graphs()
 
     assert MODULE.ENTITY_OLD not in updated
     assert MODULE.SUMMARY_OLD not in updated
-    assert updated.count(MODULE.ENTITY_NEW) == 1
-    assert updated.count(MODULE.SUMMARY_NEW) == 1
+    assert "WHERE n.uuid = $uuid" in updated
+    assert "owned + orphanedEntities + candidateSummaries" in updated
+    assert "MATCH (d:Document {uuid:$uuid})" not in updated
 
 
 @pytest.mark.parametrize("missing", [MODULE.ENTITY_OLD, MODULE.SUMMARY_OLD])

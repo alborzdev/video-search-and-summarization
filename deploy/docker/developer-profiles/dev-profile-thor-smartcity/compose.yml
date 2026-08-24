@@ -1,21 +1,35 @@
 # SPDX-FileCopyrightText: Copyright (c) 2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-# Smart City is an alternate one-stream perception/behavior workload for the
-# shared Thor-full services. Activate it with bp_developer_thor_full_2d and
-# bp_developer_thor_smartcity_2d; never combine it with the Thor search
-# perception profile because both intentionally own GPU 0 and port 9000.
+# Smart City remains available as its original complete profile. The separate
+# traffic-perception profile is also used by CTAILabs VSS as a second,
+# VSS-owned model worker: warehouse RT-CV stays on 9000 while traffic RT-CV
+# listens on 9010. Sources are routed to exactly one worker by the Agent.
 services:
   perception-2d-smartcity-thor:
     extends:
       file: ${VSS_APPS_DIR}/services/rtvi/rtvi-cv/compose.yaml
       service: perception
-    profiles: ["bp_developer_thor_smartcity_2d"]
-    container_name: vss-rtvi-cv
+    profiles: ["bp_developer_thor_smartcity_2d", "bp_developer_thor_traffic_perception_2d"]
+    container_name: vss-rtvi-cv-traffic
+    entrypoint: ["/usr/local/bin/rtvi-cv-supervisor"]
+    restart: unless-stopped
+    # The NVIDIA RT-CV base limits restart attempts to two. That is too
+    # brittle on Thor after a host reboot: DeepStream can reach nvmsgbroker
+    # before Kafka is actually accepting clients and exhaust both attempts.
+    # Override the inherited policy with unlimited retries; the direct Kafka
+    # health dependency below handles normal Compose-managed startup ordering.
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 0
     volumes:
       - ${VSS_DATA_DIR}/models/:/opt/storage/
       - ${VSS_APPS_DIR}/engines/:/opt/engines/
       - ${VSS_APPS_DIR}/developer-profiles/dev-profile-alerts/deepstream/configs/:/opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app/mounted-configs/:ro
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/rtvi-cv-healthcheck.sh:/usr/local/bin/rtvi-cv-healthcheck:ro
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/rtvi-cv-supervisor.sh:/usr/local/bin/rtvi-cv-supervisor:ro
     environment:
       # The released RT-CV launcher uses DGX-THOR as its Jetson/Thor tuning
       # selector even though the overall profile is named AGX-THOR.
@@ -28,8 +42,11 @@ services:
       DS_TRACKER_REID: "false"
       DS_SHOW_SENSOR_ID: "true"
       DS_CONFIG_FILE: /opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app/configs/run_config-api-rtdetr-protobuf.txt
+      OTEL_SERVICE_NAME: rtvi-cv-traffic
+      RTVI_CV_HEALTHCHECK_URL: http://127.0.0.1:${RTVI_CV_TRAFFIC_PORT:-9010}/api/v1/health/get-dsready-state
+      RTVI_CV_HEALTHCHECK_STATE_DIR: /tmp/rtvi-cv-traffic-healthcheck
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:9000/api/v1/health/get-dsready-state"]
+      test: ["CMD", "/usr/local/bin/rtvi-cv-healthcheck"]
       interval: 15s
       timeout: 5s
       retries: 40
@@ -37,6 +54,8 @@ services:
     depends_on:
       sensor-ms:
         condition: service_started
+      kafka:
+        condition: service_healthy
       broker-health-check:
         condition: service_completed_successfully
 

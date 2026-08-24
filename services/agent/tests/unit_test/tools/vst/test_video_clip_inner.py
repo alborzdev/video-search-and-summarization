@@ -164,6 +164,50 @@ class TestGetVideoUrl:
                 assert "disableAudio=false" in actual_url
 
     @pytest.mark.asyncio
+    async def test_get_video_url_uses_retained_media_fallback_on_vst_mux_failure(self):
+        """A retained RTSP segment stays inspectable when VIOS cannot mux it."""
+        mock_response = MagicMock()
+        mock_response.status = 500
+        mock_response_cm = AsyncMock()
+        mock_response_cm.__aenter__ = AsyncMock(return_value=mock_response)
+        mock_response_cm.__aexit__ = AsyncMock(return_value=False)
+
+        mock_session = MagicMock()
+        mock_session.get.return_value = mock_response_cm
+        mock_session_cm = AsyncMock()
+        mock_session_cm.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session_cm.__aexit__ = AsyncMock(return_value=False)
+
+        fallback_url = "http://127.0.0.1:8098/media/" + "a" * 64 + ".mp4"
+        with (
+            patch("vss_agents.tools.vst.video_clip.aiohttp.ClientSession", return_value=mock_session_cm),
+            patch("vss_agents.tools.vst.video_clip.create_retry_strategy") as mock_retry,
+            patch(
+                "vss_agents.tools.vst.video_clip._prepare_fallback_clip",
+                new_callable=AsyncMock,
+                return_value=fallback_url,
+            ) as mock_fallback,
+        ):
+
+            async def fake_retry(*args, **kwargs):
+                yield MagicMock(__enter__=MagicMock(return_value=None), __exit__=MagicMock(return_value=False))
+
+            mock_retry.return_value = fake_retry()
+            result = await get_video_url(
+                "stream1",
+                start_time="2025-01-01T00:00:00.000Z",
+                end_time="2025-01-01T00:00:10.000Z",
+                vst_internal_url="http://vst:30888",
+            )
+
+        assert result == fallback_url
+        mock_fallback.assert_awaited_once_with(
+            "stream1",
+            "2025-01-01T00:00:00.000Z",
+            "2025-01-01T00:00:10.000Z",
+        )
+
+    @pytest.mark.asyncio
     async def test_get_video_url_invalid_range(self):
         """Test error when clip end time is before start time."""
         with patch("vss_agents.tools.vst.video_clip.get_timeline", new_callable=AsyncMock) as mock_timeline:
@@ -254,6 +298,36 @@ class TestVSTVideoClipInner:
                     assert isinstance(result, VSTVideoClipOutput)
                     assert "1.2.3.4:30888" in result.video_url
                     assert result.stream_id == "stream-uuid"
+
+    @pytest.mark.asyncio
+    async def test_video_clip_preserves_loopback_fallback_url(self, config_iso, mock_builder):
+        fallback_url = "http://thor.test:7777/api/vision/evidence-media?key=" + "b" * 64
+        with (
+            patch.dict(
+                "os.environ",
+                {
+                    "VST_CLIP_FALLBACK_MEDIA_URL": "http://thor.test:7777/api/vision/evidence-media",
+                    "VST_CLIP_FALLBACK_URL": "http://127.0.0.1:8098",
+                },
+            ),
+            patch("vss_agents.tools.vst.video_clip.get_stream_id", new_callable=AsyncMock) as mock_get_id,
+            patch("vss_agents.tools.vst.video_clip.get_video_url", new_callable=AsyncMock) as mock_get_url,
+            patch("vss_agents.tools.vst.video_clip.validate_video_url", new_callable=AsyncMock),
+        ):
+            mock_get_id.return_value = "stream-uuid"
+            mock_get_url.return_value = fallback_url
+            gen = vst_video_clip.__wrapped__(config_iso, mock_builder)
+            function_info = await gen.__anext__()
+            result = await function_info.single_fn(
+                VSTVideoClipISOInput(
+                    sensor_id="camera1",
+                    start_time="2025-08-25T03:05:55.752Z",
+                    end_time="2025-08-25T03:06:15.752Z",
+                )
+            )
+
+        assert result.video_url == fallback_url
+        assert result.stream_id == "stream-uuid"
 
     @pytest.mark.asyncio
     async def test_video_clip_uses_correct_input_schema_offset(self, config, mock_builder):

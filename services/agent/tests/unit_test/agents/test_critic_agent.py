@@ -191,6 +191,19 @@ class TestCriticAgentEndpoint:
         result_types = {r.result for r in result.video_results}
         assert CriticAgentResult.CONFIRMED in result_types
         assert CriticAgentResult.UNVERIFIED in result_types
+        failed = next(result for result in result.video_results if result.result == CriticAgentResult.UNVERIFIED)
+        assert failed.failure_reason == "verification_failed"
+
+    @pytest.mark.asyncio
+    async def test_expired_vst_media_is_classified_separately(self, default_config: CriticAgentConfig) -> None:
+        mock_tool = AsyncMock()
+        mock_tool.ainvoke.side_effect = RuntimeError("Failed to get video clip URL: HTTP 404")
+        execute = await _build_execute_fn(default_config, mock_tool)
+
+        result: CriticAgentOutput = await execute(CriticAgentInput(query="Find a person", videos=[_VIDEO_A]))
+
+        assert result.video_results[0].result == CriticAgentResult.UNVERIFIED
+        assert result.video_results[0].failure_reason == "media_unavailable"
 
     @pytest.mark.asyncio
     async def test_no_tool_configured_returns_unverified(self, config_no_tool: CriticAgentConfig) -> None:
@@ -200,6 +213,7 @@ class TestCriticAgentEndpoint:
 
         assert len(result.video_results) == 1
         assert result.video_results[0].result == CriticAgentResult.UNVERIFIED
+        assert result.video_results[0].failure_reason == "verification_failed"
 
     @pytest.mark.asyncio
     async def test_invalid_json_returns_unverified(self, default_config: CriticAgentConfig) -> None:
@@ -211,6 +225,7 @@ class TestCriticAgentEndpoint:
 
         assert len(result.video_results) == 1
         assert result.video_results[0].result == CriticAgentResult.UNVERIFIED
+        assert result.video_results[0].failure_reason == "verification_failed"
 
 
 # ---------------------------------------------------------------------------

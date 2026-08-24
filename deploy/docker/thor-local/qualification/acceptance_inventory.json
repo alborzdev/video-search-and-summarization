@@ -109,8 +109,8 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 64,
-        "items_sha256": "c55d806da185b52850c513475f7dd57de4d63ec4452e96cc465d18ab6579d5ee",
+        "expected_item_count": 75,
+        "items_sha256": "8d2975b75a1095443a981bf200498563b85a7a952fa3994ed08b56491feecb65",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "agent"
@@ -158,7 +158,7 @@
           "current-runtime-evidence-required"
         ],
         "expected_item_count": 21,
-        "items_sha256": "632310a4fda1369404583bb9f8fce457c03bbb3678d65a56386b9c601fa2ad1c",
+        "items_sha256": "66ad9b209c06b47e66242f7ae7dcd8fe73ceff5ed2fc50a68cb24535db6b01fe",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "alerts"
@@ -169,8 +169,8 @@
           "operation-classification-required",
           "current-runtime-evidence-required"
         ],
-        "expected_item_count": 18,
-        "items_sha256": "393a04089472b75b33fccd61650356ed52319b46450ad812657cedd8559bb214",
+        "expected_item_count": 19,
+        "items_sha256": "66f82979b9dedcac51363cb55e1078661f2ef53182d4d46d8d0988af277dcc6b",
         "scenario_id": "rest-api-operation-matrix",
         "selector": "all-current-operations",
         "surface_id": "lvs"

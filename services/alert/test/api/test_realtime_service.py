@@ -2613,6 +2613,67 @@ class TestStreamReuse:
         mock_rtvi_client.stop_stream.assert_awaited_once()
 
     @pytest.mark.asyncio
+    async def test_preserved_reused_stream_survives_last_rule_delete(
+        self, realtime_service, mock_rtvi_client,
+    ):
+        """A UI rule may borrow a live-history stream without owning its
+        lifecycle. Deleting the last such rule aborts only its caption
+        request and leaves the external stream registration available for
+        history to resume immediately.
+        """
+        mock_rtvi_client.get_stream_info.return_value = [
+            {"id": "test-sensor-001", "liveStreamUrl": SAMPLE_RTSP_URL},
+        ]
+
+        async def _captions(**kwargs):
+            kwargs["request_id_future"].set_result("preserved-request")
+            return {
+                "status": "started",
+                "stream_id": kwargs["stream_id"],
+                "request_id": "preserved-request",
+            }
+
+        mock_rtvi_client.generate_captions.side_effect = _captions
+        data, code = await realtime_service.start_alert(
+            make_config(preserve_rtvi_stream=True),
+        )
+
+        assert code == 201
+        assert realtime_service._rules[data["id"]]["preserve_rtvi_stream"] is True
+
+        await realtime_service.stop_alert(data["id"])
+
+        mock_rtvi_client.stop_caption_request.assert_awaited_once_with(
+            "preserved-request",
+        )
+        mock_rtvi_client.stop_captions.assert_not_awaited()
+        mock_rtvi_client.stop_stream.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_preserved_stream_survives_late_caption_failure_cleanup(
+        self, realtime_service, mock_rtvi_client,
+    ):
+        """Late alert-worker failure must not destroy an externally managed
+        RT-VLM stream even when no sibling alert rule references it.
+        """
+        mock_rtvi_client.get_stream_info.return_value = [
+            {"id": "test-sensor-001", "liveStreamUrl": SAMPLE_RTSP_URL},
+        ]
+        data, code = await realtime_service.start_alert(
+            make_config(preserve_rtvi_stream=True),
+        )
+
+        assert code == 201
+        await realtime_service._cleanup_failed_rule(
+            "test-sensor-001",
+            alert_rule_id=data["id"],
+            preserve_rtvi_stream=True,
+        )
+
+        mock_rtvi_client.stop_stream.assert_not_awaited()
+        assert data["id"] not in realtime_service._rules
+
+    @pytest.mark.asyncio
     async def test_stop_alert_with_remaining_rules_skips_stop_stream(
         self, realtime_service, mock_rtvi_client,
     ):

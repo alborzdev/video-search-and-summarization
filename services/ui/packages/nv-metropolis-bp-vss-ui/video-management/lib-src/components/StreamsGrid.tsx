@@ -5,7 +5,7 @@ import type { StreamInfo, ChatSidebarQueryContext } from '../types';
 import { StreamCard } from './StreamCard';
 
 // Grid constants
-const CARD_MIN_WIDTH = 240; // minmax(240px, 1fr)
+const CARD_MIN_WIDTH = 300; // Keep source thumbnails legible on a tradeshow display.
 const GRID_GAP = 16; // gap: 16px
 const TARGET_ROWS = 4; // Target number of rows per page (reduced by ~25% from 5)
 
@@ -181,7 +181,7 @@ export const StreamsGrid: React.FC<StreamsGridProps> = ({
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-6 pb-4">
+      <div className="vm-grid-header flex items-center justify-between px-6 pt-6 pb-4">
         <div className="flex items-center">
           <div className="flex items-center gap-3">
             <input
@@ -189,6 +189,7 @@ export const StreamsGrid: React.FC<StreamsGridProps> = ({
               type="checkbox"
               checked={allSelected}
               onChange={handleSelectAllChange}
+              aria-label={allSelected ? 'Deselect all sources' : 'Select all sources'}
               className="w-4 h-4 rounded border-2 cursor-pointer bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-green-600 dark:text-green-500 focus:ring-green-500"
             />
             {canSelectAll && (
@@ -223,11 +224,11 @@ export const StreamsGrid: React.FC<StreamsGridProps> = ({
       </div>
 
       {/* Grid - scrollable */}
-      <div className="flex-1 overflow-auto px-6 pt-1 pb-4">
+      <div className="vm-grid-scroll flex-1 overflow-auto px-6 pt-1 pb-4">
         <div
           data-testid="video-streams-grid"
           ref={gridRef}
-          className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-4"
+          className="vm-stream-grid grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4"
         >
           {paginatedStreams.map((stream) => (
             <StreamCard

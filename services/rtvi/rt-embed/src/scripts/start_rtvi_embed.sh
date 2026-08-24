@@ -18,6 +18,41 @@ BACKEND_PORT="${BACKEND_PORT:-8000}"
 
 ASSET_STORAGE_DIR="${ASSET_STORAGE_DIR:-/tmp/assets}"
 
+wait_for_kafka() {
+    if [ "${KAFKA_ENABLED:-false}" != "true" ] || [ -z "${KAFKA_BOOTSTRAP_SERVERS:-}" ]; then
+        return 0
+    fi
+
+    local wait_seconds="${KAFKA_STARTUP_WAIT_SECONDS:-300}"
+    local deadline=$((SECONDS + wait_seconds))
+    echo "Waiting for Kafka before starting RTVI Embed (${KAFKA_BOOTSTRAP_SERVERS})"
+    while [ "$SECONDS" -lt "$deadline" ]; do
+        if python3 - "$KAFKA_BOOTSTRAP_SERVERS" <<'PY'
+import socket
+import sys
+
+for address in sys.argv[1].split(","):
+    host, separator, port = address.strip().rpartition(":")
+    if not separator or not host:
+        continue
+    try:
+        with socket.create_connection((host, int(port)), timeout=2):
+            raise SystemExit(0)
+    except (OSError, ValueError):
+        pass
+raise SystemExit(1)
+PY
+        then
+            echo "Kafka is reachable; continuing RTVI Embed startup"
+            return 0
+        fi
+        sleep 5
+    done
+
+    echo "Kafka was not reachable within ${wait_seconds}s; exiting so the container restart policy can retry"
+    return 1
+}
+
 # Validate MAX_ASSET_STORAGE_SIZE_GB against actual storage at startup.
 # Without this, an unset or oversized limit silently allows unlimited storage,
 # which causes OOM kills when using tmpfs or unexpectedly fills a bind-mounted disk.
@@ -254,6 +289,8 @@ start_processes() {
         echo "Please set BACKEND_PORT env variable"
         exit 1
     fi
+
+    wait_for_kafka || exit 1
 
     # Handle INSTALL_PROPRIETARY_CODECS environment variable
     # When set to true/True/TRUE/1, downloads and extracts patent-encumbered codec packages

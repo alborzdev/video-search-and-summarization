@@ -37,13 +37,20 @@ from pydantic import model_validator
 
 from vss_agents.api.rtsp_ingest import ServiceConfig
 from vss_agents.api.rtsp_ingest import _resolve_service_config
-from vss_agents.api.rtsp_ingest import cleanup_rtvi_cv
 from vss_agents.api.rtsp_ingest import cleanup_rtvi_embed_generation
 from vss_agents.api.rtsp_ingest import cleanup_rtvi_embed_stream
 from vss_agents.api.rtsp_ingest import cleanup_rtvi_vlm_stream
+from vss_agents.api.rtsp_ingest import cleanup_source_from_all_rtvi_cv
 from vss_agents.api.rtsp_ingest import cleanup_vst_sensor
 from vss_agents.api.rtsp_ingest import cleanup_vst_storage
+from vss_agents.api.rtsp_ingest import clear_live_analysis_runtime
+from vss_agents.api.rtsp_ingest import configured_detector_endpoints
 from vss_agents.api.rtsp_ingest import get_stream_info_by_name
+from vss_agents.api.rtsp_ingest import stop_managed_embedding_generation
+from vss_agents.api.source_analysis_state import forget_source_analysis_state
+from vss_agents.api.source_analysis_state import set_source_deleting
+from vss_agents.api.source_cleanup import delete_generated_source_data
+from vss_agents.api.source_cleanup import delete_lvs_graph_history
 from vss_agents.utils.sanitize import scrub_log
 
 logger = logging.getLogger(__name__)
@@ -54,15 +61,18 @@ class DeleteStreamResponse(BaseModel):
 
     model_config = ConfigDict(populate_by_name=True)
 
-    status: Literal["success", "partial", "failure"] = Field(
-        ..., description="'success', 'partial', or 'failure'"
-    )
+    status: Literal["success", "partial", "failure"] = Field(..., description="'success', 'partial', or 'failure'")
     message: str = Field(..., description="Human-readable status message")
     name: str = Field(..., description="The sensor name that was deleted")
     sensor_id: str | None = Field(
         None,
         alias="sensorId",
         description="Stable VST sensor identity resolved before cleanup",
+    )
+    generated_data_deleted: int = Field(
+        0,
+        alias="generatedDataDeleted",
+        description="Number of source-owned generated documents removed from Elasticsearch",
     )
 
     @model_validator(mode="after")
@@ -71,6 +81,110 @@ class DeleteStreamResponse(BaseModel):
         if self.status in {"success", "partial"} and not self.sensor_id:
             raise ValueError("successful or partial RTSP delete response requires sensorId")
         return self
+
+
+async def _delete_resolved_stream(
+    config: ServiceConfig,
+    name: str,
+    stream_id: str,
+    rtsp_url: str | None,
+) -> DeleteStreamResponse:
+    """Tear down every resource owned by an already-resolved live source."""
+    results: list[bool] = []
+    generated_data_deleted = 0
+
+    # RTVI cleanup runs only when at least one RTVI URL is configured.
+    # The individual cleanup helpers self-skip when their URL is empty,
+    # but we avoid opening an httpx client when nothing's configured.
+    if (
+        config.rtvi_embed_url
+        or configured_detector_endpoints(config)
+        or config.rtvi_vlm_url
+        or config.lvs_backend_url
+    ):
+        # Prevent the live supervisor from reconnecting while this
+        # explicit teardown removes the backing RTVI resource.
+        await stop_managed_embedding_generation(stream_id)
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            success, msg = await cleanup_rtvi_embed_generation(client, config, stream_id)
+            results.append(success)
+            logger.info(f"Stop embedding generation: {'OK' if success else msg}")
+
+            success, msg = await cleanup_rtvi_embed_stream(client, config, stream_id)
+            results.append(success)
+            logger.info(f"Delete from RTVI-embed: {'OK' if success else msg}")
+
+            success, msg = await cleanup_source_from_all_rtvi_cv(
+                client,
+                config,
+                stream_id,
+                name=name,
+                sensor_url=rtsp_url or "",
+            )
+            results.append(success)
+            logger.info(f"Delete from RTVI-CV: {'OK' if success else msg}")
+
+            success, msg = await cleanup_rtvi_vlm_stream(client, config, stream_id)
+            results.append(success)
+            logger.info(f"Delete from RTVI-VLM: {'OK' if success else msg}")
+
+            success, msg = await delete_lvs_graph_history(client, config.lvs_backend_url, stream_id)
+            results.append(success)
+            logger.info(f"Delete graph history: {'OK' if success else msg}")
+
+    # Delete generated records only after stopping their producers. Exact
+    # source ID/name terms are used across every date partition so old
+    # embeddings and detector frames cannot survive source removal.
+    if config.elasticsearch_url:
+        generated_cleanup = await delete_generated_source_data(
+            config.elasticsearch_url,
+            stream_id,
+            name,
+        )
+        generated_data_deleted = generated_cleanup.total_deleted
+        results.append(generated_cleanup.success)
+        if generated_cleanup.failures:
+            logger.error(
+                "Generated-data cleanup was incomplete for %s: %s",
+                scrub_log(stream_id),
+                sorted(generated_cleanup.failures),
+            )
+
+    success, msg = await cleanup_vst_sensor(config, stream_id)
+    results.append(success)
+    logger.info(f"Delete VST sensor: {'OK' if success else msg}")
+    if success:
+        clear_live_analysis_runtime(stream_id)
+        forget_source_analysis_state(stream_id)
+
+    if config.delete_vst_storage_on_stream_remove:
+        success, msg = await cleanup_vst_storage(config, stream_id)
+        results.append(success)
+        logger.info(f"Delete VST storage: {'OK' if success else msg}")
+
+    all_success = all(results)
+    any_success = any(results)
+
+    status: Literal["success", "partial", "failure"]
+    if all_success:
+        status = "success"
+        message = f"Stream '{name}' deleted successfully"
+    elif any_success:
+        status = "partial"
+        message = f"Stream '{name}' partially deleted - some services failed"
+    else:
+        status = "failure"
+        message = f"Failed to delete stream '{name}'"
+
+    logger.info("Delete stream '%s' completed with status: %s", scrub_log(name), status)
+
+    return DeleteStreamResponse(
+        status=status,
+        message=message,
+        name=name,
+        sensor_id=stream_id,
+        generated_data_deleted=generated_data_deleted,
+    )
 
 
 def create_rtsp_delete_router(config: ServiceConfig) -> APIRouter:
@@ -103,8 +217,6 @@ def create_rtsp_delete_router(config: ServiceConfig) -> APIRouter:
         5. Delete sensor from VST
         6. Delete storage from VST (only when ``delete_vst_storage_on_stream_remove`` True)
         """
-        results: list[bool] = []
-
         logger.info("Deleting stream by name '%s'", scrub_log(name))
 
         success, msg, stream_id, rtsp_url = await get_stream_info_by_name(config, name)
@@ -124,57 +236,14 @@ def create_rtsp_delete_router(config: ServiceConfig) -> APIRouter:
                 name=name,
             )
 
-        # RTVI cleanup runs only when at least one RTVI URL is configured.
-        # The individual cleanup helpers self-skip when their URL is empty,
-        # but we avoid opening an httpx client when nothing's configured.
-        if config.rtvi_embed_url or config.rtvi_cv_url or config.rtvi_vlm_url:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                success, msg = await cleanup_rtvi_embed_generation(client, config, stream_id)
-                results.append(success)
-                logger.info(f"Stop embedding generation: {'OK' if success else msg}")
-
-                success, msg = await cleanup_rtvi_embed_stream(client, config, stream_id)
-                results.append(success)
-                logger.info(f"Delete from RTVI-embed: {'OK' if success else msg}")
-
-                success, msg = await cleanup_rtvi_cv(client, config, stream_id, name=name, sensor_url=rtsp_url or "")
-                results.append(success)
-                logger.info(f"Delete from RTVI-CV: {'OK' if success else msg}")
-
-                success, msg = await cleanup_rtvi_vlm_stream(client, config, stream_id)
-                results.append(success)
-                logger.info(f"Delete from RTVI-VLM: {'OK' if success else msg}")
-
-        success, msg = await cleanup_vst_sensor(config, stream_id)
-        results.append(success)
-        logger.info(f"Delete VST sensor: {'OK' if success else msg}")
-
-        if config.delete_vst_storage_on_stream_remove:
-            success, msg = await cleanup_vst_storage(config, stream_id)
-            results.append(success)
-            logger.info(f"Delete VST storage: {'OK' if success else msg}")
-
-        all_success = all(results)
-        any_success = any(results)
-
-        if all_success:
-            status = "success"
-            message = f"Stream '{name}' deleted successfully"
-        elif any_success:
-            status = "partial"
-            message = f"Stream '{name}' partially deleted - some services failed"
-        else:
-            status = "failure"
-            message = f"Failed to delete stream '{name}'"
-
-        logger.info("Delete stream '%s' completed with status: %s", scrub_log(name), status)
-
-        return DeleteStreamResponse(
-            status=status,
-            message=message,
-            name=name,
-            sensor_id=stream_id,
-        )
+        # Keep the short-lived tombstone set until every teardown step has
+        # returned.  The periodic reconciler otherwise sees the stale VST
+        # snapshot and can recreate an RTVI resource during this request.
+        set_source_deleting(stream_id, True)
+        try:
+            return await _delete_resolved_stream(config, name, stream_id, rtsp_url)
+        finally:
+            set_source_deleting(stream_id, False)
 
     return router
 

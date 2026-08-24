@@ -29,9 +29,10 @@ workloads if available memory is approaching the documented capacity floor.
 A disk-usage warning is acceptable only while at least 10 GiB remains free;
 `doctor` fails below that hard floor.
 
-Open the operator UI at `http://127.0.0.1:3001`. The supported public ingress
-is `http://127.0.0.1:7777`; internal service ports are not customer-facing
-interfaces.
+Open `http://10.88.8.175:7777` on Thor or another device on the approved local
+network. This trusted-LAN gateway fronts the complete UI, VST media, Agent,
+analytics, alerts, uploads, and WebSockets. Port 3001 is only a direct UI
+diagnostic address; internal service ports are not customer-facing interfaces.
 
 Choose the customer vocabulary before the meeting:
 
@@ -46,31 +47,31 @@ branding changes. It prints the curated questions and searches for that pack.
 
 ## Ten-minute demonstration
 
-1. **Ingest.** In **Video Management**, upload an MP4/MKV or register an RTSP
+1. **Ingest.** In **Manage → Sources**, upload an MP4/MKV or register an RTSP
    URL. The status moves through ingestion and indexing before the source is
    ready for semantic search. Keep a pre-indexed video for a deterministic
    show-floor demo.
-2. **Find an event.** In **Search**, enter a natural-language description. Open
+2. **Find an event.** In **Investigate**, enter a natural-language description. Open
    a result to play the exact matching time range and see detected objects.
-3. **Find visually similar objects.** Pause a result, select a bounding box,
-   then choose **Search by Image**. This uses the selected object's stored
-   embedding as the seed; the similarity shown on each result is not an LLM
-   guess.
-4. **Ask the footage.** Use the VSS Agent panel to ask what videos exist, what
+3. **Build an evidence set.** Select useful ranked results with **Use as
+   evidence**, then summarize the selected set. Search-by-image remains
+   conditional on tracked-object IDs and frame boxes; do not present it when
+   the current source provides only clip embeddings.
+4. **Ask the footage.** Use **Operations → Vision Analyst** to ask what videos exist, what
    happened in a named video, or for a concise summary. Answers are produced by
    the configured local OpenAI-compatible LLM/VLM providers.
-5. **Show proactive verification.** Open **Alerts → Manage Alerts → Candidate
+5. **Show proactive verification.** Open **Manage → Alert rules → Candidate
    Verification**. Explain that inexpensive video analytics proposes an event,
    then the VLM checks up to four ordered snapshots before an operator-visible
    alert is confirmed or rejected. This avoids running a large VLM on every
    frame.
-6. **Investigate.** In **View Alerts**, expand an alert to show its evidence,
+6. **Investigate.** In **Operations → Activity**, open an incident to show its evidence,
    VLM verdict, reason, snapshots, and clip. A rejected candidate remains
    auditable instead of being presented as a confirmed incident.
 7. **Generate evidence.** Choose **Generate Report** on an alert. Open the
    Markdown or PDF result. Reports live in the private durable report store and
    remain available after the agent or full stack restarts.
-8. **Close with operations.** Open **Dashboard → Thor VSS Overview** to show
+8. **Close with operations.** Open **Operations → Insights** to show
    actual detected-object and behavior-event history. Finish with
    `./scripts/thor-local.sh doctor` to demonstrate that the entire product,
    models, media path, search path, and alert path are locally monitored.
@@ -94,8 +95,9 @@ workflow.
 
 ## Show-floor safety and recovery
 
-- Use only the loopback UI/ingress unless the host firewall and physical
-  network were deliberately prepared for remote access.
+- Use the LAN gateway only on a deliberately prepared, trusted simulator or
+  tradeshow network. It has no login or TLS boundary; never port-forward it to
+  the internet or expose internal service ports.
 - Never paste the NGC key into the UI, repository, Compose environment, or
   screenshots. Runtime containers receive blank registry credentials.
 - Keep one known-good pre-indexed video. Live RTSP depends on the camera and
@@ -109,3 +111,9 @@ workflow.
 
 See [README.md](README.md) for bootstrap, storage, model, security, capacity,
 and domain-pack details.
+
+The CTAILabs workflow and acceptance evidence are recorded in
+[`../../../docs/vision-intelligence-operator-guide.md`](../../../docs/vision-intelligence-operator-guide.md),
+[`../../../docs/vision-intelligence-parity.md`](../../../docs/vision-intelligence-parity.md),
+and
+[`../../../docs/vision-intelligence-acceptance.md`](../../../docs/vision-intelligence-acceptance.md).

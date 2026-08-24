@@ -2,6 +2,10 @@
 
 This tree is the Docker Compose packaging for **Video Search & Summarization**. The root **`compose.yml`** pulls three layers together:
 
+For entry-point selection, data categories, trusted-LAN expectations, offline
+operation, and the static image/build inventory, see
+[`DEPLOYMENT.md`](DEPLOYMENT.md).
+
 | Include | Role |
 |---------|------|
 | **`services/compose.yml`** | Shared microservices (infra, VIOS, UI, RTVI, NIMs, etc.) |

@@ -126,6 +126,11 @@ assert seek_spec.count('{"action", JsonType::String, true}') == 1
 haproxy = (docker_dir / "services/infra/haproxy/haproxy.cfg.template").read_text(encoding="utf-8")
 assert "acl p_vst path /vst" in haproxy
 assert "use_backend bk_vst_ingress if h_main p_vst" in haproxy
+assert "acl p_api_vision path /api/vision" in haproxy
+assert "use_backend bk_vss_ui if h_main p_api_vision" in haproxy
+assert haproxy.index("use_backend bk_vss_ui if h_main p_api_vision") < haproxy.index(
+    "use_backend bk_vss_agent if h_main p_api"
+)
 
 print("All Thor VIOS UI and offline-WebRTC static contracts passed.")
 PY

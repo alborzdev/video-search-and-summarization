@@ -359,6 +359,39 @@ class TestDeleteVideoFileCleanup:
         assert via_server._stream_handler.drop_collection_for_asset.call_count == 2
 
 
+class TestDeleteQaKnowledge:
+    def test_deletes_only_uuid_owned_graph_knowledge(self, via_server, client):
+        response = client.delete(f"/v1/qa/{FILE_ID}")
+
+        assert response.status_code == 200
+        assert response.json() == {
+            "deleted": True,
+            "id": FILE_ID,
+            "object": "qa_knowledge",
+        }
+        via_server._stream_handler.reset_qa_graph_for_asset.assert_called_once_with(
+            FILE_ID
+        )
+        via_server._stream_handler._vlm_pipeline.delete_file.assert_not_called()
+        via_server._stream_handler.drop_collection_for_asset.assert_not_called()
+
+    def test_rejects_invalid_asset_id_without_touching_graph(self, via_server, client):
+        response = client.delete("/v1/qa/not-a-uuid")
+
+        assert response.status_code == 422
+        via_server._stream_handler.reset_qa_graph_for_asset.assert_not_called()
+
+    def test_graph_failure_is_truthful(self, via_server, client):
+        via_server._stream_handler.reset_qa_graph_for_asset.return_value = {
+            "acknowledged": False
+        }
+
+        response = client.delete(f"/v1/qa/{FILE_ID}")
+
+        assert response.status_code == 503
+        assert response.json()["code"] == "DependencyError"
+
+
 def _stream_handler_with_context_manager(ctx_mgr):
     handler = ViaStreamHandler.__new__(ViaStreamHandler)
     handler._kafka_enabled = True
@@ -541,6 +574,61 @@ def test_failed_file_request_reaches_terminal_cleanup_gate():
     assert request.status_event.is_set()
     handler.check_status_remove_req_id(request.request_id)
     assert request.request_id not in handler._request_info_map
+
+
+def test_live_history_adds_timestamped_events_before_graph_finalization():
+    handler = ViaStreamHandler.__new__(ViaStreamHandler)
+    qa_ctx = MagicMock()
+
+    accepted = handler._ingest_live_events_into_qa(
+        qa_ctx,
+        stream_id=FILE_ID,
+        camera_id="Traffic camera",
+        events=[
+            {
+                "description": "A vehicle crosses the junction.",
+                "end_time": "2026-08-17T20:01:10.000Z",
+                "start_time": "2026-08-17T20:01:00.000Z",
+                "type": "vehicle movement",
+            },
+            {"description": "missing timestamps", "type": "advisory"},
+        ],
+    )
+
+    assert accepted == 1
+    assert qa_ctx.add_doc.call_count == 2
+    first = qa_ctx.add_doc.call_args_list[0]
+    assert first.args[0] == "vehicle movement: A vehicle crosses the junction."
+    assert first.kwargs["doc_meta"] == {
+        "camera_id": "Traffic camera",
+        "cv_meta": "",
+        "end_ntp": "2026-08-17T20:01:10.000Z",
+        "file": f"rtsp://{FILE_ID}",
+        "is_last": False,
+        "start_ntp": "2026-08-17T20:01:00.000Z",
+        "uuid": FILE_ID,
+    }
+    assert qa_ctx.add_doc.call_args_list[1].kwargs["doc_meta"]["is_last"] is True
+    qa_ctx.call.assert_called_once_with(
+        {"ingestion_function": {"uuid": FILE_ID}}
+    )
+
+
+def test_live_history_refuses_to_finalize_an_empty_graph():
+    handler = ViaStreamHandler.__new__(ViaStreamHandler)
+    qa_ctx = MagicMock()
+
+    assert (
+        handler._ingest_live_events_into_qa(
+            qa_ctx,
+            stream_id=FILE_ID,
+            camera_id="Traffic camera",
+            events=[],
+        )
+        == 0
+    )
+    qa_ctx.add_doc.assert_not_called()
+    qa_ctx.call.assert_not_called()
 
 
 def test_successful_stream_summary_publishes_terminal_and_quiescent_state(monkeypatch):

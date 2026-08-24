@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-import { addRtspStream, deleteRtspStream } from '../lib-src/rtspStream';
+import { addRtspStream, deleteRtspStream, resetRtspStream } from '../lib-src/rtspStream';
 import { deleteVideo } from '../lib-src/videoDelete';
 
 
@@ -68,7 +68,14 @@ describe('owned lifecycle status validation', () => {
 
   it('accepts RTSP add only for exact success', async () => {
     fetchMock.mockResolvedValue(
-      response({ status: 'success', message: 'created', name: 'owned-stream', sensorId: 'sensor-owned' })
+      response({
+        analysisProfileId: 'semantic-search',
+        detectionEnabled: false,
+        status: 'success',
+        message: 'created',
+        name: 'owned-stream',
+        sensorId: 'sensor-owned',
+      })
     );
     await expect(
       addRtspStream('http://127.0.0.1:8000/api/v1', {
@@ -136,6 +143,59 @@ describe('owned lifecycle status validation', () => {
     );
     await expect(
       deleteRtspStream('http://127.0.0.1:8000/api/v1', 'owned-stream')
+    ).rejects.toThrow();
+  });
+
+  it('accepts live reset only when exact identity and resumed analysis are confirmed', async () => {
+    const payload = {
+      status: 'success',
+      message: 'reset',
+      sensorId: 'sensor-owned',
+      name: 'owned-stream',
+      deletedDocuments: 42,
+      deletedByCategory: { embeddings: 10, detections: 32 },
+      recordingsCleared: true,
+      analysisResumed: true,
+      resetAt: '2026-08-17T17:00:00Z',
+    };
+    fetchMock.mockResolvedValue(response(payload));
+
+    await expect(
+      resetRtspStream(
+        'http://127.0.0.1:8000/api/v1',
+        'sensor-owned',
+        'owned-stream',
+        true
+      )
+    ).resolves.toEqual(payload);
+    expect(JSON.parse(fetchMock.mock.calls[0][1].body)).toEqual({
+      name: 'owned-stream',
+      clearRecordings: true,
+    });
+  });
+
+  it.each([
+    { status: 'partial', analysisResumed: true },
+    { status: 'success', analysisResumed: false },
+    { status: 'success', analysisResumed: true, sensorId: 'foreign' },
+  ])('rejects an incomplete live reset receipt %#', async (override) => {
+    fetchMock.mockResolvedValue(response({
+      status: 'success',
+      message: 'not complete',
+      sensorId: 'sensor-owned',
+      name: 'owned-stream',
+      deletedDocuments: 0,
+      analysisResumed: true,
+      ...override,
+    }));
+
+    await expect(
+      resetRtspStream(
+        'http://127.0.0.1:8000/api/v1',
+        'sensor-owned',
+        'owned-stream',
+        true
+      )
     ).rejects.toThrow();
   });
 });

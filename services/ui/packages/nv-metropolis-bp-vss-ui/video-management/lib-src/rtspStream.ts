@@ -16,6 +16,8 @@ export interface AddRtspStreamRequest {
   name?: string;
   username?: string;
   password?: string;
+  detectionEnabled?: boolean;
+  analysisProfileId?: string;
 }
 
 /**
@@ -26,6 +28,8 @@ export interface AddRtspStreamResult {
   message?: string;
   sensorId: string;
   name: string;
+  detectionEnabled?: boolean;
+  analysisProfileId: string;
   error?: string;
 }
 
@@ -38,6 +42,18 @@ export interface DeleteRtspStreamResult {
   name: string;
   sensorId: string;
   error?: string;
+}
+
+export interface ResetRtspStreamResult {
+  status: "success" | "partial" | "failure";
+  message: string;
+  sensorId: string;
+  name: string;
+  deletedDocuments: number;
+  deletedByCategory: Record<string, number>;
+  recordingsCleared: boolean;
+  analysisResumed: boolean;
+  resetAt: string;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -69,6 +85,9 @@ export async function addRtspStream(
       ...(request.name ? { name: request.name } : {}),
       username: request.username ?? "",
       password: request.password ?? "",
+      ...(request.analysisProfileId
+        ? { analysisProfileId: request.analysisProfileId }
+        : { detectionEnabled: request.detectionEnabled ?? false }),
     }),
     signal,
   });
@@ -87,6 +106,8 @@ export async function addRtspStream(
     result.status !== "success" ||
     typeof result.sensorId !== "string" ||
     result.sensorId.length === 0 ||
+    typeof result.analysisProfileId !== "string" ||
+    result.analysisProfileId.length === 0 ||
     typeof result.name !== "string" ||
     result.name !== request.name
   ) {
@@ -152,4 +173,54 @@ export async function deleteRtspStream(
   }
 
   return result as unknown as DeleteRtspStreamResult;
+}
+
+/**
+ * Clear all generated analytics for a live source while leaving it connected.
+ * The backend pauses producers, deletes exact source-owned records and optional
+ * VIOS archive media, then resumes live analysis.
+ */
+export async function resetRtspStream(
+  agentApiUrl: string,
+  streamId: string,
+  sensorName: string,
+  clearRecordings: boolean,
+  signal?: AbortSignal
+): Promise<ResetRtspStreamResult> {
+  if (signal?.aborted) {
+    throw new Error("Reset live source was cancelled");
+  }
+
+  const response = await fetch(
+    `${agentApiUrl}/rtsp-streams/${encodeURIComponent(streamId)}/reset`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: sensorName, clearRecordings }),
+      signal,
+    }
+  );
+
+  const result: unknown = await response.json().catch(() => null);
+  if (!response.ok || !isRecord(result)) {
+    throw new Error(
+      (isRecord(result) && typeof result.message === "string" && result.message) ||
+        `Failed to reset live source: ${response.statusText}`
+    );
+  }
+
+  if (
+    result.status !== "success" ||
+    result.sensorId !== streamId ||
+    result.name !== sensorName ||
+    typeof result.deletedDocuments !== "number" ||
+    result.analysisResumed !== true
+  ) {
+    throw new Error(
+      (typeof result.message === "string" && result.message) ||
+        `Failed to reset live source: ${sensorName}`
+    );
+  }
+
+  return result as unknown as ResetRtspStreamResult;
 }

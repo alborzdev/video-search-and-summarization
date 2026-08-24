@@ -30,13 +30,17 @@ general:
       # Thor-full intentionally omits SDRC, so the agent owns VIOS proxy
       # activation and transactional teardown for RTSP sources.
       vst_streamprocessor_url: ${STREAM_PROCESSOR_MODULE_ENDPOINT:-}
-      delete_vst_storage_on_stream_remove: false
+      # Removing a source from the Thor demo is a full lifecycle delete: stop
+      # analysis and remove its retained archive instead of leaving hidden
+      # recordings on disk.
+      delete_vst_storage_on_stream_remove: true
       rtvi_vlm_base_url: ${RTVI_VLM_BASE_URL}
       rtvi_embed_base_url: ${COSMOS_EMBED_ENDPOINT}
       rtvi_embed_model: ${RTVI_EMBED_MODEL:-cosmos-embed1-448p}
       rtvi_embed_chunk_duration: 5
       rtvi_cv_base_url: http://${HOST_IP}:${RTVI_CV_PORT}
       elasticsearch_url: ${ELASTIC_SEARCH_ENDPOINT}
+      lvs_backend_url: ${LVS_BACKEND_URL}
       rtvi_embed_es_index: ${ELASTIC_SEARCH_INDEX}
       enable_audio: ${ENABLE_AUDIO:-false}
     endpoints:
@@ -300,7 +304,7 @@ functions:
     use_attribute_search: true
     critic_agent: critic_agent
     enable_critic: ${ENABLE_CRITIC:-true}
-    search_max_iterations: 1
+    search_max_iterations: 3
     default_max_results: 10
     vst_internal_url: ${VST_INTERNAL_URL}
     vst_external_url: ${VST_EXTERNAL_URL}
@@ -315,7 +319,7 @@ functions:
     use_attribute_search: true
     critic_agent: critic_agent
     enable_critic: ${ENABLE_CRITIC:-true}
-    search_max_iterations: 1
+    search_max_iterations: 3
     default_max_results: 10
     vst_internal_url: ${VST_INTERNAL_URL}
     vst_external_url: ${VST_EXTERNAL_URL}
@@ -345,8 +349,11 @@ functions:
     _type: critic_agent
     max_concurrent_verifications: 5
     num_videos_to_evaluate: 5
-    video_analysis_tool: video_understanding
-    time_format: offset
+    # Fusion-search results always carry absolute ISO timestamps.  Keeping the
+    # critic on the ISO VST path also makes verification safe for rolling RTSP
+    # archives whose current timeline start may have advanced past a result.
+    video_analysis_tool: video_understanding_iso
+    time_format: iso
 
   # Incident report generation from Video Analytics MCP data.
   template_report_gen:

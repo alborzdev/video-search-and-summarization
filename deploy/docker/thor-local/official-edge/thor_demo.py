@@ -18,8 +18,8 @@ import official_edge as oe
 HERE = Path(__file__).resolve().parent
 DEMO_COMPOSE = HERE / "compose.thor-demo-memory.yml"
 LLM_FRACTION = Decimal("0.12")
-VLM_FRACTION = Decimal("0.35")
-RESERVE_FRACTION = Decimal("0.23")
+VLM_FRACTION = Decimal("0.30")
+RESERVE_FRACTION = Decimal("0.28")
 REQUIRED_AVAILABLE_FRACTION = Decimal("0.70")
 DEMO_EDGE_COMMAND = [
     "python3",
@@ -74,7 +74,7 @@ def verify_memory(meminfo_path: Path) -> None:
             "Thor demo unified-memory admission failed: "
             f"MemAvailable/MemTotal={actual:.4f}, "
             f"required>={REQUIRED_AVAILABLE_FRACTION} "
-            "(0.12 Edge4B + 0.35 Cosmos3 + 0.23 reserve)"
+            "(0.12 Edge4B + 0.30 Cosmos3 + 0.28 reserve)"
         )
 
 
@@ -209,6 +209,12 @@ def verify_readiness(
             "MODEL_PATH": oe.COSMOS_ARTIFACT,
             "VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME": oe.COSMOS_MODEL_ID,
             "VLLM_GPU_MEMORY_UTILIZATION": str(VLM_FRACTION),
+            "VLLM_KV_CACHE_MEMORY_BYTES": "4294967296",
+            "VLLM_MAX_NUM_BATCHED_TOKENS": "4096",
+            "VLLM_ENFORCE_EAGER": "true",
+            "VLM_MAX_MODEL_LEN": "16384",
+            "VLM_MAX_GENERATION_TOKENS": "4096",
+            "VLLM_MAX_NUM_SEQS": "1",
             "NGC_API_KEY": "",
             "NVIDIA_API_KEY": "",
             "HF_TOKEN": "",
@@ -310,7 +316,7 @@ def _audit(args: argparse.Namespace) -> int:
             print(f"FAIL images: {exc}")
         try:
             verify_memory(args.meminfo)
-            print("PASS 0.12 + 0.35 + 0.23 Thor demo memory admission")
+            print("PASS 0.12 + 0.30 + 0.28 Thor demo memory admission")
         except oe.ContractError as exc:
             failures.append(f"memory: {exc}")
             print(f"FAIL memory: {exc}")

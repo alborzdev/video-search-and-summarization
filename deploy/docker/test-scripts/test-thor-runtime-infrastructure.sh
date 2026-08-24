@@ -189,6 +189,7 @@ environment.update(
         "VSS_REPO_ROOT": str(root),
         "VSS_APPS_DIR": str(docker_dir),
         "VSS_DATA_DIR": str(docker_dir / "data-dir"),
+        "COMPOSE_PROFILES": "bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d",
         "KIBANA_PORT": "5601",
         "PHOENIX_HOST": "127.0.0.1",
         "PHOENIX_PORT": "6006",
@@ -197,6 +198,9 @@ environment.update(
         "TEGRASTATS_PORT": "19101",
         "VST_MCP_PORT": "8001",
         "MONITORING_BIND_ADDRESS": "127.0.0.1",
+        # The versioned profile intentionally carries no database secret.
+        # Supply a test-only value so Compose can resolve the static graph.
+        "GRAPH_DB_PASSWORD": "thor-runtime-infrastructure-test-only",
         "PROMETHEUS_CONFIG_FILE": str(
             thor_dir / "observability/prometheus.yml"
         ),
@@ -225,6 +229,12 @@ resolved = json.loads(
     ).stdout
 )
 resolved_services = resolved["services"]
+for key, value in {
+    "cluster.routing.allocation.disk.watermark.low": "15gb",
+    "cluster.routing.allocation.disk.watermark.high": "12gb",
+    "cluster.routing.allocation.disk.watermark.flood_stage": "10gb",
+}.items():
+    assert resolved_services["elasticsearch"]["environment"][key] == value
 assert resolved_services["alert-bridge"]["environment"][
     "PROMETHEUS_METRICS_ENABLED"
 ] == "true"
@@ -255,7 +265,7 @@ assert vios_mcp["command"] == [
 ]
 assert "/mcp" in vios_mcp["healthcheck"]["test"][-1]
 for name in ("kibana", "phoenix", "logstash"):
-    assert name in resolved_services
+    assert name in resolved_services, (name, sorted(resolved_services))
 
 kibana_mount = next(
     mount
@@ -268,7 +278,7 @@ assert kibana_mount["source"] == str(
 assert kibana_mount["read_only"] is True
 assert resolved_services["vss-ui"]["environment"][
     "DASHBOARD_KIBANA_INTERNAL_URL"
-] == "http://host.docker.internal:5601/kibana"
+] == "http://127.0.0.1:5601/kibana"
 
 phoenix = resolved_services["phoenix"]
 assert phoenix["network_mode"] == "host"
@@ -295,6 +305,9 @@ assert "127.0.0.1/9600" in logstash["healthcheck"]["test"][-1]
 
 haproxy = resolved_services["vss-haproxy-ingress"]["environment"]
 assert haproxy["PHOENIX_HOST"] == "127.0.0.1"
+assert haproxy["VSS_PUBLIC_HOST"] == "<HOST_IP>"
+assert resolved_services["vss-haproxy-ingress"]["network_mode"] == "host"
+assert "ports" not in resolved_services["vss-haproxy-ingress"]
 assert resolved_services["vss-agent"]["environment"]["PHOENIX_ENDPOINT"] == (
     "http://127.0.0.1:6006"
 )
@@ -302,6 +315,20 @@ assert resolved_services["vss-agent"]["depends_on"]["phoenix"] == {
     "condition": "service_healthy",
     "required": True,
 }
+assert resolved_services["rtvi-vlm"]["depends_on"]["kafka"] == {
+    "condition": "service_healthy",
+    "required": True,
+}
+assert resolved_services["rtvi-vlm"]["entrypoint"] == [
+    "python3",
+    "/usr/local/bin/thor-startup-gate.py",
+    "--tcp",
+    "host.docker.internal:9092",
+    "--",
+]
+assert resolved_services["rtvi-vlm"]["command"] == [
+    "/opt/nvidia/rtvi/start_rtvi_vlm.sh"
+]
 
 # The shared HAProxy file keeps its original non-Thor behavior: without the
 # two new variables, both backends inherit HOST_IP rather than loopback.

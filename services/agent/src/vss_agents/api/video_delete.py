@@ -33,8 +33,14 @@ from fastapi import APIRouter
 from fastapi import FastAPI
 import httpx
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from pydantic import Field
 
+from vss_agents.api.analysis_profiles import ANALYSIS_PROFILES
+from vss_agents.api.analysis_profiles import analysis_profile_endpoint
+from vss_agents.api.source_analysis_state import forget_source_analysis_state
+from vss_agents.api.source_cleanup import delete_generated_source_data
+from vss_agents.api.source_cleanup import registered_rtvi_cv_stream_ids
 from vss_agents.tools.vst.utils import VSTError
 from vss_agents.tools.vst.utils import delete_vst_sensor
 from vss_agents.tools.vst.utils import delete_vst_storage
@@ -53,9 +59,16 @@ logger = logging.getLogger(__name__)
 class DeleteVideoResponse(BaseModel):
     """Response model for delete video operation."""
 
+    model_config = ConfigDict(populate_by_name=True)
+
     status: str = Field(..., description="'success', 'partial', or 'failure'")
     message: str = Field(..., description="Human-readable status message")
     video_id: str = Field(..., description="The video/sensor ID that was deleted")
+    generated_data_deleted: int = Field(
+        0,
+        alias="generatedDataDeleted",
+        description="Number of source-owned generated documents removed from Elasticsearch",
+    )
 
 
 class EsCleanupConfig(BaseModel):
@@ -105,6 +118,27 @@ async def _remove_from_rtvi_cv(
         logger.info("RTVI-CV not configured, skipping")
         return True, "Skipped (not configured)"
 
+    try:
+        registered_ids = await registered_rtvi_cv_stream_ids(client, rtvi_cv_url)
+    except Exception:
+        # Older RTVI-CV deployments may not expose inventory. Keep their
+        # existing removal behavior, while current workers get the stronger
+        # source-isolation guarantee below.
+        logger.warning(
+            "Could not read RTVI-CV inventory at %s before removing %s; falling back to remove",
+            scrub_log(rtvi_cv_url),
+            scrub_log(sensor_id),
+            exc_info=True,
+        )
+    else:
+        if sensor_id not in registered_ids:
+            logger.info(
+                "RTVI-CV stream %s is already absent from %s; skipping unsafe remove",
+                scrub_log(sensor_id),
+                scrub_log(rtvi_cv_url),
+            )
+            return True, "Already absent"
+
     url = f"{rtvi_cv_url}/api/v1/stream/remove"
     payload = {
         "key": "sensor",
@@ -125,9 +159,16 @@ async def _remove_from_rtvi_cv(
         # SDR-fronted deployment may route removal to a worker that does not
         # own the stream and leave the actual registration behind.
         response = await client.post(url, json=payload, headers={"x-stream-id": sensor_id})
-        if response.status_code in (200, 201, 204, 404):
+        missing = response.status_code == 404 or (
+            response.status_code == 400
+            and (
+                "no such resource" in response.text.casefold()
+                or "resource not found" in response.text.casefold()
+            )
+        )
+        if response.status_code in (200, 201, 204) or missing:
             logger.info("RTVI-CV stream removed: %s", scrub_log(sensor_id))
-            return True, "Already absent" if response.status_code == 404 else "OK"
+            return True, "Already absent" if missing else "OK"
         return False, f"RTVI-CV returned {response.status_code}: {response.text}"
     except Exception as e:
         logger.error(f"RTVI-CV remove failed: {e}", exc_info=True)
@@ -245,6 +286,13 @@ def create_video_delete_router(
     router = APIRouter()
     vst_url = vst_internal_url.rstrip("/")
     rtvi_cv_url = rtvi_cv_base_url.rstrip("/") if rtvi_cv_base_url else ""
+    detector_urls = tuple(
+        dict.fromkeys(
+            endpoint
+            for profile in ANALYSIS_PROFILES
+            if profile.detection_enabled and (endpoint := analysis_profile_endpoint(rtvi_cv_url, profile.id))
+        )
+    )
 
     @router.delete(
         "/api/v1/videos/{video_id}",
@@ -284,6 +332,7 @@ def create_video_delete_router(
         """
         results: list[bool] = []
         sensor_name = ""
+        generated_data_deleted = 0
 
         logger.info("Deleting video '%s'", scrub_log(video_id))
 
@@ -307,32 +356,37 @@ def create_video_delete_router(
                     # the aggregate result cannot report success.
                     results.append(False)
 
-            # --- ES cleanup (done first to avoid 'not found' issues) ---
-            # Each index uses .keyword for exact match (avoids accidental match on similar names):
-            #   - mdx-embed-filtered:    sensor.id.keyword  = video_id (UUID/streamId)
-            #   - mdx-behavior: sensor.id.keyword  = sensorName
-            #   - mdx-raw:      sensorId.keyword   = sensorName
+            # --- Generated-data cleanup (done before source/storage removal) ---
+            # The source may be represented by UUID in embeddings and by name
+            # in detector/analytics data. The shared cleanup covers every date
+            # partition plus incidents and per-source caption collections.
             if es_config is not None:
-                es_index_configs = [
-                    (es_config.embed_index, "sensor.id.keyword", video_id),
-                    (es_config.behavior_index, "sensor.id.keyword", sensor_name),
-                    (es_config.raw_index, "sensorId.keyword", sensor_name),
-                ]
-                for index_name, field_name, id_value in es_index_configs:
-                    if not id_value:
-                        logger.warning("Skipping ES delete for '%s': no identifier available", index_name)
-                        continue
-                    with TimeMeasure(f"video_delete: ES delete from {index_name}"):
-                        success, msg = await _delete_es_documents(es_config.url, index_name, id_value, field_name)
-                    results.append(success)
-                    logger.info(f"Delete from ES '{index_name}': {'OK' if success else msg}")
+                with TimeMeasure("video_delete: generated source data"):
+                    generated_cleanup = await delete_generated_source_data(
+                        es_config.url,
+                        video_id,
+                        sensor_name,
+                    )
+                generated_data_deleted = generated_cleanup.total_deleted
+                results.append(generated_cleanup.success)
+                if generated_cleanup.failures:
+                    logger.error(
+                        "Generated-data cleanup was incomplete for '%s': %s",
+                        scrub_log(video_id),
+                        sorted(generated_cleanup.failures),
+                    )
 
             # --- Remove from RTVI-CV ---
-            if rtvi_cv_url:
+            for detector_url in detector_urls:
                 with TimeMeasure("video_delete: remove from RTVI-CV"):
-                    success, msg = await _remove_from_rtvi_cv(client, rtvi_cv_url, video_id, sensor_name)
+                    success, msg = await _remove_from_rtvi_cv(
+                        client,
+                        detector_url,
+                        video_id,
+                        sensor_name,
+                    )
                 results.append(success)
-                logger.info(f"Remove from RTVI-CV: {'OK' if success else msg}")
+                logger.info("Remove from RTVI-CV %s: %s", detector_url, "OK" if success else msg)
 
             # --- Delete VST storage (using shared vst utils) ---
             with TimeMeasure("video_delete: delete VST storage"):
@@ -348,6 +402,8 @@ def create_video_delete_router(
                 success, msg = await delete_vst_sensor(vst_url, video_id)
             results.append(success)
             logger.info("Delete VST sensor: %s", "OK" if success else msg)
+            if success:
+                forget_source_analysis_state(video_id)
 
         # --- Determine overall status ---
         all_success = bool(results) and all(results)
@@ -369,6 +425,7 @@ def create_video_delete_router(
             status=status,
             message=message,
             video_id=video_id,
+            generated_data_deleted=generated_data_deleted,
         )
 
     return router

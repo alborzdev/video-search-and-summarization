@@ -7,3 +7,4 @@ export type {
   ChatSidebarQueryContext,
 } from './types';
 export * from './rtspStream';
+export * from './analysisProfiles';

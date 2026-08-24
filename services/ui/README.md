@@ -148,6 +148,28 @@ cd packages/<path-to-package> && npm run test:coverage
 cd packages/nv-metropolis-bp-vss-ui/search && npm run test:coverage
 ```
 
+### Browser regression tests
+
+The VSS UI browser suite is intentionally external to the application process: it
+never starts Docker or a development server, and it exercises only navigation and
+non-destructive overlays. By default it targets the locally deployed UI at
+`http://127.0.0.1:3001`; point it at another already-running deployment with
+`VSS_UI_BASE_URL`.
+
+```bash
+# Runs against http://127.0.0.1:3001 (the default)
+npm run test:e2e
+
+# Runs against another already-running VSS UI deployment
+VSS_UI_BASE_URL=http://127.0.0.1:3001 npm run test:e2e
+```
+
+The suite checks desktop and mobile workspace navigation, shareable workspace
+URLs, common overlays, console/page errors, failed HTTP responses, and serious
+or critical WCAG findings across every primary workspace. Playwright screenshots
+and traces are retained only on failure in the ignored `test-results/`
+directory.
+
 ### Adding New Tests
 
 Sample test files are provided as boilerplate/reference code:

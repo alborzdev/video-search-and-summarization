@@ -257,6 +257,6 @@
     {"path": "deploy/docker/thor-local/qualification/search-semantic-fixture-provisioning-blocker-successor/compiler.py", "sha256": "764c793923a8b216b010d2849063c493c6424dc07b8eef12028fdbe27587298c"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/contract.json", "sha256": "f26448c2e865df6c9b702a532b50826d27791967ee88d92071e8c02393434e0d"},
     {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/executor.py", "sha256": "d193ddc9819d5db5d59b875000c217f45b3ce2b9d3eac0f7e16af57db7686e52"},
-    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs", "sha256": "6a8a7ee3dfa7ea55908056274a50d1d3983f4b58e0d85a1acb29b815bdc644aa"}
+    {"path": "deploy/docker/thor-local/qualification/ui-video-management-playwright-successor/harness.mjs", "sha256": "74c13fc4f130be73dfde4652b9e36e3651fdef2b2f0f1ea7e086d7ddd8943f55"}
   ]
 }

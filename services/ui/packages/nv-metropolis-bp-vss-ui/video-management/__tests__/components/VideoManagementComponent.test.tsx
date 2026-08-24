@@ -79,7 +79,6 @@ jest.mock('../../lib-src/utils', () => {
     fetchPictureWithQueue: jest.fn(() => Promise.reject(new Error('no thumbnail'))),
   };
 });
-
 jest.mock('../../lib-src/api', () => ({
   createApiEndpoints: () => ({
     LIVE_PICTURE: jest.fn(),
@@ -90,6 +89,11 @@ jest.mock('../../lib-src/api', () => ({
 jest.mock('@tabler/icons-react', () => ({
   IconCheck: () => <span data-testid="icon-check" />,
   IconCopy: () => <span data-testid="icon-copy" />,
+}));
+
+jest.mock('../../lib-src/components/LiveStreamModal', () => ({
+  LiveStreamModal: ({ isOpen, title }: { isOpen: boolean; title: string }) =>
+    isOpen ? <div data-testid="live-stream-modal">{title}</div> : null,
 }));
 
 const defaultProps = {
@@ -137,53 +141,72 @@ describe('VideoManagementComponent — video playback', () => {
     expect(callArgs.end_time).toBe('2025-01-01T01:03:30Z');
   });
 
-  it('calls openVideoModal with recent 30s window for RTSP stream', async () => {
-    const fixedNow = new Date('2025-06-15T10:00:00Z').getTime();
-    const realDate = global.Date;
-    const mockDate = class extends realDate {
-      constructor(...args: any[]) {
-        if (args.length === 0) {
-          super(fixedNow);
-        } else {
-          // @ts-ignore
-          super(...args);
-        }
-      }
+  it('opens the live WebRTC player for an RTSP stream', async () => {
+    renderComponent();
 
-      static now() {
-        return fixedNow;
-      }
-    };
-    global.Date = mockDate as any;
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: `Play ${rtspStream.name}` })).toBeInTheDocument();
+    });
 
-    try {
-      renderComponent();
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: `Play ${rtspStream.name}` }));
+    });
 
-      await waitFor(() => {
-        expect(screen.getByRole('button', { name: `Play ${rtspStream.name}` })).toBeInTheDocument();
-      });
-
-      await act(async () => {
-        fireEvent.click(screen.getByRole('button', { name: `Play ${rtspStream.name}` }));
-      });
-
-      expect(mockOpenVideoModal).toHaveBeenCalledTimes(1);
-      const callArgs = mockOpenVideoModal.mock.calls[0][0];
-      expect(callArgs.video_name).toBe('Camera 1');
-      expect(callArgs.sensor_id).toBe('sensor-rtsp');
-
-      const expectedEnd = new realDate(fixedNow - 5000);
-      const expectedStart = new realDate(fixedNow - 35000);
-      expect(callArgs.start_time).toBe(expectedStart.toISOString());
-      expect(callArgs.end_time).toBe(expectedEnd.toISOString());
-    } finally {
-      global.Date = realDate;
-    }
+    expect(mockOpenVideoModal).not.toHaveBeenCalled();
+    expect(screen.getByTestId('live-stream-modal')).toHaveTextContent('Camera 1');
   });
 
   it('renders VideoModal component', () => {
     renderComponent();
 
     expect(screen.queryByTestId('video-modal')).not.toBeInTheDocument();
+  });
+
+  it('clears selected live analytics and retained clips without removing the source', async () => {
+    const fetchMock = jest.fn()
+      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK', json: async () => ({ deleted: 0 }) })
+      .mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: 'OK',
+        json: async () => ({
+          status: 'success',
+          message: 'reset',
+          sensorId: rtspStream.streamId,
+          name: rtspStream.name,
+          deletedDocuments: 123,
+          deletedByCategory: { embeddings: 20, detections: 103 },
+          recordingsCleared: true,
+          analysisResumed: true,
+          resetAt: '2026-08-17T17:00:00Z',
+        }),
+      })
+      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK', json: async () => ({ removedFiles: 2 }) })
+      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK', json: async () => ({ deleted: true }) });
+    global.fetch = fetchMock;
+    renderComponent();
+
+    fireEvent.click(screen.getByRole('checkbox', { name: `Select ${rtspStream.name}` }));
+    fireEvent.click(screen.getByRole('button', { name: 'Clear live data (1)' }));
+    expect(screen.getByText('CLEAR GENERATED LIVE DATA')).toBeInTheDocument();
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Clear and resume' }));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent('Cleared 123 generated records and retained live clips');
+    });
+    expect(fetchMock.mock.calls[0][0]).toBe('/api/vision/live-alert-rules?sourceId=sensor-rtsp');
+    expect(fetchMock.mock.calls[1][0]).toBe('https://agent.example.com/rtsp-streams/rtsp-1/reset');
+    expect(fetchMock.mock.calls[2][0]).toBe('/api/vision/evidence-cache?sensorId=rtsp-1');
+    expect(fetchMock.mock.calls[3][0]).toBe('/api/vision/video-history?sourceId=sensor-rtsp');
+  });
+
+  it('does not offer live reset for a recorded-video selection', () => {
+    renderComponent();
+
+    fireEvent.click(screen.getByRole('checkbox', { name: `Select ${videoStream.name}` }));
+    expect(screen.getByRole('button', { name: 'Clear live data (1)' })).toBeDisabled();
   });
 });

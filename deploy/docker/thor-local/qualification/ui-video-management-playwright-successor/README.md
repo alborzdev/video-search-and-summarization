@@ -10,9 +10,10 @@ progress and optional template state -> adjacent invalid plus valid RTSP add ->
 bulk-delete confirmation cancel -> exact owned deletion -> unrelated-state
 restoration. Each fixture must be larger than 10 MiB and at most 12 MiB, so
 the real shared 10 MiB uploader emits exactly two chunks per file. The client
-captures those four outgoing requests, checks the complete nvstreamer chunk
-sequence and identifiers, reconstructs each multipart media payload, and
-requires its SHA-256 to equal the reviewed fixture digest.
+captures those four outgoing XHRs at the browser `send(FormData)` boundary,
+checks the complete nvstreamer chunk sequence and identifiers, hashes every
+`mediaFile` blob inside Chromium, and requires each hash and byte count to
+match the corresponding slice of the reviewed fixture.
 
 Codex Browser is not installed in this environment, so the reviewed fallback
 is regular Playwright `connectOverCDP`. Runtime requires an explicit absolute

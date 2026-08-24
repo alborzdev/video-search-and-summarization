@@ -95,12 +95,18 @@
     "adapter_mode": "local_shared",
     "provider_type": "rtvi",
     "base_url": "http://127.0.0.1:8018",
-    "gpu_memory_utilization": "0.35"
+    "gpu_memory_utilization": "0.30",
+    "kv_cache_memory_bytes": "4294967296",
+    "enforce_eager": "true",
+    "max_model_len": "16384",
+    "max_generation_tokens": "4096",
+    "max_num_batched_tokens": "4096",
+    "max_num_seqs": "1"
   },
   "unified_memory": {
     "llm_fraction": "0.25",
-    "vlm_fraction": "0.35",
-    "minimum_reserve_fraction": "0.20",
+    "vlm_fraction": "0.30",
+    "minimum_reserve_fraction": "0.25",
     "minimum_available_fraction_before_launch": "0.80"
   },
   "images": {

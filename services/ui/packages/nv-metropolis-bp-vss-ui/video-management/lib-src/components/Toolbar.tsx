@@ -17,7 +17,10 @@ interface ToolbarProps {
   onAddRtspClick: () => void;
   selectedCount: number;
   onDeleteSelected: () => void;
+  onResetSelected: () => void;
+  canResetSelected: boolean;
   isDeleting?: boolean;
+  isResetting?: boolean;
   enableAddRtspButton?: boolean;
   enableVideoUpload?: boolean;
   /** Only show Video option when API returned at least one video stream */
@@ -38,7 +41,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onAddRtspClick,
   selectedCount,
   onDeleteSelected,
+  onResetSelected,
+  canResetSelected,
   isDeleting = false,
+  isResetting = false,
   enableAddRtspButton = true,
   enableVideoUpload = true,
   hasVideoStreams = true,
@@ -142,9 +148,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   ) : undefined;
 
   return (
-    <div className="min-w-0 max-w-full overflow-x-auto overflow-y-clip border-b border-gray-200 dark:border-gray-800">
+    <div className="vm-toolbar min-w-0 max-w-full overflow-x-auto overflow-y-clip border-b border-gray-200 dark:border-gray-800">
       {/* One wrapping flex row — no flex-1 + justify-end strip */}
-      <div className="flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
+      <div className="vm-toolbar__row flex w-full min-w-0 flex-wrap items-center gap-x-3 gap-y-2 px-4 pb-4 pt-4 sm:px-6 sm:pt-6">
         <input
           ref={fileInputRef}
           type="file"
@@ -155,24 +161,26 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         />
 
         {enableVideoUpload && (
-          <Button kind="primary" onClick={handleUploadClick}>
-            + Upload Video
+          <Button kind="primary" onClick={handleUploadClick} className="vm-toolbar__primary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M12 16V4m0 0L7 9m5-5l5 5" /><path d="M5 15v4h14v-4" /></svg>
+            Upload video
           </Button>
         )}
         {enableAddRtspButton && (
-          <Button kind="secondary" onClick={onAddRtspClick}>
-            + Add RTSP
+          <Button kind="secondary" onClick={onAddRtspClick} className="vm-toolbar__action">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M12 5v14M5 12h14" /></svg>
+            Add RTSP camera
           </Button>
         )}
 
-        <div className="flex min-w-0 max-w-full items-center gap-2">
+        <div className="vm-toolbar__search flex min-w-0 max-w-full items-center gap-2" role="search">
           <div className="min-w-0 w-[min(100%,14rem)] max-w-sm sm:w-56">
             <TextInput
               data-testid="search-video-input"
               value={searchQuery}
               onValueChange={(val: string) => onSearchChange(val)}
               onKeyDown={handleSearchKeyDown}
-              placeholder="Search Files"
+              placeholder="Search sources"
               slotRight={clearSearchSlot}
             />
           </div>
@@ -182,6 +190,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             onClick={onSearch}
             className="shrink-0"
           >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
             Search
           </Button>
         </div>
@@ -299,8 +308,30 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
         <Button
           kind="secondary"
+          onClick={onResetSelected}
+          disabled={!canResetSelected || isDeleting || isResetting}
+          className="shrink-0"
+          title={selectedCount > 0 && !canResetSelected ? 'Clear generated data is available for live RTSP sources' : undefined}
+        >
+          {isResetting ? (
+            <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+              <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+              <path d="M12 2a10 10 0 0 1 10 10" strokeOpacity="1" />
+            </svg>
+          ) : (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+              <path d="M20 12a8 8 0 11-2.34-5.66" />
+              <path d="M20 4v6h-6" />
+              <path d="M8 12h8" />
+            </svg>
+          )}
+          {isResetting ? 'Clearing...' : selectedCount > 0 ? `Clear live data (${selectedCount})` : 'Clear live data'}
+        </Button>
+
+        <Button
+          kind="secondary"
           onClick={onDeleteSelected}
-          disabled={selectedCount === 0 || isDeleting}
+          disabled={selectedCount === 0 || isDeleting || isResetting}
           className="shrink-0"
         >
           {isDeleting ? (
@@ -334,7 +365,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               <line x1="9" y1="9" x2="15" y2="15" />
             </svg>
           )}
-          {isDeleting ? 'Deleting...' : 'Delete Selected'}
+          {!isDeleting && <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13" /></svg>}
+          {isDeleting ? 'Deleting...' : selectedCount > 0 ? `Delete selected (${selectedCount})` : 'Delete selected'}
         </Button>
       </div>
     </div>

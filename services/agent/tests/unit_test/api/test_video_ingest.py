@@ -25,10 +25,17 @@ from fastapi import HTTPException
 from pydantic import ValidationError
 import pytest
 
+from vss_agents.api.source_analysis_state import _detection_disabled_sources
+from vss_agents.api.source_analysis_state import _paused_sources
+from vss_agents.api.source_analysis_state import _source_analysis_profiles
+from vss_agents.api.source_analysis_state import _source_kinds
+from vss_agents.api.source_analysis_state import load_source_analysis_state
+from vss_agents.api.source_analysis_state import set_source_analysis_profile
 from vss_agents.api.video_ingest import ENV_RTVI_CV_TIMEOUT_SECONDS
 from vss_agents.api.video_ingest import ENV_RTVI_EMBED_TIMEOUT_SECONDS
 from vss_agents.api.video_ingest import ENV_VST_STORAGE_TIMEOUT_SECONDS
 from vss_agents.api.video_ingest import ENV_VST_UPLOAD_TIMEOUT_SECONDS
+from vss_agents.api.video_ingest import RecordedAnalysisRequest
 from vss_agents.api.video_ingest import VideoIngestResponse
 from vss_agents.api.video_ingest import VideoUploadCompleteInput
 from vss_agents.api.video_ingest import VideoUploadUrlInput
@@ -43,6 +50,21 @@ from vss_agents.api.video_ingest import create_video_upload_complete_router
 from vss_agents.api.video_ingest import create_video_upload_router
 from vss_agents.api.video_ingest import register_video_upload
 from vss_agents.api.video_ingest import register_video_upload_complete
+
+
+@pytest.fixture(autouse=True)
+def isolated_source_analysis_state(tmp_path, monkeypatch):
+    monkeypatch.setenv("VSS_SOURCE_ANALYSIS_STATE_FILE", str(tmp_path / "source-analysis-state.json"))
+    load_source_analysis_state(force=True)
+    _paused_sources.clear()
+    _detection_disabled_sources.clear()
+    _source_analysis_profiles.clear()
+    _source_kinds.clear()
+    yield
+    _paused_sources.clear()
+    _detection_disabled_sources.clear()
+    _source_analysis_profiles.clear()
+    _source_kinds.clear()
 
 
 class TestVideoIngestResponse:
@@ -736,7 +758,10 @@ class TestUploadCompleteRoute:
 
     def test_complete_route_registered(self):
         paths = [r.path for r in self._build_router().routes]
-        assert paths == ["/api/v1/videos/{sensor_id}/complete"]
+        assert paths == [
+            "/api/v1/videos/{sensor_id}/complete",
+            "/api/v1/videos/{sensor_id}/analysis",
+        ]
 
     def test_complete_route_not_deprecated(self):
         route = self._build_router().routes[0]
@@ -848,6 +873,143 @@ class TestUploadCompleteRoute:
         assert kwargs["rtvi_cv_timeout_seconds"] == 12.5
         assert kwargs["rtvi_embed_timeout_seconds"] == 345.0
         assert kwargs["vst_storage_timeout_seconds"] == 23.0
+
+    @pytest.mark.asyncio
+    async def test_recording_can_switch_to_semantic_without_rebuilding_embeddings(self):
+        router = create_video_upload_complete_router(
+            vst_internal_url="http://vst:30888",
+            rtvi_embed_base_url="http://embed:8017",
+            rtvi_cv_base_url="http://warehouse:9000",
+            elasticsearch_url="http://es:9200",
+        )
+        route = router.routes[1]
+        cleanup = SimpleNamespace(
+            deleted_documents={"detections": 4},
+            deleted_collections=(),
+            failures={},
+            success=True,
+            total_deleted=4,
+        )
+        with (
+            patch("vss_agents.api.video_ingest.get_sensor_id_from_stream_id", new=AsyncMock(return_value="clip")),
+            patch("vss_agents.api.video_ingest.get_source_analysis_profile", return_value="warehouse-safety"),
+            patch(
+                "vss_agents.api.video_ingest._remove_recording_from_detector",
+                new=AsyncMock(return_value=(True, "OK")),
+            ),
+            patch("vss_agents.api.video_ingest._delete_detector_generated_data", new=AsyncMock(return_value=cleanup)) as clear,
+            patch("vss_agents.api.video_ingest._run_post_upload_processing", new=AsyncMock()) as process,
+            patch("vss_agents.api.video_ingest.commit_analysis_profile_capacity_reservation") as persist,
+        ):
+            response = await route.endpoint(
+                sensor_id="sensor-xyz",
+                body=RecordedAnalysisRequest(analysisProfileId="semantic-search"),
+            )
+
+        assert response.analysis_profile_id == "semantic-search"
+        assert response.generated_data_deleted == 4
+        process.assert_not_awaited()
+        persist.assert_called_once()
+        assert persist.call_args.args[1] == "sensor-xyz"
+        clear.assert_awaited_once_with("http://es:9200", "sensor-xyz", "clip")
+
+    @pytest.mark.asyncio
+    async def test_recording_detector_reprocess_uses_selected_worker_and_preserves_search(self):
+        with patch.dict("os.environ", {"VSS_TRAFFIC_RTVI_CV_URL": ""}, clear=False):
+            router = create_video_upload_complete_router(
+                vst_internal_url="http://vst:30888",
+                rtvi_embed_base_url="http://embed:8017",
+                rtvi_cv_base_url="http://warehouse:9000",
+                elasticsearch_url="http://es:9200",
+            )
+        route = router.routes[1]
+        cleanup = SimpleNamespace(success=True, total_deleted=0)
+        completed = VideoIngestResponse(
+            message="ok",
+            sensor_id="sensor-xyz",
+            filename="clip",
+            analysisProfileId="warehouse-safety",
+        )
+        with (
+            patch("vss_agents.api.video_ingest.get_sensor_id_from_stream_id", new=AsyncMock(return_value="clip")),
+            patch("vss_agents.api.video_ingest.get_source_analysis_profile", return_value="semantic-search"),
+            patch(
+                "vss_agents.api.video_ingest._remove_recording_from_detector",
+                new=AsyncMock(return_value=(True, "OK")),
+            ),
+            patch("vss_agents.api.video_ingest._delete_detector_generated_data", new=AsyncMock(return_value=cleanup)),
+            patch(
+                "vss_agents.api.video_ingest._run_post_upload_processing",
+                new=AsyncMock(return_value=completed),
+            ) as process,
+            patch("vss_agents.api.video_ingest.commit_analysis_profile_capacity_reservation") as persist,
+        ):
+            response = await route.endpoint(
+                sensor_id="sensor-xyz",
+                body=RecordedAnalysisRequest(analysisProfileId="warehouse-safety"),
+            )
+
+        assert response.analysis_profile_id == "warehouse-safety"
+        assert process.call_args.kwargs["rtvi_cv_base_url"] == "http://warehouse:9000"
+        assert process.call_args.kwargs["rtvi_embed_base_url"] == ""
+        persist.assert_called_once()
+        assert persist.call_args.args[1] == "sensor-xyz"
+
+    @pytest.mark.asyncio
+    async def test_upload_completion_rejects_a_finite_profile_at_capacity(self, monkeypatch):
+        monkeypatch.setenv("VSS_TRAFFIC_RTVI_CV_URL", "http://traffic:9010")
+        set_source_analysis_profile("intersection-a", "traffic-monitoring")
+        route = create_video_upload_complete_router(
+            vst_internal_url="http://vst:30888",
+            rtvi_cv_base_url="http://warehouse:9000",
+        ).routes[0]
+
+        with patch(
+            "vss_agents.api.video_ingest._run_post_upload_processing",
+            new=AsyncMock(),
+        ) as process:
+            with pytest.raises(HTTPException) as exc_info:
+                await route.endpoint(
+                    sensor_id="recording-b",
+                    body=VideoUploadCompleteInput(
+                        filename="recording-b.mp4",
+                        analysisProfileId="traffic-monitoring",
+                    ),
+                )
+
+        assert exc_info.value.status_code == 409
+        assert exc_info.value.detail["code"] == "analysis_profile_capacity_exhausted"
+        process.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_recorded_reprocessing_rejects_a_finite_profile_before_removing_prior_evidence(self, monkeypatch):
+        monkeypatch.setenv("VSS_TRAFFIC_RTVI_CV_URL", "http://traffic:9010")
+        set_source_analysis_profile("intersection-a", "traffic-monitoring")
+        route = create_video_upload_complete_router(
+            vst_internal_url="http://vst:30888",
+            rtvi_cv_base_url="http://warehouse:9000",
+            elasticsearch_url="http://es:9200",
+        ).routes[1]
+
+        with (
+            patch(
+                "vss_agents.api.video_ingest.get_sensor_id_from_stream_id",
+                new=AsyncMock(return_value="recording-b.mp4"),
+            ),
+            patch(
+                "vss_agents.api.video_ingest._remove_recording_from_detector",
+                new=AsyncMock(),
+            ) as remove,
+        ):
+            with pytest.raises(HTTPException) as exc_info:
+                await route.endpoint(
+                    sensor_id="recording-b",
+                    body=RecordedAnalysisRequest(analysisProfileId="traffic-monitoring"),
+                )
+
+        assert exc_info.value.status_code == 409
+        assert exc_info.value.detail["code"] == "analysis_profile_capacity_exhausted"
+        remove.assert_not_awaited()
 
 
 class TestResolveVideoUploadConfig:

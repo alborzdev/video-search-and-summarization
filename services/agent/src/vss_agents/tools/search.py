@@ -402,9 +402,7 @@ def _apply_decomposed_time_range(search_input: "SearchInput", decomposed: Decomp
     candidate_start = explicit_start if explicit_start is not None else decomposed_start
     candidate_end = explicit_end if explicit_end is not None else decomposed_end
     if candidate_start is not None and candidate_end is not None and candidate_end <= candidate_start:
-        logger.warning(
-            "Ignoring non-positive decomposed search time range; preserving explicit request bounds"
-        )
+        logger.warning("Ignoring non-positive decomposed search time range; preserving explicit request bounds")
         if explicit_start is None:
             candidate_start = None
         if explicit_end is None:
@@ -1158,6 +1156,7 @@ async def execute_core_search(
     # Keep track of confirmed and rejected results to avoid re-running the critic agent on the known results
     rejected_results = set()
     confirmed_results = set()
+    unavailable_results = set()
     iteration_num = 0
     # Collect non-fatal messages from pipeline steps to surface in the final response
     search_messages: list[str] = []
@@ -1394,7 +1393,11 @@ async def execute_core_search(
                         start_timestamp=result.start_time,
                         end_timestamp=result.end_time,
                     )
-                    if info not in confirmed_results and info not in rejected_results:
+                    if (
+                        info not in confirmed_results
+                        and info not in rejected_results
+                        and info not in unavailable_results
+                    ):
                         search_videos.append(info)
                 if len(search_videos) > 0:
                     critic_input = {"query": original_query, "videos": search_videos}
@@ -1413,12 +1416,41 @@ async def execute_core_search(
                                 top_k += 1
                                 do_search = True
                             case CriticAgentResult.UNVERIFIED:
-                                logger.warning(f"[Search] Unverified result for video {info.sensor_id}")
+                                if video_result.failure_reason == "media_unavailable":
+                                    unavailable_results.add(info)
+                                    top_k += 1
+                                    do_search = True
+                                    logger.info(
+                                        "[Search] Skipping indexed result without playable media for video %s",
+                                        info.sensor_id,
+                                    )
+                                else:
+                                    logger.warning(f"[Search] Unverified result for video {info.sensor_id}")
 
                     # If all results are unverified (e.g. VLM is down), stop re-searching
                     # and return results without critic verification.
-                    if critic_results and all(
-                        r.result == CriticAgentResult.UNVERIFIED for r in critic_results.values()
+                    verification_failures = [
+                        result
+                        for result in critic_results.values()
+                        if result.result == CriticAgentResult.UNVERIFIED
+                        and result.failure_reason != "media_unavailable"
+                    ]
+                    media_failures = [
+                        result for result in critic_results.values() if result.failure_reason == "media_unavailable"
+                    ]
+                    if media_failures:
+                        msg = (
+                            f"Skipped {len(media_failures)} indexed match"
+                            f"{'es' if len(media_failures) != 1 else ''} whose video is no longer available."
+                        )
+                        if msg not in search_messages:
+                            search_messages.append(msg)
+                        yield AgentMessageChunk(type=AgentMessageChunkType.THOUGHT, content=msg)
+
+                    if (
+                        critic_results
+                        and verification_failures
+                        and len(verification_failures) + len(media_failures) == len(critic_results)
                     ):
                         logger.warning(
                             "[Search] All critic results unverified (VLM may be down). "
@@ -1449,6 +1481,20 @@ async def execute_core_search(
                     )
                     if info in persistent_critic_results:
                         result.critic_result = persistent_critic_results[info]
+
+                # A rejected critic match is not a result, and an indexed match
+                # without playable media cannot serve as evidence.  Exclude both
+                # before returning or before a refill iteration.
+                search_results = [
+                    result
+                    for result in search_results
+                    if VideoInfo(
+                        sensor_id=result.sensor_id,
+                        start_timestamp=result.start_time,
+                        end_timestamp=result.end_time,
+                    )
+                    not in rejected_results | unavailable_results
+                ]
 
                 # Yield critic results summary
                 verified_count = sum(1 for vr in critic_results.values() if vr.result == CriticAgentResult.CONFIRMED)

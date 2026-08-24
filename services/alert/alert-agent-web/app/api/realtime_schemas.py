@@ -127,6 +127,15 @@ class RealtimeAlertRequest(BaseModel):
         default=None,
         description="Description of the live stream",
     )
+    preserve_rtvi_stream: bool = Field(
+        default=False,
+        description=(
+            "Keep an existing RTVI stream registration when this rule is "
+            "deleted or fails. Use this only when another service owns the "
+            "stream lifecycle. The rule's exact caption request is still "
+            "stopped."
+        ),
+    )
     username: Optional[str] = Field(
         default=None,
         description="RTSP authentication username",

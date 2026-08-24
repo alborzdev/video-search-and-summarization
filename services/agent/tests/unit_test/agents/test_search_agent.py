@@ -414,6 +414,52 @@ class TestFetchReferenceObjectEmbedding:
             )
 
     @pytest.mark.asyncio
+    async def test_falls_back_to_exact_raw_detector_frame_for_fresh_live_track(self):
+        from datetime import UTC
+        from datetime import datetime
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools.attribute_search import _fetch_reference_object_embedding
+
+        mock_client = AsyncMock()
+        mock_client.search.side_effect = [
+            {"hits": {"hits": []}},
+            {
+                "hits": {
+                    "hits": [
+                        {
+                            "_source": {
+                                "timestamp": "2026-08-17T15:56:47.527Z",
+                                "objects": [{"id": "28", "embedding": {"vector": [0.1, 0.2, 0.3]}}],
+                            }
+                        }
+                    ]
+                }
+            },
+        ]
+        timestamp = datetime(2026, 8, 17, 15, 56, 47, 527000, tzinfo=UTC)
+
+        result = await _fetch_reference_object_embedding(
+            object_id="28",
+            sensor_name="Preview_01_main",
+            timestamp=timestamp,
+            behavior_index=["mdx-behavior-*", "-mdx-behavior-2025-01-01"],
+            es=mock_client,
+        )
+
+        assert result == [0.1, 0.2, 0.3]
+        raw_call = mock_client.search.await_args_list[1]
+        assert raw_call.kwargs["index"] == "mdx-raw-*,-mdx-raw-2025-01-01"
+        filters = raw_call.kwargs["body"]["query"]["bool"]["filter"]
+        assert {"term": {"sensorId.keyword": "Preview_01_main"}} in filters
+        assert {
+            "nested": {
+                "path": "objects",
+                "query": {"term": {"objects.id.keyword": "28"}},
+            }
+        } in filters
+
+    @pytest.mark.asyncio
     async def test_structured_knn_excludes_only_exact_seed_and_backfills(self, monkeypatch):
         from datetime import UTC
         from datetime import datetime

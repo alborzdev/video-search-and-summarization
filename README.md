@@ -89,7 +89,11 @@ This blueprint is designed for ease of setup with extensive configuration option
 
 ## Documentation
 
-For detailed instructions and additional information about this blueprint, please refer to the [official documentation](https://docs.nvidia.com/vss/latest/index.html).
+For upstream blueprint instructions, refer to the [official NVIDIA
+documentation](https://docs.nvidia.com/vss/latest/index.html). For this
+repository's Thor deployment, custom Vision Intelligence UI, architecture
+decisions, and qualification records, use the [project documentation
+index](docs/README.md).
 
 ## Prerequisites
 

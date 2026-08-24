@@ -346,7 +346,10 @@ def _build_es_query(query_input: QueryInput, query_embedding: list[float], confi
             must_clauses.append({"range": {"timestamp": {"gte": timestamp_start.isoformat()}}})
 
         if timestamp_end:
-            must_clauses.append({"range": {"end": {"lte": timestamp_end.isoformat()}}})
+            # Embed documents store each chunk's start in `timestamp`; there is
+            # no top-level `end` field.  Filtering on `end` silently returned
+            # zero hits whenever the UI supplied an upper bound.
+            must_clauses.append({"range": {"timestamp": {"lte": timestamp_end.isoformat()}}})
 
         if len(must_clauses) > 1:
             filters.append({"bool": {"must": must_clauses}})
@@ -384,22 +387,18 @@ def _build_es_query(query_input: QueryInput, query_embedding: list[float], confi
         }
     }
 
-    # Build search query with filters
+    # Build search query with filters. Elasticsearch must receive metadata
+    # constraints in the top-level kNN `filter`; wrapping a nested kNN query in
+    # an outer bool filter applies the constraint after approximate neighbors
+    # have already been selected. That can incorrectly produce zero results
+    # when the global nearest neighbors fall outside the requested camera/time
+    # range even though valid neighbors exist inside it.
     if filters:
         if len(filters) > 1:
             filter_clause = {"bool": {"must": filters}}
         else:
             filter_clause = filters[0]
-
-        search_query = {
-            "query": {
-                "bool": {
-                    "must": [nested_query],
-                    "filter": [filter_clause],
-                }
-            },
-            "size": k_value,
-        }
+        search_query = {"knn": {**knn_query, "filter": filter_clause}, "size": k_value}
     else:
         search_query = {
             "query": nested_query,

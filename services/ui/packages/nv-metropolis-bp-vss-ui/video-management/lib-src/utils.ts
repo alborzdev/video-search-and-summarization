@@ -1,22 +1,44 @@
 // SPDX-License-Identifier: MIT
-import type { StreamInfo, StreamsApiResponse, FileUploadResponse, FileUploadError } from './types';
-import { NUM_PARALLEL_GET_PICTURES } from './constants';
-import { createApiEndpoints } from './api';
+
+import { createApiEndpoints } from "./api";
+import { NUM_PARALLEL_GET_PICTURES } from "./constants";
+import type {
+  StreamInfo,
+  StreamsApiResponse,
+  FileUploadResponse,
+  FileUploadError,
+} from "./types";
 
 export function getFileExtension(path: string): string {
-  const parts = path.split('.');
-  return parts.length > 1 ? parts.at(-1)!.toUpperCase() : '';
+  const parts = path.split(".");
+  return parts.length > 1 ? parts.at(-1)!.toUpperCase() : "";
 }
 
 export function isRtspStream(stream: StreamInfo): boolean {
   return (
-    (stream.url ?? '').toLowerCase().startsWith('rtsp://') ||
-    (stream.vodUrl ?? '').toLowerCase().startsWith('rtsp://')
+    (stream.url ?? "").toLowerCase().startsWith("rtsp://") ||
+    (stream.vodUrl ?? "").toLowerCase().startsWith("rtsp://")
   );
 }
 
-export function getStreamType(stream: StreamInfo): 'rtsp' | 'video' {
-  return isRtspStream(stream) ? 'rtsp' : 'video';
+export function getStreamType(stream: StreamInfo): "rtsp" | "video" {
+  return isRtspStream(stream) ? "rtsp" : "video";
+}
+
+/** Presenter-friendly label; backend operations continue using the raw source name. */
+export function getStreamDisplayName(name: string): string {
+  if (!name) return "Unnamed source";
+  const normalized = name.toLowerCase().replace(/\.[a-z0-9]+$/i, "");
+  if (normalized === "sample-sim-traffic") return "Traffic — Main Intersection";
+  if (normalized === "sample-sim-jaywalking") return "Traffic — Pedestrian Crossing";
+  if (normalized.includes("nvidia-warehouse-loading-dock")) return "Warehouse — Loading Dock";
+  if (normalized === "pit-pov") return "Motorsport — Driver POV";
+  return name
+    .replace(/\.[a-z0-9]+$/i, "")
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (character) => character.toUpperCase())
+    .replace(/\bPov\b/g, "POV")
+    .trim() || "Unnamed source";
 }
 
 export function filterStreams(
@@ -33,8 +55,8 @@ export function filterStreams(
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      const name = (stream.name ?? '').toLowerCase();
-      return name.includes(query);
+      const name = (stream.name ?? "").toLowerCase();
+      return name.includes(query) || getStreamDisplayName(stream.name ?? "").toLowerCase().includes(query);
     }
 
     return true;
@@ -48,7 +70,9 @@ export function parseStreamsResponse(data: StreamsApiResponse): StreamInfo[] {
     const sensorId = Object.keys(item)[0];
     const streamInfoArray = item[sensorId];
     if (Array.isArray(streamInfoArray)) {
-      allStreams.push(...streamInfoArray.map(stream => ({ ...stream, sensorId })));
+      allStreams.push(
+        ...streamInfoArray.map((stream) => ({ ...stream, sensorId }))
+      );
     }
   }
 
@@ -63,17 +87,21 @@ interface ParsedErrorObj {
 }
 
 /** FastAPI-style validation errors: { "detail": [ { "loc": ["body", "name"], "msg": "Field required" } ] } */
-function parseValidationDetail(detail: ParsedErrorObj['detail']): string | null {
+function parseValidationDetail(
+  detail: ParsedErrorObj["detail"]
+): string | null {
   if (!Array.isArray(detail) || detail.length === 0) return null;
 
   const first = detail[0];
-  const msg = first?.msg ?? '';
+  const msg = first?.msg ?? "";
   const loc = first?.loc;
 
   if (Array.isArray(loc)) {
     const field = loc.at(-1);
-    const isNameRequired = field === 'name' && (msg.toLowerCase().includes('required') || first?.type === 'missing');
-    if (isNameRequired) return 'Sensor Name is required.';
+    const isNameRequired =
+      field === "name" &&
+      (msg.toLowerCase().includes("required") || first?.type === "missing");
+    if (isNameRequired) return "Sensor Name is required.";
     if (msg) return `${String(field)}: ${msg}`;
   }
 
@@ -83,17 +111,17 @@ function parseValidationDetail(detail: ParsedErrorObj['detail']): string | null 
 function parseErrorCodeMessage(errorObj: ParsedErrorObj): string | null {
   const rawMessage = errorObj.error_message || errorObj.message;
   const isDuplicate =
-    errorObj.error_code === 'InvalidParameterError' &&
-    (rawMessage ?? '').toLowerCase().includes('exists');
+    errorObj.error_code === "InvalidParameterError" &&
+    (rawMessage ?? "").toLowerCase().includes("exists");
 
-  if (isDuplicate) return 'A sensor with this RTSP URL already exists.';
+  if (isDuplicate) return "A sensor with this RTSP URL already exists.";
   return rawMessage || null;
 }
 
 export function parseApiError(text: string, defaultMessage: string): string {
   try {
     const parsed: unknown = JSON.parse(text);
-    if (typeof parsed !== 'object' || parsed === null) return text;
+    if (typeof parsed !== "object" || parsed === null) return text;
 
     const errorObj = parsed as ParsedErrorObj;
 
@@ -108,12 +136,12 @@ export function parseApiError(text: string, defaultMessage: string): string {
 
 export function generateUUID(): string {
   const c = globalThis.crypto as Crypto | undefined;
-  if (c && typeof c.randomUUID === 'function') {
+  if (c && typeof c.randomUUID === "function") {
     return c.randomUUID();
   }
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (char) => {
     const r = (Math.random() * 16) | 0;
-    const v = char === 'x' ? r : (r & 0x3) | 0x8;
+    const v = char === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -133,16 +161,16 @@ export async function uploadFile(
   const fileName = file.name;
 
   const formData = new FormData();
-  formData.append('mediaFile', file);
-  formData.append('filename', fileName);
-  formData.append('metadata', '{"timestamp":"2025-01-01T00:00:00"}');
+  formData.append("mediaFile", file);
+  formData.append("filename", fileName);
+  formData.append("metadata", '{"timestamp":"2025-01-01T00:00:00"}');
 
   const headers: Record<string, string> = {
-    'nvstreamer-chunk-number': '1',
-    'nvstreamer-file-name': fileName,
-    'nvstreamer-identifier': identifier,
-    'nvstreamer-is-last-chunk': 'true',
-    'nvstreamer-total-chunks': '1',
+    "nvstreamer-chunk-number": "1",
+    "nvstreamer-file-name": fileName,
+    "nvstreamer-identifier": identifier,
+    "nvstreamer-is-last-chunk": "true",
+    "nvstreamer-total-chunks": "1",
   };
 
   return new Promise((resolve, reject) => {
@@ -150,40 +178,51 @@ export async function uploadFile(
 
     if (abortSignal) {
       if (abortSignal.aborted) {
-        reject(new Error('Upload was aborted'));
+        reject(new Error("Upload was aborted"));
         return;
       }
-      abortSignal.addEventListener('abort', () => xhr.abort());
+      abortSignal.addEventListener("abort", () => xhr.abort());
     }
 
-    xhr.upload.addEventListener('progress', (event) => {
+    xhr.upload.addEventListener("progress", (event) => {
       if (event.lengthComputable && onProgress) {
         onProgress(Math.round((event.loaded / event.total) * 100));
       }
     });
 
-    xhr.addEventListener('load', () => {
+    xhr.addEventListener("load", () => {
       if (xhr.status >= 200 && xhr.status < 300) {
         try {
           resolve(JSON.parse(xhr.responseText) as FileUploadResponse);
         } catch {
-          reject(new Error('Failed to parse upload response'));
+          reject(new Error("Failed to parse upload response"));
         }
       } else {
         try {
           const errorResponse = JSON.parse(xhr.responseText) as FileUploadError;
-          reject(new Error(errorResponse.error_message || `Upload failed with status ${xhr.status}`));
+          reject(
+            new Error(
+              errorResponse.error_message ||
+                `Upload failed with status ${xhr.status}`
+            )
+          );
         } catch {
           reject(new Error(`Upload failed with status ${xhr.status}`));
         }
       }
     });
 
-    xhr.addEventListener('error', () => reject(new Error('Network error during upload')));
-    xhr.addEventListener('abort', () => reject(new Error('Upload was aborted')));
+    xhr.addEventListener("error", () =>
+      reject(new Error("Network error during upload"))
+    );
+    xhr.addEventListener("abort", () =>
+      reject(new Error("Upload was aborted"))
+    );
 
-    xhr.open('POST', apiEndpoints.UPLOAD_FILE);
-    Object.entries(headers).forEach(([key, value]) => xhr.setRequestHeader(key, value));
+    xhr.open("POST", apiEndpoints.UPLOAD_FILE);
+    Object.entries(headers).forEach(([key, value]) =>
+      xhr.setRequestHeader(key, value)
+    );
     xhr.send(formData);
   });
 }
@@ -217,7 +256,8 @@ class PictureFetchQueue {
   }
 
   private processNext(): void {
-    if (this.activeCount >= this.maxConcurrent || this.queue.length === 0) return;
+    if (this.activeCount >= this.maxConcurrent || this.queue.length === 0)
+      return;
 
     const task = this.queue.shift();
     if (task) {
@@ -227,23 +267,40 @@ class PictureFetchQueue {
   }
 
   async fetch(url: string): Promise<Blob> {
-    const inFlightPromise = this.inFlight.get(url);
+    const requestUrl = proxyPictureUrl(url);
+    const inFlightPromise = this.inFlight.get(requestUrl);
     if (inFlightPromise) return inFlightPromise;
 
     const fetchPromise = this.enqueue(async () => {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Failed to fetch picture: ${response.status}`);
+      const response = await fetch(requestUrl);
+      if (!response.ok)
+        throw new Error(`Failed to fetch picture: ${response.status}`);
       return response.blob();
-    }).then((blob) => {
-      this.inFlight.delete(url);
-      return blob;
-    }).catch((error) => {
-      this.inFlight.delete(url);
-      throw error;
-    });
+    })
+      .then((blob) => {
+        this.inFlight.delete(requestUrl);
+        return blob;
+      })
+      .catch((error) => {
+        this.inFlight.delete(requestUrl);
+        throw error;
+      });
 
-    this.inFlight.set(url, fetchPromise);
+    this.inFlight.set(requestUrl, fetchPromise);
     return fetchPromise;
+  }
+}
+
+function proxyPictureUrl(url: string): string {
+  if (typeof window === "undefined") return url;
+  try {
+    const target = new URL(url, window.location.href);
+    if (target.origin === window.location.origin) return target.toString();
+    return `/api/vision/vst-image?path=${encodeURIComponent(
+      `${target.pathname}${target.search}`
+    )}`;
+  } catch {
+    return url;
   }
 }
 
@@ -252,4 +309,3 @@ const pictureFetchQueue = new PictureFetchQueue();
 export async function fetchPictureWithQueue(url: string): Promise<Blob> {
   return pictureFetchQueue.fetch(url);
 }
-

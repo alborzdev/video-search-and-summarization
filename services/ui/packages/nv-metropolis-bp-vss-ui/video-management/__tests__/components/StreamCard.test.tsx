@@ -1,35 +1,46 @@
 // SPDX-License-Identifier: MIT
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { StreamCard } from '../../lib-src/components/StreamCard';
-import type { StreamInfo } from '../../lib-src/types';
-import { makeStream, videoStream, rtspStream } from '../helpers/streamFixtures';
 
-jest.mock('../../lib-src/utils', () => ({
+import { StreamCard } from "../../lib-src/components/StreamCard";
+import type { StreamInfo } from "../../lib-src/types";
+import { makeStream, videoStream, rtspStream } from "../helpers/streamFixtures";
+import {
+  act,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react";
+import React from "react";
+
+jest.mock("../../lib-src/utils", () => ({
   getFileExtension: (url: string) => {
-    const parts = url.split('.');
-    return parts.length > 1 ? parts.at(-1)!.toUpperCase() : '';
+    const parts = url.split(".");
+    return parts.length > 1 ? parts.at(-1)!.toUpperCase() : "";
   },
   isRtspStream: (stream: StreamInfo) =>
-    (stream.url ?? '').toLowerCase().startsWith('rtsp://'),
+    (stream.url ?? "").toLowerCase().startsWith("rtsp://"),
   getStreamType: (stream: StreamInfo) =>
-    (stream.url ?? '').toLowerCase().startsWith('rtsp://') ? 'rtsp' : 'video',
-  fetchPictureWithQueue: jest.fn(() => Promise.reject(new Error('no thumbnail in test'))),
+    (stream.url ?? "").toLowerCase().startsWith("rtsp://") ? "rtsp" : "video",
+  getStreamDisplayName: (name: string) => name,
+  fetchPictureWithQueue: jest.fn(() =>
+    Promise.reject(new Error("no thumbnail in test"))
+  ),
 }));
 
-jest.mock('../../lib-src/api', () => ({
+jest.mock("../../lib-src/api", () => ({
   createApiEndpoints: () => ({
-    LIVE_PICTURE: jest.fn(),
-    REPLAY_PICTURE: jest.fn(),
+    LIVE_PICTURE: (streamId: string) => `live-picture:${streamId}`,
+    REPLAY_PICTURE: (streamId: string, time: string) =>
+      `replay-picture:${streamId}:${time}`,
   }),
 }));
 
 const mockCopyToClipboard = jest.fn(() => Promise.resolve());
-jest.mock('@nemo-agent-toolkit/ui', () => ({
+jest.mock("@nemo-agent-toolkit/ui", () => ({
   copyToClipboard: (...args: unknown[]) => mockCopyToClipboard(...args),
 }));
 
-jest.mock('@tabler/icons-react', () => ({
+jest.mock("@tabler/icons-react", () => ({
   IconCheck: () => <span data-testid="icon-check" />,
 }));
 
@@ -40,182 +51,305 @@ const defaultProps = {
   getEndTimeForStream: jest.fn(() => null),
 };
 
-function renderStreamCard(props: Partial<Parameters<typeof StreamCard>[0]> = {}) {
+function renderStreamCard(
+  props: Partial<Parameters<typeof StreamCard>[0]> = {}
+) {
   return render(<StreamCard {...defaultProps} {...props} />);
 }
 
-describe('StreamCard — play button', () => {
-  describe('visibility', () => {
-    it('does not render play button when onPlay is not provided', () => {
+describe("StreamCard — play button", () => {
+  describe("visibility", () => {
+    it("does not render play button when onPlay is not provided", () => {
       renderStreamCard();
 
-      expect(screen.queryByRole('button', { name: /play/i })).not.toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: /loading/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /play/i })
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /loading/i })
+      ).not.toBeInTheDocument();
     });
 
-    it('renders play button when onPlay is provided for a video stream', () => {
+    it("renders play button when onPlay is provided for a video stream", () => {
       renderStreamCard({ onPlay: jest.fn() });
 
-      expect(screen.getByRole('button', { name: `Play ${videoStream.name}` })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: `Play ${videoStream.name}` })
+      ).toBeInTheDocument();
     });
 
-    it('renders play button when onPlay is provided for an RTSP stream', () => {
+    it("renders play button when onPlay is provided for an RTSP stream", () => {
       renderStreamCard({ stream: rtspStream, onPlay: jest.fn() });
 
-      expect(screen.getByRole('button', { name: `Play ${rtspStream.name}` })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: `Play ${rtspStream.name}` })
+      ).toBeInTheDocument();
     });
   });
 
-  describe('click behavior', () => {
-    it('calls onPlay with the stream when play button is clicked', () => {
+  describe("click behavior", () => {
+    it("calls onPlay with the stream when play button is clicked", () => {
       const onPlay = jest.fn();
       renderStreamCard({ onPlay });
 
-      fireEvent.click(screen.getByRole('button', { name: `Play ${videoStream.name}` }));
+      fireEvent.click(
+        screen.getByRole("button", { name: `Play ${videoStream.name}` })
+      );
 
       expect(onPlay).toHaveBeenCalledTimes(1);
       expect(onPlay).toHaveBeenCalledWith(videoStream);
     });
 
-    it('does not call onPlay when isLoadingPlay is true', () => {
+    it("does not call onPlay when isLoadingPlay is true", () => {
       const onPlay = jest.fn();
       renderStreamCard({ onPlay, isLoadingPlay: true });
 
-      fireEvent.click(screen.getByRole('button', { name: `Loading ${videoStream.name}` }));
+      fireEvent.click(
+        screen.getByRole("button", { name: `Loading ${videoStream.name}` })
+      );
 
       expect(onPlay).not.toHaveBeenCalled();
     });
   });
 
-  describe('loading state', () => {
+  describe("loading state", () => {
     it('shows "Loading" aria-label when isLoadingPlay is true', () => {
       renderStreamCard({ onPlay: jest.fn(), isLoadingPlay: true });
 
-      expect(screen.getByRole('button', { name: `Loading ${videoStream.name}` })).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: `Play ${videoStream.name}` })).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: `Loading ${videoStream.name}` })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: `Play ${videoStream.name}` })
+      ).not.toBeInTheDocument();
     });
 
     it('shows "Play" aria-label when isLoadingPlay is false', () => {
       renderStreamCard({ onPlay: jest.fn(), isLoadingPlay: false });
 
-      expect(screen.getByRole('button', { name: `Play ${videoStream.name}` })).toBeInTheDocument();
-      expect(screen.queryByRole('button', { name: `Loading ${videoStream.name}` })).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: `Play ${videoStream.name}` })
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: `Loading ${videoStream.name}` })
+      ).not.toBeInTheDocument();
     });
 
-    it('button is disabled when isLoadingPlay is true', () => {
+    it("button is disabled when isLoadingPlay is true", () => {
       renderStreamCard({ onPlay: jest.fn(), isLoadingPlay: true });
 
-      const btn = screen.getByRole('button', { name: `Loading ${videoStream.name}` });
+      const btn = screen.getByRole("button", {
+        name: `Loading ${videoStream.name}`,
+      });
       expect(btn).toBeDisabled();
     });
 
-    it('button is enabled when isLoadingPlay is false', () => {
+    it("button is enabled when isLoadingPlay is false", () => {
       renderStreamCard({ onPlay: jest.fn(), isLoadingPlay: false });
 
-      const btn = screen.getByRole('button', { name: `Play ${videoStream.name}` });
+      const btn = screen.getByRole("button", {
+        name: `Play ${videoStream.name}`,
+      });
       expect(btn).not.toBeDisabled();
     });
   });
 });
 
-describe('StreamCard — basic rendering', () => {
-  it('displays stream name', () => {
+describe("StreamCard — basic rendering", () => {
+  beforeEach(() => {
+    const utils = jest.requireMock("../../lib-src/utils") as {
+      fetchPictureWithQueue: jest.Mock;
+    };
+    utils.fetchPictureWithQueue.mockClear();
+  });
+
+  it("displays stream name", () => {
     renderStreamCard();
 
     expect(screen.getByText(videoStream.name)).toBeInTheDocument();
   });
 
-  it('displays codec and framerate metadata', () => {
+  it("displays codec and framerate metadata", () => {
     renderStreamCard();
 
-    expect(screen.getByText('H264')).toBeInTheDocument();
-    expect(screen.getByText('30 fps')).toBeInTheDocument();
+    expect(screen.getByText("H264")).toBeInTheDocument();
+    expect(screen.getByText("30 fps")).toBeInTheDocument();
   });
 
-  it('displays MP4 label for video streams', () => {
+  it("displays MP4 label for video streams", () => {
     renderStreamCard();
 
-    expect(screen.getByText('MP4')).toBeInTheDocument();
+    expect(screen.getByText("MP4")).toBeInTheDocument();
   });
 
-  it('displays RTSP label for rtsp streams', () => {
+  it("displays RTSP label for rtsp streams", () => {
     renderStreamCard({ stream: rtspStream });
 
-    expect(screen.getByText('RTSP')).toBeInTheDocument();
+    expect(screen.getByText(/LIVE · RTSP/)).toBeInTheDocument();
   });
 
-  it('checkbox reflects isSelected prop', () => {
+  it("uses a retained replay frame for an RTSP thumbnail when a timeline exists", async () => {
+    const endTime = "2026-08-19T17:00:00.000Z";
+    const utils = jest.requireMock("../../lib-src/utils") as {
+      fetchPictureWithQueue: jest.Mock;
+    };
+    renderStreamCard({
+      stream: rtspStream,
+      vstApiUrl: "http://vst.test/vst/api",
+      getEndTimeForStream: jest.fn(() => endTime),
+    });
+
+    await waitFor(() => {
+      expect(utils.fetchPictureWithQueue).toHaveBeenCalledWith(
+        `replay-picture:${rtspStream.streamId}:${endTime}`
+      );
+    });
+  });
+
+  it("uses the live frame endpoint for a new RTSP source without retained footage", async () => {
+    jest.useFakeTimers();
+    const utils = jest.requireMock("../../lib-src/utils") as {
+      fetchPictureWithQueue: jest.Mock;
+    };
+    try {
+      renderStreamCard({
+        stream: rtspStream,
+        vstApiUrl: "http://vst.test/vst/api",
+      });
+
+      expect(utils.fetchPictureWithQueue).not.toHaveBeenCalled();
+      await act(async () => {
+        jest.advanceTimersByTime(2500);
+      });
+      expect(utils.fetchPictureWithQueue).toHaveBeenCalledWith(
+        `live-picture:${rtspStream.streamId}`
+      );
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("waits for the shared timeline request before choosing an RTSP thumbnail", async () => {
+    jest.useFakeTimers();
+    const endTime = "2026-08-19T17:00:00.000Z";
+    const getEndTimeForStream = jest
+      .fn<
+        ReturnType<typeof defaultProps.getEndTimeForStream>,
+        Parameters<typeof defaultProps.getEndTimeForStream>
+      >()
+      .mockReturnValueOnce(null)
+      .mockReturnValue(endTime);
+    const utils = jest.requireMock("../../lib-src/utils") as {
+      fetchPictureWithQueue: jest.Mock;
+    };
+    try {
+      renderStreamCard({
+        stream: rtspStream,
+        vstApiUrl: "http://vst.test/vst/api",
+        getEndTimeForStream,
+      });
+
+      expect(utils.fetchPictureWithQueue).not.toHaveBeenCalled();
+      await act(async () => {
+        jest.advanceTimersByTime(500);
+      });
+      expect(utils.fetchPictureWithQueue).toHaveBeenCalledWith(
+        `replay-picture:${rtspStream.streamId}:${endTime}`
+      );
+      expect(utils.fetchPictureWithQueue).not.toHaveBeenCalledWith(
+        `live-picture:${rtspStream.streamId}`
+      );
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
+  it("checkbox reflects isSelected prop", () => {
     renderStreamCard({ isSelected: true });
 
-    expect(screen.getByRole('checkbox')).toBeChecked();
+    expect(screen.getByRole("checkbox")).toBeChecked();
   });
 
-  it('calls onSelectionChange when checkbox is toggled', () => {
+  it("calls onSelectionChange when checkbox is toggled", () => {
     const onSelectionChange = jest.fn();
     renderStreamCard({ isSelected: false, onSelectionChange });
 
-    fireEvent.click(screen.getByRole('checkbox'));
+    fireEvent.click(screen.getByRole("checkbox"));
 
     expect(onSelectionChange).toHaveBeenCalledWith(videoStream.streamId, true);
   });
 });
 
-describe('StreamCard — copy and chat context', () => {
+describe("StreamCard — copy and chat context", () => {
   beforeEach(() => {
     mockCopyToClipboard.mockClear();
     mockCopyToClipboard.mockImplementation(() => Promise.resolve());
   });
 
-  it('does not render + Chat when add-context callback is not provided', () => {
+  it("does not render + Chat when add-context callback is not provided", () => {
     renderStreamCard();
-    expect(screen.queryByRole('button', { name: /\+\s*chat/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /\+\s*chat/i })
+    ).not.toBeInTheDocument();
   });
 
-  it('copies JSON to clipboard when + Chat is clicked', async () => {
+  it("copies JSON to clipboard when + Chat is clicked", async () => {
     renderStreamCard({ onAddChatQueryContext: jest.fn() });
 
-    fireEvent.click(screen.getByRole('button', { name: /\+\s*chat/i }));
+    fireEvent.click(screen.getByRole("button", { name: /\+\s*chat/i }));
 
     await waitFor(() => {
       expect(mockCopyToClipboard).toHaveBeenCalledWith(
         JSON.stringify(
-          { sensorName: videoStream.name, streamId: videoStream.streamId, mediaType: 'video' },
+          {
+            sensorName: videoStream.name,
+            streamId: videoStream.streamId,
+            mediaType: "video",
+          },
           null,
-          2,
-        ),
+          2
+        )
       );
     });
   });
 
-  it('emits contextType media/video for uploaded videos', async () => {
+  it("emits contextType media/video for uploaded videos", async () => {
     const onAddChatQueryContext = jest.fn();
     renderStreamCard({ onAddChatQueryContext });
 
-    fireEvent.click(screen.getByRole('button', { name: /\+\s*chat/i }));
+    fireEvent.click(screen.getByRole("button", { name: /\+\s*chat/i }));
 
     expect(onAddChatQueryContext).toHaveBeenCalledTimes(1);
     expect(onAddChatQueryContext).toHaveBeenCalledWith({
       id: `video-mgmt-stream:${videoStream.streamId}`,
       label: videoStream.name,
-      contextType: 'media/video',
-      data: { sensorName: videoStream.name, streamId: videoStream.streamId, mediaType: 'video' },
+      contextType: "media/video",
+      data: {
+        sensorName: videoStream.name,
+        streamId: videoStream.streamId,
+        mediaType: "video",
+      },
     });
     await waitFor(() => {
       expect(mockCopyToClipboard).toHaveBeenCalled();
     });
   });
 
-  it('emits contextType media/video for RTSP live streams', async () => {
+  it("emits contextType media/video for RTSP live streams", async () => {
     const onAddChatQueryContext = jest.fn();
     renderStreamCard({ stream: rtspStream, onAddChatQueryContext });
 
-    fireEvent.click(screen.getByRole('button', { name: /\+\s*chat/i }));
+    fireEvent.click(screen.getByRole("button", { name: /\+\s*chat/i }));
 
     expect(onAddChatQueryContext).toHaveBeenCalledWith({
       id: `video-mgmt-stream:${rtspStream.streamId}`,
       label: rtspStream.name,
-      contextType: 'media/video',
-      data: { sensorName: rtspStream.name, streamId: rtspStream.streamId, mediaType: 'rtsp' },
+      contextType: "media/video",
+      data: {
+        sensorName: rtspStream.name,
+        streamId: rtspStream.streamId,
+        mediaType: "rtsp",
+      },
     });
   });
 });

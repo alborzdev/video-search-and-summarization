@@ -1,7 +1,14 @@
 // SPDX-License-Identifier: MIT
-import React, { useState, useCallback } from 'react';
+import { useDialogAccessibility } from '@aiqtoolkit-ui/common';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button, TextInput, Select } from '@nvidia/foundations-react-core';
 import { IconChevronDown, IconVideo, IconX } from '@tabler/icons-react';
+import {
+  SEMANTIC_ANALYSIS_PROFILE_ID,
+  type AnalysisProfile,
+  loadAnalysisProfiles,
+  recommendAnalysisProfile,
+} from '../analysisProfiles';
 
 const ACCEPTED_EXTENSIONS = ['.mp4', '.mkv'];
 
@@ -18,6 +25,7 @@ interface AgentUploadFileItem {
 }
 
 interface AgentUploadDialogProps {
+  agentApiUrl?: string | null;
   open: boolean;
   files: AgentUploadFileItem[];
   configTemplate: any;
@@ -33,6 +41,7 @@ interface AgentUploadDialogProps {
 }
 
 export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
+  agentApiUrl,
   open,
   files,
   configTemplate,
@@ -46,6 +55,80 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
   overlay = 'viewport',
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [analysisProfiles, setAnalysisProfiles] = useState<AnalysisProfile[]>([]);
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [profileError, setProfileError] = useState<string | null>(null);
+  const [intentByFile, setIntentByFile] = useState<Record<string, string>>({});
+  const [recommendationByFile, setRecommendationByFile] = useState<Record<string, string>>({});
+  const [recommendingFileId, setRecommendingFileId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open || !agentApiUrl) return;
+    const controller = new AbortController();
+    setProfileLoading(true);
+    setProfileError(null);
+    loadAnalysisProfiles(agentApiUrl, controller.signal)
+      .then((profiles) => {
+        setAnalysisProfiles(profiles);
+        const fallback =
+          profiles.find((profile) => profile.id === SEMANTIC_ANALYSIS_PROFILE_ID && profile.ready) ??
+          profiles.find((profile) => profile.ready);
+        if (!fallback) throw new Error('No analysis profile is currently ready on this Thor.');
+        files.forEach((item) => {
+          const selected = profiles.find(
+            (profile) => profile.id === item.formData.analysisProfileId && profile.ready,
+          );
+          if (!selected) onFieldChange(item.id, 'analysisProfileId', fallback.id);
+        });
+      })
+      .catch((requestError) => {
+        if (!controller.signal.aborted) {
+          setProfileError(
+            requestError instanceof Error
+              ? requestError.message
+              : 'Analysis profiles are unavailable.',
+          );
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setProfileLoading(false);
+      });
+    return () => controller.abort();
+  // Files already carry a safe semantic default, so this fetch is tied to the
+  // dialog session rather than every field edit.
+  }, [agentApiUrl, open]);
+
+  const recommendForFile = async (item: AgentUploadFileItem) => {
+    if (!agentApiUrl) return;
+    setRecommendingFileId(item.id);
+    setProfileError(null);
+    try {
+      const recommendation = await recommendAnalysisProfile(agentApiUrl, {
+        intent: intentByFile[item.id] ?? '',
+        sourceKind: 'recorded',
+        sourceName: item.file.name,
+      });
+      const profile = analysisProfiles.find(
+        (candidate) => candidate.id === recommendation.profileId,
+      );
+      if (!profile?.ready) {
+        throw new Error(`${profile?.name ?? 'The recommended profile'} is not ready on this Thor.`);
+      }
+      onFieldChange(item.id, 'analysisProfileId', profile.id);
+      setRecommendationByFile((current) => ({
+        ...current,
+        [item.id]: `${recommendation.reason} ${Math.round(recommendation.confidence * 100)}% confidence.`,
+      }));
+    } catch (requestError) {
+      setProfileError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Thor could not recommend a profile.',
+      );
+    } finally {
+      setRecommendingFileId(null);
+    }
+  };
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -76,6 +159,8 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
       onAddMore();
     }
   }, [onAddMore]);
+
+  const dialogRef = useDialogAccessibility({ isOpen: open, onClose });
 
   if (!open) return null;
 
@@ -148,9 +233,9 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
     overlay === 'contained' ? POPUP_OVERLAY_CONTAINED : POPUP_OVERLAY_VIEWPORT;
 
   return (
-    <div className={overlayClass}>
+    <div ref={dialogRef as React.RefObject<HTMLDivElement>} className={overlayClass} role="dialog" aria-modal="true" aria-labelledby="agent-upload-dialog-title">
       <div className={POPUP_CONTAINER_CLASS}>
-        <h3 className="mb-6 text-center text-lg font-semibold text-gray-900 dark:text-white">
+        <h3 id="agent-upload-dialog-title" className="mb-6 text-center text-lg font-semibold text-gray-900 dark:text-white">
           Upload Files
         </h3>
 
@@ -178,7 +263,11 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
           {files.length > 0 ? (
             <div className="max-h-96 space-y-2 overflow-y-auto">
               {files.map((item) => {
-                const hasExpandableContent = configTemplate && Array.isArray(configTemplate.fields) && configTemplate.fields.length > 0;
+                const hasTemplateFields = configTemplate && Array.isArray(configTemplate.fields) && configTemplate.fields.length > 0;
+                const hasExpandableContent = true;
+                const selectedProfile = analysisProfiles.find(
+                  (profile) => profile.id === item.formData.analysisProfileId,
+                );
                 return (
                   <div
                     key={item.id}
@@ -204,6 +293,11 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                         <span className="flex-shrink-0 text-xs text-gray-400">
                           ({(item.file.size / 1024 / 1024).toFixed(2)} MB)
                         </span>
+                        {selectedProfile && (
+                          <span className="ml-2 hidden flex-shrink-0 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2 py-0.5 text-[11px] text-cyan-700 dark:text-cyan-300 sm:inline">
+                            {selectedProfile.shortName}
+                          </span>
+                        )}
                       </div>
                       <button
                         onClick={() => onRemoveFile(item.id)}
@@ -215,8 +309,83 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                     </div>
 
                     {hasExpandableContent && item.isExpanded && (
-                      <div className="border-t border-gray-200 bg-gray-50 p-3 dark:border-gray-600 dark:bg-neutral-800">
-                        <div className="mb-3 space-y-3">
+                      <div className="space-y-4 border-t border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-neutral-950">
+                        <div>
+                          <div className="mb-3">
+                            <strong className="text-sm text-gray-900 dark:text-gray-100">Choose how Thor analyzes this video</strong>
+                            <p className="mt-1 text-xs leading-5 text-gray-500">
+                              Semantic indexing is always available. A detector adds compatible tracks, overlays, and rules.
+                            </p>
+                          </div>
+                          <div className="grid gap-2">
+                            {analysisProfiles.map((profile) => (
+                              <label
+                                className={`rounded-md border p-3 ${
+                                  profile.ready ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
+                                } ${
+                                  item.formData.analysisProfileId === profile.id
+                                    ? 'border-cyan-500 bg-cyan-500/10'
+                                    : 'border-gray-300 bg-white dark:border-gray-700 dark:bg-black'
+                                }`}
+                                key={profile.id}
+                              >
+                                <span className="flex items-start gap-3">
+                                  <input
+                                    checked={item.formData.analysisProfileId === profile.id}
+                                    className="mt-1"
+                                    disabled={!profile.ready}
+                                    name={`analysis-profile-${item.id}`}
+                                    onChange={() => {
+                                      onFieldChange(item.id, 'analysisProfileId', profile.id);
+                                      setRecommendationByFile((current) => ({ ...current, [item.id]: '' }));
+                                    }}
+                                    type="radio"
+                                  />
+                                  <span className="min-w-0 flex-1">
+                                    <span className="flex items-center justify-between gap-3">
+                                      <strong className="text-sm text-gray-900 dark:text-gray-100">{profile.name}</strong>
+                                      <em className="whitespace-nowrap text-[10px] not-italic uppercase tracking-wider text-gray-500">{profile.resourceTier} load</em>
+                                    </span>
+                                    <span className="mt-1 block text-xs leading-5 text-gray-500">{profile.description}</span>
+                                    <span className="mt-1 block text-[11px] text-gray-500">{profile.modelLabel}</span>
+                                    {!profile.ready && <span className="mt-1 block text-xs text-amber-600 dark:text-amber-400">Unavailable: {profile.readyDetail}</span>}
+                                  </span>
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="rounded-md border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-white/[0.03]">
+                          <label className="text-xs font-medium text-gray-700 dark:text-gray-300" htmlFor={`analysis-intent-${item.id}`}>
+                            Let Thor recommend a profile
+                          </label>
+                          <textarea
+                            className="mt-2 min-h-[64px] w-full resize-y rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-cyan-500 dark:border-gray-700 dark:bg-black dark:text-gray-100"
+                            id={`analysis-intent-${item.id}`}
+                            onChange={(event) => setIntentByFile((current) => ({ ...current, [item.id]: event.target.value }))}
+                            placeholder="Example: Detect pedestrians and vehicles entering a crosswalk."
+                            value={intentByFile[item.id] ?? ''}
+                          />
+                          <div className="mt-2 flex items-center justify-between gap-3">
+                            <span className="text-[11px] leading-4 text-gray-500">Only installed VSS-owned pipelines can be selected.</span>
+                            <Button
+                              disabled={recommendingFileId === item.id || profileLoading}
+                              kind="secondary"
+                              onClick={() => void recommendForFile(item)}
+                            >
+                              {recommendingFileId === item.id ? 'Checking…' : 'Recommend with Thor'}
+                            </Button>
+                          </div>
+                          {recommendationByFile[item.id] && (
+                            <p className="mt-2 rounded border border-cyan-500/30 bg-cyan-500/10 p-2 text-xs leading-5 text-cyan-800 dark:text-cyan-200">
+                              {recommendationByFile[item.id]}
+                            </p>
+                          )}
+                        </div>
+
+                        {hasTemplateFields && (
+                        <div className="space-y-3 border-t border-gray-200 pt-4 dark:border-gray-700">
                           {configTemplate.fields.map((field: any) => (
                             <div key={field['field-name']} className="flex items-center gap-3">
                               <label className="w-24 flex-shrink-0 text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -226,6 +395,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                             </div>
                           ))}
                         </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -267,11 +437,26 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
           <Button
             kind="primary"
             onClick={onConfirmUpload}
-            disabled={files.length === 0}
+            disabled={
+              files.length === 0 ||
+              profileLoading ||
+              Boolean(profileError) ||
+              files.some(
+                (item) =>
+                  !analysisProfiles.some(
+                    (profile) => profile.id === item.formData.analysisProfileId && profile.ready,
+                  ),
+              )
+            }
           >
             Upload {files.length > 0 ? `(${files.length})` : ''}
           </Button>
         </div>
+        {profileError && (
+          <p className="mt-3 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950/30 dark:text-red-300">
+            {profileError}
+          </p>
+        )}
       </div>
     </div>
   );

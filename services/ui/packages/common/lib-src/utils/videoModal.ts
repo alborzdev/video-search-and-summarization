@@ -153,7 +153,12 @@ export const fetchVideoUrlFromVst = async (
     endTime,
     expiryMinutes: '60',
     container: 'mp4',
-    disableAudio: 'false',
+    // VIOS's direct remux path can reject short recorded-camera clips when
+    // source buffers have discontinuous or missing timestamps.  A full video-
+    // only transcode normalizes those timestamps and is also required for the
+    // optional bounding-box overlay configuration below.
+    disableAudio: 'true',
+    transcode: 'full',
   });
 
   if (hasObjectIds) {
@@ -176,10 +181,16 @@ export const fetchVideoUrlFromVst = async (
   }
 
   const fetchUrl = `${vstApiUrl}/v1/storage/file/${sensorId}/url?${searchParams.toString()}`;
-  const response = await fetch(fetchUrl, { signal });
+  let response = await fetch(fetchUrl, { signal });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch video URL: ${response.status}`);
+    const fallbackParams = new URLSearchParams({ sensorId, startTime, endTime });
+    const configuration = searchParams.get('configuration');
+    if (configuration) fallbackParams.set('configuration', configuration);
+    response = await fetch(`/api/vision/evidence?${fallbackParams.toString()}`, { signal });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch video URL: ${response.status}`);
+    }
   }
 
   const data = await response.json();

@@ -14,7 +14,7 @@
 # limitations under the License.
 """Unit tests for the route dispatcher in CustomFastApiFrontEndWorker.
 
-The dispatcher registers six sets of routes on every profile, with no
+The dispatcher registers the source lifecycle route sets on every profile, with no
 per-profile capability flags:
 
   * ``register_video_upload``               — POST /api/v1/videos
@@ -29,11 +29,14 @@ from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
+from nat.builder.framework_enum import LLMFrameworkEnum
 import pytest
 
 from vss_agents.api.custom_fastapi_worker import LVS_RUNTIME_TOOL_NAMES
 from vss_agents.api.custom_fastapi_worker import CustomFastApiFrontEndWorker
+from vss_agents.api.custom_fastapi_worker import VisionInspectionRequest
 from vss_agents.api.custom_fastapi_worker import discover_lvs_runtime_tools
+from vss_agents.api.custom_fastapi_worker import inspect_vision_source
 from vss_agents.api.front_end_config import StreamingIngestConfig
 
 _MISSING = object()
@@ -191,3 +194,55 @@ async def test_lvs_runtime_discovery_is_fail_closed_and_complete():
     assert result["available"] == list(LVS_RUNTIME_TOOL_NAMES[:3])
     assert result["missing"] == ["lvs_caption_retrieval", "video_report_gen"]
     assert builder.get_tool.await_count == 5
+
+
+@pytest.mark.asyncio
+async def test_direct_replay_inspection_executes_visual_tool_once_at_playhead():
+    tool = MagicMock()
+    tool.ainvoke = AsyncMock(return_value="Two vehicles cross the intersection.")
+    builder = MagicMock()
+    builder.get_tool = AsyncMock(return_value=tool)
+    request = VisionInspectionRequest(
+        source_kind="replay",
+        sensor_id="traffic-sensor",
+        query="What objects do you see?",
+        asked_at="2026-08-13T12:00:00Z",
+        current_time_seconds=40,
+        duration_seconds=120,
+    )
+
+    result = await inspect_vision_source(builder, request)
+
+    assert result == {
+        "answer": "Two vehicles cross the intersection.",
+        "evidence_tool": "video_understanding",
+        "observed_range": {"start_seconds": 34.0, "end_seconds": 58.0},
+    }
+    builder.get_tool.assert_awaited_once_with(
+        "video_understanding",
+        wrapper_type=LLMFrameworkEnum.LANGCHAIN,
+    )
+    tool.ainvoke.assert_awaited_once()
+    assert tool.ainvoke.await_args.kwargs["input"]["sensor_id"] == "traffic-sensor"
+
+
+@pytest.mark.asyncio
+async def test_direct_live_inspection_uses_recent_iso_evidence_window():
+    tool = MagicMock()
+    tool.ainvoke = AsyncMock(return_value="Traffic is moving through the junction.")
+    builder = MagicMock()
+    builder.get_tool = AsyncMock(return_value=tool)
+    request = VisionInspectionRequest(
+        source_kind="live",
+        sensor_id="junction-camera",
+        query="What is happening now?",
+        asked_at="2026-08-13T12:00:30Z",
+    )
+
+    result = await inspect_vision_source(builder, request)
+
+    assert result["evidence_tool"] == "video_understanding_iso"
+    assert result["observed_range"] is None
+    tool_input = tool.ainvoke.await_args.kwargs["input"]
+    assert tool_input["start_timestamp"] == "2026-08-13T12:00:00Z"
+    assert tool_input["end_timestamp"] == "2026-08-13T12:00:25Z"

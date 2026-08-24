@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: Copyright (c) 2026, CTAILabs.
+# SPDX-License-Identifier: Apache-2.0
+
+services:
+  nvstreamer:
+    image: ${NVSTREAMER_IMAGE:-vss-vios-nvstreamer:3.2.1-thor-local}
+    container_name: vss-vios-nvstreamer
+    user: "0:0"
+    runtime: nvidia
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      ADAPTOR: streamer
+      HTTP_PORT: "31000"
+      NVSTREAMER_INSTALL_ADDITIONAL_PACKAGES: "false"
+    volumes:
+      - ../../developer-profiles/dev-profile-lvs/nvstreamer/configs/vst-config.json:/home/vst/vst_release/configs/vst_config.json:ro
+      - ../../developer-profiles/dev-profile-lvs/nvstreamer/configs/vst-storage.json:/home/vst/vst_release/configs/vst_storage.json:ro
+      - ../../data-dir/videos/nvstreamer:/home/vst/vst_release/streamer_videos
+      - ../../data-dir/data_log/nvstreamer/vst_data:/home/vst/vst_release/vst_data
+    mem_limit: 4g
+    cpus: 4
+    pids_limit: 1024
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

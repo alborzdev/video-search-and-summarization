@@ -29,6 +29,7 @@ from vss_agents.tools.vst.utils import delete_proxy_stream
 from vss_agents.tools.vst.utils import delete_vst_sensor
 from vss_agents.tools.vst.utils import delete_vst_storage
 from vss_agents.tools.vst.utils import get_name_to_stream_id_map
+from vss_agents.tools.vst.utils import get_stream_id
 from vss_agents.tools.vst.utils import validate_video_url
 
 # Sample mock data based on real VST server responses
@@ -276,6 +277,45 @@ class TestGetNameToStreamIdMap:
             pytest.raises(VSTError, match="duplicate VST sensor name"),
         ):
             await get_name_to_stream_id_map("http://localhost:30888")
+
+
+class TestGetStreamId:
+    """Retained archive IDs remain resolvable after live-source removal."""
+
+    @pytest.mark.asyncio
+    async def test_accepts_uncatalogued_id_only_with_retained_timeline(self):
+        response = create_mock_response(200, "")
+        response.json = AsyncMock(
+            return_value=[
+                {
+                    "startTime": "2026-08-18T00:00:00Z",
+                    "endTime": "2026-08-18T00:01:00Z",
+                }
+            ]
+        )
+        session = create_mock_session(response)
+
+        with (
+            patch("vss_agents.tools.vst.utils.get_name_to_stream_id_map", new=AsyncMock(return_value={})),
+            patch("vss_agents.tools.vst.utils.aiohttp.ClientSession", return_value=session),
+        ):
+            result = await get_stream_id("retained-stream", "http://vst:30888")
+
+        assert result == "retained-stream"
+        assert session.get.call_args.args[0] == ("http://vst:30888/vst/api/v1/storage/retained-stream/timelines")
+
+    @pytest.mark.asyncio
+    async def test_rejects_uncatalogued_id_without_retained_media(self):
+        response = create_mock_response(200, "")
+        response.json = AsyncMock(return_value=[])
+        session = create_mock_session(response)
+
+        with (
+            patch("vss_agents.tools.vst.utils.get_name_to_stream_id_map", new=AsyncMock(return_value={})),
+            patch("vss_agents.tools.vst.utils.aiohttp.ClientSession", return_value=session),
+            pytest.raises(VSTError, match="streamId not found"),
+        ):
+            await get_stream_id("missing-stream", "http://vst:30888")
 
 
 class TestGetTimeline:

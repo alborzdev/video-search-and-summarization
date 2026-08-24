@@ -2,17 +2,31 @@
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
-import Home from '../components/Home';
-import { APPLICATION_TITLE } from '../constants/constants';
+import VisionIntelligenceApp from '../components/vision-intelligence/VisionIntelligenceApp';
+import {
+  emptyInitialVisionPageData,
+  getInitialVisionPageData,
+} from '../server/vision/initialPageData';
 
 // Server-side props with data fetching
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
-    // Import server-side functions dynamically
     const { getNemoAgentToolkitSSProps } = await import('@nemo-agent-toolkit/ui/server');
-    const { fetchAlertsData, fetchSearchData, fetchDashboardData, fetchMapData, fetchVideoManagementData } = await import('@nv-metropolis-bp-vss-ui/all/server');
-    
-    // Get base props from NemoAgentToolkit (includes i18n translations)
+    const initialVisionData = import('@nv-metropolis-bp-vss-ui/all/server')
+      .then(({ fetchAlertsData, fetchSearchData, fetchVideoManagementData }) =>
+        getInitialVisionPageData({
+          alerts: fetchAlertsData,
+          search: fetchSearchData,
+          videoManagement: fetchVideoManagementData,
+        })
+      )
+      .catch((error) => {
+        console.error('Error fetching Vision Intelligence data:', error);
+        return emptyInitialVisionPageData();
+      });
+
+    // Keep the toolkit's translations/redirect semantics independent of the
+    // optional workspace data sources.
     const nemoResult = await getNemoAgentToolkitSSProps(context);
 
     // Preserve redirects and not-found responses from the embedded toolkit.
@@ -20,26 +34,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     if (!('props' in nemoResult)) {
       return nemoResult;
     }
-    const nemoProps = await nemoResult.props;
-    
-    // Fetch data for our new components in parallel for better performance
-    const [alertsData, searchData, dashboardData, mapData, videoManagementData] = await Promise.all([
-      fetchAlertsData(),
-      fetchSearchData(),
-      fetchDashboardData(),
-      fetchMapData(),
-      fetchVideoManagementData(),
+    const [nemoProps, visionData] = await Promise.all([
+      nemoResult.props,
+      initialVisionData,
     ]);
     
     // Chain/Merge all props
     return {
       props: {
         ...nemoProps,              // Spread NemoAgentToolkit props (i18n, etc.)
-        alertsData,                // Add Alerts data from package
-        searchData,                // Add Search data from package
-        dashboardData,             // Add Dashboard data from package
-        mapData,                   // Add Map data from package
-        videoManagementData,       // Add Video Management data from package
+        ...visionData,
         serverRenderTime: new Date().toISOString(),
       },
     };
@@ -49,11 +53,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     // Fallback: return minimal props if fetching fails
     return {
       props: {
-        alertsData: null,
-        dashboardData: null,
-        mapData: null,
-        searchData: null,
-        videoManagementData: null,
+        ...emptyInitialVisionPageData(),
         serverRenderTime: new Date().toISOString(),
       },
     };
@@ -63,8 +63,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 // Props interface matching what getServerSideProps returns
 interface HomePageProps {
   alertsData?: any;
-  dashboardData?: any;
-  mapData?: any;
   searchData?: any;
   videoManagementData?: any;
   serverRenderTime?: string;
@@ -75,9 +73,9 @@ export default function HomePage(props: HomePageProps) {
   return (
     <>
       <Head>
-        <title>{APPLICATION_TITLE}</title>
+        <title>Vision Intelligence</title>
       </Head>
-      <Home {...props} />
+      <VisionIntelligenceApp {...props} />
     </>
   );
 }

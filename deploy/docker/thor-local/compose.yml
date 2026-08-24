@@ -9,26 +9,56 @@ services:
   # single-node Thor demo carries only the local VSS topics, so keep the
   # broker's steady-state and restart footprint bounded while retaining an
   # explicit override for larger operator workloads. This headroom is also
-  # required to admit the exact 0.35 Cosmos3 RT-VLM allocation after reboot.
+  # required to admit the bounded 0.30 Cosmos3 RT-VLM allocation after reboot.
   kafka:
+    # Kafka is a hard dependency for embedding delivery and live analytics.
+    # The upstream service has no restart policy, which leaves search silently
+    # accepting footage without indexing it after a Thor reboot.
+    restart: unless-stopped
     environment:
       KAFKA_HEAP_OPTS: "${THOR_LOCAL_KAFKA_HEAP_OPTS:--Xms1G -Xmx1G}"
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "127.0.0.1:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  # These stateful/API services are part of the VIOS and analytics critical
+  # path. Keep them restartable on a tradeshow appliance even when the
+  # selected upstream profile omits its usual service-level restart policy.
+  centralizedb:
+    restart: unless-stopped
+
+  vss-video-analytics-api-fusion:
+    restart: unless-stopped
 
   # The released search RT-CV profile does not pass a hardware identity, so
   # its shared startup script leaves NvDCF on the legacy CUDA tracker. Declare
   # Thor explicitly so the effective runtime config selects the advertised
   # VPI visual-tracker implementation and backend.
   perception-2d-fusion:
+    entrypoint: ["/usr/local/bin/rtvi-cv-supervisor"]
     environment:
       HARDWARE_PROFILE: "${THOR_LOCAL_RT_CV_HARDWARE_PROFILE:-AGX-THOR}"
+    volumes:
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/rtvi-cv-healthcheck.sh:/usr/local/bin/rtvi-cv-healthcheck:ro
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/rtvi-cv-supervisor.sh:/usr/local/bin/rtvi-cv-supervisor:ro
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/rtvi-cv-healthcheck"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
 
   # Elasticsearch's percentage watermarks mark a 1 TB Thor disk red despite
   # tens of GiB remaining. Absolute free-space thresholds retain a 10 GiB
-  # flood-stage guard while allowing the single-node demo indices to allocate.
+  # flood-stage guard while allowing the single-node demo indices to allocate
+  # at the operator-approved 10 GiB show-floor floor.
   elasticsearch:
     environment:
-      cluster.routing.allocation.disk.watermark.low: 20gb
-      cluster.routing.allocation.disk.watermark.high: 15gb
+      cluster.routing.allocation.disk.watermark.low: 15gb
+      cluster.routing.allocation.disk.watermark.high: 12gb
       cluster.routing.allocation.disk.watermark.flood_stage: 10gb
 
   # The upstream service installs logstash-codec-protobuf from Rubygems every
@@ -97,6 +127,10 @@ services:
     # loopback, and remove the inherited bridge port publication.
     network_mode: host
     ports: !override []
+    # The upstream profile marks Phoenix as non-restarting, so a host reboot
+    # leaves the readiness contract blocked even though its SQLite trace store
+    # is intact. Phoenix is an appliance service in the Thor profile.
+    restart: unless-stopped
     environment:
       PHOENIX_HOST: 127.0.0.1
       PHOENIX_PORT: "${PHOENIX_PORT:-6006}"
@@ -464,9 +498,22 @@ services:
       PYTHONPATH: /vss-agent/thor-local-src
       PHOENIX_ENDPOINT: http://127.0.0.1:${PHOENIX_PORT:-6006}
       VIDEO_ANALYSIS_MCP_URL: http://127.0.0.1:${VSS_VA_MCP_PORT:-9901}
+      VSS_TRAFFIC_RTVI_CV_URL: http://127.0.0.1:${RTVI_CV_TRAFFIC_PORT:-9010}
+      VSS_ANALYSIS_PLANNER_BASE_URL: http://127.0.0.1:30081/v1
+      RTVI_VLM_URL: http://127.0.0.1:${RTVI_VLM_PORT:-8018}
+      VISION_HISTORY_DIR: /data/vision-history
+      # VST returns this authority in temporary media URLs. RT-Embed rejects
+      # numeric private addresses by design, but permits this one exact local
+      # gateway hostname through ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS below.
+      # Use the same name for Agent-to-VST calls so uploaded-file embedding
+      # stays inside that narrow SSRF boundary.
+      VST_INTERNAL_URL: http://host.docker.internal:${VST_PORT:-30888}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ${VSS_REPO_ROOT}/services/agent/src:/vss-agent/thor-local-src:ro
       - ${VSS_DATA_DIR}/agent-reports:/vss-agent/agent_reports:rw
+      - ${VSS_DATA_DIR}/vision-history:/data/vision-history:ro
     depends_on:
       vst-ingress:
         condition: service_healthy
@@ -483,6 +530,9 @@ services:
       args:
         BASE_IMAGE: ${RTVI_EMBED_BASE_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1}
     runtime: nvidia
+    depends_on:
+      kafka:
+        condition: service_healthy
     # The local embedding API has no Bearer-token gate. Keep its host
     # publication on loopback; the host-network Agent uses the matching
     # COSMOS_EMBED_ENDPOINT instead of the physical HOST_IP.
@@ -525,6 +575,16 @@ services:
   # API variables here so the NGC credential used by connected staging can
   # never be copied into the long-running local proxy container.
   rtvi-vlm:
+    # Docker's restart manager does not replay Compose dependency ordering
+    # after a host reboot. Gate the image entrypoint on the current Kafka
+    # listener so its one-shot producer initialization cannot fail permanently.
+    entrypoint:
+      - python3
+      - /usr/local/bin/thor-startup-gate.py
+      - --tcp
+      - host.docker.internal:9092
+      - --
+    command: [/opt/nvidia/rtvi/start_rtvi_vlm.sh]
     image: ${THOR_LOCAL_RTVI_VLM_IMAGE:-cti-vss-rt-vlm:thor-local}
     build:
       context: ${VSS_REPO_ROOT}/services/rtvi/rt-vlm
@@ -554,6 +614,14 @@ services:
       REDIS_HOST: "${THOR_LOCAL_RTVI_REDIS_HOST:-host.docker.internal}"
     volumes:
       - "${MODEL_ROOT_DIR:-/tmp/model_cache}:${MODEL_ROOT_DIR:-/tmp/model_cache}:ro"
+      - ${VSS_REPO_ROOT}/deploy/docker/thor-local/startup-gate.py:/usr/local/bin/thor-startup-gate.py:ro
+    # broker-health-check is a one-shot container whose successful exit can
+    # survive a host reboot. Depend on Kafka's current health as well so
+    # RT-VLM does not initialize its producer while the broker is still
+    # recovering and then remain unable to publish captions until restarted.
+    depends_on:
+      kafka:
+        condition: service_healthy
 
   # Preserve NVIDIA's released Alert Bridge while replacing only its default
   # schema modules. This lets API, agent, and UI callers omit hardware tuning
@@ -567,7 +635,10 @@ services:
         ALERT_BRIDGE_BASE_IMAGE: ${ALERT_BRIDGE_IMAGE:-nvcr.io/nvidia/vss-core/vss-alert-verification:3.2.0}
     environment:
       VLM_WARMUP_ENABLED: "false"
-      REALTIME_ALERT_CHUNK_DURATION: ${REALTIME_ALERT_CHUNK_DURATION:-10}
+      # A 10-second producer outruns Cosmos on one Thor and creates an
+      # unbounded request queue. Thirty seconds keeps continuous monitoring
+      # at wall-clock pace while 5-second RT-Embed search remains unchanged.
+      REALTIME_ALERT_CHUNK_DURATION: ${REALTIME_ALERT_CHUNK_DURATION:-30}
       REALTIME_ALERT_CHUNK_OVERLAP_DURATION: ${REALTIME_ALERT_CHUNK_OVERLAP_DURATION:-2}
       REALTIME_ALERT_FRAMES_PER_CHUNK: ${REALTIME_ALERT_FRAMES_PER_CHUNK:-4}
       REALTIME_ALERT_USE_FPS: ${REALTIME_ALERT_USE_FPS:-false}
@@ -647,6 +718,10 @@ services:
       args:
         LVS_BASE_IMAGE: ${LVS_IMAGE:-nvcr.io/nvidia/vss-core/vss-video-summarization}:${LVS_TAG:-3.2.1}
     environment:
+      # Internal Thor model traffic stays on loopback. Basing this on HOST_IP
+      # makes LVS fail after DHCP/interface changes even though RT-VLM is
+      # healthy on its intentionally local-only published port.
+      RTVI_VLM_URL: http://127.0.0.1:${RTVI_VLM_PORT:-8018}
       LVS_LLM_MODEL_TYPE: ${LLM_MODEL_TYPE:-openai}
       LVS_LLM_ENABLE_THINKING: ${LVS_LLM_ENABLE_THINKING:-false}
       LVS_LLM_MAX_TOKENS: ${LVS_LLM_MAX_TOKENS:-1024}
@@ -661,6 +736,12 @@ services:
       LVS_QA_DATABASE_BACKEND: graph_db
       LVS_INGESTION_FUNCTION: graph_ingestion
       LVS_RETRIEVER_FUNCTION: graph_retrieval
+      # GraphRAG must use real, query-compatible local embeddings. NVIDIA's
+      # disabled fallback emits unrelated dummy vectors and cannot retrieve
+      # source-history facts reliably.
+      LVS_EMB_ENABLE: ${LVS_EMB_ENABLE:-true}
+      LVS_EMB_MODEL_NAME: ${LVS_EMB_MODEL_NAME:-cosmos-embed1-448p-anomaly-detection}
+      LVS_EMB_BASE_URL: ${LVS_EMB_BASE_URL:-http://127.0.0.1:8098/v1}
       GRAPH_DB_HOST: 127.0.0.1
       GRAPH_DB_HTTP_PORT: "7474"
       GRAPH_DB_BOLT_PORT: "7687"
@@ -672,8 +753,40 @@ services:
       graph-db:
         condition: service_healthy
 
+  evidence-clip:
+    image: vss-evidence-clip:thor-local
+    build:
+      context: ${VSS_REPO_ROOT}/deploy/docker/thor-local/evidence-clip
+    network_mode: host
+    restart: unless-stopped
+    environment:
+      EVIDENCE_CLIP_HOST: 127.0.0.1
+      EVIDENCE_CLIP_PORT: "${THOR_LOCAL_EVIDENCE_CLIP_PORT:-8098}"
+      VST_API_URL: http://127.0.0.1:${VST_API_PORT:-30888}/vst/api
+      VST_PATH_PREFIX: /home/vst/vst_release/vst_video
+      MEDIA_ROOT: /media
+      CACHE_ROOT: /cache
+      MAX_DURATION_SECONDS: "600"
+      MAX_CACHE_BYTES: "${THOR_LOCAL_EVIDENCE_CACHE_BYTES:-4294967296}"
+      COSMOS_EMBED_API_URL: http://127.0.0.1:${RTVI_EMBED_PORT:-8017}/v1/generate_text_embeddings
+      COSMOS_EMBED_MODEL: ${LVS_EMB_MODEL_NAME:-cosmos-embed1-448p-anomaly-detection}
+    volumes:
+      - ${VSS_DATA_DIR}/data_log/vst/vst_video:/media:ro
+      - ${VSS_DATA_DIR}/evidence-clip-cache:/cache:rw
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8098/health', timeout=2).read()"]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+      start_period: 10s
+
   vss-ui:
     image: vss-agent-ui:thor-local
+    # The Thor control-plane services intentionally bind to host loopback.
+    # Run the UI server on the host network as well so its server-side routes
+    # can reach those local-only APIs without widening their exposure.
+    network_mode: host
+    ports: !override []
     build:
       context: ${VSS_REPO_ROOT}
       dockerfile: services/ui/Dockerfile
@@ -685,4 +798,28 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
-      DASHBOARD_KIBANA_INTERNAL_URL: http://host.docker.internal:${KIBANA_PORT:-5601}/kibana
+      HOSTNAME: 0.0.0.0
+      PORT: ${VSS_UI_PORT:-3001}
+      DASHBOARD_KIBANA_INTERNAL_URL: http://127.0.0.1:${KIBANA_PORT:-5601}/kibana
+      VA_MCP_URL: http://127.0.0.1:${VSS_VA_MCP_PORT:-9901}/mcp
+      # Server-side Operations Q&A bypasses the public ingress. The agent is
+      # loopback-only on Thor and HAProxy does not publish its OpenAI route.
+      VISION_ANALYST_API_URL: http://127.0.0.1:${VSS_AGENT_PORT:-8100}/v1/chat/completions
+      VISION_INSPECTION_API_URL: http://127.0.0.1:${VSS_AGENT_PORT:-8100}/api/v1/vision-inspection
+      EVIDENCE_ANALYSIS_API_URL: http://127.0.0.1:${VSS_AGENT_PORT:-8100}/api/v1/evidence-analysis
+      LVS_BACKEND_URL: http://127.0.0.1:${LVS_PORT:-38111}
+      LVS_VLM_MODEL: ${VLM_NAME}
+      VISION_HISTORY_ELASTICSEARCH_URL: http://127.0.0.1:${VSS_ES_PORT:-9200}
+      VST_INTERNAL_API_URL: http://127.0.0.1:${VST_API_PORT:-30888}/vst/api
+      EVIDENCE_CLIP_API_URL: http://127.0.0.1:${THOR_LOCAL_EVIDENCE_CLIP_PORT:-8098}
+      VIDEO_ANALYTICS_INTERNAL_URL: http://127.0.0.1:${VIDEO_ANALYTICS_API_PORT:-8081}
+      VISION_INVESTIGATIONS_DIR: /data/vision-investigations
+      VISION_HISTORY_DIR: /data/vision-history
+      VISION_RULES_DIR: /data/vision-rules
+    volumes:
+      - ${VSS_DATA_DIR}/vision-investigations:/data/vision-investigations:rw
+      - ${VSS_DATA_DIR}/vision-history:/data/vision-history:rw
+      - ${VSS_DATA_DIR}/vision-rules:/data/vision-rules:rw
+    depends_on:
+      evidence-clip:
+        condition: service_healthy

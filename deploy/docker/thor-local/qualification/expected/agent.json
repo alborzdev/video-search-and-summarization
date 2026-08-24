@@ -1,15 +1,33 @@
 {
   "component_schema_hash": null,
-  "declared_operation_count": 64,
+  "declared_operation_count": 75,
   "kind": "rest",
   "method_counts": {
     "DELETE": 3,
-    "GET": 10,
-    "POST": 49,
+    "GET": 15,
+    "POST": 55,
     "PUT": 2
   },
-  "normalized_unique_operation_count": 64,
+  "normalized_unique_operation_count": 75,
   "operations": [
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/analysis-profiles",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/analysis-profiles/recommend",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/analysis-profiles/sources/{source_id}",
+      "schema_hash": null
+    },
     {
       "method": "POST",
       "operation_id": null,
@@ -85,6 +103,12 @@
     {
       "method": "POST",
       "operation_id": null,
+      "path": "/api/v1/evidence-analysis",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
       "path": "/api/v1/rtsp-streams/add",
       "schema_hash": null
     },
@@ -92,6 +116,30 @@
       "method": "DELETE",
       "operation_id": null,
       "path": "/api/v1/rtsp-streams/delete/{name}",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/rtsp-streams/{stream_id}/analysis",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/rtsp-streams/{stream_id}/analysis",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/rtsp-streams/{stream_id}/reset",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/api/v1/runtime-tools/lvs",
       "schema_hash": null
     },
     {
@@ -205,6 +253,12 @@
     {
       "method": "POST",
       "operation_id": null,
+      "path": "/api/v1/videos/{sensor_id}/analysis",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
       "path": "/api/v1/videos/{sensor_id}/complete",
       "schema_hash": null
     },
@@ -212,6 +266,12 @@
       "method": "DELETE",
       "operation_id": null,
       "path": "/api/v1/videos/{video_id}",
+      "schema_hash": null
+    },
+    {
+      "method": "POST",
+      "operation_id": null,
+      "path": "/api/v1/vision-inspection",
       "schema_hash": null
     },
     {
@@ -302,6 +362,12 @@
       "method": "POST",
       "operation_id": null,
       "path": "/generate/stream",
+      "schema_hash": null
+    },
+    {
+      "method": "GET",
+      "operation_id": null,
+      "path": "/health",
       "schema_hash": null
     },
     {
@@ -399,7 +465,7 @@
   "source_files": [
     {
       "path": "deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
-      "sha256": "a7441068d77491d67dfe3c815ade51140978623ef5bd1b00f7765d64b5bb0df6"
+      "sha256": "5629766d200043b2edf52df5ca43adbddb6d1cacbd2008830e956b503fdcfe81"
     },
     {
       "path": "deploy/docker/services/agent/compose.yml",
@@ -410,24 +476,60 @@
       "sha256": "d4e32ddb05460f3928fab19309aa163b0dce69e0b59abd251c4a67ec6ae23b97"
     },
     {
+      "path": "services/agent/src/vss_agents/api/analysis_profile_capacity.py",
+      "sha256": "62bd99a06688bfcdcb6e5bf0648a77a2912ab62d73de25a27d8100cf1be93b70"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/analysis_profiles.py",
+      "sha256": "57efb6584b208957204745d82419e56c7051900a45637ceb71d06ed050d7b9ea"
+    },
+    {
       "path": "services/agent/src/vss_agents/api/custom_fastapi_worker.py",
-      "sha256": "b9b5354f32dd32c89e798559c7080b045d55cee8df41ca4822bdabab48f88075"
+      "sha256": "eaf3626985e553755dbfb0aaadca8d9b57757cc40e12411a83858d45500e66ea"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/evidence_analysis.py",
+      "sha256": "becffffd7022aa0018ad79b90fd3d9fd060fa2ea32e63f55a940234640a3a49b"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/front_end_config.py",
+      "sha256": "81aef3322eb69f3f9ca77bdfc131786b674886db688d0569348813f8f29ad357"
     },
     {
       "path": "services/agent/src/vss_agents/api/rtsp_delete.py",
-      "sha256": "d90e887b26f518a15a628224a33577e3469c4f3f29b66d84dae0470fe75285cb"
+      "sha256": "78ab48f423e492c923734f467dff1f436f0089133fb904eeaaa6379f4656df92"
     },
     {
       "path": "services/agent/src/vss_agents/api/rtsp_ingest.py",
-      "sha256": "b246293be1a0919a3620a35fb9e0fc423955186e31b91b900c2ae45a1302a38e"
+      "sha256": "86d86a863b36b1e5e0c9633f504f26f8c98566c5e9fadfdde3c1ac6461ab680d"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/source_analysis_state.py",
+      "sha256": "405a1ed1c2766669d14091df7a49621c5dc8d488cab99a5575312833000b3fe0"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/source_cleanup.py",
+      "sha256": "26c7373ab13a3620029a074ef19feaeb3e0f0e5cbfb523bf1b7c43d8f0b239ed"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/source_control.py",
+      "sha256": "4bdba4297b883993f55285be987929bb6d95c701a85f8217184c49896df7a3f7"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/source_reset.py",
+      "sha256": "63583d28d682f06bb5e9d516db8870646517543b6eafd41fc35cbd92e0a06677"
+    },
+    {
+      "path": "services/agent/src/vss_agents/api/thor_workload_admission.py",
+      "sha256": "b4e8cf9622bd382063d5afa92d1c402aeeb40c7ee63c8aa2d0190f16df644c48"
     },
     {
       "path": "services/agent/src/vss_agents/api/video_delete.py",
-      "sha256": "67d2146665f7750c4bdd65513a3061e5b3955c95595f9ae3e4c7a23f7c13851c"
+      "sha256": "7c2bce4ea3d65ccdc2faad8a095587efedc09e4c5e36ce44de70f57bdcdfffcb"
     },
     {
       "path": "services/agent/src/vss_agents/api/video_ingest.py",
-      "sha256": "0074a4165684e207d629d2e56ed47d7abf0cc26b3a39f42bf197bc7bf4566534"
+      "sha256": "489cee37b495ff4ef712a0c69717a82dfe1e1d62141fdca21307700a3fa8593c"
     },
     {
       "path": "services/agent/src/vss_agents/api/video_search_ingest.py",

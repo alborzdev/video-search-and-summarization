@@ -1632,6 +1632,49 @@ class ViaServer:
 
         # ======================= Chat Completions API (Graph-based QA)
 
+        @self._app.delete(
+            "/v1/qa/{asset_id}",
+            summary="Delete graph-based Q&A knowledge for one asset",
+            description=(
+                "Deletes only the UUID-owned graph-Q&A knowledge for a video or "
+                "stream. The source, retained media, captions, and search indexes "
+                "are left unchanged."
+            ),
+            responses={
+                200: {"description": "Graph-Q&A knowledge deleted."},
+                **add_common_error_responses(),
+                503: {
+                    "model": LvsError,
+                    "description": "Graph-Q&A cleanup is unavailable.",
+                },
+            },
+            tags=["Chat"],
+        )
+        async def delete_qa_knowledge(
+            asset_id: Annotated[UUID, Path(description="Video or stream UUID.")],
+        ) -> dict:
+            asset_id = str(asset_id)
+            logger.info("Received graph-Q&A cleanup request for %s", asset_id)
+            try:
+                loop = asyncio.get_event_loop()
+                graph_result = await loop.run_in_executor(
+                    self._async_executor,
+                    self._stream_handler.reset_qa_graph_for_asset,
+                    asset_id,
+                )
+                _require_qa_graph_reset_success(asset_id, graph_result)
+                return {"deleted": True, "id": asset_id, "object": "qa_knowledge"}
+            except ViaException:
+                raise
+            except Exception as e:
+                logger.error("Q&A graph cleanup failed for asset %s: %s", asset_id, e)
+                raise ViaException(
+                    "Service temporarily unavailable: Q&A graph deletion failed. "
+                    "See server logs for details.",
+                    "DependencyError",
+                    503,
+                ) from e
+
         @self._app.post(
             "/v1/chat/completions",
             summary="Ask a question about a summarized video/stream",

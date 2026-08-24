@@ -24,7 +24,8 @@ responses. Static harness assertions cover bounded JSON parsing, exact
 success/identity enforcement, preservation of empty-sensor identities, the
 175+45+20-second workflow/cleanup/parent deadline split, AbortSignal-bound VST
 and Agent calls, and the exact irreversible-warning observation.
-The gated browser client is now capable
-of proving two ordered chunks per fixture and byte-exact reconstructed upload
-payloads. No live receipt exists, so these capabilities remain unexecuted and
-do not prove a rendered deployment.
+The gated browser client is now capable of proving two ordered chunks per
+fixture and byte-exact browser-side `send(FormData)` media payloads without
+depending on CDP `request.postDataBuffer()`, which Chromium does not retain for
+these 10 MiB multipart XHRs. No live receipt exists, so these capabilities
+remain unexecuted and do not prove a rendered deployment.

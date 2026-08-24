@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import pytest
 
+from vss_agents.api.source_cleanup import GeneratedDataCleanup
 from vss_agents.api.video_delete import EsCleanupConfig
 from vss_agents.api.video_delete import _delete_es_documents
 from vss_agents.api.video_delete import _remove_from_rtvi_cv
@@ -100,8 +101,16 @@ async def test_complete_delete_by_query_result_is_successful():
 
 @pytest.mark.asyncio
 async def test_rtvi_cv_remove_uses_stream_affinity_header():
+    inventory_response = MagicMock()
+    inventory_response.json.return_value = {
+        "stream-info": {
+            "stream-count": 1,
+            "stream-info": [{"camera_id": "00000000-0000-4000-8000-000000000001"}],
+        }
+    }
     response = MagicMock(status_code=204)
     client = MagicMock()
+    client.get = AsyncMock(return_value=inventory_response)
     client.post = AsyncMock(return_value=response)
 
     success, message = await _remove_from_rtvi_cv(
@@ -118,14 +127,42 @@ async def test_rtvi_cv_remove_uses_stream_affinity_header():
 
 @pytest.mark.asyncio
 async def test_rtvi_cv_remove_treats_affinity_scoped_absence_as_success():
+    inventory_response = MagicMock()
+    inventory_response.raise_for_status.side_effect = RuntimeError("inventory unavailable")
     response = MagicMock(status_code=404)
     client = MagicMock()
+    client.get = AsyncMock(return_value=inventory_response)
     client.post = AsyncMock(return_value=response)
 
     success, message = await _remove_from_rtvi_cv(client, "http://rtvi-cv:9000", "sensor-1", "owned-clip")
 
     assert success is True
     assert message == "Already absent"
+
+
+@pytest.mark.asyncio
+async def test_rtvi_cv_remove_skips_unknown_id_in_authoritative_inventory():
+    inventory_response = MagicMock()
+    inventory_response.json.return_value = {
+        "stream-info": {
+            "stream-count": 1,
+            "stream-info": [{"camera_id": "unrelated-live-camera"}],
+        }
+    }
+    client = MagicMock()
+    client.get = AsyncMock(return_value=inventory_response)
+    client.post = AsyncMock()
+
+    success, message = await _remove_from_rtvi_cv(
+        client,
+        "http://rtvi-cv:9000",
+        "recorded-source",
+        "recorded-clip",
+    )
+
+    assert success is True
+    assert message == "Already absent"
+    client.post.assert_not_awaited()
 
 
 @pytest.mark.asyncio
@@ -146,8 +183,14 @@ async def test_es_identity_lookup_failure_cannot_report_delete_success():
             new=AsyncMock(side_effect=VSTError("missing")),
         ),
         patch(
-            "vss_agents.api.video_delete._delete_es_documents",
-            new=AsyncMock(return_value=(True, "OK")),
+            "vss_agents.api.video_delete.delete_generated_source_data",
+            new=AsyncMock(
+                return_value=GeneratedDataCleanup(
+                    deleted_documents={},
+                    deleted_collections=(),
+                    failures={},
+                )
+            ),
         ),
         patch(
             "vss_agents.api.video_delete.delete_vst_storage",

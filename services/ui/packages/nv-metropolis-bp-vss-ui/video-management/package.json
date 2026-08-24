@@ -35,6 +35,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@aiqtoolkit-ui/common": "*",
     "@nemo-agent-toolkit/ui": "0.1.1",
     "@nvidia/foundations-react-core": "0.600.0",
     "@tabler/icons-react": "^2.9.0",

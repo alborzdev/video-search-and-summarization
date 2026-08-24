@@ -4,7 +4,9 @@ module.exports = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   moduleNameMapper: {
+    '^@aiqtoolkit-ui/common$': '<rootDir>/../../packages/common/lib-src/index.ts',
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    '^next/router$': '<rootDir>/__mocks__/next-router.js',
     '^next-runtime-env$': '<rootDir>/__mocks__/next-runtime-env.js',
   },
   testMatch: [

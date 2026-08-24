@@ -170,9 +170,9 @@ The `read -s` prompt does not echo the key, and the protected key file lives out
 The base profile exposes:
 
 - UI: `http://127.0.0.1:3001`
-- public ingress: `http://127.0.0.1:7777`
+- trusted-LAN gateway: `http://<THOR_LAN_IP>:7777`
 - agent API: `http://127.0.0.1:8100`
-- VIOS/VST UI through the public ingress: `http://127.0.0.1:7777/vst`
+- VIOS/VST UI through the gateway: `http://<THOR_LAN_IP>:7777/vst`
 - Prometheus: `http://127.0.0.1:9090`
 - Grafana: `http://127.0.0.1:35000`
 
@@ -368,12 +368,14 @@ such change. The cleanup proof uses the authoritative per-sensor stream lookup
 and DeepStream stream-info endpoint instead of relying only on the cached
 sensor-list view.
 
-## Single-device network security
+## Trusted-LAN network security
 
-The supported operator surface is `http://127.0.0.1:7777`; it fronts the UI
-and API through one loopback-only HAProxy listener. NVIDIA's single-node graph
-also contains host-network services whose released binaries bind to all host
-addresses. Do not treat those internal ports as a supported LAN API.
+The supported operator surface is `http://<THOR_LAN_IP>:7777`. HAProxy binds
+to Thor's exact current `HOST_IP`, not `0.0.0.0`, and fronts the UI, media,
+Agent, analytics, alerts, uploads, and WebSockets through one browser origin.
+NVIDIA's single-node graph also contains host-network services whose released
+binaries bind to all host addresses. Do not treat those internal ports as a
+supported LAN API.
 
 Audit the resolved runtime, container credential metadata, ingress bind, and
 known internal listeners without changing the host:
@@ -401,17 +403,19 @@ checks both sides of that path and automatically removes its table if readiness
 regresses. The rule is intentionally volatile and must be reapplied after a
 reboot; remove only this product-owned table with `security firewall-remove`.
 
-For remote operation, use an SSH tunnel instead of opening the internal ports:
+For remote operation outside the trusted local network, use an SSH tunnel
+instead of opening the gateway or internal ports:
 
 ```bash
-ssh -L 7777:127.0.0.1:7777 nvidia@THOR_ADDRESS
+ssh -L 7777:THOR_LAN_IP:7777 nvidia@THOR_ADDRESS
 ```
 
-Then browse `http://127.0.0.1:7777` on the operator laptop. If a customer
-deployment requires direct LAN users, place an authenticated TLS reverse proxy
-in front of the loopback ingress and define a trusted-client policy; disabling
-the firewall or exposing Kafka, Elasticsearch, model, VST, or agent ports is
-not an equivalent production design.
+Then browse `http://127.0.0.1:7777` on the operator laptop. The direct LAN
+gateway is intentionally unauthenticated and unencrypted for isolated simulator
+and tradeshow networks. A production or untrusted-network deployment requires
+an authenticated TLS reverse proxy and a trusted-client policy; disabling the
+firewall or exposing Kafka, Elasticsearch, model, VST, or Agent ports is not an
+equivalent design.
 
 ## Tradeshow domain packs
 

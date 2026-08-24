@@ -87,6 +87,13 @@ export VSS_AGENT_PORT="${VSS_AGENT_PORT:-8100}"
 export VSS_UI_PORT="${VSS_UI_PORT:-3001}"
 export HAPROXY_PORT="${HAPROXY_PORT:-7777}"
 export VSS_PUBLIC_PORT="${VSS_PUBLIC_PORT:-${HAPROXY_PORT}}"
+# Publish exactly one browser gateway on Thor's current LAN address. The
+# gateway carries the UI, VST, Agent, analytics, alerts, uploads, and
+# WebSockets; model, database, broker, and MCP ports remain private. Binding to
+# HOST_IP instead of 0.0.0.0 avoids unintentionally publishing the gateway on
+# every physical interface.
+export HAPROXY_BIND_ADDR="${HAPROXY_BIND_ADDR:-${HOST_IP}}"
+export VSS_PUBLIC_HOST="${VSS_PUBLIC_HOST:-${HOST_IP}}"
 export VST_PORT="${VST_PORT:-30888}"
 export VST_INGRESS_HTTP_PORT="${VST_INGRESS_HTTP_PORT:-${VST_PORT}}"
 export VST_MCP_PORT="${VST_MCP_PORT:-8001}"
@@ -97,6 +104,7 @@ export SDR_STREAMPROCESSING_PORT="${SDR_STREAMPROCESSING_PORT:-4003}"
 export RTVI_EMBED_PORT="${RTVI_EMBED_PORT:-8017}"
 export RTVI_VLM_PORT="${RTVI_VLM_PORT:-8018}"
 export RTVI_CV_PORT="${RTVI_CV_PORT:-9000}"
+export RTVI_CV_TRAFFIC_PORT="${RTVI_CV_TRAFFIC_PORT:-9010}"
 export VIDEO_ANALYTICS_API_PORT="${VIDEO_ANALYTICS_API_PORT:-8081}"
 export MDX_PORT="${MDX_PORT:-${VIDEO_ANALYTICS_API_PORT}}"
 export SMARTCITY_MAP_PORT="${SMARTCITY_MAP_PORT:-3002}"
@@ -175,13 +183,13 @@ export THOR_LOCAL_FORCE_BOOTSTRAP="${THOR_LOCAL_FORCE_BOOTSTRAP:-false}"
 # Thor-local uses operator-hosted model endpoints and one unified application
 # profile. Perception is selected separately so the Smart City and Search
 # pipelines can never compete for Thor's one GPU/RT-CV host port.
-export COMPOSE_PROFILES="${THOR_LOCAL_COMPOSE_PROFILES:-bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d}"
+export COMPOSE_PROFILES="${THOR_LOCAL_COMPOSE_PROFILES:-bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d,bp_developer_thor_traffic_perception_2d}"
 smartcity_profile_enabled=false
 case ",${COMPOSE_PROFILES}," in
   *,bp_developer_thor_smartcity_2d,*) smartcity_profile_enabled=true ;;
 esac
 export NEXT_PUBLIC_ENABLE_MAP_TAB="${NEXT_PUBLIC_ENABLE_MAP_TAB:-${smartcity_profile_enabled}}"
-export NEXT_PUBLIC_MAP_URL="${NEXT_PUBLIC_MAP_URL:-http://127.0.0.1:${VSS_PUBLIC_PORT}/smartcity-map/}"
+export NEXT_PUBLIC_MAP_URL="${NEXT_PUBLIC_MAP_URL:-http://${VSS_PUBLIC_HOST}:${VSS_PUBLIC_PORT}/smartcity-map/}"
 
 usage() {
   cat <<'EOF'
@@ -239,7 +247,7 @@ Optional environment overrides:
   THOR_LOCAL_MIN_MEMORY_GB_BEFORE_STACK_START (defaults 20),
   VST_PORT, VST_MCP_PORT, VIOS_MCP_ENDPOINT, SENSOR_HTTP_PORT, STREAM_PROCESSOR_HTTP_PORT,
   SDR_STREAMPROCESSING_PORT,
-  RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT,
+  RTVI_EMBED_PORT, RTVI_VLM_PORT, RTVI_CV_PORT, RTVI_CV_TRAFFIC_PORT,
   VIDEO_ANALYTICS_API_PORT, SMARTCITY_MAP_PORT, ALERT_BRIDGE_PORT, KAFKA_PORT, VSS_ES_PORT,
   VSS_VA_MCP_PORT, BACKEND_PORT, KIBANA_PORT, PHOENIX_PORT,
   MONITORING_BIND_ADDRESS, PROMETHEUS_CONFIG_FILE,
@@ -251,8 +259,9 @@ Optional environment overrides:
   NEXT_PUBLIC_APP_TITLE, NEXT_PUBLIC_APP_SUBTITLE,
   NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_ENABLE.
   THOR_LOCAL_COMPOSE_PROFILES defaults to the shared Thor-full services plus
-  bp_developer_thor_search_perception_2d. Replace that perception profile with
-  bp_developer_thor_smartcity_2d for the one-camera Smart City workload.
+  bp_developer_thor_search_perception_2d and
+  bp_developer_thor_traffic_perception_2d. Use the legacy
+  bp_developer_thor_smartcity_2d profile only for the complete Smart City workload.
   THOR_FULL_ENABLE_KIBANA (defaults to true).
   THOR_FULL_STAGE_TIMEOUT_SECONDS (defaults to 1800).
   THOR_FULL_READINESS_TIMEOUT_SECONDS (defaults to 1200).
@@ -456,6 +465,40 @@ PY
   rm -rf -- "${temporary_directory}"
 }
 
+vlm_has_active_caption_session() {
+  local endpoint="$1"
+  local response_file
+  response_file="$(mktemp "${TMPDIR:-/tmp}/thor-vlm-stream-info.XXXXXX")"
+  if ! curl --connect-timeout 2 --max-time 5 --fail --silent --show-error \
+    --output "${response_file}" \
+    "${endpoint%/}/v1/stream/get-stream-info"; then
+    rm -f -- "${response_file}"
+    return 1
+  fi
+  if python3 - "${response_file}" <<'PY'
+import json
+import sys
+
+try:
+    with open(sys.argv[1], encoding="utf-8") as stream:
+        payload = json.load(stream)
+    active = any(
+        item.get("inference_active") is True
+        for item in payload.get("stream_list", [])
+        if isinstance(item, dict)
+    )
+except (OSError, TypeError, ValueError, json.JSONDecodeError):
+    raise SystemExit(1)
+raise SystemExit(0 if active else 1)
+PY
+  then
+    rm -f -- "${response_file}"
+    return 0
+  fi
+  rm -f -- "${response_file}"
+  return 1
+}
+
 check_local_model_contracts() {
   local llm_endpoint="${LLM_ENDPOINT_URL}"
   local vlm_endpoint="${VLM_ENDPOINT_URL}"
@@ -478,9 +521,19 @@ check_local_model_contracts() {
   openai_chat_contract LLM "${llm_endpoint}" "${llm_model}" 0 ||
     die "LLM provider contract failed"
   echo "[OK] LLM implements OpenAI-compatible /v1/models and /v1/chat/completions."
-  openai_chat_contract VLM "${vlm_endpoint}" "${vlm_model}" \
-    "${VLM_MAX_FRAMES_PER_REQUEST}" || die "VLM multi-image provider contract failed"
-  echo "[OK] VLM accepted ${VLM_MAX_FRAMES_PER_REQUEST} ordered images through OpenAI-compatible chat completions."
+  if vlm_has_active_caption_session "${vlm_endpoint}"; then
+    # RTVI-VLM on Thor owns one heavyweight Cosmos sequence at a time. A live
+    # caption job is deliberately long-lived, so queueing an intrusive model
+    # contract behind it can make an otherwise healthy show lane fail `ready`.
+    # The UI's visual-analysis routes perform a serialized pause/probe/restore;
+    # this non-mutating readiness command treats an active caption session as
+    # direct runtime proof and leaves the customer stream uninterrupted.
+    echo "[OK] VLM is actively producing live captions; deferred the intrusive multi-image probe."
+  else
+    openai_chat_contract VLM "${vlm_endpoint}" "${vlm_model}" \
+      "${VLM_MAX_FRAMES_PER_REQUEST}" || die "VLM multi-image provider contract failed"
+    echo "[OK] VLM accepted ${VLM_MAX_FRAMES_PER_REQUEST} ordered images through OpenAI-compatible chat completions."
+  fi
 }
 
 wait_for_model() {
@@ -650,7 +703,7 @@ validate_thor_full_contract() {
   local item name port value model_container
   [[ "${profile}" == "thor-full" ]] || die "THOR_LOCAL_PROFILE must be thor-full; found '${profile}'"
   case "${COMPOSE_PROFILES}" in
-    bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d)
+    bp_developer_thor_full_2d,bp_developer_thor_search_perception_2d,bp_developer_thor_traffic_perception_2d)
       [[ "${NEXT_PUBLIC_ENABLE_MAP_TAB}" == "false" ]] ||
         die "NEXT_PUBLIC_ENABLE_MAP_TAB must be false for the Thor Search perception profile"
       ;;
@@ -659,7 +712,7 @@ validate_thor_full_contract() {
         die "NEXT_PUBLIC_ENABLE_MAP_TAB must be true for the Thor Smart City profile"
       ;;
     *)
-      die "THOR_LOCAL_COMPOSE_PROFILES must select Thor-full plus exactly one of bp_developer_thor_search_perception_2d or bp_developer_thor_smartcity_2d"
+      die "THOR_LOCAL_COMPOSE_PROFILES must select Thor-full with the warehouse+traffic workers, or the legacy Smart City profile"
       ;;
   esac
   [[ "${THOR_FULL_ENABLE_KIBANA}" == "true" || "${THOR_FULL_ENABLE_KIBANA}" == "false" ]] ||
@@ -784,6 +837,7 @@ validate_thor_full_contract() {
     "RTVI_EMBED_PORT:${RTVI_EMBED_PORT}" \
     "RTVI_VLM_PORT:${RTVI_VLM_PORT}" \
     "RTVI_CV_PORT:${RTVI_CV_PORT}" \
+    "RTVI_CV_TRAFFIC_PORT:${RTVI_CV_TRAFFIC_PORT}" \
     "VIDEO_ANALYTICS_API_PORT:${VIDEO_ANALYTICS_API_PORT}" \
     "SMARTCITY_MAP_PORT:${SMARTCITY_MAP_PORT}" \
     "ALERT_BRIDGE_PORT:${ALERT_BRIDGE_PORT}" \
@@ -874,8 +928,8 @@ print_runtime_contract() {
     VSS_AGENT_PORT "${VSS_AGENT_PORT}" \
     VSS_UI_PORT "${VSS_UI_PORT}" \
     HAPROXY_PORT "${HAPROXY_PORT}" \
-    HAPROXY_BIND_ADDR 127.0.0.1 \
-    VSS_PUBLIC_HOST 127.0.0.1 \
+    HAPROXY_BIND_ADDR "${HAPROXY_BIND_ADDR}" \
+    VSS_PUBLIC_HOST "${VSS_PUBLIC_HOST}" \
     VSS_PUBLIC_PORT "${VSS_PUBLIC_PORT}" \
     VST_PORT "${VST_PORT}" \
     VST_INGRESS_HTTP_PORT "${VST_INGRESS_HTTP_PORT}" \
@@ -902,6 +956,7 @@ print_runtime_contract() {
     RTVI_TIMESTAMP_PROMPT_SUFFIX_RTSP_SOURCE "${RTVI_TIMESTAMP_PROMPT_SUFFIX_RTSP_SOURCE}" \
     RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS "${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}" \
     RTVI_CV_PORT "${RTVI_CV_PORT}" \
+    RTVI_CV_TRAFFIC_PORT "${RTVI_CV_TRAFFIC_PORT}" \
     COSMOS_EMBED_PORT "${RTVI_EMBED_PORT}" \
     COSMOS_EMBED_ENDPOINT "http://127.0.0.1:${RTVI_EMBED_PORT}" \
     VIDEO_ANALYTICS_API_PORT "${VIDEO_ANALYTICS_API_PORT}" \
@@ -1027,12 +1082,21 @@ require_runtime_env() {
 
 ensure_operator_runtime_directories() {
   local reports_directory="${data_directory}/agent-reports"
+  local investigations_directory="${data_directory}/vision-investigations"
+  local history_directory="${data_directory}/vision-history"
+  local rules_directory="${data_directory}/vision-rules"
   mkdir -p -- "${reports_directory}"
   chmod 0700 -- "${reports_directory}"
   [[ "$(stat -c '%u' "${reports_directory}")" == "$(id -u)" ]] ||
     die "${reports_directory} must be owned by the invoking user ($(id -un)); fix its ownership before starting Thor VSS"
   [[ "$(stat -c '%a' "${reports_directory}")" == "700" ]] ||
     die "${reports_directory} must have mode 0700"
+
+  # The production UI runs as the image's fixed unprivileged uid. Reports do
+  # not contain credentials, so keep this single bind-mounted directory
+  # writable across image rebuilds and LAN browser sessions.
+  mkdir -p -- "${investigations_directory}" "${history_directory}" "${rules_directory}"
+  chmod 0777 -- "${investigations_directory}" "${history_directory}" "${rules_directory}"
 }
 
 show_contract() {
@@ -1049,7 +1113,7 @@ Thor-local environment contract:
   VLM: ${THOR_LOCAL_VLM_MODEL} via ${THOR_LOCAL_VLM_MODEL_TYPE} at ${VLM_ENDPOINT_URL} (container ${THOR_LOCAL_VLM_CONTAINER})
   RTVI-VLM upstream: ${VLM_CONTAINER_ENDPOINT_URL}/v1 (bridge-to-host)
   Runtime ports: agent=${VSS_AGENT_PORT}, UI=${VSS_UI_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, SDR=${SDR_STREAMPROCESSING_PORT}, VIOS-MCP=${VST_MCP_PORT}
-  Intelligence ports: embed=${RTVI_EMBED_PORT} (batch ${RTVI_EMBED_BATCH_SIZE}), RTVI-VLM=${RTVI_VLM_PORT} (batch ${RTVI_VLM_BATCH_SIZE}, processes ${RTVI_VLM_NUM_VLM_PROCS}), perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, LVS=${BACKEND_PORT}
+  Intelligence ports: embed=${RTVI_EMBED_PORT} (batch ${RTVI_EMBED_BATCH_SIZE}), RTVI-VLM=${RTVI_VLM_PORT} (batch ${RTVI_VLM_BATCH_SIZE}, processes ${RTVI_VLM_NUM_VLM_PROCS}), warehouse perception=${RTVI_CV_PORT}, traffic perception=${RTVI_CV_TRAFFIC_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, LVS=${BACKEND_PORT}
   RTVI timestamps: prompt=${RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT}, absolute_metadata=${RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS}
   LVS aggregation: provider=${THOR_LOCAL_LLM_MODEL_TYPE}, thinking=${LVS_LLM_ENABLE_THINKING}, max_tokens=${LVS_LLM_MAX_TOKENS}, MCP=${LVS_ENABLE_MCP}@${LVS_MCP_PORT}
   LVS extended routes: VIA_DEV_API=${VIA_DEV_API}
@@ -1310,6 +1374,7 @@ preflight() {
   require_available_port "${RTVI_EMBED_PORT}" vss-rtvi-embed
   require_available_port "${RTVI_VLM_PORT}" vss-rtvi-vlm
   require_available_port "${RTVI_CV_PORT}" vss-rtvi-cv
+  require_available_port "${RTVI_CV_TRAFFIC_PORT}" vss-rtvi-cv-traffic
   require_available_port "${VIDEO_ANALYTICS_API_PORT}" vss-video-analytics-api
   if [[ "${smartcity_profile_enabled}" == "true" ]]; then
     require_available_port "${SMARTCITY_MAP_PORT}" vss-smartcity-map-thor
@@ -1341,7 +1406,7 @@ preflight() {
 
   echo "[OK] AGX Thor platform and local model endpoints are ready."
   echo "[OK] Planned core ports: UI=${VSS_UI_PORT}, agent=${VSS_AGENT_PORT}, ingress=${HAPROXY_PORT}, VIOS=${VST_PORT}/${SENSOR_HTTP_PORT}/${STREAM_PROCESSOR_HTTP_PORT}, SDR=${SDR_STREAMPROCESSING_PORT}, VIOS-MCP=${VST_MCP_PORT}."
-  echo "[OK] Planned intelligence ports: embed=${RTVI_EMBED_PORT}, RTVI-VLM=${RTVI_VLM_PORT}, perception=${RTVI_CV_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, LVS=${BACKEND_PORT}."
+  echo "[OK] Planned intelligence ports: embed=${RTVI_EMBED_PORT}, RTVI-VLM=${RTVI_VLM_PORT}, warehouse perception=${RTVI_CV_PORT}, traffic perception=${RTVI_CV_TRAFFIC_PORT}, analytics=${VIDEO_ANALYTICS_API_PORT}, alerts=${ALERT_BRIDGE_PORT}, VA-MCP=${VSS_VA_MCP_PORT}, LVS=${BACKEND_PORT}."
   echo "[OK] Planned data ports: Kafka=${KAFKA_PORT}, Elasticsearch=${VSS_ES_PORT}, Kibana=${KIBANA_PORT} (enabled=${THOR_FULL_ENABLE_KIBANA}), Phoenix=${PHOENIX_HOST}:${PHOENIX_PORT}, Logstash API=127.0.0.1:${LOGSTASH_API_PORT}."
   echo "[OK] Planned observability ports: Prometheus=${PROMETHEUS_PORT}, Grafana=${GRAFANA_PORT}, node-exporter=${NODE_EXPORTER_PORT}, cAdvisor=${CADVISOR_PORT} on loopback; tegrastats=${TEGRASTATS_BIND_ADDRESS}:${TEGRASTATS_PORT} on Docker's private gateway."
   echo "[OK] VLM frame request limit: ${VLM_MAX_FRAMES_PER_REQUEST}."
@@ -1658,7 +1723,7 @@ security_internal_ports() {
     "$(endpoint_port "${LLM_ENDPOINT_URL}")" \
     "$(endpoint_port "${VLM_ENDPOINT_URL}")" \
     8000 "${RTVI_EMBED_PORT}" "${RTVI_VLM_PORT}" "${VIDEO_ANALYTICS_API_PORT}" "${SMARTCITY_MAP_PORT}" \
-    "${VSS_AGENT_PORT}" 8554 8787 8888 8889 8892 "${RTVI_CV_PORT}" \
+    "${VSS_AGENT_PORT}" 8554 8787 8888 8889 8892 "${RTVI_CV_PORT}" "${RTVI_CV_TRAFFIC_PORT}" \
     "${ALERT_BRIDGE_PORT}" "${KAFKA_PORT}" "${VSS_ES_PORT}" 9300 "${KIBANA_PORT}" "${LOGSTASH_API_PORT}" \
     "${VSS_VA_MCP_PORT}" "${SENSOR_HTTP_PORT}" "${STREAM_PROCESSOR_HTTP_PORT}" "${SDR_STREAMPROCESSING_PORT}" \
     30554 30555 30556 30557 30558 30559 30560 30561 30562 30563 30564 \
@@ -1766,12 +1831,14 @@ security_audit() {
   fi
 
   ingress_scope="$(listener_scope "${HAPROXY_PORT}")"
-  if [[ "${ingress_scope}" == "loopback" ]]; then
-    echo "[PASS] Supported operator ingress ${HAPROXY_PORT}/tcp is loopback-only."
+  if [[ "${ingress_scope}" == "exposed" &&
+        "${HAPROXY_BIND_ADDR}" == "${HOST_IP}" &&
+        "${VSS_PUBLIC_HOST}" == "${HOST_IP}" ]]; then
+    echo "[PASS] Trusted-LAN operator gateway is bound only to ${HOST_IP}:${HAPROXY_PORT}."
   elif [[ "${ingress_scope}" == "down" ]]; then
     echo "[INFO] Supported operator ingress ${HAPROXY_PORT}/tcp is not listening."
   else
-    echo "[FAIL] Supported operator ingress ${HAPROXY_PORT}/tcp is reachable beyond loopback."
+    echo "[FAIL] Operator gateway does not match the exact trusted-LAN bind contract (${HOST_IP}:${HAPROXY_PORT})."
     failures=1
   fi
 
@@ -1792,8 +1859,8 @@ security_audit() {
   fi
 
   echo
-  echo "LAN policy: the supported UI/API is 127.0.0.1:${HAPROXY_PORT}. Use an SSH tunnel for a remote operator."
-  echo "The firewall rule blocks only named physical interfaces; loopback and Docker bridges remain usable."
+  echo "LAN policy: trusted operators use http://${HOST_IP}:${HAPROXY_PORT}; no login boundary is provided yet."
+  echo "The firewall rule blocks internal service ports on named physical interfaces while leaving this gateway usable."
   (( failures == 0 ))
 }
 
@@ -1950,6 +2017,18 @@ stack_container_states_are_ready() {
 }
 
 rtvi_vlm_upstream_is_ready() {
+  # In the exact official-edge lane RT-VLM owns the Cosmos model itself; there
+  # is no separate operator-managed VLM upstream on :8003. Probe the endpoint
+  # that actually serves the advertised model instead of applying the generic
+  # proxy-upstream contract to this topology.
+  if official_edge_demo_lane_is_deployed; then
+    docker exec vss-rtvi-vlm \
+      curl --connect-timeout 2 --max-time 5 --fail --silent \
+        "http://127.0.0.1:8000/v1/models" 2>/dev/null |
+      python3 -c 'import json,sys; expected=sys.argv[1]; data=json.load(sys.stdin).get("data", []); sys.exit(0 if expected in {item.get("id") for item in data} else 1)' \
+        "${official_edge_vlm_model}"
+    return
+  fi
   docker exec vss-rtvi-vlm \
     curl --connect-timeout 2 --max-time 5 --fail --silent \
       "${VLM_CONTAINER_ENDPOINT_URL%/}/v1/models" 2>/dev/null |
@@ -1967,7 +2046,8 @@ critical_http_endpoints_are_ready() {
     "vios-sdr|http://127.0.0.1:${SDR_STREAMPROCESSING_PORT}/healthz" \
     "rtvi-embed|http://127.0.0.1:${RTVI_EMBED_PORT}/v1/ready" \
     "rtvi-vlm|http://127.0.0.1:${RTVI_VLM_PORT}/v1/health/ready" \
-    "deepstream-perception|http://127.0.0.1:${RTVI_CV_PORT}/api/v1/health/get-dsready-state"; do
+    "deepstream-warehouse|http://127.0.0.1:${RTVI_CV_PORT}/api/v1/health/get-dsready-state" \
+    "deepstream-traffic|http://127.0.0.1:${RTVI_CV_TRAFFIC_PORT}/api/v1/health/get-dsready-state"; do
     name="${item%%|*}"
     url="${item#*|}"
     if ! curl --connect-timeout 2 --max-time 5 --fail --silent "${url}" >/dev/null; then
@@ -2099,12 +2179,14 @@ PY
 doctor_check_network_security() {
   local ingress_scope exposed=0 port
   ingress_scope="$(listener_scope "${HAPROXY_PORT}")"
-  if [[ "${ingress_scope}" == "loopback" ]]; then
-    doctor_pass "Supported operator ingress is loopback-only (${HAPROXY_PORT}/tcp)."
+  if [[ "${ingress_scope}" == "exposed" &&
+        "${HAPROXY_BIND_ADDR}" == "${HOST_IP}" &&
+        "${VSS_PUBLIC_HOST}" == "${HOST_IP}" ]]; then
+    doctor_pass "Trusted-LAN operator gateway is bound only to ${HOST_IP}:${HAPROXY_PORT}."
   elif [[ "${ingress_scope}" == "down" ]]; then
     doctor_warn "Supported operator ingress is not listening (${HAPROXY_PORT}/tcp)."
   else
-    doctor_fail "Supported operator ingress is reachable beyond loopback (${HAPROXY_PORT}/tcp)."
+    doctor_fail "Operator gateway does not match the exact trusted-LAN bind contract (${HOST_IP}:${HAPROXY_PORT})."
   fi
   while IFS= read -r port; do
     [[ "$(listener_scope "${port}")" == "exposed" ]] && ((exposed += 1))
@@ -2349,12 +2431,12 @@ doctor_check_endpoints() {
   fi
 
   doctor_http_status "Operator UI" "http://127.0.0.1:${VSS_UI_PORT}/" 200
-  doctor_http_status "Public ingress/UI" "http://127.0.0.1:${HAPROXY_PORT}/" 200
+  doctor_http_status "Trusted-LAN ingress/UI" "http://${VSS_PUBLIC_HOST}:${HAPROXY_PORT}/" 200
   doctor_json_contract "VSS API" "http://127.0.0.1:${VSS_AGENT_PORT}/health" \
     'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if payload.get("value", {}).get("isAlive") is True else 1)'
   doctor_json_contract "Search API route" "http://127.0.0.1:${VSS_AGENT_PORT}/openapi.json" \
     'import json,sys; payload=json.load(sys.stdin); raise SystemExit(0 if "/api/v1/search" in payload.get("paths", {}) else 1)'
-  doctor_http_status "Search ingress route" "http://127.0.0.1:${HAPROXY_PORT}/api/v1/search" 405
+  doctor_http_status "Search ingress route" "http://${VSS_PUBLIC_HOST}:${HAPROXY_PORT}/api/v1/search" 405
   doctor_http_status "Cosmos-Embed" "http://127.0.0.1:${RTVI_EMBED_PORT}/v1/ready" 200
   doctor_http_status "RTVI-VLM proxy" "http://127.0.0.1:${RTVI_VLM_PORT}/v1/health/ready" 200
   doctor_http_status "VST/VIOS" "http://127.0.0.1:${VST_PORT}/health" 200

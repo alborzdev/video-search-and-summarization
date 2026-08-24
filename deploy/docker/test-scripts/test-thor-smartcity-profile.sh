@@ -81,10 +81,24 @@ expected = {
     "smartcity-map-thor",
 }
 assert set(services) == expected
-for service in services.values():
-    assert service["profiles"] == ["bp_developer_thor_smartcity_2d"]
-assert services["perception-2d-smartcity-thor"]["environment"]["NUM_SENSORS"] == "1"
-assert services["perception-2d-smartcity-thor"]["environment"]["MODEL_NAME_2D"] == "RTDETR"
+for service_name, service in services.items():
+    if service_name == "perception-2d-smartcity-thor":
+        assert service["profiles"] == [
+            "bp_developer_thor_smartcity_2d",
+            "bp_developer_thor_traffic_perception_2d",
+        ]
+    else:
+        assert service["profiles"] == ["bp_developer_thor_smartcity_2d"]
+traffic_perception = services["perception-2d-smartcity-thor"]
+assert traffic_perception["environment"]["NUM_SENSORS"] == "1"
+assert traffic_perception["environment"]["MODEL_NAME_2D"] == "RTDETR"
+assert traffic_perception["depends_on"]["kafka"] == {"condition": "service_healthy"}
+assert traffic_perception["restart"] == "unless-stopped"
+assert traffic_perception["deploy"]["restart_policy"] == {
+    "condition": "any",
+    "delay": "5s",
+    "max_attempts": 0,
+}
 assert services["vss-behavior-analytics-smartcity-thor"]["container_name"] != "vss-behavior-analytics"
 assert services["vss-behavior-analytics-smartcity-thor"]["image"] == "${THOR_LOCAL_BEHAVIOR_ANALYTICS_IMAGE:-cti-vss-behavior-analytics:thor-local}"
 assert "PYTHONPATH" not in services["vss-behavior-analytics-smartcity-thor"].get("environment", {})

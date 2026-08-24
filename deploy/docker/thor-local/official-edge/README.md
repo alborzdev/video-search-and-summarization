@@ -9,10 +9,10 @@ The exact contract is:
 | Role | Runtime contract |
 |---|---|
 | LLM | Local standalone `nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8` on `127.0.0.1:30081`; VSS calls it through `LLM_MODE=remote` because the service is outside NVIDIA's released Compose graph. |
-| VLM | RT-VLM 3.2.1 loads `ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final` in-process with selector `cosmos-reason3` and advertises `nim_nvidia_cosmos3-nano-reasoner_bf16-final` on loopback-only port `127.0.0.1:8018`. |
+| VLM | RT-VLM 3.2.1 loads `ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final` in-process with selector `cosmos-reason3` and advertises `nim_nvidia_cosmos3-nano-reasoner_bf16-final` on loopback-only port `127.0.0.1:8018`. Its KV cache is explicitly capped at 4 GiB for one 16K-context request so startup order cannot consume the appliance's remaining unified memory. |
 | Agent | The complete Thor-full feature graph remains the base config. Only the two Edge 4B planning/response prompt fields are inherited exactly from NVIDIA's `dev-profile-base/.../config_edge.yml`. |
-| Official memory lane | Edge 4B `0.25` + Cosmos3 `0.35` + required UMA reserve `0.20`; launch admission therefore requires `MemAvailable / MemTotal >= 0.80`. |
-| Thor demo memory lane | The exact same artifacts and images with Edge 4B KV allocation `0.12`, Cosmos3 at its required `0.35`, and a `0.23` admission reserve; launch admission requires `MemAvailable / MemTotal >= 0.70`. |
+| Official memory lane | Edge 4B `0.25` + bounded Cosmos3 `0.30` + required UMA reserve `0.25`; launch admission therefore requires `MemAvailable / MemTotal >= 0.80`. |
+| Thor demo memory lane | The exact same artifacts and images with Edge 4B KV allocation `0.12`, bounded Cosmos3 at `0.30`, and a `0.28` admission reserve; launch admission requires `MemAvailable / MemTotal >= 0.70`. |
 
 The authoritative model identity comes from NVIDIA's versioned
 [VSS 3.2.1 Edge Deployment documentation](https://docs.nvidia.com/vss/3.2.1/edge-deployment.html),
@@ -42,8 +42,14 @@ available. A second, explicitly named Thor demo lane is provided for a machine
 that also hosts the desktop and operator session. It preserves both exact
 models, model IDs, image digests, prompts, and the complete Compose graph; only
 the Edge LLM KV-cache allocation is reduced. Its measured `0.12` setting keeps
-a 2.95 GiB KV cache (54,560 tokens) while Cosmos3 retains NVIDIA's required
-`0.35`. The demo launcher remains fail-closed below 70% prelaunch availability.
+a 2.95 GiB KV cache (54,560 tokens). Cosmos3 uses `0.30` admission plus an
+explicit 4 GiB KV-cache cap, one sequence, 4,096 batched tokens, and a 16,384
+token context. Eager execution is required because the pinned vLLM 0.12 image's
+CUDA-graph warm-up fails a dynamic-shape assertion for this Cosmos3 backbone on
+Thor. These controls avoid both the previously observed startup-order-dependent
+~40 GiB cache and a repeated model-load loop while retaining the context needed
+for local evidence inspection.
+The demo launcher remains fail-closed below 70% prelaunch availability.
 
 There is deliberately no "capture and trust" command here. Creating an exact
 lock is a review operation, not a way to bless whatever happens to be in a
@@ -280,8 +286,9 @@ python3 -m unittest discover \
 
 The focused suite includes source drift, exact tree mutation/extra-file,
 symlink escape, model-ID alias, image identity, Compose resolution, inert
-renderers, the exact official `0.25 + 0.35 + 0.20` boundary, and the Thor demo
-`0.12 + 0.35 + 0.23` boundary. The repository-
+renderers, the exact official `0.25 + 0.30 + 0.25` boundary, the explicit
+Cosmos3 cache/context bounds, and the Thor demo `0.12 + 0.30 + 0.28` boundary.
+The repository-
 reproducible full-Compose resolution test uses the tracked Thor-full environment
 with sanitized `VSS_APPS_DIR`/`VSS_DATA_DIR` substitutions; it does not require
 the gitignored protected `generated.env`.

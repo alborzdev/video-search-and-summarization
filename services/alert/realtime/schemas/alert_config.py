@@ -100,6 +100,11 @@ class AlertRuleConfig:
     sensor_id: Optional[str] = None
     sensor_name: Optional[str] = None
     description: Optional[str] = None
+    # The Vision Intelligence UI reuses a stream registered by the live
+    # history service.  Alert Bridge may stop its own caption request, but it
+    # must leave that externally managed stream registration in place when
+    # the rule is removed or fails later.
+    preserve_rtvi_stream: bool = False
 
     # RTSP authentication
     username: Optional[str] = None

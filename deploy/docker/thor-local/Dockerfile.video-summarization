@@ -9,11 +9,13 @@ COPY deploy/docker/thor-local/patches/patch_lvs_files_purpose.py /tmp/patch_lvs_
 COPY deploy/docker/thor-local/patches/patch_lvs_file_management.py /tmp/patch_lvs_file_management.py
 COPY deploy/docker/thor-local/patches/patch_lvs_vlm_caption_prompt.py /tmp/patch_lvs_vlm_caption_prompt.py
 COPY deploy/docker/thor-local/patches/patch_lvs_neo4j_uuid_cleanup.py /tmp/patch_lvs_neo4j_uuid_cleanup.py
+COPY deploy/docker/thor-local/patches/patch_lvs_graphrag_schema.py /tmp/patch_lvs_graphrag_schema.py
 RUN /usr/local/bin/python3 /tmp/patch_lvs_llm_provider.py && \
     /usr/local/bin/python3 /tmp/patch_lvs_files_purpose.py && \
     /usr/local/bin/python3 /tmp/patch_lvs_file_management.py && \
     /usr/local/bin/python3 /tmp/patch_lvs_vlm_caption_prompt.py && \
-    /usr/local/bin/python3 /tmp/patch_lvs_neo4j_uuid_cleanup.py
+    /usr/local/bin/python3 /tmp/patch_lvs_neo4j_uuid_cleanup.py && \
+    /usr/local/bin/python3 /tmp/patch_lvs_graphrag_schema.py
 # The released 3.2.1 image is the dependency/runtime base. Install the complete
 # current repository implementation so Thor runs the fixes and API behavior we
 # qualify here rather than a mixture of current MCP files and older core code.

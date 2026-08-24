@@ -82,6 +82,7 @@ class StreamingIngestConfig(BaseModel):
         ),
     )
     elasticsearch_url: str = Field(default="", description="Elasticsearch endpoint URL")
+    lvs_backend_url: str = Field(default="", description="LVS video-history service URL")
     rtvi_embed_es_index: str = Field(default="", description="Elasticsearch index for embeddings")
 
     # Optional HTTP-client timeouts for the post-upload pipeline (video_ingest).

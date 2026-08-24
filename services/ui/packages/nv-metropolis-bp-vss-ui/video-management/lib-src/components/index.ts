@@ -9,4 +9,5 @@ export { Toolbar } from './Toolbar';
 export { UploadProgressPanel } from './UploadProgressPanel';
 export { VideoManagementSidebarControls } from './VideoManagementSidebarControls';
 export { AgentUploadDialog } from './AgentUploadDialog';
+export { LiveStreamModal } from './LiveStreamModal';
 

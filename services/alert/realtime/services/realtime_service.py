@@ -85,7 +85,7 @@ except ImportError:
 
 _INTERNAL_FIELDS = frozenset({
     "rtvi_stream_id", "rtvi_request_id", "previous_rtvi_stream_id",
-    "owns_rtvi_stream",
+    "owns_rtvi_stream", "preserve_rtvi_stream",
     "_id", "_index", "_seq_no", "_primary_term",
 })
 
@@ -439,6 +439,7 @@ class RealtimeAlertService:
             sensor_id=rule_doc.get("sensor_id"),
             sensor_name=rule_doc.get("sensor_name"),
             description=rule_doc.get("description"),
+            preserve_rtvi_stream=rule_doc.get("preserve_rtvi_stream", False),
             username=rule_doc.get("username"),
             password=rule_doc.get("password"),
             place_name=rule_doc.get("place_name"),
@@ -568,7 +569,10 @@ class RealtimeAlertService:
                 self._caption_tasks.add(captions_task)
                 captions_task.add_done_callback(self._caption_tasks.discard)
                 captions_task.add_done_callback(
-                    lambda t, sid=rtvi_stream_id, rid=rule_id, svc=self: svc._log_caption_task_result(t, sid, rid)
+                    lambda t, sid=rtvi_stream_id, rid=rule_id,
+                    preserve=config.preserve_rtvi_stream, svc=self: svc._log_caption_task_result(
+                        t, sid, rid, preserve_rtvi_stream=preserve,
+                    )
                 )
 
             now_iso = datetime.now(timezone.utc).isoformat()
@@ -610,6 +614,7 @@ class RealtimeAlertService:
                 "rtvi_stream_id": rtvi_stream_id,
                 "rtvi_request_id": rtvi_request_id,
                 "owns_rtvi_stream": owns_stream,
+                "preserve_rtvi_stream": config.preserve_rtvi_stream,
                 "live_stream_url": config.live_stream_url,
                 "alert_type": config.alert_type,
                 "sensor_id": config.sensor_id,
@@ -1220,7 +1225,10 @@ class RealtimeAlertService:
                 self._caption_tasks.add(captions_task)
                 captions_task.add_done_callback(self._caption_tasks.discard)
                 captions_task.add_done_callback(
-                    lambda t, sid=rtvi_stream_id, rid=alert_rule_id, svc=self: svc._log_caption_task_result(t, sid, rid)
+                    lambda t, sid=rtvi_stream_id, rid=alert_rule_id,
+                    preserve=config.preserve_rtvi_stream, svc=self: svc._log_caption_task_result(
+                        t, sid, rid, preserve_rtvi_stream=preserve,
+                    )
                 )
 
             # ── Step 4: update ES with rtvi_stream_id ─────────────────
@@ -1314,6 +1322,7 @@ class RealtimeAlertService:
                 "rtvi_stream_id": rtvi_stream_id,
                 "rtvi_request_id": rtvi_request_id,
                 "owns_rtvi_stream": owns_stream,
+                "preserve_rtvi_stream": config.preserve_rtvi_stream,
                 "sensor_id": config.sensor_id,
                 "sensor_name": config.sensor_name,
                 "live_stream_url": config.live_stream_url,
@@ -1464,9 +1473,11 @@ class RealtimeAlertService:
         # below uses the live ref-count so a reuse rule that turns out to
         # be the *last* reader still cleans the stream up.
         owns_stream = rule.get("owns_rtvi_stream", True)
+        preserve_stream = rule.get("preserve_rtvi_stream", False)
         ctx["rtvi_stream_id"] = rtvi_stream_id
         ctx["rtvi_request_id"] = rtvi_request_id
         ctx["owns_stream"] = owns_stream
+        ctx["preserve_stream"] = preserve_stream
 
         # Step 1: delete the durable record so the rule is gone from the
         # user's perspective regardless of what happens with RTVI.
@@ -1531,7 +1542,8 @@ class RealtimeAlertService:
             )
             ctx["other_active_rules"] = other_count
             rtvi_outcome = await self._safe_teardown_rtvi_with_outcome(
-                rtvi_stream_id, ctx, stop_stream=(other_count == 0),
+                rtvi_stream_id, ctx,
+                stop_stream=(other_count == 0 and not preserve_stream),
                 request_id=rtvi_request_id,
             )
 
@@ -1640,11 +1652,13 @@ class RealtimeAlertService:
         rtvi_stream_id = rule.get("rtvi_stream_id")
         rtvi_request_id = rule.get("rtvi_request_id")
         owns_stream = rule.get("owns_rtvi_stream", True)
+        preserve_stream = rule.get("preserve_rtvi_stream", False)
         ctx = {
             "alert_rule_id": alert_rule_id,
             "rtvi_stream_id": rtvi_stream_id,
             "rtvi_request_id": rtvi_request_id,
             "owns_stream": owns_stream,
+            "preserve_stream": preserve_stream,
         }
 
         # Pop the rule first so the ref-count below excludes it.
@@ -1657,7 +1671,8 @@ class RealtimeAlertService:
             )
             ctx["other_active_rules"] = other_count
             await self._safe_teardown_rtvi(
-                rtvi_stream_id, ctx, stop_stream=(other_count == 0),
+                rtvi_stream_id, ctx,
+                stop_stream=(other_count == 0 and not preserve_stream),
                 request_id=rtvi_request_id,
             )
 
@@ -1777,6 +1792,7 @@ class RealtimeAlertService:
             "enable_reasoning": config.enable_reasoning,
             "status": RuleStatus.PENDING,
             "owns_rtvi_stream": True,
+            "preserve_rtvi_stream": config.preserve_rtvi_stream,
             "created_at": created_at,
         }
         # Include optional stream-identity / location fields only when set —
@@ -2783,7 +2799,10 @@ class RealtimeAlertService:
             )
 
     async def _cleanup_failed_rule(
-        self, rtvi_stream_id: str, alert_rule_id: Optional[str] = None
+        self,
+        rtvi_stream_id: str,
+        alert_rule_id: Optional[str] = None,
+        preserve_rtvi_stream: bool = False,
     ) -> None:
         """Clean up after a caption task fails post-ack-window.
 
@@ -2826,17 +2845,18 @@ class RealtimeAlertService:
                 include_pending_refs=True,
             )
 
-        if other_count == 0:
+        if other_count == 0 and not preserve_rtvi_stream:
             await self._safe_stop_stream(rtvi_stream_id)
         else:
             logger.info(
-                "Skipping stop_stream during cleanup — %d other rule(s) still "
-                "reference this RTVI stream",
+                "Skipping stop_stream during cleanup — stream is preserved "
+                "or %d other rule(s) still reference it",
                 other_count,
                 extra={
                     "alert_rule_id": alert_rule_id,
                     "rtvi_stream_id": rtvi_stream_id,
                     "other_rules": other_count,
+                    "preserve_stream": preserve_rtvi_stream,
                 },
             )
 
@@ -2885,6 +2905,7 @@ class RealtimeAlertService:
         task: asyncio.Task,
         rtvi_stream_id: str,
         alert_rule_id: Optional[str] = None,
+        preserve_rtvi_stream: bool = False,
     ) -> None:
         """Log the outcome of a fire-and-forget caption task."""
         ctx = {"rtvi_stream_id": rtvi_stream_id}
@@ -2928,7 +2949,13 @@ class RealtimeAlertService:
         # the task may not run until after start_alert's guard check passes.
         if alert_rule_id:
             self._readiness_failed_ids.add(alert_rule_id)
-        asyncio.create_task(self._cleanup_failed_rule(rtvi_stream_id, alert_rule_id=alert_rule_id))
+        asyncio.create_task(
+            self._cleanup_failed_rule(
+                rtvi_stream_id,
+                alert_rule_id=alert_rule_id,
+                preserve_rtvi_stream=preserve_rtvi_stream,
+            )
+        )
 
     @staticmethod
     def _error_response(

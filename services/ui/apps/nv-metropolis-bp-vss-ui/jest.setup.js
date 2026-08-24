@@ -26,5 +26,6 @@ if (typeof window !== 'undefined') {
 }
 
 beforeEach(() => {
+  require('./__mocks__/next-router').resetMockRouter();
   jest.clearAllMocks();
 });

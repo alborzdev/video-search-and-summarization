@@ -199,7 +199,7 @@ class TestEmbedSearchInner:
 
         assert isinstance(result, EmbedSearchOutput)
         body = mock_es.search.await_args.kwargs["body"]
-        source_filter = body["query"]["bool"]["filter"][0]
+        source_filter = body["knn"]["filter"]
         should_clauses = source_filter["bool"]["should"]
 
         assert {"terms": {"sensor.id.keyword": [stream_id]}} not in should_clauses
@@ -230,6 +230,11 @@ class TestEmbedSearchInner:
         )
         result = await inner_fn(query_input)
         assert isinstance(result, EmbedSearchOutput)
+        search_body = mock_es.search.await_args.kwargs["body"]
+        serialized = json.dumps(search_body)
+        assert '"timestamp": {"gte":' in serialized
+        assert '"timestamp": {"lte":' in serialized
+        assert '"end": {"lte":' not in serialized
 
     @pytest.mark.asyncio
     async def test_with_top_k(self, config, mock_builder, mock_es, mock_embed_client):

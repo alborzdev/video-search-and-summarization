@@ -1,8 +1,12 @@
 // SPDX-License-Identifier: MIT
-import { filterStreams } from '../../lib-src/utils';
+import { filterStreams, getStreamDisplayName } from '../../lib-src/utils';
 import { makeStream } from '../helpers/streamFixtures';
 
 describe('filterStreams', () => {
+  it('provides presenter-friendly aliases without changing backend source names', () => {
+    expect(getStreamDisplayName('sample-sim-traffic')).toBe('Traffic — Main Intersection');
+    expect(getStreamDisplayName('nvidia-warehouse-loading-dock-camera-01-4min')).toBe('Warehouse — Loading Dock');
+  });
   // Filter matches by stream name only (not url, vodUrl, or streamId). Applied when user clicks Search.
   const videoStream = makeStream({ name: 'warehouse_safety', streamId: 'vid-1', url: 'https://a/v.mp4', vodUrl: 'https://a/vod/v.mp4' });
   const singleLetterStream = makeStream({ name: 't', streamId: 'vid-t', url: 'https://a/t.mp4', vodUrl: 'https://a/t.mp4' });

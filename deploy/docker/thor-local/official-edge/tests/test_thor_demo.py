@@ -38,11 +38,11 @@ class ThorDemoStaticTests(unittest.TestCase):
     def test_overlay_is_exact_and_official_defaults_remain_unchanged(self) -> None:
         contract = td.verify_static()
         self.assertEqual(contract["unified_memory"]["llm_fraction"], "0.25")
-        self.assertEqual(contract["unified_memory"]["vlm_fraction"], "0.35")
+        self.assertEqual(contract["unified_memory"]["vlm_fraction"], "0.30")
         self.assertEqual(oe.EDGE_COMMAND[-4], "0.25")
         self.assertEqual(td.DEMO_EDGE_COMMAND[-4], "0.12")
-        self.assertEqual(td.VLM_FRACTION, td.Decimal("0.35"))
-        self.assertEqual(td.RESERVE_FRACTION, td.Decimal("0.23"))
+        self.assertEqual(td.VLM_FRACTION, td.Decimal("0.30"))
+        self.assertEqual(td.RESERVE_FRACTION, td.Decimal("0.28"))
         self.assertEqual(td.REQUIRED_AVAILABLE_FRACTION, td.Decimal("0.70"))
 
     def test_overlay_rejects_any_third_change(self) -> None:
@@ -103,7 +103,7 @@ class ThorDemoStaticTests(unittest.TestCase):
         self.assertEqual(services["nemotron-edge"]["command"], td.DEMO_EDGE_COMMAND)
         self.assertEqual(
             services["rtvi-vlm"]["environment"]["VLLM_GPU_MEMORY_UTILIZATION"],
-            "0.35",
+            "0.30",
         )
 
 
@@ -126,7 +126,7 @@ class ThorDemoReadinessTests(unittest.TestCase):
         self.assertEqual(containers.call_args_list[0].args[3], td.DEMO_EDGE_COMMAND)
         self.assertEqual(
             containers.call_args_list[1].args[4]["VLLM_GPU_MEMORY_UTILIZATION"],
-            "0.35",
+            "0.30",
         )
 
 

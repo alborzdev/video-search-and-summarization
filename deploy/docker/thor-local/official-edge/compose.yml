@@ -9,6 +9,15 @@ services:
     profiles: ["bp_developer_thor_full_2d"]
     network_mode: host
     runtime: nvidia
+    # Compose ordering is not replayed by Docker's restart manager after a
+    # host reboot. Keep this lightweight process waiting until Cosmos has
+    # claimed its larger unified-memory allocation, then start the Edge LLM.
+    entrypoint:
+      - python3
+      - /usr/local/bin/thor-startup-gate.py
+      - --http
+      - http://127.0.0.1:8018/v1/health/ready
+      - --
     read_only: true
     security_opt:
       - no-new-privileges:true
@@ -34,6 +43,7 @@ services:
       # targets resolve to /blobs/* from /models/edge4b. Mount the separately
       # verified sibling blob store so the immutable snapshot is usable.
       - ${THOR_OFFICIAL_EDGE4B_BLOBS_DIR:?Set the exact verified Edge4B blobs path}:/blobs:ro
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/deploy/docker/thor-local/startup-gate.py:/usr/local/bin/thor-startup-gate.py:ro
     tmpfs:
       - /tmp:size=2g,mode=1777,exec,nosuid,nodev
       - /runtime:size=8g,mode=0700,exec,nosuid,nodev
@@ -70,6 +80,9 @@ services:
       retries: 60
       start_period: 300s
     restart: unless-stopped
+    depends_on:
+      rtvi-vlm:
+        condition: service_healthy
 
   rtvi-vlm:
     image: nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504
@@ -83,7 +96,22 @@ services:
       OPENAI_API_KEY: ""
       VLM_MODEL_TO_USE: cosmos-reason3
       MODEL_PATH: ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final
-      VLLM_GPU_MEMORY_UTILIZATION: "0.35"
+      # Thor shares CPU and GPU memory. A utilization fraction alone makes
+      # Cosmos consume anywhere from ~3 GiB to ~40 GiB of KV cache depending
+      # on which peer models happened to start first. Pin the cache instead:
+      # 4 GiB comfortably covers one 16K request (vLLM reports ~2.25 GiB) and
+      # preserves deterministic appliance headroom for CV, Embed, and Edge4B.
+      VLLM_GPU_MEMORY_UTILIZATION: "0.30"
+      VLLM_KV_CACHE_MEMORY_BYTES: "4294967296"
+      VLLM_MAX_NUM_BATCHED_TOKENS: "4096"
+      # Cosmos3's Qwen3-VL backbone reproducibly fails the vLLM 0.12 CUDA
+      # graph warm-up on Thor with a dynamic-shape assertion. Eager mode is
+      # the runtime's supported fallback and avoids an endless 16.7 GiB
+      # model reload loop while preserving the same model and context limits.
+      VLLM_ENFORCE_EAGER: "true"
+      VLM_MAX_MODEL_LEN: "16384"
+      VLM_MAX_GENERATION_TOKENS: "4096"
+      VLLM_MAX_NUM_SEQS: "1"
       VLM_BATCH_SIZE: "1"
       NUM_VLM_PROCS: "1"
     volumes:
@@ -110,6 +138,21 @@ services:
       VLM_MODEL_TYPE: rtvi
       VLM_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
       VLM_BASE_URL: http://127.0.0.1:8018
+      # VIOS's synchronous MP4 muxer can reject otherwise-retained RTSP
+      # segments with discontinuous source timestamps. The loopback support
+      # service rebuilds those clips from the exact retained MKV media so
+      # operator-requested evidence inspection remains reliable.
+      VST_CLIP_FALLBACK_URL: http://127.0.0.1:${THOR_LOCAL_EVIDENCE_CLIP_PORT:-8098}
+      # RTVI-VLM deliberately blocks loopback media URLs as SSRF protection.
+      # Serve the prepared clip through the same LAN-safe application origin
+      # already allow-listed for native VST evidence.
+      VST_CLIP_FALLBACK_MEDIA_URL: ${VST_EXTERNAL_URL}/api/vision/evidence-media
+      # Evidence inspection is an operator action and must remain available
+      # while the same local Cosmos service captions a live stream. RTVI-VLM
+      # serializes the bounded file requests; the 16K local context contract
+      # leaves enough room for the configured evidence frame sample.
+      EVIDENCE_ALLOW_FRESH_INSPECTION_WHILE_BUSY: "true"
+      EVIDENCE_FRESH_INSPECTION_TIMEOUT_SECONDS: "120"
       VSS_AGENT_CONFIG_FILE: /vss-agent/deploy/docker/thor-local/official-edge/config_edge.yml
     command:
       - serve
@@ -139,6 +182,13 @@ services:
       VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
       RTVI_VLM_URL: http://127.0.0.1:8018
       VIA_VLM_ENDPOINT: http://127.0.0.1:8018/v1/
+
+  vss-ui:
+    environment:
+      # The base Thor renderer intentionally uses a non-runnable placeholder
+      # model identity. UI-owned live-caption reservations must restore the
+      # actual Cosmos model selected by this official-edge overlay.
+      LVS_VLM_MODEL: nim_nvidia_cosmos3-nano-reasoner_bf16-final
 
   vss-va-mcp:
     environment:

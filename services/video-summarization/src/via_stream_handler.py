@@ -2155,6 +2155,82 @@ class ViaStreamHandler:
                 with self._lock:
                     self._ctx_mgr_pool.append(ctx_mgr)
 
+    def _ingest_live_events_into_qa(
+        self,
+        qa_ctx,
+        *,
+        stream_id: str,
+        camera_id: str,
+        events: list,
+    ) -> int:
+        """Add timestamped live aggregate events before finalizing GraphRAG.
+
+        ``ContextManager.call(ingestion_function)`` only post-processes docs
+        that were previously supplied through ``add_doc``.  The live summary
+        path historically called it with an empty batch, producing a lone
+        Document node and a Q&A surface that confidently returned no history.
+        Feed the timestamped aggregate events through the same contract used
+        by recorded-video chunks, then add the required terminal marker.
+        """
+        accepted: list[dict] = []
+        for event in events:
+            if not isinstance(event, dict):
+                continue
+            start_time = event.get("start_time")
+            end_time = event.get("end_time")
+            if start_time in (None, "") or end_time in (None, ""):
+                continue
+            description = str(event.get("description") or "").strip()
+            event_type = str(event.get("type") or "observed activity").strip()
+            if not description:
+                description = json.dumps(event, ensure_ascii=False)
+            accepted.append(
+                {
+                    "description": f"{event_type}: {description}",
+                    "end_time": end_time,
+                    "start_time": start_time,
+                }
+            )
+
+        for doc_i, event in enumerate(accepted):
+            qa_ctx.add_doc(
+                event["description"],
+                doc_i=doc_i,
+                doc_meta={
+                    "uuid": stream_id,
+                    "camera_id": camera_id,
+                    "file": f"rtsp://{stream_id}",
+                    "start_ntp": event["start_time"],
+                    "end_ntp": event["end_time"],
+                    "is_last": False,
+                    "cv_meta": "",
+                },
+            )
+
+        if not accepted:
+            logger.warning(
+                "Skipping live Q&A ingestion for %s: no timestamped events",
+                stream_id,
+            )
+            return 0
+
+        last = accepted[-1]
+        qa_ctx.add_doc(
+            ".",
+            doc_i=len(accepted),
+            doc_meta={
+                "uuid": stream_id,
+                "camera_id": camera_id,
+                "file": f"rtsp://{stream_id}",
+                "start_ntp": last["start_time"],
+                "end_ntp": last["end_time"],
+                "is_last": True,
+                "cv_meta": "",
+            },
+        )
+        qa_ctx.call({"ingestion_function": {"uuid": stream_id}})
+        return len(accepted)
+
     def summarize_stream(self, request: StreamSummarizeRequest):
         """Summarize a live stream by aggregating captions from Elasticsearch via CA-RAG.
 
@@ -2300,29 +2376,46 @@ class ViaStreamHandler:
                         with self._lock:
                             if self._qa_ctx_mgr_pool:
                                 qa_ctx = self._qa_ctx_mgr_pool.pop()
-                        if qa_ctx:
-                            qa_cfg = deepcopy(self._ca_rag_config)
-                            qa_cfg["context_manager"]["uuid"] = req_info.source_id
-                            qa_cfg["context_manager"]["functions"] = []
-                            fn = "ingestion_function"
-                            if fn in qa_cfg.get("functions", {}):
-                                qa_cfg["context_manager"]["functions"].append(fn)
-                                if "params" not in qa_cfg["functions"][fn]:
-                                    qa_cfg["functions"][fn]["params"] = {}
-                                qa_cfg["functions"][fn]["params"]["uuid"] = req_info.source_id
-                            qa_cfg["functions"].pop("retriever_function", None)
-                            self._configure_ctx_mgr(qa_ctx, qa_cfg)
-                            logger.info(
-                                "summarize_stream: running ingestion on QA ctx_mgr: %s",
-                                req_info.source_id,
+                        if not qa_ctx:
+                            raise ViaException(
+                                "No Q&A context manager is available",
+                                "DependencyUnavailable",
+                                503,
                             )
-                            qa_ctx.call({"ingestion_function": {"uuid": req_info.source_id}})
+                        qa_cfg = deepcopy(self._ca_rag_config)
+                        qa_cfg["context_manager"]["uuid"] = req_info.source_id
+                        qa_cfg["context_manager"]["functions"] = []
+                        fn = "ingestion_function"
+                        if fn in qa_cfg.get("functions", {}):
+                            qa_cfg["context_manager"]["functions"].append(fn)
+                            if "params" not in qa_cfg["functions"][fn]:
+                                qa_cfg["functions"][fn]["params"] = {}
+                            qa_cfg["functions"][fn]["params"]["uuid"] = req_info.source_id
+                        qa_cfg["functions"].pop("retriever_function", None)
+                        self._configure_ctx_mgr(qa_ctx, qa_cfg)
+                        logger.info(
+                            "summarize_stream: running ingestion on QA ctx_mgr: %s",
+                            req_info.source_id,
+                        )
+                        ingested = self._ingest_live_events_into_qa(
+                            qa_ctx,
+                            stream_id=req_info.source_id,
+                            camera_id=req_info.camera_id,
+                            events=events,
+                        )
+                        if not ingested:
+                            raise ViaException(
+                                "No timestamped events are available for Q&A ingestion",
+                                "NoVideoHistory",
+                                409,
+                            )
                     except Exception as qa_ex:
-                        logger.warning(
+                        logger.error(
                             "summarize_stream: QA ingestion failed for %s: %s",
                             req_info.source_id,
                             qa_ex,
                         )
+                        raise
                     finally:
                         if qa_ctx is not None:
                             with self._lock:

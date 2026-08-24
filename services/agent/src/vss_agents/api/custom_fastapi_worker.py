@@ -18,7 +18,11 @@ Custom FastAPI front-end worker that extends NAT's default worker
 to support additional streaming endpoints and a lightweight health check.
 """
 
+from datetime import UTC
+from datetime import datetime
+from datetime import timedelta
 import logging
+from typing import Literal
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -26,9 +30,18 @@ from nat.builder.framework_enum import LLMFrameworkEnum
 from nat.builder.workflow_builder import WorkflowBuilder
 from nat.data_models.config import Config
 from nat.front_ends.fastapi.fastapi_front_end_plugin_worker import FastApiFrontEndPluginWorker
+from pydantic import BaseModel
+from pydantic import Field
+from pydantic import model_validator
 
+from vss_agents.api.analysis_profiles import register_analysis_profile_routes
+from vss_agents.api.evidence_analysis import register_evidence_analysis_routes
 from vss_agents.api.rtsp_delete import register_rtsp_delete_routes
 from vss_agents.api.rtsp_ingest import register_rtsp_ingest_routes
+from vss_agents.api.source_control import register_source_control_routes
+from vss_agents.api.source_reset import register_source_reset_routes
+from vss_agents.api.thor_workload_admission import ThorVisualWorkloadAdmission
+from vss_agents.api.thor_workload_admission import ThorWorkloadAdmissionError
 from vss_agents.api.video_delete import register_video_delete_routes
 from vss_agents.api.video_ingest import register_video_upload
 from vss_agents.api.video_ingest import register_video_upload_complete
@@ -48,6 +61,96 @@ LVS_RUNTIME_TOOL_NAMES = (
     "lvs_caption_retrieval",
     "video_report_gen",
 )
+
+
+class VisionInspectionRequest(BaseModel):
+    """A deterministic, single-source visual inspection request from the UI."""
+
+    source_kind: Literal["live", "replay"]
+    sensor_id: str = Field(min_length=1, max_length=160)
+    query: str = Field(min_length=1, max_length=1000)
+    asked_at: datetime
+    current_time_seconds: float | None = Field(default=None, ge=0)
+    duration_seconds: float | None = Field(default=None, gt=0)
+
+    model_config = {"extra": "forbid"}
+
+    @model_validator(mode="after")
+    def validate_playback(self):
+        if self.source_kind == "live" and (self.current_time_seconds is not None or self.duration_seconds is not None):
+            raise ValueError("Live inspection requests cannot include replay offsets")
+        return self
+
+
+def _replay_inspection_range(request: VisionInspectionRequest) -> tuple[float | None, float | None]:
+    """Choose a fast, useful replay window without pretending it covers unseen footage."""
+
+    query = request.query.lower()
+    whole_replay = any(
+        phrase in query
+        for phrase in ("entire replay", "entire video", "whole replay", "whole video", "summarize this replay")
+    )
+    if whole_replay:
+        return None, None
+
+    duration = request.duration_seconds
+    current = request.current_time_seconds or 0.0
+    # At the initial playhead, inspect the opening rather than constructing an
+    # invalid negative interval. Else center the observation around the frame
+    # the presenter is looking at.
+    start = max(0.0, current - 6.0)
+    end = current + 18.0
+    if duration is not None:
+        end = min(duration, end)
+        if end - start < 2.0:
+            start = max(0.0, end - 24.0)
+    return start, end
+
+
+async def inspect_vision_source(builder: WorkflowBuilder, request: VisionInspectionRequest) -> dict:
+    """Execute the visual evidence tool directly, bypassing agent planning."""
+
+    if request.source_kind == "live":
+        tool_name = "video_understanding_iso"
+        asked_at = request.asked_at.astimezone(UTC)
+        # Allow a small ingest/storage delay at the live edge.
+        start_timestamp: str | float | None = (asked_at - timedelta(seconds=30)).isoformat().replace("+00:00", "Z")
+        end_timestamp: str | float | None = (asked_at - timedelta(seconds=5)).isoformat().replace("+00:00", "Z")
+        observed_range = None
+    else:
+        tool_name = "video_understanding"
+        start_timestamp, end_timestamp = _replay_inspection_range(request)
+        observed_range = (
+            {"start_seconds": start_timestamp, "end_seconds": end_timestamp}
+            if start_timestamp is not None and end_timestamp is not None
+            else None
+        )
+
+    tool = await builder.get_tool(tool_name, wrapper_type=LLMFrameworkEnum.LANGCHAIN)
+    if tool is None:
+        raise RuntimeError(f"Visual evidence tool '{tool_name}' is unavailable")
+
+    answer = await tool.ainvoke(
+        input={
+            "sensor_id": request.sensor_id,
+            "start_timestamp": start_timestamp,
+            "end_timestamp": end_timestamp,
+            "user_prompt": (
+                "Answer the visitor's question only from visible evidence in this video. "
+                "Be concise, name important objects or activity, and do not infer facts that are not visible. "
+                f"Question: {request.query.strip()}"
+            ),
+            "vlm_reasoning": False,
+        }
+    )
+    answer_text = str(answer).strip()
+    if not answer_text:
+        raise RuntimeError("The visual evidence tool returned no observation")
+    return {
+        "answer": answer_text,
+        "evidence_tool": tool_name,
+        "observed_range": observed_range,
+    }
 
 
 async def discover_lvs_runtime_tools(builder: WorkflowBuilder) -> dict:
@@ -123,6 +226,30 @@ class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
 
         logger.info("Registered read-only /api/v1/runtime-tools/lvs discovery endpoint")
 
+        visual_admission = ThorVisualWorkloadAdmission()
+
+        @app.post("/api/v1/vision-inspection", include_in_schema=False)
+        async def vision_inspection(request: VisionInspectionRequest):
+            """Inspect one selected source through a real visual tool call."""
+
+            try:
+                async with visual_admission.reserve("current_visual_question"):
+                    result = await inspect_vision_source(builder, request)
+            except ThorWorkloadAdmissionError as exc:
+                return JSONResponse(status_code=exc.status_code, content=exc.response_body())
+            except Exception as exc:
+                logger.warning("Direct visual inspection failed", exc_info=True)
+                return JSONResponse(
+                    status_code=502,
+                    content={"error": f"Visual inspection could not be completed: {exc}"},
+                )
+            return JSONResponse(status_code=200, content=result)
+
+        logger.info("Registered deterministic /api/v1/vision-inspection endpoint")
+
+        register_evidence_analysis_routes(app, builder, visual_admission)
+        logger.info("Registered grounded /api/v1/evidence-analysis endpoint")
+
         # Register custom streaming routes per capability flags in streaming_ingest
         self._register_streaming_routes(app)
 
@@ -143,6 +270,8 @@ class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
           Registered with ``deprecated=True`` in OpenAPI; will be dropped
           once the fixture migrates to the new three-step flow.
         - ``POST /api/v1/rtsp-streams/add`` and ``DELETE /.../delete/{name}``.
+        - ``POST /api/v1/rtsp-streams/{stream_id}/reset`` — clear generated
+          live analytics and optionally archive media without removing the source.
         - ``DELETE /api/v1/videos/{video_id}``.
 
         Raises:
@@ -174,5 +303,8 @@ class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
         register_video_upload_complete(app, self.config)
         register_video_search_ingest_routes(app, self.config)
         register_rtsp_ingest_routes(app, self.config)
+        register_analysis_profile_routes(app, self.config)
         register_rtsp_delete_routes(app, self.config)
+        register_source_reset_routes(app, self.config)
+        register_source_control_routes(app, self.config)
         register_video_delete_routes(app, self.config)

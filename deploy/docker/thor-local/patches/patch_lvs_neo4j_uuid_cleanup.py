@@ -17,6 +17,7 @@ from __future__ import annotations
 import argparse
 import ast
 from pathlib import Path
+import re
 import site
 import stat
 import tempfile
@@ -26,6 +27,25 @@ ENTITY_OLD = "WHERE e IS NOT NULL AND NOT EXISTS { // Ensure entity is not linke
 ENTITY_NEW = "WHERE e IS NULL OR NOT EXISTS { // Preserve row when no entity was extracted"
 SUMMARY_OLD = "WHERE s IS NOT NULL AND NOT EXISTS { // Ensure summary is not linked elsewhere"
 SUMMARY_NEW = "WHERE s IS NULL OR NOT EXISTS { // Preserve row when no summary was extracted"
+
+ROBUST_UUID_CLEANUP_QUERY = r'''
+MATCH (n)
+WHERE n.uuid = $uuid
+WITH collect(n) AS owned
+OPTIONAL MATCH (ownedChunk:Chunk)-[:HAS_ENTITY]->(entity)
+WHERE ownedChunk IN owned
+WITH owned, collect(DISTINCT entity) AS candidateEntities
+WITH owned, [entity IN candidateEntities WHERE entity IS NOT NULL AND NOT EXISTS {
+  MATCH (otherChunk:Chunk)-[:HAS_ENTITY]->(entity)
+  WHERE NOT otherChunk IN owned
+}] AS orphanedEntities
+OPTIONAL MATCH (summaryChunk:Chunk)-[:IN_SUMMARY]->(summary:Summary)
+WHERE summaryChunk IN owned
+WITH owned, orphanedEntities, collect(DISTINCT summary) AS candidateSummaries
+WITH [node IN owned + orphanedEntities + candidateSummaries WHERE node IS NOT NULL] AS nodesToDelete
+UNWIND nodesToDelete AS nodeToDelete
+DETACH DELETE nodeToDelete
+'''.strip()
 
 
 def default_target() -> Path:
@@ -49,6 +69,23 @@ def _replace_once(source: str, old: str, new: str, label: str) -> str:
 def patch_source(source: str) -> str:
     source = _replace_once(source, ENTITY_OLD, ENTITY_NEW, "Neo4j entity cleanup")
     source = _replace_once(source, SUMMARY_OLD, SUMMARY_NEW, "Neo4j summary cleanup")
+    pattern = re.compile(
+        r'QUERY_TO_DELETE_UUID_GRAPH\s*=\s*(?:[rRuUbBfF]*)'
+        r'(?P<quote>"""|\'\'\').*?(?P=quote)',
+        re.DOTALL,
+    )
+    matches = list(pattern.finditer(source))
+    if len(matches) != 1:
+        raise RuntimeError(
+            f"Expected one UUID cleanup query assignment, found {len(matches)}"
+        )
+    source = pattern.sub(
+        'QUERY_TO_DELETE_UUID_GRAPH = r"""\n'
+        + ROBUST_UUID_CLEANUP_QUERY
+        + '\n"""',
+        source,
+        count=1,
+    )
     ast.parse(source)
     return source
 

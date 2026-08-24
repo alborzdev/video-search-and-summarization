@@ -407,6 +407,7 @@ async def create_realtime_alert(
         prompt=body.prompt,
         sensor_id=body.sensor_id,
         description=body.description,
+        preserve_rtvi_stream=body.preserve_rtvi_stream,
         username=body.username,
         password=body.password,
         place_name=body.place_name,

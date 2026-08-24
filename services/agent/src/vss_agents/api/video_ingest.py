@@ -45,6 +45,7 @@ import math
 import os
 import re
 from typing import Any
+from typing import Literal
 import urllib.parse
 
 from fastapi import APIRouter
@@ -55,6 +56,17 @@ from pydantic import BaseModel
 from pydantic import ConfigDict
 from pydantic import Field
 
+from vss_agents.api.analysis_profile_capacity import AnalysisProfileCapacityError
+from vss_agents.api.analysis_profile_capacity import claim_source_analysis_profile_capacity
+from vss_agents.api.analysis_profile_capacity import commit_analysis_profile_capacity_reservation
+from vss_agents.api.analysis_profile_capacity import release_analysis_profile_capacity_reservation
+from vss_agents.api.analysis_profile_capacity import reserve_analysis_profile_capacity
+from vss_agents.api.analysis_profiles import ANALYSIS_PROFILES
+from vss_agents.api.analysis_profiles import SEMANTIC_PROFILE_ID
+from vss_agents.api.analysis_profiles import analysis_profile_endpoint
+from vss_agents.api.analysis_profiles import require_analysis_profile
+from vss_agents.api.source_analysis_state import get_source_analysis_profile
+from vss_agents.api.source_analysis_state import set_source_kind
 from vss_agents.tools.vst.timeline import get_timeline
 from vss_agents.tools.vst.utils import VSTError
 from vss_agents.tools.vst.utils import get_sensor_id_from_stream_id
@@ -79,6 +91,35 @@ ENV_VST_UPLOAD_TIMEOUT_SECONDS = "VIDEO_INGEST_VST_UPLOAD_TIMEOUT_SECONDS"
 # Sensor ids arrive on the request path and flow into logs and the VST
 # storage URL, so restrict them to an allowlist at the boundary.
 _SENSOR_ID_RE = re.compile(r"\A[A-Za-z0-9._-]{1,128}\Z")
+
+
+async def _delete_detector_generated_data(
+    elasticsearch_url: str,
+    sensor_id: str,
+    source_name: str,
+) -> Any:
+    """Lazily load ES cleanup so upload-only profiles keep a small import surface."""
+    from vss_agents.api.source_cleanup import delete_generated_source_data
+
+    return await delete_generated_source_data(
+        elasticsearch_url,
+        sensor_id,
+        source_name,
+        categories=("detections", "behavior", "incidents", "vlm_incidents"),
+        delete_caption_collection=False,
+    )
+
+
+async def _remove_recording_from_detector(
+    client: httpx.AsyncClient,
+    endpoint: str,
+    sensor_id: str,
+    source_name: str,
+) -> tuple[bool, str]:
+    """Use the canonical idempotent RTVI-CV removal contract lazily."""
+    from vss_agents.api.video_delete import _remove_from_rtvi_cv
+
+    return await _remove_from_rtvi_cv(client, endpoint, sensor_id, source_name)
 
 
 def _validate_sensor_id(sensor_id: str) -> str:
@@ -193,6 +234,33 @@ class VideoIngestResponse(BaseModel):
     sensor_id: str = Field(..., description="VST sensor id for the uploaded video (matches the {sensor_id} path param)")
     filename: str = Field(..., description="The filename returned by VST after upload")
     chunks_processed: int = Field(default=0, description="Number of chunks processed")
+    analysis_profile_id: str = Field(
+        default=SEMANTIC_PROFILE_ID,
+        alias="analysisProfileId",
+        description="Applied VSS-owned source analysis profile",
+    )
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class RecordedAnalysisRequest(BaseModel):
+    """Select and rerun detector analytics for an existing recording."""
+
+    analysis_profile_id: str = Field(alias="analysisProfileId")
+
+    model_config = ConfigDict(extra="forbid", populate_by_name=True)
+
+
+class RecordedAnalysisResponse(BaseModel):
+    analysis_profile_id: str = Field(alias="analysisProfileId")
+    previous_profile_id: str = Field(alias="previousProfileId")
+    detection_enabled: bool = Field(alias="detectionEnabled")
+    generated_data_deleted: int = Field(alias="generatedDataDeleted")
+    message: str
+    sensor_id: str = Field(alias="sensorId")
+    state: Literal["ready"] = "ready"
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class VideoUploadUrlInput(BaseModel):
@@ -227,6 +295,11 @@ class VideoUploadCompleteInput(BaseModel):
     custom_params: dict[str, Any] | None = Field(
         default=None,
         description="Optional per-upload custom parameters forwarded by the UI",
+    )
+    analysis_profile_id: str = Field(
+        default=SEMANTIC_PROFILE_ID,
+        alias="analysisProfileId",
+        description="Validated VSS-owned source analysis profile",
     )
 
 
@@ -568,6 +641,7 @@ async def _run_post_upload_processing(
     rtvi_cv_timeout_seconds: float = DEFAULT_RTVI_CV_TIMEOUT_SECONDS,
     rtvi_embed_timeout_seconds: float = DEFAULT_RTVI_EMBED_TIMEOUT_SECONDS,
     vst_storage_timeout_seconds: float = DEFAULT_VST_STORAGE_TIMEOUT_SECONDS,
+    analysis_profile_id: str = SEMANTIC_PROFILE_ID,
 ) -> VideoIngestResponse:
     """
     Run post-upload processing: get timeline, get video URL, add to RTVI-CV, generate embeddings.
@@ -792,6 +866,7 @@ async def _run_post_upload_processing(
         sensor_id=sensor_id,
         filename=filename,
         chunks_processed=chunks_processed,
+        analysis_profile_id=analysis_profile_id,
     )
 
 
@@ -849,6 +924,14 @@ def create_video_upload_complete_router(
     and RTVI ``camera_name``); other fields are ignored.
     """
     router = APIRouter()
+    detector_urls = tuple(
+        dict.fromkeys(
+            endpoint
+            for candidate in ANALYSIS_PROFILES
+            if candidate.detection_enabled
+            and (endpoint := analysis_profile_endpoint(rtvi_cv_base_url, candidate.id))
+        )
+    )
 
     @router.post(
         "/api/v1/videos/{sensor_id}/complete",
@@ -866,6 +949,18 @@ def create_video_upload_complete_router(
     )
     async def upload_complete(sensor_id: str, body: VideoUploadCompleteInput) -> VideoIngestResponse:
         sensor_id = _validate_sensor_id(sensor_id)
+        profile = require_analysis_profile(body.analysis_profile_id)
+        selected_rtvi_cv_url = analysis_profile_endpoint(rtvi_cv_base_url, profile.id)
+        if profile.detection_enabled and not selected_rtvi_cv_url:
+            raise HTTPException(
+                status_code=503,
+                detail=f"The {profile.name} detector is not configured on this VSS appliance",
+            )
+        try:
+            claim_source_analysis_profile_capacity(sensor_id, profile.id)
+        except AnalysisProfileCapacityError as exc:
+            raise HTTPException(status_code=409, detail=exc.detail) from exc
+        set_source_kind(sensor_id, "recorded")
         # ``filename`` comes from the VST upload response the UI forwards. Fall
         # back to ``sensor_id`` when missing so RTVI-CV's camera_name is at
         # least populated (lookups by sensor id keep working either way).
@@ -879,7 +974,7 @@ def create_video_upload_complete_router(
                 filename=filename,
                 vst_url=vst_internal_url,
                 rtvi_embed_base_url=rtvi_embed_base_url,
-                rtvi_cv_base_url=rtvi_cv_base_url,
+                rtvi_cv_base_url=selected_rtvi_cv_url,
                 elasticsearch_url=elasticsearch_url,
                 rtvi_embed_es_index=rtvi_embed_es_index,
                 rtvi_embed_model=rtvi_embed_model,
@@ -888,12 +983,140 @@ def create_video_upload_complete_router(
                 rtvi_cv_timeout_seconds=rtvi_cv_timeout_seconds,
                 rtvi_embed_timeout_seconds=rtvi_embed_timeout_seconds,
                 vst_storage_timeout_seconds=vst_storage_timeout_seconds,
+                analysis_profile_id=profile.id,
             )
         except HTTPException:
             raise
         except Exception as exc:
             logger.error("/complete failed for %s: %s", sensor_id, exc, exc_info=True)
             raise HTTPException(status_code=500, detail=f"Post-processing failed: {exc}") from exc
+
+    @router.post(
+        "/api/v1/videos/{sensor_id}/analysis",
+        response_model=RecordedAnalysisResponse,
+        summary="Reprocess an existing recording with a source analysis profile",
+        description=(
+            "Preserves the uploaded media and semantic-search index, removes stale "
+            "detector-derived evidence, and reruns the recording through exactly one "
+            "compatible VSS-owned DeepStream worker."
+        ),
+        tags=["Video Ingest"],
+    )
+    async def reprocess_recording(
+        sensor_id: str,
+        body: RecordedAnalysisRequest,
+    ) -> RecordedAnalysisResponse:
+        sensor_id = _validate_sensor_id(sensor_id)
+        try:
+            profile = require_analysis_profile(body.analysis_profile_id)
+        except ValueError as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+        selected_rtvi_cv_url = analysis_profile_endpoint(rtvi_cv_base_url, profile.id)
+        if profile.detection_enabled and not selected_rtvi_cv_url:
+            raise HTTPException(
+                status_code=503,
+                detail=f"The {profile.name} detector is not configured on this VSS appliance",
+            )
+
+        try:
+            source_name = await get_sensor_id_from_stream_id(sensor_id, vst_internal_url)
+        except Exception as exc:
+            logger.error("Could not resolve recording %s for reprocessing", sensor_id, exc_info=True)
+            raise HTTPException(status_code=502, detail="The recording could not be verified in VST") from exc
+        if not source_name:
+            raise HTTPException(status_code=404, detail="The recording no longer exists in VST")
+        try:
+            capacity_reservation = reserve_analysis_profile_capacity(
+                profile.id,
+                source_id=sensor_id,
+            )
+        except AnalysisProfileCapacityError as exc:
+            raise HTTPException(status_code=409, detail=exc.detail) from exc
+
+        try:
+            # VST exposes uploaded MP4 playback through an RTSP URL too. Persist
+            # the source kind before touching detector workers so the concurrent
+            # live-camera reconciler can never claim this replay mid-transaction.
+            set_source_kind(sensor_id, "recorded")
+
+            previous_profile_id = get_source_analysis_profile(sensor_id)
+            previous_profile = require_analysis_profile(previous_profile_id)
+            if previous_profile.detection_enabled and not elasticsearch_url:
+                raise HTTPException(
+                    status_code=503,
+                    detail="Detector-derived evidence cannot be safely replaced because Elasticsearch is unavailable",
+                )
+
+            # First stop every detector worker so none can publish new records
+            # while the prior model's exact source-scoped output is being removed.
+            async with httpx.AsyncClient(timeout=rtvi_cv_timeout_seconds) as client:
+                removal_failures: list[str] = []
+                for endpoint in detector_urls:
+                    removed, message = await _remove_recording_from_detector(
+                        client,
+                        endpoint,
+                        sensor_id,
+                        source_name,
+                    )
+                    if not removed:
+                        removal_failures.append(message)
+            if removal_failures:
+                raise HTTPException(
+                    status_code=502,
+                    detail="The previous detector could not be stopped; the recording was not reprocessed",
+                )
+
+            generated_data_deleted = 0
+            if elasticsearch_url:
+                cleanup = await _delete_detector_generated_data(
+                    elasticsearch_url,
+                    sensor_id,
+                    source_name,
+                )
+                if not cleanup.success:
+                    raise HTTPException(
+                        status_code=502,
+                        detail="Prior detector evidence could not be fully cleared; retry reprocessing",
+                    )
+                generated_data_deleted = cleanup.total_deleted
+
+            if profile.detection_enabled:
+                await _run_post_upload_processing(
+                    camera_name=source_name.rsplit(".", 1)[0],
+                    sensor_id=sensor_id,
+                    filename=source_name,
+                    vst_url=vst_internal_url,
+                    rtvi_embed_base_url="",
+                    rtvi_cv_base_url=selected_rtvi_cv_url,
+                    disable_audio=disable_audio,
+                    rtvi_cv_timeout_seconds=rtvi_cv_timeout_seconds,
+                    rtvi_embed_timeout_seconds=rtvi_embed_timeout_seconds,
+                    vst_storage_timeout_seconds=vst_storage_timeout_seconds,
+                    analysis_profile_id=profile.id,
+                )
+
+            # Persist only after every destructive and runtime step succeeded.
+            # The reservation made the target worker unavailable to parallel
+            # reprocessing requests, so this commit cannot overbook it.
+            try:
+                commit_analysis_profile_capacity_reservation(capacity_reservation, sensor_id)
+            except AnalysisProfileCapacityError as exc:
+                raise HTTPException(status_code=409, detail=exc.detail) from exc
+            return RecordedAnalysisResponse(
+                analysis_profile_id=profile.id,
+                previous_profile_id=previous_profile_id,
+                detection_enabled=profile.detection_enabled,
+                generated_data_deleted=generated_data_deleted,
+                message=(
+                    f"{profile.name} is reprocessing this recording"
+                    if profile.detection_enabled
+                    else "Detector analytics were cleared; semantic search and Vision Analyst remain available"
+                ),
+                sensor_id=sensor_id,
+            )
+        finally:
+            release_analysis_profile_capacity_reservation(capacity_reservation)
 
     return router
 

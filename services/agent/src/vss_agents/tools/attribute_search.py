@@ -557,16 +557,60 @@ async def _fetch_reference_object_embedding(
     response = await es.search(index=search_index_str, body=query)
     hits = response["hits"]["hits"]
     reference = f"object ID '{object_id}' on sensor '{sensor_name}' at '{timestamp_iso}'"
-    if not hits:
-        raise ValueError(f"Reference {reference} not found in behavior index '{search_index_str}'")
+    if hits:
+        embeddings = hits[0]["_source"].get("embeddings", {})
+        if isinstance(embeddings, list):
+            embeddings = embeddings[0] if embeddings else {}
+        vector = embeddings.get("vector", [])
+        if vector:
+            return [float(v) for v in vector]
 
-    embeddings = hits[0]["_source"].get("embeddings", {})
-    if isinstance(embeddings, list):
-        embeddings = embeddings[0] if embeddings else {}
-    vector = embeddings.get("vector", [])
-    if not vector:
+    # Live objects appear in mdx-raw immediately, while mdx-behavior is only
+    # written after a track is consolidated. The UI lets an operator select a
+    # fresh detector box, so resolve that exact frame while behavior catches up.
+    raw_indexes = [
+        index_name.replace("mdx-behavior-", "mdx-raw-", 1)
+        for index_name in (behavior_index if isinstance(behavior_index, list) else [behavior_index])
+    ]
+    raw_index_str = ",".join(raw_indexes)
+    raw_query = {
+        "query": {
+            "bool": {
+                "filter": [
+                    {"term": {"sensorId.keyword": sensor_name}},
+                    {
+                        "range": {
+                            "timestamp": {
+                                "gte": (timestamp - timedelta(seconds=1)).isoformat(),
+                                "lte": (timestamp + timedelta(seconds=1)).isoformat(),
+                            }
+                        }
+                    },
+                    {
+                        "nested": {
+                            "path": "objects",
+                            "query": {"term": {"objects.id.keyword": object_id}},
+                        }
+                    },
+                ]
+            }
+        },
+        "size": 10,
+        "sort": [{"timestamp": {"order": "desc"}}],
+        "_source": ["timestamp", "objects.id", "objects.embedding.vector"],
+    }
+    raw_response = await es.search(index=raw_index_str, body=raw_query)
+    for hit in raw_response["hits"]["hits"]:
+        for raw_object in hit["_source"].get("objects", []):
+            if str(raw_object.get("id")) != object_id:
+                continue
+            vector = raw_object.get("embedding", {}).get("vector", [])
+            if vector:
+                return [float(value) for value in vector]
+
+    if hits:
         raise ValueError(f"Reference {reference} has no embedding vector")
-    return [float(v) for v in vector]
+    raise ValueError(f"Reference {reference} not found in behavior or raw detector indexes")
 
 
 async def search_by_object_embedding(

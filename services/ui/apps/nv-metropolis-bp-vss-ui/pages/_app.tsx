@@ -4,8 +4,10 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { appWithTranslation } from 'next-i18next';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import '@fontsource-variable/manrope/wght.css';
 import { APPLICATION_TITLE } from '../constants/constants';
 import '../styles/globals.css';
+import '../styles/vision-intelligence.css';
 import 'rsuite/dist/rsuite.min.css';
 import '../styles/rsuite-custom.css';
 

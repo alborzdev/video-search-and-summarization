@@ -13,11 +13,16 @@ const MAX_ACTIONS = 40;
 const MAX_API = 32;
 const CLEANUP_ACTION_RESERVE = 3;
 const MAX_AGENT_DELETE_RESPONSE_BYTES = 64 * 1024;
+const UPLOAD_CHUNK_BYTES = 10 * 1024 * 1024;
 const WORKFLOW_DEADLINE_MS = 175 * 1000;
 const CLEANUP_RESERVE_MS = 45 * 1000;
 const ACTION_TIMEOUT_MS = 15 * 1000;
 const LONG_WAIT_TIMEOUT_MS = 90 * 1000;
 const CLEANUP_HTTP_TIMEOUT_MS = 7 * 1000;
+const STREAM_PROJECTION_POLL_ATTEMPTS = 4;
+const STREAM_PROJECTION_POLL_INTERVAL_MS = 750;
+
+let currentPhase = "startup";
 
 function remainingTimeout(deadline, maximum) {
   const remaining = deadline - Date.now();
@@ -58,24 +63,6 @@ function stable(value) {
     );
   }
   return value;
-}
-
-function mediaPart(body, contentType, expectedFileName) {
-  const boundaryMatch = /boundary=(?:"([^"]+)"|([^;\s]+))/i.exec(contentType);
-  if (!boundaryMatch) throw new Error("multipart-boundary");
-  const boundary = boundaryMatch[1] ?? boundaryMatch[2];
-  const disposition = Buffer.from(
-    `name="mediaFile"; filename="${expectedFileName}"`,
-  );
-  const dispositionAt = body.indexOf(disposition);
-  if (dispositionAt < 0 || body.indexOf(disposition, dispositionAt + 1) >= 0) {
-    throw new Error("multipart-media-part");
-  }
-  const payloadAt = body.indexOf(Buffer.from("\r\n\r\n"), dispositionAt);
-  const terminator = Buffer.from(`\r\n--${boundary}`);
-  const payloadEnd = payloadAt < 0 ? -1 : body.indexOf(terminator, payloadAt + 4);
-  if (payloadAt < 0 || payloadEnd < 0) throw new Error("multipart-media-part");
-  return body.subarray(payloadAt + 4, payloadEnd);
 }
 
 function numericLoopbackOrigin(text) {
@@ -146,6 +133,7 @@ function flattenStreams(value) {
 }
 
 async function main() {
+  currentPhase = "input";
   const input = await stdinJson();
   const workflowDeadline = Date.now() + WORKFLOW_DEADLINE_MS;
   const cleanupDeadline = workflowDeadline + CLEANUP_RESERVE_MS;
@@ -181,7 +169,67 @@ async function main() {
   let apiExchanges = 0;
   const consoleErrors = [];
   const redirectStatuses = [];
-  const uploadCaptures = [];
+
+  await page.addInitScript(({ uploadUrl }) => {
+    const captures = [];
+    Object.defineProperty(globalThis, "__vssUploadCaptures", {
+      configurable: false,
+      enumerable: false,
+      writable: false,
+      value: captures,
+    });
+    const stateByRequest = new WeakMap();
+    const originalOpen = XMLHttpRequest.prototype.open;
+    const originalSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+    const originalSend = XMLHttpRequest.prototype.send;
+
+    XMLHttpRequest.prototype.open = function open(method, url, ...rest) {
+      stateByRequest.set(this, {
+        method: String(method).toUpperCase(),
+        url: new URL(String(url), globalThis.location.href).href,
+        headers: {},
+      });
+      return originalOpen.call(this, method, url, ...rest);
+    };
+    XMLHttpRequest.prototype.setRequestHeader = function setRequestHeader(name, value) {
+      const state = stateByRequest.get(this);
+      if (state) state.headers[String(name).toLowerCase()] = String(value);
+      return originalSetRequestHeader.call(this, name, value);
+    };
+    XMLHttpRequest.prototype.send = function send(body) {
+      const state = stateByRequest.get(this);
+      if (state?.method === "POST" && state.url === uploadUrl) {
+        captures.push((async () => {
+          try {
+            if (!(body instanceof FormData)) return { error: "form-data" };
+            const media = body.get("mediaFile");
+            const formFileName = body.get("filename");
+            if (!(media instanceof Blob) || typeof formFileName !== "string") {
+              return { error: "media-part" };
+            }
+            const payload = await media.arrayBuffer();
+            const digest = await crypto.subtle.digest("SHA-256", payload);
+            const payloadSha = Array.from(new Uint8Array(digest), (byte) =>
+              byte.toString(16).padStart(2, "0")
+            ).join("");
+            return {
+              fileName: state.headers["nvstreamer-file-name"],
+              formFileName,
+              identifier: state.headers["nvstreamer-identifier"],
+              chunkNumber: Number(state.headers["nvstreamer-chunk-number"]),
+              totalChunks: Number(state.headers["nvstreamer-total-chunks"]),
+              isLastChunk: state.headers["nvstreamer-is-last-chunk"],
+              payloadBytes: payload.byteLength,
+              payloadSha,
+            };
+          } catch (_error) {
+            return { error: "capture" };
+          }
+        })());
+      }
+      return originalSend.call(this, body);
+    };
+  }, { uploadUrl: `${vstApiBase}/v1/storage/file` });
 
   const workflowAct = async (operation) => {
     if (actions >= MAX_ACTIONS - CLEANUP_ACTION_RESERVE) {
@@ -221,31 +269,6 @@ async function main() {
       }
     }
   });
-  page.on("request", (request) => {
-    if (
-      request.method() === "POST" &&
-      request.url() === `${vstApiBase}/v1/storage/file`
-    ) {
-      uploadCaptures.push(
-        (async () => {
-          const headers = await request.allHeaders();
-          const body = request.postDataBuffer();
-          if (!body) throw new Error("upload-body");
-          const fileName = headers["nvstreamer-file-name"];
-          if (!fixtureNames.includes(fileName)) throw new Error("upload-filename");
-          return {
-            fileName,
-            identifier: headers["nvstreamer-identifier"],
-            chunkNumber: Number(headers["nvstreamer-chunk-number"]),
-            totalChunks: Number(headers["nvstreamer-total-chunks"]),
-            isLastChunk: headers["nvstreamer-is-last-chunk"],
-            payload: mediaPart(body, headers["content-type"] ?? "", fileName),
-          };
-        })(),
-      );
-    }
-  });
-
   const ownedIds = new Set();
   const fixtureNames = input.fixtures.map((row) => row.path.split("/").at(-1));
   const streamNames = fixtureNames.map((name) => name.replace(/\.[^.]+$/, ""));
@@ -258,6 +281,7 @@ async function main() {
   let preStateCaptured = false;
   let beforeDigest = null;
   let cleanupVerified = false;
+  let ownedMutationStarted = false;
 
   const readStreams = async (
     deadline = workflowDeadline,
@@ -278,6 +302,26 @@ async function main() {
     return flattenStreams(value);
   };
 
+  const pollStreams = async (
+    predicate,
+    deadline = workflowDeadline,
+    maximum = ACTION_TIMEOUT_MS,
+  ) => {
+    let rows = [];
+    for (let attempt = 0; attempt < STREAM_PROJECTION_POLL_ATTEMPTS; attempt += 1) {
+      rows = await readStreams(deadline, maximum);
+      if (predicate(rows)) return rows;
+      if (attempt + 1 < STREAM_PROJECTION_POLL_ATTEMPTS) {
+        await withinDeadline(
+          () => new Promise((resolve) => setTimeout(resolve, STREAM_PROJECTION_POLL_INTERVAL_MS)),
+          deadline,
+          STREAM_PROJECTION_POLL_INTERVAL_MS + 1,
+        );
+      }
+    }
+    return rows;
+  };
+
   const unrelated = (rows) =>
     rows.filter((row) => !ownedIds.has(String(row.sensorId)));
 
@@ -291,7 +335,14 @@ async function main() {
 
   const reconcileAndCleanup = async () => {
     if (!preStateCaptured || beforeDigest === null) return;
-    const observed = await readStreams(cleanupDeadline, CLEANUP_HTTP_TIMEOUT_MS);
+    currentPhase = "cleanup-reconcile";
+    const observed = ownedMutationStarted
+      ? await pollStreams(
+          (rows) => rows.some((row) => ownedNames.has(String(row.name))),
+          cleanupDeadline,
+          CLEANUP_HTTP_TIMEOUT_MS,
+        )
+      : await readStreams(cleanupDeadline, CLEANUP_HTTP_TIMEOUT_MS);
     for (let index = 0; index < 2; index += 1) {
       const matches = observed.filter(
         (row) => String(row.name) === streamNames[index],
@@ -379,7 +430,16 @@ async function main() {
         deletionFailed = true;
       }
     }
-    const finalRows = await readStreams(cleanupDeadline, CLEANUP_HTTP_TIMEOUT_MS);
+    currentPhase = "cleanup-postconditions";
+    const finalRows = await pollStreams(
+      (rows) =>
+        !rows.some(
+          (row) =>
+            ownedIds.has(String(row.sensorId)) || ownedNames.has(String(row.name)),
+        ),
+      cleanupDeadline,
+      CLEANUP_HTTP_TIMEOUT_MS,
+    );
     if (
       deletionFailed ||
       finalRows.some(
@@ -396,6 +456,7 @@ async function main() {
   };
 
   try {
+    currentPhase = "page-open";
     await workflowAct(() => page.setViewportSize({ width: 1440, height: 900 }));
     await workflowAct((timeout) =>
       page.goto(`${uiOrigin}/`, { waitUntil: "domcontentloaded", timeout }),
@@ -425,6 +486,7 @@ async function main() {
       throw new Error("page-identity");
     }
 
+    currentPhase = "responsive-render";
     await workflowAct(() => page.setViewportSize({ width: 390, height: 844 }));
     const mobileOverflow = await workflowWait(() =>
       page.evaluate(
@@ -440,6 +502,7 @@ async function main() {
       page.screenshot({ type: "png", timeout }),
     );
 
+    currentPhase = "pre-state";
     const before = await readStreams();
     if (
       before.some(
@@ -454,8 +517,13 @@ async function main() {
     beforeDigest = sha(JSON.stringify(stable(unrelated(before))));
     preStateCaptured = true;
 
-    const fileInput = page.locator('input[type="file"][accept=".mp4,.mkv"]').first();
-    await workflowAct(() => fileInput.setInputFiles(input.fixtures.map((row) => row.path)));
+    currentPhase = "upload-dialog";
+    await workflowAct(async (timeout) => {
+      const chooserPromise = page.waitForEvent("filechooser", { timeout });
+      await page.getByRole("button", { name: "+ Upload Video", exact: true }).click();
+      const chooser = await chooserPromise;
+      await chooser.setFiles(input.fixtures.map((row) => row.path));
+    });
     await workflowWait((timeout) =>
       page.getByText("Upload Files", { exact: true }).waitFor({ timeout }),
     );
@@ -469,6 +537,8 @@ async function main() {
     await workflowWait((timeout) =>
       page.getByText(input.template_field_name, { exact: true }).waitFor({ timeout }),
     );
+    currentPhase = "upload-progress";
+    ownedMutationStarted = true;
     await workflowAct(() => page.getByRole("button", { name: /^Upload \(2\)$/ }).click());
     const progressPanel = page.getByTestId("upload-progress-panel");
     await workflowWait((timeout) => progressPanel.waitFor({ timeout }));
@@ -485,14 +555,23 @@ async function main() {
       progressPanel.waitFor({ state: "detached", timeout }),
     );
 
+    currentPhase = "chunk-integrity";
     const capturedChunks = await workflowWait(
-      () => Promise.all(uploadCaptures),
+      () => page.evaluate(async () => {
+        const captures = globalThis.__vssUploadCaptures;
+        if (!Array.isArray(captures)) throw new Error("upload-capture");
+        return Promise.all(captures);
+      }),
       LONG_WAIT_TIMEOUT_MS,
     );
     if (capturedChunks.length !== 4) throw new Error("chunk-count");
     const identifiers = new Set();
     for (let index = 0; index < fixtureNames.length; index += 1) {
       const fileName = fixtureNames[index];
+      const expectedFixture = await fs.readFile(input.fixtures[index].path);
+      if (sha(expectedFixture) !== input.fixtures[index].sha256) {
+        throw new Error("fixture-drift");
+      }
       const chunks = capturedChunks
         .filter((row) => row.fileName === fileName)
         .sort((left, right) => left.chunkNumber - right.chunkNumber);
@@ -503,19 +582,33 @@ async function main() {
         chunks[0].isLastChunk !== "false" ||
         chunks[1].chunkNumber !== 2 ||
         chunks[1].isLastChunk !== "true" ||
+        chunks.some((row) => row.formFileName !== fileName || row.error) ||
         !chunks[0].identifier ||
         chunks[0].identifier !== chunks[1].identifier
       ) {
         throw new Error("chunk-protocol");
       }
       identifiers.add(chunks[0].identifier);
-      if (sha(Buffer.concat(chunks.map((row) => row.payload))) !== input.fixtures[index].sha256) {
-        throw new Error("chunk-payload-digest");
+      for (const chunk of chunks) {
+        const start = (chunk.chunkNumber - 1) * UPLOAD_CHUNK_BYTES;
+        const end = Math.min(start + UPLOAD_CHUNK_BYTES, expectedFixture.length);
+        const expectedPayload = expectedFixture.subarray(start, end);
+        if (
+          chunk.payloadBytes !== expectedPayload.length ||
+          chunk.payloadSha !== sha(expectedPayload)
+        ) {
+          throw new Error("chunk-payload-digest");
+        }
       }
     }
     if (identifiers.size !== 2) throw new Error("chunk-identifier");
 
-    const afterUpload = await readStreams();
+    currentPhase = "upload-projection";
+    const afterUpload = await pollStreams((rows) =>
+      streamNames.every(
+        (name) => rows.filter((row) => String(row.name) === name).length === 1,
+      ),
+    );
     for (let index = 0; index < 2; index += 1) {
       const row = uniqueNamedRow(afterUpload, streamNames[index]);
       const sensorId = String(row.sensorId);
@@ -529,6 +622,7 @@ async function main() {
       );
     }
 
+    currentPhase = "rtsp-negative";
     await workflowAct(() => page.getByRole("button", { name: "+ Add RTSP" }).click());
     await workflowAct(() => page.locator("#add-rtsp-url").fill("http://127.0.0.1/not-rtsp"));
     await workflowAct(() => page.locator("#add-rtsp-sensor-name").fill(rtspName));
@@ -538,6 +632,7 @@ async function main() {
         .getByText('RTSP URL must start with "rtsp://".', { exact: true })
         .waitFor({ timeout }),
     );
+    currentPhase = "rtsp-positive";
     await workflowAct(() =>
       page.locator("#add-rtsp-url").fill(`rtsp://127.0.0.1:18554/${rtspName}`),
     );
@@ -549,12 +644,16 @@ async function main() {
       page.getByText(rtspName, { exact: true }).waitFor({ timeout }),
     );
 
-    const afterRtsp = await readStreams();
+    currentPhase = "rtsp-projection";
+    const afterRtsp = await pollStreams(
+      (rows) => rows.filter((row) => String(row.name) === rtspName).length === 1,
+    );
     const rtspRow = uniqueNamedRow(afterRtsp, rtspName);
     const rtspSensorId = String(rtspRow.sensorId);
     ownedIds.add(rtspSensorId);
     registered.set(rtspSensorId, { kind: "rtsp", name: rtspName });
 
+    currentPhase = "bulk-delete-cancel";
     for (const name of [...streamNames, rtspName]) {
       const card = page
         .getByText(name, { exact: true })
@@ -584,6 +683,7 @@ async function main() {
       );
     }
 
+    currentPhase = "bulk-delete-confirm";
     await workflowAct(() => page.getByRole("button", { name: "Delete Selected", exact: true }).click());
     await workflowWait((timeout) => confirm.waitFor({ timeout }));
     await workflowWait((timeout) =>
@@ -599,7 +699,14 @@ async function main() {
       LONG_WAIT_TIMEOUT_MS,
     );
 
-    const finalRows = await readStreams();
+    currentPhase = "postconditions";
+    const finalRows = await pollStreams(
+      (rows) =>
+        !rows.some(
+          (row) =>
+            ownedIds.has(String(row.sensorId)) || ownedNames.has(String(row.name)),
+        ),
+    );
     if (
       finalRows.some(
         (row) =>
@@ -669,5 +776,5 @@ try {
   // Browser.close command to the operator-preexisting browser.
   process.exit(0);
 } catch (_error) {
-  fail("browser_oracle_failed");
+  fail(`browser_oracle_failed:${currentPhase}`);
 }

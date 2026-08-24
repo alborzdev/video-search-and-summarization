@@ -49,6 +49,55 @@ from vss_agents.utils.retry import create_retry_strategy
 logger = logging.getLogger(__name__)
 
 
+async def _prepare_fallback_clip(
+    stream_id: str,
+    start_time: str,
+    end_time: str,
+) -> str | None:
+    """Build a clip from retained media when VIOS's synchronous muxer fails.
+
+    Some RTSP sources retain playable MKV media but carry timestamp
+    discontinuities that make ``/storage/file/{id}/url`` return HTTP 500. A
+    Thor-local support service remuxes that same retained media with regenerated
+    timestamps. The fallback is opt-in so upstream and non-Thor deployments keep
+    their existing behavior.
+    """
+    fallback_base = os.getenv("VST_CLIP_FALLBACK_URL", "").strip().rstrip("/")
+    if not fallback_base:
+        return None
+
+    payload = {
+        "sensorId": stream_id,
+        "startTime": start_time,
+        "endTime": end_time,
+    }
+    timeout = aiohttp.ClientTimeout(total=320)
+    try:
+        async with (
+            aiohttp.ClientSession(timeout=timeout) as session,
+            session.post(f"{fallback_base}/prepare", json=payload) as response,
+        ):
+            body = await response.json(content_type=None)
+            if response.status != 200 or not isinstance(body, dict) or not body.get("key"):
+                logger.warning(
+                    "Retained-media clip fallback failed for stream %s with HTTP %s",
+                    stream_id,
+                    response.status,
+                )
+                return None
+            key = str(body["key"])
+            if len(key) != 64 or any(character not in "0123456789abcdef" for character in key):
+                logger.warning("Retained-media clip fallback returned an invalid key")
+                return None
+            media_base = os.getenv("VST_CLIP_FALLBACK_MEDIA_URL", "").strip().rstrip("/")
+            if media_base:
+                return f"{media_base}?{urllib.parse.urlencode({'key': key})}"
+            return f"{fallback_base}/media/{key}.mp4"
+    except (aiohttp.ClientError, TimeoutError, ValueError, TypeError):
+        logger.warning("Retained-media clip fallback request failed", exc_info=True)
+        return None
+
+
 class VSTVideoClipConfig(FunctionBaseConfig, name="vst.video_clip"):
     """Configuration for the VST Video Clip tool."""
 
@@ -261,6 +310,13 @@ async def get_video_url(
             with retry:
                 async with session.get(url) as response:
                     if response.status != 200:
+                        fallback_url = await _prepare_fallback_clip(stream_id, start_time_iso, end_time_iso)
+                        if fallback_url:
+                            logger.info(
+                                "VIOS clip muxing returned HTTP %s; using retained-media fallback",
+                                response.status,
+                            )
+                            return fallback_url
                         raise VSTError(f"Failed to get video clip URL: HTTP {response.status}")
                     text = await response.text()
                     try:
@@ -299,9 +355,16 @@ async def vst_video_clip(config: VSTVideoClipConfig, _: Builder) -> AsyncGenerat
             disable_audio=not config.enable_audio,
         )
         await validate_video_url(video_clip_url)
-        ext_base = config.vst_external_url.rstrip("/")
-        path_only = urllib.parse.urlparse(video_clip_url).path
-        video_clip_url = f"{ext_base}{path_only}"
+        fallback_base = os.getenv("VST_CLIP_FALLBACK_URL", "").strip().rstrip("/")
+        fallback_media_base = os.getenv("VST_CLIP_FALLBACK_MEDIA_URL", "").strip().rstrip("/")
+        is_fallback_url = bool(
+            (fallback_base and video_clip_url.startswith(f"{fallback_base}/"))
+            or (fallback_media_base and video_clip_url.startswith(f"{fallback_media_base}?"))
+        )
+        if not is_fallback_url:
+            ext_base = config.vst_external_url.rstrip("/")
+            path_only = urllib.parse.urlparse(video_clip_url).path
+            video_clip_url = f"{ext_base}{path_only}"
         return VSTVideoClipOutput(video_url=video_clip_url, stream_id=stream_id)
 
     # Register the tool with the appropriate input schema based on time_format:

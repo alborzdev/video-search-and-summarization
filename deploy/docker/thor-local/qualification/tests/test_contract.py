@@ -238,9 +238,9 @@ class CheckedInInventoryTests(unittest.TestCase):
     def test_inventory_totals_are_exact(self) -> None:
         rest = [item for item in self.manifests.values() if item["kind"] == "rest"]
         mcp = [item for item in self.manifests.values() if item["kind"] == "mcp"]
-        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 350)
+        self.assertEqual(sum(item["declared_operation_count"] for item in rest), 362)
         self.assertEqual(
-            sum(item["normalized_unique_operation_count"] for item in rest), 349
+            sum(item["normalized_unique_operation_count"] for item in rest), 361
         )
         self.assertEqual(
             self.inventory["expected_totals"]["official_declared_rest_operations"],
@@ -254,7 +254,7 @@ class CheckedInInventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             self.inventory["expected_totals"]["thor_local_extension_operations"],
-            4,
+            16,
         )
         self.assertEqual(sum(item["tool_count"] for item in mcp), 44)
         self.assertEqual(sum(item["prompt_count"] for item in mcp), 5)
@@ -343,13 +343,50 @@ class CheckedInInventoryTests(unittest.TestCase):
         self.assertEqual(len(colliding), 2)
 
     def test_lvs_source_and_documented_gap_are_exact(self) -> None:
-        self.assertEqual(self.manifests["lvs"]["declared_operation_count"], 18)
+        self.assertEqual(self.manifests["lvs"]["declared_operation_count"], 19)
         self.assertEqual(self.surfaces["lvs"]["official_operation_count"], 17)
         self.assertEqual(
             self.surfaces["lvs"]["thor_local_extensions"],
-            [{"method": "GET", "path": "/files/{file_id}"}],
+            [
+                {"method": "GET", "path": "/files/{file_id}"},
+                {"method": "DELETE", "path": "/v1/qa/{asset_id}"},
+            ],
         )
         qualify._validate_lvs_documented_gap(self.inventory, self.manifests)
+
+    def test_agent_official_denominator_excludes_local_vision_extensions(self) -> None:
+        self.assertEqual(self.manifests["agent"]["declared_operation_count"], 75)
+        self.assertEqual(self.surfaces["agent"]["official_operation_count"], 64)
+        extensions = {
+            (item["method"], item["path"])
+            for item in self.surfaces["agent"]["thor_local_extensions"]
+        }
+        self.assertEqual(
+            extensions,
+            {
+                ("GET", "/api/v1/analysis-profiles"),
+                ("POST", "/api/v1/analysis-profiles/recommend"),
+                ("GET", "/api/v1/analysis-profiles/sources/{source_id}"),
+                ("POST", "/api/v1/evidence-analysis"),
+                ("GET", "/api/v1/rtsp-streams/{stream_id}/analysis"),
+                ("POST", "/api/v1/rtsp-streams/{stream_id}/analysis"),
+                ("POST", "/api/v1/rtsp-streams/{stream_id}/reset"),
+                ("GET", "/api/v1/runtime-tools/lvs"),
+                ("POST", "/api/v1/videos/{sensor_id}/analysis"),
+                ("POST", "/api/v1/vision-inspection"),
+                ("GET", "/health"),
+            },
+        )
+        source_paths = {
+            item["path"] for item in self.manifests["agent"]["source_files"]
+        }
+        self.assertTrue(
+            {
+                "services/agent/src/vss_agents/api/analysis_profile_capacity.py",
+                "services/agent/src/vss_agents/api/source_analysis_state.py",
+                "services/agent/src/vss_agents/api/thor_workload_admission.py",
+            }.issubset(source_paths)
+        )
 
     def test_rt_vlm_official_denominator_excludes_local_cancellation(self) -> None:
         self.assertEqual(self.manifests["rt-vlm"]["declared_operation_count"], 28)
@@ -389,7 +426,7 @@ class CheckedInInventoryTests(unittest.TestCase):
                 QUALIFICATION_DIR / "expected",
             )
         self.assertEqual(status, 0, output.getvalue())
-        self.assertIn("350 declared REST operations", output.getvalue())
+        self.assertIn("362 declared REST operations", output.getvalue())
         self.assertIn("official core denominator is 346 declared", output.getvalue())
         self.assertIn("44 MCP tools plus 5 MCP prompts", output.getvalue())
 

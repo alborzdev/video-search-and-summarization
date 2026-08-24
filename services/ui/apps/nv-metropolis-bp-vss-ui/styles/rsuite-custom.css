@@ -1,9 +1,9 @@
 /* SPDX-License-Identifier: MIT */
-/* Override rsuite font to use NVIDIA Sans */
+/* Keep RSuite aligned with the CTAILabs product typography. */
 .rs-theme-dark,
 .rs-theme-light,
 [class*="rs-"] {
-  font-family: 'NVIDIA Sans', system-ui, -apple-system, sans-serif !important;
+  font-family: var(--ctai-font-sans) !important;
 }
 
 /* Custom rsuite theme - Light mode darker */

@@ -360,7 +360,13 @@ def verify_contract_identity(contract: dict[str, Any]) -> None:
     _expect(vlm, "adapter_mode", "local_shared", "vlm")
     _expect(vlm, "provider_type", "rtvi", "vlm")
     _expect(vlm, "base_url", COSMOS_BASE_URL, "vlm")
-    _expect(vlm, "gpu_memory_utilization", "0.35", "vlm")
+    _expect(vlm, "gpu_memory_utilization", "0.30", "vlm")
+    _expect(vlm, "kv_cache_memory_bytes", "4294967296", "vlm")
+    _expect(vlm, "enforce_eager", "true", "vlm")
+    _expect(vlm, "max_model_len", "16384", "vlm")
+    _expect(vlm, "max_generation_tokens", "4096", "vlm")
+    _expect(vlm, "max_num_batched_tokens", "4096", "vlm")
+    _expect(vlm, "max_num_seqs", "1", "vlm")
 
     llm_fraction = _decimal(memory.get("llm_fraction"), "memory.llm_fraction")
     vlm_fraction = _decimal(memory.get("vlm_fraction"), "memory.vlm_fraction")
@@ -371,10 +377,10 @@ def verify_contract_identity(contract: dict[str, Any]) -> None:
         memory.get("minimum_available_fraction_before_launch"),
         "memory.minimum_available_fraction_before_launch",
     )
-    if llm_fraction != Decimal("0.25") or vlm_fraction != Decimal("0.35"):
-        raise ContractError("official Edge4B/Cosmos3 fractions must remain 0.25/0.35")
-    if reserve != Decimal("0.20"):
-        raise ContractError("official-edge unified-memory reserve must remain 0.20")
+    if llm_fraction != Decimal("0.25") or vlm_fraction != Decimal("0.30"):
+        raise ContractError("official Edge4B/Cosmos3 fractions must remain 0.25/0.30")
+    if reserve != Decimal("0.25"):
+        raise ContractError("official-edge unified-memory reserve must remain 0.25")
     if required != llm_fraction + vlm_fraction + reserve:
         raise ContractError("minimum available fraction must equal LLM + VLM + reserve")
 
@@ -520,7 +526,13 @@ def verify_env_contract() -> None:
         "RTVI_VLM_MODEL_TO_USE": "cosmos-reason3",
         "RTVI_VLM_MODEL_PATH": COSMOS_ARTIFACT,
         "RTVI_VLM_OPENAI_MODEL_DEPLOYMENT_NAME": COSMOS_MODEL_ID,
-        "RTVI_VLLM_GPU_MEMORY_UTILIZATION": "0.35",
+        "RTVI_VLLM_GPU_MEMORY_UTILIZATION": "0.30",
+        "RTVI_VLLM_KV_CACHE_MEMORY_BYTES": "4294967296",
+        "RTVI_VLLM_MAX_NUM_BATCHED_TOKENS": "4096",
+        "RTVI_VLLM_ENFORCE_EAGER": "true",
+        "RTVI_VLM_MAX_MODEL_LEN": "16384",
+        "RTVI_VLM_MAX_GENERATION_TOKENS": "4096",
+        "RTVI_VLLM_MAX_NUM_SEQS": "1",
         "RTVI_VLM_BATCH_SIZE": "1",
         "RTVI_VLM_NUM_VLM_PROCS": "1",
         "VSS_AGENT_CONFIG_FILE": AGENT_CONFIG_CONTAINER,
@@ -567,6 +579,7 @@ def verify_compose_contract() -> None:
         "rtvi-vlm",
         "vss-agent",
         "lvs-server",
+        "vss-ui",
         "vss-va-mcp",
         "alert-bridge",
     }:
@@ -577,6 +590,7 @@ def verify_compose_contract() -> None:
     rtvlm = services["rtvi-vlm"]
     agent = services["vss-agent"]
     lvs = services["lvs-server"]
+    ui = services["vss-ui"]
     va_mcp = services["vss-va-mcp"]
     alert_bridge = services["alert-bridge"]
     for name, value in (
@@ -585,6 +599,7 @@ def verify_compose_contract() -> None:
         ("rtvi-vlm", rtvlm),
         ("vss-agent", agent),
         ("lvs-server", lvs),
+        ("vss-ui", ui),
         ("vss-va-mcp", va_mcp),
         ("alert-bridge", alert_bridge),
     ):
@@ -600,7 +615,25 @@ def verify_compose_contract() -> None:
     _expect(edge, "network_mode", "host", "compose.nemotron-edge")
     _expect(edge, "runtime", "nvidia", "compose.nemotron-edge")
     _expect(edge, "read_only", True, "compose.nemotron-edge")
+    _expect(
+        edge,
+        "entrypoint",
+        [
+            "python3",
+            "/usr/local/bin/thor-startup-gate.py",
+            "--http",
+            "http://127.0.0.1:8018/v1/health/ready",
+            "--",
+        ],
+        "compose.nemotron-edge",
+    )
     _expect(edge, "command", EDGE_COMMAND, "compose.nemotron-edge")
+    _expect(
+        edge,
+        "depends_on",
+        {"rtvi-vlm": {"condition": "service_healthy"}},
+        "compose.nemotron-edge",
+    )
     expected_edge_environment = {
         "HF_HUB_OFFLINE": "1",
         "TRANSFORMERS_OFFLINE": "1",
@@ -623,6 +656,7 @@ def verify_compose_contract() -> None:
     expected_edge_volumes = [
         "${THOR_OFFICIAL_EDGE4B_SNAPSHOT:?Set the exact verified Edge4B snapshot path}:/models/edge4b:ro",
         "${THOR_OFFICIAL_EDGE4B_BLOBS_DIR:?Set the exact verified Edge4B blobs path}:/blobs:ro",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/deploy/docker/thor-local/startup-gate.py:/usr/local/bin/thor-startup-gate.py:ro",
     ]
     if edge.get("volumes") != expected_edge_volumes:
         raise ContractError(
@@ -643,7 +677,13 @@ def verify_compose_contract() -> None:
         "OPENAI_API_KEY": "",
         "VLM_MODEL_TO_USE": "cosmos-reason3",
         "MODEL_PATH": COSMOS_ARTIFACT,
-        "VLLM_GPU_MEMORY_UTILIZATION": "0.35",
+        "VLLM_GPU_MEMORY_UTILIZATION": "0.30",
+        "VLLM_KV_CACHE_MEMORY_BYTES": "4294967296",
+        "VLLM_MAX_NUM_BATCHED_TOKENS": "4096",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLM_MAX_MODEL_LEN": "16384",
+        "VLM_MAX_GENERATION_TOKENS": "4096",
+        "VLLM_MAX_NUM_SEQS": "1",
         "VLM_BATCH_SIZE": "1",
         "NUM_VLM_PROCS": "1",
     }
@@ -663,6 +703,8 @@ def verify_compose_contract() -> None:
         "VIA_VLM_ENDPOINT": f"{COSMOS_BASE_URL}/v1/",
     }:
         raise ContractError("compose LVS credential environment differs")
+    if ui.get("environment") != {"LVS_VLM_MODEL": COSMOS_MODEL_ID}:
+        raise ContractError("compose UI VLM identity differs")
     if va_mcp.get("environment") != {
         "NVIDIA_API_KEY": "",
         "OPENAI_API_KEY": "",
@@ -712,6 +754,10 @@ def verify_compose_contract() -> None:
         "VLM_MODEL_TYPE": "rtvi",
         "VLM_NAME": COSMOS_MODEL_ID,
         "VLM_BASE_URL": COSMOS_BASE_URL,
+        "VST_CLIP_FALLBACK_URL": "http://127.0.0.1:${THOR_LOCAL_EVIDENCE_CLIP_PORT:-8098}",
+        "VST_CLIP_FALLBACK_MEDIA_URL": "${VST_EXTERNAL_URL}/api/vision/evidence-media",
+        "EVIDENCE_ALLOW_FRESH_INSPECTION_WHILE_BUSY": "true",
+        "EVIDENCE_FRESH_INSPECTION_TIMEOUT_SECONDS": "120",
         "VSS_AGENT_CONFIG_FILE": AGENT_CONFIG_CONTAINER,
     }
     if agent_env != expected_agent:
@@ -1307,7 +1353,7 @@ def verify_memory(contract: dict[str, Any], meminfo_path: Path) -> None:
         raise ContractError(
             "unified-memory admission failed: "
             f"MemAvailable/MemTotal={actual:.4f}, required>={required} "
-            "(0.25 Edge4B + 0.35 Cosmos3 + 0.20 reserve)"
+            "(0.25 Edge4B + 0.30 Cosmos3 + 0.25 reserve)"
         )
 
 
@@ -1466,7 +1512,13 @@ def verify_resolved_compose(
         "OPENAI_API_KEY": "",
         "VLM_MODEL_TO_USE": "cosmos-reason3",
         "MODEL_PATH": COSMOS_ARTIFACT,
-        "VLLM_GPU_MEMORY_UTILIZATION": "0.35",
+        "VLLM_GPU_MEMORY_UTILIZATION": "0.30",
+        "VLLM_KV_CACHE_MEMORY_BYTES": "4294967296",
+        "VLLM_MAX_NUM_BATCHED_TOKENS": "4096",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLM_MAX_MODEL_LEN": "16384",
+        "VLM_MAX_GENERATION_TOKENS": "4096",
+        "VLLM_MAX_NUM_SEQS": "1",
     }
     for key, expected in expected_rtvlm.items():
         if rtvlm_env.get(key) != expected:
@@ -1883,7 +1935,13 @@ def verify_readiness(
             "VLM_MODEL_TO_USE": "cosmos-reason3",
             "MODEL_PATH": COSMOS_ARTIFACT,
             "VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME": COSMOS_MODEL_ID,
-            "VLLM_GPU_MEMORY_UTILIZATION": "0.35",
+            "VLLM_GPU_MEMORY_UTILIZATION": "0.30",
+            "VLLM_KV_CACHE_MEMORY_BYTES": "4294967296",
+            "VLLM_MAX_NUM_BATCHED_TOKENS": "4096",
+            "VLLM_ENFORCE_EAGER": "true",
+            "VLM_MAX_MODEL_LEN": "16384",
+            "VLM_MAX_GENERATION_TOKENS": "4096",
+            "VLLM_MAX_NUM_SEQS": "1",
             "NGC_API_KEY": "",
             "NVIDIA_API_KEY": "",
             "HF_TOKEN": "",
@@ -1991,7 +2049,7 @@ def _audit(args: argparse.Namespace) -> int:
             print(f"FAIL images: {exc}")
         try:
             verify_memory(contract, args.meminfo)
-            print("PASS 0.25 + 0.35 + 0.20 unified-memory admission")
+            print("PASS 0.25 + 0.30 + 0.25 unified-memory admission")
         except ContractError as exc:
             failures.append(f"memory: {exc}")
             print(f"FAIL memory: {exc}")

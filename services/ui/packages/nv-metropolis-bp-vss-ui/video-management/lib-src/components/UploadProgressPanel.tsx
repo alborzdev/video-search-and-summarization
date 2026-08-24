@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+import { useDialogAccessibility } from '@aiqtoolkit-ui/common';
 import React from 'react';
 import { Button } from '@nvidia/foundations-react-core';
 import type { UploadProgress } from '../types';
@@ -14,8 +15,6 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
   onClose,
   onCancel,
 }) => {
-  if (uploads.length === 0) return null;
-
   const completedCount = uploads.filter((u) => u.status === 'success').length;
   const errorCount = uploads.filter((u) => u.status === 'error').length;
   const cancelledCount = uploads.filter((u) => u.status === 'cancelled').length;
@@ -25,9 +24,18 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
 
   const allDone = inProgressCount === 0 && pendingCount === 0 && processingCount === 0;
   const hasActiveUploads = inProgressCount > 0 || pendingCount > 0 || processingCount > 0;
+  const dialogRef = useDialogAccessibility<HTMLDivElement>({
+    isOpen: uploads.length > 0,
+    onClose,
+    // Processing must remain visible and must not dismiss the modal beneath it.
+    dismissible: allDone,
+  });
+
+  if (uploads.length === 0) return null;
 
   return (
     <div
+      ref={dialogRef}
       data-testid="upload-progress-panel"
       className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
       role="dialog"

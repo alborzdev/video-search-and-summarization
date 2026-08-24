@@ -22,6 +22,7 @@ live in ``vss_agents.api.rtsp_ingest``.
 from unittest.mock import ANY
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
+from unittest.mock import call
 from unittest.mock import patch
 
 import pytest
@@ -30,6 +31,7 @@ from vss_agents.api.rtsp_delete import DeleteStreamResponse
 from vss_agents.api.rtsp_delete import create_rtsp_delete_router
 from vss_agents.api.rtsp_delete import register_rtsp_delete_routes
 from vss_agents.api.rtsp_ingest import ServiceConfig
+from vss_agents.api.source_cleanup import GeneratedDataCleanup
 
 
 class TestDeleteStreamResponse:
@@ -78,7 +80,7 @@ class TestDeleteStreamEndpoint:
 
     @pytest.mark.asyncio
     @patch("vss_agents.api.rtsp_delete.cleanup_vst_sensor")
-    @patch("vss_agents.api.rtsp_delete.cleanup_rtvi_cv")
+    @patch("vss_agents.api.rtsp_delete.cleanup_source_from_all_rtvi_cv")
     @patch("vss_agents.api.rtsp_delete.cleanup_rtvi_embed_stream")
     @patch("vss_agents.api.rtsp_delete.cleanup_rtvi_embed_generation")
     @patch("vss_agents.api.rtsp_delete.get_stream_info_by_name")
@@ -89,7 +91,7 @@ class TestDeleteStreamEndpoint:
         mock_get_stream_info,
         mock_cleanup_embed_gen,
         mock_cleanup_embed_stream,
-        mock_cleanup_rtvi_cv,
+        mock_cleanup_all_cv,
         mock_cleanup_vst_sensor,
     ):
         """Successful delete when RTVI is fully configured (search-style)."""
@@ -109,7 +111,7 @@ class TestDeleteStreamEndpoint:
         mock_get_stream_info.return_value = (True, "OK", "sensor-123", "rtsp://vst:554/sensor-123")
         mock_cleanup_embed_gen.return_value = (True, "OK")
         mock_cleanup_embed_stream.return_value = (True, "OK")
-        mock_cleanup_rtvi_cv.return_value = (True, "OK")
+        mock_cleanup_all_cv.return_value = (True, "OK")
         mock_cleanup_vst_sensor.return_value = (True, "OK")
 
         endpoint = router.routes[0].endpoint
@@ -182,7 +184,7 @@ class TestDeleteStreamEndpoint:
 
     @pytest.mark.asyncio
     @patch("vss_agents.api.rtsp_delete.cleanup_vst_sensor")
-    @patch("vss_agents.api.rtsp_delete.cleanup_rtvi_cv")
+    @patch("vss_agents.api.rtsp_delete.cleanup_source_from_all_rtvi_cv")
     @patch("vss_agents.api.rtsp_delete.cleanup_rtvi_embed_stream")
     @patch("vss_agents.api.rtsp_delete.cleanup_rtvi_embed_generation")
     @patch("vss_agents.api.rtsp_delete.get_stream_info_by_name")
@@ -193,7 +195,7 @@ class TestDeleteStreamEndpoint:
         mock_get_stream_info,
         mock_cleanup_embed_gen,
         mock_cleanup_embed_stream,
-        mock_cleanup_rtvi_cv,
+        mock_cleanup_all_cv,
         mock_cleanup_vst_sensor,
     ):
         """Partial deletion when some services fail."""
@@ -213,7 +215,7 @@ class TestDeleteStreamEndpoint:
         mock_get_stream_info.return_value = (True, "OK", "sensor-123", "rtsp://vst:554/sensor-123")
         mock_cleanup_embed_gen.return_value = (True, "OK")
         mock_cleanup_embed_stream.return_value = (False, "Error")
-        mock_cleanup_rtvi_cv.return_value = (True, "OK")
+        mock_cleanup_all_cv.return_value = (True, "OK")
         mock_cleanup_vst_sensor.return_value = (True, "OK")
 
         endpoint = router.routes[0].endpoint
@@ -221,6 +223,133 @@ class TestDeleteStreamEndpoint:
 
         assert response.status == "partial"
         assert response.sensor_id == "sensor-123"
+
+    @pytest.mark.asyncio
+    @patch("vss_agents.api.rtsp_delete.cleanup_vst_sensor")
+    @patch("vss_agents.api.rtsp_delete.delete_generated_source_data")
+    @patch("vss_agents.api.rtsp_delete.get_stream_info_by_name")
+    async def test_delete_cascades_generated_data_across_all_partitions(
+        self,
+        mock_get_stream_info,
+        mock_delete_generated,
+        mock_cleanup_vst_sensor,
+    ):
+        router = create_rtsp_delete_router(
+            ServiceConfig(
+                vst_internal_url="http://vst:30888",
+                elasticsearch_url="http://elasticsearch:9200",
+                delete_vst_storage_on_stream_remove=False,
+            )
+        )
+        mock_get_stream_info.return_value = (True, "OK", "sensor-123", "rtsp://vst/live")
+        mock_delete_generated.return_value = GeneratedDataCleanup(
+            deleted_documents={"embeddings": 5, "detections": 20},
+            deleted_collections=(),
+            failures={},
+        )
+        mock_cleanup_vst_sensor.return_value = (True, "OK")
+
+        response = await router.routes[0].endpoint(name="camera-1")
+
+        assert response.status == "success"
+        assert response.generated_data_deleted == 25
+        mock_delete_generated.assert_awaited_once_with(
+            "http://elasticsearch:9200",
+            "sensor-123",
+            "camera-1",
+        )
+
+    @pytest.mark.asyncio
+    @patch("vss_agents.api.rtsp_delete.cleanup_vst_sensor")
+    @patch("vss_agents.api.rtsp_delete.delete_lvs_graph_history")
+    @patch("vss_agents.api.rtsp_delete.get_stream_info_by_name")
+    @patch("vss_agents.api.rtsp_delete.httpx.AsyncClient")
+    async def test_delete_cascades_graph_history(
+        self,
+        mock_client_class,
+        mock_get_stream_info,
+        mock_delete_graph,
+        mock_cleanup_vst_sensor,
+    ):
+        router = create_rtsp_delete_router(
+            ServiceConfig(
+                vst_internal_url="http://vst:30888",
+                lvs_backend_url="http://lvs:38111",
+                delete_vst_storage_on_stream_remove=False,
+            )
+        )
+        client = MagicMock()
+        mock_client_class.return_value.__aenter__ = AsyncMock(return_value=client)
+        mock_client_class.return_value.__aexit__ = AsyncMock(return_value=None)
+        mock_get_stream_info.return_value = (True, "OK", "sensor-123", "rtsp://vst/live")
+        mock_delete_graph.return_value = (True, "OK")
+        mock_cleanup_vst_sensor.return_value = (True, "OK")
+
+        response = await router.routes[0].endpoint(name="camera-1")
+
+        assert response.status == "success"
+        mock_delete_graph.assert_awaited_once_with(client, "http://lvs:38111", "sensor-123")
+
+    @pytest.mark.asyncio
+    @patch("vss_agents.api.rtsp_delete.cleanup_vst_sensor")
+    @patch("vss_agents.api.rtsp_delete.get_stream_info_by_name")
+    @patch("vss_agents.api.rtsp_delete.set_source_deleting")
+    async def test_delete_blocks_reconciliation_until_teardown_finishes(
+        self,
+        mock_set_source_deleting,
+        mock_get_stream_info,
+        mock_cleanup_vst_sensor,
+    ):
+        """The reconciler must see a tombstone for the entire destructive window."""
+        router = create_rtsp_delete_router(
+            ServiceConfig(
+                vst_internal_url="http://vst:30888",
+                delete_vst_storage_on_stream_remove=False,
+            )
+        )
+        events: list[tuple[str, bool]] = []
+        mock_get_stream_info.return_value = (True, "OK", "sensor-123", "rtsp://vst/live")
+        mock_set_source_deleting.side_effect = lambda _stream_id, deleting: events.append(("deleting", deleting))
+
+        async def cleanup_sensor(_config, _stream_id):
+            events.append(("cleanup", True))
+            return True, "OK"
+
+        mock_cleanup_vst_sensor.side_effect = cleanup_sensor
+
+        response = await router.routes[0].endpoint(name="camera-1")
+
+        assert response.status == "success"
+        assert events == [
+            ("deleting", True),
+            ("cleanup", True),
+            ("deleting", False),
+        ]
+        mock_set_source_deleting.assert_has_calls([call("sensor-123", True), call("sensor-123", False)])
+
+    @pytest.mark.asyncio
+    @patch("vss_agents.api.rtsp_delete.cleanup_vst_sensor")
+    @patch("vss_agents.api.rtsp_delete.get_stream_info_by_name")
+    @patch("vss_agents.api.rtsp_delete.set_source_deleting")
+    async def test_delete_clears_reconciliation_tombstone_after_unexpected_error(
+        self,
+        mock_set_source_deleting,
+        mock_get_stream_info,
+        mock_cleanup_vst_sensor,
+    ):
+        router = create_rtsp_delete_router(
+            ServiceConfig(
+                vst_internal_url="http://vst:30888",
+                delete_vst_storage_on_stream_remove=False,
+            )
+        )
+        mock_get_stream_info.return_value = (True, "OK", "sensor-123", "rtsp://vst/live")
+        mock_cleanup_vst_sensor.side_effect = RuntimeError("unexpected cleanup failure")
+
+        with pytest.raises(RuntimeError, match="unexpected cleanup failure"):
+            await router.routes[0].endpoint(name="camera-1")
+
+        mock_set_source_deleting.assert_has_calls([call("sensor-123", True), call("sensor-123", False)])
 
 
 class TestRegisterRtspDeleteRoutes:

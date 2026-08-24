@@ -45,14 +45,14 @@ describe('DeleteConfirmDialog — visibility', () => {
 
   it('renders the primary confirmation message', () => {
     renderDialog();
-    expect(screen.getByText('Are you sure you want to delete the following?')).toBeInTheDocument();
+    expect(screen.getByText('Delete the selected sources and all of their generated data?')).toBeInTheDocument();
   });
 
   it('warns explicitly that deletion is irreversible', () => {
     renderDialog();
     expect(
       screen.getByTestId('delete-irreversible-warning'),
-    ).toHaveTextContent('This deletion is irreversible and cannot be undone.');
+    ).toHaveTextContent('This removes the source, retained media, embeddings, detections, events, and captions. It cannot be undone.');
   });
 
   it('exposes the dialog with accessible alertdialog semantics', () => {
@@ -98,7 +98,7 @@ describe('DeleteConfirmDialog — preview list', () => {
     renderDialog({ streams: [] });
 
     // Body shell + message still render
-    expect(screen.getByText('Are you sure you want to delete the following?')).toBeInTheDocument();
+    expect(screen.getByText('Delete the selected sources and all of their generated data?')).toBeInTheDocument();
     // But there's no <ul> of items
     expect(screen.queryByRole('list')).not.toBeInTheDocument();
   });
@@ -157,9 +157,9 @@ describe('DeleteConfirmDialog — user interactions', () => {
 });
 
 describe('DeleteConfirmDialog — isDeleting state', () => {
-  it('shows "Confirm" label by default and "Deleting..." while a delete is in flight', () => {
+  it('shows the explicit destructive label by default and "Deleting..." while a delete is in flight', () => {
     const { rerender } = renderDialog({ isDeleting: false });
-    expect(screen.getByTestId('delete-confirm-button')).toHaveTextContent('Confirm');
+    expect(screen.getByTestId('delete-confirm-button')).toHaveTextContent('Delete everything');
 
     rerender(<DeleteConfirmDialog {...defaultProps} isDeleting={true} />);
     expect(screen.getByTestId('delete-confirm-button')).toHaveTextContent('Deleting...');
@@ -188,6 +188,26 @@ describe('DeleteConfirmDialog — isDeleting state', () => {
 
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(onCancel).not.toHaveBeenCalled();
+  });
+});
+
+describe('DeleteConfirmDialog — live reset mode', () => {
+  it('explains that the source stays connected and lets retained clips be included', () => {
+    const onClearRecordingsChange = jest.fn();
+    renderDialog({
+      mode: 'reset',
+      streams: [rtspStream],
+      clearRecordings: true,
+      onClearRecordingsChange,
+    });
+
+    expect(screen.getByText('CLEAR GENERATED LIVE DATA')).toBeInTheDocument();
+    expect(screen.getByText(/The camera stays connected/)).toBeInTheDocument();
+    expect(screen.getByText('Also clear retained live clips')).toBeInTheDocument();
+    expect(screen.getByTestId('delete-confirm-button')).toHaveTextContent('Clear and resume');
+
+    fireEvent.click(screen.getByRole('checkbox'));
+    expect(onClearRecordingsChange).toHaveBeenCalledWith(false);
   });
 });
 

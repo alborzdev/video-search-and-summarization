@@ -111,6 +111,22 @@ async def get_stream_id(sensor_id: str, vst_internal_url: str | None = None) -> 
         if sensor_id in stream_id_map.values():
             stream_id = sensor_id
         else:
+            # A source can be removed from the live catalog while its retained
+            # recording is intentionally still available for investigation.
+            # Accept the supplied stream ID only when VST proves that it owns
+            # a non-empty recording timeline; this keeps archived search hits
+            # usable without trusting an arbitrary caller-provided ID.
+            timeline_url = (
+                f"{vst_internal_url.rstrip('/')}/vst/api/v1/storage/{quote_path_segment(sensor_id)}/timelines"
+            )
+            try:
+                timeout = aiohttp.ClientTimeout(total=5)
+                async with aiohttp.ClientSession(timeout=timeout) as session, session.get(timeline_url) as response:
+                    timeline = await response.json(content_type=None) if response.status == 200 else None
+                if isinstance(timeline, list) and timeline:
+                    return sensor_id
+            except Exception:
+                logger.info("No retained VST timeline found for %s", scrub_log(sensor_id), exc_info=True)
             raise VSTError(
                 f"streamId not found for '{sensor_id}'. Available: {sorted(stream_id_map.keys())}"
                 if stream_id_map

@@ -27,6 +27,8 @@ export type {
 
 // Hooks
 export { useVideoModal } from './hooks/useVideoModal';
+export { useDialogAccessibility } from './hooks/useDialogAccessibility';
+export type { UseDialogAccessibilityOptions } from './hooks/useDialogAccessibility';
 export type {
   VideoModalState,
   VideoModalData,

@@ -137,7 +137,8 @@ describe('fetchVideoUrlFromVst', () => {
     expect(calledUrl).toContain('endTime=');
     expect(calledUrl).toContain('expiryMinutes=60');
     expect(calledUrl).toContain('container=mp4');
-    expect(calledUrl).toContain('disableAudio=false');
+    expect(calledUrl).toContain('disableAudio=true');
+    expect(calledUrl).toContain('transcode=full');
   });
 
   it('includes bbox configuration when showObjectsBbox is true and objectIds exist', async () => {
