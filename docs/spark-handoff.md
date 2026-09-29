@@ -5,14 +5,22 @@
 Prepared September 29, 2026. This checkout contains the demo UI redesign, backend
 fixes, research, presenter runbook, tests, and an independent **Spark candidate**
 bootstrap. It is ready to hand to Codex on the Spark for deployment and continued
-work. It is **not yet a hardware-qualified Spark installation**. Compose rendering
-and source tests on Thor cannot prove first model download, GB10 engine compilation,
-video decoding, or latency under Isaac Sim load.
+work. The Spark target has since passed first downloads/GB10 engine compilation
+and a real recorded-fixture upload → search → playback → fresh answer → saved
+report → retained replay journey. Cache-only restart and a fresh visual request
+also pass. After a later 24 GiB guard trip, attempt 10 verifies recovery with a
+smaller language-model allocation and the Cosmos pre-warmup cache fix: video/text
+warmup, fresh visual requests and retained-report playback pass. The 180-second
+post-request observation also passes, with a 27.818 GiB minimum and no new trip.
+See [target evidence](qa/2026-09-29-spark-startup.md). Joint Isaac Sim operation
+and sustained live ingestion remain unqualified.
 
 The user's target is **Isaac Sim and VSS running together on the same Spark**,
 with a live RTSP stream from Sim. Do not stop or reconfigure Sim without discussing
-it with the user. Start with one stream. Keep the 48 GiB diagnostic reserve until
-measured joint operation justifies a different budget. The Spark guard stops only
+it with the user. Start with one stream. The fresh-checkout default reserve is
+48 GiB; on September 29 the user explicitly authorized a **24 GiB Spark trial
+reserve**. Preserve the saved setting on this target and measure joint operation.
+The Spark guard stops only
 this VSS Compose project; it cannot prevent every driver/GPU hang.
 
 ## Get the exact working branch
@@ -81,6 +89,16 @@ it and recreate the model containers in a controlled staged restart; prove they
 start from cache before calling the installation offline-ready. Never commit
 Docker credentials, generated environments, or `.spark/`.
 
+After the first successful model download, render again with the existing
+host/gateway/data-directory/registry arguments and `--cached-models`. This mode
+pins local model paths, enables HF/RTVI offline mode, disables NIM model downloads,
+and removes NGC download keys from the rendered model services. Unset download
+credentials in the invoking shell and perform a controlled staged restart of the
+model services and their consumers. `render` alone does not recreate containers;
+verify readiness and a fresh real visual request after `up`. The mode is saved
+across later renders; use `--no-cached-models` when intentionally downloading a
+new model. This is cache-only startup, not proof of network-isolated operation.
+
 ## Render, download/build, and start
 
 Substitute Spark's LAN IPv4 and its actual `docker0` address (`ip -4 addr show
@@ -102,6 +120,12 @@ generated Compose graph, health receipts and new runtime data live under ignored
 time. Do not change it accidentally on a later render. Keep a backup of
 `.spark/graph-password` with any Neo4j database backup.
 
+If the host cannot establish TLS to `registry.npmjs.org`, `render` accepts
+`--npm-registry https://registry.yarnpkg.com` to build from Yarn's npm mirror.
+Preserve the existing host/gateway/data-directory arguments when rendering again.
+The build still uses `npm ci` with the checked-in versions and integrity hashes;
+registry overrides must be HTTPS URLs without embedded credentials.
+
 `stage` verifies the bundled Logstash plugin archive, downloads the checksum-locked
 VIOS MCP wheelhouse, pulls released services, and builds source derivatives,
 including the current UI. It refuses to build while this candidate stack runs.
@@ -109,12 +133,49 @@ Keep Sim idle during large image builds if unified-memory pressure is high; the
 helper cannot qualify someone else's GPU workload. It does not prune caches.
 
 `up` provisions missing data roots, requires the guard, starts dependencies and
-models serially, and waits for readiness before continuing. Each model admission
-requires 63 GiB available (48 GiB reserve plus 15 GiB startup headroom). A failed
+models serially, and waits for readiness before continuing. A one-shot initializer
+sets the empty Nemotron cache volume to the image's service user (1000:1000);
+the model itself continues to run as that non-root user. Model admission requires
+the saved runtime reserve plus an initial peak estimate: 24 GiB for Nemotron,
+20 GiB for embeddings, and 24 GiB for Cosmos. With the target's 24 GiB reserve,
+these checks require 48, 44 and 48 GiB available respectively. These are startup
+estimates to validate on Spark, not measured joint-workload guarantees. A failed
 admission is a real capacity constraint to investigate with Sim, not permission
 to automatically lower the reserve. The guard remains a user systemd service;
 ensure the operator's user session remains active, or configure user lingering
 when unattended operation is desired. Services deliberately do not auto-restart.
+
+After each model becomes ready, startup advises away large files only within its
+candidate cache mounts using `POSIX_FADV_DONTNEED`. Files are retained and no
+privileged/global cache flush runs. This addresses observed GB10 CUDA allocation
+failure while host MemAvailable still included substantial file cache; inspect
+the before/after memory log and a real visual request, because RTVI can suppress
+a warmup error and still report healthy. The Spark gateway targets the loopback
+agent through `VSS_AGENT_BACKEND_HOST`; other profiles retain the host-IP default.
+
+Spark also sets `VLM_RECLAIM_MODEL_FILE_CACHE=true` and the explicit
+`VLM_FILE_CACHE_RECLAIM_ROOT` for checkpoint-scoped advice immediately after
+Cosmos engine initialization, before the wrapper's first CUDA allocation.
+This source hook defaults off for other profiles. The Spark Nemotron allocation
+fraction is now 0.11, with one sequence and 32768 context; a 0.13 run crossed the
+24 GiB operating reserve after a successful short question. That historical
+23.985 GiB sample triggered 30 clean candidate-container stops, without reboot or
+stopping the pre-existing workloads. Attempt 10 completes recovery in 640.224
+seconds with a 28.445 GiB startup minimum, no trip and unchanged boot ID. The
+pre-warmup hook raises MemFree from 7.087 to 23.421 GiB while retaining all four
+Cosmos safetensors; video and text warmup both pass. Fresh movement/end-location
+answers return correctly in 1.423/0.942 seconds, and the saved report's retained
+video replays fully with no console warnings or errors. The 180.620-second
+post-request observation records 902 samples at 200 ms cadence, a 27.818 GiB
+minimum, no new guard trip and unchanged boot ID. Keep the guard; these bounded
+checks do not establish capacity for an active Sim renderer or sustained ingestion.
+
+The target reserve is saved in ignored `.spark/settings.json`; subsequent renders
+preserve it when `--reserve-gib` is omitted. To change it explicitly, render with
+the existing host/gateway/data-directory/registry arguments plus `--reserve-gib 24`,
+then run `systemctl --user restart vss-spark-guard.service`. Confirm `floor_gib`
+in `.spark/guard-status.json` before starting models. Thor's guard is separate
+and retains its existing settings.
 
 Stop only this candidate graph with:
 
@@ -133,10 +194,10 @@ paste the whole file or `docker inspect` environment output into chat/logs.
 | UI / Agent / VIOS MCP / evidence support | Current source; independent new data roots |
 | Vision model | Cosmos3 reasoner inside source-built RT-VLM 3.2.1 SBSA |
 | Language model | Supported Spark Nemotron Nano 9B NIM variant; different from Thor Edge 4B |
-| Search embeddings | Cosmos Embed1 448p; downloads weights and compiles a fresh GB10 TensorRT cache |
+| Search embeddings | Cosmos Embed1 448p on RT-Embed 3.2.1 SBSA; downloads weights and compiles a fresh GB10 TensorRT cache |
 | Summaries / graph Q&A | Source-patched LVS SBSA, local model endpoints, 768-dimension embeddings |
 | Video | Released ARM64 VIOS; Spark uses its codec installer, not Thor's Tegra codec bundle |
-| Safety / startup | Independent 48 GiB guard, serial admission, saved sources and always-on rules paused |
+| Safety / startup | Saved target reserve (24 GiB authorized trial; 48 GiB fresh default), serial admission, saved sources and always-on rules paused |
 | Detectors | Omitted initially, matching the current Thor core runtime; enable/qualify separately |
 | Telemetry | Shared CPU/service monitoring; Thor tegrastats omitted; Spark GPU monitoring needs target verification |
 
@@ -146,6 +207,12 @@ Thor scripts and historical artifacts remain for recovery, not Spark startup.
 Do not run `artifacts/thor-memory-2026-09-09/manage.py` or `tools/dev/ui.py` on Spark:
 those intentionally operate the Thor candidate. A Spark hot-reload workflow is
 still to be qualified; the initial bootstrap builds the UI from source.
+
+Use the SBSA embedding image from the first engine build. If a previous attempt
+used the Jetson base, retain its generated TensorRT plans outside the active
+model filenames and rebuild them under SBSA. Plans from the Jetson 10.13 runtime
+were incompatible with the SBSA 10.14 runtime on this target; retaining weights
+and ONNX exports avoids repeating model downloads.
 
 The entire application source is transferred through Git. **Existing runtime
 content is not**: long recordings, indexed databases, uploaded media, saved user

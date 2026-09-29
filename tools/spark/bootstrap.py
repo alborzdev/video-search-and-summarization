@@ -7,6 +7,7 @@ Target qualification is recorded separately; rendering is not deployment proof.
 import argparse
 import ipaddress
 import json
+import math
 import os
 from pathlib import Path
 import platform
@@ -16,13 +17,51 @@ import shutil
 import subprocess
 import sys
 import time
+import urllib.parse
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
 STATE = ROOT / '.spark'
-LLM = 'nvidia/nvidia-nemotron-nano-9b-v2-dgx-spark'
+# API identity exposed by the pinned Spark NIM, distinct from its image name.
+LLM = 'nvidia/nemotron-nano-9b-v2'
 VLM = 'nim_nvidia_cosmos3-nano-reasoner_bf16-final'
 PROFILE = 'bp_developer_thor_full_2d'
+DEFAULT_RESERVE_GIB = 48
+# Initial peak estimates; record target measurements before tuning these.
+MODEL_STARTUP_HEADROOM_GIB = {'spark-llm': 24, 'rtvi-embed': 20, 'rtvi-vlm': 24}
+MODEL_CACHE_ROOTS = {
+    'spark-llm': ['/opt/nim/.cache/ngc'],
+    'rtvi-embed': ['/opt/nvidia/rtvi/.rtvi/ngc_model_cache', '/tmp/triton_model_repo'],
+    'rtvi-vlm': ['/opt/nvidia/rtvi/.rtvi/ngc_model_cache'],
+}
+
+# GB10 CUDA allocations can fail while MemAvailable includes reclaimable file
+# cache. Once each model is loaded, advise away only its candidate cache files.
+# This needs no sudo, keeps the files, and leaves other applications untouched.
+CACHE_RECLAIM_SCRIPT = '''
+import json, os, re, sys
+from pathlib import Path
+def memory():
+    value = Path('/proc/meminfo').read_text()
+    return {key: round(int(re.search(r'^' + key + r':\\s+(\\d+)', value, re.M)[1]) / 1048576, 3)
+            for key in ('MemFree', 'MemAvailable', 'Cached')}
+before = memory()
+seen, advised_bytes = set(), 0
+for root_arg in sys.argv[1:]:
+    root = Path(root_arg).resolve()
+    for candidate in root.rglob('*'):
+        path = candidate.resolve()
+        if not path.is_relative_to(root) or not path.is_file() or path in seen:
+            continue
+        seen.add(path)
+        size = path.stat().st_size
+        if size < 1048576:
+            continue
+        with path.open('rb') as file:
+            os.posix_fadvise(file.fileno(), 0, 0, os.POSIX_FADV_DONTNEED)
+        advised_bytes += size
+print(json.dumps({'before_gib': before, 'after_gib': memory(), 'advised_bytes': advised_bytes}))
+'''
 
 
 def run(args, **kwargs):
@@ -31,6 +70,23 @@ def run(args, **kwargs):
 
 def available():
     return int(re.search(r'^MemAvailable:\s+(\d+)', Path('/proc/meminfo').read_text(), re.M)[1]) / 1048576
+
+
+def validate_reserve(value):
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value < 128:
+        raise RuntimeError('Runtime reserve must be a finite number between 0 and 128 GiB.')
+    return value
+
+
+def memory_reserve():
+    settings = STATE / 'settings.json'
+    if not settings.exists():
+        return DEFAULT_RESERVE_GIB
+    return validate_reserve(json.loads(settings.read_text()).get('reserve_gib', DEFAULT_RESERVE_GIB))
+
+
+def model_admission_gib(service):
+    return memory_reserve() + MODEL_STARTUP_HEADROOM_GIB[service]
 
 
 def private_write(path, value):
@@ -57,14 +113,24 @@ def doctor():
         raise RuntimeError('Docker Compose >= 2.39.1 required for includes/override tags.')
     if int(Path('/proc/sys/vm/max_map_count').read_text()) < 262144:
         raise RuntimeError('Set vm.max_map_count >= 262144 before Elasticsearch (see handoff).')
-    if available() < 63:
-        raise RuntimeError('Need at least 63 GiB MemAvailable before initial model admission. Stop competing GPU jobs, including Isaac Sim.')
-    print(f'Spark preflight passed; {available():.1f} GiB available. Driver/Docker versions still require comparison with NVIDIA prerequisites.')
+    reserve = memory_reserve()
+    if available() < reserve:
+        raise RuntimeError(f'Need at least {reserve:g} GiB MemAvailable for the configured runtime reserve.')
+    print(f'Spark preflight passed; {available():.1f} GiB available; {reserve:g} GiB runtime reserve. Driver/Docker versions still require comparison with NVIDIA prerequisites.')
 
 
-def render(host_ip, data_dir, gateway):
+def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org', reserve_gib=None, cached_models=None):
+    reserve = memory_reserve() if reserve_gib is None else validate_reserve(reserve_gib)
+    if cached_models is None:
+        settings_path = STATE / 'settings.json'
+        cached_models = json.loads(settings_path.read_text()).get('cached_models', False) if settings_path.exists() else False
+    if not isinstance(cached_models, bool):
+        raise RuntimeError('cached_models must be a boolean.')
     ipaddress.IPv4Address(host_ip)
     ipaddress.IPv4Address(gateway)
+    registry = urllib.parse.urlsplit(npm_registry)
+    if registry.scheme != 'https' or not registry.hostname or registry.username or registry.password or registry.query or registry.fragment:
+        raise RuntimeError('Use an HTTPS npm registry URL without credentials, query, or fragment.')
     data = Path(data_dir).expanduser().resolve()
     if data == ROOT or ROOT in data.parents and not str(data).startswith(str(STATE) + '/'):
         raise RuntimeError('Use .spark/data or a data directory outside the checkout.')
@@ -80,16 +146,17 @@ def render(host_ip, data_dir, gateway):
         LLM_NAME=LLM, LLM_BASE_URL='http://127.0.0.1:30081', LLM_MODEL_TYPE='openai',
         VLM_MODE='local_shared', VLM_NAME=VLM, VLM_MODEL_TYPE='rtvi', VLM_BASE_URL='http://127.0.0.1:8018',
         RTVI_VLM_IMAGE_TAG='3.2.1-sbsa', RTVI_VLM_BASE_IMAGE='nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1-sbsa',
+        RTVI_EMBED_TAG='3.2.1-sbsa', RTVI_EMBED_BASE_IMAGE='nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1-sbsa',
         RTVI_VLM_BASE_URL='http://127.0.0.1:8018', RTVI_VLM_ENDPOINT='', RTVI_VLM_MODEL_TO_USE='cosmos-reason3',
-        RTVI_VLM_MODEL_PATH='ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final',
+        RTVI_VLM_MODEL_PATH='/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final' if cached_models else 'ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final',
         RTVI_VLLM_GPU_MEMORY_UTILIZATION='0.30', RTVI_VLLM_MAX_NUM_SEQS='1', RTVI_VLM_MAX_MODEL_LEN='16384',
         RTVI_VLM_MAX_GENERATION_TOKENS='4096', RTVI_EMBED_BATCH_SIZE='2',
         RTVI_EMBED_KAFKA_ENABLED='true', RTVI_EMBED_KAFKA_TOPIC='mdx-embed',
-        LVS_TAG='3.2.1-sbsa', VSS_AGENT_HOST='127.0.0.1', VSS_UI_PORT='3001',
+        LVS_TAG='3.2.1-sbsa', VSS_AGENT_HOST='127.0.0.1', VSS_AGENT_BACKEND_HOST='127.0.0.1', VSS_UI_PORT='3001',
         COSMOS_EMBED_ENDPOINT='http://127.0.0.1:8017', ELASTIC_SEARCH_ENDPOINT='http://127.0.0.1:9200',
         NEXT_PUBLIC_APP_TITLE='LOCAL VIDEO INTELLIGENCE', NEXT_PUBLIC_APP_SUBTITLE='DGX SPARK',
         ALERT_ALWAYS_ON_ENABLED='false', GRAPH_DB_PASSWORD=password_path.read_text().strip(),
-        NPM_CONFIG_REGISTRY='https://registry.npmjs.org',
+        NPM_CONFIG_REGISTRY=npm_registry,
         NGC_API_KEY='', NGC_CLI_API_KEY='', NVIDIA_API_KEY='', HF_TOKEN='', OPENAI_API_KEY='local',
     )
     template = (ROOT / 'deploy/docker/developer-profiles/dev-profile-thor-full/.env').read_text()
@@ -121,19 +188,38 @@ def render(host_ip, data_dir, gateway):
     embed = services['rtvi-embed']['environment']
     embed.update(RTVI_OFFLINE='false', HF_HUB_OFFLINE='0', TRANSFORMERS_OFFLINE='0')
     vlm = services['rtvi-vlm']['environment']
-    vlm.update(VLLM_KV_CACHE_MEMORY_BYTES='4294967296', VLLM_ENFORCE_EAGER='true', VLLM_MAX_NUM_SEQS='1')
+    vlm.update(VLLM_KV_CACHE_MEMORY_BYTES='4294967296', VLLM_ENFORCE_EAGER='true', VLLM_MAX_NUM_SEQS='1',
+               VLM_RECLAIM_MODEL_FILE_CACHE='true',
+               VLM_FILE_CACHE_RECLAIM_ROOT='/opt/nvidia/rtvi/.rtvi/ngc_model_cache')
     # Credentials are supplied only while downloading models; never stored here.
     vlm['NGC_API_KEY'] = '${NGC_API_KEY:-}'
     llm_cache = {'type': 'volume', 'source': 'spark-nim-cache', 'target': '/opt/nim/.cache'}
+    nim_image = 'nvcr.io/nim/nvidia/nvidia-nemotron-nano-9b-v2-dgx-spark:1.0.0-variant'
+    # Docker creates an empty named volume as root. This NIM runs as nvs
+    # (1000:1000), so prepare only its cache mount before downloading weights.
+    services['spark-llm-cache-init'] = {
+        'image': nim_image, 'user': '0:0', 'restart': 'no',
+        'entrypoint': ['/bin/sh', '-ec', 'chown 1000:1000 /opt/nim/.cache; chmod 0770 /opt/nim/.cache'],
+        'volumes': [llm_cache],
+    }
     services['spark-llm'] = {
-        'image': 'nvcr.io/nim/nvidia/nvidia-nemotron-nano-9b-v2-dgx-spark:1.0.0-variant',
+        'image': nim_image,
         'runtime': 'nvidia', 'ports': ['127.0.0.1:30081:8000'], 'shm_size': '16gb', 'restart': 'no',
         'environment': {'NGC_API_KEY': '${NGC_API_KEY:-}', 'NVIDIA_VISIBLE_DEVICES': '0',
-                        'NIM_KVCACHE_PERCENT': '0.20', 'NIM_GPU_MEM_FRACTION': '0.25', 'MAX_NUM_SEQS': '1'},
+                        'NIM_GPU_MEM_FRACTION': '0.11', 'NIM_MAX_BATCH_SIZE': '1', 'NIM_MAX_MODEL_LEN': '32768',
+                        'HF_HOME': '/opt/nim/.cache/huggingface', 'VLLM_CACHE_ROOT': '/opt/nim/.cache/vllm'},
         'volumes': [llm_cache],
+        'depends_on': {'spark-llm-cache-init': {'condition': 'service_completed_successfully'}},
         'healthcheck': {'test': ['CMD', 'curl', '-f', 'http://localhost:8000/v1/health/ready'],
                         'interval': '15s', 'timeout': '5s', 'retries': 120, 'start_period': '120s'},
     }
+    if cached_models:
+        for environment in (embed, vlm):
+            environment.update(RTVI_OFFLINE='true', HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', NGC_API_KEY='')
+        services['spark-llm']['environment'].update(
+            NGC_API_KEY='', NIM_DISABLE_MODEL_DOWNLOAD='1',
+            NIM_MODEL_PATH='/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1',
+            HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
     graph.setdefault('volumes', {})['spark-nim-cache'] = {'name': 'vss-spark-nim-cache'}
     va_config = '/vss-agent/deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml'
     services['vss-va-mcp']['command'] = ['mcp', 'serve', '--config_file', va_config, '--host', '127.0.0.1', '--port', '9901']
@@ -161,15 +247,21 @@ def render(host_ip, data_dir, gateway):
         for dependency in list(service.get('depends_on', {})):
             if dependency not in services:
                 del service['depends_on'][dependency]
-    services['broker-health-check']['depends_on'] = {'kafka': {'condition': 'service_healthy'}}
+    # The broker check also requires all application topics. An empty data root
+    # must initialize them before the serial startup waits on that check.
+    services['broker-health-check']['depends_on'] = {
+        'kafka': {'condition': 'service_healthy'},
+        'kafka-topic-init-container': {'condition': 'service_completed_successfully'},
+    }
     # Source config mounts are inherited from the agent's repository deployment mount.
     agent.setdefault('volumes', []).append({'type': 'bind', 'source': str(ROOT / 'deploy/docker/spark'),
                                           'target': '/vss-agent/deploy/docker/spark', 'read_only': True})
-    # Compose config emits literal dollars from entrypoints. Escape before parsing again,
-    # preserving only the intentionally deferred download credential.
-    encoded = json.dumps(graph, indent=2).replace('$', '$$').replace('$${NGC_API_KEY:-}', '${NGC_API_KEY:-}')
+    # Compose config already escapes shell dollars as $$; preserve those pairs.
+    # Escape only new singleton dollars, except the deferred download credential.
+    encoded = re.sub(r'(?<!\$)\$(?!\$)', lambda _: '$$', json.dumps(graph, indent=2))
+    encoded = encoded.replace('$${NGC_API_KEY:-}', '${NGC_API_KEY:-}')
     private_write(STATE / 'compose.json', encoded + '\n')
-    private_write(STATE / 'settings.json', json.dumps({'host_ip': host_ip, 'data_dir': str(data), 'gateway': gateway}, indent=2))
+    private_write(STATE / 'settings.json', json.dumps({'host_ip': host_ip, 'data_dir': str(data), 'gateway': gateway, 'npm_registry': npm_registry, 'reserve_gib': reserve, 'cached_models': cached_models}, indent=2))
     run(compose('config', '--quiet'), env=clean_env)
     print(f'Rendered {len(services)} services to {STATE}/compose.json (unqualified Spark candidate).')
 
@@ -228,11 +320,21 @@ def up():
     early = [s for s in graph['services'] if s not in models + late]
     order = startup_order(graph['services'], early, models, late)
     for service in order:
-        if service in models and available() < 63:
-            raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need 63. Preserve 48 GiB reserve.')
+        if service in models:
+            required = model_admission_gib(service)
+            if available() < required:
+                raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} ({memory_reserve():g} reserve + {MODEL_STARTUP_HEADROOM_GIB[service]:g} startup headroom).')
         run(compose('up', '-d', '--no-deps', '--no-build', '--pull', 'never', service))
-        await_service(service, graph['services'][service].get('restart') == 'no' and service in ('broker-health-check', 'elasticsearch-init-container', 'kafka-topic-init-container', 'kibana-init-container-thor-full', 'sdr-streamprocessing-init'))
+        await_service(service, graph['services'][service].get('restart') == 'no' and service in ('broker-health-check', 'elasticsearch-init-container', 'kafka-topic-init-container', 'kibana-init-container-thor-full', 'sdr-streamprocessing-init', 'spark-llm-cache-init'))
+        if service in models:
+            reclaim_model_file_cache(service)
     verify()
+
+
+def reclaim_model_file_cache(service):
+    result = run(compose('exec', '-T', service, 'python3', '-c', CACHE_RECLAIM_SCRIPT,
+                         *MODEL_CACHE_ROOTS[service]), capture_output=True, text=True, timeout=30)
+    print(f'{service} candidate file-cache advice: {result.stdout.strip()}', flush=True)
 
 
 def startup_order(services, early, models, late):
@@ -255,9 +357,10 @@ def startup_order(services, early, models, late):
 def await_service(service, one_shot=False):
     deadline = time.monotonic() + 3600
     while time.monotonic() < deadline:
-        if available() < 48:
+        reserve = memory_reserve()
+        if available() < reserve:
             run(compose('stop'), stdout=subprocess.DEVNULL)
-            raise RuntimeError('48 GiB reserve crossed; candidate stack stopped.')
+            raise RuntimeError(f'{reserve:g} GiB reserve crossed; candidate stack stopped.')
         cid = run(compose('ps', '-a', '-q', service), capture_output=True, text=True).stdout.strip()
         if cid:
             state = json.loads(run(['docker', 'inspect', '--format', '{{json .State}}', cid], capture_output=True, text=True).stdout)
@@ -278,7 +381,7 @@ def install_guard():
     if any(c in str(ROOT) + python for c in '\n"%'):
         raise RuntimeError('Unsupported systemd path characters')
     private_write(unit, f"""[Unit]
-Description=Spark VSS 48 GiB diagnostic reserve guard
+Description=Spark VSS configurable memory reserve guard
 [Service]
 ExecStart="{python}" "{ROOT}/tools/spark/guard.py"
 Restart=on-failure
@@ -303,7 +406,7 @@ def verify():
         except Exception:
             failures.append(name)
     receipt = {'time': time.time(), 'commit': run(['git', '-C', ROOT, 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip(),
-               'available_gib': available(), 'failed_probes': failures,
+               'available_gib': available(), 'reserve_gib': memory_reserve(), 'failed_probes': failures,
                'qualification': 'health only; browser and real clip/RTSP inference still required'}
     private_write(STATE / 'health-receipt.json', json.dumps(receipt, indent=2))
     if failures:
@@ -317,11 +420,16 @@ def main():
     parser.add_argument('--host-ip')
     parser.add_argument('--gateway', default='172.17.0.1')
     parser.add_argument('--data-dir', default=str(STATE / 'data'))
+    parser.add_argument('--npm-registry', default='https://registry.npmjs.org', help='HTTPS package registry for the source UI build')
+    parser.add_argument('--reserve-gib', type=float, help='Runtime memory reserve; render preserves the saved value when omitted')
+    parser.add_argument('--cached-models', action=argparse.BooleanOptionalAction, default=None, help='Cache-only model startup without download credentials; render preserves the saved mode when omitted')
     args = parser.parse_args()
     if args.command == 'render':
         if not args.host_ip:
             parser.error('render requires --host-ip <Spark LAN IPv4>')
-        render(args.host_ip, args.data_dir, args.gateway)
+        render(args.host_ip, args.data_dir, args.gateway, args.npm_registry, args.reserve_gib, args.cached_models)
+    elif args.reserve_gib is not None or args.cached_models is not None:
+        parser.error('--reserve-gib and --cached-models apply to render; restart the guard after changing its reserve')
     elif args.command == 'stop':
         run(compose('stop'))
     else:

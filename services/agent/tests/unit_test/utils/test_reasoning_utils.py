@@ -44,6 +44,17 @@ class TestGetThinkingTag:
         result = get_thinking_tag(llm, False)
         assert result == "/no_think"
 
+    def test_spark_nim_api_identity(self):
+        llm = MagicMock()
+        llm.model_name = "nvidia/nemotron-nano-9b-v2"
+        assert get_thinking_tag(llm, False) == "/no_think"
+        assert get_thinking_tag(llm, True) == "/think"
+
+    def test_canonical_nemotron_3_keeps_template_control(self):
+        llm = MagicMock()
+        llm.model_name = "nvidia/nemotron-3-nano-30b-a3b"
+        assert get_thinking_tag(llm, False) is None
+
     def test_nvidia_nemotron_3_nano(self):
         """Test that Nemotron 3 Nano does not need thinking tag."""
         llm = MagicMock()

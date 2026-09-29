@@ -1,12 +1,79 @@
 # Edge video AI demo — running progress
 
-Started: September 28, 2026. Status: blocked awaiting Codex browser reopen and
-scenario/alignment details. Recorded and bounded RTSP evidence/report flows are
-demonstrated; full rehearsal and live monitoring qualification remain open.
+Started: September 28, 2026. Status: recorded-fixture acceptance passes on DGX
+Spark, including a fresh visual answer and saved evidence replay. A cache-only
+recovery now passes with the Cosmos initialization fix, successful video/text
+warmup, fresh answers and retained-report playback. The 180-second post-request
+observation passes with a 27.818 GiB minimum and no new guard trip. The user's Sim
+stream and joint live operation remain
+unqualified. See the [Spark startup receipt](qa/2026-09-29-spark-startup.md) for
+current target evidence. Full rehearsal and live monitoring qualification remain open.
 Use the [current presenter guide](demo-presenter-runbook.md) for the coherent
 walkthrough; dated entries below preserve the development history.
 
-## Current checkpoint — September28, after23:16EDT
+## Current Spark checkpoint — September 29
+
+- Target preflight, six bootstrap tests, Git LFS integrity and fixture hashes pass.
+- The independent 36-service graph is rendered. The user explicitly authorized
+  a 24 GiB Spark trial reserve; the active guard confirms that setting. Thor's
+  reserve remains unchanged.
+- The user supplied NGC credentials locally and provisioned the 21 fresh data roots.
+- Eight public source derivatives, including the current UI, build on ARM64.
+  A registry TLS failure was diagnosed and addressed with the explicit HTTPS
+  registry override; package versions and lockfile integrity are preserved.
+- Complete image staging and first full serial startup pass.
+  Build-memory minimum so far is 85.893 GiB. Existing Isaac Sim MCP and Moondream
+  containers remain running; an active Sim renderer has not been established.
+- Fresh-data topic ordering, Compose shell-dollar escaping and empty Nemotron
+  cache permissions were diagnosed and fixed. Early infrastructure/video
+  services are up. Nemotron completed first download/GB10 compilation and serves
+  requests initially with a verified 0.13 GPU allocation and 32K context. Available
+  memory recovered to approximately 64.6 GiB. Embedding's initial Jetson base
+  failed decoding-library initialization; the corrected SBSA base passes that
+  import. Fresh SBSA TensorRT 10.14 engines work; earlier incompatible 10.13
+  plans are retained outside active filenames. Cosmos initializes, but its
+  first visual warmup exposes a file-cache/CUDA allocation failure despite
+  ample MemAvailable. Targeted unprivileged cache advice resolves the actual
+  inference failure; model files remain intact. The bootstrap now advises only
+  candidate cache files after each model loads.
+- First full startup: 820.23 seconds, minimum MemAvailable 27.585 GiB, unchanged
+  boot ID and no 24 GiB guard trip. Cache-only restart passes in 465.157 seconds,
+  minimum 25.286 GiB. Fresh post-restart Cosmos inference passes in 5.678 seconds;
+  sequential inference probes reach 24.349 GiB, close to the authorized floor.
+  That restart still suppresses a built-in Cosmos warmup allocation error;
+  attempt 10 below verifies the opt-in cache release before visual warmup.
+- A later guard sample reaches 23.985 GiB and stops all 30 running VSS containers
+  cleanly, without reboot or stopping the two pre-existing workloads. Recovery
+  retains the 24 GiB floor and lowers Nemotron's allocation fraction to 0.11,
+  keeping 32K context/batch 1.
+- Attempt 10 verifies the source fix and full cache-only recovery in 640.224
+  seconds: startup minimum 28.445 GiB, unchanged boot ID, no reserve trip.
+  Checkpoint-scoped advice raises MemFree from 7.087 to 23.421 GiB; the four
+  safetensors remain intact. Cosmos video/text and decoder warmup pass, with
+  zero warmup/CUDA-allocation/no-frame errors in startup logs. Fresh direct
+  movement/end-location answers are correct in 1.423/0.942 seconds; Nemotron
+  returns `Ready.` in 0.168 seconds. The 180.620-second post-request observation
+  records 902 samples at 200 ms cadence: minimum 27.818 GiB, first 28.249 GiB,
+  last 27.978 GiB, no new guard trip and unchanged boot ID. The historical
+  attempt 9 trip receipt is retained. Six bootstrap tests, four cache-helper
+  tests and 32 reasoning methods pass. These sequential checks do not prove
+  joint Sim capacity.
+- Real browser upload indexes two segments from a 7.535-second recorded conveyor
+  fixture. Natural-language search returns playable evidence; a fresh selected
+  clip question answers correctly in 7.501 seconds. The saved report replays
+  its retained local video to completion. Single-clip synthesis is bypassed, so
+  multi-clip language-model synthesis is not established by this journey.
+  Following attempt 10 recovery, browser reload and retained-report playback
+  pass again (`readyState=4`, `ended=true`, `error=null`, duration 7.535 seconds),
+  with no console warnings or errors.
+- The gateway's agent target was corrected to loopback; its public analysis
+  profiles endpoint and browser upload now work. UI/report hardware labels and
+  missing Spark GPU metrics remain limitations; detector profiles are omitted.
+- The Sim RTSP URL and reset steps are requested for later live acceptance.
+  No Sim renderer has yet been established. The historical Thor browser error
+  below does not describe the now-tested Spark browser.
+
+## Historical Thor checkpoint — September28, after23:16EDT
 
 - **Visible UI work completed:** redesigned Home; clearer recording/camera entry;
   source-scoped search; retained search/answer state; evidence playback and report
@@ -2282,7 +2349,8 @@ behavior still require current-session inspection.
 4. Resolve or constrain model failures in temporal endings, comparisons and
    package condition using reproducible evidence, not additional blind prompts.
 5. Qualify a bounded Isaac Sim condition → analysis → event → evidence → report
-   path and repeatable reset, following runtime gates with the 48 GiB reserve.
+   path and repeatable reset, following the target's runtime gates: the authorized
+   Spark trial reserve is 24 GiB; Thor's diagnostic reserve remains 48 GiB.
 6. Re-audit every original requirement against actual current-state evidence.
    A working recorded/replay path does not complete the requested live demo.
 
@@ -2305,3 +2373,14 @@ This is a source/deployment handoff milestone, not completion of the tradeshow
 demo goal or Spark runtime qualification. Target model warm-up, shared Sim memory,
 actual RTSP ingestion, answer quality/latency and browser rehearsal remain to be
 measured on Spark. Thor runtime and its 48 GiB diagnostic reserve stay unchanged.
+
+## September 29 — begin preparation on the Spark target
+
+The user authorized the next deployment stage on the GB10 Spark. Target preflight
+and three bootstrap tests pass; Git LFS and fixture integrity are restored; the
+independent 35-service graph is rendered for `10.88.9.91`; and the Spark 48 GiB
+guard is installed and active. Existing Isaac Sim MCP and Moondream containers
+remain running. Public images/source builds are being prepared while local NGC
+credentials and privileged data-directory setup are requested. This is preparation,
+not target inference or joint-workload acceptance. See the
+[target startup receipt](qa/2026-09-29-spark-startup.md) for exact state and limits.

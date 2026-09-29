@@ -84,7 +84,7 @@ def get_thinking_tag(llm: Any, thinking: bool | None) -> str | None:
         # Normalize name to reduce checks
         model = model.lower().translate(str.maketrans("_.", "--"))
 
-        if model.startswith("nvidia/nvidia"):
+        if model.startswith(("nvidia/nvidia", "nvidia/nemotron")):
             if "nemotron-3" in model:
                 return None  # Nemotron 3 Nano does not need thinking tag
 

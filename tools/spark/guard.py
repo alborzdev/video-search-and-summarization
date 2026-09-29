@@ -6,7 +6,7 @@ import signal
 import subprocess
 import threading
 import time
-from bootstrap import STATE, available, compose, private_write
+from bootstrap import STATE, available, compose, memory_reserve, private_write
 
 stop = threading.Event()
 for sig in (signal.SIGTERM, signal.SIGINT):
@@ -22,17 +22,18 @@ def halt(cid):
 
 
 def main():
+    reserve = memory_reserve()
     tripped = False
     while not stop.wait(1):
         free = available()
-        private_write(STATE / 'guard-status.json', json.dumps({'time': time.time(), 'available_gib': free, 'floor_gib': 48}))
-        if free < 48 and not tripped:
+        private_write(STATE / 'guard-status.json', json.dumps({'time': time.time(), 'available_gib': free, 'floor_gib': reserve}))
+        if free < reserve and not tripped:
             tripped = True
             ids = subprocess.run(compose('ps', '-q'), capture_output=True, text=True, timeout=15, check=True).stdout.splitlines()
             with concurrent.futures.ThreadPoolExecutor(max_workers=16) as pool:
                 results = list(pool.map(halt, ids))
-            private_write(STATE / 'guard-trip.json', json.dumps({'time': time.time(), 'available_gib': free, 'stops': results}, indent=2))
-        if free >= 48:
+            private_write(STATE / 'guard-trip.json', json.dumps({'time': time.time(), 'available_gib': free, 'floor_gib': reserve, 'stops': results}, indent=2))
+        if free >= reserve:
             tripped = False
 
 if __name__ == '__main__':

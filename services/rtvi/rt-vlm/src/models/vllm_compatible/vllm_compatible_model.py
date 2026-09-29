@@ -40,6 +40,7 @@ from models.base_vlm_model import (
     VlmGenerationConfig,
     VlmModelOutput,
 )
+from models.vllm_compatible.model_file_cache import reclaim_loaded_model_file_cache
 
 
 def _parse_int_env(name: str, default: int) -> int:
@@ -693,6 +694,10 @@ class VllmCompatible(BaseVlmModel):
 
                 engine_args = AsyncEngineArgs(**engine_args_kwargs)
                 self._llm = AsyncLLMEngine.from_engine_args(engine_args)
+                # GB10 may retain checkpoint file pages after loading. Release
+                # only the explicitly opted-in candidate checkpoint before the
+                # wrapper allocates CUDA frames for its visual warmup.
+                reclaim_loaded_model_file_cache(self.model_path, logger)
                 self._processor = AutoProcessor.from_pretrained(
                     self.model_path, trust_remote_code=vlm_trust_remote_code
                 )
