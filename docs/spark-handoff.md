@@ -20,6 +20,8 @@ this VSS Compose project; it cannot prevent every driver/GPU hang.
 ```sh
 git clone --branch agent/vss-3.2.1-thor-parity https://github.com/alborzdev/video-search-and-summarization.git
 cd video-search-and-summarization
+git lfs install
+git lfs pull
 python3 tools/spark/test_bootstrap.py
 ```
 
@@ -49,7 +51,7 @@ for current supported versions. At preparation time the documentation specifies
 DGX OS 7.4.0, driver 580.95.05, NVIDIA Container Toolkit 1.17.8+, Docker 28.3.3+
 (and below 29.5.0), Compose 2.39.1+, and NGC CLI 4.10+ when using NGC CLI workflows.
 The helper uses Docker/model-service downloads rather than requiring NGC CLI.
-Python 3 and working Docker/NVIDIA runtime access are required. The helper refuses
+Python 3, Git LFS (`git-lfs` package), and working Docker/NVIDIA runtime access are required. Git LFS is needed to fetch the bundled video fixtures, rather than pointer files. The helper refuses
 runtime changes on anything other than an aarch64 GB10 host.
 
 Budget at least 200 GiB free on the Docker storage filesystem for image/build/model

@@ -59,3 +59,10 @@ memory/latency measurement was performed on Spark. Those are target acceptance
 steps in `docs/spark-handoff.md`. The hardware-specific changes are candidates,
 not inherited Thor qualification. Existing recorded media/databases/reports are
 not part of a fresh source checkout; transfer separately if needed.
+
+## Remote delivery
+
+The application snapshot `516b7ad376dd92f33a93b4a9cd9afe5293173433` was pushed
+to `origin/agent/vss-3.2.1-thor-parity`; `git ls-remote` confirmed the same SHA.
+Git LFS reported all 12 new objects (36 MB) uploaded successfully. Follow-up
+documentation commits record verification and the Git LFS prerequisite.
