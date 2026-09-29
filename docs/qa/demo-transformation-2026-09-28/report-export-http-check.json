@@ -1,0 +1,13 @@
+{
+  "status": 200,
+  "content_disposition": "attachment; filename=\"vision-investigation-509d8852-a1d7-4385-9fc1-30d5ee52a313.html\"",
+  "bytes": 8434,
+  "contains_question": true,
+  "contains_review_notes": true,
+  "evidence_links": [
+    "http://10.88.9.12:7777/api/vision/investigations?id=509d8852-a1d7-4385-9fc1-30d5ee52a313&format=html#E1"
+  ],
+  "external_assets": [],
+  "scope": "HTTP export contract; not browser download delivery",
+  "content_type": "text/html; charset=utf-8"
+}

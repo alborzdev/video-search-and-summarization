@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import ipaddress
 import json
 import os
 import re
@@ -31,9 +32,12 @@ DEPLOY_DOCKER = REPO_ROOT / "deploy/docker"
 DEFAULT_CONTRACT = HERE / "contract.json"
 DEFAULT_ARTIFACT_LOCK = HERE / "artifacts.lock.json"
 DEFAULT_RUNTIME_ENV = DEPLOY_DOCKER / "thor-local/generated.env"
+HOST_MEMINFO = Path("/proc/meminfo")
 OFFICIAL_ENV = HERE / "official-edge.env"
 OFFICIAL_COMPOSE = HERE / "compose.yml"
 OFFICIAL_AGENT_CONFIG = HERE / "config_edge.yml"
+STARTUP_GATE = DEPLOY_DOCKER / "thor-local/startup-gate.py"
+STARTUP_GATE_SHA256 = "76395d755712f1af40f3b63e2d958350117f24d065520ecc511946601bc3626c"
 THOR_OPERATOR_GUIDANCE = (
     REPO_ROOT / "skills/vss-deploy-profile/references/thor-official-edge.md"
 )
@@ -71,9 +75,7 @@ RTVLM_IMAGE = (
 RTVLM_IMAGE_ID = (
     "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504"
 )
-RTVLM_SERVER_OVERLAY = (
-    REPO_ROOT / "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py"
-)
+RTVLM_SERVER_OVERLAY = REPO_ROOT / "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py"
 RTVLM_SERVER_OVERLAY_SHA256 = (
     "a160cd74f7f645a7610bdb0a56424749d2b5a157187188eb93d961c49d1e4118"
 )
@@ -84,9 +86,7 @@ RTVLM_STREAM_HANDLER_OVERLAY = (
 RTVLM_STREAM_HANDLER_OVERLAY_SHA256 = (
     "7eca96161a3d5dd92665be6c10487832f273dabca05ed08be4341a340a439188"
 )
-RTVLM_STREAM_HANDLER_CONTAINER = (
-    "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py"
-)
+RTVLM_STREAM_HANDLER_CONTAINER = "/opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py"
 RTVLM_PIPELINE_OVERLAY = (
     REPO_ROOT / "services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py"
 )
@@ -101,9 +101,7 @@ RTVLM_PROCESS_BASE_OVERLAY_SHA256 = (
     "a56ecdb52ef125b1f0b33b57c8b55a9f4e547a6e53a26bfb6a9d68590b1dea91"
 )
 RTVLM_PROCESS_BASE_CONTAINER = "/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py"
-RTVLM_CAPTIONS_OVERLAY = (
-    REPO_ROOT / "services/rtvi/rt-vlm/src/api_models/captions.py"
-)
+RTVLM_CAPTIONS_OVERLAY = REPO_ROOT / "services/rtvi/rt-vlm/src/api_models/captions.py"
 RTVLM_CAPTIONS_OVERLAY_SHA256 = (
     "7e7fc698441f6702fb43fb4f064c976e9520fdffb238dd0155abc464fc5b7692"
 )
@@ -155,6 +153,34 @@ RTVLM_REQUEST_CANCELLATION_OVERLAYS = {
 AGENT_CONFIG_CONTAINER = (
     "/vss-agent/deploy/docker/thor-local/official-edge/config_edge.yml"
 )
+AGENT_RTSP_INGEST_OVERLAY = (
+    REPO_ROOT / "services/agent/src/vss_agents/api/rtsp_ingest.py"
+)
+AGENT_RTSP_INGEST_OVERLAY_SHA256 = (
+    "c4c57e5944403db80ba183d1d7544e7279a69686edbfb303bb9df0c537352442"
+)
+AGENT_RTSP_INGEST_CONTAINER = (
+    "/vss-agent/.venv/lib/python3.13/site-packages/vss_agents/api/rtsp_ingest.py"
+)
+AGENT_FRONT_END_CONFIG_OVERLAY = (
+    REPO_ROOT / "services/agent/src/vss_agents/api/front_end_config.py"
+)
+AGENT_FRONT_END_CONFIG_OVERLAY_SHA256 = (
+    "b0f9713170f57215125cab2cc15fcd82dad128cd513db68bb2ea17ab38429cec"
+)
+AGENT_FRONT_END_CONFIG_CONTAINER = (
+    "/vss-agent/.venv/lib/python3.13/site-packages/vss_agents/api/front_end_config.py"
+)
+AGENT_RUNTIME_OVERLAYS = {
+    AGENT_RTSP_INGEST_CONTAINER: (
+        AGENT_RTSP_INGEST_OVERLAY,
+        AGENT_RTSP_INGEST_OVERLAY_SHA256,
+    ),
+    AGENT_FRONT_END_CONFIG_CONTAINER: (
+        AGENT_FRONT_END_CONFIG_OVERLAY,
+        AGENT_FRONT_END_CONFIG_OVERLAY_SHA256,
+    ),
+}
 EDGE_COMMAND = [
     "python3",
     "-m",
@@ -176,6 +202,33 @@ EDGE_COMMAND = [
     "--tool-call-parser",
     "qwen3_coder",
 ]
+EDGE_ENTRYPOINT = [
+    "python3",
+    "/usr/local/bin/thor-startup-gate.py",
+    "--http",
+    "http://127.0.0.1:8018/v1/health/ready",
+    "--min-available-kib",
+    "134217728",
+    "--",
+]
+KIB_PER_GIB = 1024 * 1024
+# The measured 128 GiB Thor full graph committed roughly 64 GiB during model
+# and consumer startup. Round to that conservative whole-GiB envelope instead
+# of treating the model utilization fractions as a complete host budget.
+MEASURED_FULL_GRAPH_COMMIT_KIB = 64 * KIB_PER_GIB
+MINIMUM_POSTLOAD_RESERVE_KIB = 64 * KIB_PER_GIB
+FAIL_CLOSED_RUNTIME_CONTAINERS = (
+    "vss-nemotron-edge-4b",
+    "vss-rtvi-vlm",
+    "vss-agent",
+    "vss-alert-bridge",
+    "vss-lvs",
+    "vss-rtvi-embed",
+    "vss-rtvi-cv",
+    "vss-rtvi-cv-traffic",
+    "vss-vios-streamprocessing",
+    "vss-vios-sensor",
+)
 
 
 class ContractError(RuntimeError):
@@ -248,6 +301,48 @@ def _run(command: list[str], *, env: dict[str, str] | None = None) -> str:
             f"command returned {result.returncode}: {shlex.join(command)}: {detail}"
         )
     return result.stdout
+
+
+def _runtime_env_value(runtime_env: Path, key: str) -> str | None:
+    try:
+        lines = runtime_env.read_text(encoding="utf-8").splitlines()
+    except OSError as exc:
+        raise ContractError(f"cannot read runtime env {runtime_env}: {exc}") from exc
+    prefix = f"{key}="
+    for line in lines:
+        if line.startswith(prefix):
+            return line[len(prefix) :].strip().strip("'\"")
+    return None
+
+
+def resolve_model_bind_host(
+    value: str | None = None, *, runtime_env: Path | None = None
+) -> str:
+    """Return a distinct private IPv4 address for bridged Thor consumers."""
+
+    candidate = value or os.environ.get("THOR_LOCAL_MODEL_BIND_HOST")
+    if candidate is None and runtime_env is not None:
+        candidate = _runtime_env_value(runtime_env, "THOR_LOCAL_MODEL_BIND_HOST")
+    if candidate is None:
+        output = _run(["ip", "-4", "-o", "address", "show", "docker0"])
+        fields = output.split()
+        if len(fields) < 4:
+            raise ContractError("docker0 has no inspectable IPv4 address")
+        candidate = fields[3].split("/", 1)[0]
+    try:
+        address = ipaddress.ip_address(candidate)
+    except ValueError as exc:
+        raise ContractError(
+            f"THOR_LOCAL_MODEL_BIND_HOST is not an IP address: {candidate!r}"
+        ) from exc
+    if not isinstance(address, ipaddress.IPv4Address):
+        raise ContractError("THOR_LOCAL_MODEL_BIND_HOST must be an IPv4 address")
+    if address.is_loopback or address.is_unspecified or address.is_multicast:
+        raise ContractError(
+            "THOR_LOCAL_MODEL_BIND_HOST must be a distinct private bridge address, "
+            f"not {address}"
+        )
+    return str(address)
 
 
 def _expect(mapping: dict[str, Any], key: str, expected: Any, context: str) -> None:
@@ -561,13 +656,20 @@ def _command_contains(command: Any, required: list[str], context: str) -> None:
 
 
 def verify_compose_contract() -> None:
-    for destination, (source, expected_sha256) in (
-        RTVLM_REQUEST_CANCELLATION_OVERLAYS.items()
-    ):
+    if _sha256_file(STARTUP_GATE) != STARTUP_GATE_SHA256:
+        raise ContractError("Thor model startup gate source drifted")
+    for destination, (
+        source,
+        expected_sha256,
+    ) in RTVLM_REQUEST_CANCELLATION_OVERLAYS.items():
         if _sha256_file(source) != expected_sha256:
             raise ContractError(
-                "RT-VLM request-cancellation overlay source drifted: "
-                f"{destination}"
+                f"RT-VLM request-cancellation overlay source drifted: {destination}"
+            )
+    for destination, (source, expected_sha256) in AGENT_RUNTIME_OVERLAYS.items():
+        if _sha256_file(source) != expected_sha256:
+            raise ContractError(
+                f"Agent live-source safety overlay source drifted: {destination}"
             )
     compose = _load_yaml(OFFICIAL_COMPOSE)
     services = compose.get("services")
@@ -575,6 +677,10 @@ def verify_compose_contract() -> None:
         raise ContractError("official-edge compose must define services")
     if set(services) != {
         "perception-2d-fusion",
+        "perception-2d-smartcity-thor",
+        "rtvi-embed",
+        "streamprocessing-ms",
+        "sensor-ms",
         "nemotron-edge",
         "rtvi-vlm",
         "vss-agent",
@@ -606,25 +712,28 @@ def verify_compose_contract() -> None:
         if not isinstance(value, dict):
             raise ContractError(f"compose service {name} must be an object")
 
-    if perception != {"restart": "unless-stopped"}:
+    if perception != {"restart": "no"}:
         raise ContractError(
-            "compose perception-2d-fusion override must only preserve reboot restart"
+            "compose perception-2d-fusion must fail closed after a host reboot"
         )
+    for name in (
+        "perception-2d-smartcity-thor",
+        "rtvi-embed",
+        "streamprocessing-ms",
+        "sensor-ms",
+    ):
+        if services[name] != {"restart": "no"}:
+            raise ContractError(f"compose {name} must fail closed after a host reboot")
 
     _expect(edge, "image", EDGE_IMAGE, "compose.nemotron-edge")
     _expect(edge, "network_mode", "host", "compose.nemotron-edge")
     _expect(edge, "runtime", "nvidia", "compose.nemotron-edge")
     _expect(edge, "read_only", True, "compose.nemotron-edge")
+    _expect(edge, "restart", "no", "compose.nemotron-edge")
     _expect(
         edge,
         "entrypoint",
-        [
-            "python3",
-            "/usr/local/bin/thor-startup-gate.py",
-            "--http",
-            "http://127.0.0.1:8018/v1/health/ready",
-            "--",
-        ],
+        EDGE_ENTRYPOINT,
         "compose.nemotron-edge",
     )
     _expect(edge, "command", EDGE_COMMAND, "compose.nemotron-edge")
@@ -664,6 +773,7 @@ def verify_compose_contract() -> None:
         )
 
     _expect(rtvlm, "image", RTVLM_IMAGE, "compose.rtvi-vlm")
+    _expect(rtvlm, "restart", "no", "compose.rtvi-vlm")
     rtvlm_env = rtvlm.get("environment")
     if not isinstance(rtvlm_env, dict):
         raise ContractError("compose.rtvi-vlm.environment must be an object")
@@ -722,6 +832,7 @@ def verify_compose_contract() -> None:
         "VLM_NAME": COSMOS_MODEL_ID,
         "VLM_BASE_URL": COSMOS_BASE_URL,
         "RTVI_VLM_BASE_URL": COSMOS_BASE_URL,
+        "ALERT_ALWAYS_ON_ENABLED": "false",
     }:
         raise ContractError("compose Alert Bridge model environment differs")
     if rtvlm.get("volumes") != [
@@ -765,6 +876,14 @@ def verify_compose_contract() -> None:
             "compose Agent environment differs from exact edge contract"
         )
     _command_contains(agent.get("command"), [AGENT_CONFIG_CONTAINER], "vss-agent")
+    _expect(agent, "restart", "no", "compose.vss-agent")
+    if agent.get("volumes") != [
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/agent/src/vss_agents/api/rtsp_ingest.py:/vss-agent/.venv/lib/python3.13/site-packages/vss_agents/api/rtsp_ingest.py:ro",
+        "${VSS_REPO_ROOT:?Set the VSS repository root}/services/agent/src/vss_agents/api/front_end_config.py:/vss-agent/.venv/lib/python3.13/site-packages/vss_agents/api/front_end_config.py:ro",
+    ]:
+        raise ContractError("compose Agent live-source safety overlay mounts differ")
+    _expect(lvs, "restart", "no", "compose.lvs-server")
+    _expect(alert_bridge, "restart", "no", "compose.alert-bridge")
 
 
 def verify_agent_prompt_overlay() -> None:
@@ -779,13 +898,29 @@ def verify_agent_prompt_overlay() -> None:
         "../../developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml",
         "official-edge.config_edge",
     )
+    if set(overlay) != {"base", "general", "workflow"}:
+        raise ContractError(
+            "official Edge agent overlay may define only base, general, and workflow"
+        )
+    expected_general = {
+        "front_end": {
+            "streaming_ingest": {
+                "auto_resume_registered_live_sources": False,
+            }
+        }
+    }
+    if overlay.get("general") != expected_general:
+        raise ContractError(
+            "official Edge agent must fail closed instead of auto-resuming "
+            "registered live sources"
+        )
     source_workflow = source.get("workflow")
     overlay_workflow = overlay.get("workflow")
     if not isinstance(source_workflow, dict) or not isinstance(overlay_workflow, dict):
         raise ContractError("both Edge agent configs must contain workflow objects")
     if set(overlay_workflow) != {"plan_prompt", "response_format_prompt"}:
         raise ContractError(
-            "official Edge prompt overlay may override only two prompt fields"
+            "official Edge workflow overlay may override only two prompt fields"
         )
     for field in ("plan_prompt", "response_format_prompt"):
         if overlay_workflow.get(field) != source_workflow.get(field):
@@ -1152,7 +1287,9 @@ def _verify_locked_artifact(
         actual_type = (
             "file"
             if stat.S_ISREG(mode)
-            else "directory" if stat.S_ISDIR(mode) else "unsupported"
+            else "directory"
+            if stat.S_ISDIR(mode)
+            else "unsupported"
         )
         if actual_type != expected_type:
             raise ContractError(
@@ -1357,6 +1494,22 @@ def verify_memory(contract: dict[str, Any], meminfo_path: Path) -> None:
         )
 
 
+def verify_empirical_headroom(meminfo_path: Path) -> None:
+    """Require the measured full graph to leave a watchdog-safe reserve."""
+
+    _total, available = _read_meminfo(meminfo_path)
+    required = MEASURED_FULL_GRAPH_COMMIT_KIB + MINIMUM_POSTLOAD_RESERVE_KIB
+    if available < required:
+        projected = available - MEASURED_FULL_GRAPH_COMMIT_KIB
+        raise ContractError(
+            "official full-graph empirical headroom failed: "
+            f"MemAvailable={available / KIB_PER_GIB:.1f} GiB; the conservative "
+            "measured full-graph commitment plus the required 64 GiB post-load "
+            f"reserve needs {required / KIB_PER_GIB:.0f} GiB before launch "
+            f"(projected post-load MemAvailable={projected / KIB_PER_GIB:.1f} GiB)"
+        )
+
+
 def _compose_prefix(runtime_env: Path) -> list[str]:
     return [
         "docker",
@@ -1460,6 +1613,9 @@ def verify_resolved_compose(
     if not runtime_env.is_file():
         raise ContractError(f"protected Thor runtime env is missing: {runtime_env}")
     process_env = os.environ.copy()
+    process_env["THOR_LOCAL_MODEL_BIND_HOST"] = resolve_model_bind_host(
+        runtime_env=runtime_env
+    )
     process_env["VSS_REPO_ROOT"] = str(REPO_ROOT)
     process_env["THOR_OFFICIAL_EDGE4B_SNAPSHOT"] = str(edge_snapshot)
     process_env["THOR_OFFICIAL_EDGE4B_BLOBS_DIR"] = str(
@@ -1484,12 +1640,48 @@ def verify_resolved_compose(
     for name in ("nemotron-edge", "rtvi-vlm", "vss-agent"):
         if name not in services:
             raise ContractError(f"resolved Compose omitted required service {name}")
+    for name in (
+        "nemotron-edge",
+        "rtvi-vlm",
+        "vss-agent",
+        "alert-bridge",
+        "lvs-server",
+        "rtvi-embed",
+        "perception-2d-fusion",
+        "perception-2d-smartcity-thor",
+        "streamprocessing-ms",
+        "sensor-ms",
+    ):
+        if services.get(name, {}).get("restart") != "no":
+            raise ContractError(f"resolved {name} must fail closed after a host reboot")
+    redis_command = services.get("redis", {}).get("command")
+    try:
+        bind_index = redis_command.index("--bind")
+        protected_index = redis_command.index("--protected-mode")
+        redis_bind_addresses = redis_command[bind_index + 1 : protected_index]
+    except (AttributeError, ValueError):
+        raise ContractError("resolved Redis command has no inspectable bind contract")
+    if (
+        len(redis_bind_addresses) != 2
+        or redis_bind_addresses[0] != "127.0.0.1"
+        or redis_bind_addresses[0] == redis_bind_addresses[1]
+    ):
+        raise ContractError(
+            "resolved Redis bind addresses must be loopback plus one distinct "
+            f"Docker bridge address, found {redis_bind_addresses!r}"
+        )
     if services["nemotron-edge"].get("image") != EDGE_IMAGE:
         raise ContractError("resolved Edge4B image differs from digest lock")
     if services["rtvi-vlm"].get("image") != RTVLM_IMAGE:
         raise ContractError("resolved RT-VLM image differs from digest lock")
     _expect(
         services["nemotron-edge"], "command", EDGE_COMMAND, "resolved nemotron-edge"
+    )
+    _expect(
+        services["nemotron-edge"],
+        "entrypoint",
+        EDGE_ENTRYPOINT,
+        "resolved nemotron-edge",
     )
     rtvlm_env = _environment_list_to_map(
         services["rtvi-vlm"].get("environment"), "resolved rtvi-vlm"
@@ -1567,6 +1759,7 @@ def verify_resolved_compose(
         "VLM_NAME": COSMOS_MODEL_ID,
         "VLM_BASE_URL": COSMOS_BASE_URL,
         "RTVI_VLM_BASE_URL": COSMOS_BASE_URL,
+        "ALERT_ALWAYS_ON_ENABLED": "false",
     }
     for key, expected in expected_alert.items():
         if alert_env.get(key) != expected:
@@ -1631,9 +1824,10 @@ def verify_resolved_compose(
         raise ContractError(
             "resolved Cosmos3 cache is not the exact dedicated writable bind"
         )
-    for destination, (source, _expected_sha256) in (
-        RTVLM_REQUEST_CANCELLATION_OVERLAYS.items()
-    ):
+    for destination, (
+        source,
+        _expected_sha256,
+    ) in RTVLM_REQUEST_CANCELLATION_OVERLAYS.items():
         if not any(
             isinstance(mount, dict)
             and mount.get("type") == "bind"
@@ -1680,7 +1874,7 @@ def verify_resolved_compose(
         raise ContractError("resolved vss-agent has a direct config shadow mount")
     _reject_mount_overlays(
         agent_mounts,
-        {AGENT_CONFIG_CONTAINER},
+        {AGENT_CONFIG_CONTAINER} | set(AGENT_RUNTIME_OVERLAYS),
         "resolved vss-agent",
         allowed_overlaps={agent_deploy_target},
     )
@@ -1696,16 +1890,34 @@ def verify_resolved_compose(
         raise ContractError(
             "resolved vss-agent config does not come from the exact read-only deploy bind"
         )
+    for destination, (source, _expected_sha256) in AGENT_RUNTIME_OVERLAYS.items():
+        if not any(
+            isinstance(mount, dict)
+            and mount.get("type") == "bind"
+            and mount.get("source") == str(source.resolve(strict=True))
+            and mount.get("target") == destination
+            and mount.get("read_only") is True
+            for mount in agent_mounts
+        ):
+            raise ContractError(
+                "resolved vss-agent lacks exact read-only live-source safety "
+                f"overlay: {destination}"
+            )
     return resolved
 
 
 def render_pull_free_command(
-    runtime_env: Path, edge_snapshot: Path, cosmos_cache: Path
+    runtime_env: Path,
+    edge_snapshot: Path,
+    cosmos_cache: Path,
+    model_bind_host: str | None = None,
 ) -> str:
+    model_bind_host = resolve_model_bind_host(model_bind_host, runtime_env=runtime_env)
     return shlex.join(
         [
             "env",
             f"VSS_REPO_ROOT={REPO_ROOT}",
+            f"THOR_LOCAL_MODEL_BIND_HOST={model_bind_host}",
             f"THOR_OFFICIAL_EDGE4B_SNAPSHOT={edge_snapshot}",
             f"THOR_OFFICIAL_EDGE4B_BLOBS_DIR={_edge_repository(edge_snapshot) / 'blobs'}",
             f"THOR_OFFICIAL_COSMOS3_CACHE_DIR={cosmos_cache}",
@@ -1720,7 +1932,7 @@ def render_pull_free_command(
             "RAG_API_KEY=",
         ]
         + _compose_prefix(runtime_env)
-        + ["up", "-d", "--no-build", "--pull", "never"]
+        + ["up", "-d", "--no-build", "--pull", "never", "--force-recreate"]
     )
 
 
@@ -1733,6 +1945,66 @@ def _docker_container(name: str) -> dict[str, Any]:
     if not isinstance(value, list) or len(value) != 1 or not isinstance(value[0], dict):
         raise ContractError(f"unexpected docker inspect shape for {name}")
     return value[0]
+
+
+def _verify_fail_closed_runtime_container(name: str) -> None:
+    container = _docker_container(name)
+    state = container.get("State")
+    host_config = container.get("HostConfig")
+    if not isinstance(state, dict) or state.get("Running") is not True:
+        raise ContractError(f"fail-closed container {name} is not running")
+    if not isinstance(host_config, dict):
+        raise ContractError(f"container {name} has no inspectable host config")
+    restart_policy = host_config.get("RestartPolicy")
+    if not isinstance(restart_policy, dict) or restart_policy.get("Name") != "no":
+        raise ContractError(f"container {name} restart policy is not fail-closed 'no'")
+
+
+def _verify_exact_runtime_mounts(
+    container: dict[str, Any], name: str, expected_mounts: dict[str, Path]
+) -> None:
+    mounts = container.get("Mounts")
+    if not isinstance(mounts, list):
+        raise ContractError(f"container {name} has no inspectable mounts")
+    destinations = [
+        mount.get("Destination")
+        for mount in mounts
+        if isinstance(mount, dict) and isinstance(mount.get("Destination"), str)
+    ]
+    if len(destinations) != len(mounts):
+        raise ContractError(f"container {name} has an invalid mount record")
+    if len(destinations) != len(set(destinations)):
+        raise ContractError(f"container {name} has duplicate mount destinations")
+    protected = tuple(expected_mounts)
+    unexpected_overlays = sorted(
+        destination
+        for destination in destinations
+        if destination not in expected_mounts
+        and any(
+            destination.startswith(f"{root.rstrip('/')}/")
+            or root.startswith(f"{destination.rstrip('/')}/")
+            for root in protected
+        )
+    )
+    if unexpected_overlays:
+        raise ContractError(
+            f"container {name} has mounts overlapping protected paths: "
+            f"{unexpected_overlays}"
+        )
+    for destination, source in expected_mounts.items():
+        expected_source = str(source.resolve(strict=True))
+        if not any(
+            isinstance(mount, dict)
+            and mount.get("Type") == "bind"
+            and mount.get("Source") == expected_source
+            and mount.get("Destination") == destination
+            and mount.get("RW") is False
+            for mount in mounts
+        ):
+            raise ContractError(
+                f"container {name} does not use exact read-only bind "
+                f"{expected_source} -> {destination}"
+            )
 
 
 def _verify_running_container(
@@ -1758,6 +2030,10 @@ def _verify_running_container(
     ):
         raise ContractError(f"container {name} image differs from exact lock")
     if name == "vss-nemotron-edge-4b":
+        if config.get("Entrypoint") != EDGE_ENTRYPOINT:
+            raise ContractError(
+                f"container {name} entrypoint bypasses the exact startup gate"
+            )
         if config.get("Cmd") != required_command:
             raise ContractError(f"container {name} command differs from exact contract")
     elif required_command:
@@ -1842,7 +2118,10 @@ def _verify_running_container(
 
 
 def _verify_running_environment(
-    name: str, required_command: list[str], expected_env: dict[str, str]
+    name: str,
+    required_command: list[str],
+    expected_env: dict[str, str],
+    expected_mounts: dict[str, Path] | None = None,
 ) -> None:
     container = _docker_container(name)
     state = container.get("State")
@@ -1872,6 +2151,8 @@ def _verify_running_environment(
         raise ContractError(
             f"container {name} exposes non-empty credential environment: {leaked}"
         )
+    if expected_mounts:
+        _verify_exact_runtime_mounts(container, name, expected_mounts)
 
 
 def _get_json(url: str, timeout: float) -> Any:
@@ -1902,7 +2183,12 @@ def verify_readiness(
     timeout: float,
     edge_snapshot: Path,
     cosmos_cache: Path,
+    *,
+    meminfo_path: Path = HOST_MEMINFO,
 ) -> None:
+    verify_empirical_headroom(meminfo_path)
+    for name in FAIL_CLOSED_RUNTIME_CONTAINERS:
+        _verify_fail_closed_runtime_container(name)
     edge_image_id = contract["images"]["edge4b_vllm"].get("image_id")
     if not isinstance(edge_image_id, str):
         raise ContractError("Edge4B image lacks a reviewed local image ID")
@@ -1975,6 +2261,15 @@ def verify_readiness(
             "EVAL_LLM_JUDGE_NAME": EDGE_MODEL_ID,
             "EVAL_LLM_JUDGE_BASE_URL": EDGE_BASE_URL,
         },
+        {
+            "/vss-agent/deploy/docker": DEPLOY_DOCKER,
+            **{
+                destination: source
+                for destination, (source, _expected_sha256) in (
+                    AGENT_RUNTIME_OVERLAYS.items()
+                )
+            },
+        },
     )
     _verify_running_environment(
         "vss-lvs",
@@ -2002,6 +2297,7 @@ def verify_readiness(
             "VLM_NAME": COSMOS_MODEL_ID,
             "VLM_BASE_URL": COSMOS_BASE_URL,
             "VLM_MODE": "local_shared",
+            "ALERT_ALWAYS_ON_ENABLED": "false",
         },
     )
     _verify_model_endpoint(EDGE_BASE_URL, EDGE_MODEL_ID, timeout)
@@ -2048,8 +2344,9 @@ def _audit(args: argparse.Namespace) -> int:
             failures.append(f"images: {exc}")
             print(f"FAIL images: {exc}")
         try:
-            verify_memory(contract, args.meminfo)
-            print("PASS 0.25 + 0.30 + 0.25 unified-memory admission")
+            verify_memory(contract, HOST_MEMINFO)
+            verify_empirical_headroom(HOST_MEMINFO)
+            print("PASS fraction gate and empirical 64 GiB post-load memory reserve")
         except ContractError as exc:
             failures.append(f"memory: {exc}")
             print(f"FAIL memory: {exc}")
@@ -2079,7 +2376,6 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--contract", type=Path, default=DEFAULT_CONTRACT)
     parser.add_argument("--artifact-lock", type=Path, default=DEFAULT_ARTIFACT_LOCK)
     parser.add_argument("--runtime-env", type=Path, default=DEFAULT_RUNTIME_ENV)
-    parser.add_argument("--meminfo", type=Path, default=Path("/proc/meminfo"))
     parser.add_argument(
         "--edge4b-snapshot", default=os.environ.get("THOR_OFFICIAL_EDGE4B_SNAPSHOT")
     )
@@ -2117,7 +2413,8 @@ def main(argv: list[str] | None = None) -> int:
         verify_artifacts(args.artifact_lock, edge, cosmos)
         verify_images(contract)
         if args.command == "render-command":
-            verify_memory(contract, args.meminfo)
+            verify_memory(contract, HOST_MEMINFO)
+            verify_empirical_headroom(HOST_MEMINFO)
             verify_resolved_compose(args.runtime_env, edge, cosmos)
             print(render_pull_free_command(args.runtime_env, edge, cosmos))
             return 0

@@ -5,24 +5,27 @@
 From the repository root:
 
 ```bash
-pgrep -af /usr/local/bin/sys-cache-cleaner.sh || \
-  sudo -b /usr/local/bin/sys-cache-cleaner.sh
+./deploy/docker/scripts/thor-local.sh stop
 ./deploy/docker/scripts/thor-local.sh status
-./deploy/docker/scripts/thor-local.sh ready
 ./deploy/docker/scripts/thor-local.sh doctor
 ```
 
-Open **http://10.88.8.175:7777** on Thor or any other device on the approved
-local network. This is the complete application gateway: UI, source discovery,
-recorded and live playback, search, uploads, alerts, analytics, Vision Analyst,
-and both WebSocket paths use that one origin. Port 3001 remains a direct UI
-diagnostic address, but 7777 is the supported operator URL.
+The 128 GiB host is safety-locked against the full local Cosmos3 + Nemotron
+graph after two hardware-watchdog resets. Keep the periodic cache cleaner and
+all GPU-heavy services stopped. Restore the application only after selecting a
+split local-model lane or a remote endpoint for one model and passing the
+official-edge audit; never replay an older all-service Compose command.
 
-If Thor's LAN address changes, run `./deploy/docker/scripts/thor-local.sh
-refresh-runtime` before restoring the exact-model lane. Then follow the
-pull-free exact-model recovery command printed by `thor-local.sh doctor` so the
-UI, gateway, and Agent all receive the new address without replacing the local
-models.
+After a split/remote topology is implemented and accepted, open
+**http://10.88.8.175:7777** on Thor or another device on the approved local
+network. That is the complete application gateway. While the safety lock is
+active, both the gateway and the direct UI diagnostic port may be unavailable
+because the application is intentionally stopped.
+
+If Thor's LAN address changes, refresh the runtime only after a split/remote
+replacement topology has been implemented and accepted. `thor-local.sh doctor`
+intentionally prints no co-resident recovery command while this safety lock is
+active.
 
 Do not start a presentation until the header says **NVIDIA THOR · ONLINE** and
 the readiness popover shows all seven application capabilities online: video,
@@ -96,14 +99,14 @@ back/forward preserves the selected workspace and unrelated query parameters.
   describe it honestly as recorded evidence.
 - If readiness is not fully online, run `thor-local.sh doctor` and inspect only
   the named service with `docker logs --tail 150 <container>`.
-- If Cosmos and Nemotron both need recovery, start Cosmos first and wait until
-  it is healthy before starting Nemotron. Starting both large models together
-  can exhaust Thor's unified-memory startup headroom.
+- Do not recover Cosmos and Nemotron together on this 128 GiB host. Move one
+  model to a split/remote endpoint, run the corresponding admission audit, and
+  only then start application consumers.
 - Do not run connected bootstrap, pull large images, prune runtime images, or
   delete VSS data on a show floor.
-- The conservative operating point is one continuous live camera plus recorded
-  archives. A second live stream is suitable for a short supervised demo when
-  readiness and memory headroom remain healthy.
+- Agent startup leaves registered live sources inactive in the constrained
+  lane. Resume a source explicitly only after the replacement topology passes
+  runtime acceptance; never treat endpoint health alone as that acceptance.
 - The LAN gateway intentionally has no login or TLS boundary. Use it only on a
   trusted, isolated simulator or tradeshow network; never port-forward 7777 to
   the internet or expose the internal model, database, broker, VST, or Agent

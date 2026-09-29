@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
 
+import { readEvidenceAnalysis } from "./readEvidenceAnalysis";
+import type { EvidenceVisualInspection } from "./evidenceAnalysis";
+
 import { useDialogAccessibility } from "@aiqtoolkit-ui/common";
 
 import {
@@ -88,6 +91,7 @@ interface InvestigationRequest {
 }
 
 interface InvestigateWorkspaceProps {
+  isActive?: boolean;
   agentApiUrl?: string | null;
   initialRequest?: InvestigationRequest | null;
   mdxWebApiUrl?: string | null;
@@ -105,8 +109,9 @@ type DetectorFrameAvailability = "available" | "checking" | "unavailable";
 
 const RESULTS_PAGE_SIZE = 6;
 const PRIMARY_SEARCH_SIMILARITY = "0.25";
-const DISCOVERY_SEARCH_SIMILARITY = "0.15";
 const ALL_SOURCE_SEARCH_SIMILARITY = "0.12";
+// Scoping to one source must not hide candidates accepted by all-source discovery.
+const DISCOVERY_SEARCH_SIMILARITY = ALL_SOURCE_SEARCH_SIMILARITY;
 const ALL_SOURCE_SEARCH_TOP_K = 18;
 const SCOPED_SEARCH_TOP_K = 12;
 const SOURCE_REPRESENTATIVE_SCORE_RATIO = 0.5;
@@ -160,6 +165,9 @@ async function searchResponseError(
   } catch {
     // FastAPI normally returns JSON. Preserve a useful status fallback if an
     // upstream proxy instead returns an empty or non-JSON response.
+  }
+  if ([502, 503, 504].includes(response.status)) {
+    return "Video search is temporarily unavailable. Check local services in System, then retry. Your indexed evidence has not been removed.";
   }
   return operatorSearchError(
     detail ||
@@ -314,6 +322,7 @@ function matchExplanation(
 
 function resultTitle(item: VisionSearchResult, query: string): string {
   const description = item.description.trim();
+  if (/^VST live stream$/i.test(description)) return resultSourceName(item.video_name);
   if (description && !/^attribute match at\s/i.test(description)) {
     return description;
   }
@@ -711,6 +720,7 @@ function rankByRelevance(
 
 function EvidenceViewer({
   item,
+  onAsk,
   mdxWebApiUrl,
   onClose,
   onFindSimilar,
@@ -720,6 +730,7 @@ function EvidenceViewer({
   vstApiUrl,
 }: {
   item: VisionSearchResult;
+  onAsk: () => void;
   mdxWebApiUrl?: string | null;
   onClose: () => void;
   onFindSimilar: (reference: VisualReference) => Promise<string | null>;
@@ -887,7 +898,7 @@ function EvidenceViewer({
               src={proxyVstPictureUrl(
                 normalizeMediaUrl(item.screenshot_url, vstApiUrl)
               )}
-              alt={item.description || item.video_name}
+              alt={resultTitle(item, query)}
             />
           )}
           {!videoUrl && !error && (
@@ -927,13 +938,16 @@ function EvidenceViewer({
           </div>
           <p>
             {searchByImageEnabled && detectorFrames === "available"
-              ? "Play or scrub to the object you want, then choose Find similar object. The selector uses only real detector and tracker boxes from that exact indexed frame."
+              ? "Pause on an object, then choose Find similar object to search for another appearance. Only objects detected in that frame can be selected."
               : searchByImageEnabled && detectorFrames === "checking"
-              ? "Checking this interval for indexed detector and tracker objects. Clip playback remains available while the object index is queried."
+              ? "Checking whether object search is available for this clip. You can keep watching."
               : searchByImageEnabled
-              ? "This interval has no indexed detector or tracker frames, so object-similarity search is not offered. Semantic evidence and exact playback remain available."
-              : "Open the clip to inspect the model-ranked interval directly. The description, timestamp, source, and critic status are preserved from the VSS result."}
+              ? "Watch the matching moment to check what happened. Search by object is unavailable for this clip; you can still search using words."
+              : "Watch the matching moment to check what happened. The source and recording position identify the footage behind this result."}
           </p>
+          <button type="button" className="vi-button vi-button--primary" onClick={onAsk}>
+            <IconSparkles size={18} /> Ask about this clip
+          </button>
           <div className="vi-match-explanation">
             <strong>Why this matched</strong>
             <span>{matchExplanation(item, visualSearchResult)}</span>
@@ -987,6 +1001,7 @@ function EvidenceViewer({
 }
 
 export function InvestigateWorkspace({
+  isActive = true,
   agentApiUrl,
   initialRequest,
   mdxWebApiUrl,
@@ -1001,13 +1016,27 @@ export function InvestigateWorkspace({
   const [searchMessages, setSearchMessages] = useState<string[]>([]);
   const [selectedEvidence, setSelectedEvidence] =
     useState<VisionSearchResult | null>(null);
+  const evidenceRevision = useRef(0);
+  const lastEvidenceQuestion = useRef<string | undefined>(undefined);
   const [evidenceSelection, setEvidenceSelection] = useState<string[]>([]);
+  const [evidenceSnapshots, setEvidenceSnapshots] = useState<Record<string, {
+    item: VisionSearchResult; query: string; visual: boolean;
+  }>>({});
+  const questionInputRef = useRef<HTMLInputElement>(null);
+  const focusQuestionAfterViewer = useRef(false);
+  useEffect(() => {
+    if (selectedEvidence || !focusQuestionAfterViewer.current) return;
+    // Run after the viewer's cleanup restores focus to its opener.
+    focusQuestionAfterViewer.current = false;
+    questionInputRef.current?.focus();
+  }, [selectedEvidence]);
   const [evidenceAnalysis, setEvidenceAnalysis] =
     useState<EvidenceAnalysisResponse | null>(null);
   const [evidenceAnalysisError, setEvidenceAnalysisError] = useState<
     string | null
   >(null);
   const [evidenceAnalysisLoading, setEvidenceAnalysisLoading] = useState(false);
+  const [inspectionProgress, setInspectionProgress] = useState<EvidenceVisualInspection[]>([]);
   const [visualReference, setVisualReference] =
     useState<VisualReference | null>(null);
   const [scopedCamera, setScopedCamera] = useState<VisionStream | undefined>(
@@ -1030,7 +1059,12 @@ export function InvestigateWorkspace({
     request: InvestigationRequest;
   } | null>(null);
   const { isLoading: sourcesLoading, streams: availableStreams } =
-    useVisionStreams(vstApiUrl);
+    useVisionStreams(vstApiUrl, isActive);
+
+  // Preserve the inquiry across navigation, but release the viewer and its media.
+  useEffect(() => {
+    if (!isActive) setSelectedEvidence(null);
+  }, [isActive]);
 
   const availableSearchSources = useMemo(() => {
     const unique = new Map<string, VisionStream>();
@@ -1055,8 +1089,9 @@ export function InvestigateWorkspace({
       setSubmittedQuery(normalizedQuery);
       setVisibleCount(RESULTS_PAGE_SIZE);
       setSelectedEvidence(null);
-      setEvidenceSelection([]);
+      evidenceRevision.current += 1;
       setEvidenceAnalysis(null);
+    setInspectionProgress([]);
       setEvidenceAnalysisError(null);
       setVisualReference(null);
       setMediaAvailability({});
@@ -1364,8 +1399,9 @@ export function InvestigateWorkspace({
           setMediaAvailability(nextAvailability);
           setResults(nextResults);
           setSelectedEvidence(null);
-          setEvidenceSelection([]);
+          evidenceRevision.current += 1;
           setEvidenceAnalysis(null);
+    setInspectionProgress([]);
           setEvidenceAnalysisError(null);
           return null;
         }
@@ -1444,17 +1480,14 @@ export function InvestigateWorkspace({
     [visibleResults]
   );
   const selectedResults = useMemo(() => {
-    const byIdentity = new Map(
-      results.map((item) => [resultIdentity(item), item] as const)
-    );
     return evidenceSelection
-      .map((identity) => byIdentity.get(identity))
+      .map((identity) => evidenceSnapshots[identity]?.item)
       .filter(
         (item): item is VisionSearchResult =>
           Boolean(item) &&
           mediaAvailability[resultIdentity(item!)] !== "expired"
       );
-  }, [evidenceSelection, mediaAvailability, results]);
+  }, [evidenceSelection, evidenceSnapshots, mediaAvailability]);
   const selectedEvidenceItems = useMemo<SelectedEvidenceItem[]>(
     () =>
       selectedResults.map((item) => ({
@@ -1463,13 +1496,16 @@ export function InvestigateWorkspace({
         imageUrl: proxyVstPictureUrl(
           normalizeMediaUrl(item.screenshot_url, vstApiUrl)
         ),
-        matchType: resultReviewLabel(item, Boolean(visualReference)),
+        matchType: resultReviewLabel(item, evidenceSnapshots[resultIdentity(item)]?.visual ?? false),
         sensorId: item.sensor_id,
         sourceName: resultSourceName(item.video_name),
         startTime: item.start_time,
-        title: resultTitle(item, submittedQuery),
+        startLabel: recordedClipOffset(item) ?? undefined,
+        durationLabel: formatDuration(item.start_time, item.end_time),
+        fromEarlierSearch: !results.some((result) => resultIdentity(result) === resultIdentity(item)),
+        title: resultTitle(item, evidenceSnapshots[resultIdentity(item)]?.query ?? submittedQuery),
       })),
-    [selectedResults, submittedQuery, visualReference, vstApiUrl]
+    [selectedResults, evidenceSnapshots, submittedQuery, vstApiUrl, results]
   );
 
   const analyzeSelectedEvidence = async (question?: string) => {
@@ -1480,31 +1516,33 @@ export function InvestigateWorkspace({
       evidence: selectedResults.map((item) => ({
         client_id: resultIdentity(item),
         end_time: item.end_time,
-        match_type: resultReviewLabel(item, Boolean(visualReference)),
+        match_type: resultReviewLabel(item, evidenceSnapshots[resultIdentity(item)]?.visual ?? false),
         search_description: item.description,
         sensor_id: item.sensor_id,
         source_name: resultSourceName(item.video_name),
         start_time: item.start_time,
       })),
     };
+    lastEvidenceQuestion.current = question;
+    const revision = ++evidenceRevision.current;
+    setEvidenceAnalysis(null);
+    setInspectionProgress([]);
     setEvidenceAnalysisLoading(true);
     setEvidenceAnalysisError(null);
     try {
       const response = await fetch("/api/vision/evidence-analysis", {
         body: JSON.stringify(request),
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/x-ndjson" },
         method: "POST",
       });
-      const payload = (await response.json()) as EvidenceAnalysisResponse & {
-        error?: string;
-      };
-      if (!response.ok) {
-        throw new Error(
-          payload.error || `Evidence analysis returned ${response.status}.`
-        );
-      }
-      setEvidenceAnalysis(payload);
+      const payload = await readEvidenceAnalysis(response, (inspection) => {
+        if (revision === evidenceRevision.current) {
+          setInspectionProgress((current) => [...current, inspection]);
+        }
+      });
+      if (revision === evidenceRevision.current) setEvidenceAnalysis(payload);
     } catch (analysisError) {
+      if (revision !== evidenceRevision.current) return;
       setEvidenceAnalysisError(
         analysisError instanceof Error
           ? analysisError.message
@@ -1515,22 +1553,50 @@ export function InvestigateWorkspace({
     }
   };
 
+  const addEvidence = (identity: string) => {
+    if (evidenceSelection.includes(identity)) return;
+    if (evidenceSelection.length >= 6) {
+      setEvidenceAnalysisError("Choose up to six clips. Remove one before adding another.");
+      return;
+    }
+    const item = results.find((result) => resultIdentity(result) === identity);
+    if (!item) return;
+    setEvidenceSnapshots((snapshots) => ({ ...snapshots,
+      [identity]: { item, query: submittedQuery, visual: Boolean(visualReference) },
+    }));
+    setEvidenceSelection((selection) => [...selection, identity]);
+    evidenceRevision.current += 1;
+    setEvidenceAnalysis(null);
+    setInspectionProgress([]);
+    setEvidenceAnalysisError(null);
+  };
+
   const removeEvidence = (identity: string) => {
+    setEvidenceSnapshots((snapshots) => {
+      const next = { ...snapshots };
+      delete next[identity];
+      return next;
+    });
     setEvidenceSelection((selection) =>
       selection.filter((value) => value !== identity)
     );
+    evidenceRevision.current += 1;
     setEvidenceAnalysis(null);
+    setInspectionProgress([]);
     setEvidenceAnalysisError(null);
   };
 
   const clearEvidence = () => {
     setEvidenceSelection([]);
+    setEvidenceSnapshots({});
+    evidenceRevision.current += 1;
     setEvidenceAnalysis(null);
+    setInspectionProgress([]);
     setEvidenceAnalysisError(null);
   };
 
   const openEvidence = (identity: string) => {
-    const item = results.find((result) => resultIdentity(result) === identity);
+    const item = evidenceSnapshots[identity]?.item;
     if (item) setSelectedEvidence(item);
   };
 
@@ -1561,7 +1627,7 @@ export function InvestigateWorkspace({
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Ask about activity across your sources…"
+          placeholder="Describe the moment you want to find…"
           aria-label="Search video evidence"
         />
         <button type="submit" aria-label="Search">
@@ -1591,6 +1657,9 @@ export function InvestigateWorkspace({
             ))}
           </select>
         </label>
+        <details className="vi-search-refinements">
+          <summary>Refine search{(timeRange !== "all" || sourceType !== "all" || resultStatus !== "usable") ? ` · ${[timeRange !== "all", sourceType !== "all", resultStatus !== "usable"].filter(Boolean).length} active` : ""}</summary>
+          <div>
         <label className="vi-investigate-filter">
           <IconClock size={17} />
           <select
@@ -1669,21 +1738,23 @@ export function InvestigateWorkspace({
             <option value="all">All statuses</option>
           </select>
         </label>
+          </div>
+        </details>
       </div>
 
       {!submittedQuery && !loading && (
         <div className="vi-investigate-empty">
           <IconSearch size={28} />
-          <h1>Investigate video evidence</h1>
+          <h1>Find the moment that matters</h1>
           <p>
-            Describe an object, action, or event. Vision Intelligence will rank
-            matching clips from available sources.
+            Search in everyday language. Watch a matching clip, select it as evidence,
+            then ask AI to explain what is visible—with a citation back to the footage.
           </p>
           <div>
             {[
-              "Find vehicles at the intersection",
-              "Show people entering restricted areas",
-              "Find forklift activity",
+              "People moving",
+              "Vehicles at an intersection",
+              "Forklift activity",
             ].map((suggestion) => (
               <button
                 key={suggestion}
@@ -1779,9 +1850,9 @@ export function InvestigateWorkspace({
                     {visibleSourceCount === 1 ? "source" : "sources"}
                   </strong>
                   <span>
-                    Ranked locally by semantic similarity to “{submittedQuery}”.
-                    Select the strongest evidence to ask the Vision Analyst for
-                    a grounded briefing.
+                    {visibleResults.length > 0
+                      ? `Matches for “${submittedQuery}”. Play a clip to check it, then choose Ask about this clip to ask your own question.`
+                      : `No playable matches for “${submittedQuery}” with the current filters. This does not establish that the activity never occurred.`}
                   </span>
                 </div>
               </div>
@@ -1829,8 +1900,8 @@ export function InvestigateWorkspace({
               <strong>
                 {visibleResults.length}{" "}
                 {visualReference
-                  ? "visually similar objects"
-                  : "matching clips"}
+                  ? `visually similar object${visibleResults.length === 1 ? "" : "s"}`
+                  : `matching clip${visibleResults.length === 1 ? "" : "s"}`}
               </strong>
               <span>
                 {sortMode === "relevance"
@@ -1838,7 +1909,7 @@ export function InvestigateWorkspace({
                   : "Newest evidence first"}
               </span>
             </div>
-            <div className="vi-results-heading-actions">
+            <div className="vi-results-heading-actions" style={visibleResults.length < 2 ? { display: "none" } : undefined}>
               <button
                 type="button"
                 className={sortMode === "relevance" ? "is-active" : ""}
@@ -1855,26 +1926,20 @@ export function InvestigateWorkspace({
               >
                 Newest first
               </button>
-              <button
-                type="button"
-                className={selectedResults.length ? "is-active" : ""}
-                disabled={!selectedResults.length || evidenceAnalysisLoading}
-                onClick={() => void analyzeSelectedEvidence()}
-              >
-                <IconSparkles size={16} />{" "}
-                {selectedResults.length
-                  ? `Analyze ${selectedResults.length} selected`
-                  : "Select clips to analyze"}
-              </button>
+
             </div>
           </div>
           {selectedResults.length > 0 && (
             <EvidenceAnalysisPanel
+              key={evidenceRevision.current}
+              questionInputRef={questionInputRef}
               analysis={evidenceAnalysis}
               error={evidenceAnalysisError}
               isAnalyzing={evidenceAnalysisLoading}
               items={selectedEvidenceItems}
+              inspections={inspectionProgress}
               onAnalyze={() => void analyzeSelectedEvidence()}
+              onRetry={() => void analyzeSelectedEvidence(lastEvidenceQuestion.current)}
               onAsk={(question) => void analyzeSelectedEvidence(question)}
               onClear={clearEvidence}
               onOpenEvidence={openEvidence}
@@ -1882,7 +1947,7 @@ export function InvestigateWorkspace({
             />
           )}
           {visibleResults.length ? (
-            <div className="vi-results-grid">
+            <div className={`vi-results-grid${visibleResults.length === 1 ? " vi-results-grid--single" : ""}`}>
               {shownResults.map((item, index) => {
                 const identity = resultIdentity(item);
                 const isSelected = evidenceSelection.includes(identity);
@@ -1902,7 +1967,7 @@ export function InvestigateWorkspace({
                       aria-label={
                         recordingExpired
                           ? `Preview unavailable for ${evidenceLabel}`
-                          : undefined
+                          : `Play clip: ${evidenceLabel}`
                       }
                       disabled={recordingExpired}
                       onClick={() => setSelectedEvidence(item)}
@@ -1920,7 +1985,7 @@ export function InvestigateWorkspace({
                           src={proxyVstPictureUrl(
                             normalizeMediaUrl(item.screenshot_url, vstApiUrl)
                           )}
-                          alt={item.description || item.video_name}
+                          alt={evidenceLabel}
                         />
                       )}
                       <span>
@@ -1971,9 +2036,10 @@ export function InvestigateWorkspace({
                             </span>
                           )}
                         </div>
-                        <p className="vi-result-why">
-                          {matchExplanation(item, Boolean(visualReference))}
-                        </p>
+                        <details className="vi-result-method">
+                          <summary>Why this matched</summary>
+                          <p className="vi-result-why">{matchExplanation(item, Boolean(visualReference))}</p>
+                        </details>
                       </div>
                       <div className="vi-result-actions">
                         <button
@@ -2003,11 +2069,7 @@ export function InvestigateWorkspace({
                           aria-label={`${
                             recordingExpired
                               ? `Expired ${evidenceLabel} cannot be used as evidence`
-                              : `${
-                                  isSelected ? "Remove" : "Use"
-                                } ${evidenceLabel} ${
-                                  isSelected ? "from" : "as"
-                                } evidence`
+                              : `${isSelected ? "Remove clip" : "Ask about this clip"}: ${evidenceLabel}`
                           }`}
                           disabled={recordingExpired}
                           onClick={() => {
@@ -2015,22 +2077,11 @@ export function InvestigateWorkspace({
                               removeEvidence(identity);
                               return;
                             }
-                            if (evidenceSelection.length >= 6) {
-                              setEvidenceAnalysisError(
-                                "Analyze up to six clips at once so every result remains fast and verifiable."
-                              );
-                              return;
-                            }
-                            setEvidenceSelection((selection) => [
-                              ...selection,
-                              identity,
-                            ]);
-                            setEvidenceAnalysis(null);
-                            setEvidenceAnalysisError(null);
+                            addEvidence(identity);
                           }}
                         >
-                          <IconCheck size={16} />{" "}
-                          {isSelected ? "Selected" : "Use as evidence"}
+                          {isSelected ? <IconX size={16} /> : <IconSparkles size={16} />}{" "}
+                          {isSelected ? "Remove clip" : "Ask about this clip"}
                         </button>
                       </div>
                     </div>
@@ -2058,7 +2109,7 @@ export function InvestigateWorkspace({
             <div className="vi-results-empty">
               {results.length && resultStatus === "usable"
                 ? "Matching embeddings were found, but their recordings have expired. Choose All statuses to review the indexed history."
-                : "No matching evidence was returned. Try a more concrete visual description or a broader source filter."}
+                : "No matching evidence was returned. Try a shorter description of the main action, or broaden the source and time filters."}
             </div>
           )}
         </div>
@@ -2067,12 +2118,17 @@ export function InvestigateWorkspace({
       {selectedEvidence && (
         <EvidenceViewer
           item={selectedEvidence}
+          onAsk={() => {
+            focusQuestionAfterViewer.current = true;
+            addEvidence(resultIdentity(selectedEvidence));
+            setSelectedEvidence(null);
+          }}
           mdxWebApiUrl={mdxWebApiUrl}
           onClose={() => setSelectedEvidence(null)}
           onFindSimilar={searchByReference}
-          query={submittedQuery}
+          query={evidenceSnapshots[resultIdentity(selectedEvidence)]?.query ?? submittedQuery}
           searchByImageEnabled={searchByImageEnabled}
-          visualSearchResult={Boolean(visualReference)}
+          visualSearchResult={evidenceSnapshots[resultIdentity(selectedEvidence)]?.visual ?? Boolean(visualReference)}
           vstApiUrl={vstApiUrl}
         />
       )}

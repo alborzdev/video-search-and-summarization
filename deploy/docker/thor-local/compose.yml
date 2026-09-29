@@ -5,6 +5,14 @@
 # supplies the runtime, while PYTHONPATH selects the checked-out source so local
 # fixes can be qualified before a new immutable image is built.
 services:
+  # Bound the collector and avoid recursive container disk-usage scans. Host
+  # filesystem capacity remains available from node-exporter; CPU, memory,
+  # network and disk-I/O counters remain enabled. Preserve cAdvisor's other
+  # default disabled metric groups when adding disk to the list.
+  cadvisor:
+    mem_limit: 1g
+    memswap_limit: 1g
+    command: ["--docker_only=true", "--housekeeping_interval=15s", "--max_housekeeping_interval=15s", "--storage_duration=1m", "--disable_metrics=advtcp,cpu_topology,cpuset,disk,hugetlb,memory_numa,process,referenced_memory,resctrl,sched,tcp,udp"]
   # The upstream production broker reserves a fixed 6 GiB JVM heap. A
   # single-node Thor demo carries only the local VSS topics, so keep the
   # broker's steady-state and restart footprint bounded while retaining an
@@ -104,7 +112,7 @@ services:
       - /config/redis.conf
       - --bind
       - 127.0.0.1
-      - ${THOR_LOCAL_MODEL_BIND_HOST:-127.0.0.1}
+      - ${THOR_LOCAL_MODEL_BIND_HOST:?set THOR_LOCAL_MODEL_BIND_HOST to the docker0 IPv4 address}
       # The SDR dispatcher reaches this explicitly bound docker0 address from
       # the private Compose bridge. Redis protected mode rejects that traffic
       # even though no physical/LAN interface is listening; the narrow bind is
@@ -416,6 +424,11 @@ services:
       args:
         PYTHON_BASE_IMAGE: ${VIOS_MCP_PYTHON_BASE_IMAGE:-python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c}
     container_name: vss-vios-mcp
+    # Keep the internal development helper source-mounted for small fixes.
+    volumes:
+      - ${VSS_REPO_ROOT}/services/vios/mcp/src:/app/src:ro
+    mem_limit: 1g
+    memswap_limit: 1g
     network_mode: host
     read_only: true
     security_opt:
@@ -444,8 +457,8 @@ services:
         - >-
           import http.client,sys;
           c=http.client.HTTPConnection('127.0.0.1',${VST_MCP_PORT:-8001},timeout=3);
-          c.request('GET','/mcp',headers={'Accept':'application/json'});
-          sys.exit(0 if c.getresponse().status in (200,400,406) else 1)
+          c.request('GET','/health');
+          sys.exit(0 if c.getresponse().status == 200 else 1)
       interval: 10s
       timeout: 5s
       retries: 30
@@ -772,6 +785,7 @@ services:
       COSMOS_EMBED_MODEL: ${LVS_EMB_MODEL_NAME:-cosmos-embed1-448p-anomaly-detection}
     volumes:
       - ${VSS_DATA_DIR}/data_log/vst/vst_video:/media:ro
+      - ${VSS_DATA_DIR}/data_log/vst/clip_storage:/recordings:ro
       - ${VSS_DATA_DIR}/evidence-clip-cache:/cache:rw
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8098/health', timeout=2).read()"]

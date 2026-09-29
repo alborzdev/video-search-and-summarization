@@ -1,0 +1,3 @@
+# Same demo capabilities and startup source gate as Thor; runtime endpoints and
+# model identity are supplied by the independent Spark environment.
+base: ../thor-local/official-edge/config_edge.yml

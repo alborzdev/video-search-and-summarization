@@ -150,6 +150,11 @@ async def inspect_vision_source(builder: WorkflowBuilder, request: VisionInspect
         "answer": answer_text,
         "evidence_tool": tool_name,
         "observed_range": observed_range,
+        **(
+            {"observed_window": {"start_time": start_timestamp, "end_time": end_timestamp}}
+            if request.source_kind == "live"
+            else {}
+        ),
     }
 
 

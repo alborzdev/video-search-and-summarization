@@ -1,0 +1,16 @@
+Conveyor demo — box movement
+
+Question: What moves in this clip?
+
+Saved AI answer:
+A box moves along a conveyor belt.
+
+Review notes:
+Recorded simulation, reviewed against the source footage. A box travels around the conveyor bend and leaves the camera view. This demonstrates finding and reviewing item movement; it does not establish a jam, defect, or where the box goes after leaving view. Fresh local inspection took 7.8 seconds.
+
+Saved: 2026-09-28T22:50:29.639Z
+Review status: open
+
+Evidence links (video stays on the Jetson; network access required; retained clips can expire):
+E1 · Box moving on a conveyor belt — Conveyor — Box Movement · 0:00 into recording
+http://10.88.9.12:7777/api/vision/investigations?id=080de717-3ba8-48d1-8e90-c2c8e0d6af2f&format=html#E1

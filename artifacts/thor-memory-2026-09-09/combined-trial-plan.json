@@ -1,0 +1,19 @@
+{
+  "status": "qualified_for_bounded_workloads",
+  "models": "exact local Nemotron3Nano4B-FP8 and Cosmos3NanoBF16; exact CosmosEmbed1",
+  "controls": {
+    "nemotron_context": 32768,
+    "nemotron_kv_gib": 2,
+    "cosmos_context": 16384,
+    "cosmos_kv_gib": 3,
+    "embedding_batch": 2,
+    "model_sequences_each": 1,
+    "periodic_cache_cleaner": false,
+    "lvs_max_live_streams": 2,
+    "lvs_embedding_dimensions": 768
+  },
+  "estimated_additional_model_peak_gib": 53,
+  "minimum_host_available_gib": 36,
+  "note": "User-authorized separate candidate; validated with sequential 25-second summaries, fresh ingestion/search, and one1080p10 live source plus Agent request. Original64+64GiB fuse unchanged. Thumbnail HTTP500 and caption inaccuracies remain separate issues.",
+  "measured_minimum_available_gib": 40.20427322387695
+}

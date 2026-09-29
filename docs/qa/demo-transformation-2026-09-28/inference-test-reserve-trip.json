@@ -1,0 +1,10 @@
+[
+  {
+    "time": 1790619417.251137,
+    "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+    "available_gib": 47.958,
+    "floor_gib": 48.0,
+    "reason": "reserve",
+    "thermal_age": 0.48
+  }
+]

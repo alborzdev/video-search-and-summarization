@@ -5,6 +5,7 @@ import { Button, TextInput, Select } from '@nvidia/foundations-react-core';
 import { IconChevronDown, IconVideo, IconX } from '@tabler/icons-react';
 import {
   SEMANTIC_ANALYSIS_PROFILE_ID,
+  analysisProfileTask,
   type AnalysisProfile,
   loadAnalysisProfiles,
   recommendAnalysisProfile,
@@ -12,10 +13,10 @@ import {
 
 const ACCEPTED_EXTENSIONS = ['.mp4', '.mkv'];
 
-const POPUP_OVERLAY_VIEWPORT = 'fixed inset-0 z-50 flex items-center justify-center bg-black/50';
+const POPUP_OVERLAY_VIEWPORT = 'fixed inset-0 z-[120] flex items-center justify-center bg-black/50';
 /** Covers only the parent `relative` region (e.g. Video Management main pane), not the whole browser window */
 const POPUP_OVERLAY_CONTAINED = 'absolute inset-0 z-40 flex items-center justify-center bg-black/50';
-const POPUP_CONTAINER_CLASS = 'mx-4 w-full max-w-xl rounded-lg bg-white p-6 shadow-xl dark:bg-neutral-900';
+const POPUP_CONTAINER_CLASS = 'mx-4 flex w-full max-w-3xl max-h-[90vh] flex-col overflow-hidden rounded-lg bg-white p-6 shadow-xl dark:bg-neutral-900';
 
 interface AgentUploadFileItem {
   id: string;
@@ -169,6 +170,10 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
     const value = fileItem.formData[fieldName] ?? field['field-default-value'];
     const isChangeable = field['changeable'] !== false;
 
+    if (fieldName === 'embedding' && !isChangeable && value === true) {
+      return <span className="text-sm text-gray-500">Included in processing</span>;
+    }
+
     if (field['field-type'] === 'boolean') {
       return (
         <label
@@ -235,12 +240,13 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
   return (
     <div ref={dialogRef as React.RefObject<HTMLDivElement>} className={overlayClass} role="dialog" aria-modal="true" aria-labelledby="agent-upload-dialog-title">
       <div className={POPUP_CONTAINER_CLASS}>
-        <h3 id="agent-upload-dialog-title" className="mb-6 text-center text-lg font-semibold text-gray-900 dark:text-white">
-          Upload Files
+        <h3 id="agent-upload-dialog-title" className="mb-3 shrink-0 text-xl font-semibold text-gray-900 dark:text-white">
+          Make a video searchable
         </h3>
 
-        {/* Files list */}
-        <div className="mb-4">
+        <p className="mb-5 shrink-0 text-sm leading-6 text-gray-500">Upload a recording, then build searchable moments on this Jetson. Processing must finish before search is ready.</p>
+        {/* One scrolling content region; actions remain visible below it. */}
+        <div className="min-h-0 flex-1 overflow-y-auto pr-2">
           <div className="mb-2 flex items-center justify-between">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Files <span className="text-red-500">*</span>
@@ -261,7 +267,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
           </div> 
 
           {files.length > 0 ? (
-            <div className="max-h-96 space-y-2 overflow-y-auto">
+            <div className="space-y-2">
               {files.map((item) => {
                 const hasTemplateFields = configTemplate && Array.isArray(configTemplate.fields) && configTemplate.fields.length > 0;
                 const hasExpandableContent = true;
@@ -314,9 +320,10 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                           <div className="mb-3">
                             <strong className="text-sm text-gray-900 dark:text-gray-100">Choose how Thor analyzes this video</strong>
                             <p className="mt-1 text-xs leading-5 text-gray-500">
-                              Semantic indexing is always available. A detector adds compatible tracks, overlays, and rules.
+                              Choose an available option below. Tracking adds supported object overlays and compatible alert rules.
                             </p>
                           </div>
+                          {profileLoading && <p role="status" className="text-sm text-gray-500">Checking available analysis options…</p>}
                           <div className="grid gap-2">
                             {analysisProfiles.map((profile) => (
                               <label
@@ -343,10 +350,10 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                                   />
                                   <span className="min-w-0 flex-1">
                                     <span className="flex items-center justify-between gap-3">
-                                      <strong className="text-sm text-gray-900 dark:text-gray-100">{profile.name}</strong>
+                                      <strong className="text-sm text-gray-900 dark:text-gray-100">{analysisProfileTask(profile).name}</strong>
                                       <em className="whitespace-nowrap text-[10px] not-italic uppercase tracking-wider text-gray-500">{profile.resourceTier} load</em>
                                     </span>
-                                    <span className="mt-1 block text-xs leading-5 text-gray-500">{profile.description}</span>
+                                    <span className="mt-1 block text-xs leading-5 text-gray-500">{analysisProfileTask(profile).description}</span>
                                     <span className="mt-1 block text-[11px] text-gray-500">{profile.modelLabel}</span>
                                     {!profile.ready && <span className="mt-1 block text-xs text-amber-600 dark:text-amber-400">Unavailable: {profile.readyDetail}</span>}
                                   </span>
@@ -368,7 +375,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                             value={intentByFile[item.id] ?? ''}
                           />
                           <div className="mt-2 flex items-center justify-between gap-3">
-                            <span className="text-[11px] leading-4 text-gray-500">Only installed VSS-owned pipelines can be selected.</span>
+                            <span className="text-[11px] leading-4 text-gray-500">Suggestions use the analysis options installed on this device.</span>
                             <Button
                               disabled={recommendingFileId === item.id || profileLoading}
                               kind="secondary"
@@ -387,9 +394,9 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                         {hasTemplateFields && (
                         <div className="space-y-3 border-t border-gray-200 pt-4 dark:border-gray-700">
                           {configTemplate.fields.map((field: any) => (
-                            <div key={field['field-name']} className="flex items-center gap-3">
+                            <div key={field['field-name'] === 'embedding' ? 'Video search' : field['field-name']} className="flex items-center gap-3">
                               <label className="w-24 flex-shrink-0 text-xs font-medium text-gray-600 dark:text-gray-400">
-                                {field['field-name']}
+                                {field['field-name'] === 'embedding' ? 'Video search' : field['field-name']}
                               </label>
                               <div className="flex-1">{renderField(item, field)}</div>
                             </div>
@@ -427,7 +434,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
           )}
         </div>
 
-        <div className="flex gap-3">
+        <div className="mt-4 flex shrink-0 justify-end gap-3 border-t border-gray-200 pt-4 dark:border-gray-700">
           <Button
             kind="secondary"
             onClick={onClose}

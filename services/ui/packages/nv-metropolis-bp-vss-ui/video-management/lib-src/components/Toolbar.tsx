@@ -120,8 +120,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     }
   };
 
-  const showVideoOption = enableVideoUpload && hasVideoStreams;
-  const showRtspOption = enableAddRtspButton && hasRtspStreams;
+  const showVideoOption = enableVideoUpload;
+  const showRtspOption = enableAddRtspButton;
   const showDisplayFilter = showVideoOption || showRtspOption;
 
   const getFilterLabel = () => {
@@ -181,6 +181,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               onValueChange={(val: string) => onSearchChange(val)}
               onKeyDown={handleSearchKeyDown}
               placeholder="Search sources"
+              aria-label="Search sources"
               slotRight={clearSearchSlot}
             />
           </div>

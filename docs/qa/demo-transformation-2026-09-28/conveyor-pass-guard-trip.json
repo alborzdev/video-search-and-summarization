@@ -1,0 +1,286 @@
+{
+  "time": 1790634860.9163284,
+  "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+  "available_gib": 47.689,
+  "free_gib": 3.259,
+  "slab_gib": 3.089,
+  "thermal_age": 0.34,
+  "tegrastats": "09-28-2026 18:34:20 RAM 75511/125772MB (lfb 6x4MB) CPU [50%@2601,49%@2601,53%@2601,36%@2601,46%@1998,40%@1998,44%@2601,36%@2601,61%@2601,44%@2601,69%@2601,41%@2601,57%@2538,39%@2538] cpu@44.875C tj@44.968C soc012@44.968C gpu@42.781C soc345@42C VDD_GPU 3558mW/2665mW VDD_CPU_SOC_MSS 15808mW/10547mW VIN_SYS_5V0 8839mW/7651mW VIN 38896mW/27284mW",
+  "processes": [
+    {
+      "pid": "2836",
+      "name": "cups-browsed",
+      "state": "S",
+      "rss_mib": 379,
+      "wchan": "0"
+    },
+    {
+      "pid": "5926",
+      "name": "node",
+      "state": "S",
+      "rss_mib": 560,
+      "wchan": "0"
+    },
+    {
+      "pid": "7925",
+      "name": "gnome-shell",
+      "state": "S",
+      "rss_mib": 627,
+      "wchan": "do_sys_poll"
+    },
+    {
+      "pid": "8303",
+      "name": "gnome-software",
+      "state": "S",
+      "rss_mib": 287,
+      "wchan": "do_sys_poll"
+    },
+    {
+      "pid": "284966",
+      "name": "chrome",
+      "state": "S",
+      "rss_mib": 270,
+      "wchan": "do_sys_poll"
+    },
+    {
+      "pid": "295330",
+      "name": "ChatGPT",
+      "state": "S",
+      "rss_mib": 684,
+      "wchan": "do_sys_poll"
+    },
+    {
+      "pid": "295375",
+      "name": "ChatGPT",
+      "state": "S",
+      "rss_mib": 307,
+      "wchan": "do_sys_poll"
+    },
+    {
+      "pid": "295893",
+      "name": "ChatGPT",
+      "state": "S",
+      "rss_mib": 792,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "295913",
+      "name": "codex",
+      "state": "S",
+      "rss_mib": 462,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "296330",
+      "name": "ChatGPT",
+      "state": "S",
+      "rss_mib": 335,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "297482",
+      "name": "ChatGPT",
+      "state": "S",
+      "rss_mib": 336,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "305861",
+      "name": "MainThread",
+      "state": "S",
+      "rss_mib": 288,
+      "wchan": "do_epoll_wait"
+    },
+    {
+      "pid": "378186",
+      "name": "java",
+      "state": "S",
+      "rss_mib": 718,
+      "wchan": "0"
+    },
+    {
+      "pid": "378735",
+      "name": "java",
+      "state": "S",
+      "rss_mib": 1711,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "379680",
+      "name": "python3.13",
+      "state": "S",
+      "rss_mib": 338,
+      "wchan": "0"
+    },
+    {
+      "pid": "379739",
+      "name": "prometheus",
+      "state": "S",
+      "rss_mib": 639,
+      "wchan": "0"
+    },
+    {
+      "pid": "379887",
+      "name": "grafana",
+      "state": "S",
+      "rss_mib": 277,
+      "wchan": "0"
+    },
+    {
+      "pid": "380039",
+      "name": "node",
+      "state": "S",
+      "rss_mib": 794,
+      "wchan": "do_epoll_wait"
+    },
+    {
+      "pid": "875952",
+      "name": "chrome",
+      "state": "S",
+      "rss_mib": 301,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "1177643",
+      "name": "ChatGPT",
+      "state": "S",
+      "rss_mib": 277,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "1202900",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 1187,
+      "wchan": "0"
+    },
+    {
+      "pid": "1205508",
+      "name": "VLLM::EngineCor",
+      "state": "S",
+      "rss_mib": 2485,
+      "wchan": "0"
+    },
+    {
+      "pid": "1213210",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 760,
+      "wchan": "0"
+    },
+    {
+      "pid": "1216003",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 1378,
+      "wchan": "0"
+    },
+    {
+      "pid": "1218371",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 1327,
+      "wchan": "0"
+    },
+    {
+      "pid": "1225403",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 688,
+      "wchan": "0"
+    },
+    {
+      "pid": "1226175",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 1530,
+      "wchan": "0"
+    },
+    {
+      "pid": "1228938",
+      "name": "VLLM::EngineCor",
+      "state": "S",
+      "rss_mib": 2220,
+      "wchan": "0"
+    },
+    {
+      "pid": "1265840",
+      "name": "python3",
+      "state": "R",
+      "rss_mib": 1242,
+      "wchan": "0"
+    },
+    {
+      "pid": "1271879",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 396,
+      "wchan": "do_epoll_wait"
+    },
+    {
+      "pid": "1277092",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 382,
+      "wchan": "hrtimer_nanosleep"
+    },
+    {
+      "pid": "1309531",
+      "name": "python3",
+      "state": "S",
+      "rss_mib": 382,
+      "wchan": "hrtimer_nanosleep"
+    },
+    {
+      "pid": "1360354",
+      "name": "nat",
+      "state": "S",
+      "rss_mib": 674,
+      "wchan": "do_epoll_wait"
+    },
+    {
+      "pid": "1438500",
+      "name": "kworker/u28:2+devfreq_wq",
+      "state": "D",
+      "rss_mib": 0,
+      "wchan": "0"
+    },
+    {
+      "pid": "2900131",
+      "name": "java",
+      "state": "S",
+      "rss_mib": 1252,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "2900139",
+      "name": "nat",
+      "state": "S",
+      "rss_mib": 744,
+      "wchan": "do_epoll_wait"
+    },
+    {
+      "pid": "2900335",
+      "name": "launch_vst",
+      "state": "S",
+      "rss_mib": 895,
+      "wchan": "0"
+    },
+    {
+      "pid": "3041417",
+      "name": "java",
+      "state": "S",
+      "rss_mib": 1271,
+      "wchan": "futex_wait_queue"
+    },
+    {
+      "pid": "3073348",
+      "name": "next-server (v1",
+      "state": "S",
+      "rss_mib": 1709,
+      "wchan": "0"
+    }
+  ],
+  "reason": "reserve",
+  "floor_gib": 48.0
+}

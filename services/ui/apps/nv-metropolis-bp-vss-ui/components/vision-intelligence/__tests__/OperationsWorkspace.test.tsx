@@ -9,6 +9,7 @@ import {
   within,
 } from "@testing-library/react";
 import React from "react";
+import * as streamCanvas from "../VisionStreamCanvas";
 
 const streamsResponse = [
   {
@@ -40,6 +41,45 @@ const streamsResponse = [
 ];
 
 describe("OperationsWorkspace", () => {
+  it("opens the source from an unknown-status attention item without claiming it is healthy", async () => {
+    jest.spyOn(streamCanvas, "VisionStreamCanvas").mockImplementation(() => <div>Camera preview</div>);
+    global.fetch = jest.fn(async (input) => {
+      if (String(input).endsWith('/v1/live/streams')) return {ok:true, json:async()=>[
+        {camera:[{streamId:'camera', sensorId:'camera', name:'Loading bay', type:'Rtsp', url:'rtsp://camera.test/live', metadata:{}, isMain:true}]}
+      ]};
+      return {ok:true,json:async()=>({})};
+    });
+    const onOpenActivity = jest.fn();
+    render(<OperationsWorkspace initialView="grid" onInvestigate={jest.fn()} onOpenActivity={onOpenActivity} onOpenInsights={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+    const source = await screen.findByRole('button', {name:/Loading Bay.*Review source/i});
+    expect(screen.queryByText('No action needed')).not.toBeInTheDocument();
+    fireEvent.click(source);
+    expect(await screen.findByLabelText('Source intelligence status')).toBeInTheDocument();
+    expect(onOpenActivity).not.toHaveBeenCalled();
+  });
+  it("shows disconnected video even when analysis is paused", async () => {
+    jest.spyOn(streamCanvas, "VisionStreamCanvas").mockImplementation(() => <div>Camera preview</div>);
+    global.fetch = jest.fn(async (input) => {
+      if (String(input).endsWith('/v1/live/streams')) return {ok:true, json:async()=>[
+        {camera:[{streamId:'camera', name:'Loading bay', type:'Rtsp', url:'rtsp://camera.test/live', metadata:{}, isMain:true}]}
+      ]};
+      if (String(input).endsWith('/sensor/status')) return {ok:true,json:async()=>({camera:{state:'offline'}})};
+      if (String(input).endsWith('/analysis')) return {ok:true,json:async()=>({state:'paused'})};
+      return {ok:true,json:async()=>({})};
+    });
+    render(<OperationsWorkspace agentApiUrl="/agent" initialView="grid" onInvestigate={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+    expect((await screen.findAllByText('Disconnected')).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Check the camera or simulator connection/).length).toBeGreaterThan(0);
+    expect(screen.queryByText('Press play to check the live connection.', {exact:false})).not.toBeInTheDocument();
+    expect(screen.queryByText('Camera preview')).not.toBeInTheDocument();
+    const details = screen.getByText('1 disconnected camera · Connection details').closest('details');
+    expect(details).not.toHaveAttribute('open');
+    fireEvent.click(screen.getByText('1 disconnected camera · Connection details'));
+    fireEvent.click(screen.getByRole('button', { name: /Loading Bay.*Review source/i }));
+    expect(await screen.findByLabelText('Source intelligence status')).toBeInTheDocument();
+    expect(screen.getByText('No live frames — camera disconnected')).toBeInTheDocument();
+    expect(screen.getByText('No live input')).toBeInTheDocument();
+  });
   beforeEach(() => {
     jest.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
     jest
@@ -133,7 +173,24 @@ describe("OperationsWorkspace", () => {
     }
   });
 
-  it("selects the strongest source and returns to the overview through the persistent Monitor tab", async () => {
+  it("keeps the camera usable when source intelligence rejects but analysis state succeeds", async () => {
+    jest.spyOn(streamCanvas, "VisionStreamCanvas").mockImplementation(() => <div>Camera preview</div>);
+    global.fetch = jest.fn(async input => {
+      const url = String(input);
+      if (url.endsWith('/v1/live/streams')) return {ok:true,json:async()=>[
+        {camera:[{streamId:'camera',sensorId:'camera',name:'Loading bay',type:'Rtsp',url:'rtsp://camera.test/live',metadata:{},isMain:true}]}
+      ]};
+      if (url.includes('/api/vision/source-intelligence')) throw new TypeError('Failed to fetch');
+      if (url.endsWith('/analysis')) return {ok:true,json:async()=>({state:'paused'})};
+      return {ok:true,json:async()=>({})};
+    }) as jest.Mock;
+    render(<OperationsWorkspace agentApiUrl="/agent" initialView="focused" onInvestigate={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+    expect(await screen.findByText('Analysis paused')).toBeInTheDocument();
+    expect(screen.getByLabelText('Source intelligence status')).toBeInTheDocument();
+    expect(screen.getByText('Camera preview')).toBeInTheDocument();
+  });
+
+  it("selects the strongest source and returns to the overview through the persistent Live tab", async () => {
     render(
       <OperationsWorkspace
         onInvestigate={jest.fn()}
@@ -153,8 +210,8 @@ describe("OperationsWorkspace", () => {
     expect(
       screen.getByLabelText("Source intelligence status")
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Monitor" }));
-    expect(screen.getByText("2 Sources")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Live cameras" }));
+    expect(screen.getByText("2 recordings")).toBeInTheDocument();
     expect(screen.getAllByText("Warehouse Camera").length).toBeGreaterThan(0);
   });
 
@@ -206,16 +263,16 @@ describe("OperationsWorkspace", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps every supported camera visible in the overview up to eight sources", async () => {
+  it("keeps live cameras visible in the overview", async () => {
+    jest.spyOn(streamCanvas, "VisionStreamCanvas").mockImplementation(() => <div>Camera preview</div>);
     const onOpenRules = jest.fn();
     const fiveStreams = Array.from({ length: 5 }, (_, index) => ({
       isMain: true,
       metadata: {},
       name: `camera-${index + 1}`,
       streamId: `camera-${index + 1}`,
-      type: "FileDownload",
-      url: `/camera-${index + 1}.mp4`,
-      vodUrl: `/camera-${index + 1}.mp4`,
+      type: "Rtsp",
+      url: `rtsp://camera.test/${index + 1}`,
     }));
     (global.fetch as jest.Mock).mockImplementation(
       async (input: RequestInfo | URL) => {
@@ -258,7 +315,7 @@ describe("OperationsWorkspace", () => {
     );
 
     await waitFor(() =>
-      expect(screen.getByText("5 Sources")).toBeInTheDocument()
+      expect(screen.getByText("5 live cameras configured")).toBeInTheDocument()
     );
     for (let index = 1; index <= 5; index += 1) {
       expect(screen.getAllByText(`Camera ${index}`).length).toBeGreaterThan(0);
@@ -266,11 +323,41 @@ describe("OperationsWorkspace", () => {
     expect(
       screen.getByRole("navigation", { name: "Monitoring views" })
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Rules" }));
+    fireEvent.click(screen.getByRole("button", { name: "Alert rules" }));
     expect(onOpenRules).toHaveBeenCalledWith();
     expect(
       screen.queryByRole("button", { name: "Focused view" })
     ).not.toBeInTheDocument();
+  });
+
+  it("replays the absolute inspected live interval without deriving offsets from a changing timeline", async () => {
+    jest.spyOn(streamCanvas, "VisionStreamCanvas").mockImplementation(() => <div>Live preview</div>);
+    global.fetch = jest.fn(async (input) => {
+      const url = String(input);
+      if (url.endsWith('/v1/live/streams')) return {ok:true,json:async()=>[
+        {camera:[{streamId:'camera',name:'Conveyor replay',type:'Rtsp',url:'rtsp://camera.test/live',metadata:{},isMain:true}]}
+      ]};
+      if (url === '/api/vision/analyst') return {ok:true,json:async()=>({
+        answer:'A box is visible.', evidenceTools:['video_understanding_iso'], grounded:true,
+        generatedAt:'2026-09-28T23:00:35Z', query:'What is visible?', scope:'selected-source',
+        sourceNames:['Conveyor replay'], observedWindow:{startTime:'2026-09-28T23:00:00Z',endTime:'2026-09-28T23:00:25Z'},
+      })};
+      if (url.includes('/api/vision/evidence?')) return {ok:true,json:async()=>({videoUrl:'/vst/storage/temp_files/live-evidence.mp4'})};
+      return {ok:true,json:async()=>({})};
+    }) as jest.Mock;
+    render(<OperationsWorkspace onInvestigate={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+    const question = await screen.findByRole('textbox', {name:'Ask Vision Analyst'});
+    fireEvent.change(question, {target:{value:'What is visible?'}});
+    fireEvent.click(screen.getByRole('button', {name:'Send question'}));
+    await screen.findByText('A box is visible.');
+    fireEvent.click(screen.getByRole('button', {name:'Play inspected clip'}));
+    const dialog = await screen.findByRole('dialog', {name:'Inspected evidence clip'});
+    await waitFor(()=>expect(dialog.querySelector('video')).toHaveAttribute('src','http://thor.test/vst/storage/temp_files/live-evidence.mp4'));
+    expect(within(dialog).getByText(/not the current frame/)).toBeInTheDocument();
+    const request = (global.fetch as jest.Mock).mock.calls.find(([url])=>String(url).includes('/api/vision/evidence?'));
+    const params = new URL(String(request[0]), 'http://thor.test').searchParams;
+    expect(params.get('startTime')).toBe('2026-09-28T23:00:00Z');
+    expect(params.get('endTime')).toBe('2026-09-28T23:00:25Z');
   });
 
   it("answers analyst questions in Operations before offering a deliberate evidence investigation", async () => {
@@ -594,7 +681,7 @@ describe("OperationsWorkspace", () => {
     await waitFor(() => expect(profile).toHaveValue("warehouse-safety"));
     await waitFor(() =>
       expect(
-        screen.getByText("Ready — no observations yet")
+        screen.getByText("No observations yet")
       ).toBeInTheDocument()
     );
     view.unmount();

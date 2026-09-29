@@ -19,6 +19,10 @@ Markdown file is authoritative.
 
 ## Product and architecture
 
+- [Edge video AI demo — running progress](demo-transformation-progress.md)
+- [Edge video demo — presenter runbook](demo-presenter-runbook.md)
+  tracks the customer-demo transformation goal, page-by-page critique,
+  decisions, implementation evidence, and remaining work.
 - [Domain context](../CONTEXT.md) defines the shared product language and
   boundaries used by the code and UI.
 - [Architecture decisions](adr/) contain numbered, current design decisions.

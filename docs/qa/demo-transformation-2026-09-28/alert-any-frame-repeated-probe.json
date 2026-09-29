@@ -1,0 +1,560 @@
+[
+  {
+    "window": 0,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 1.038,
+    "matched": true,
+    "response": {
+      "id": "3138e848-009a-493c-a7f0-81859b135bc2",
+      "object": "chat.completion",
+      "created": 1790645476,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 1,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.994,
+    "matched": true,
+    "response": {
+      "id": "3b19314c-c651-4313-8780-c5d25f9a5881",
+      "object": "chat.completion",
+      "created": 1790645477,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 2,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.917,
+    "matched": true,
+    "response": {
+      "id": "d6467764-61e8-4733-bbd3-a10c0158bbf9",
+      "object": "chat.completion",
+      "created": 1790645478,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 3,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.925,
+    "matched": true,
+    "response": {
+      "id": "8bd97ebd-5614-45b5-8ed2-608d491ffcd2",
+      "object": "chat.completion",
+      "created": 1790645479,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 4,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.916,
+    "matched": true,
+    "response": {
+      "id": "4adf32be-576d-4625-bc07-3822db308fed",
+      "object": "chat.completion",
+      "created": 1790645480,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "NO",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 5,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.963,
+    "matched": true,
+    "response": {
+      "id": "f4335119-f0e6-41dc-8242-4dcf7a66d96a",
+      "object": "chat.completion",
+      "created": 1790645481,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 6,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.883,
+    "matched": true,
+    "response": {
+      "id": "a4f6c49e-baaf-4b88-bf28-36c02db9574d",
+      "object": "chat.completion",
+      "created": 1790645482,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "NO",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 7,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.965,
+    "matched": true,
+    "response": {
+      "id": "979e7017-ff7b-4c71-aa40-537dda4dfb52",
+      "object": "chat.completion",
+      "created": 1790645483,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 8,
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.9,
+    "matched": true,
+    "response": {
+      "id": "a5af9420-b269-444e-a1ad-28e637a0c709",
+      "object": "chat.completion",
+      "created": 1790645484,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "NO",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 0,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.903,
+    "matched": true,
+    "response": {
+      "id": "ee9b4830-2317-44f4-a451-781a27410a32",
+      "object": "chat.completion",
+      "created": 1790645485,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 1,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.924,
+    "matched": true,
+    "response": {
+      "id": "c4acb66c-2aa3-43d6-b3c7-bfcbbf4604df",
+      "object": "chat.completion",
+      "created": 1790645486,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 2,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.932,
+    "matched": true,
+    "response": {
+      "id": "483ec10b-5ff3-43ba-821d-1035e871b790",
+      "object": "chat.completion",
+      "created": 1790645487,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 3,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.947,
+    "matched": true,
+    "response": {
+      "id": "486cf6f4-1085-4950-9374-1739372a98ca",
+      "object": "chat.completion",
+      "created": 1790645488,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 4,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.92,
+    "matched": true,
+    "response": {
+      "id": "194453e0-c5b6-4d1d-aa4e-0fbfc61d7747",
+      "object": "chat.completion",
+      "created": 1790645489,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "NO",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 5,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.962,
+    "matched": true,
+    "response": {
+      "id": "aa1b6e40-1138-48d9-8e87-3ccdf31c0e75",
+      "object": "chat.completion",
+      "created": 1790645490,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 6,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.889,
+    "matched": true,
+    "response": {
+      "id": "bb24b708-29b3-4025-a7cd-c255874fad8e",
+      "object": "chat.completion",
+      "created": 1790645490,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "NO",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 7,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.927,
+    "matched": true,
+    "response": {
+      "id": "8563d087-ff9c-47d3-9653-a014d6eae111",
+      "object": "chat.completion",
+      "created": 1790645491,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  },
+  {
+    "window": 8,
+    "repeat": 1,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.955,
+    "matched": true,
+    "response": {
+      "id": "276b942f-7ef9-4786-9975-ce3ae6d1112b",
+      "object": "chat.completion",
+      "created": 1790645492,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "NO",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  }
+]

@@ -1,0 +1,589 @@
+[
+  {
+    "request_id": "17ba7eaa-c624-4ef2-aa5f-51d882b97c65",
+    "captured_unix": 1790651287.025046,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "823edeed2e865252d2ab6beda669025104dd85c0d817995109af21c6fdf355ed",
+    "frame_times": [
+      0.75,
+      3.28,
+      5.78,
+      8.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.39840637450199207,
+      "duration": 7.529999999999999
+    },
+    "chunk": {
+      "chunkIdx": 0,
+      "start_ntp": "2026-09-29T03:07:59.370Z",
+      "end_ntp": "2026-09-29T03:08:06.901Z",
+      "start_pts": 745739662,
+      "end_pts": 8276775835
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.007264116080477834,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "17ba7eaa-c624-4ef2-aa5f-51d882b97c65/frame-0.png",
+      "17ba7eaa-c624-4ef2-aa5f-51d882b97c65/frame-1.png",
+      "17ba7eaa-c624-4ef2-aa5f-51d882b97c65/frame-2.png",
+      "17ba7eaa-c624-4ef2-aa5f-51d882b97c65/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "3cc9bcb1-9516-491d-8fb5-b6f568072827",
+    "captured_unix": 1790651296.9935126,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "ce11a094df74ca69e329dee0b1bd89595cb9fc7a1b145144320b64519696ca6b",
+    "frame_times": [
+      10.78,
+      13.28,
+      15.78,
+      18.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.3999999999999999,
+      "duration": 7.500000000000002
+    },
+    "chunk": {
+      "chunkIdx": 1,
+      "start_ntp": "2026-09-29T03:08:09.370Z",
+      "end_ntp": "2026-09-29T03:08:16.902Z",
+      "start_pts": 10745739662,
+      "end_pts": 18277106347
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.007534598000347614,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "3cc9bcb1-9516-491d-8fb5-b6f568072827/frame-0.png",
+      "3cc9bcb1-9516-491d-8fb5-b6f568072827/frame-1.png",
+      "3cc9bcb1-9516-491d-8fb5-b6f568072827/frame-2.png",
+      "3cc9bcb1-9516-491d-8fb5-b6f568072827/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "50dedad9-98d9-4255-a9cf-fa3f8fce0ec3",
+    "captured_unix": 1790651306.9937844,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "ea45ccaa2db5f10a701910719caa580bf85f8e246d89efaaf48ce9433ce9c9b6",
+    "frame_times": [
+      20.78,
+      23.28,
+      25.78,
+      28.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 2,
+      "start_ntp": "2026-09-29T03:08:19.370Z",
+      "end_ntp": "2026-09-29T03:08:26.902Z",
+      "start_pts": 20745739662,
+      "end_pts": 28277545410
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.012180031044408679,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "50dedad9-98d9-4255-a9cf-fa3f8fce0ec3/frame-0.png",
+      "50dedad9-98d9-4255-a9cf-fa3f8fce0ec3/frame-1.png",
+      "50dedad9-98d9-4255-a9cf-fa3f8fce0ec3/frame-2.png",
+      "50dedad9-98d9-4255-a9cf-fa3f8fce0ec3/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "7ab91ffb-a934-4cfd-90f7-825d29f88a50",
+    "captured_unix": 1790651316.9960296,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "fe8a2f7843f46998d14e330062d142ba558f891b2afd4cec550ea8b4ebcb01fe",
+    "frame_times": [
+      30.78,
+      33.28,
+      35.78,
+      38.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 3,
+      "start_ntp": "2026-09-29T03:08:29.370Z",
+      "end_ntp": "2026-09-29T03:08:36.902Z",
+      "start_pts": 30745739662,
+      "end_pts": 38277105407
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.011059429962188005,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "7ab91ffb-a934-4cfd-90f7-825d29f88a50/frame-0.png",
+      "7ab91ffb-a934-4cfd-90f7-825d29f88a50/frame-1.png",
+      "7ab91ffb-a934-4cfd-90f7-825d29f88a50/frame-2.png",
+      "7ab91ffb-a934-4cfd-90f7-825d29f88a50/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        0
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "71a63d2e-d1f9-4261-961f-da384bf36a38",
+    "captured_unix": 1790651326.9934103,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "4e6ca9a0bb0a262998c0889bc787e27ce7884980fc61511b4832df2005f54ad4",
+    "frame_times": [
+      40.78,
+      43.28,
+      45.78,
+      48.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 4,
+      "start_ntp": "2026-09-29T03:08:39.370Z",
+      "end_ntp": "2026-09-29T03:08:46.901Z",
+      "start_pts": 40745739662,
+      "end_pts": 48277027096
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.012386939022690058,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "71a63d2e-d1f9-4261-961f-da384bf36a38/frame-0.png",
+      "71a63d2e-d1f9-4261-961f-da384bf36a38/frame-1.png",
+      "71a63d2e-d1f9-4261-961f-da384bf36a38/frame-2.png",
+      "71a63d2e-d1f9-4261-961f-da384bf36a38/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "1f0bdb2a-9266-41b8-be18-6f0733fc2848",
+    "captured_unix": 1790651336.9964483,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "8d8b7e9fac98d0bc405ccc38021eb290c2d227e23edad0a68b7d4b6334d2214d",
+    "frame_times": [
+      50.78,
+      53.28,
+      55.78,
+      58.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 5,
+      "start_ntp": "2026-09-29T03:08:49.370Z",
+      "end_ntp": "2026-09-29T03:08:56.901Z",
+      "start_pts": 50745739662,
+      "end_pts": 58276980307
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.013589204987511039,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "1f0bdb2a-9266-41b8-be18-6f0733fc2848/frame-0.png",
+      "1f0bdb2a-9266-41b8-be18-6f0733fc2848/frame-1.png",
+      "1f0bdb2a-9266-41b8-be18-6f0733fc2848/frame-2.png",
+      "1f0bdb2a-9266-41b8-be18-6f0733fc2848/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "d4d8cb8f-823c-4708-8992-4f80839e2a4b",
+    "captured_unix": 1790651347.0002391,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "9f7371c60c3326c907e8f37c2c7cdc913a4735a2fa7f05078d24daf9a11edada",
+    "frame_times": [
+      60.78,
+      63.28,
+      65.78,
+      68.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 6,
+      "start_ntp": "2026-09-29T03:08:59.370Z",
+      "end_ntp": "2026-09-29T03:09:06.903Z",
+      "start_pts": 60745739662,
+      "end_pts": 68278876444
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.00963753112591803,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "d4d8cb8f-823c-4708-8992-4f80839e2a4b/frame-0.png",
+      "d4d8cb8f-823c-4708-8992-4f80839e2a4b/frame-1.png",
+      "d4d8cb8f-823c-4708-8992-4f80839e2a4b/frame-2.png",
+      "d4d8cb8f-823c-4708-8992-4f80839e2a4b/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        1,
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "affcc7e0-6f70-4cfd-86c5-5e286528a050",
+    "captured_unix": 1790651356.9970121,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "4957125565035cb45f4d367c71ceb31542ddd7ef5d22358e70998c2e1966ffbd",
+    "frame_times": [
+      70.78,
+      73.28,
+      75.78,
+      78.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 7,
+      "start_ntp": "2026-09-29T03:09:09.370Z",
+      "end_ntp": "2026-09-29T03:09:16.903Z",
+      "start_pts": 70745739662,
+      "end_pts": 78278919316
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.012734336080029607,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "affcc7e0-6f70-4cfd-86c5-5e286528a050/frame-0.png",
+      "affcc7e0-6f70-4cfd-86c5-5e286528a050/frame-1.png",
+      "affcc7e0-6f70-4cfd-86c5-5e286528a050/frame-2.png",
+      "affcc7e0-6f70-4cfd-86c5-5e286528a050/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        0
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  },
+  {
+    "request_id": "4d43af7f-a4f4-4d2c-8f4b-5d1358fcdd10",
+    "captured_unix": 1790651366.9978125,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "f1b92a625eb701dab108356cad41d246e556e0480887a470041380dcdf3b7acf",
+    "frame_times": [
+      80.78,
+      83.25,
+      85.75,
+      88.28
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 8,
+      "start_ntp": "2026-09-29T03:09:19.370Z",
+      "end_ntp": "2026-09-29T03:09:26.903Z",
+      "start_pts": 80745739662,
+      "end_pts": 88279015764
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.015837092883884907,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "4d43af7f-a4f4-4d2c-8f4b-5d1358fcdd10/frame-0.png",
+      "4d43af7f-a4f4-4d2c-8f4b-5d1358fcdd10/frame-1.png",
+      "4d43af7f-a4f4-4d2c-8f4b-5d1358fcdd10/frame-2.png",
+      "4d43af7f-a4f4-4d2c-8f4b-5d1358fcdd10/frame-3.png"
+    ],
+    "manual_review": {
+      "condition": "box visible on conveyor in at least one sampled frame",
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual engine-bound samples; not exhaustive source-video annotation"
+    }
+  }
+]

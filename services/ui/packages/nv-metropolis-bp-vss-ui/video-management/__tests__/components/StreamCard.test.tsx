@@ -185,7 +185,7 @@ describe("StreamCard — basic rendering", () => {
   it("displays RTSP label for rtsp streams", () => {
     renderStreamCard({ stream: rtspStream });
 
-    expect(screen.getByText(/LIVE · RTSP/)).toBeInTheDocument();
+    expect(screen.getByText(/RTSP CAMERA/)).toBeInTheDocument();
   });
 
   it("uses a retained replay frame for an RTSP thumbnail when a timeline exists", async () => {
@@ -193,6 +193,9 @@ describe("StreamCard — basic rendering", () => {
     const utils = jest.requireMock("../../lib-src/utils") as {
       fetchPictureWithQueue: jest.Mock;
     };
+    utils.fetchPictureWithQueue.mockResolvedValueOnce(new Blob(["frame"], { type: "image/jpeg" }));
+    URL.createObjectURL = jest.fn(() => "blob:retained-preview");
+    URL.revokeObjectURL = jest.fn();
     renderStreamCard({
       stream: rtspStream,
       vstApiUrl: "http://vst.test/vst/api",
@@ -203,6 +206,8 @@ describe("StreamCard — basic rendering", () => {
       expect(utils.fetchPictureWithQueue).toHaveBeenCalledWith(
         `replay-picture:${rtspStream.streamId}:${endTime}`
       );
+      expect(screen.getByText("Recorded preview")).toBeInTheDocument();
+      expect(screen.queryByText("Live source")).not.toBeInTheDocument();
     });
   });
 

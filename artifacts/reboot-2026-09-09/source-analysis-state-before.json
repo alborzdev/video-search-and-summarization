@@ -1,0 +1,22 @@
+{
+  "detection_disabled_source_ids": [],
+  "paused_source_ids": [
+    "1bdc82a9-0e61-468f-a1e1-9ac96f82f068",
+    "26bb2ad8-7f30-41fb-871f-d70b6b66ab7a",
+    "a791d7b0-a6cf-4cb1-979f-dfea812256ed",
+    "f20f4337-1cbd-4981-af9d-994fc9fe7dfa"
+  ],
+  "schema_version": 4,
+  "source_analysis_profiles": {
+    "0d365f5e-6c85-4706-b9d4-1a7cc8261347": "warehouse-safety",
+    "a0d44114-9947-4edf-8355-14e5732999db": "traffic-monitoring"
+  },
+  "source_kinds": {
+    "0d365f5e-6c85-4706-b9d4-1a7cc8261347": "recorded",
+    "1bdc82a9-0e61-468f-a1e1-9ac96f82f068": "live",
+    "26bb2ad8-7f30-41fb-871f-d70b6b66ab7a": "live",
+    "a0d44114-9947-4edf-8355-14e5732999db": "live",
+    "a791d7b0-a6cf-4cb1-979f-dfea812256ed": "live",
+    "f20f4337-1cbd-4981-af9d-994fc9fe7dfa": "live"
+  }
+}

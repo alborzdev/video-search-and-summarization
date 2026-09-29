@@ -3,6 +3,7 @@
 import { useDialogAccessibility } from "@aiqtoolkit-ui/common";
 import { LiveModeNav } from "./LiveModeNav";
 import { evidenceClipEndpoint } from "./evidenceClip";
+import { EventReport } from "./EventReport";
 import {
   consolidateIncidents,
   incidentDurationLabel,
@@ -10,13 +11,13 @@ import {
   incidentVerdict,
   incidentVerdictLabel,
   isOperatorIncidentCandidate,
-  isOperatorRelevantIncident,
+  isDirectModelMatch,
   type AnalyticsIncident,
   type ConsolidatedIncident,
 } from "./incidentModel";
 import type { InvestigationRecord } from "./investigation";
 import type { IncidentStateRecord, IncidentWorkflowState } from "./incidentState";
-import { ruleMatchesSource, type MonitoringRule } from "./monitoringRules";
+import { type MonitoringRule } from "./monitoringRules";
 import { streamDisplayName } from "./utils";
 import {
   IconActivity,
@@ -39,6 +40,7 @@ type ActivityFilter =
   | "acknowledged"
   | "all"
   | "confirmed"
+  | "model_match"
   | "failed"
   | "rejected"
   | "resolved"
@@ -114,23 +116,21 @@ function incidentWorkflowState(
   return states[incident.Id]?.state ?? "new";
 }
 
-function incidentRule(
+export function incidentRule(
   incident: AnalyticsIncident,
   rules: MonitoringRule[],
 ): MonitoringRule | null {
-  const candidates = rules.filter((rule) => ruleMatchesSource(rule, incident.sensorId));
-  if (candidates.length === 1) return candidates[0];
-  const description = `${incident.info?.alertCategory ?? ""} ${incident.info?.description ?? ""} ${incident.info?.reasoning ?? ""}`;
-  const kind = /proximity|too close|near/i.test(description) ? "proximity"
-    : /restricted|zone|area|entered/i.test(description) ? "area-entry"
-    : /visual|semantic/i.test(description) ? "semantic" : null;
-  return candidates.find((rule) => rule.kind === kind) ?? null;
+  const ruleId = incident.info?.alertRuleId;
+  if (!ruleId) return null;
+  // Shared source or similar wording does not establish which rule fired.
+  return rules.find(rule => rule.backendRuleId === ruleId || rule.id === ruleId) ?? null;
 }
 
 function IncidentMedia({
   incident,
   onClose,
   onStateChange,
+  onReportSaved,
   rule,
   sourceNames,
   workflowState,
@@ -139,6 +139,7 @@ function IncidentMedia({
   incident: ConsolidatedIncident;
   onClose: () => void;
   onStateChange: (state: IncidentWorkflowState) => void;
+  onReportSaved: (record: InvestigationRecord) => void;
   rule: MonitoringRule | null;
   sourceNames: Record<string, string>;
   workflowState: IncidentWorkflowState;
@@ -146,6 +147,7 @@ function IncidentMedia({
 }) {
   const snapshot = incidentSnapshot(incident, vstApiUrl);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [evidenceSensorId, setEvidenceSensorId] = useState<string | null>(null);
   const [clipStatus, setClipStatus] = useState<
     "loading" | "ready" | "snapshot"
   >("loading");
@@ -180,6 +182,7 @@ function IncidentMedia({
         );
         if (!stream?.streamId)
           throw new Error("The source is no longer in the catalog.");
+        setEvidenceSensorId(stream.streamId);
 
         const clipResponse = await fetch(
           evidenceClipEndpoint(
@@ -240,7 +243,7 @@ function IncidentMedia({
             <div>
               {clipStatus === "loading"
                 ? "Preparing evidence…"
-                : "No media was attached to this incident."}
+                : "Footage could not be retrieved for this event interval. It may no longer be retained, or the video service may be unavailable."}
             </div>
           )}
           {clipStatus === "loading" && snapshot && (
@@ -256,18 +259,19 @@ function IncidentMedia({
           <span className={`vi-verdict vi-verdict--${verdictFor(incident)}`}>
             {incidentVerdictLabel(incident)}
           </span>
-          <h2>{incidentTitle(incident)}</h2>
+          <h2>{rule?.engine === "vlm" ? rule.name : incidentTitle(incident)}</h2>
           <p>
             {!isOperatorIncidentCandidate(incident)
               ? "Backend processing record retained for audit."
               : incident.info?.reasoning ||
                 incident.info?.verificationResponseStatus ||
-                "No model reasoning was recorded for this incident."}
+                (incident.info?.triggerPhrase ? "The visual model matched the rule condition. Review the footage before confirming what happened." : "No model reasoning was recorded for this incident.")}
           </p>
+          {incident.info?.prompt && <p><strong>Recorded condition</strong><br />{incident.info.prompt}</p>}
           <dl>
             <div>
               <dt>Triggered by</dt>
-              <dd>{rule?.name ?? "Analytics candidate"}</dd>
+              <dd>{rule?.name ?? (incident.info?.alertRuleId ? "Rule record unavailable" : "Analytics candidate")}</dd>
             </div>
             <div>
               <dt>Source</dt>
@@ -292,6 +296,7 @@ function IncidentMedia({
             {workflowState !== "resolved" && <button className="is-primary" type="button" onClick={() => onStateChange("resolved")}>Resolve incident</button>}
             {workflowState === "resolved" && <button type="button" onClick={() => onStateChange("new")}>Reopen</button>}
           </div>
+          {videoUrl && evidenceSensorId && <EventReport key={incident.Id} incident={incident} rule={rule} sensorId={evidenceSensorId} sourceName={incidentSourceName(incident, sourceNames)} onSaved={onReportSaved} />}
         </div>
       </div>
     </div>
@@ -308,6 +313,7 @@ export function ActivityInsightsWorkspace({
   const [investigations, setInvestigations] = useState<InvestigationRecord[]>(
     []
   );
+  const [investigationsError, setInvestigationsError] = useState<string | null>(null);
   const [sourceNames, setSourceNames] = useState<Record<string, string>>({});
   const [sourceCount, setSourceCount] = useState(0);
   const [rules, setRules] = useState<MonitoringRule[]>([]);
@@ -317,11 +323,13 @@ export function ActivityInsightsWorkspace({
   const [selected, setSelected] = useState<ConsolidatedIncident | null>(null);
   const [activityFilter, setActivityFilter] =
     useState<ActivityFilter>("actionable");
+  const [visibleInvestigations, setVisibleInvestigations] = useState(4);
   const [visibleCount, setVisibleCount] = useState(ACTIVITY_PAGE_SIZE);
 
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setInvestigationsError(null);
     try {
       const [incidentResult, investigationResult, sourceResult, rulesResult, stateResult] =
         await Promise.allSettled([
@@ -333,6 +341,15 @@ export function ActivityInsightsWorkspace({
           fetch("/api/vision/monitoring-rules", { cache: "no-store" }),
           fetch("/api/vision/incident-state", { cache: "no-store" }),
         ]);
+      try {
+        if (investigationResult.status === "rejected" || !investigationResult.value.ok) {
+          throw new Error("Saved reports could not be refreshed.");
+        }
+        const saved = await investigationResult.value.json() as { investigations?: InvestigationRecord[] };
+        setInvestigations(saved.investigations ?? []);
+      } catch {
+        setInvestigationsError("Saved reports could not be refreshed. Any shown below are from the last successful load.");
+      }
       if (incidentResult.status === "rejected") throw incidentResult.reason;
       const data = (await incidentResult.value.json()) as {
         incidents?: AnalyticsIncident[];
@@ -343,17 +360,6 @@ export function ActivityInsightsWorkspace({
           data.error || `Analytics returned ${incidentResult.value.status}.`
         );
       setIncidents(data.incidents ?? []);
-      if (
-        investigationResult.status === "fulfilled" &&
-        investigationResult.value.ok
-      ) {
-        const saved = (await investigationResult.value.json()) as {
-          investigations?: InvestigationRecord[];
-        };
-        setInvestigations(saved.investigations ?? []);
-      } else {
-        setInvestigations([]);
-      }
       if (sourceResult.status === "fulfilled" && sourceResult.value?.ok) {
         const catalog = (await sourceResult.value.json()) as unknown;
         if (Array.isArray(catalog)) {
@@ -411,17 +417,17 @@ export function ActivityInsightsWorkspace({
     [incidents]
   );
   const operatorIncidents = useMemo(
-    () => consolidatedIncidents.filter(isOperatorRelevantIncident),
+    () => consolidatedIncidents.filter(isOperatorIncidentCandidate),
     [consolidatedIncidents]
   );
 
   const stats = useMemo(() => {
     const sources = new Map<string, number>();
-    const verdicts = { confirmed: 0, rejected: 0, failed: 0, unverified: 0 };
+    const verdicts = { model_match: 0, confirmed: 0, rejected: 0, failed: 0, unverified: 0 };
     operatorIncidents.forEach((incident) => {
       const source = incidentSourceName(incident, sourceNames);
       sources.set(source, (sources.get(source) ?? 0) + 1);
-      verdicts[verdictFor(incident)] += 1;
+      verdicts[isDirectModelMatch(incident) ? "model_match" : verdictFor(incident)] += 1;
     });
     const buckets = new Map<number, number>();
     operatorIncidents.forEach((incident) => {
@@ -449,6 +455,8 @@ export function ActivityInsightsWorkspace({
           return verdictFor(incident) !== "rejected" && incidentWorkflowState(incident, workflowStates) === "new";
         if (activityFilter === "acknowledged" || activityFilter === "resolved")
           return incidentWorkflowState(incident, workflowStates) === activityFilter;
+        if (activityFilter === "model_match") return isDirectModelMatch(incident);
+        if (activityFilter === "confirmed") return verdictFor(incident) === "confirmed" && !isDirectModelMatch(incident);
         return verdictFor(incident) === activityFilter;
       }),
     [activityFilter, consolidatedIncidents, workflowStates]
@@ -456,11 +464,11 @@ export function ActivityInsightsWorkspace({
   const shownActivity = activityIncidents.slice(0, visibleCount);
 
   const maxBucket = Math.max(1, ...stats.buckets.map(([, count]) => count));
-  const confirmedPercent = operatorIncidents.length
-    ? Math.round((stats.verdicts.confirmed / operatorIncidents.length) * 100)
-    : 0;
-  const featuredIncident = operatorIncidents.find((incident) =>
-    incidentWorkflowState(incident, workflowStates) !== "resolved" && Boolean(incidentSnapshot(incident, vstApiUrl) || incident.info?.videoSource)
+  const awaitingReview = operatorIncidents.filter(incident =>
+    verdictFor(incident) !== "rejected" && incidentWorkflowState(incident, workflowStates) === "new"
+  ).length;
+  const featuredIncident = operatorIncidents.find(incident =>
+    verdictFor(incident) !== "rejected" && incidentWorkflowState(incident, workflowStates) !== "resolved"
   );
 
   const setIncidentState = async (incident: ConsolidatedIncident, state: IncidentWorkflowState) => {
@@ -501,54 +509,84 @@ export function ActivityInsightsWorkspace({
         </div>
       )}
 
-      {!loading && !error && initialMode === "insights" && (
+      {!loading && !error && initialMode === "insights" && !operatorIncidents.length && (
+        <section className="vi-insights-start" aria-label="Insights awaiting event evidence">
+          <span className="vi-eyebrow">FROM EVENTS TO OPERATIONAL INSIGHT</span>
+          <h1>See patterns behind the moments</h1>
+          <p>Once monitored events are captured, compare when they happen, which cameras they come from, and what verification found.</p>
+          <dl>
+            <div><dt>When does activity concentrate?</dt><dd>Compare event counts by hour to identify periods worth reviewing.</dd></div>
+            <div><dt>Where should you look first?</dt><dd>Compare sources, then open the footage behind an event.</dd></div>
+            <div><dt>Which events need a closer look?</dt><dd>Separate confirmed observations from candidates awaiting verification.</dd></div>
+          </dl>
+          <div className="vi-activity-empty">
+            <IconActivity size={24} />
+            <strong>No event evidence to summarize yet</strong>
+            <p>Charts appear when incident records are available. This view does not measure camera uptime or establish that a scene is safe.</p>
+            <div className="vi-activity-empty-actions">
+              <button type="button" onClick={() => onModeChange("live")}>Check cameras</button>
+              <button type="button" onClick={onOpenRules}>Review monitoring rules</button>
+              {investigations.length > 0 && <button type="button" onClick={() => onModeChange("activity")}>View {investigations.length} saved {investigations.length === 1 ? "report" : "reports"}</button>}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {!loading && !error && initialMode === "insights" && operatorIncidents.length > 0 && (
         <div className="vi-insights">
+          <div className="vi-activity-heading"><div>
+            <h1>Activity at a glance</h1>
+            <p>See where events happened, then open the footage behind a match.</p>
+          </div></div>
           <div className="vi-operational-briefing">
             <IconSparkles size={20} />
-            <strong>Operational Briefing</strong>
+            <strong>Event overview</strong>
             <span>
-              {operatorIncidents.length} operator-relevant{" "}
-              {operatorIncidents.length === 1 ? "incident" : "incidents"} across{" "}
-              {sourceCount || stats.sources.length}{" "}
-              {(sourceCount || stats.sources.length) === 1
-                ? "monitored source"
-                : "monitored sources"}
-              . {stats.verdicts.confirmed} confirmed;{" "}
-              {stats.verdicts.failed + stats.verdicts.unverified} require
-              verification. {investigations.length} saved{" "}
-              {investigations.length === 1 ? "investigation" : "investigations"}
-              .
+              {operatorIncidents.length} recorded {operatorIncidents.length === 1 ? "event" : "events"} from {stats.sources.length} {stats.sources.length === 1 ? "source" : "sources"}.
+              {" "}{awaitingReview} awaiting review; {stats.verdicts.model_match} direct model {stats.verdicts.model_match === 1 ? "match" : "matches"}.
+              {" "}Model outcomes and review status are separate. Counts do not measure accuracy.
             </span>
           </div>
           <div className="vi-insight-metrics">
             <div>
               <IconActivity size={20} />
               <strong>{operatorIncidents.length}</strong>
-              <span>Operator incidents</span>
+              <span>Recorded events</span>
             </div>
             <div>
               <IconCheck size={20} />
-              <strong>{stats.verdicts.confirmed}</strong>
-              <span>Confirmed</span>
+              <strong>{awaitingReview}</strong>
+              <span>Awaiting review</span>
             </div>
             <div>
               <IconCamera size={20} />
               <strong>{sourceCount || stats.sources.length}</strong>
-              <span>Monitored sources</span>
+              <span>Configured sources</span>
             </div>
             <div>
               <IconShieldCheck size={20} />
               <strong>{investigations.length}</strong>
-              <span>Saved investigations</span>
+              <span>Saved reports</span>
             </div>
           </div>
+          {featuredIncident && (
+            <IncidentRow
+              incident={featuredIncident}
+              onOpen={() => setSelected(featuredIncident)}
+              rule={incidentRule(featuredIncident, rules)}
+              sourceNames={sourceNames}
+              vstApiUrl={vstApiUrl}
+              workflowState={incidentWorkflowState(featuredIncident, workflowStates)}
+              featured
+            />
+          )}
           <div className="vi-insights-chart">
             <div className="vi-insight-heading">
               <div>
                 <h2>Events over time</h2>
-                <p>Recent incident distribution by hour</p>
+                <p>Loaded events by hour · latest 18 occupied hours · up to 100 source records</p>
               </div>
-              <span>{confirmedPercent}% confirmed</span>
+              <span>Recorded history</span>
             </div>
             <div className="vi-bars">
               {stats.buckets.length ? (
@@ -563,15 +601,15 @@ export function ActivityInsightsWorkspace({
                     </div>
                     <small>
                       {new Intl.DateTimeFormat(undefined, {
-                        hour: "numeric",
+                        month: "short", day: "numeric", hour: "numeric",
                       }).format(new Date(timestamp))}
                     </small>
                   </div>
                 ))
               ) : (
                 <p className="vi-insight-empty">
-                  No operator events in this period. Live indexing and visual
-                  search remain active.
+                  No operator events in this period. Try another activity filter
+                  or explore indexed footage.
                 </p>
               )}
             </div>
@@ -602,16 +640,17 @@ export function ActivityInsightsWorkspace({
               )}
             </div>
             <div>
-              <h2>Verification outcomes</h2>
+              <h2>Model outcomes</h2>
               {Object.entries(stats.verdicts).map(([verdict, count]) => (
                 <div className="vi-breakdown-row" key={verdict}>
                   <span>
                     {
                       {
-                        confirmed: "Confirmed",
+                        model_match: "Rule matched",
+                        confirmed: "Verification passed",
                         rejected: "Dismissed",
-                        failed: "Needs review",
-                        unverified: "Pending review",
+                        failed: "Verification failed",
+                        unverified: "Unverified",
                       }[verdict]
                     }
                   </span>
@@ -632,35 +671,25 @@ export function ActivityInsightsWorkspace({
               ))}
             </div>
           </div>
-          {featuredIncident && (
-            <IncidentRow
-              incident={featuredIncident}
-              onOpen={() => setSelected(featuredIncident)}
-              rule={incidentRule(featuredIncident, rules)}
-              sourceNames={sourceNames}
-              vstApiUrl={vstApiUrl}
-              workflowState={incidentWorkflowState(featuredIncident, workflowStates)}
-              featured
-            />
-          )}
+
         </div>
       )}
 
-      {!loading && !error && initialMode === "activity" && (
+      {!loading && initialMode === "activity" && (
         <div className="vi-activity-list">
           <div className="vi-activity-heading">
             <div>
-              <h1>Activity</h1>
+              <h1>Event review</h1>
               <p>
-                Consolidated visual incidents verified by local analytics.
-                Diagnostics, dismissed candidates, and empty backend records are
-                hidden by default.
+                Review detected events, inspect their footage, and decide what needs attention.
+                Each event shows its verification and review status.
               </p>
             </div>
             <label className="vi-activity-filter">
               <span>Show</span>
               <select
                 aria-label="Activity filter"
+                disabled={Boolean(error)}
                 value={activityFilter}
                 onChange={(event) => {
                   setActivityFilter(event.target.value as ActivityFilter);
@@ -670,7 +699,8 @@ export function ActivityInsightsWorkspace({
                 <option value="actionable">Needs attention</option>
                 <option value="acknowledged">Acknowledged</option>
                 <option value="resolved">Resolved</option>
-                <option value="confirmed">Confirmed</option>
+                <option value="model_match">Model match</option>
+                <option value="confirmed">Verification passed</option>
                 <option value="unverified">Unverified</option>
                 <option value="failed">Verification failed</option>
                 <option value="rejected">Rejected</option>
@@ -678,30 +708,29 @@ export function ActivityInsightsWorkspace({
               </select>
             </label>
             <span>
-              {activityIncidents.length}{" "}
-              {activityIncidents.length === 1 ? "incident" : "incidents"}
+              {error ? "Event data unavailable" : `${activityIncidents.length} ${activityIncidents.length === 1 ? "incident" : "incidents"}`}
             </span>
           </div>
+          {investigationsError && <p role="status" className="vi-investigate-error">{investigationsError}</p>}
           {investigations.length > 0 && (
             <section
               className="vi-saved-investigations"
-              aria-label="Saved investigations"
+              aria-label="Saved reports"
             >
               <header>
                 <div>
                   <IconShieldCheck size={18} />
                   <span>
-                    <strong>Saved investigations</strong>
+                    <strong>Saved reports</strong>
                     <small>
-                      Operator-created evidence briefings retained locally on
-                      Thor
+                      Answers, notes and video references saved on this device
                     </small>
                   </span>
                 </div>
                 <span>{investigations.length}</span>
               </header>
               <div>
-                {investigations.slice(0, 4).map((investigation) => (
+                {investigations.slice(0, visibleInvestigations).map((investigation) => (
                   <article key={investigation.id}>
                     <span className={`is-${investigation.severity}`}>
                       {investigation.severity}
@@ -711,8 +740,8 @@ export function ActivityInsightsWorkspace({
                       <small>
                         {investigation.evidence.length}{" "}
                         {investigation.evidence.length === 1
-                          ? "citation"
-                          : "citations"}
+                          ? "video reference"
+                          : "video references"}
                         {investigation.evidence.some(
                           (item) => item.media_status === "retained"
                         )
@@ -721,24 +750,28 @@ export function ActivityInsightsWorkspace({
                                 (item) => item.media_status === "retained"
                               ).length
                             } retained locally`
-                          : " · source retention"}{" "}
+                          : " · video depends on source availability"}{" "}
                         · {investigation.disposition.replaceAll("_", " ")} ·{" "}
                         {formatIncidentTime(investigation.created_at)}
                       </small>
                     </div>
                     <a
                       href={investigation.report_url}
-                      target="_blank"
-                      rel="noreferrer"
                     >
                       <IconFileReport size={15} /> Open report
                     </a>
                   </article>
                 ))}
               </div>
+              {investigations.length > visibleInvestigations && (
+                <footer className="vi-activity-more">
+                  <button type="button" onClick={() => setVisibleInvestigations(count => count + 8)}>Show older reports</button>
+                  <span>Showing {Math.min(visibleInvestigations, investigations.length)} of {investigations.length}</span>
+                </footer>
+              )}
             </section>
           )}
-          {shownActivity.length ? (
+          {!error && (shownActivity.length ? (
             shownActivity.map((incident) => (
               <IncidentRow
                 key={incident.Id}
@@ -752,12 +785,24 @@ export function ActivityInsightsWorkspace({
             ))
           ) : (
             <div className="vi-activity-empty">
-              <IconCheck size={24} />
-              <strong>No activity in this view</strong>
-              <span>Choose another filter or refresh local analytics.</span>
+              <IconActivity size={24} />
+              <strong>{consolidatedIncidents.length ? "No events match this filter" : "No detected events yet"}</strong>
+              <p>{consolidatedIncidents.length
+                ? "Other review states or diagnostic records may be available."
+                : "When a monitored condition is detected, review its footage and verification here. An empty event list does not confirm that cameras are connected or monitoring is active."}</p>
+              <div className="vi-activity-empty-actions">
+                {consolidatedIncidents.length ? (
+                  <button type="button" onClick={() => { setActivityFilter("all"); setVisibleCount(ACTIVITY_PAGE_SIZE); }}>Show all records</button>
+                ) : (
+                  <>
+                    <button type="button" onClick={() => onModeChange("live")}>Check cameras</button>
+                    <button type="button" onClick={onOpenRules}>Review monitoring rules</button>
+                  </>
+                )}
+              </div>
             </div>
-          )}
-          {activityIncidents.length > shownActivity.length && (
+          ))}
+          {!error && activityIncidents.length > shownActivity.length && (
             <div className="vi-activity-more">
               <button
                 type="button"
@@ -779,6 +824,7 @@ export function ActivityInsightsWorkspace({
         <IncidentMedia
           incident={selected}
           onClose={() => setSelected(null)}
+          onReportSaved={(record) => setInvestigations((current) => [record, ...current.filter((item) => item.id !== record.id)])}
           onStateChange={(state) => void setIncidentState(selected, state).catch((requestError) => setError(requestError instanceof Error ? requestError.message : "The incident could not be updated."))}
           rule={incidentRule(selected, rules)}
           sourceNames={sourceNames}
@@ -809,6 +855,9 @@ function IncidentRow({
 }) {
   const snapshot = incidentSnapshot(incident, vstApiUrl);
   const hasRetainedMedia = Boolean(snapshot || incident.info?.videoSource);
+  const start = Date.parse(incident.timestamp);
+  const end = Date.parse(incident.end ?? "");
+  const canFindFootage = Boolean(vstApiUrl && incident.sensorId && Number.isFinite(start) && Number.isFinite(end) && end > start);
   return (
     <article
       className={featured ? "vi-incident-row is-featured" : "vi-incident-row"}
@@ -820,20 +869,20 @@ function IncidentRow({
         <span className={`vi-verdict vi-verdict--${verdictFor(incident)}`}>
           {incidentVerdictLabel(incident)}
         </span>
-        <h2>{incidentTitle(incident)}</h2>
+        <h2>{rule?.engine === "vlm" ? rule.name : incidentTitle(incident)}</h2>
         <p>
           {!isOperatorIncidentCandidate(incident)
             ? "Backend processing record retained for audit."
             : incident.info?.reasoning ||
               incident.info?.verificationResponseStatus ||
-              "Visual observation retained for review."}
+              (incident.info?.triggerPhrase ? "The visual model matched the rule condition. Review the footage." : "Visual observation retained for review.")}
         </p>
         <time>
           <IconClock size={14} /> {formatIncidentTime(incident.timestamp)} ·{" "}
           {incidentDurationLabel(incident)} ·{" "}
           {incidentSourceName(incident, sourceNames)}
         </time>
-        <div className="vi-incident-rule-line"><IconShieldCheck size={14} /> {rule ? `Triggered by ${rule.name}` : "Analytics candidate"}<span className={`is-${workflowState}`}>{workflowState}</span></div>
+        <div className="vi-incident-rule-line"><IconShieldCheck size={14} /> {rule ? `Triggered by ${rule.name}` : incident.info?.alertRuleId ? "Rule record unavailable" : "Analytics candidate"}<span className={`is-${workflowState}`}>{workflowState}</span></div>
         {incident.candidateCount > 1 && (
           <small>
             {incident.candidateCount} matching records consolidated · audit
@@ -844,17 +893,19 @@ function IncidentRow({
       <button
         type="button"
         onClick={onOpen}
-        disabled={!hasRetainedMedia}
+        disabled={!hasRetainedMedia && !canFindFootage}
         title={
           hasRetainedMedia
             ? "Open retained incident evidence"
-            : "This analytics record did not retain playable media"
+            : canFindFootage ? "Look for recorded footage at this event's source and time" : "This record has no attached media or usable source interval"
         }
       >
         {hasRetainedMedia ? (
           <>
             <IconPlayerPlay size={17} /> Open evidence
           </>
+        ) : canFindFootage ? (
+          <><IconPlayerPlay size={17} /> Find footage</>
         ) : (
           <>
             <IconClock size={17} /> Timing only

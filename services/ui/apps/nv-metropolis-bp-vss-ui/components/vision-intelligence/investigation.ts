@@ -18,6 +18,7 @@ export interface InvestigationEvidence {
   sensor_id: string;
   source_name: string;
   start_time: string;
+  start_label?: string;
   title: string;
   video_url?: string;
 }

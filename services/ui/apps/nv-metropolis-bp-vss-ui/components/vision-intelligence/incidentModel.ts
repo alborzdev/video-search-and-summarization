@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 
 export interface AnalyticsIncidentInfo {
+  alertRuleId?: string;
+  triggerPhrase?: string;
+  prompt?: string;
   alertCategory?: string;
   description?: string;
   reasoning?: string;
@@ -39,11 +42,16 @@ export function incidentVerdict(incident: AnalyticsIncident): IncidentVerdict {
   return "unverified";
 }
 
+export function isDirectModelMatch(incident: AnalyticsIncident): boolean {
+  return incidentVerdict(incident) === "confirmed" && Boolean(incident.info?.alertRuleId && incident.info?.triggerPhrase);
+}
+
 export function incidentVerdictLabel(incident: AnalyticsIncident): string {
   const verdict = incidentVerdict(incident);
   if (!isOperatorIncidentCandidate(incident)) {
     return verdict === "failed" ? "Processing failed" : "Processed";
   }
+  if (isDirectModelMatch(incident)) return "Model match";
   if (verdict === "confirmed") return "Confirmed";
   if (verdict === "rejected") return "Dismissed";
   if (verdict === "failed") return "Needs review";

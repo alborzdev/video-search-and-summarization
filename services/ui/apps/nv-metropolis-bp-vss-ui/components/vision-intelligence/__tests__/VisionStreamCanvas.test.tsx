@@ -26,6 +26,34 @@ describe("VisionStreamCanvas", () => {
     jest.restoreAllMocks();
   });
 
+  it("keeps the empty player hidden until a decoded frame and ignores source-less cleanup errors", () => {
+    const { container } = render(<VisionStreamCanvas stream={replay} />);
+    const video = container.querySelector("video")!;
+    expect(video).toHaveStyle({ visibility: "hidden" });
+    fireEvent.error(video);
+    expect(screen.queryByText(/Video could not be loaded/)).not.toBeInTheDocument();
+    fireEvent.loadedData(video);
+    expect(video).toHaveStyle({ visibility: "visible" });
+    fireEvent.emptied(video);
+    expect(video).toHaveStyle({ visibility: "hidden" });
+    video.setAttribute("src", "/missing.mp4");
+    fireEvent.error(video);
+    expect(screen.getByText(/Video could not be loaded/)).toBeInTheDocument();
+  });
+
+  it("never treats an unavailable illustration as a usable camera frame", async () => {
+    const onPreviewAvailable = jest.fn();
+    const blob = jest.fn(async () => new Blob(["<svg/>"], { type: "image/svg+xml" }));
+    global.fetch = jest.fn(async (input) => String(input).includes('/timelines')
+      ? { ok: true, json: async () => [{ startTime: '2025-01-01T00:00:00Z', endTime: '2025-01-01T00:00:10Z' }] }
+      : { ok: true, headers: { get: () => 'unavailable' }, blob }) as jest.Mock;
+    const { container } = render(<VisionStreamCanvas eager={false} stream={replay} vstApiUrl="http://thor.test/vst/api" onPreviewAvailable={onPreviewAvailable} />);
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+    expect(blob).not.toHaveBeenCalled();
+    expect(container.querySelector('img')).toBeNull();
+    expect(onPreviewAvailable).toHaveBeenLastCalledWith(false);
+  });
+
   it("does not regenerate a replay when its poster finishes loading", async () => {
     let resolvePicture!: (response: Response) => void;
     const pictureResponse = new Promise<Response>((resolve) => {
@@ -72,8 +100,10 @@ describe("VisionStreamCanvas", () => {
       return { ok: false, status: 404 } as Response;
     }) as jest.Mock;
 
-    render(
+    const onPreviewAvailable = jest.fn();
+    const { container } = render(
       <VisionStreamCanvas
+        onPreviewAvailable={onPreviewAvailable}
         stream={replay}
         vstApiUrl="http://thor.test/vst/api"
       />
@@ -92,6 +122,15 @@ describe("VisionStreamCanvas", () => {
       blob: async () => new Blob(["poster"], { type: "image/jpeg" }),
     } as Response);
     await waitFor(() => expect(URL.createObjectURL).toHaveBeenCalledTimes(1));
+
+    // A returned image URL is not proof that the browser decoded a usable frame.
+    expect(onPreviewAvailable).toHaveBeenLastCalledWith(false);
+    const poster = container.querySelector('img')!;
+    Object.defineProperty(poster, 'naturalWidth', { configurable:true, value:1280 });
+    fireEvent.load(poster);
+    expect(onPreviewAvailable).toHaveBeenLastCalledWith(true);
+    fireEvent.error(poster);
+    expect(onPreviewAvailable).toHaveBeenLastCalledWith(false);
 
     expect(replayRequests()).toHaveLength(1);
   });

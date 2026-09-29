@@ -1,0 +1,155 @@
+{
+  "results": [
+    {
+      "case": "short",
+      "repeat": 0,
+      "seconds": 48.3,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 32,
+        "total_tokens": 35,
+        "completion_tokens": 3,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "42",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "tool",
+      "repeat": 0,
+      "seconds": 4.07,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 281,
+        "total_tokens": 308,
+        "completion_tokens": 27,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [
+          {
+            "id": "chatcmpl-tool-bece6246931e7eca",
+            "type": "function",
+            "function": {
+              "name": "lookup_video",
+              "arguments": "{\"filename\": \"demo.mp4\"}"
+            }
+          }
+        ],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "long_context",
+      "repeat": 0,
+      "seconds": 29.29,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 25376,
+        "total_tokens": 25388,
+        "completion_tokens": 12,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "One person repeatedly walks past a stationary forklift.",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "short",
+      "repeat": 1,
+      "seconds": 0.17,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 32,
+        "total_tokens": 35,
+        "completion_tokens": 3,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "42",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "tool",
+      "repeat": 1,
+      "seconds": 1.15,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 281,
+        "total_tokens": 308,
+        "completion_tokens": 27,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [
+          {
+            "id": "chatcmpl-tool-bb2419bff9835d75",
+            "type": "function",
+            "function": {
+              "name": "lookup_video",
+              "arguments": "{\"filename\": \"demo.mp4\"}"
+            }
+          }
+        ],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "long_context",
+      "repeat": 1,
+      "seconds": 4.88,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 25376,
+        "total_tokens": 25388,
+        "completion_tokens": 12,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "One person repeatedly walks past a stationary forklift.",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    }
+  ],
+  "minimum_available_gib": 53.89188766479492
+}

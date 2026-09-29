@@ -1,0 +1,19 @@
+{"time": "2026-09-09T12:09:26-0400", "stage": "baseline", "available_gib": 101.495, "used_gib": 21.329, "dstate": []}
+{"time": "2026-09-09T12:09:26-0400", "stage": "loading", "available_gib": 101.49, "used_gib": 21.333, "dstate": [{"pid": "2094398", "comm": "kworker/u28:2+netns", "wchan": "0"}]}
+{"time": "2026-09-09T12:09:28-0400", "stage": "loading", "available_gib": 100.799, "used_gib": 22.025, "dstate": []}
+{"time": "2026-09-09T12:09:31-0400", "stage": "loading", "available_gib": 100.739, "used_gib": 22.085, "dstate": []}
+{"time": "2026-09-09T12:09:33-0400", "stage": "loading", "available_gib": 100.636, "used_gib": 22.188, "dstate": []}
+{"time": "2026-09-09T12:09:35-0400", "stage": "loading", "available_gib": 100.572, "used_gib": 22.252, "dstate": []}
+{"time": "2026-09-09T12:09:37-0400", "stage": "loading", "available_gib": 100.644, "used_gib": 22.18, "dstate": [{"pid": "2194765", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:09:39-0400", "stage": "loading", "available_gib": 100.723, "used_gib": 22.101, "dstate": []}
+{"time": "2026-09-09T12:09:41-0400", "stage": "loading", "available_gib": 100.684, "used_gib": 22.14, "dstate": []}
+{"time": "2026-09-09T12:09:43-0400", "stage": "loading", "available_gib": 100.656, "used_gib": 22.167, "dstate": []}
+{"time": "2026-09-09T12:09:45-0400", "stage": "loading", "available_gib": 100.626, "used_gib": 22.198, "dstate": []}
+{"time": "2026-09-09T12:09:47-0400", "stage": "loading", "available_gib": 100.639, "used_gib": 22.185, "dstate": []}
+{"time": "2026-09-09T12:09:49-0400", "stage": "loading", "available_gib": 100.582, "used_gib": 22.241, "dstate": []}
+{"time": "2026-09-09T12:09:51-0400", "stage": "loading", "available_gib": 100.579, "used_gib": 22.245, "dstate": []}
+{"time": "2026-09-09T12:09:53-0400", "stage": "loading", "available_gib": 100.625, "used_gib": 22.199, "dstate": []}
+{"time": "2026-09-09T12:09:55-0400", "stage": "loading", "available_gib": 100.698, "used_gib": 22.126, "dstate": [{"pid": "2059902", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:09:57-0400", "stage": "loading", "available_gib": 100.615, "used_gib": 22.209, "dstate": []}
+{"time": "2026-09-09T12:09:59-0400", "stage": "loading", "available_gib": 100.681, "used_gib": 22.143, "dstate": []}
+{"time": "2026-09-09T12:09:59-0400", "stage": "ready-settled", "available_gib": 100.68, "used_gib": 22.144, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}

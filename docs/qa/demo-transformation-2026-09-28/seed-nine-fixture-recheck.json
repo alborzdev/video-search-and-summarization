@@ -1,0 +1,92 @@
+[
+  {
+    "file": "0.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 1.065,
+    "matched": true,
+    "available_gib_after": 52.382
+  },
+  {
+    "file": "1.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.934,
+    "matched": true,
+    "available_gib_after": 52.344
+  },
+  {
+    "file": "2.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.879,
+    "matched": true,
+    "available_gib_after": 52.332
+  },
+  {
+    "file": "3.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.98,
+    "matched": true,
+    "available_gib_after": 52.333
+  },
+  {
+    "file": "4.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.872,
+    "matched": true,
+    "available_gib_after": 52.294
+  },
+  {
+    "file": "5.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.967,
+    "matched": true,
+    "available_gib_after": 52.337
+  },
+  {
+    "file": "6.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.874,
+    "matched": true,
+    "available_gib_after": 52.353
+  },
+  {
+    "file": "7.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 0.931,
+    "matched": true,
+    "available_gib_after": 52.405
+  },
+  {
+    "file": "8.mp4",
+    "repeat": 0,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "NO",
+    "seconds": 0.914,
+    "matched": true,
+    "available_gib_after": 52.406
+  }
+]

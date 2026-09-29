@@ -1,0 +1,106 @@
+Already running: redis
+Already running: vss-vios-postgres
+Already running: kafka
+Already running: elasticsearch
+Already running: vss-graph-db
+Already running: vss-vios-sensor
+Already running: vss-vios-streamprocessing
+Already running: vss-vios-ingress
+Already running: vss-vios-sdr
+Already running: vss-vios-mcp
+Already running: logstash
+Already running: vss-behavior-analytics
+Already running: vss-behavior-analytics-thor-candidates
+Already running: vss-video-analytics-api
+Already running: vss-va-mcp
+Already running: phoenix
+Already running: prometheus
+Already running: grafana
+Already running: kibana
+Already running: mdx-node-exporter-1
+Already running: mdx-cadvisor-1
+Already running: tegrastats-exporter
+Already running: vss-agent-ui
+Already running: vss-haproxy-ingress
+All requested stages settled; API-level validation is still required.
+ Container vss-memory-nemotron Starting
+ Container vss-memory-nemotron Started
+{"time": "2026-09-28T20:22:56-0400", "stage": "loading", "available_gib": 100.041, "used_gib": 22.783, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+netns", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:13-0400", "stage": "loading", "available_gib": 98.982, "used_gib": 23.842, "dstate": []}
+{"time": "2026-09-28T20:23:29-0400", "stage": "loading", "available_gib": 98.442, "used_gib": 24.382, "dstate": []}
+{"time": "2026-09-28T20:23:46-0400", "stage": "loading", "available_gib": 88.188, "used_gib": 34.636, "dstate": []}
+{"time": "2026-09-28T20:24:02-0400", "stage": "loading", "available_gib": 89.115, "used_gib": 33.709, "dstate": []}
+{"time": "2026-09-28T20:24:19-0400", "stage": "loading", "available_gib": 88.983, "used_gib": 33.841, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:29-0400", "stage": "ready-settled", "available_gib": 89.056, "used_gib": 33.767, "dstate": []}
+READY; model remains isolated for bounded inference probes
+ Container vss-memory-embed Starting
+ Container vss-memory-embed Started
+{"time": "2026-09-28T20:24:31-0400", "stage": "loading", "available_gib": 89.004, "used_gib": 33.82, "dstate": [{"pid": "1873967", "comm": "kworker/u28:1+netns", "wchan": "0"}, {"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "2117096", "comm": "kworker/12:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:47-0400", "stage": "loading", "available_gib": 86.142, "used_gib": 36.682, "dstate": []}
+{"time": "2026-09-28T20:25:03-0400", "stage": "loading", "available_gib": 83.121, "used_gib": 39.703, "dstate": [{"pid": "1081801", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "1873967", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T20:25:20-0400", "stage": "loading", "available_gib": 82.794, "used_gib": 40.03, "dstate": []}
+{"time": "2026-09-28T20:25:36-0400", "stage": "loading", "available_gib": 82.673, "used_gib": 40.151, "dstate": []}
+{"time": "2026-09-28T20:25:41-0400", "stage": "ready-settled", "available_gib": 82.714, "used_gib": 40.11, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+READY; model remains isolated for bounded inference probes
+ Container vss-memory-cosmos Starting
+ Container vss-memory-cosmos Started
+{"time": "2026-09-28T20:25:42-0400", "stage": "loading", "available_gib": 82.685, "used_gib": 40.139, "dstate": []}
+{"time": "2026-09-28T20:25:58-0400", "stage": "loading", "available_gib": 81.736, "used_gib": 41.088, "dstate": []}
+{"time": "2026-09-28T20:26:15-0400", "stage": "loading", "available_gib": 80.455, "used_gib": 42.369, "dstate": []}
+{"time": "2026-09-28T20:26:31-0400", "stage": "loading", "available_gib": 61.924, "used_gib": 60.9, "dstate": []}
+{"time": "2026-09-28T20:26:48-0400", "stage": "loading", "available_gib": 60.925, "used_gib": 61.899, "dstate": [{"pid": "2147729", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T20:27:04-0400", "stage": "loading", "available_gib": 60.839, "used_gib": 61.985, "dstate": []}
+{"time": "2026-09-28T20:27:20-0400", "stage": "loading", "available_gib": 60.885, "used_gib": 61.939, "dstate": []}
+{"time": "2026-09-28T20:27:37-0400", "stage": "loading", "available_gib": 60.815, "used_gib": 62.009, "dstate": []}
+{"time": "2026-09-28T20:27:53-0400", "stage": "loading", "available_gib": 60.917, "used_gib": 61.907, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:28:10-0400", "stage": "loading", "available_gib": 60.714, "used_gib": 62.11, "dstate": []}
+{"time": "2026-09-28T20:28:26-0400", "stage": "loading", "available_gib": 54.966, "used_gib": 67.858, "dstate": []}
+{"time": "2026-09-28T20:28:43-0400", "stage": "loading", "available_gib": 53.954, "used_gib": 68.87, "dstate": []}
+{"time": "2026-09-28T20:28:59-0400", "stage": "loading", "available_gib": 53.375, "used_gib": 69.448, "dstate": []}
+{"time": "2026-09-28T20:29:15-0400", "stage": "loading", "available_gib": 53.356, "used_gib": 69.468, "dstate": []}
+{"time": "2026-09-28T20:29:24-0400", "stage": "ready-settled", "available_gib": 53.35, "used_gib": 69.473, "dstate": []}
+READY; model remains isolated for bounded inference probes
+ Container vss-memory-support Running
+ Container vss-lvs Starting
+ Container vss-lvs Started
+Already running: vss-lvs
+Already running: vss-alert-bridge
+{"time": "2026-09-28T20:30:40-0400", "stage": "vss-agent", "status": "before-start", "available_gib": 52.489, "used_gib": 70.335}
+{"time": "2026-09-28T20:30:41-0400", "stage": "vss-agent", "status": "starting", "available_gib": 52.485, "used_gib": 70.339}
+{"time": "2026-09-28T20:30:57-0400", "stage": "vss-agent", "status": "starting", "available_gib": 52.06, "used_gib": 70.764}
+{"time": "2026-09-28T20:31:13-0400", "stage": "vss-agent", "status": "healthy", "available_gib": 51.611, "used_gib": 71.213}
+{"time": "2026-09-28T20:31:29-0400", "stage": "vss-agent", "status": "healthy", "available_gib": 51.518, "used_gib": 71.306}
+{"time": "2026-09-28T20:31:29-0400", "stage": "vss-agent", "status": "healthy-settled", "available_gib": 51.518, "used_gib": 71.306}
+All requested stages settled; API-level validation is still required.
+redis healthy
+vss-vios-postgres healthy
+kafka healthy
+elasticsearch healthy
+vss-graph-db healthy
+vss-vios-sensor healthy
+vss-vios-streamprocessing healthy
+vss-vios-ingress healthy
+vss-vios-sdr healthy
+vss-vios-mcp healthy
+logstash healthy
+vss-behavior-analytics running (no Docker health check)
+vss-behavior-analytics-thor-candidates running (no Docker health check)
+vss-video-analytics-api running (no Docker health check)
+vss-va-mcp healthy
+phoenix healthy
+prometheus healthy
+grafana healthy
+kibana healthy
+mdx-node-exporter-1 running (no Docker health check)
+mdx-cadvisor-1 healthy
+tegrastats-exporter healthy
+vss-agent-ui running (no Docker health check)
+vss-haproxy-ingress running (no Docker health check)
+vss-memory-cosmos running (no Docker health check)
+vss-memory-nemotron running (no Docker health check)
+vss-memory-embed running (no Docker health check)
+vss-memory-support healthy
+vss-lvs healthy
+vss-alert-bridge running (no Docker health check)
+vss-agent healthy
+31 service roles; 51.55 GiB available; failures: []

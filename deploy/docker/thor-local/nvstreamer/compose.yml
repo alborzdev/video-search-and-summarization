@@ -8,7 +8,9 @@ services:
     user: "0:0"
     runtime: nvidia
     network_mode: host
-    restart: unless-stopped
+    # Fail closed after a host watchdog reset; the operator must explicitly
+    # re-admit media sources after the application passes its safety gates.
+    restart: "no"
     environment:
       ADAPTOR: streamer
       HTTP_PORT: "31000"

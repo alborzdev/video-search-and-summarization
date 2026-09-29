@@ -10,9 +10,9 @@ The exact contract is:
 |---|---|
 | LLM | Local standalone `nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8` on `127.0.0.1:30081`; VSS calls it through `LLM_MODE=remote` because the service is outside NVIDIA's released Compose graph. |
 | VLM | RT-VLM 3.2.1 loads `ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final` in-process with selector `cosmos-reason3` and advertises `nim_nvidia_cosmos3-nano-reasoner_bf16-final` on loopback-only port `127.0.0.1:8018`. Its KV cache is explicitly capped at 4 GiB for one 16K-context request so startup order cannot consume the appliance's remaining unified memory. |
-| Agent | The complete Thor-full feature graph remains the base config. Only the two Edge 4B planning/response prompt fields are inherited exactly from NVIDIA's `dev-profile-base/.../config_edge.yml`. |
-| Official memory lane | Edge 4B `0.25` + bounded Cosmos3 `0.30` + required UMA reserve `0.25`; launch admission therefore requires `MemAvailable / MemTotal >= 0.80`. |
-| Thor demo memory lane | The exact same artifacts and images with Edge 4B KV allocation `0.12`, bounded Cosmos3 at `0.30`, and a `0.28` admission reserve; launch admission requires `MemAvailable / MemTotal >= 0.70`. |
+| Agent | The complete Thor-full feature graph remains the base config. The two Edge 4B planning/response prompts are inherited exactly from NVIDIA's `dev-profile-base/.../config_edge.yml`; registered live sources do not auto-resume at Agent startup. |
+| Official memory lane | Edge 4B `0.25` + bounded Cosmos3 `0.30` + required UMA reserve `0.25`; the initial gate requires `MemAvailable / MemTotal >= 0.80`, followed by the empirical post-load reserve gate. |
+| Thor demo memory lane | The exact same artifacts and images with Edge 4B KV allocation `0.12` in eager mode, bounded Cosmos3 at `0.30`, and a `0.28` admission reserve; the initial gate requires `MemAvailable / MemTotal >= 0.70`, followed by a 64 GiB projected post-load reserve. |
 
 The authoritative model identity comes from NVIDIA's versioned
 [VSS 3.2.1 Edge Deployment documentation](https://docs.nvidia.com/vss/3.2.1/edge-deployment.html),
@@ -37,19 +37,28 @@ upstream provenance. The two evidence documents under `provenance/` bind the
 promoted trees to the immutable Hugging Face revision and NVIDIA's signed NGC
 payload. No model or image pull is required for a pull-free launch.
 
-The official launcher requires at least 80% of Thor's unified memory to be
-available. A second, explicitly named Thor demo lane is provided for a machine
-that also hosts the desktop and operator session. It preserves both exact
-models, model IDs, image digests, prompts, and the complete Compose graph; only
-the Edge LLM KV-cache allocation is reduced. Its measured `0.12` setting keeps
-a 2.95 GiB KV cache (54,560 tokens). Cosmos3 uses `0.30` admission plus an
-explicit 4 GiB KV-cache cap, one sequence, 4,096 batched tokens, and a 16,384
-token context. Eager execution is required because the pinned vLLM 0.12 image's
-CUDA-graph warm-up fails a dynamic-shape assertion for this Cosmos3 backbone on
-Thor. These controls avoid both the previously observed startup-order-dependent
-~40 GiB cache and a repeated model-load loop while retaining the context needed
-for local evidence inspection.
-The demo launcher remains fail-closed below 70% prelaunch availability.
+The official launcher first requires at least 80% of Thor's unified memory to
+be available and then applies an empirical post-load safety reserve. A second,
+explicitly named Thor demo lane preserves both exact
+models, model IDs, image digests, prompts, and the complete Compose graph. The
+Edge LLM uses a reduced `0.12` KV-cache allocation plus eager execution so CUDA
+graph capture cannot claim additional unified memory; the measured KV cache is
+2.95 GiB (54,560 tokens). Cosmos3 uses `0.30` admission plus an explicit 4 GiB
+KV-cache cap, one sequence, 4,096 batched tokens, a 16,384-token context, and
+eager execution because this backbone's CUDA-graph warm-up fails a dynamic-shape
+assertion on Thor. These controls avoid both the previously observed
+startup-order-dependent ~40 GiB cache and repeated model-load loops while
+retaining the context needed for local evidence inspection.
+The demo launcher also projects the measured full-graph commitment and requires
+at least 64 GiB to remain available after load. Two watchdog resets proved that
+the 128 GiB host is not qualified for this co-resident lane, even though its old
+70% snapshot gate passed. Use a split local lane or a remote endpoint for one
+model; the renderer now fails closed on this host.
+
+The mounted Nemotron PID 1 startup gate independently requires 128 GiB of
+`MemAvailable` before it will execute the second model. This duplicates the
+pre-launch fuse inside the container boundary, so an old or direct Compose
+command cannot bypass the block on this machine.
 
 There is deliberately no "capture and trust" command here. Creating an exact
 lock is a review operation, not a way to bless whatever happens to be in a
@@ -168,8 +177,8 @@ python3 deploy/docker/thor-local/official-edge/official_edge.py static
 
 The complete audit is also read-only. With the promoted artifact paths
 supplied, it passes the source, prompt, Compose, exact-tree, provenance, and image
-identity gates; it will fail only while the host does not satisfy the dynamic
-80% unified-memory admission rule:
+identity gates; it remains blocked while the host cannot satisfy both the
+dynamic 80% admission rule and empirical post-load reserve:
 
 ```bash
 python3 deploy/docker/thor-local/official-edge/official_edge.py \
@@ -178,7 +187,7 @@ python3 deploy/docker/thor-local/official-edge/official_edge.py \
   audit
 ```
 
-It checks source anchors, the Edge prompt overlay, the inert Compose contract,
+It checks source anchors, the Edge prompt and live-stream startup overlay, the inert Compose contract,
 exact artifact trees, both required image identities, and the combined UMA
 admission rule. NGC/HF credentials are not accepted by this offline lane and
 both are blank in the long-running model services.
@@ -249,11 +258,22 @@ or Cosmos3 file, RTSP, dense-caption, alert, LVS and Agent workflows.
 
 ## Exact-model Thor demo lane
 
-Use `thor_demo.py` when the official 80% admission gate cannot coexist with
-other required Thor services. The audit and renderer use the same exact
+`thor_demo.py` documents the lower-KV-cache experiment; it is not a bypass for
+the official lane's safety gate. The audit and renderer use the same exact
 artifact locks and image identities as `official_edge.py`; the additional
-overlay is proved to differ from the official resolved graph only in the Edge
-LLM memory value.
+overlay is proved to differ from the official resolved graph only in bounded
+Edge runtime memory and fail-closed restart controls.
+
+Both exact-model lanes set the Agent, model services, LVS, RT-Embed, both RT-CV
+workers, and both GPU-backed VIOS services to `restart: "no"`. Heavyweight and
+source recovery therefore fail closed after a reboot. Keep the periodic cache
+cleaner stopped, stop any automatically restored graph, and run the audit
+below. The short operator sequence is maintained in
+[`../DEMO.md`](../DEMO.md).
+
+Agent startup also leaves persisted live sources stopped. An operator may
+explicitly resume a source only after a future split/remote deployment passes
+its runtime acceptance; merely starting the Agent cannot re-admit the source.
 
 ```bash
 python3 deploy/docker/thor-local/official-edge/thor_demo.py \
@@ -272,10 +292,12 @@ python3 deploy/docker/thor-local/official-edge/thor_demo.py \
   readiness
 ```
 
-The rendered command is still pull-free (`--no-build --pull never`) and blanks
-all model-service credentials. On this Thor, live readiness passed with both
-exact model endpoints, Agent, LVS, VA-MCP, Alert Bridge, VIOS, embeddings,
-analytics, UI, and observability dependencies healthy.
+The rendered command is pull-free (`--no-build --pull never`) and blanks all
+model-service credentials, but it is emitted only when the 70% initial gate,
+64 GiB projected post-load reserve, idle periodic-cache policy, exact artifacts,
+and resolved restart contract all pass. The current 128 GiB Thor intentionally
+fails the projected-reserve gate. Brief endpoint readiness before a watchdog
+reset is not runtime acceptance.
 
 ## Tests
 

@@ -4,7 +4,6 @@ import { VisionStreamCanvas } from "./VisionStreamCanvas";
 import type { VisionAnalystRequest, VisionAnalystResponse } from "./analyst";
 import {
   consolidateIncidents,
-  incidentTitle,
   incidentVerdict,
   isOperatorRelevantIncident,
   type ConsolidatedIncident,
@@ -16,9 +15,6 @@ import { createPeerId, sourceKind, streamDisplayName } from "./utils";
 import {
   IconAlertTriangle,
   IconArrowRight,
-  IconBolt,
-  IconCheck,
-  IconClock,
   IconPlayerPlay,
   IconRefresh,
   IconSearch,
@@ -44,6 +40,7 @@ interface HomeWorkspaceProps {
   onExplore: (query: string, stream?: VisionStream) => void;
   onOpenEvents: () => void;
   onOpenLive: (stream?: VisionStream) => void;
+  onOpenSystem?: () => void;
   systemHealth: SystemHealth | null;
   visualAnalystAvailable?: boolean | null;
   vstApiUrl?: string | null;
@@ -51,6 +48,26 @@ interface HomeWorkspaceProps {
 
 function normalize(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function recordingInvitation(stream: VisionStream | undefined) {
+  const name = stream?.name.toLowerCase().replace(/\.mp4$/, "");
+  if (name === "qa-recovery-20260928") return {
+    query: "person carrying a box",
+    action: "Find a person carrying a box",
+    context: "Warehouse operations · Review how goods are handled",
+  };
+  if (name === "conveyor-box-movement-demo") return {
+    query: "box moving on a conveyor belt",
+    action: "Find a box moving on the conveyor",
+    context: "Production & logistics · Follow an item through the line",
+  };
+  if (name === "conveyor-package-review-demo") return {
+    query: "crumpled cardboard box on a conveyor",
+    action: "Find a box to inspect",
+    context: "Package review · Find footage for human inspection (simulation)",
+  };
+  return { query: "", action: "Search this video", context: "Find an activity you want to review" };
 }
 
 function incidentForStream(
@@ -83,7 +100,7 @@ function relativeTime(value: string | null | undefined): string {
   const minutes = Math.round(seconds / 60);
   if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.round(minutes / 60);
-  return `${hours}h ago`;
+  return hours < 24 ? `${hours}h ago` : `${Math.floor(hours / 24)}d ago`;
 }
 
 export function sourceTimelineContext(
@@ -92,9 +109,10 @@ export function sourceTimelineContext(
 ): string {
   // Archived media keeps its original capture timestamps. Presenting those as
   // live recency (for example, “14327h ago”) is misleading and visually noisy.
+  if (!lastSemanticAt) return "Awaiting first indexed moment";
   return sourceKind(stream) === "Replay"
     ? "Indexed locally"
-    : relativeTime(lastSemanticAt);
+    : `Last indexed ${relativeTime(lastSemanticAt).toLowerCase()}`;
 }
 
 function sourceStatus(
@@ -102,10 +120,13 @@ function sourceStatus(
   intelligence: SourceIntelligence | undefined,
   analysisState: AnalysisState | undefined
 ): { label: string; tone: "attention" | "healthy" | "watch" } {
+  if (stream.connectionState === "offline" || stream.connectionState === "removed") {
+    return { label: "Disconnected", tone: "attention" };
+  }
   if (sourceKind(stream) === "Replay") {
     return {
-      label: intelligence?.semanticSegments ? "Searchable" : "Ready",
-      tone: "healthy",
+      label: intelligence?.semanticSegments ? "Searchable" : "Checking index",
+      tone: intelligence?.semanticSegments ? "healthy" : "watch",
     };
   }
   if (analysisState === "paused") return { label: "Paused", tone: "watch" };
@@ -114,33 +135,16 @@ function sourceStatus(
   if (analysisState === "changing") return { label: "Updating", tone: "watch" };
   if (intelligence?.semanticFresh === false)
     return { label: "Indexing delayed", tone: "watch" };
-  return { label: "Analyzing", tone: "healthy" };
-}
-
-function sourceSummary(
-  stream: VisionStream,
-  intelligence: SourceIntelligence | undefined,
-  analysisState: AnalysisState | undefined,
-  incident: ConsolidatedIncident | undefined
-): string {
-  if (incident) return incidentTitle(incident);
-  if (analysisState === "paused")
-    return "Video is available; intelligence processing is paused.";
-  if ((intelligence?.trackedObservations ?? 0) > 0)
-    return `${intelligence?.trackedObservations?.toLocaleString()} tracked observations are available for review.`;
-  if ((intelligence?.semanticSegments ?? 0) > 0)
-    return `${intelligence?.semanticSegments?.toLocaleString()} indexed moments are ready to search.`;
-  return sourceKind(stream) === "Live"
-    ? "Live video is connected and waiting for its first indexed moment."
-    : "Recorded footage is connected and ready to inspect.";
+  return intelligence?.semanticFresh === true
+    ? { label: "Analyzing", tone: "healthy" }
+    : { label: "Checking", tone: "watch" };
 }
 
 export function HomeWorkspace({
   agentApiUrl,
   onExplore,
-  onOpenEvents,
   onOpenLive,
-  systemHealth,
+  onOpenSystem,
   visualAnalystAvailable,
   vstApiUrl,
 }: HomeWorkspaceProps) {
@@ -161,6 +165,24 @@ export function HomeWorkspace({
   const [answer, setAnswer] = useState<VisionAnalystResponse | null>(null);
   const [answerError, setAnswerError] = useState<string | null>(null);
   const [asking, setAsking] = useState(false);
+  const [selectedRecordingId, setSelectedRecordingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    try {
+      setSelectedRecordingId(sessionStorage.getItem("vision-demo-recording"));
+    } catch {
+      // Choosing a chapter still works when browser storage is unavailable.
+    }
+  }, []);
+
+  function selectRecording(streamId: string) {
+    setSelectedRecordingId(streamId);
+    try {
+      sessionStorage.setItem("vision-demo-recording", streamId);
+    } catch {
+      // Persistence is optional; do not interrupt the current demonstration.
+    }
+  }
 
   useEffect(() => {
     if (!streams.length) return;
@@ -255,7 +277,8 @@ export function HomeWorkspace({
             (incident && incidentVerdict(incident) !== "rejected"
               ? 10_000_000
               : 0) +
-            (sourceKind(stream) === "Live" ? 1_000_000 : 0) +
+            ((intelligence?.semanticSegments ?? 0) > 0 ? 2_000_000 : 0) +
+            (sourceKind(stream) === "Replay" ? 1_000_000 : 0) +
             (intelligence?.evidenceEvents ?? 0) * 1_000 +
             (intelligence?.semanticSegments ?? 0)
           );
@@ -264,24 +287,13 @@ export function HomeWorkspace({
       }),
     [incidents, intelligenceById, streams]
   );
-  const featured = rankedStreams[0];
-  const liveCount = streams.filter(
-    (stream) => sourceKind(stream) === "Live"
-  ).length;
-  const pausedCount = Object.values(analysisById).filter(
-    (state) => state === "paused"
-  ).length;
-  // Indexed history remains searchable even when a live source is paused or
-  // its newest segment is delayed. Keep this definition aligned with Live and
-  // Explore rather than treating freshness as data availability.
-  const searchableCount = Object.values(intelligenceById).filter(
-    (value) => (value.semanticSegments ?? 0) > 0
-  ).length;
-  const attentionIncidents = incidents.filter(
-    (incident) => incidentVerdict(incident) !== "rejected"
-  );
-  const latestIncident = attentionIncidents[0];
-
+  const recordings = rankedStreams.filter((stream) => sourceKind(stream) === "Replay");
+  const featured = recordings.find((stream) => stream.streamId === selectedRecordingId)
+    ?? recordings.find((stream) => stream.name === "qa-recovery-20260928")
+    ?? recordings.find((stream) => stream.name === "conveyor-box-movement-demo")
+    ?? rankedStreams[0];
+  const invitation = recordingInvitation(featured);
+  const connectedCamera = rankedStreams.find((stream) => sourceKind(stream) === "Live" && stream.connectionState === "online");
   const submitQuestion = async (event: FormEvent) => {
     event.preventDefault();
     const query = question.trim();
@@ -353,85 +365,99 @@ export function HomeWorkspace({
   }
 
   return (
-    <section className="vi-home">
-      <div className="vi-home-layout">
-        <div className="vi-home-primary">
-          <article className="vi-environment-brief">
-            {featured && (
-              <div className="vi-brief-media">
-                <VisionStreamCanvas
-                  eager={false}
-                  showStatus={false}
-                  stream={featured}
-                  vstApiUrl={vstApiUrl}
-                />
-                <button
-                  className="vi-brief-media-open"
-                  type="button"
-                  onClick={() => onOpenLive(featured)}
-                  aria-label={`Open ${streamDisplayName(featured.name)}`}
-                >
-                  <IconPlayerPlay size={16} />{" "}
-                  {streamDisplayName(featured.name)}
-                </button>
-              </div>
-            )}
-            <div className="vi-environment-copy">
-              <h1>Environment brief</h1>
-              <p className="vi-environment-summary">
-                {latestIncident
-                  ? `${incidentTitle(
-                      latestIncident
-                    )} was observed ${relativeTime(
-                      latestIncident.timestamp
-                    )}. The supporting clip and model verdict remain attached.`
-                  : `The environment is operating normally. ${liveCount} live ${
-                      liveCount === 1 ? "feed is" : "feeds are"
-                    } connected${
-                      pausedCount
-                        ? `, with analysis paused on ${pausedCount}`
-                        : ""
-                    }. ${searchableCount} ${
-                      searchableCount === 1 ? "source has" : "sources have"
-                    } searchable visual moments.`}
-              </p>
-              <div className="vi-brief-meta">
-                <span className="vi-brief-freshness">
-                  <i /> Updated just now
-                </span>
-                <span>
-                  {liveCount} live {liveCount === 1 ? "stream" : "streams"}
-                </span>
-                <span>Processing locally</span>
-              </div>
-              <div className="vi-brief-actions">
-                <button
-                  className="vi-button vi-button--primary"
-                  type="button"
-                  onClick={
-                    attentionIncidents.length
-                      ? onOpenEvents
-                      : () => onOpenLive()
-                  }
-                >
-                  {attentionIncidents.length
-                    ? "Review evidence"
-                    : "Open live view"}
-                  <IconArrowRight size={17} />
-                </button>
-                <button
-                  className="vi-button vi-button--quiet"
-                  type="button"
-                  onClick={() =>
-                    onExplore("Show the most important recent activity.")
-                  }
-                >
-                  Explore what happened
-                </button>
-              </div>
+    <section className="vi-home vi-demo-home">
+      {recordings.length > 1 && (
+        <div className="vi-demo-recordings" role="group" aria-label="Choose a demo recording">
+          <span>Choose a recording</span>
+          {recordings.map((stream) => (
+            <button type="button" key={stream.streamId}
+              aria-pressed={featured?.streamId === stream.streamId}
+              onClick={() => selectRecording(stream.streamId)}>
+              {streamDisplayName(stream.name)}
+            </button>
+          ))}
+        </div>
+      )}
+      {featured && (
+        <div className="vi-demo-feature">
+          <div className="vi-demo-start">
+            <span className="vi-demo-eyebrow">Video AI · On this Jetson</span>
+            <h1>Ask your video<br />what happened.</h1>
+            <p>Find an activity in video, ask about what you see, and open the footage behind the answer. All processed on this device.</p>
+            <div className="vi-demo-invitation">
+              <span>{invitation.context}</span>
+              <button className="vi-button vi-button--primary" type="button"
+                onClick={() => onExplore(invitation.query, featured)}>
+                {invitation.action} <IconArrowRight size={18} />
+              </button>
+              <small>Search the footage first. Then ask your own question.</small>
             </div>
-          </article>
-
+          </div>
+          <figure>
+            <div className="vi-demo-media">
+              <VisionStreamCanvas
+                key={featured.streamId}
+                eager={sourceKind(featured) === "Replay"}
+                showReplayControls
+                stream={featured}
+                vstApiUrl={vstApiUrl}
+              />
+            </div>
+            <figcaption>
+              <strong>{sourceKind(featured) === "Replay" ? "Recorded footage" : "Camera footage"}</strong>
+              <span>{streamDisplayName(featured.name)} · {sourceStatus(featured, intelligenceById[featured.streamId], analysisById[featured.streamId]).label}</span>
+            </figcaption>
+          </figure>
+        </div>
+      )}
+      {connectedCamera && (
+        <section className="vi-demo-camera-entry" aria-label="Try a camera stream">
+          <div>
+            <span className="vi-demo-eyebrow">Try a camera stream</span>
+            <h2>{visualAnalystAvailable === true ? "Ask about the scene. Check the video behind the answer." : "Preview a connected camera stream."}</h2>
+            <p>{streamDisplayName(connectedCamera.name)}</p>
+            <small>{visualAnalystAvailable === false
+              ? "Video preview is available. Local AI answers are currently unavailable; check System for readiness."
+              : visualAnalystAvailable !== true
+              ? "Preview the stream while local AI readiness is checked."
+              : analysisById[connectedCamera.streamId] === "paused"
+              ? "Continuous analysis is paused. You can still preview the stream and ask an individual question."
+              : "Open the stream, ask a question, then replay the inspected interval."}</small>
+          </div>
+          <button className="vi-button" type="button" onClick={() => onOpenLive(connectedCamera)}>
+            Open camera stream <IconArrowRight size={18} />
+          </button>
+        </section>
+      )}
+      <ol className="vi-demo-journey" aria-label="Video intelligence workflow">
+        <li><span>01</span><div><h2>Search in plain language</h2><p>Describe the activity you want to find.</p></div></li>
+        <li><span>02</span><div><h2>See the exact moment</h2><p>Play the matching clip and check what happened.</p></div></li>
+        <li><span>03</span><div><h2>Get an answer with evidence</h2><p>Ask a follow-up and save the answer with its video.</p></div></li>
+      </ol>
+      <details className="vi-demo-sources" aria-label="Source details">
+        <summary>Sources and connection status <span>{streams.length} sources · {streams.filter((stream) => stream.connectionState === "offline").length} disconnected</span></summary>
+        <div className="vi-home-section-heading">
+          <h2>Available recordings and cameras</h2>
+          <button type="button" onClick={() => onOpenLive()}>View all sources <IconArrowRight size={16} /></button>
+        </div>
+        {rankedStreams.map((stream) => {
+          const intelligence = intelligenceById[stream.streamId];
+          const status = sourceStatus(stream, intelligence, analysisById[stream.streamId]);
+          return <button className="vi-demo-source" type="button" key={stream.streamId} onClick={() => onOpenLive(stream)}>
+            <strong>{streamDisplayName(stream.name)}</strong>
+            <span>{sourceKind(stream) === "Replay" ? "Recorded video" : "Camera"}</span>
+            <span className={`is-${status.tone}`}>{status.label}</span>
+            <IconArrowRight size={17} />
+          </button>;
+        })}
+      </details>
+      <footer className="vi-demo-local">
+        <span><IconShieldCheck size={19} /> Video and AI on this device</span>
+        <button type="button" onClick={onOpenSystem}>System <IconArrowRight size={16} /></button>
+      </footer>
+      <details className="vi-demo-advanced">
+        <summary>Ask across sources</summary>
+        <p>For an answer grounded in a specific moment, find and select a clip first.</p>
           <form className="vi-home-ask" onSubmit={submitQuestion}>
             <IconSparkles size={21} />
             <div>
@@ -474,6 +500,7 @@ export function HomeWorkspace({
               ].map((suggestion) => (
                 <button
                   key={suggestion}
+                  disabled={asking || visualAnalystAvailable === false}
                   type="button"
                   onClick={() => setQuestion(suggestion)}
                 >
@@ -509,149 +536,7 @@ export function HomeWorkspace({
             </div>
           )}
 
-          <div className="vi-home-section-heading">
-            <div>
-              <span className="vi-eyebrow">Live world</span>
-              <h2>What each source understands</h2>
-            </div>
-            <button type="button" onClick={() => onOpenLive()}>
-              View all sources <IconArrowRight size={16} />
-            </button>
-          </div>
-          <div className="vi-world-grid">
-            {rankedStreams.slice(0, 8).map((stream) => {
-              const intelligence = intelligenceById[stream.streamId];
-              const analysisState = analysisById[stream.streamId];
-              const incident = incidentForStream(incidents, stream);
-              const status = sourceStatus(stream, intelligence, analysisState);
-              return (
-                <article className="vi-world-card" key={stream.streamId}>
-                  <div className="vi-world-card-media">
-                    <VisionStreamCanvas
-                      eager={false}
-                      showStatus={false}
-                      stream={stream}
-                      vstApiUrl={vstApiUrl}
-                    />
-                  </div>
-                  <button
-                    className="vi-world-card-copy"
-                    type="button"
-                    onClick={() => onOpenLive(stream)}
-                  >
-                    <div>
-                      <strong>{streamDisplayName(stream.name)}</strong>
-                      <span className={`is-${status.tone}`}>
-                        {status.label}
-                      </span>
-                    </div>
-                    <p>
-                      {sourceSummary(
-                        stream,
-                        intelligence,
-                        analysisState,
-                        incident
-                      )}
-                    </p>
-                    <small>
-                      {sourceKind(stream)} ·{" "}
-                      {sourceTimelineContext(
-                        stream,
-                        intelligence?.lastSemanticAt
-                      )}
-                    </small>
-                  </button>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-
-        <aside className="vi-home-rail">
-          <div className="vi-home-rail-heading">
-            <span className="vi-eyebrow">Local edge</span>
-            <h2>NVIDIA Thor</h2>
-            <p>Inference and indexed evidence stay on this device.</p>
-          </div>
-          <div className="vi-edge-proof">
-            <IconShieldCheck size={21} />
-            <div>
-              <strong>On-device boundary</strong>
-              <span>No cloud inference configured</span>
-            </div>
-          </div>
-          <dl className="vi-edge-metrics">
-            <div>
-              <dt>Services</dt>
-              <dd>
-                {systemHealth
-                  ? `${
-                      systemHealth.services.filter((service) => service.ok)
-                        .length
-                    }/${systemHealth.services.length}`
-                  : "Checking"}
-              </dd>
-            </div>
-            <div>
-              <dt>Video sources</dt>
-              <dd>{systemHealth?.thor?.activeStreams ?? streams.length}</dd>
-            </div>
-            <div>
-              <dt>GPU temperature</dt>
-              <dd>
-                {systemHealth?.thor?.gpuTemperatureC == null
-                  ? "Unavailable"
-                  : `${systemHealth.thor.gpuTemperatureC.toFixed(0)}°C`}
-              </dd>
-            </div>
-            <div>
-              <dt>GPU power</dt>
-              <dd>
-                {systemHealth?.thor?.powerWatts == null
-                  ? "Unavailable"
-                  : `${systemHealth.thor.powerWatts.toFixed(1)} W`}
-              </dd>
-            </div>
-          </dl>
-          <div className="vi-pipeline-proof">
-            <span>Local pipeline</span>
-            <ol>
-              <li>
-                <IconCheck size={15} /> Video I/O
-              </li>
-              <li>
-                <IconBolt size={15} /> Embed + retrieve
-              </li>
-              <li>
-                <IconSparkles size={15} /> Reason + explain
-              </li>
-            </ol>
-          </div>
-          <div className="vi-noticed-list">
-            <div className="vi-noticed-heading">
-              <IconClock size={17} /> What the system noticed
-            </div>
-            {incidents.slice(0, 3).map((incident) => (
-              <button type="button" key={incident.Id} onClick={onOpenEvents}>
-                <span
-                  className={
-                    incidentVerdict(incident) === "confirmed"
-                      ? "is-attention"
-                      : "is-watch"
-                  }
-                />
-                <div>
-                  <strong>{incidentTitle(incident)}</strong>
-                  <small>{relativeTime(incident.timestamp)}</small>
-                </div>
-              </button>
-            ))}
-            {!incidents.length && (
-              <p>No operator-relevant events are waiting for review.</p>
-            )}
-          </div>
-        </aside>
-      </div>
+      </details>
     </section>
   );
 }

@@ -2,7 +2,16 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { AlertRulesWorkspace, MonitoringRuleWizard } from '../AlertRulesWorkspace';
+it('does not present unknown rule counts or an outage as an empty rule catalog', async () => {
+  global.fetch = jest.fn(async () => ({ok: false, status:503, json:async()=>({error:'Rules service unavailable'})}));
+  render(<AlertRulesWorkspace onManageSources={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+  expect(screen.getByRole('status')).toHaveTextContent('Checking monitoring rules');
+  expect(screen.queryByText('enabled rules')).not.toBeInTheDocument();
+  expect(await screen.findByText('Rule counts unavailable')).toBeInTheDocument();
+  expect(screen.queryByText('No monitoring rules yet')).not.toBeInTheDocument();
+});
+
+import { AlertRulesWorkspace, MonitoringRuleWizard, preferredMonitoringSource } from '../AlertRulesWorkspace';
 
 const liveCatalog = [{
   live: [{
@@ -33,6 +42,57 @@ const warehouseProfile = {
 describe('AlertRulesWorkspace', () => {
   afterEach(() => jest.restoreAllMocks());
 
+  it('prefers a connected camera but honors explicit source selection', () => {
+    const offline = { ...liveCatalog[0].live[0], sensorId: 'offline', streamId: 'offline', connectionState: 'offline' as const };
+    const online = { ...offline, sensorId: 'online', streamId: 'online', connectionState: 'online' as const };
+    const recorded = { ...offline, sensorId: 'file', streamId: 'file', url: '', vodUrl: '' };
+    expect(preferredMonitoringSource([offline, recorded, online])).toBe(online);
+    expect(preferredMonitoringSource([offline, recorded, online], 'offline')).toBe(offline);
+    expect(preferredMonitoringSource([offline, recorded])).toBe(recorded);
+    expect(preferredMonitoringSource([])).toBeUndefined();
+  });
+
+  it('requires a custom condition and keeps the selected visual rule despite detection keywords', async () => {
+    global.fetch = jest.fn(async input => ({ ok: true, json: async () => String(input).includes('?sourceId=') ? { profile: warehouseProfile } : { profiles: [warehouseProfile] } })) as jest.Mock;
+    render(<MonitoringRuleWizard onClose={jest.fn()} onCreated={jest.fn()} streams={[{ ...liveCatalog[0].live[0], sensorId: 'live' }]} />);
+    await screen.findByText(/Warehouse safety · NVIDIA RT-DETR Warehouse/);
+    expect(screen.getByRole('textbox', { name: 'Monitoring intent' })).toHaveValue('');
+    fireEvent.click(screen.getByRole('button', { name: /Custom visual condition/i }));
+    expect(screen.getByRole('button', { name: /Continue/i })).toBeDisabled();
+    const condition = 'Does any frame show a forklift near the marked entrance? Answer YES or NO.';
+    fireEvent.change(screen.getByRole('textbox', { name: 'Monitoring intent' }), { target: { value: condition } });
+    fireEvent.click(screen.getByRole('button', { name: /Custom visual condition/i }));
+    expect(screen.getByRole('textbox', { name: 'Monitoring intent' })).toHaveValue(condition);
+    fireEvent.click(screen.getByRole('button', { name: /Continue/i }));
+    expect(screen.getByRole('textbox', { name: 'Visual condition' })).toHaveValue(condition);
+    expect(screen.queryByText('Image-space proximity')).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: 'Repeat cooldown' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    fireEvent.click(screen.getByRole('button', { name: /Unsafe proximity/i }));
+    fireEvent.click(screen.getByRole('button', { name: /Continue/i }));
+    expect(screen.getByRole('combobox', { name: 'Repeat cooldown' })).toBeInTheDocument();
+    expect((global.fetch as jest.Mock).mock.calls.some(([, init]) => init?.method === 'POST')).toBe(false);
+  });
+
+  it.each([
+    ['offline', 'Camera disconnected — this rule cannot receive live footage.'],
+    ['online', 'Camera connected. Check that analysis is running in Live cameras.'],
+    ['unknown', 'Camera connection is unconfirmed. Check Live cameras before relying on this rule.'],
+  ])('distinguishes an enabled rule from its %s source connection', async (connection, expected) => {
+    global.fetch = jest.fn(async input => {
+      const url = String(input);
+      if (url.endsWith('/v1/live/streams')) return {ok:true,json:async()=>liveCatalog};
+      if (url.endsWith('/sensor/status')) return {ok:true,json:async()=>({live:{state:connection}})};
+      if (url === '/api/vision/monitoring-rules') return {ok:true,json:async()=>({rules:[{
+        id:'rule',name:'Area entry',sourceId:'live',sourceName:'Traffic camera',sourceKind:'live',status:'active',engine:'deepstream',cooldownSeconds:30,severity:'warning',backendStatus:'active'
+      }]})};
+      return {ok:false,status:404,json:async()=>({})};
+    }) as jest.Mock;
+    render(<AlertRulesWorkspace onManageSources={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+    expect(await screen.findByText(expected)).toBeInTheDocument();
+    expect(screen.getByText('Enabled')).toBeInTheDocument();
+  });
+
   it('guides an operator through a semantic live rule and persists its backend link', async () => {
     const created = {
       backendRuleId: 'bridge-rule-1', backendStatus: 'active', cooldownSeconds: 30,
@@ -58,7 +118,10 @@ describe('AlertRulesWorkspace', () => {
     render(<MonitoringRuleWizard onClose={jest.fn()} onCreated={onCreated} streams={[{ ...liveCatalog[0].live[0], sensorId: 'live' }]} vstApiUrl="http://thor.test/vst/api" />);
 
     fireEvent.click(await screen.findByRole('button', { name: /Custom visual condition/i }));
+    fireEvent.change(screen.getByRole('textbox', { name: 'Monitoring intent' }), { target: { value: 'Alert when a pedestrian falls on the crossing' } });
+    await waitFor(() => expect(screen.getByRole('button', { name: /Continue/i })).toBeEnabled());
     fireEvent.click(screen.getByRole('button', { name: /Continue/i }));
+    expect(screen.getByRole('textbox', { name: 'Visual condition' })).toHaveValue('Alert when a pedestrian falls on the crossing');
     fireEvent.click(screen.getByRole('button', { name: /Activate monitoring/i }));
 
     await waitFor(() => expect(onCreated).toHaveBeenCalledWith(created));
@@ -82,9 +145,9 @@ describe('AlertRulesWorkspace', () => {
     const navigation = screen.getByRole('navigation', { name: 'Monitoring views' });
     expect(navigation.parentElement).toHaveClass('vi-monitoring-workspace');
     expect(screen.getByRole('heading', { name: 'Rules by source' }).closest('.vi-monitoring-content')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Rules' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('button', { name: 'Alert rules' })).toHaveAttribute('aria-current', 'page');
     expect(screen.queryByText('NVIDIA verification controls')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Monitor' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Live cameras' }));
     expect(onModeChange).toHaveBeenCalledWith('monitor');
     fireEvent.click(screen.getByRole('button', { name: 'Create first rule' }));
     expect(await screen.findByRole('heading', { name: 'Connect a source first' })).toBeInTheDocument();

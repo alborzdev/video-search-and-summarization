@@ -3,6 +3,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import handler from "../../../pages/api/vision/search-coverage";
+import { configuredSourcesFromCatalog } from "../../../server/vision/searchCoverage";
 
 function responseHarness() {
   const state: { body?: unknown; headers: Record<string, string>; statusCode: number } = {
@@ -44,6 +45,16 @@ function sourceIntelligenceResponse(sensorId: string, recent: string): Response 
 }
 
 describe("search coverage API", () => {
+  it("uses source metadata, not names or old timestamps, to identify recorded files", () => {
+    const sources = configuredSourcesFromCatalog([
+      { recording: [{ name: "Uploaded clip", type: "FileDownload", url: "/videos/clip.mp4" }] },
+      { replay: [{ name: "Recorded simulation", type: "FileDownload", url: "rtsp://camera/replay.mp4" }] },
+      { unknown: [{ name: "recording.mp4" }] },
+    ]);
+    expect(Object.fromEntries(sources.map((source) => [source.sensorId, source.sourceKind])))
+      .toEqual({ recording: "recording", replay: "live", unknown: "unknown" });
+  });
+
   beforeEach(() => {
     jest.restoreAllMocks();
   });

@@ -1,0 +1,30 @@
+[
+  {
+    "temperature": 0,
+    "seed": 42,
+    "answer": "YES",
+    "seconds": 0.956,
+    "availableGiB": 52.53147506713867
+  },
+  {
+    "temperature": 0.4,
+    "seed": 1,
+    "answer": "YES",
+    "seconds": 0.931,
+    "availableGiB": 52.50982666015625
+  },
+  {
+    "temperature": 0.4,
+    "seed": 1,
+    "answer": "YES",
+    "seconds": 0.964,
+    "availableGiB": 52.474327087402344
+  },
+  {
+    "temperature": 0,
+    "seed": 42,
+    "answer": "YES",
+    "seconds": 0.996,
+    "availableGiB": 52.4798583984375
+  }
+]

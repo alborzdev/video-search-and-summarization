@@ -42,8 +42,6 @@ export function useStreams({ vstApiUrl }: UseStreamsOptions = {}): UseStreamsRes
       const allStreams = parseStreamsResponse(data);
       setStreams(allStreams);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.error('Error fetching streams:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch streams');
     } finally {
       setIsLoading(false);

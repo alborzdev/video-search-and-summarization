@@ -6,22 +6,27 @@ Nothing in this runbook requires a cloud service.
 
 ## Before the doors open
 
-After a host reboot, start the cache cleaner before the models and VSS stack:
+After a host reboot, keep the periodic cache cleaner and the VSS graph stopped:
 
 ```bash
-pgrep -af /usr/local/bin/sys-cache-cleaner.sh || \
-  sudo -b /usr/local/bin/sys-cache-cleaner.sh
 cd /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker
+./scripts/thor-local.sh stop
 ./scripts/thor-local.sh status
 ./scripts/thor-local.sh doctor
 ```
 
-The exact Nemotron 3 + Cosmos3 demo lane normally returns automatically through
-its Docker restart policy. Generic `thor-local.sh up/restart` is intentionally
-blocked while that lane is installed because it would replace its model and
-consumer wiring. If `doctor` reports a failure after reboot, use the exact
-**Verify identity** and **Render recovery** commands that it prints, run the
-single pull-free command emitted by **Render recovery**, then rerun `doctor`.
+The exact Nemotron 3 + Cosmos3 co-resident graph produced two whole-host stalls
+on this 128 GiB Thor and was reset by the 120-second hardware watchdog. It is
+therefore safety-locked. `thor_demo.py audit` now requires a conservative 64 GiB
+post-load reserve; it must remain `BLOCKED` on this host. The periodic
+three-second `sync`/`drop_caches` loop is also rejected for this lane.
+
+Use a split local-model deployment or a remote endpoint for one model before
+running this demonstration. Do not bypass the audit or replay an older rendered
+Compose command. Every model and GPU-capable service remains `restart: "no"` so
+a reboot returns to a stable stopped state without deleting data. Agent startup
+also leaves registered live sources inactive; an explicit operator resume is
+required after a future replacement topology passes acceptance.
 
 Do not begin the demonstration unless `doctor` ends with zero failures. A
 unified-memory warning is informational; close unrelated GPU or browser
@@ -29,10 +34,10 @@ workloads if available memory is approaching the documented capacity floor.
 A disk-usage warning is acceptable only while at least 10 GiB remains free;
 `doctor` fails below that hard floor.
 
-Open `http://10.88.8.175:7777` on Thor or another device on the approved local
-network. This trusted-LAN gateway fronts the complete UI, VST media, Agent,
-analytics, alerts, uploads, and WebSockets. Port 3001 is only a direct UI
-diagnostic address; internal service ports are not customer-facing interfaces.
+Only after a split/remote topology is implemented and accepted, open
+`http://10.88.8.175:7777` on Thor or another device on the approved local
+network. While the safety lock is active, the gateway and port 3001 may both be
+unavailable because the graph is intentionally stopped.
 
 Choose the customer vocabulary before the meeting:
 
@@ -102,10 +107,11 @@ workflow.
   screenshots. Runtime containers receive blank registry credentials.
 - Keep one known-good pre-indexed video. Live RTSP depends on the camera and
   venue network even though all inference remains local.
-- If a model or service becomes unavailable, run `doctor`, inspect the named
-  container with `docker logs --tail 150 <name>`, and follow the exact-model
-  recovery commands printed by `doctor`. Do not use generic `restart` for the
-  active exact-model lane, and do not run connected bootstrap on a show floor.
+- If a model or service becomes unavailable, run `doctor` and inspect the named
+  container with `docker logs --tail 150 <name>`. While the exact co-resident
+  lane is safety-locked, `doctor` intentionally provides containment—not a
+  recovery command. Do not use generic `restart`, and do not run connected
+  bootstrap on a show floor.
 - Return to the neutral configuration after a customer-specific demo with
   `./scripts/thor-local.sh domain apply general`.
 

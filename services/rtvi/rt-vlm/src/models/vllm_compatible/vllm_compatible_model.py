@@ -908,6 +908,34 @@ class VllmCompatible(BaseVlmModel):
             f"Inflight requests: {len(self._inflight_req_ids)}"
         )
 
+        capture_path = None
+        capture_source = os.getenv("RTVI_CAPTURE_SOURCE_URL", "")
+        if (os.getenv("RTVI_CAPTURE_INPUTS_DIR") and capture_source.startswith("rtsp://")
+                and getattr(chunk, "file", None) == capture_source):
+            try:
+                from utils.input_capture import capture_input
+
+                video_input = llm_inputs.get("multi_modal_data", {}).get("video", [])
+                if video_input:
+                    frames, video_metadata = video_input[0]
+                    capture_path = capture_input(
+                        os.environ["RTVI_CAPTURE_INPUTS_DIR"], request_id, frames,
+                        {
+                            "model_type": self._vlm_model_type,
+                            "model_architecture": self._model_architecture,
+                            "prompt_token_ids": llm_inputs.get("prompt_token_ids"),
+                            "video_metadata": video_metadata,
+                            "frame_times": video_frames_times,
+                            "mm_processor_kwargs": llm_inputs.get("mm_processor_kwargs"),
+                            "sampling": {key: getattr(vllm_sampling_params, key, None) for key in
+                                ("temperature", "seed", "top_p", "top_k", "max_tokens", "min_tokens", "ignore_eos", "repetition_penalty")},
+                            "chunk": {key: getattr(chunk, key, None) for key in
+                                ("chunkIdx", "start_ntp", "end_ntp", "start_pts", "end_pts")},
+                        },
+                    )
+            except Exception as exc:
+                logger.warning("Diagnostic input capture skipped: %s", exc)
+
         final_output = None
         with TimeMeasure("vLLM generate"):
             try:
@@ -951,6 +979,17 @@ class VllmCompatible(BaseVlmModel):
                 logger.error("Error during vLLM generate: %s", e)
                 self._inflight_req_ids.remove(request_id)
                 raise e
+
+        if capture_path is not None:
+            try:
+                from utils.input_capture import capture_response
+
+                capture_response(capture_path, {
+                    "request_id": request_id,
+                    "outputs": [output.text for output in final_output.outputs] if final_output else [],
+                })
+            except Exception as exc:
+                logger.warning("Diagnostic response capture skipped: %s", exc)
 
         if not final_output:
             logger.warning("Async for retuned no output")
@@ -1158,9 +1197,8 @@ class VllmCompatible(BaseVlmModel):
             "repetition_penalty": config.repetition_penalty,
         }
 
-        # Only include temperature if it's not 0
-        if config.temperature != 0:
-            generation_params["temperature"] = config.temperature
+        # Zero explicitly requests greedy decoding; it must reach the constructor.
+        generation_params["temperature"] = config.temperature
 
         # Set the seed
         seed = config.seed
@@ -1478,6 +1516,7 @@ class VllmCompatible(BaseVlmModel):
                 "top_p": generation_params["top_p"],
                 "top_k": generation_params["top_k"],
                 "temperature": generation_params.get("temperature", "default"),
+                "seed": config.seed,
                 "repetition_penalty": generation_params["repetition_penalty"],
             },
         )
@@ -1486,6 +1525,8 @@ class VllmCompatible(BaseVlmModel):
         from vllm import SamplingParams
 
         sp_kwargs = {
+            "seed": config.seed,
+            "temperature": generation_params["temperature"],
             "top_p": generation_params["top_p"],
             "top_k": generation_params["top_k"],
             "max_tokens": generation_params["max_new_tokens"],
@@ -1497,8 +1538,6 @@ class VllmCompatible(BaseVlmModel):
         if env_ignore_eos or config.ignore_eos is not None:
             sp_kwargs["ignore_eos"] = env_ignore_eos or bool(config.ignore_eos)
         vllm_sampling_params = SamplingParams(**sp_kwargs)
-        if "temperature" in generation_params:
-            vllm_sampling_params.temperature = generation_params["temperature"]
         if self._vlm_model_type in ("cosmos-reason2", "cosmos-reason3"):
             vllm_sampling_params.no_repeat_ngram_size = 3
 
@@ -1538,8 +1577,7 @@ class VllmCompatible(BaseVlmModel):
             "top_k": int(config.top_k),
             "repetition_penalty": config.repetition_penalty,
         }
-        if config.temperature != 0:
-            generation_params["temperature"] = config.temperature
+        generation_params["temperature"] = config.temperature
 
         prompt = self._processor.apply_chat_template(
             messages,
@@ -1554,6 +1592,8 @@ class VllmCompatible(BaseVlmModel):
         from vllm import SamplingParams
 
         sp_kwargs = {
+            "seed": config.seed,
+            "temperature": generation_params["temperature"],
             "top_p": generation_params["top_p"],
             "top_k": generation_params["top_k"],
             "max_tokens": generation_params["max_new_tokens"],
@@ -1565,8 +1605,6 @@ class VllmCompatible(BaseVlmModel):
         if env_ignore_eos or config.ignore_eos is not None:
             sp_kwargs["ignore_eos"] = env_ignore_eos or bool(config.ignore_eos)
         vllm_sampling_params = SamplingParams(**sp_kwargs)
-        if "temperature" in generation_params:
-            vllm_sampling_params.temperature = generation_params["temperature"]
 
         request_id = str(uuid.uuid4())
         self._inflight_req_ids.append(request_id)
@@ -1665,8 +1703,7 @@ class VllmCompatible(BaseVlmModel):
             "top_k": int(config.top_k),
             "repetition_penalty": config.repetition_penalty,
         }
-        if config.temperature != 0:
-            generation_params["temperature"] = config.temperature
+        generation_params["temperature"] = config.temperature
 
         prompt = self._processor.apply_chat_template(
             messages,
@@ -1681,6 +1718,8 @@ class VllmCompatible(BaseVlmModel):
         from vllm import SamplingParams
 
         sp_kwargs = {
+            "seed": config.seed,
+            "temperature": generation_params["temperature"],
             "top_p": generation_params["top_p"],
             "top_k": generation_params["top_k"],
             "max_tokens": generation_params["max_new_tokens"],
@@ -1692,8 +1731,6 @@ class VllmCompatible(BaseVlmModel):
         if env_ignore_eos or config.ignore_eos is not None:
             sp_kwargs["ignore_eos"] = env_ignore_eos or bool(config.ignore_eos)
         vllm_sampling_params = SamplingParams(**sp_kwargs)
-        if "temperature" in generation_params:
-            vllm_sampling_params.temperature = generation_params["temperature"]
 
         request_id = str(uuid.uuid4())
         self._inflight_req_ids.append(request_id)

@@ -16,11 +16,14 @@
 """Grounded, multi-clip evidence analysis for the Vision Intelligence UI."""
 
 import asyncio
+from collections.abc import Callable
+from contextlib import suppress
 from datetime import datetime
 import json
 import logging
 import os
 import re
+from time import perf_counter
 from typing import Literal
 from typing import Protocol
 from typing import Self
@@ -29,6 +32,7 @@ from typing import cast
 import aiohttp
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from fastapi.responses import StreamingResponse
 from langchain_core.messages import HumanMessage
 from langchain_core.messages import SystemMessage
 from nat.builder.framework_enum import LLMFrameworkEnum
@@ -158,28 +162,27 @@ class EvidenceAnalysisResponse(BaseModel):
     evidence: list[VisualInspection]
     suggested_questions: list[str]
     warning: str | None = None
+    timings_ms: dict[str, float] = Field(default_factory=dict)
 
 
 SYNTHESIS_SYSTEM_PROMPT = """You are the local Vision Analyst synthesizing observations from selected video evidence.
 Return exactly one valid JSON object and no markdown. Use only facts in the supplied visual observations.
 E1, E2, and similar tokens are clip labels, never people, vehicles, or other subjects. Treat every selected clip as
 an independent observation. Never claim or imply that a person, vehicle, or object in one clip is the same identity
-as one in another clip unless the supplied observations explicitly prove track continuity. If an operator asks about
-\"the person\", \"the man\", or another ambiguous subject across multiple clips, answer separately per clip and say
-that cross-clip identity continuity is not established. The summary must represent every supplied evidence clip.
-Separate directly visible observations from cautious operational interpretations. Every claim must cite one or more
-provided evidence IDs. Do not invent timestamps, cameras, objects, causes, identities, expressions, or events.
-Suggested questions must be answerable by re-inspecting only these selected clips. Do not suggest questions about
-identity, purpose, intent, causes, operational status, or information outside the visible intervals.
+as one in another clip unless the supplied observations explicitly prove track continuity. Compare visible actions and positions separately by clip without assuming the subjects are the same.
+Do not refuse an action or position comparison merely because identity continuity is unknown.
+The summary must represent every supplied evidence clip.
+Preserve action state and negation exactly: stopping movement while holding an object does not mean stopping
+holding it. Do not turn ongoing movement into completed placement, release, entry, or exit. Distinguish what is
+visible in each clip using its evidence label. Do not infer purpose or future action.
+Preserve location phrases and spatial prepositions from the observations exactly: beside, on, under, inside,
+and outside are different states. Do not simplify away these distinctions or add a conclusion not supported
+by the observations. Prefer short quoted location phrases over paraphrases when comparing positions.
+Write at most two short sentences and 50 words. Answer the operator question directly. The application retains
+the original per-clip observations, citations and timeline separately; do not regenerate them.
 
 Required JSON shape:
-{
-  "summary": "one concise evidence-grounded answer",
-  "observations": [{"text": "directly visible fact", "evidence_ids": ["E1"]}],
-  "interpretations": [{"text": "cautious interpretation", "evidence_ids": ["E1", "E2"]}],
-  "timeline": [{"evidence_id": "E1", "label": "short event label"}],
-  "suggested_questions": ["useful grounded follow-up", "second follow-up"]
-}
+{"summary": "concise comparison or answer, referring to E1, E2 and other supplied clip labels"}
 """
 
 
@@ -436,6 +439,7 @@ async def _fresh_inspection_is_available() -> bool:
 async def _inspect_evidence(
     builder: WorkflowBuilder,
     request: EvidenceAnalysisRequest,
+    on_inspection: Callable[[VisualInspection], None] | None = None,
 ) -> tuple[list[VisualInspection], list[str]]:
     inspections: list[VisualInspection] = []
     warnings: list[str] = []
@@ -450,6 +454,8 @@ async def _inspect_evidence(
                 retained = await _retained_caption_inspection(retriever, clip, evidence_id)
                 if retained is not None:
                     inspections.append(retained)
+                    if on_inspection is not None:
+                        on_inspection(retained)
                     continue
             except Exception:
                 logger.info("No retained Cosmos caption was usable for %s", evidence_id, exc_info=True)
@@ -474,12 +480,27 @@ async def _inspect_evidence(
                         "start_timestamp": _format_timestamp(clip.start_time),
                         "end_timestamp": _format_timestamp(clip.end_time),
                         "user_prompt": (
-                            f"Inspect this exact clip as {evidence_id}. The investigation query is: "
-                            f"{request.query.strip()}\n"
-                            f"The current operator question is: {active_question.strip()}\n"
-                            "Describe only directly visible objects, people, actions, spatial relationships, and "
-                            "changes that help answer the question. State uncertainty explicitly. Do not infer "
-                            "identity, intent, cause, or events outside this clip. Be concise and use plain text."
+                            (
+                                f"Inspect ONLY this single video clip, labeled {evidence_id}. "
+                                "No other clip is provided to you. Your task is to provide this clip's "
+                                "observations relevant to the operator question below. If the question "
+                                "compares clips, describe only this clip's side of that comparison; "
+                                "a separate step will compare the observations. Do not describe another "
+                                "clip or infer what it contains.\n"
+                                f"Operator question (context for this clip's inspection): {active_question.strip()}\n"
+                                f"Report only what is visible in {evidence_id}, focusing on the requested "
+                                "actions or positions. Do not give a general scene summary.\n"
+                                if len(request.evidence) > 1
+                                else (
+                                    f"Inspect only this clip, {evidence_id}.\n"
+                                    f"Question: {active_question.strip()}\n"
+                                )
+                            )
+                            +
+                            "Answer that question directly in at most two short sentences. "
+                            "State only what the supplied frames show. If the answer is not visible, say so. "
+                            "Do not infer intentions or predict subsequent actions. Do not summarize the "
+                            "whole clip unless asked. Use plain text."
                         ),
                         "vlm_reasoning": False,
                     }
@@ -501,6 +522,8 @@ async def _inspect_evidence(
                     inspection_source="fresh_cosmos_inspection",
                 )
             )
+            if on_inspection is not None:
+                on_inspection(inspections[-1])
         except TimeoutError:
             warnings.append(f"{evidence_id} visual inspection timed out while the local vision model was busy.")
         except Exception as exc:
@@ -569,15 +592,61 @@ def _degraded_response(
     )
 
 
-async def analyze_evidence(builder: WorkflowBuilder, request: EvidenceAnalysisRequest) -> EvidenceAnalysisResponse:
+async def analyze_evidence(
+    builder: WorkflowBuilder, request: EvidenceAnalysisRequest,
+    on_inspection: Callable[[VisualInspection], None] | None = None,
+) -> EvidenceAnalysisResponse:
     """Inspect every selected interval, then synthesize only citation-bearing claims."""
 
-    inspections, inspection_warnings = await _inspect_evidence(builder, request)
+    started = perf_counter()
+    inspections, inspection_warnings = await _inspect_evidence(builder, request, on_inspection)
+    inspected = perf_counter()
     if not inspections:
         detail = " ".join(inspection_warnings) or "No selected interval could be visually inspected."
         raise RuntimeError(detail)
 
+    result = await _synthesize_inspections(builder, request, inspections, inspection_warnings)
+    completed = perf_counter()
+    result.timings_ms = {
+        "inspection": round((inspected - started) * 1000, 1),
+        "synthesis": round((completed - inspected) * 1000, 1),
+        "total": round((completed - started) * 1000, 1),
+    }
+    return result
+
+
+async def _synthesize_inspections(
+    builder: WorkflowBuilder,
+    request: EvidenceAnalysisRequest,
+    inspections: list[VisualInspection],
+    inspection_warnings: list[str],
+) -> EvidenceAnalysisResponse:
+    """Write a briefing from visual inspection results without reopening video."""
+
     active_question = request.question or request.query
+    if (
+        len(request.evidence) == 1
+        and len(inspections) == 1
+        and inspections[0].inspection_source == "fresh_cosmos_inspection"
+    ):
+        # Fresh inspection already answered this question. A second model would
+        # only rewrite it; retain the original uncertainty and exact citation.
+        inspection = inspections[0]
+        return EvidenceAnalysisResponse(
+            status="degraded" if inspection_warnings else "complete",
+            query=request.query,
+            question=active_question,
+            summary=inspection.observation,
+            observations=[EvidenceClaim(text=inspection.observation, evidence_ids=[inspection.evidence_id])],
+            interpretations=[],
+            timeline=_timeline([{"evidence_id": inspection.evidence_id, "label": "Visual inspection"}], inspections),
+            evidence=inspections,
+            suggested_questions=[
+                "What changes during this clip?",
+                "Where are the visible people and objects relative to each other?",
+            ],
+            warning=" ".join(inspection_warnings) or None,
+        )
     if _asks_for_cross_clip_identity(active_question, len(inspections)):
         warning = " ".join(inspection_warnings) or None
         return EvidenceAnalysisResponse(
@@ -606,6 +675,22 @@ async def analyze_evidence(builder: WorkflowBuilder, request: EvidenceAnalysisRe
         llm = await builder.get_llm(llm_name, wrapper_type=LLMFrameworkEnum.LANGCHAIN)
         if llm is None:
             raise RuntimeError(f"The local synthesis model '{llm_name}' is unavailable")
+        if llm_name == "vllm_llm":
+            # The local OpenAI-compatible server supports constrained JSON decoding.
+            # Keep malformed output on the existing degraded-response path.
+            llm = llm.bind(response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": "evidence_summary",
+                    "strict": True,
+                    "schema": {
+                        "type": "object",
+                        "properties": {"summary": {"type": "string"}},
+                        "required": ["summary"],
+                        "additionalProperties": False,
+                    },
+                },
+            })
         result = await asyncio.wait_for(
             llm.ainvoke(
                 [
@@ -616,8 +701,10 @@ async def analyze_evidence(builder: WorkflowBuilder, request: EvidenceAnalysisRe
             timeout=max(30, min(240, int(os.environ.get("EVIDENCE_SYNTHESIS_TIMEOUT_SECONDS", "120")))),
         )
         payload = _extract_json_object(_message_text(result))
-        allowed_ids = {item.evidence_id for item in inspections}
-        observations = _ensure_observation_coverage(_claim_list(payload.get("observations"), allowed_ids), inspections)
+        # Preserve inspection evidence verbatim; synthesis only supplies the comparison.
+        observations = [
+            EvidenceClaim(text=item.observation, evidence_ids=[item.evidence_id]) for item in inspections
+        ]
         summary = str(payload.get("summary", "")).strip()
         if not summary:
             raise ValueError("The synthesis model returned no summary")
@@ -627,10 +714,13 @@ async def analyze_evidence(builder: WorkflowBuilder, request: EvidenceAnalysisRe
             question=request.question or request.query,
             summary=summary[:4000],
             observations=observations,
-            interpretations=_cautious_interpretations(payload.get("interpretations"), allowed_ids),
-            timeline=_timeline(payload.get("timeline"), inspections),
+            interpretations=[],
+            timeline=_timeline([], inspections),
             evidence=inspections,
-            suggested_questions=_suggested_questions(payload.get("suggested_questions")),
+            suggested_questions=[
+                "What people and objects are visible in each clip?",
+                "How do the visible actions differ between the clips?",
+            ],
             warning=" ".join(inspection_warnings) or None,
         )
     except Exception as exc:
@@ -666,3 +756,36 @@ def register_evidence_analysis_routes(
             logger.warning("Selected evidence analysis failed", exc_info=True)
             return JSONResponse(status_code=502, content={"error": f"Evidence analysis could not be completed: {exc}"})
         return JSONResponse(status_code=200, content=result.model_dump(mode="json"))
+
+    @app.post("/api/v1/evidence-analysis/stream", include_in_schema=False)
+    async def evidence_analysis_stream(request: EvidenceAnalysisRequest) -> StreamingResponse:
+        async def events():
+            queue: asyncio.Queue[dict | None] = asyncio.Queue()
+
+            def inspected(item: VisualInspection) -> None:
+                queue.put_nowait({"type": "inspection", "inspection": item.model_dump(mode="json"),
+                                  "total": len(request.evidence)})
+
+            async def produce() -> None:
+                try:
+                    async with visual_admission.reserve("evidence_analysis"):
+                        result = await analyze_evidence(builder, request, inspected)
+                        queue.put_nowait({"type": "complete", "result": result.model_dump(mode="json")})
+                except Exception as exc:
+                    logger.warning("Streaming evidence analysis failed", exc_info=True)
+                    queue.put_nowait({"type": "error", "error": str(exc)})
+                finally:
+                    queue.put_nowait(None)
+
+            task = asyncio.create_task(produce())
+            try:
+                while (event := await queue.get()) is not None:
+                    yield json.dumps(event) + "\n"
+            finally:
+                if not task.done():
+                    task.cancel()
+                with suppress(asyncio.CancelledError):
+                    await task
+
+        return StreamingResponse(events(), media_type="application/x-ndjson",
+                                 headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"})

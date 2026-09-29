@@ -1,0 +1,5 @@
+{"time": "2026-09-09T12:07:46-0400", "stage": "baseline", "available_gib": 108.485, "used_gib": 14.339, "dstate": [{"pid": "1961937", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:07:46-0400", "stage": "loading", "available_gib": 108.425, "used_gib": 14.399, "dstate": [{"pid": "2094398", "comm": "kworker/u28:2+netns", "wchan": "0"}, {"pid": "2111744", "comm": "kworker/9:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:07:48-0400", "stage": "loading", "available_gib": 107.958, "used_gib": 14.866, "dstate": [{"pid": "2059902", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "2094398", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:07:50-0400", "stage": "loading", "available_gib": 107.722, "used_gib": 15.102, "dstate": [{"pid": "2094398", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:07:51-0400", "stage": "ready", "available_gib": 107.166, "used_gib": 15.658, "dstate": []}

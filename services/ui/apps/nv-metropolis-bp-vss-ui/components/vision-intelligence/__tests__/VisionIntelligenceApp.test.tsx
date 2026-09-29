@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import VisionIntelligenceApp from "../VisionIntelligenceApp";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 
 jest.mock("@nv-metropolis-bp-vss-ui/all", () => ({
@@ -53,9 +53,13 @@ jest.mock("../CapabilitiesWorkspace", () => ({
 }));
 
 jest.mock("../InvestigateWorkspace", () => ({
-  InvestigateWorkspace: (props: { initialRequest?: { query?: string } }) => (
-    <div>Investigation workspace {props.initialRequest?.query || "empty"}</div>
-  ),
+  InvestigateWorkspace: (props: { initialRequest?: { query?: string } }) => {
+    const [draft, setDraft] = React.useState("");
+    return <div>
+      Investigation workspace {props.initialRequest?.query || "empty"}
+      <input aria-label="Investigation draft" value={draft} onChange={(event) => setDraft(event.target.value)} />
+    </div>;
+  },
 }));
 
 jest.mock("../ActivityInsightsWorkspace", () => ({
@@ -96,6 +100,7 @@ const health = {
 
 describe("VisionIntelligenceApp shell", () => {
   beforeEach(() => {
+    jest.spyOn(window, "scrollTo").mockImplementation(() => {});
     global.fetch = jest.fn().mockResolvedValue({
       json: async () => health,
       ok: true,
@@ -107,6 +112,19 @@ describe("VisionIntelligenceApp shell", () => {
     document.documentElement.classList.remove("dark");
     document.documentElement.style.removeProperty("color-scheme");
     window.localStorage.clear();
+  });
+
+  it("retains the investigation when the presenter visits another workspace", async () => {
+    render(<VisionIntelligenceApp />);
+    await screen.findByText("Home workspace");
+    fireEvent.click(screen.getByRole("button", { name: "Search video" }));
+    const draft = await screen.findByRole("textbox", { name: "Investigation draft" });
+    fireEvent.change(draft, { target: { value: "Compare selected warehouse evidence" } });
+    fireEvent.click(screen.getByRole("button", { name: "Live cameras" }));
+    await screen.findByText("Operations workspace");
+    expect(screen.queryByRole("textbox", { name: "Investigation draft" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Search video" }));
+    expect(await screen.findByRole("textbox", { name: "Investigation draft" })).toHaveValue("Compare selected warehouse evidence");
   });
 
   it("applies and persists a complete appearance preference", async () => {
@@ -145,9 +163,11 @@ describe("VisionIntelligenceApp shell", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "System readiness" }));
     expect(screen.getByText("Thor readiness")).toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Demo service checks" })).toHaveTextContent("Play videoAvailable");
+    fireEvent.click(screen.getByText("Technical service checks"));
     expect(screen.getByText("Video I/O")).toBeInTheDocument();
     expect(screen.getByText("3 ms")).toBeInTheDocument();
-    expect(screen.getByText("Unavailable")).toBeInTheDocument();
+    expect(screen.getAllByText("Unavailable").length).toBeGreaterThan(0);
     expect(screen.getByText("18% load")).toBeInTheDocument();
     expect(screen.getByText("80.0 GB / 128.0 GB")).toBeInTheDocument();
 
@@ -166,16 +186,16 @@ describe("VisionIntelligenceApp shell", () => {
       await screen.findByText("Investigation workspace person")
     ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Live" }));
+    fireEvent.click(screen.getByRole("button", { name: "Live cameras" }));
     expect(await screen.findByText("Initial view grid")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Open activity" }));
     expect(await screen.findByText("activity workspace")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Live" }));
+    fireEvent.click(screen.getByRole("button", { name: "Live cameras" }));
     fireEvent.click(screen.getByRole("button", { name: "Open insights" }));
     expect(await screen.findByText("insights workspace")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Live" }));
+    fireEvent.click(screen.getByRole("button", { name: "Live cameras" }));
     fireEvent.click(screen.getByRole("button", { name: "Open rules" }));
     expect(await screen.findByText("Rules navigation enabled")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Return to monitor" }));
@@ -187,7 +207,7 @@ describe("VisionIntelligenceApp shell", () => {
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Sources" }));
     expect(await screen.findByText("Dynamic management surface")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "Alert rules" }));
+    fireEvent.click(within(screen.getByRole("navigation", { name: "Primary navigation" })).getByRole("button", { name: "Alert rules" }));
     expect(
       await screen.findByText("Native alert rules workspace")
     ).toBeInTheDocument();

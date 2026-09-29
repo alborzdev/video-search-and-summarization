@@ -89,6 +89,7 @@ async function waitForHistoryBuild(
     );
     if (response.ok) {
       const payload = (await response.json()) as VideoHistoryRecord;
+      if (!payload) throw new Error("No history build was started. Check System readiness, then retry.");
       if (payload.status === "ready") return payload;
       if (payload.status === "error") {
         throw new Error(
@@ -238,6 +239,9 @@ export function VideoHistoryPanel({
         // A long local graph rebuild can outlive the ingress response timeout.
       }
       if (!response.ok) {
+        // A structured rejection is definitive; only an unreadable proxy timeout
+        // may represent a build that is still running upstream.
+        if (payload?.error) throw new Error(payload.error);
         if ([502, 503, 504].includes(response.status)) {
           payload = await waitForHistoryBuild(stream.sensorId);
         } else {
@@ -400,8 +404,8 @@ export function VideoHistoryPanel({
             </span>
             <h1>{streamDisplayName(stream.name)}</h1>
             <p>
-              Source-scoped LVS + Neo4j memory built from locally processed
-              captions.
+              Summarize this source and ask questions grounded in its recorded
+              footage.
             </p>
           </div>
           <button

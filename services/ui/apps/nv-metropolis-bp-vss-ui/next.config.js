@@ -1,12 +1,32 @@
 // SPDX-License-Identifier: MIT
 const { configureRuntimeEnv } = require('next-runtime-env/build/configure');
 const { i18n } = require('./next-i18next.config');
+const path = require('path');
 
 const nextConfig = {
   env: {
     ...configureRuntimeEnv(),
   },
   i18n,
+  allowedDevOrigins: [
+    'localhost',
+    ...[process.env.NEXT_PUBLIC_VST_API_URL]
+      .filter(Boolean)
+      .map(url => new URL(url).hostname),
+  ],
+  devIndicators: false,
+  turbopack: {
+    resolveAlias: Object.fromEntries([
+      ['@aiqtoolkit-ui/common', 'common'],
+      ...['all', 'alerts', 'search', 'dashboard', 'map', 'video-management'].map(name => [`@nv-metropolis-bp-vss-ui/${name}`, `nv-metropolis-bp-vss-ui/${name}`]),
+    ].flatMap(([name, folder]) => {
+      const source = path.resolve(__dirname, '../../packages', folder, 'lib-src');
+      return [
+        [name, `../../packages/${folder}/lib-src/index.ts`],
+        ...(require('fs').existsSync(path.join(source, 'server.ts')) ? [[`${name}/server`, `../../packages/${folder}/lib-src/server.ts`]] : []),
+      ];
+    })),
+  },
   output: 'standalone',
   // Transpile packages from source for hot reload during development
   transpilePackages: [

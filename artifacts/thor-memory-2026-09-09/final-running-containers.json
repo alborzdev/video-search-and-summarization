@@ -1,0 +1,282 @@
+[
+  {
+    "name": "vss-lvs",
+    "image_id": "sha256:390187bc87727acffe15e3272c3f0c4dc4ec0398257eb68ceddebdf4277877e2",
+    "started_at": "2026-09-09T16:49:07.147899928Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-memory-support",
+    "image_id": "sha256:d559f2729d789b024caff7fd1d74725dfd4670580cc560858bc0ca6445bc0640",
+    "started_at": "2026-09-09T16:39:29.205333363Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-memory-nemotron",
+    "image_id": "sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8",
+    "started_at": "2026-09-09T16:25:57.376184949Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-memory-cosmos",
+    "image_id": "sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504",
+    "started_at": "2026-09-09T16:22:34.077606864Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-memory-embed",
+    "image_id": "sha256:e481b8f293871ff312e5ac90430ba6312a17d6d3803abdc8eb176ca13c02a9dd",
+    "started_at": "2026-09-09T16:28:58.564903753Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "chatbot-ingestion-worker-1",
+    "image_id": "sha256:4f0bd2c2824b186ca8cca7c674061ea4c423830e073f44a1e7fb978efc7e1a93",
+    "started_at": "2026-09-01T15:13:04.791792029Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "chatbot-app-1",
+    "image_id": "sha256:4f0bd2c2824b186ca8cca7c674061ea4c423830e073f44a1e7fb978efc7e1a93",
+    "started_at": "2026-09-01T15:12:51.089007157Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "redis",
+    "image_id": "sha256:c5e375abb885e6b2021c0377879e4890bf76f9065b8922ffc113f2b226b9fc17",
+    "started_at": "2026-09-09T15:41:38.719619444Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-agent",
+    "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+    "started_at": "2026-09-09T16:31:21.372921451Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-video-analytics-api",
+    "image_id": "sha256:2aef26ab5a7394b42da75c53169a9efaf8d2c9278d19de2a214586aafd5e082d",
+    "started_at": "2026-09-09T16:13:58.586761242Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-vios-postgres",
+    "image_id": "sha256:c7526c0f6c3f30260a563d7bcf8ad778effac59a44f8ffa86678c35418338609",
+    "started_at": "2026-09-09T15:41:53.813238182Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "kafka",
+    "image_id": "sha256:acbbf674f2ed40e5d0a8ca51beb0f00692c866fc22b5ce06f8cadbdc54cd4436",
+    "started_at": "2026-09-09T15:42:13.989315712Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "phoenix",
+    "image_id": "sha256:4902edc412785dcd90ad20172c3b15def87d076a18cfc3c3df44df211993f0f0",
+    "started_at": "2026-09-09T16:15:11.477141956Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-agent-ui",
+    "image_id": "sha256:8ad24df0813928abace5bffb4f8013a78a9ef2a10f98ee3e3f587834f0316dcb",
+    "started_at": "2026-09-09T16:18:56.874514928Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-rtvi-cv-traffic",
+    "image_id": "sha256:1a8b9879686f21cb6b9589d6139b5ac2eb960f1520aa3b4bb5f079d05fee9458",
+    "started_at": "2026-09-09T16:09:26.345721595Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-alert-bridge",
+    "image_id": "sha256:6dc6fdbdb756fa6ef7239e72b9e02d0c069b860fefba6a311ba9ee777f65b540",
+    "started_at": "2026-09-09T16:31:01.002515346Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-rtvi-cv",
+    "image_id": "sha256:1a8b9879686f21cb6b9589d6139b5ac2eb960f1520aa3b4bb5f079d05fee9458",
+    "started_at": "2026-09-09T16:07:46.129187491Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "elasticsearch",
+    "image_id": "sha256:f665779df4f52598dc7fca625540a4ddac9aaa098700c34510d37d97e30d265c",
+    "started_at": "2026-09-09T15:42:34.17015075Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-haproxy-ingress",
+    "image_id": "sha256:dee54db8b27cd6c21519ea4f0ba0604f3742e8e7369bc16fb5b69133dec3f47f",
+    "started_at": "2026-09-09T16:19:17.193006871Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-vios-streamprocessing",
+    "image_id": "sha256:72fa2af3b9c8a7950119e0483efe976ebb48c00f8182c2cf9c47b130d7d6319e",
+    "started_at": "2026-09-09T16:10:59.698952071Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-graph-db",
+    "image_id": "sha256:d9dd3dc7d1c78fa959191ff02dbdcbefadceaf83eee23428fb92a58cac8ad3fe",
+    "started_at": "2026-09-09T15:43:29.445331272Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-vios-sdr",
+    "image_id": "sha256:d9912bc9b412188b9beae5948f93a1be2a86affdb3df1a0e0c1933bb1c05d24d",
+    "started_at": "2026-09-09T16:11:52.667801853Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "mdx-node-exporter-1",
+    "image_id": "sha256:0f422f62c15f154af8d8572b23d623aebfb10cec73a5c654d18f911f3f9df241",
+    "started_at": "2026-09-09T16:17:17.270632361Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-va-mcp",
+    "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+    "started_at": "2026-09-09T16:14:18.886713865Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-vios-ingress",
+    "image_id": "sha256:ea2b5c14d12753d1f319d0e808f95d6be3127edcea9674b96c3a9b759bdf1ea4",
+    "started_at": "2026-09-09T16:11:26.31641805Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "grafana",
+    "image_id": "sha256:15baab58cbdcf288c36a20ea9e469fe6c60955e725ddc56060377b27e9eaa47c",
+    "started_at": "2026-09-09T16:16:04.308242574Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "tegrastats-exporter",
+    "image_id": "sha256:b7f3246aaf355ebf96e91a40b2f0abc5dea7e330e7bf9a7cf726107b560c3ac1",
+    "started_at": "2026-09-09T16:18:04.107804068Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "logstash",
+    "image_id": "sha256:b234e31f3c3cf3d42092281709cf6ce448f546a0c42796223e41832638db444f",
+    "started_at": "2026-09-09T16:12:45.469483177Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-vios-mcp",
+    "image_id": "sha256:0a4f7d72370f2250e77b196f4955f76852c647fae666adc1b90be7d0ccba7f94",
+    "started_at": "2026-09-09T16:12:19.117380779Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "vss-behavior-analytics-thor-candidates",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "started_at": "2026-09-09T16:13:38.274840104Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-behavior-analytics",
+    "image_id": "sha256:f3fd84f9c9f63b9d00298161929b71c73f36b301782d58bf810e0583843c9fa6",
+    "started_at": "2026-09-09T16:13:17.938870376Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "vss-vios-sensor",
+    "image_id": "sha256:6dd443f43acd52b00c449238907f38a936d8e3f5d7fb77765d4ece82b3c24cc7",
+    "started_at": "2026-09-09T16:10:32.682865487Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "mdx-cadvisor-1",
+    "image_id": "sha256:5534ae91cbf3428998d60428d107cfdd97272d80658534ac6e54d8ce3b0c4d72",
+    "started_at": "2026-09-09T16:17:37.64576269Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "prometheus",
+    "image_id": "sha256:c0b857aead0d5793aa566adb8f49a9983d6f6031652098759d521a330cfa050f",
+    "started_at": "2026-09-09T16:15:37.856331893Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "datasheet-llm-parser",
+    "image_id": "sha256:6402d5ac90223b9ba4434228f98aec798c5a8b942e770ee47528b4148e923105",
+    "started_at": "2026-08-30T17:59:31.51237554Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "chatbot-redis-1",
+    "image_id": "sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99",
+    "started_at": "2026-08-30T17:52:52.420345729Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "chatbot-postgres-1",
+    "image_id": "sha256:4fa2e178d173497af533351ad95a7a2c27b964f495a399b48c3bba6b928fe10a",
+    "started_at": "2026-08-30T17:52:52.500583793Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "kibana",
+    "image_id": "sha256:36301dc49650e47484b23803d60f78e0ac763ab4d7edab6c75c1f54a186d5f9d",
+    "started_at": "2026-09-09T16:16:30.751798812Z",
+    "health": "healthy",
+    "oom_killed": false
+  },
+  {
+    "name": "ctai-vision-playground-web-dev",
+    "image_id": "sha256:9b25ca0c3914d4d03c858538769314d88b4cadac4dbcd76b061223f24299ed4b",
+    "started_at": "2026-08-30T17:52:52.497645393Z",
+    "health": null,
+    "oom_killed": false
+  },
+  {
+    "name": "ctai-vision-playground-mediamtx",
+    "image_id": "sha256:35f9e8aefaca5352b5f4667c8cd529360a53a493c51fa639e8f5898c03bc0d06",
+    "started_at": "2026-08-30T17:52:52.442796564Z",
+    "health": null,
+    "oom_killed": false
+  }
+]

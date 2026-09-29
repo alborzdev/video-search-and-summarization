@@ -32,6 +32,7 @@ interface VisionStreamCanvasProps {
   eager?: boolean;
   evidenceEvents?: ReplayEvidenceEvent[];
   liveSnapshotEnabled?: boolean;
+  onPreviewAvailable?: (available: boolean) => void;
   onPlaybackContext?: (context: {
     capturedAt: string;
     currentTimeSeconds?: number;
@@ -93,6 +94,7 @@ export function VisionStreamCanvas({
   eager = true,
   evidenceEvents = [],
   liveSnapshotEnabled = true,
+  onPreviewAvailable,
   onPlaybackContext,
   showStatus = true,
   showReplayControls = false,
@@ -107,6 +109,7 @@ export function VisionStreamCanvas({
   );
   const [errorMessage, setErrorMessage] = useState("");
   const [posterUrl, setPosterUrl] = useState<string | null>(null);
+  const [loadedPosterUrl, setLoadedPosterUrl] = useState<string | null>(null);
   const [playRequested, setPlayRequested] = useState(eager);
   const [retryKey, setRetryKey] = useState(0);
   const [replayTimeline, setReplayTimeline] = useState<StreamTimeline | null>(
@@ -115,9 +118,13 @@ export function VisionStreamCanvas({
   const [replayTime, setReplayTime] = useState(0);
   const [replayDuration, setReplayDuration] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasVideoFrame, setHasVideoFrame] = useState(false);
   const initialEventApplied = useRef(false);
   const autoRescanAttempted = useRef<string | null>(null);
   const liveSource = useMemo(() => isLiveStream(stream), [stream]);
+  useEffect(() => {
+    onPreviewAvailable?.(status === "playing" || Boolean(posterUrl && loadedPosterUrl === posterUrl));
+  }, [loadedPosterUrl, onPreviewAvailable, posterUrl, status]);
   const eventOffsets = useMemo(() => {
     if (!replayTimeline) return [];
     const timelineStart = Date.parse(replayTimeline.startTime);
@@ -239,7 +246,7 @@ export function VisionStreamCanvas({
           );
         }
 
-        if (!response?.ok) return;
+        if (!response?.ok || response.headers?.get("X-Vision-Image-Fallback")) return;
         const blob = await response.blob();
         if (!blob.type.startsWith("image/")) return;
         objectUrl = URL.createObjectURL(blob);
@@ -537,11 +544,19 @@ export function VisionStreamCanvas({
           src={posterUrl}
           alt=""
           aria-hidden="true"
+          onLoad={(event) => {
+            if (event.currentTarget.naturalWidth > 0) setLoadedPosterUrl(posterUrl);
+          }}
+          onError={() => setLoadedPosterUrl(null)}
         />
       )}
       <video
         ref={videoRef}
         className="vi-stream-video"
+        style={{ visibility: hasVideoFrame ? "visible" : "hidden" }}
+        aria-hidden={!hasVideoFrame}
+        onLoadedData={() => setHasVideoFrame(true)}
+        onEmptied={() => setHasVideoFrame(false)}
         autoPlay
         muted
         playsInline
@@ -563,6 +578,14 @@ export function VisionStreamCanvas({
         onPlaying={() => {
           setStatus("playing");
           setIsPlaying(true);
+        }}
+        onError={(event) => {
+          const video = event.currentTarget;
+          // Cleanup and initial mounting have no media source to fail.
+          if (!video.getAttribute("src") && !video.srcObject) return;
+          setHasVideoFrame(false);
+          setErrorMessage("Video could not be loaded. Retry or choose another source.");
+          setStatus(posterUrlRef.current ? "poster" : "error");
         }}
         onTimeUpdate={(event) => setReplayTime(event.currentTarget.currentTime)}
       />
@@ -669,6 +692,13 @@ export function VisionStreamCanvas({
           >
             <IconChevronRight size={17} />
           </button>
+        </div>
+      )}
+
+      {!playRequested && !posterUrl && (
+        <div className="vi-stream-preview-empty">
+          <span>Preview unavailable</span>
+          <small>Press play to connect</small>
         </div>
       )}
 

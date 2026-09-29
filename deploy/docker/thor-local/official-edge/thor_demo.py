@@ -21,6 +21,17 @@ LLM_FRACTION = Decimal("0.12")
 VLM_FRACTION = Decimal("0.30")
 RESERVE_FRACTION = Decimal("0.28")
 REQUIRED_AVAILABLE_FRACTION = Decimal("0.70")
+KIB_PER_GIB = 1024 * 1024
+MEASURED_FULL_GRAPH_COMMIT_KIB = 64 * KIB_PER_GIB
+MINIMUM_POSTLOAD_RESERVE_KIB = 64 * KIB_PER_GIB
+FAIL_CLOSED_GPU_SERVICES = {
+    "rtvi-embed",
+    "perception-2d-fusion",
+    "perception-2d-smartcity-thor",
+    "streamprocessing-ms",
+    "sensor-ms",
+}
+PERIODIC_CACHE_CLEANER = b"/usr/local/bin/sys-cache-cleaner.sh"
 DEMO_EDGE_COMMAND = [
     "python3",
     "-m",
@@ -36,6 +47,7 @@ DEMO_EDGE_COMMAND = [
     "127.0.0.1",
     "--port",
     "30081",
+    "--enforce-eager",
     "--gpu-memory-utilization",
     str(LLM_FRACTION),
     "--enable-auto-tool-choice",
@@ -49,7 +61,8 @@ def verify_overlay_contract() -> None:
     if set(overlay) != {"services"}:
         raise oe.ContractError("Thor demo overlay may define only services")
     services = overlay.get("services")
-    if not isinstance(services, dict) or set(services) != {"nemotron-edge"}:
+    expected_services = {"nemotron-edge"} | FAIL_CLOSED_GPU_SERVICES
+    if not isinstance(services, dict) or set(services) != expected_services:
         raise oe.ContractError("Thor demo overlay service set drifted")
     edge = services["nemotron-edge"]
     if not isinstance(edge, dict) or set(edge) != {"command"}:
@@ -58,6 +71,11 @@ def verify_overlay_contract() -> None:
         raise oe.ContractError("Thor demo Edge command differs from exact 0.12 lane")
     if REQUIRED_AVAILABLE_FRACTION != (LLM_FRACTION + VLM_FRACTION + RESERVE_FRACTION):
         raise oe.ContractError("Thor demo memory admission arithmetic drifted")
+    for service_name in FAIL_CLOSED_GPU_SERVICES:
+        if services.get(service_name) != {"restart": "no"}:
+            raise oe.ContractError(
+                f"Thor demo {service_name} must fail closed after reboot"
+            )
 
 
 def verify_static(contract_path: Path = oe.DEFAULT_CONTRACT) -> dict[str, Any]:
@@ -78,12 +96,60 @@ def verify_memory(meminfo_path: Path) -> None:
         )
 
 
+def verify_empirical_headroom(meminfo_path: Path) -> None:
+    """Reject hosts that cannot retain the post-stall safety reserve."""
+
+    _total, available = oe._read_meminfo(meminfo_path)
+    projected = available - MEASURED_FULL_GRAPH_COMMIT_KIB
+    if projected < MINIMUM_POSTLOAD_RESERVE_KIB:
+        raise oe.ContractError(
+            "full dual-model runtime is empirically unqualified on this host: "
+            f"projected post-load MemAvailable={projected / KIB_PER_GIB:.1f} GiB; "
+            "the hardware-watchdog safety contract requires a 64 GiB post-load "
+            "reserve. Use a split local-model lane or a remote model endpoint."
+        )
+
+
+def verify_periodic_cache_cleaner_stopped(proc_root: Path = Path("/proc")) -> None:
+    """Reject the three-second sync/drop-caches loop during dual-model runtime."""
+
+    try:
+        processes = list(proc_root.iterdir())
+    except OSError as exc:
+        raise oe.ContractError(
+            f"cannot inspect process table {proc_root}: {exc}"
+        ) from exc
+    for process in processes:
+        if not process.name.isdigit():
+            continue
+        try:
+            argv = [
+                part for part in (process / "cmdline").read_bytes().split(b"\0") if part
+            ]
+        except OSError:
+            continue
+        if (
+            len(argv) >= 2
+            and Path(os.fsdecode(argv[0])).name == "bash"
+            and argv[1] == PERIODIC_CACHE_CLEANER
+        ):
+            raise oe.ContractError(
+                "the periodic cache cleaner is running; stop its three-second "
+                "sync/drop-caches loop before any exact dual-model admission"
+            )
+
+
 def _compose_prefix(runtime_env: Path) -> list[str]:
     return oe._compose_prefix(runtime_env) + ["-f", str(DEMO_COMPOSE)]
 
 
-def _compose_environment(edge_snapshot: Path, cosmos_cache: Path) -> dict[str, str]:
+def _compose_environment(
+    runtime_env: Path, edge_snapshot: Path, cosmos_cache: Path
+) -> dict[str, str]:
     environment = os.environ.copy()
+    environment["THOR_LOCAL_MODEL_BIND_HOST"] = oe.resolve_model_bind_host(
+        runtime_env=runtime_env
+    )
     environment["VSS_REPO_ROOT"] = str(oe.REPO_ROOT)
     environment["THOR_OFFICIAL_EDGE4B_SNAPSHOT"] = str(edge_snapshot)
     environment["THOR_OFFICIAL_EDGE4B_BLOBS_DIR"] = str(
@@ -106,7 +172,7 @@ def verify_resolved_compose(
     official = oe.verify_resolved_compose(runtime_env, edge_snapshot, cosmos_cache)
     output = oe._run(
         _compose_prefix(runtime_env) + ["config", "--format", "json"],
-        env=_compose_environment(edge_snapshot, cosmos_cache),
+        env=_compose_environment(runtime_env, edge_snapshot, cosmos_cache),
     )
     try:
         demo = json.loads(output)
@@ -140,18 +206,31 @@ def verify_resolved_compose(
     normalized_services["nemotron-edge"]["command"] = official_services[
         "nemotron-edge"
     ]["command"]
+    for service_name in FAIL_CLOSED_GPU_SERVICES:
+        normalized_services[service_name]["restart"] = official_services[service_name][
+            "restart"
+        ]
     if normalized != official:
-        raise oe.ContractError("Thor demo resolved graph differs outside Edge memory")
+        raise oe.ContractError(
+            "Thor demo resolved graph differs outside Edge memory controls"
+        )
     return demo
 
 
 def render_pull_free_command(
-    runtime_env: Path, edge_snapshot: Path, cosmos_cache: Path
+    runtime_env: Path,
+    edge_snapshot: Path,
+    cosmos_cache: Path,
+    model_bind_host: str | None = None,
 ) -> str:
+    model_bind_host = oe.resolve_model_bind_host(
+        model_bind_host, runtime_env=runtime_env
+    )
     return shlex.join(
         [
             "env",
             f"VSS_REPO_ROOT={oe.REPO_ROOT}",
+            f"THOR_LOCAL_MODEL_BIND_HOST={model_bind_host}",
             f"THOR_OFFICIAL_EDGE4B_SNAPSHOT={edge_snapshot}",
             f"THOR_OFFICIAL_EDGE4B_BLOBS_DIR={oe._edge_repository(edge_snapshot) / 'blobs'}",
             f"THOR_OFFICIAL_COSMOS3_CACHE_DIR={cosmos_cache}",
@@ -166,7 +245,7 @@ def render_pull_free_command(
             "RAG_API_KEY=",
         ]
         + _compose_prefix(runtime_env)
-        + ["up", "-d", "--no-build", "--pull", "never"]
+        + ["up", "-d", "--no-build", "--pull", "never", "--force-recreate"]
     )
 
 
@@ -175,7 +254,12 @@ def verify_readiness(
     timeout: float,
     edge_snapshot: Path,
     cosmos_cache: Path,
+    *,
+    meminfo_path: Path = oe.HOST_MEMINFO,
 ) -> None:
+    verify_empirical_headroom(meminfo_path)
+    for name in oe.FAIL_CLOSED_RUNTIME_CONTAINERS:
+        oe._verify_fail_closed_runtime_container(name)
     edge_image_id = contract["images"]["edge4b_vllm"].get("image_id")
     if not isinstance(edge_image_id, str):
         raise oe.ContractError("Edge4B image lacks a reviewed local image ID")
@@ -220,7 +304,17 @@ def verify_readiness(
             "HF_TOKEN": "",
             "OPENAI_API_KEY": "",
         },
-        {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache": oe._cosmos_cache_root(cosmos_cache)},
+        {
+            "/opt/nvidia/rtvi/.rtvi/ngc_model_cache": oe._cosmos_cache_root(
+                cosmos_cache
+            ),
+            **{
+                destination: source
+                for destination, (source, _expected_sha256) in (
+                    oe.RTVLM_REQUEST_CANCELLATION_OVERLAYS.items()
+                )
+            },
+        },
         {"/opt/nvidia/rtvi/.rtvi/ngc_model_cache"},
     )
     oe._verify_running_environment(
@@ -238,6 +332,15 @@ def verify_readiness(
             "VSS_AGENT_CONFIG_FILE": oe.AGENT_CONFIG_CONTAINER,
             "EVAL_LLM_JUDGE_NAME": oe.EDGE_MODEL_ID,
             "EVAL_LLM_JUDGE_BASE_URL": oe.EDGE_BASE_URL,
+        },
+        {
+            "/vss-agent/deploy/docker": oe.DEPLOY_DOCKER,
+            **{
+                destination: source
+                for destination, (source, _expected_sha256) in (
+                    oe.AGENT_RUNTIME_OVERLAYS.items()
+                )
+            },
         },
     )
     oe._verify_running_environment(
@@ -266,6 +369,7 @@ def verify_readiness(
             "VLM_NAME": oe.COSMOS_MODEL_ID,
             "VLM_BASE_URL": oe.COSMOS_BASE_URL,
             "VLM_MODE": "local_shared",
+            "ALERT_ALWAYS_ON_ENABLED": "false",
         },
     )
     oe._verify_model_endpoint(oe.EDGE_BASE_URL, oe.EDGE_MODEL_ID, timeout)
@@ -315,8 +419,12 @@ def _audit(args: argparse.Namespace) -> int:
             failures.append(f"images: {exc}")
             print(f"FAIL images: {exc}")
         try:
-            verify_memory(args.meminfo)
-            print("PASS 0.12 + 0.30 + 0.28 Thor demo memory admission")
+            verify_memory(oe.HOST_MEMINFO)
+            verify_empirical_headroom(oe.HOST_MEMINFO)
+            verify_periodic_cache_cleaner_stopped()
+            print(
+                "PASS initial memory, 64 GiB post-load reserve, and idle cache policy"
+            )
         except oe.ContractError as exc:
             failures.append(f"memory: {exc}")
             print(f"FAIL memory: {exc}")
@@ -344,7 +452,6 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--contract", type=Path, default=oe.DEFAULT_CONTRACT)
     parser.add_argument("--artifact-lock", type=Path, default=oe.DEFAULT_ARTIFACT_LOCK)
     parser.add_argument("--runtime-env", type=Path, default=oe.DEFAULT_RUNTIME_ENV)
-    parser.add_argument("--meminfo", type=Path, default=Path("/proc/meminfo"))
     parser.add_argument(
         "--edge4b-snapshot", default=os.environ.get("THOR_OFFICIAL_EDGE4B_SNAPSHOT")
     )
@@ -371,11 +478,14 @@ def main(argv: list[str] | None = None) -> int:
             return _audit(args)
         contract, edge, cosmos = _prerequisites(args)
         if args.command == "render-command":
-            verify_memory(args.meminfo)
+            verify_memory(oe.HOST_MEMINFO)
+            verify_empirical_headroom(oe.HOST_MEMINFO)
+            verify_periodic_cache_cleaner_stopped()
             verify_resolved_compose(args.runtime_env, edge, cosmos)
             print(render_pull_free_command(args.runtime_env, edge, cosmos))
             return 0
         if args.command == "readiness":
+            verify_periodic_cache_cleaner_stopped()
             verify_resolved_compose(args.runtime_env, edge, cosmos)
             verify_readiness(contract, args.timeout, edge, cosmos)
             print("PASS exact-model Thor demo runtime identity/readiness contract")

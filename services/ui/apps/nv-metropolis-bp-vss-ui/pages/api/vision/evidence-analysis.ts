@@ -74,6 +74,45 @@ async function forwardEvidenceAnalysis(
   }
 }
 
+async function streamEvidenceAnalysis(request: EvidenceAnalysisRequest, res: NextApiResponse) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs());
+  try {
+    const upstream = await fetch(`${analysisEndpoint()}/stream`, {
+      body: JSON.stringify(request), headers: { "Content-Type": "application/json" },
+      method: "POST", signal: controller.signal,
+    });
+    if (!upstream.ok || !upstream.body) {
+      const payload = await upstream.json().catch(() => null);
+      return res.status(upstream.status >= 400 ? upstream.status : 502).json({
+        error: payload?.error || "Evidence analysis stream is unavailable.",
+      });
+    }
+    res.status(200);
+    res.setHeader("Content-Type", "application/x-ndjson");
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("X-Accel-Buffering", "no");
+    res.flushHeaders();
+    const reader = upstream.body.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        // Drain even after a browser disconnect so reservation covers all inference.
+        if (!res.destroyed) res.write(Buffer.from(value));
+      }
+    } finally { reader.releaseLock(); }
+  } catch (error) {
+    const message = controller.signal.aborted ? "Evidence analysis took too long. Try fewer or shorter clips."
+      : error instanceof Error ? error.message : "Evidence analysis is unavailable.";
+    if (!res.headersSent) return res.status(502).json({ error: message });
+    if (!res.destroyed) res.write(JSON.stringify({ type: "error", error: message }) + "\n");
+  } finally {
+    clearTimeout(timeout);
+    if (!res.destroyed && !res.writableEnded) res.end();
+  }
+}
+
 function analysisEndpoint(): string {
   if (process.env.EVIDENCE_ANALYSIS_API_URL) {
     return process.env.EVIDENCE_ANALYSIS_API_URL;
@@ -182,6 +221,9 @@ export default async function handler(
 
   try {
     await admitWorkload("evidence_analysis");
+    if (req.headers?.accept?.includes("application/x-ndjson")) {
+      return await withCosmosReservation(() => streamEvidenceAnalysis(req.body, res));
+    }
     const outcome = await withCosmosReservation(() =>
       forwardEvidenceAnalysis(req.body)
     );

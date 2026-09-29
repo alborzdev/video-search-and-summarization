@@ -1,0 +1,63 @@
+{
+  "request": {
+    "query": "people moving",
+    "question": "What is the worker holding in the final visible frame?",
+    "evidence": [
+      {
+        "client_id": "qa-final-frame",
+        "sensor_id": "edfe78cd-2a6d-47c2-8317-57e1ade9aafc",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "match_type": "Semantic Match"
+      }
+    ]
+  },
+  "elapsed_ms": 16105,
+  "response": {
+    "status": "complete",
+    "query": "people moving",
+    "question": "What is the worker holding in the final visible frame?",
+    "summary": "In the final visible frame, the worker is still holding a cardboard box while standing near the green rolling ladder between shelves D and E. The box remains securely gripped in both hands throughout the sequence. No change in object is shown.",
+    "observations": [
+      {
+        "text": "In the final visible frame, the worker is still holding a cardboard box while standing near the green rolling ladder between shelves D and E. The box remains securely gripped in both hands throughout the sequence. No change in object is shown.",
+        "evidence_ids": [
+          "E1"
+        ]
+      }
+    ],
+    "interpretations": [],
+    "timeline": [
+      {
+        "evidence_id": "E1",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "label": "Visual inspection"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "E1",
+        "client_id": "qa-final-frame",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "observation": "In the final visible frame, the worker is still holding a cardboard box while standing near the green rolling ladder between shelves D and E. The box remains securely gripped in both hands throughout the sequence. No change in object is shown.",
+        "match_type": "Semantic Match",
+        "inspection_source": "fresh_cosmos_inspection"
+      }
+    ],
+    "suggested_questions": [
+      "What changes during this clip?",
+      "Where are the visible people and objects relative to each other?"
+    ],
+    "warning": null,
+    "timings_ms": {
+      "inspection": 15924.5,
+      "synthesis": 0,
+      "total": 15924.5
+    }
+  }
+}

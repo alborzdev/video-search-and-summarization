@@ -29,6 +29,23 @@ official_edge_llm_endpoint="http://127.0.0.1:30081"
 official_edge_vlm_endpoint="http://127.0.0.1:8018"
 official_edge_llm_model="nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8"
 official_edge_vlm_model="nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+fail_closed_container_names=(
+  # Stop the two co-resident models and the live stream source first. A single
+  # Docker API failure must never leave them running while lighter services
+  # are being contained.
+  vss-nemotron-edge-4b
+  vss-rtvi-vlm
+  vss-vios-nvstreamer
+  vss-agent
+  vss-alert-bridge
+  vss-lvs
+  vss-rtvi-embed
+  vss-rtvi-cv
+  vss-rtvi-cv-traffic
+  vss-vios-streamprocessing
+  vss-vios-sensor
+)
+containment_failures=0
 local_model_provisioner="${deployment_dir}/thor-local/provision-local-models.sh"
 model_artifact_verifier="${deployment_dir}/thor-local/models/verify_artifacts.py"
 model_artifact_lock="${deployment_dir}/thor-local/models/artifacts.lock.json"
@@ -326,6 +343,15 @@ require_edge_cache_cleaner() {
   fi
 }
 
+require_periodic_cache_cleaner_stopped() {
+  # Two watchdog resets proved the exact dual-model lane unsafe with the
+  # three-second sync/drop-caches loop active. Its empirical admission owns
+  # page-cache headroom directly and requires the loop to remain stopped.
+  if edge_cache_cleaner_is_running; then
+    die "The periodic Thor cache cleaner must be stopped for the exact dual-model lane. Its three-second sync/drop-caches loop is not runtime-safe for this deployment."
+  fi
+}
+
 model_is_served() {
   local endpoint="$1"
   local expected_model="$2"
@@ -348,21 +374,31 @@ raise SystemExit(0 if sys.argv[1] in served else 1)
 ' "${expected_model}" <<< "${response}"
 }
 
-official_edge_demo_lane_is_deployed() {
-  local config_files
-  config_files="$(docker container inspect --format \
-    '{{index .Config.Labels "com.docker.compose.project.config_files"}}' \
-    vss-agent 2>/dev/null)" || return 1
-  [[ "${config_files}" == *"${official_edge_dir}/compose.yml"* ]] &&
-    [[ "${config_files}" == *"${official_edge_dir}/compose.thor-demo-memory.yml"* ]]
+official_edge_lane_is_deployed() {
+  local container_name config_files
+  for container_name in vss-agent vss-nemotron-edge-4b vss-rtvi-vlm; do
+    config_files="$(docker container inspect --format \
+      '{{index .Config.Labels "com.docker.compose.project.config_files"}}' \
+      "${container_name}" 2>/dev/null || true)"
+    [[ "${config_files}" == *"${official_edge_dir}/compose.yml"* ]] && return 0
+  done
+  # A stale exact LLM container is enough to block generic model startup even
+  # if the Agent marker or Compose labels were lost during a partial teardown.
+  docker container inspect vss-nemotron-edge-4b >/dev/null 2>&1
 }
 
-container_mount_source() {
-  local container_name="$1"
-  local destination="$2"
-  docker container inspect --format \
-    "{{range .Mounts}}{{if eq .Destination \"${destination}\"}}{{.Source}}{{end}}{{end}}" \
-    "${container_name}" 2>/dev/null
+official_edge_demo_lane_is_deployed() {
+  local container_name config_files
+  for container_name in vss-agent vss-nemotron-edge-4b vss-rtvi-vlm; do
+    config_files="$(docker container inspect --format \
+      '{{index .Config.Labels "com.docker.compose.project.config_files"}}' \
+      "${container_name}" 2>/dev/null || true)"
+    if [[ "${config_files}" == *"${official_edge_dir}/compose.yml"* ]] &&
+       [[ "${config_files}" == *"${official_edge_dir}/compose.thor-demo-memory.yml"* ]]; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 require_official_edge_demo_models() {
@@ -507,7 +543,7 @@ check_local_model_contracts() {
   require_command curl
   require_command python3
   validate_thor_full_contract
-  if official_edge_demo_lane_is_deployed; then
+  if official_edge_lane_is_deployed; then
     llm_endpoint="${official_edge_llm_endpoint}"
     vlm_endpoint="${official_edge_vlm_endpoint}"
     llm_model="${official_edge_llm_model}"
@@ -575,10 +611,10 @@ ensure_local_models_are_running() {
   require_command curl
   require_command docker
   require_command pgrep
-  require_edge_cache_cleaner
-  if official_edge_demo_lane_is_deployed; then
-    die "The exact-model Thor demo lane is deployed. Generic up/restart would replace its Nemotron 3 Nano + Cosmos3 consumer wiring; use ${official_edge_dir}/thor_demo.py for this deployment."
+  if official_edge_lane_is_deployed; then
+    die "An exact-model Thor lane or stale exact-model container is present. Generic up/restart could overlap it with Qwen models; keep the graph stopped and use the official-edge safety audit after selecting a split/remote topology."
   fi
+  require_edge_cache_cleaner
   # Sequential startup is intentional on unified memory: simultaneous vLLM
   # initialization makes each server measure the other's temporary allocation
   # as available capacity and can overcommit the Thor.
@@ -1349,11 +1385,11 @@ preflight() {
   if ! "${script_dir}/dev-profile.sh" check-kernel-settings; then
     die "Required kernel settings are incomplete. Run '${script_dir}/thor-local.sh kernel-settings' once, then retry."
   fi
-  require_edge_cache_cleaner
-
-  if official_edge_demo_lane_is_deployed; then
+  if official_edge_lane_is_deployed; then
+    require_periodic_cache_cleaner_stopped
     require_official_edge_demo_models
   else
+    require_edge_cache_cleaner
     model_is_served "${LLM_ENDPOINT_URL}" "${THOR_LOCAL_LLM_MODEL}" ||
       die "LLM ${THOR_LOCAL_LLM_MODEL} is not available at ${LLM_ENDPOINT_URL}/v1/models"
     model_is_served "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" ||
@@ -1420,6 +1456,68 @@ compose() {
   env -u NGC_CLI_API_KEY -u NGC_API_KEY -u NVIDIA_API_KEY -u HF_TOKEN \
     -u RTVI_VLM_API_KEY -u VIA_VLM_API_KEY \
     docker compose --env-file "${generated_env}" "$@"
+}
+
+stop_fail_closed_containers() {
+  # Exact-edge services come from extra Compose overlays, while NvStreamer is
+  # a separate project. Stop by explicit container identity before the generic
+  # graph so containment works regardless of which Compose files created them.
+  local container_name running failures_before=${containment_failures} found=false
+  for container_name in "${fail_closed_container_names[@]}"; do
+    docker container inspect "${container_name}" >/dev/null 2>&1 || continue
+    found=true
+    if ! docker update --restart=no "${container_name}" >/dev/null; then
+      echo "[ERROR] Could not disable restart for ${container_name}; continuing containment." >&2
+      containment_failures=$((containment_failures + 1))
+    fi
+    running="$(docker inspect --format '{{.State.Running}}' "${container_name}" 2>/dev/null || true)"
+    if [[ "${running}" == "true" ]] &&
+       ! docker stop --timeout 15 "${container_name}" >/dev/null; then
+      echo "[ERROR] Could not stop ${container_name}; continuing containment." >&2
+      containment_failures=$((containment_failures + 1))
+    elif [[ -z "${running}" ]]; then
+      echo "[ERROR] Could not read the running state for ${container_name}; continuing containment." >&2
+      containment_failures=$((containment_failures + 1))
+    fi
+  done
+  if [[ "${found}" == "true" && "${containment_failures}" -eq "${failures_before}" ]]; then
+    echo "[OK] Agent, media, model, and GPU-heavy containers are stopped with restart disabled."
+  elif [[ "${found}" == "true" ]]; then
+    echo "[WARNING] Fail-closed containment reached every explicit target but reported errors." >&2
+  fi
+}
+
+stop_application_project_containers() {
+  # The protected env may be missing after a failed reboot or checkout change.
+  # Compose labels remain sufficient to contain the already-created project.
+  local container_id container_ids running failures_before=${containment_failures} found=false
+  if ! container_ids="$(docker ps --all --quiet --filter 'label=com.docker.compose.project=mdx')"; then
+    echo "[ERROR] Could not enumerate the mdx application containers." >&2
+    containment_failures=$((containment_failures + 1))
+    return 0
+  fi
+  while IFS= read -r container_id; do
+    [[ -n "${container_id}" ]] || continue
+    found=true
+    if ! docker update --restart=no "${container_id}" >/dev/null; then
+      echo "[ERROR] Could not disable restart for ${container_id}; continuing containment." >&2
+      containment_failures=$((containment_failures + 1))
+    fi
+    running="$(docker inspect --format '{{.State.Running}}' "${container_id}" 2>/dev/null || true)"
+    if [[ "${running}" == "true" ]] &&
+       ! docker stop --timeout 15 "${container_id}" >/dev/null; then
+      echo "[ERROR] Could not stop ${container_id}; continuing containment." >&2
+      containment_failures=$((containment_failures + 1))
+    elif [[ -z "${running}" ]]; then
+      echo "[ERROR] Could not read the running state for ${container_id}; continuing containment." >&2
+      containment_failures=$((containment_failures + 1))
+    fi
+  done <<< "${container_ids}"
+  if [[ "${found}" == "true" && "${containment_failures}" -eq "${failures_before}" ]]; then
+    echo "[OK] Remaining mdx application containers are stopped with restart disabled."
+  elif [[ "${found}" == "true" ]]; then
+    echo "[WARNING] mdx containment reached every labeled target but reported errors." >&2
+  fi
 }
 
 configured_images_are_present() {
@@ -2021,7 +2119,7 @@ rtvi_vlm_upstream_is_ready() {
   # is no separate operator-managed VLM upstream on :8003. Probe the endpoint
   # that actually serves the advertised model instead of applying the generic
   # proxy-upstream contract to this topology.
-  if official_edge_demo_lane_is_deployed; then
+  if official_edge_lane_is_deployed; then
     docker exec vss-rtvi-vlm \
       curl --connect-timeout 2 --max-time 5 --fail --silent \
         "http://127.0.0.1:8000/v1/models" 2>/dev/null |
@@ -2218,7 +2316,13 @@ doctor_check_kernel() {
   else
     doctor_fail "Required VSS kernel settings are incomplete; run: ${script_dir}/thor-local.sh kernel-settings"
   fi
-  if edge_cache_cleaner_is_running; then
+  if official_edge_lane_is_deployed; then
+    if edge_cache_cleaner_is_running; then
+      doctor_fail "Periodic cache cleaner is running; stop it before exact dual-model admission."
+    else
+      doctor_pass "Periodic cache cleaner is stopped for exact dual-model safety."
+    fi
+  elif edge_cache_cleaner_is_running; then
     doctor_pass "Thor unified-memory cache cleaner is running."
   else
     doctor_fail "Thor cache cleaner is not running; run: sudo -b /usr/local/bin/sys-cache-cleaner.sh"
@@ -2271,7 +2375,9 @@ doctor_check_gpu_and_resources() {
   if [[ "${total_kib}" =~ ^[0-9]+$ && "${available_kib}" =~ ^[0-9]+$ && "${total_kib}" -gt 0 ]]; then
     available_gib=$(( available_kib / 1024 / 1024 ))
     available_pct=$(( available_kib * 100 / total_kib ))
-    if (( available_kib < 1048576 || available_pct < 1 )); then
+    if official_edge_lane_is_deployed && (( available_kib < 134217728 )); then
+      doctor_fail "Exact dual-model lane is safety-blocked: ${available_gib} GiB is available, but empirical admission requires at least 128 GiB before launch."
+    elif (( available_kib < 1048576 || available_pct < 1 )); then
       doctor_fail "Unified memory is critically low (${available_gib} GiB / ${available_pct}% available)."
     elif (( available_kib < 8388608 || available_pct < 8 )); then
       doctor_warn "Unified memory headroom is low (${available_gib} GiB / ${available_pct}% available); close unrelated workloads before a demo."
@@ -2403,26 +2509,28 @@ doctor_check_endpoints() {
   local vlm_endpoint="${VLM_ENDPOINT_URL}"
   local llm_model="${THOR_LOCAL_LLM_MODEL}"
   local vlm_model="${THOR_LOCAL_VLM_MODEL}"
-  local llm_recovery="docker start ${THOR_LOCAL_LLM_CONTAINER}"
-  local vlm_recovery="docker start ${THOR_LOCAL_VLM_CONTAINER}"
-  if official_edge_demo_lane_is_deployed; then
+  local exact_lane=false
+  if official_edge_lane_is_deployed; then
     llm_endpoint="${official_edge_llm_endpoint}"
     vlm_endpoint="${official_edge_vlm_endpoint}"
     llm_model="${official_edge_llm_model}"
     vlm_model="${official_edge_vlm_model}"
-    llm_recovery="${official_edge_dir}/thor_demo.py"
-    vlm_recovery="${official_edge_dir}/thor_demo.py"
-    doctor_pass "Exact-model Thor demo lane is the active Compose deployment."
+    exact_lane=true
+    doctor_pass "Exact-model Thor lane is the detected Compose deployment."
   fi
   if model_is_served "${llm_endpoint}" "${llm_model}" 2>/dev/null; then
     doctor_pass "Local LLM ${llm_model} is served at ${llm_endpoint}."
+  elif [[ "${exact_lane}" == "true" ]]; then
+    doctor_fail "Local LLM ${llm_model} is unavailable; co-resident recovery is safety-blocked on this host."
   else
-    doctor_fail "Local LLM ${llm_model} is unavailable; recover with ${llm_recovery}"
+    doctor_fail "Local LLM ${llm_model} is unavailable; recover with docker start ${THOR_LOCAL_LLM_CONTAINER}"
   fi
   if model_is_served "${vlm_endpoint}" "${vlm_model}" 2>/dev/null; then
     doctor_pass "Local VLM ${vlm_model} is served at ${vlm_endpoint}."
+  elif [[ "${exact_lane}" == "true" ]]; then
+    doctor_fail "Local VLM ${vlm_model} is unavailable; co-resident recovery is safety-blocked on this host."
   else
-    doctor_fail "Local VLM ${vlm_model} is unavailable; recover with ${vlm_recovery}"
+    doctor_fail "Local VLM ${vlm_model} is unavailable; recover with docker start ${THOR_LOCAL_VLM_CONTAINER}"
   fi
 
   if [[ "${doctor_stack_state}" == "down" ]]; then
@@ -2475,21 +2583,17 @@ doctor_check_endpoints() {
 doctor_finish() {
   printf '\nThor doctor summary: %d PASS, %d WARN, %d FAIL\n' \
     "${doctor_passes}" "${doctor_warnings}" "${doctor_failures}"
-  if official_edge_demo_lane_is_deployed; then
-    local edge_snapshot cosmos_cache_root cosmos_cache
-    edge_snapshot="$(container_mount_source vss-nemotron-edge-4b /models/edge4b)"
-    cosmos_cache_root="$(container_mount_source vss-rtvi-vlm /opt/nvidia/rtvi/.rtvi/ngc_model_cache)"
-    cosmos_cache="${cosmos_cache_root}/${official_edge_vlm_model}"
+  if official_edge_lane_is_deployed; then
     cat <<EOF
-Recovery commands (exact-model Thor demo lane; offline-safe):
-  Verify identity: python3 ${official_edge_dir}/thor_demo.py --edge4b-snapshot ${edge_snapshot} --cosmos3-cache ${cosmos_cache} readiness
-  Render recovery: python3 ${official_edge_dir}/thor_demo.py --edge4b-snapshot ${edge_snapshot} --cosmos3-cache ${cosmos_cache} render-command
+Safety lock (exact-model Thor lane):
+  Keep contained:  ${script_dir}/thor-local.sh stop
+  Verify static:   python3 ${official_edge_dir}/thor_demo.py static
   Re-check:        ${script_dir}/thor-local.sh doctor
   Service status:  ${script_dir}/thor-local.sh status
-  Service logs:    docker logs --tail 150 <container-name>
 
-Run the single pull-free command printed by "Render recovery"; generic
-thor-local.sh up/restart is intentionally blocked for this active model lane.
+Do not render or run the previous co-resident recovery command on this host.
+The observed graph needs one model moved to a remote/sibling host before the
+application can be brought up safely.
 EOF
   else
     cat <<EOF
@@ -2661,12 +2765,32 @@ case "${command_name}" in
     domain_command "${2:-}" "${3:-}"
     ;;
   stop)
-    [[ -f "${generated_env}" ]] || die "Missing ${generated_env}"
-    compose stop
+    containment_failures=0
+    stop_fail_closed_containers
+    stop_application_project_containers
+    if [[ -f "${generated_env}" ]]; then
+      if ! compose stop; then
+        echo "[ERROR] Compose stop failed after identity- and label-based containment." >&2
+        containment_failures=$((containment_failures + 1))
+      fi
+    else
+      echo "[WARNING] Protected runtime env is missing; label- and identity-based containment completed without Compose."
+    fi
+    (( containment_failures == 0 )) || die "Containment attempted every target but reported ${containment_failures} Docker error(s); inspect the messages above."
     ;;
   down)
-    [[ -f "${generated_env}" ]] || die "Missing ${generated_env}"
-    compose down --remove-orphans
+    containment_failures=0
+    stop_fail_closed_containers
+    stop_application_project_containers
+    if [[ -f "${generated_env}" ]]; then
+      if ! compose down --remove-orphans; then
+        echo "[ERROR] Compose down failed after identity- and label-based containment." >&2
+        containment_failures=$((containment_failures + 1))
+      fi
+    else
+      echo "[WARNING] Protected runtime env is missing; label- and identity-based containment completed without Compose removal."
+    fi
+    (( containment_failures == 0 )) || die "Containment attempted every target but reported ${containment_failures} Docker error(s); inspect the messages above."
     ;;
   status)
     if [[ -f "${generated_env}" ]]; then
@@ -2674,7 +2798,7 @@ case "${command_name}" in
     else
       echo "VSS stack has not been bootstrapped (generated.env is absent)."
     fi
-    if official_edge_demo_lane_is_deployed; then
+    if official_edge_lane_is_deployed; then
       model_is_served "${official_edge_llm_endpoint}" "${official_edge_llm_model}" &&
         echo "Official Nemotron 3 LLM endpoint: ready" || echo "Official Nemotron 3 LLM endpoint: unavailable"
       model_is_served "${official_edge_vlm_endpoint}" "${official_edge_vlm_model}" &&
@@ -2685,8 +2809,14 @@ case "${command_name}" in
       model_is_served "${VLM_ENDPOINT_URL}" "${THOR_LOCAL_VLM_MODEL}" &&
         echo "VLM endpoint: ready" || echo "VLM endpoint: unavailable"
     fi
-    edge_cache_cleaner_is_running &&
-      echo "Thor cache cleaner: ready" || echo "Thor cache cleaner: unavailable"
+    if official_edge_lane_is_deployed; then
+      edge_cache_cleaner_is_running &&
+        echo "Periodic cache cleaner: running (unsafe for exact dual-model lane)" ||
+        echo "Periodic cache cleaner: stopped (required for exact dual-model safety)"
+    else
+      edge_cache_cleaner_is_running &&
+        echo "Thor cache cleaner: ready" || echo "Thor cache cleaner: unavailable"
+    fi
     ;;
   -h|--help|help)
     usage

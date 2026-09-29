@@ -1,0 +1,56 @@
+name: vss-memory-support
+services:
+  test:
+    image: sha256:d559f2729d789b024caff7fd1d74725dfd4670580cc560858bc0ca6445bc0640
+    container_name: vss-memory-support
+    runtime: runc
+    restart: 'no'
+    oom_score_adj: 500
+    environment:
+      COSMOS_EMBED_MODEL: cosmos-embed1-448p-anomaly-detection
+      VST_API_URL: http://127.0.0.1:30888/vst/api
+      EVIDENCE_CLIP_HOST: 127.0.0.1
+      MAX_DURATION_SECONDS: '600'
+      CACHE_ROOT: /cache
+      EVIDENCE_CLIP_PORT: '8098'
+      VST_PATH_PREFIX: /home/vst/vst_release/vst_video
+      COSMOS_EMBED_API_URL: http://127.0.0.1:8017/v1/generate_text_embeddings
+      MAX_CACHE_BYTES: '4294967296'
+      MEDIA_ROOT: /media
+      PATH: /usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      LANG: C.UTF-8
+      GPG_KEY: 7169605F62C751356D054A26A821E680E5FA6305
+      PYTHON_VERSION: 3.12.14
+      PYTHON_SHA256: 5c8462af5790baf43a321a1559dbe0db06d1be4300fb85fb53c40060668e548a
+    volumes:
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/data_log/vst/vst_video
+      target: /media
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/evidence-clip-cache
+      target: /cache
+      read_only: false
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/data_log/vst/clip_storage
+      target: /recordings
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/thor-local/evidence-clip/server.py
+      target: /app/server.py
+      read_only: true
+    entrypoint:
+    - python
+    - /app/server.py
+    working_dir: /app
+    shm_size: 67108864
+    network_mode: host
+    healthcheck:
+      test:
+      - CMD
+      - python
+      - -c
+      - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8098/health',timeout=2).read()
+      interval: 10s
+      timeout: 3s
+      retries: 6

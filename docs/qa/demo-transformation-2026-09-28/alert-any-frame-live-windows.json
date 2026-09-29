@@ -1,0 +1,146 @@
+[
+  {
+    "chunk": 0,
+    "start": "2026-09-29T01:35:25.641Z",
+    "end": "2026-09-29T01:35:33.171Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:35:33.761000+00:00",
+    "last_frame_to_response_seconds": 0.59,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013525_dd190.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.51,
+      5.02,
+      7.43
+    ],
+    "visual_review": "YES supported by a visible box in reconstructed clip samples (window 6: partial entry at final right edge)."
+  },
+  {
+    "chunk": 1,
+    "start": "2026-09-29T01:35:35.641Z",
+    "end": "2026-09-29T01:35:43.174Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:35:43.766000+00:00",
+    "last_frame_to_response_seconds": 0.592,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013535_37ff4.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.022,
+      7.433
+    ],
+    "visual_review": "YES supported by a visible box in reconstructed clip samples (window 6: partial entry at final right edge)."
+  },
+  {
+    "chunk": 2,
+    "start": "2026-09-29T01:35:45.641Z",
+    "end": "2026-09-29T01:35:53.141Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:35:53.759000+00:00",
+    "last_frame_to_response_seconds": 0.618,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013545_2dc09.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.5,
+      5.0,
+      7.4
+    ],
+    "visual_review": "YES supported by a visible box in reconstructed clip samples (window 6: partial entry at final right edge)."
+  },
+  {
+    "chunk": 3,
+    "start": "2026-09-29T01:35:55.641Z",
+    "end": "2026-09-29T01:36:03.174Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:36:03.833000+00:00",
+    "last_frame_to_response_seconds": 0.659,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013555_3d039.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.022,
+      7.433
+    ],
+    "visual_review": "YES supported by a visible box in reconstructed clip samples (window 6: partial entry at final right edge)."
+  },
+  {
+    "chunk": 4,
+    "start": "2026-09-29T01:36:05.641Z",
+    "end": "2026-09-29T01:36:13.174Z",
+    "answer": "NO",
+    "response_time": "2026-09-29T01:36:13.767000+00:00",
+    "last_frame_to_response_seconds": 0.593,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013605_47fe5.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.022,
+      7.433
+    ],
+    "visual_review": "NO consistent with four inspected empty frames; full interval not exhaustively annotated."
+  },
+  {
+    "chunk": 5,
+    "start": "2026-09-29T01:36:15.641Z",
+    "end": "2026-09-29T01:36:23.174Z",
+    "answer": "NO",
+    "response_time": "2026-09-29T01:36:23.782000+00:00",
+    "last_frame_to_response_seconds": 0.608,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013615_094af.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.022,
+      7.433
+    ],
+    "visual_review": "NO conflicts with visible crumpled box in reconstructed clip samples; fixed-clip replay returns YES."
+  },
+  {
+    "chunk": 6,
+    "start": "2026-09-29T01:36:25.641Z",
+    "end": "2026-09-29T01:36:33.173Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:36:33.836000+00:00",
+    "last_frame_to_response_seconds": 0.663,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013625_af856.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.021,
+      7.432
+    ],
+    "visual_review": "YES supported by a visible box in reconstructed clip samples (window 6: partial entry at final right edge)."
+  },
+  {
+    "chunk": 7,
+    "start": "2026-09-29T01:36:35.641Z",
+    "end": "2026-09-29T01:36:43.173Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:36:43.811000+00:00",
+    "last_frame_to_response_seconds": 0.638,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013635_27869.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.021,
+      7.432
+    ],
+    "visual_review": "YES supported by a visible box in reconstructed clip samples (window 6: partial entry at final right edge)."
+  },
+  {
+    "chunk": 8,
+    "start": "2026-09-29T01:36:45.641Z",
+    "end": "2026-09-29T01:36:53.141Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:36:53.780000+00:00",
+    "last_frame_to_response_seconds": 0.639,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_013645_12b1b.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.5,
+      5.0,
+      7.4
+    ],
+    "visual_review": "YES supported by a visible box in reconstructed clip samples (window 6: partial entry at final right edge)."
+  }
+]

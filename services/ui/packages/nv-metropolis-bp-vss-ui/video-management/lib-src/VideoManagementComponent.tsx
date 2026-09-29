@@ -16,7 +16,7 @@ import {
 } from "./components";
 import { NUM_PARALLEL_FILE_UPLOADS } from "./constants";
 import { useStreams, useStorageTimelines } from "./hooks";
-import { deleteRtspStream, resetRtspStream } from "./rtspStream";
+import { deleteRtspStream, resetRtspStream, type AddRtspStreamResult } from "./rtspStream";
 import type {
   VideoManagementComponentProps,
   UploadProgress,
@@ -148,6 +148,7 @@ export const VideoManagementComponent: React.FC<
   }, []);
 
   const [isRtspModalOpen, setIsRtspModalOpen] = useState(false);
+  const [pendingCamera, setPendingCamera] = useState<AddRtspStreamResult | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [appliedSearchQuery, setAppliedSearchQuery] = useState("");
   const searchInputValueRef = useRef("");
@@ -515,10 +516,61 @@ export const VideoManagementComponent: React.FC<
     setIsRtspModalOpen(false);
   };
 
-  const handleRtspSuccess = useCallback(() => {
+  const handleRtspSuccess = useCallback((result: AddRtspStreamResult) => {
+    setPendingCamera(result);
+    setOperationNotice({
+      kind: "success",
+      text: `${result.name} connected. ${result.analysisPaused ? "AI analysis is paused." : "AI analysis was requested."} Waiting for the camera inventory…`,
+    });
+    // Make the new camera visible even if an earlier filter excluded it.
+    setSearchQuery("");
+    setAppliedSearchQuery("");
+    searchInputValueRef.current = "";
+    setShowRtsps(true);
     refetchRef.current();
     refetchTimelinesRef.current();
   }, []);
+
+  const pendingCameraVisible = Boolean(pendingCamera && streams.some(
+    (stream) => stream.sensorId === pendingCamera.sensorId
+  ));
+
+  useEffect(() => {
+    if (!pendingCamera) return;
+    const analysisStatus = pendingCamera.analysisPaused
+      ? "AI analysis is paused."
+      : "AI analysis was requested.";
+    if (pendingCameraVisible) {
+      setOperationNotice({
+        kind: "success",
+        text: `${pendingCamera.name} is in Sources. ${analysisStatus} Select Play to check the video.`,
+      });
+      setPendingCamera(null);
+      return;
+    }
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    let attempts = 0;
+    const refresh = async () => {
+      await refetchRef.current();
+      if (cancelled) return;
+      attempts += 1;
+      if (attempts < 10) {
+        timer = setTimeout(refresh, 2000);
+      } else {
+        setOperationNotice({
+          kind: "error",
+          text: `${pendingCamera.name} connected, but the camera inventory has not updated. ${analysisStatus} Use Refresh sources to check again; do not reconnect it.`,
+        });
+        setPendingCamera(null);
+      }
+    };
+    timer = setTimeout(refresh, 2000);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [pendingCamera, pendingCameraVisible]);
 
   const handlePlayStream = useCallback(
     async (stream: StreamInfo) => {
@@ -790,7 +842,17 @@ export const VideoManagementComponent: React.FC<
       return <LoadingState />;
     }
 
-    if (error || streams.length === 0) {
+    if (error) {
+      return (
+        <div role="alert" className="vm-source-error">
+          <h2>Sources are temporarily unavailable</h2>
+          <p>The local video service could not return the source catalog. Your saved sources have not been removed.</p>
+          <button type="button" onClick={() => void refetch()}>Retry loading sources</button>
+        </div>
+      );
+    }
+
+    if (streams.length === 0) {
       return (
         <EmptyState
           onFilesSelected={handleFilesSelected}
@@ -858,7 +920,7 @@ export const VideoManagementComponent: React.FC<
       <section className="vm-source-overview" aria-label="Source inventory">
         <div className="vm-source-overview__title">
           <span>Source inventory</span>
-          <strong>{streams.length}</strong>
+          <strong>{error || isLoading ? "—" : streams.length}</strong>
         </div>
         <div className="vm-source-overview__stat">
           <svg
@@ -874,7 +936,7 @@ export const VideoManagementComponent: React.FC<
             <rect x="3" y="6" width="12" height="12" rx="2" />
           </svg>
           <div>
-            <strong>{streams.filter(isRtspStream).length}</strong>
+            <strong>{error || isLoading ? "—" : streams.filter(isRtspStream).length}</strong>
             <span>Live cameras</span>
           </div>
         </div>
@@ -893,7 +955,7 @@ export const VideoManagementComponent: React.FC<
           </svg>
           <div>
             <strong>
-              {streams.filter((stream) => !isRtspStream(stream)).length}
+              {error || isLoading ? "—" : streams.filter((stream) => !isRtspStream(stream)).length}
             </strong>
             <span>Recorded videos</span>
           </div>
@@ -974,7 +1036,7 @@ export const VideoManagementComponent: React.FC<
 
         <AgentUploadDialog
           agentApiUrl={agentApiUrl}
-          overlay="contained"
+          overlay="viewport"
           open={showUploadDialog}
           files={selectedFiles}
           configTemplate={configTemplate}

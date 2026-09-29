@@ -20,6 +20,7 @@ export interface VisionStreamMetadata {
 }
 
 export interface VisionStream {
+  connectionState?: "online" | "offline" | "removed" | "unknown";
   isMain: boolean;
   metadata: VisionStreamMetadata;
   name: string;

@@ -1968,6 +1968,47 @@ class TestAddStreamEndpoint:
 class TestRegisterRtspStreamApiRoutes:
     """Test register_rtsp_ingest_routes function."""
 
+    def test_does_not_schedule_restart_reconciliation_when_disabled(self):
+        """A staged Thor launch must not activate persisted sources before admission."""
+        mock_app = MagicMock()
+        mock_config = MagicMock()
+        running_loop = MagicMock()
+
+        mock_streaming_config = MagicMock()
+        mock_streaming_config.vst_internal_url = "http://vst:30888"
+        mock_streaming_config.rtvi_cv_base_url = "http://rtvi-cv:9000"
+        mock_streaming_config.rtvi_embed_base_url = "http://rtvi-embed:8017"
+        mock_streaming_config.rtvi_vlm_base_url = "http://rtvi-vlm:8018"
+        mock_streaming_config.auto_resume_registered_live_sources = False
+
+        mock_config.general.front_end.streaming_ingest = mock_streaming_config
+
+        with patch("vss_agents.api.rtsp_ingest.asyncio.get_running_loop", return_value=running_loop):
+            register_rtsp_ingest_routes(mock_app, mock_config)
+
+        running_loop.create_task.assert_not_called()
+        event_names = [call.args[0] for call in mock_app.add_event_handler.call_args_list]
+        assert "startup" not in event_names
+        assert event_names == ["shutdown"]
+
+    def test_schedules_restart_reconciliation_by_default(self):
+        """Existing profiles retain automatic source recovery unless they opt out."""
+        mock_app = MagicMock()
+        mock_config = MagicMock()
+
+        mock_streaming_config = MagicMock(spec=[])
+        mock_streaming_config.vst_internal_url = "http://vst:30888"
+        mock_streaming_config.rtvi_cv_base_url = "http://rtvi-cv:9000"
+        mock_streaming_config.rtvi_embed_base_url = "http://rtvi-embed:8017"
+        mock_streaming_config.rtvi_vlm_base_url = "http://rtvi-vlm:8018"
+
+        mock_config.general.front_end.streaming_ingest = mock_streaming_config
+
+        register_rtsp_ingest_routes(mock_app, mock_config)
+
+        event_names = [call.args[0] for call in mock_app.add_event_handler.call_args_list]
+        assert event_names == ["startup", "shutdown"]
+
     def test_register_with_full_rtvi_config(self):
         """search-style: VST + RTVI-CV + RTVI-embed all configured, RTVI manages storage."""
         mock_app = MagicMock()

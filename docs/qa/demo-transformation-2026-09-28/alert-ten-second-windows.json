@@ -1,0 +1,146 @@
+[
+  {
+    "chunk": 0,
+    "start": "2026-09-29T01:23:09.513Z",
+    "end": "2026-09-29T01:23:17.045Z",
+    "answer": "No",
+    "response_time": "2026-09-29T01:23:17.607000+00:00",
+    "last_frame_to_response_seconds": 0.562,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012309_c9be1.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.021,
+      7.432
+    ],
+    "visual_review": "Discrepancy: box visible near clip end despite NO; exact model input frames not captured."
+  },
+  {
+    "chunk": 1,
+    "start": "2026-09-29T01:23:19.513Z",
+    "end": "2026-09-29T01:23:27.047Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:23:27.680000+00:00",
+    "last_frame_to_response_seconds": 0.633,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012319_3600d.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.023,
+      7.434
+    ],
+    "visual_review": "YES supported by visible boxes."
+  },
+  {
+    "chunk": 2,
+    "start": "2026-09-29T01:23:29.513Z",
+    "end": "2026-09-29T01:23:37.014Z",
+    "answer": "NO",
+    "response_time": "2026-09-29T01:23:37.595000+00:00",
+    "last_frame_to_response_seconds": 0.581,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012329_d81ce.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.5,
+      5.001,
+      7.401
+    ],
+    "visual_review": "Discrepancy: box visible near clip end despite NO; exact model input frames not captured."
+  },
+  {
+    "chunk": 3,
+    "start": "2026-09-29T01:23:39.513Z",
+    "end": "2026-09-29T01:23:47.014Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:23:47.631000+00:00",
+    "last_frame_to_response_seconds": 0.617,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012339_d50ca.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.5,
+      5.001,
+      7.401
+    ],
+    "visual_review": "YES supported by visible boxes."
+  },
+  {
+    "chunk": 4,
+    "start": "2026-09-29T01:23:49.513Z",
+    "end": "2026-09-29T01:23:57.014Z",
+    "answer": "No",
+    "response_time": "2026-09-29T01:23:57.556000+00:00",
+    "last_frame_to_response_seconds": 0.542,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012349_d69f5.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.5,
+      5.001,
+      7.401
+    ],
+    "visual_review": "NO consistent with four inspected empty-belt frames; whole interval not exhaustively scored."
+  },
+  {
+    "chunk": 5,
+    "start": "2026-09-29T01:23:59.513Z",
+    "end": "2026-09-29T01:24:07.046Z",
+    "answer": "Yes",
+    "response_time": "2026-09-29T01:24:07.613000+00:00",
+    "last_frame_to_response_seconds": 0.567,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012359_d4d94.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.022,
+      7.433
+    ],
+    "visual_review": "YES supported by visible boxes."
+  },
+  {
+    "chunk": 6,
+    "start": "2026-09-29T01:24:09.513Z",
+    "end": "2026-09-29T01:24:17.014Z",
+    "answer": "NO",
+    "response_time": "2026-09-29T01:24:17.852000+00:00",
+    "last_frame_to_response_seconds": 0.838,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012409_2324e.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.5,
+      5.001,
+      7.401
+    ],
+    "visual_review": "NO consistent with four inspected empty-belt frames; whole interval not exhaustively scored."
+  },
+  {
+    "chunk": 7,
+    "start": "2026-09-29T01:24:19.513Z",
+    "end": "2026-09-29T01:24:27.014Z",
+    "answer": "YES",
+    "response_time": "2026-09-29T01:24:27.599000+00:00",
+    "last_frame_to_response_seconds": 0.585,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012419_046a9.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.5,
+      5.001,
+      7.401
+    ],
+    "visual_review": "YES supported by visible boxes."
+  },
+  {
+    "chunk": 8,
+    "start": "2026-09-29T01:24:29.513Z",
+    "end": "2026-09-29T01:24:37.047Z",
+    "answer": "No",
+    "response_time": "2026-09-29T01:24:37.627000+00:00",
+    "last_frame_to_response_seconds": 0.58,
+    "video_url": "http://10.88.9.12:7777/vst/storage/temp_files/Conveyor__Recorded_Simulation_RTSP_Replay_20260929_012429_63218.mp4",
+    "sample_offsets_seconds": [
+      0,
+      2.511,
+      5.023,
+      7.434
+    ],
+    "visual_review": "NO consistent with four inspected empty-belt frames; whole interval not exhaustively scored."
+  }
+]

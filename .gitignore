@@ -36,3 +36,12 @@ tools/sdg-postprocessing/thor/.thor-env.bootstrap/
 *.log
 *checkpoint.*
 .orchestrator-artifacts/*
+
+# Per-device Spark deployment: rendered credentials, caches, and model/data state.
+/.spark/
+# Local browser snapshots and high-volume runtime telemetry/captured tensors.
+/.playwright-mcp/
+/artifacts/runtime-telemetry/samples*.jsonl
+/artifacts/live-input-capture-*/**/*.npy
+/artifacts/live-input-capture-*/.lock
+/artifacts/live-input-capture-*/.started

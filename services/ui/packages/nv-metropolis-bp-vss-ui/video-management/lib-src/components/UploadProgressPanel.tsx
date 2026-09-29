@@ -37,7 +37,7 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
     <div
       ref={dialogRef}
       data-testid="upload-progress-panel"
-      className="absolute inset-0 z-40 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Upload progress"
@@ -94,6 +94,7 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
           {allDone && (
             <button
               onClick={onClose}
+              aria-label="Close upload progress"
               className="p-1.5 rounded transition-colors text-gray-400 hover:text-white hover:bg-neutral-700 dark:text-gray-400 dark:hover:text-white dark:hover:bg-neutral-700"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

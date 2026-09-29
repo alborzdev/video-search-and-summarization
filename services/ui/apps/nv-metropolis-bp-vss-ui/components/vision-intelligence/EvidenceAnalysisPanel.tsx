@@ -3,6 +3,7 @@
 import type {
   EvidenceAnalysisClaim,
   EvidenceAnalysisResponse,
+  EvidenceVisualInspection,
 } from "./evidenceAnalysis";
 import type {
   InvestigationCreateRequest,
@@ -13,7 +14,6 @@ import type {
 import {
   IconAlertTriangle,
   IconArrowRight,
-  IconCheck,
   IconClock,
   IconDownload,
   IconFileReport,
@@ -24,7 +24,7 @@ import {
   IconTrash,
   IconX,
 } from "@tabler/icons-react";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 
 export interface SelectedEvidenceItem {
   clientId: string;
@@ -34,15 +34,21 @@ export interface SelectedEvidenceItem {
   sensorId: string;
   sourceName: string;
   startTime: string;
+  startLabel?: string;
+  durationLabel?: string;
+  fromEarlierSearch?: boolean;
   title: string;
 }
 
 interface EvidenceAnalysisPanelProps {
+  questionInputRef?: React.RefObject<HTMLInputElement>;
   analysis: EvidenceAnalysisResponse | null;
   error: string | null;
   isAnalyzing: boolean;
   items: SelectedEvidenceItem[];
+  inspections?: EvidenceVisualInspection[];
   onAnalyze: () => void;
+  onRetry: () => void;
   onAsk: (question: string) => void;
   onClear: () => void;
   onOpenEvidence: (clientId: string) => void;
@@ -117,19 +123,24 @@ export function EvidenceAnalysisPanel({
   error,
   isAnalyzing,
   items,
+  inspections = [],
   onAnalyze,
+  onRetry,
   onAsk,
   onClear,
   onOpenEvidence,
   onRemove,
+  questionInputRef,
 }: EvidenceAnalysisPanelProps) {
   const [question, setQuestion] = useState("");
+  const localQuestionInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = questionInputRef ?? localQuestionInputRef;
   const [showInvestigationForm, setShowInvestigationForm] = useState(false);
   const [investigationTitle, setInvestigationTitle] = useState("");
   const [investigationSeverity, setInvestigationSeverity] =
-    useState<InvestigationSeverity>("medium");
+    useState<InvestigationSeverity>("low");
   const [investigationDisposition, setInvestigationDisposition] =
-    useState<InvestigationDisposition>("open");
+    useState<InvestigationDisposition>("under_review");
   const [investigationNotes, setInvestigationNotes] = useState("");
   const [investigationSaving, setInvestigationSaving] = useState(false);
   const [investigationError, setInvestigationError] = useState<string | null>(
@@ -140,6 +151,8 @@ export function EvidenceAnalysisPanel({
   const evidenceById = new Map(
     analysis?.evidence.map((item) => [item.evidence_id, item.client_id]) ?? []
   );
+  const summaryIsObservation = analysis?.observations.length === 1 &&
+    analysis.observations[0].text === analysis.summary;
   const retainedCaptionCount =
     analysis?.evidence.filter(
       (item) => item.inspection_source === "retained_cosmos_caption"
@@ -155,6 +168,23 @@ export function EvidenceAnalysisPanel({
     onAsk(nextQuestion);
     setQuestion("");
   };
+  const questionForm = (
+          <form className="vi-evidence-followup" onSubmit={submitQuestion}>
+            <IconMessageCircle size={18} />
+            <input
+              ref={inputRef}
+              aria-label="Ask about selected evidence"
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+              placeholder={analysis ? "Ask a follow-up…" : items.length === 1 ? "Ask about this clip…" : "Ask about these clips…"}
+              disabled={isAnalyzing}
+              autoFocus={!analysis && !isAnalyzing}
+            />
+            <button type="submit" aria-label={analysis ? "Send evidence follow-up" : "Ask selected evidence"} disabled={!question.trim() || isAnalyzing}>
+              <IconArrowRight size={17} />
+            </button>
+          </form>
+  );
   const createInvestigation = async (event: FormEvent) => {
     event.preventDefault();
     if (!analysis || investigationSaving) return;
@@ -169,6 +199,7 @@ export function EvidenceAnalysisPanel({
         sensor_id: item.sensorId,
         source_name: item.sourceName,
         start_time: item.startTime,
+        ...(item.startLabel ? { start_label: item.startLabel } : {}),
         title: item.title,
       })),
       notes: investigationNotes,
@@ -213,7 +244,7 @@ export function EvidenceAnalysisPanel({
       <header className="vi-evidence-workspace-header">
         <div>
           <span>
-            <IconSparkles size={16} /> Evidence workspace
+            <IconSparkles size={16} /> Ask about selected clips
           </span>
           <strong>
             {items.length} selected clip{items.length === 1 ? "" : "s"}
@@ -239,8 +270,8 @@ export function EvidenceAnalysisPanel({
                   items.length === 1 ? "" : "s"
                 }…`
               : analysis
-              ? "Analyze again"
-              : "Analyze selected evidence"}
+              ? "Describe again"
+              : "Describe what happens"}
           </button>
         </div>
       </header>
@@ -261,10 +292,12 @@ export function EvidenceAnalysisPanel({
             </button>
             <div>
               <strong>{item.title}</strong>
-              <span>
-                {item.sourceName} · {formatClock(item.startTime)}
+              <span title={item.sourceName}>{item.sourceName}</span>
+              <span className="vi-evidence-tray-time">
+                {item.startLabel ?? formatClock(item.startTime)}
+                {item.durationLabel && ` · ${item.durationLabel} clip`}
               </span>
-              <small>{item.matchType}</small>
+              <small>{item.fromEarlierSearch ? "Selected earlier · " : ""}{item.matchType}</small>
             </div>
             <button
               type="button"
@@ -278,11 +311,36 @@ export function EvidenceAnalysisPanel({
         ))}
       </div>
 
+      {items.some((item) => item.fromEarlierSearch) && (
+        <p className="vi-evidence-selection-context">Includes clips from earlier searches. Questions use the selection above.</p>
+      )}
+
+      {!analysis && questionForm}
+
+      {!analysis && (
+        <div className="vi-evidence-question-ideas" role="group" aria-label="Suggested evidence questions">
+          <span>Try a question, or write your own.</span>
+          {[
+            { label: "What moves?", question: items.length === 1
+              ? "What moves in this clip?"
+              : "What moves in each clip?" },
+            { label: "What is visible?", question: items.length === 1
+              ? "What objects are visible in this clip?"
+              : "What objects are visible in each clip?" },
+          ].map((idea) => (
+            <button key={idea.label} type="button" disabled={isAnalyzing}
+              onClick={() => { setQuestion(idea.question); inputRef.current?.focus(); }}>
+              {idea.label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {error && (
         <div className="vi-evidence-analysis-error" role="alert">
           <IconAlertTriangle size={17} />
           <span>{error}</span>
-          <button type="button" onClick={onAnalyze} disabled={isAnalyzing}>
+          <button type="button" onClick={onRetry} disabled={isAnalyzing}>
             Try again
           </button>
         </div>
@@ -292,25 +350,49 @@ export function EvidenceAnalysisPanel({
         <div className="vi-evidence-analysis-loading" aria-live="polite">
           <span className="vi-spinner" />
           <div>
-            <strong>Inspecting the actual selected footage</strong>
+            <strong>{inspections.length === items.length
+              ? (items.length > 1 ? "Preparing the comparison" : "Preparing the answer")
+              : inspections.length ? `${inspections.length} of ${items.length} clips inspected`
+              : "Inspecting the actual selected footage"}</strong>
             <span>
-              Local vision analyzes each clip before the evidence is
-              synthesized. This can take a moment on Thor.
+              Your question is answered from the selected footage on this
+              device. Each answer stays linked to its source clip.
             </span>
           </div>
         </div>
+      )}
+
+      {!analysis && inspections.length > 0 && (
+        <section className="vi-evidence-partial" aria-label="Inspection progress" aria-live="polite">
+          <strong>{error ? "Inspections completed before interruption" : `Results so far · ${items.length > 1 ? "comparison" : "answer"} pending`}</strong>
+          {inspections.map((inspection) => (
+            <article key={inspection.evidence_id}>
+              <button type="button" onClick={() => onOpenEvidence(inspection.client_id)}>
+                <IconPlayerPlay size={14} /> {inspection.evidence_id} · {inspection.source_name}
+              </button>
+              <p>{inspection.observation}</p>
+            </article>
+          ))}
+        </section>
       )}
 
       {analysis && (
         <div className="vi-evidence-analysis" aria-live="polite">
           <section className="vi-evidence-answer">
             <span>
-              <IconSparkles size={17} /> Vision Analyst
+              <IconSparkles size={17} /> AI answer
             </span>
+            <p className="vi-answer-question">You asked: {analysis.question || analysis.query}</p>
             <h2>{analysis.summary}</h2>
+            {summaryIsObservation && (
+              <div className="vi-summary-citation">
+                <CitationButtons evidenceIds={analysis.observations[0].evidence_ids}
+                  evidenceById={evidenceById} onOpenEvidence={onOpenEvidence} />
+              </div>
+            )}
             <p className="vi-evidence-grounding">
-              <IconShieldCheck size={15} /> Grounded in {analysis.evidence.length}{" "}
-              Cosmos-inspected clip{analysis.evidence.length === 1 ? "" : "s"}
+              <IconPlayerPlay size={15} /> Based on {analysis.evidence.length}{" "}
+              AI-inspected clip{analysis.evidence.length === 1 ? "" : "s"}
               {retainedCaptionCount > 0 && (
                 <span>
                   {retainedCaptionCount} retained caption
@@ -327,22 +409,34 @@ export function EvidenceAnalysisPanel({
                 <span>Independent clips · identity not inferred</span>
               )}
             </p>
+            {typeof analysis.timings_ms?.total === "number" && Number.isFinite(analysis.timings_ms.total) && analysis.timings_ms.total >= 0 && (
+              <details className="vi-analysis-timing">
+                <summary>Local analysis: {(analysis.timings_ms.total / 1000).toFixed(1)} seconds</summary>
+                <p>Time measured by the local analysis service. Upload, queue and browser delivery time are not included.</p>
+                {([ ["inspection", "Footage inspection"], ["synthesis", "Answer preparation"] ] as const).map(([key, label]) => {
+                  const duration = analysis.timings_ms?.[key];
+                  return typeof duration === "number" && Number.isFinite(duration) && duration >= 0
+                    ? <div key={key}>{label}: {(duration / 1000).toFixed(1)} seconds</div>
+                    : null;
+                })}
+              </details>
+            )}
             {analysis.warning && (
               <p className="vi-evidence-degraded">
                 <IconAlertTriangle size={15} /> {analysis.warning}
               </p>
             )}
             <div className="vi-evidence-claims">
-              <div>
+              {!summaryIsObservation && <div>
                 <h3>
-                  <IconCheck size={16} /> Observed
+                  <IconSparkles size={16} /> AI observations
                 </h3>
                 <ClaimList
                   claims={analysis.observations}
                   evidenceById={evidenceById}
                   onOpenEvidence={onOpenEvidence}
                 />
-              </div>
+              </div>}
               {analysis.interpretations.length > 0 && (
                 <div>
                   <h3>AI interpretation</h3>
@@ -358,11 +452,12 @@ export function EvidenceAnalysisPanel({
 
           <aside className="vi-evidence-timeline">
             <span>
-              <IconClock size={16} /> Evidence timeline
+              <IconClock size={16} /> Check the video
             </span>
             <ol>
               {analysis.timeline.map((entry) => {
                 const clientId = evidenceById.get(entry.evidence_id);
+                const selectedItem = items.find((item) => item.clientId === clientId);
                 return (
                   <li key={entry.evidence_id}>
                     <button
@@ -372,7 +467,7 @@ export function EvidenceAnalysisPanel({
                     >
                       <i />
                       <div>
-                        <time>{formatClock(entry.start_time)}</time>
+                        <time>{selectedItem?.startLabel ?? formatClock(entry.start_time)}</time>
                         <strong>{entry.label}</strong>
                         <span>
                           {entry.source_name} · {entry.evidence_id}
@@ -386,19 +481,7 @@ export function EvidenceAnalysisPanel({
             </ol>
           </aside>
 
-          <form className="vi-evidence-followup" onSubmit={submitQuestion}>
-            <IconMessageCircle size={18} />
-            <input
-              aria-label="Ask about selected evidence"
-              value={question}
-              onChange={(event) => setQuestion(event.target.value)}
-              placeholder="Ask a follow-up using only this evidence…"
-              disabled={isAnalyzing}
-            />
-            <button type="submit" disabled={!question.trim() || isAnalyzing}>
-              <IconArrowRight size={17} />
-            </button>
-          </form>
+          {questionForm}
 
           {analysis.suggested_questions.length > 0 && (
             <div className="vi-evidence-suggestions">
@@ -420,38 +503,36 @@ export function EvidenceAnalysisPanel({
               <div className="vi-investigation-saved">
                 <IconShieldCheck size={18} />
                 <div>
-                  <strong>Investigation saved</strong>
+                  <strong>Report saved</strong>
                   <span>
-                    {investigation.severity} severity · {investigation.id}
+                    Answer, notes and video references saved locally.
                   </span>
                 </div>
                 <a
                   href={investigation.report_url}
-                  target="_blank"
-                  rel="noreferrer"
                 >
-                  <IconFileReport size={15} /> View evidence report
+                  <IconFileReport size={15} /> Open report
                 </a>
                 <a
                   href={`${investigation.report_url}&download=true`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <IconDownload size={15} /> Export HTML
+                  <IconDownload size={15} /> Download report
                 </a>
               </div>
-            ) : (
+            ) : !showInvestigationForm ? (
               <button
                 type="button"
                 onClick={() => {
-                  setInvestigationTitle(analysis.summary.slice(0, 180));
+                  setInvestigationTitle((analysis.question || analysis.query).slice(0, 180));
                   setShowInvestigationForm(true);
                   setInvestigationError(null);
                 }}
               >
-                <IconShieldCheck size={16} /> Create incident and report
+                <IconShieldCheck size={16} /> Save report
               </button>
-            )}
+            ) : null}
           </div>
 
           {showInvestigationForm && (
@@ -463,16 +544,15 @@ export function EvidenceAnalysisPanel({
                 <div>
                   <IconShieldCheck size={18} />
                   <span>
-                    <strong>Create investigation</strong>
+                    <strong>Save an evidence report</strong>
                     <small>
-                      Retains the briefing, ordered evidence, notes, and exact
-                      playable citations locally on Thor.
+                      Keep this answer, your notes and links to the selected video together.
                     </small>
                   </span>
                 </div>
                 <button
                   type="button"
-                  aria-label="Cancel investigation"
+                  aria-label="Cancel report"
                   onClick={() => setShowInvestigationForm(false)}
                 >
                   <IconX size={16} />
@@ -481,7 +561,7 @@ export function EvidenceAnalysisPanel({
               <label>
                 Title
                 <input
-                  aria-label="Investigation title"
+                  aria-label="Report title"
                   value={investigationTitle}
                   onChange={(event) =>
                     setInvestigationTitle(event.target.value)
@@ -490,11 +570,13 @@ export function EvidenceAnalysisPanel({
                   required
                 />
               </label>
-              <div>
+              <details className="vi-report-review-details">
+                <summary>Review details · {investigationSeverity} priority · {investigationDisposition.replace("_", " ")}</summary>
+                <div>
                 <label>
-                  Severity
+                  Review priority
                   <select
-                    aria-label="Investigation severity"
+                    aria-label="Review priority"
                     value={investigationSeverity}
                     onChange={(event) =>
                       setInvestigationSeverity(
@@ -509,9 +591,9 @@ export function EvidenceAnalysisPanel({
                   </select>
                 </label>
                 <label>
-                  Disposition
+                  Review status
                   <select
-                    aria-label="Investigation disposition"
+                    aria-label="Review status"
                     value={investigationDisposition}
                     onChange={(event) =>
                       setInvestigationDisposition(
@@ -525,11 +607,12 @@ export function EvidenceAnalysisPanel({
                     <option value="dismissed">Dismissed</option>
                   </select>
                 </label>
-              </div>
+                </div>
+              </details>
               <label>
-                Operator notes
+                Notes (optional)
                 <textarea
-                  aria-label="Investigation notes"
+                  aria-label="Report notes"
                   value={investigationNotes}
                   onChange={(event) =>
                     setInvestigationNotes(event.target.value)
@@ -554,7 +637,7 @@ export function EvidenceAnalysisPanel({
                   )}
                   {investigationSaving
                     ? "Saving locally…"
-                    : "Save investigation"}
+                    : "Save report"}
                 </button>
               </footer>
             </form>

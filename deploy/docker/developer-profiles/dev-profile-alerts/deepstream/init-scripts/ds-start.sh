@@ -79,7 +79,7 @@ if [[ $HARDWARE_PROFILE == "DGX-THOR" ]]; then
         sed -i '/^VisualTracker:/,/^[A-Z][a-zA-Z]*:/ {/^[[:space:]]*vpiBackend4DcfTracker:/d;}' "$TRACKER_CONFIG"
         # Add the properties after VisualTracker line with proper YAML indentation (2 spaces)
         sed -i '/^VisualTracker:/a \  visualTrackerType: 2' "$TRACKER_CONFIG"
-        sed -i '/^[[:space:]]*visualTrackerType: 2/a \  vpiBackend4DcfTracker: 2' "$TRACKER_CONFIG"
+        sed -i '/^[[:space:]]*visualTrackerType: 2/a \  vpiBackend4DcfTracker: 1' "$TRACKER_CONFIG"
         # Update maxTargetsPerStream to 50 in TargetManagement section
         sed -i '/^TargetManagement:/,/^[A-Z][a-zA-Z]*:/ {s/^[[:space:]]*maxTargetsPerStream:.*/  maxTargetsPerStream: 50/;}' "$TRACKER_CONFIG"
         echo "##### Updated maxTargetsPerStream to 50 in TargetManagement section... #####"

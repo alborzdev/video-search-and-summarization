@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 
 import { useDialogAccessibility } from "@aiqtoolkit-ui/common";
-import { addRtspStream } from "../rtspStream";
+import { addRtspStream, type AddRtspStreamResult } from "../rtspStream";
 import {
   SEMANTIC_ANALYSIS_PROFILE_ID,
+  analysisProfileTask,
   type AnalysisProfile,
   loadAnalysisProfiles,
   recommendAnalysisProfile,
@@ -14,7 +15,7 @@ import { Button, TextInput } from "@nvidia/foundations-react-core";
 import React, { useEffect, useState } from "react";
 
 const POPUP_OVERLAY_VIEWPORT =
-  "fixed inset-0 z-50 flex items-center justify-center bg-black/50";
+  "fixed inset-0 z-[120] flex items-center justify-center bg-black/50";
 /** Covers only the parent `relative` region (e.g. Video Management main pane), not the whole browser window */
 const POPUP_OVERLAY_CONTAINED =
   "absolute inset-0 z-40 flex items-center justify-center bg-black/50";
@@ -23,7 +24,7 @@ interface AddRtspDialogProps {
   isOpen: boolean;
   agentApiUrl?: string | null;
   onClose: () => void;
-  onSuccess?: () => void;
+  onSuccess?: (result: AddRtspStreamResult) => void;
   /** `contained` = overlay only the nearest positioned ancestor (Video Management pane). Default `viewport` = full window. */
   overlay?: "viewport" | "contained";
 }
@@ -41,6 +42,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
   const [password, setPassword] = useState("");
   const [analysisProfiles, setAnalysisProfiles] = useState<AnalysisProfile[]>([]);
   const [analysisProfileId, setAnalysisProfileId] = useState(SEMANTIC_ANALYSIS_PROFILE_ID);
+  const [startAnalysis, setStartAnalysis] = useState(false);
   const [analysisIntent, setAnalysisIntent] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
   const [recommendation, setRecommendation] = useState<string | null>(null);
@@ -49,7 +51,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!isOpen || !agentApiUrl) return;
+    if (!isOpen || !agentApiUrl || !startAnalysis) return;
     const controller = new AbortController();
     setProfileLoading(true);
     loadAnalysisProfiles(agentApiUrl, controller.signal)
@@ -73,7 +75,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
         if (!controller.signal.aborted) setProfileLoading(false);
       });
     return () => controller.abort();
-  }, [agentApiUrl, isOpen]);
+  }, [agentApiUrl, isOpen, startAnalysis]);
 
   const extractNameFromUrl = (url: string): string =>
     url
@@ -103,6 +105,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
     setUsername("");
     setPassword("");
     setAnalysisProfileId(SEMANTIC_ANALYSIS_PROFILE_ID);
+    setStartAnalysis(false);
     setAnalysisIntent("");
     setRecommendation(null);
     setUserEditedName(false);
@@ -163,11 +166,12 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
         name: trimmedName,
         username: username.trim(),
         password,
-        analysisProfileId,
+        analysisProfileId: startAnalysis ? analysisProfileId : SEMANTIC_ANALYSIS_PROFILE_ID,
+        startAnalysis,
       });
       handleClose();
-      onSuccess?.();
-      void requestMonitoringSetup({
+      onSuccess?.(result);
+      if (!result.analysisPaused && startAnalysis) void requestMonitoringSetup({
         blocking: false,
         analysisProfileId: result.analysisProfileId,
         detectionEnabled: result.detectionEnabled ?? false,
@@ -305,15 +309,20 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
             />
           </div>
 
-          <fieldset className="space-y-3">
+          <label className="flex items-start gap-3 rounded-md border border-gray-200 p-4 dark:border-gray-700">
+            <input type="checkbox" checked={startAnalysis} onChange={(event) => setStartAnalysis(event.target.checked)} />
+            <span><strong className="block text-sm">Start AI analysis after connecting</strong>
+              <span className="text-xs text-gray-500">Leave off to check camera playback first. You can start analysis later from the camera view.</span></span>
+          </label>
+
+          {startAnalysis && <fieldset className="space-y-3">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <legend className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                  AI analysis profile
+                  What should this camera help you do?
                 </legend>
                 <p className="mt-1 text-xs leading-5 text-gray-500">
-                  Every profile remains searchable. Detection profiles also publish tracked objects
-                  for compatible alerts and overlays.
+                  All options support video search. Tracking options also support object overlays and compatible alert rules.
                 </p>
               </div>
               <span className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-1 text-[11px] text-cyan-700 dark:text-cyan-300">
@@ -357,14 +366,14 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
                         <span className="min-w-0 flex-1">
                           <span className="flex flex-wrap items-center justify-between gap-2">
                             <strong className="text-sm text-gray-800 dark:text-gray-100">
-                              {profile.name}
+                              {analysisProfileTask(profile).name}
                             </strong>
                             <span className="text-[11px] uppercase tracking-wide text-gray-500">
                               {profile.resourceTier} load
                             </span>
                           </span>
                           <span className="mt-1 block text-xs leading-5 text-gray-500">
-                            {profile.description}
+                            {analysisProfileTask(profile).description}
                           </span>
                           <span className="mt-2 block text-[11px] text-gray-500">
                             {profile.modelLabel}
@@ -401,7 +410,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
               />
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <p className="max-w-md text-xs leading-5 text-gray-500">
-                  Thor recommends from the profiles actually installed here; it never invents a pipeline.
+                  Describe your use case to get a suggestion from the installed options.
                 </p>
                 <Button
                   disabled={profileLoading || !sensorName.trim()}
@@ -418,7 +427,7 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
                 </p>
               )}
             </div>
-          </fieldset>
+          </fieldset>}
 
           <fieldset className="space-y-3">
             <legend className="text-sm text-gray-700 dark:text-gray-300">
@@ -490,11 +499,11 @@ export const AddRtspDialog: React.FC<AddRtspDialogProps> = ({
             type="submit"
             disabled={
               isSubmitting ||
-              profileLoading ||
-              !analysisProfiles.some((profile) => profile.id === analysisProfileId && profile.ready)
+              (startAnalysis && (profileLoading ||
+              !analysisProfiles.some((profile) => profile.id === analysisProfileId && profile.ready)))
             }
           >
-            {isSubmitting ? "Connecting..." : "Connect camera"}
+            {isSubmitting ? "Connecting..." : startAnalysis ? "Connect and analyze" : "Connect preview only"}
           </Button>
         </div>
       </form>

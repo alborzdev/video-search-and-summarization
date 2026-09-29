@@ -1,0 +1,173 @@
+{
+  "results": [
+    {
+      "case": "color_oracle",
+      "repeat": 0,
+      "seconds": 0.78,
+      "passed": true,
+      "response": {
+        "id": "b3798b00-c637-476f-9da3-1da6f973863e",
+        "object": "chat.completion",
+        "created": 1788969998,
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "red green blue yellow",
+              "reasoning_description": null
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 29,
+          "completion_tokens": 5,
+          "total_tokens": 34
+        }
+      }
+    },
+    {
+      "case": "four_video_frames",
+      "repeat": 0,
+      "seconds": 10.45,
+      "passed": true,
+      "response": {
+        "id": "b584d19a-5800-4491-ae9a-ffec78a7216f",
+        "object": "chat.completion",
+        "created": 1788969999,
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "A worker wearing a yellow safety vest and hard hat stands beside a metal rolling step ladder in front of aisle D, facing away while holding an item near his body. In the foreground right, a neon green high-visibility jacket with a yellow hard hat draped over it rests on stacked cardboard boxes. The surrounding warehouse features tall green metal shelving units labeled A through F, loaded with various boxed goods under bright overhead lighting.",
+              "reasoning_description": null
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 85,
+          "total_tokens": 125
+        }
+      }
+    },
+    {
+      "case": "color_oracle",
+      "repeat": 1,
+      "seconds": 0.71,
+      "passed": true,
+      "response": {
+        "id": "13d0dd75-ca6f-46d7-820d-50c88e039f1a",
+        "object": "chat.completion",
+        "created": 1788970009,
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Red green blue yellow",
+              "reasoning_description": null
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 29,
+          "completion_tokens": 5,
+          "total_tokens": 34
+        }
+      }
+    },
+    {
+      "case": "four_video_frames",
+      "repeat": 1,
+      "seconds": 7.7,
+      "passed": true,
+      "response": {
+        "id": "46134d2b-c00c-4557-8a50-4a1359c23526",
+        "object": "chat.completion",
+        "created": 1788970010,
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "A worker wearing a high-visibility yellow vest and hard hat stands in an aisle between green racks labeled C and D, holding an object near shelf E. Another person in similar safety gear is partially visible behind boxes on the right side of the aisle. The scene remains static with no significant movement or vehicle activity observed.",
+              "reasoning_description": null
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 64,
+          "total_tokens": 104
+        }
+      }
+    },
+    {
+      "case": "color_oracle",
+      "repeat": 2,
+      "seconds": 0.72,
+      "passed": true,
+      "response": {
+        "id": "3fb23649-d1e6-4c2f-8980-b6aa79a147b2",
+        "object": "chat.completion",
+        "created": 1788970018,
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "Red green blue yellow",
+              "reasoning_description": null
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 29,
+          "completion_tokens": 5,
+          "total_tokens": 34
+        }
+      }
+    },
+    {
+      "case": "four_video_frames",
+      "repeat": 2,
+      "seconds": 6.95,
+      "passed": true,
+      "response": {
+        "id": "94fd0d61-613c-433c-a4ca-c1176d00784e",
+        "object": "chat.completion",
+        "created": 1788970019,
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "A worker wearing a yellow safety vest and a white hard hat is seen carrying a large object, possibly an appliance or piece of equipment, between aisles C and D. The person walks away from the camera toward aisle E. No other people or moving vehicles are visible in these frames.",
+              "reasoning_description": null
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 58,
+          "total_tokens": 98
+        }
+      }
+    }
+  ],
+  "minimum_available_gib": 77.63734436035156
+}

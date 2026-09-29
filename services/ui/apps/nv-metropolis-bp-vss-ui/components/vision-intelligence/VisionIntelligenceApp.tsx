@@ -2,7 +2,7 @@
 
 import type { MonitoringRule } from "./monitoringRules";
 import type { SystemPanel } from "./SystemWorkspace";
-import { formatMemory, healthLabel, type SystemHealth } from "./systemHealth";
+import { demoServiceChecks, formatMemory, healthLabel, type SystemHealth } from "./systemHealth";
 import type { PrimarySection, VisionStream } from "./types";
 import {
   IconBell,
@@ -128,12 +128,12 @@ const THEME_STORAGE_KEY = "ctai-vision-theme-v1";
 
 const sectionMeta: Record<PrimarySection, { eyebrow: string; title: string }> =
   {
-    capabilities: { eyebrow: "Real demos", title: "Capabilities" },
-    events: { eyebrow: "Evidence-led review", title: "Events" },
-    explore: { eyebrow: "Natural-language retrieval", title: "Explore" },
-    home: { eyebrow: "AI-monitored environment", title: "Home" },
-    live: { eyebrow: "Connected sources", title: "Live" },
-    monitoring: { eyebrow: "Rules that create incidents", title: "Monitoring" },
+    capabilities: { eyebrow: "Real demos", title: "What it can do" },
+    events: { eyebrow: "Evidence-led review", title: "Events & reports" },
+    explore: { eyebrow: "Search video in your own words", title: "Search video" },
+    home: { eyebrow: "Video AI demonstration", title: "Home" },
+    live: { eyebrow: "Connected sources", title: "Live cameras" },
+    monitoring: { eyebrow: "Rules that create incidents", title: "Alert rules" },
     system: { eyebrow: "On-device runtime", title: "System" },
   };
 
@@ -152,6 +152,7 @@ export default function VisionIntelligenceApp({
   );
   const [investigation, setInvestigation] =
     useState<InvestigationRequest | null>(null);
+  const [hasOpenedInvestigation, setHasOpenedInvestigation] = useState(false);
   const [liveTarget, setLiveTarget] = useState<LiveTarget>({ focused: false });
   const [liveSession, setLiveSession] = useState(0);
   const [monitoringSourceId, setMonitoringSourceId] = useState<string | null>(null);
@@ -199,6 +200,7 @@ export default function VisionIntelligenceApp({
   const navigateToSection = useCallback(
     (nextSection: PrimarySection) => {
       setSection(nextSection);
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
       if (!router.isReady) return;
 
       void router.push(workspaceHref(nextSection, router.query), undefined, {
@@ -213,6 +215,10 @@ export default function VisionIntelligenceApp({
     if (!router.isReady) return;
     setSection(parseWorkspace(router.query.workspace));
   }, [router.isReady, router.query.workspace]);
+
+  useEffect(() => {
+    if (section === "explore") setHasOpenedInvestigation(true);
+  }, [section]);
 
   const refreshHealth = useCallback(async () => {
     try {
@@ -282,7 +288,7 @@ export default function VisionIntelligenceApp({
   }, [refreshWorkloadAdmission]);
 
   useEffect(() => {
-    if (section !== "system") return;
+    if (section !== "system" && section !== "capabilities") return;
     void refreshSearchCoverage();
     const interval = window.setInterval(refreshSearchCoverage, 60_000);
     return () => window.clearInterval(interval);
@@ -328,11 +334,11 @@ export default function VisionIntelligenceApp({
   const navItems = useMemo(
     () => [
       { icon: IconHome, id: "home" as const, label: "Home" },
-      { icon: IconVideo, id: "live" as const, label: "Live" },
-      { icon: IconBellCog, id: "monitoring" as const, label: "Monitoring" },
-      { icon: IconSearch, id: "explore" as const, label: "Explore" },
-      { icon: IconBell, id: "events" as const, label: "Events" },
-      { icon: IconBulb, id: "capabilities" as const, label: "Capabilities" },
+      { icon: IconSearch, id: "explore" as const, label: "Search video" },
+      { icon: IconVideo, id: "live" as const, label: "Live cameras" },
+      { icon: IconBell, id: "events" as const, label: "Events & reports" },
+      { icon: IconBellCog, id: "monitoring" as const, label: "Alert rules" },
+      { icon: IconBulb, id: "capabilities" as const, label: "What it can do" },
       { icon: IconCpu, id: "system" as const, label: "System" },
     ],
     []
@@ -399,7 +405,7 @@ export default function VisionIntelligenceApp({
           onClick={() => navigateToSection("home")}
           aria-label="Vision Intelligence home"
         >
-          <img src="/ctai-labs-horizontal-black.png" alt="" />
+          <img src={resolvedTheme === "dark" ? "/ctai-labs-horizontal-white.png" : "/ctai-labs-horizontal-black.png"} alt="CTAI Labs" />
         </button>
         <div className="vi-product-label">
           <strong>Vision</strong>
@@ -432,11 +438,11 @@ export default function VisionIntelligenceApp({
             navigateToSection("system");
           }}
         >
-          <span className={`is-${localProcessingStatus}`} />
+          <span className={presentationMode ? "is-presentation" : `is-${localProcessingStatus}`} />
           <div>
             <strong>Local edge</strong>
             <em>
-              {systemHealth ? healthLabel(systemHealth.status) : "Checking"}
+              {presentationMode ? "NVIDIA Thor" : systemHealth ? healthLabel(systemHealth.status) : "Checking"}
             </em>
           </div>
         </button>
@@ -455,11 +461,13 @@ export default function VisionIntelligenceApp({
             aria-expanded={showSystemHealth}
             onClick={() => setShowSystemHealth((current) => !current)}
           >
-            <span className={`is-${localProcessingStatus}`} />
+            <span className={presentationMode ? "is-presentation" : `is-${localProcessingStatus}`} />
             <div>
               <strong>LOCAL PROCESSING</strong>
               <em>
-                {systemHealth
+                {presentationMode
+                  ? "NVIDIA THOR"
+                  : systemHealth
                   ? `NVIDIA THOR · ${localProcessingStatus.toUpperCase()}`
                   : "CHECKING SERVICES"}
               </em>
@@ -557,6 +565,21 @@ export default function VisionIntelligenceApp({
               <IconX size={17} />
             </button>
           </div>
+          {systemHealth && (
+            <section className="vi-demo-service-checks" aria-label="Demo service checks">
+              <strong>Services for your demo</strong>
+              {demoServiceChecks(systemHealth).map((check) => (
+                <div className="vi-system-service" key={check.label}>
+                  <i className={check.status === "available" ? "is-online" : check.status === "unavailable" ? "is-offline" : "is-unknown"} />
+                  <span>{check.label}</span>
+                  <em>{check.status === "available" ? "Available" : check.status === "unavailable" ? "Unavailable" : "Not checked"}</em>
+                </div>
+              ))}
+              <p>Service checks only. Camera connection, analysis settings and compute capacity also affect live monitoring.</p>
+            </section>
+          )}
+          <details className="vi-service-details">
+            <summary>Technical service checks</summary>
           {(systemHealth?.services ?? []).map((service) => (
             <div className="vi-system-service" key={service.key}>
               <i className={service.ok ? "is-online" : "is-offline"} />
@@ -566,6 +589,7 @@ export default function VisionIntelligenceApp({
               </em>
             </div>
           ))}
+          </details>
           {systemHealth?.thor && (
             <div className="vi-thor-metrics">
               <div>
@@ -644,6 +668,7 @@ export default function VisionIntelligenceApp({
             onExplore={openInvestigation}
             onOpenEvents={openEvents}
             onOpenLive={openLive}
+            onOpenSystem={() => navigateToSection("system")}
             systemHealth={systemHealth}
             visualAnalystAvailable={visualAnalystAvailable}
             vstApiUrl={vstApiUrl}
@@ -667,14 +692,17 @@ export default function VisionIntelligenceApp({
             vstApiUrl={vstApiUrl}
           />
         )}
-        {section === "explore" && (
+        {(section === "explore" || hasOpenedInvestigation) && (
+          <div hidden={section !== "explore"}>
           <InvestigateWorkspace
+            isActive={section === "explore"}
             agentApiUrl={searchData?.agentApiUrl}
             initialRequest={investigation}
             mdxWebApiUrl={searchData?.mdxWebApiUrl}
             searchByImageEnabled={searchData?.mediaWithObjectsBbox === true}
             vstApiUrl={vstApiUrl}
           />
+          </div>
         )}
         {section === "events" && (
           <ActivityInsightsWorkspace
@@ -698,6 +726,8 @@ export default function VisionIntelligenceApp({
             }
             onOpenRules={openRules}
             systemHealth={systemHealth}
+            admissions={workloadAdmission?.admissions}
+            searchCoverage={searchCoverageUnavailable ? null : searchCoverage}
           />
         )}
         {section === "monitoring" && (

@@ -37,9 +37,10 @@ async function errorMessage(response: Response, fallback: string): Promise<strin
   const text = await response.text().catch(() => '');
   try {
     const payload = text ? JSON.parse(text) as { detail?: string; error?: string } : {};
-    return payload.detail || payload.error || fallback;
+    const detail = payload.detail || payload.error;
+    return typeof detail === 'string' && detail.trim() ? detail : fallback;
   } catch {
-    return text || fallback;
+    return fallback;
   }
 }
 
@@ -52,7 +53,7 @@ export async function loadAnalysisProfiles(
     signal,
   });
   if (!response.ok) {
-    throw new Error(await errorMessage(response, 'Analysis profiles are unavailable.'));
+    throw new Error(await errorMessage(response, 'Analysis profiles are unavailable. Check System, then reopen this form to retry.'));
   }
   const payload = await response.json() as { profiles?: AnalysisProfile[] };
   if (!Array.isArray(payload.profiles) || !payload.profiles.length) {
@@ -76,4 +77,18 @@ export async function recommendAnalysisProfile(
     throw new Error(await errorMessage(response, 'Thor could not recommend an analysis profile.'));
   }
   return response.json() as Promise<AnalysisProfileRecommendation>;
+}
+
+/** Customer-facing task names; profile IDs and capability checks stay authoritative. */
+export function analysisProfileTask(profile: AnalysisProfile): { name: string; description: string } {
+  switch (profile.id) {
+    case SEMANTIC_ANALYSIS_PROFILE_ID:
+      return { name: 'Find activity and ask questions', description: 'Search video using everyday language, then ask AI about a selected moment.' };
+    case WAREHOUSE_ANALYSIS_PROFILE_ID:
+      return { name: 'Track warehouse activity', description: 'Detect supported workers, vehicles and pallets to support tracking and configured warehouse alert rules.' };
+    case TRAFFIC_ANALYSIS_PROFILE_ID:
+      return { name: 'Track road activity', description: 'Detect supported people, bicycles and vehicles to support tracking and configured traffic alert rules.' };
+    default:
+      return { name: profile.name, description: profile.description };
+  }
 }

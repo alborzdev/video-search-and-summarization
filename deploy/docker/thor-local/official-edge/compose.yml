@@ -1,7 +1,19 @@
 # Pull-free, opt-in NVIDIA Thor official edge model lane.
 services:
   perception-2d-fusion:
-    restart: unless-stopped
+    restart: "no"
+
+  perception-2d-smartcity-thor:
+    restart: "no"
+
+  rtvi-embed:
+    restart: "no"
+
+  streamprocessing-ms:
+    restart: "no"
+
+  sensor-ms:
+    restart: "no"
 
   nemotron-edge:
     image: ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8
@@ -9,14 +21,21 @@ services:
     profiles: ["bp_developer_thor_full_2d"]
     network_mode: host
     runtime: nvidia
-    # Compose ordering is not replayed by Docker's restart manager after a
-    # host reboot. Keep this lightweight process waiting until Cosmos has
-    # claimed its larger unified-memory allocation, then start the Edge LLM.
+    # Only the admission-qualified official-edge launcher may start this
+    # model. Docker's restart manager does not replay the host cache-cleaner
+    # or unified-memory gates after a reboot.
+    restart: "no"
+    # Keep this lightweight process waiting until Cosmos has claimed its
+    # larger unified-memory allocation, then start the Edge LLM.
     entrypoint:
       - python3
       - /usr/local/bin/thor-startup-gate.py
       - --http
       - http://127.0.0.1:8018/v1/health/ready
+      # Duplicate the launcher fuse inside the mounted PID 1 gate so a stale
+      # raw Compose command cannot start the second model on this 128 GiB host.
+      - --min-available-kib
+      - "134217728"
       - --
     read_only: true
     security_opt:
@@ -79,13 +98,15 @@ services:
       timeout: 8s
       retries: 60
       start_period: 300s
-    restart: unless-stopped
     depends_on:
       rtvi-vlm:
         condition: service_healthy
 
   rtvi-vlm:
     image: nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504
+    # Fail closed across host reboots. The pull-free launcher verifies the
+    # lane-specific memory and cache-policy gates before starting this model.
+    restart: "no"
     environment:
       VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
       VIA_VLM_ENDPOINT: ""
@@ -125,6 +146,9 @@ services:
       - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py:/opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py:ro
 
   vss-agent:
+    # Do not let a pre-update Agent image reconcile persisted sources after a
+    # reboot; the source-level gate is an additional defense for new builds.
+    restart: "no"
     environment:
       NVIDIA_API_KEY: ""
       OPENAI_API_KEY: ""
@@ -162,6 +186,12 @@ services:
       - ${VSS_AGENT_HOST}
       - --port
       - ${VSS_AGENT_PORT}
+    volumes:
+      # The released 3.2.1 image predates the fail-closed live-source gate.
+      # Mount the reviewed source patches into the installed package so this
+      # behavior is effective even before a replacement Agent image is built.
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/agent/src/vss_agents/api/rtsp_ingest.py:/vss-agent/.venv/lib/python3.13/site-packages/vss_agents/api/rtsp_ingest.py:ro
+      - ${VSS_REPO_ROOT:?Set the VSS repository root}/services/agent/src/vss_agents/api/front_end_config.py:/vss-agent/.venv/lib/python3.13/site-packages/vss_agents/api/front_end_config.py:ro
     depends_on:
       nemotron-edge:
         condition: service_healthy
@@ -172,6 +202,9 @@ services:
   # placeholder credentials from generated.env. Keep this fail-closed even
   # when Compose is invoked directly instead of through the command renderer.
   lvs-server:
+    # Avoid a summarizer restart loop overlapping either model's warm-up.
+    # The gated Compose launch starts it after its model dependencies.
+    restart: "no"
     environment:
       NVIDIA_API_KEY: ""
       OPENAI_API_KEY: ""
@@ -200,6 +233,10 @@ services:
       LLM_BASE_URL: http://127.0.0.1:30081
 
   alert-bridge:
+    # Persisted always-on rules can replay camera_streaming and start Cosmos
+    # workers during boot. Keep replay disabled until an operator performs a
+    # separate post-admission enablement step.
+    restart: "no"
     environment:
       NVIDIA_API_KEY: ""
       OPENAI_API_KEY: ""
@@ -208,3 +245,4 @@ services:
       VLM_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
       VLM_BASE_URL: http://127.0.0.1:8018
       RTVI_VLM_BASE_URL: http://127.0.0.1:8018
+      ALERT_ALWAYS_ON_ENABLED: "false"

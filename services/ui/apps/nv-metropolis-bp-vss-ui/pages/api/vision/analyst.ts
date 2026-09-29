@@ -30,6 +30,7 @@ interface DirectInspectionResponse {
   answer?: string;
   error?: string;
   evidence_tool?: string;
+  observed_window?: { start_time: string; end_time: string } | null;
   observed_range?: { end_seconds: number; start_seconds: number } | null;
 }
 
@@ -150,6 +151,10 @@ async function inspectSelectedSource(
   return {
     answer,
     evidenceTools: [payload.evidence_tool],
+    ...(payload.observed_window ? { observedWindow: {
+      startTime: payload.observed_window.start_time,
+      endTime: payload.observed_window.end_time,
+    } } : {}),
     generatedAt: new Date().toISOString(),
     grounded: true,
     ...(payload.observed_range ? {

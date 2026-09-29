@@ -1,0 +1,34 @@
+name: vss-memory-isolated
+services:
+  nemotron:
+    image: ghcr.io/nvidia-ai-iot/vllm@sha256:b587dd56b4cb076209ad5156a626ac75f5a976d0e8e7d1e6a9fccd56d1bd65e8
+    container_name: vss-memory-nemotron
+    network_mode: host
+    runtime: nvidia
+    restart: "no"
+    read_only: true
+    oom_score_adj: 500
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    environment:
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+      HF_HUB_DISABLE_TELEMETRY: "1"
+      HF_HOME: /runtime/huggingface
+      XDG_CACHE_HOME: /runtime/cache
+      XDG_CONFIG_HOME: /runtime/config
+      FLASHINFER_WORKSPACE_BASE: /runtime/cache
+      TRITON_CACHE_DIR: /runtime/cache/triton
+      TORCHINDUCTOR_CACHE_DIR: /runtime/cache/torchinductor
+      VLLM_CACHE_ROOT: /runtime/cache/vllm
+      CUDA_CACHE_PATH: /runtime/cache/cuda
+      NVIDIA_VISIBLE_DEVICES: "0"
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    volumes:
+      - /home/nvidia/vss-official-edge-artifacts/huggingface/hub/models--nvidia--NVIDIA-Nemotron-3-Nano-4B-FP8/snapshots/3fe6dab75665a93884214ad4b1b95cf02717d081:/models/edge4b:ro
+      - /home/nvidia/vss-official-edge-artifacts/huggingface/hub/models--nvidia--NVIDIA-Nemotron-3-Nano-4B-FP8/blobs:/blobs:ro
+    tmpfs:
+      - /tmp:size=2g,mode=1777,exec,nosuid,nodev
+      - /runtime:size=4g,mode=0700,exec,nosuid,nodev
+    entrypoint: [python3, -m, vllm.entrypoints.openai.api_server]
+    command: [--model, /models/edge4b, --tokenizer, /models/edge4b, --served-model-name, nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8, --trust-remote-code, --host, 127.0.0.1, --port, "30081", --enforce-eager, --gpu-memory-utilization, "0.12", --kv-cache-memory-bytes, "1073741824", --max-model-len, "16384", --max-num-seqs, "1", --max-num-batched-tokens, "2048", --enable-auto-tool-choice, --tool-call-parser, qwen3_coder]

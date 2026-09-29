@@ -23,7 +23,7 @@ export default async function handler(
   const sensorId =
     typeof req.query.sensorId === "string" ? req.query.sensorId.trim() : "";
   const name = typeof req.query.name === "string" ? req.query.name.trim() : "";
-  if (!SOURCE_ID_PATTERN.test(sensorId) || !SOURCE_ID_PATTERN.test(name)) {
+  if (!SOURCE_ID_PATTERN.test(sensorId) || !name || name.length > 256 || /[\u0000-\u001f\u007f]/.test(name)) {
     return res.status(400).json({ error: "A valid source is required." });
   }
 

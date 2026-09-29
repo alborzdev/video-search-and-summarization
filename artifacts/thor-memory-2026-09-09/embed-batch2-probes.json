@@ -1,0 +1,117 @@
+{
+  "results": [
+    {
+      "case": "text",
+      "repeat": 0,
+      "seconds": 0.04,
+      "vectors": 2,
+      "dimensions": [
+        768,
+        768
+      ],
+      "passed": true,
+      "response_keys": [
+        "id",
+        "created",
+        "model",
+        "data"
+      ]
+    },
+    {
+      "case": "video",
+      "repeat": 0,
+      "seconds": 1.54,
+      "vectors": 3,
+      "dimensions": [
+        768,
+        768,
+        768
+      ],
+      "passed": true,
+      "response_keys": [
+        "id",
+        "created",
+        "model",
+        "media_info",
+        "usage",
+        "chunk_responses"
+      ]
+    },
+    {
+      "case": "text",
+      "repeat": 1,
+      "seconds": 0.01,
+      "vectors": 2,
+      "dimensions": [
+        768,
+        768
+      ],
+      "passed": true,
+      "response_keys": [
+        "id",
+        "created",
+        "model",
+        "data"
+      ]
+    },
+    {
+      "case": "video",
+      "repeat": 1,
+      "seconds": 1.15,
+      "vectors": 3,
+      "dimensions": [
+        768,
+        768,
+        768
+      ],
+      "passed": true,
+      "response_keys": [
+        "id",
+        "created",
+        "model",
+        "media_info",
+        "usage",
+        "chunk_responses"
+      ]
+    },
+    {
+      "case": "text",
+      "repeat": 2,
+      "seconds": 0.01,
+      "vectors": 2,
+      "dimensions": [
+        768,
+        768
+      ],
+      "passed": true,
+      "response_keys": [
+        "id",
+        "created",
+        "model",
+        "data"
+      ]
+    },
+    {
+      "case": "video",
+      "repeat": 2,
+      "seconds": 1.53,
+      "vectors": 3,
+      "dimensions": [
+        768,
+        768,
+        768
+      ],
+      "passed": true,
+      "response_keys": [
+        "id",
+        "created",
+        "model",
+        "media_info",
+        "usage",
+        "chunk_responses"
+      ]
+    }
+  ],
+  "minimum_available_gib": 101.18832397460938,
+  "owned_remaining": []
+}

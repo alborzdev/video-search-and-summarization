@@ -1,0 +1,27 @@
+{
+  "sources_preserved": true,
+  "named_sources": 5,
+  "generated_indices": [],
+  "source_states": [
+    [
+      "IsaacSim_camNE",
+      "offline"
+    ],
+    [
+      "IsaacSim_camSW",
+      "offline"
+    ],
+    [
+      "sample-sim-jaywalking.mp4",
+      "offline"
+    ],
+    [
+      "IsaacSim_camSE",
+      "offline"
+    ],
+    [
+      "IsaacSim_CamNW",
+      "offline"
+    ]
+  ]
+}

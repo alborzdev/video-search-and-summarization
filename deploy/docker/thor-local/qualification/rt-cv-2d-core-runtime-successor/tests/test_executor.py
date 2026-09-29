@@ -60,7 +60,7 @@ class RtCv2dCoreRuntimeQualificationTests(unittest.TestCase):
         self.assertIn("max_targets_per_stream=$((512 / max_sources))", start)
         self.assertIn("max_targets_per_stream > 50", start)
         self.assertIn("visualTrackerType: 2", start)
-        self.assertIn("vpiBackend4DcfTracker: 2", start)
+        self.assertIn("vpiBackend4DcfTracker: 1", start)
         self.assertIn("apply_tracker_reid_mode", start)
         self.assertIn("reidType: 0", start)
         self.assertIn("DS_TRACKER_REID must be true or false", start)

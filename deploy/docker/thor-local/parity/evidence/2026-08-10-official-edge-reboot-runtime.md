@@ -1,5 +1,11 @@
 # Thor exact-model official-edge reboot qualification — 2026-08-10
 
+> **Safety supersession — 2026-08-30:** Historical evidence only. Two later
+> whole-host watchdog resets revoke this record as launch authorization for
+> the co-resident exact LLM/VLM graph. Keep that graph stopped and follow the
+> current safety lock in [DEMO.md](../../DEMO.md); one model must move to a
+> remote or sibling host before full application bring-up.
+
 ## Result
 
 After Thor rebooted at `2026-08-09 21:43:55` local time, the active VSS 3.2.1

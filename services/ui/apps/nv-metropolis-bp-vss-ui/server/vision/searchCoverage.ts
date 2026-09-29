@@ -16,6 +16,7 @@ export type IndexCoverageStatus = "indexed" | "not-indexed" | "unknown";
 export type RecordingCoverageStatus = "expired" | "retained" | "unavailable";
 
 export interface SearchCoverageSource {
+  sourceKind?: "recording" | "live" | "unknown";
   indexStatus: IndexCoverageStatus;
   lastSemanticAt: string | null;
   name: string;
@@ -45,6 +46,7 @@ export interface SearchCoverageSnapshot {
 interface ConfiguredSource {
   name: string;
   sensorId: string;
+  sourceKind: "recording" | "live" | "unknown";
 }
 
 interface Timeline {
@@ -80,10 +82,14 @@ export function configuredSourcesFromCatalog(value: unknown): ConfiguredSource[]
       }
       const firstStream = streams.find(
         (stream) => stream && typeof stream === "object" && !Array.isArray(stream)
-      ) as { name?: unknown } | undefined;
+      ) as { name?: unknown; type?: unknown; url?: unknown; vodUrl?: unknown } | undefined;
+      const isRtsp = [firstStream?.url, firstStream?.vodUrl].some(
+        (url) => typeof url === "string" && /^rtsps?:\/\//i.test(url)
+      );
       sources.set(sensorId, {
         name: readableName(firstStream?.name, sensorId),
         sensorId,
+        sourceKind: isRtsp ? "live" : firstStream?.type === "FileDownload" ? "recording" : "unknown",
       });
     }
   }
@@ -219,6 +225,7 @@ export async function readSearchCoverage(): Promise<SearchCoverageSnapshot> {
       indexStatus: indexing,
       lastSemanticAt: intelligence?.lastSemanticAt ?? null,
       name: source.name,
+      sourceKind: source.sourceKind,
       recordingStatus: timeline.status,
       remediation: remediation(indexing, timeline.status),
       semanticSegments: intelligence?.semanticSegments ?? null,

@@ -16,10 +16,10 @@ export function LiveModeNav({ active, action, onSelect }: LiveModeNavProps) {
     <nav className="vi-subnav vi-live-mode-nav" aria-label="Monitoring views">
       {(
         [
-          ["monitor", "Monitor"],
-          ["activity", "Activity"],
+          ["monitor", "Live cameras"],
+          ["activity", "Events & reports"],
           ["insights", "Insights"],
-          ["rules", "Rules"],
+          ["rules", "Alert rules"],
         ] as const
       ).map(([mode, label]) => (
         <button

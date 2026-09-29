@@ -58,6 +58,7 @@ from vss_agents.api.source_analysis_state import is_source_deleting
 from vss_agents.api.source_analysis_state import is_source_detection_enabled
 from vss_agents.api.source_analysis_state import is_source_paused
 from vss_agents.api.source_analysis_state import set_source_kind
+from vss_agents.api.source_analysis_state import set_source_paused
 from vss_agents.api.source_cleanup import registered_rtvi_cv_stream_ids
 from vss_agents.tools.vst.utils import add_proxy_stream as vst_add_proxy_stream
 from vss_agents.tools.vst.utils import add_sensor as vst_add_sensor
@@ -83,9 +84,8 @@ class ServiceConfig:
 
     Per-step runtime behavior is driven by URL presence: each integration
     self-skips when its URL is empty (see ``add_to_rtvi_cv``,
-    ``add_to_rtvi_embed``, etc.). The only behavior that isn't reducible to
-    URL presence is whether to also delete VST storage when an RTSP stream is
-    removed, which is governed by ``delete_vst_storage_on_stream_remove``.
+    ``add_to_rtvi_embed``, etc.). Explicit settings govern VST storage removal
+    and whether persisted live sources are reconciled automatically at startup.
     """
 
     def __init__(
@@ -101,6 +101,7 @@ class ServiceConfig:
         rtvi_embed_chunk_duration: int = 5,
         delete_vst_storage_on_stream_remove: bool = True,
         enable_audio: bool = False,
+        auto_resume_registered_live_sources: bool = True,
     ):
         self.vst_url = vst_internal_url.rstrip("/")
         self.vst_streamprocessor_url = vst_streamprocessor_url.rstrip("/") if vst_streamprocessor_url else ""
@@ -113,6 +114,7 @@ class ServiceConfig:
         self.rtvi_embed_chunk_duration = rtvi_embed_chunk_duration
         self.delete_vst_storage_on_stream_remove = delete_vst_storage_on_stream_remove
         self.enable_audio = enable_audio
+        self.auto_resume_registered_live_sources = auto_resume_registered_live_sources
 
 
 def _resolve_service_config(config: Any) -> ServiceConfig:
@@ -143,12 +145,18 @@ def _resolve_service_config(config: Any) -> ServiceConfig:
             getattr(streaming_config, "delete_vst_storage_on_stream_remove", True)
         ),
         enable_audio=bool(getattr(streaming_config, "enable_audio", False)),
+        auto_resume_registered_live_sources=bool(
+            getattr(streaming_config, "auto_resume_registered_live_sources", True)
+        ),
     )
 
 
 # ============================================================================
 # Request/Response Models
 # ============================================================================
+
+
+_source_catalog_lock = asyncio.Lock()
 
 
 class AddStreamRequest(BaseModel):
@@ -162,6 +170,7 @@ class AddStreamRequest(BaseModel):
     password: str = Field(default="", description="RTSP authentication password")
     location: str = Field(default="", description="Location information")
     tags: str = Field(default="", description="Tags for the sensor")
+    start_analysis: bool = Field(default=True, alias="startAnalysis", description="Start analysis after connecting")
     detection_enabled: bool | None = Field(
         default=None,
         alias="detectionEnabled",
@@ -199,6 +208,7 @@ class AddStreamResponse(BaseModel):
     error: str | None = Field(None, description="Error details if failed")
     sensor_id: str | None = Field(None, alias="sensorId", description="Stable VST sensor identity on success")
     name: str | None = Field(None, description="Exact sensor name on success")
+    analysis_paused: bool = Field(default=False, alias="analysisPaused", description="Analysis is intentionally paused")
     detection_enabled: bool = Field(
         default=True,
         alias="detectionEnabled",
@@ -270,15 +280,20 @@ async def add_to_vst(config: ServiceConfig, request: AddStreamRequest) -> tuple[
     if config.enable_audio and _is_nvstream_url(source_url):
         source_url = _with_include_audio(source_url)
 
-    success, msg, sensor_id = await vst_add_sensor(
-        sensor_url=source_url,
-        name=request.name,
-        username=request.username,
-        password=request.password,
-        location=request.location,
-        tags=request.tags,
-        vst_internal_url=config.vst_url,
-    )
+    # Hold catalog discovery until a preview-only source is durably paused.
+    # Otherwise reconciliation could register it with models during onboarding.
+    async with _source_catalog_lock:
+        success, msg, sensor_id = await vst_add_sensor(
+            sensor_url=source_url,
+            name=request.name,
+            username=request.username,
+            password=request.password,
+            location=request.location,
+            tags=request.tags,
+            vst_internal_url=config.vst_url,
+        )
+        if success and sensor_id and not request.start_analysis:
+            set_source_paused(sensor_id, True)
     if not success:
         return False, msg, None, None
 
@@ -963,7 +978,8 @@ async def reconcile_registered_live_sources(
     config: ServiceConfig,
 ) -> tuple[int, int]:
     """Run one VST-to-RTVI reconciliation pass and return active/desired counts."""
-    catalog_streams = await vst_get_streams_info(config.vst_url)
+    async with _source_catalog_lock:
+        catalog_streams = await vst_get_streams_info(config.vst_url)
     streams = {
         stream_id: stream
         for stream_id, stream in catalog_streams.items()
@@ -1323,6 +1339,7 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                 # sensor and returning an unhandled retry exception.
                 if sensor_id is not None:
                     await cleanup_vst_sensor(config, sensor_id)
+                    forget_source_analysis_state(sensor_id)
                     if config.delete_vst_storage_on_stream_remove:
                         await cleanup_vst_storage(config, sensor_id)
                 return AddStreamResponse(
@@ -1345,6 +1362,7 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                 # this path reachable, but do not leak the just-created VST
                 # source or turn the domain conflict into an unstructured 500.
                 await cleanup_vst_sensor(config, sensor_id)
+                forget_source_analysis_state(sensor_id)
                 if config.delete_vst_storage_on_stream_remove:
                     await cleanup_vst_storage(config, sensor_id)
                 raise HTTPException(status_code=409, detail=exc.detail) from exc
@@ -1352,6 +1370,19 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
             release_analysis_profile_capacity_reservation(capacity_reservation)
 
         set_source_kind(sensor_id, "live")
+
+        if not request.start_analysis:
+            set_source_paused(sensor_id, True)
+            return AddStreamResponse(
+                status="success",
+                message=f"Camera '{request.name}' connected with analysis paused",
+                sensorId=sensor_id,
+                name=request.name,
+                detectionEnabled=profile.detection_enabled,
+                analysisProfileId=profile.id,
+                analysisPaused=True,
+                error=None,
+            )
 
         # Integrations are additive. A unified deployment registers the same
         # VST proxy with RTVI-VLM for live alerts/captioning and with
@@ -1509,28 +1540,37 @@ def register_rtsp_ingest_routes(app: FastAPI, config: Any) -> None:
         service_config = _resolve_service_config(config)
         app.include_router(create_rtsp_ingest_router(service_config))
 
-        async def resume_live_embeddings() -> None:
-            await resume_registered_embedding_generation(service_config)
+        if service_config.auto_resume_registered_live_sources:
 
-        # NAT installs custom routes from within its own startup lifecycle, so
-        # a newly added FastAPI startup handler would be too late in that
-        # deployment. Schedule immediately when a loop is already running;
-        # conventional pre-start registration still uses the app event.
-        try:
-            running_loop = asyncio.get_running_loop()
-        except RuntimeError:
-            app.add_event_handler("startup", resume_live_embeddings)
+            async def resume_live_embeddings() -> None:
+                await resume_registered_embedding_generation(service_config)
+
+            # NAT installs custom routes from within its own startup lifecycle, so
+            # a newly added FastAPI startup handler would be too late in that
+            # deployment. Schedule immediately when a loop is already running;
+            # conventional pre-start registration still uses the app event.
+            try:
+                running_loop = asyncio.get_running_loop()
+            except RuntimeError:
+                app.add_event_handler("startup", resume_live_embeddings)
+            else:
+                resume_task = running_loop.create_task(resume_live_embeddings(), name="resume-live-embeddings")
+                _embedding_bootstrap_tasks.add(resume_task)
+                resume_task.add_done_callback(_embedding_bootstrap_tasks.discard)
         else:
-            resume_task = running_loop.create_task(resume_live_embeddings(), name="resume-live-embeddings")
-            _embedding_bootstrap_tasks.add(resume_task)
-            resume_task.add_done_callback(_embedding_bootstrap_tasks.discard)
+            logger.warning(
+                "Automatic registered-live-source reconciliation is disabled; "
+                "persisted sources will remain inactive until an explicit add or resume request"
+            )
         app.add_event_handler("shutdown", stop_all_managed_embedding_generation)
         logger.info(
             "RTSP ingest route registered "
             f"(rtvi_embed={'on' if service_config.rtvi_embed_url else 'off'}, "
             f"rtvi_cv={'on' if service_config.rtvi_cv_url else 'off'}, "
             f"rtvi_vlm={'on' if service_config.rtvi_vlm_url else 'off'}, "
-            f"direct_proxy={'on' if service_config.vst_streamprocessor_url else 'off'})"
+            f"direct_proxy={'on' if service_config.vst_streamprocessor_url else 'off'}, "
+            "auto_resume_registered_live_sources="
+            f"{'on' if service_config.auto_resume_registered_live_sources else 'off'})"
         )
     except Exception as e:
         logger.error(f"Failed to register RTSP ingest route: {e}", exc_info=True)

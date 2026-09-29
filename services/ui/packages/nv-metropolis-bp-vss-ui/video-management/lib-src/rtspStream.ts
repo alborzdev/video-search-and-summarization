@@ -18,6 +18,7 @@ export interface AddRtspStreamRequest {
   password?: string;
   detectionEnabled?: boolean;
   analysisProfileId?: string;
+  startAnalysis?: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ export interface AddRtspStreamResult {
   name: string;
   detectionEnabled?: boolean;
   analysisProfileId: string;
+  analysisPaused?: boolean;
   error?: string;
 }
 
@@ -85,6 +87,7 @@ export async function addRtspStream(
       ...(request.name ? { name: request.name } : {}),
       username: request.username ?? "",
       password: request.password ?? "",
+      ...(request.startAnalysis !== undefined ? { startAnalysis: request.startAnalysis } : {}),
       ...(request.analysisProfileId
         ? { analysisProfileId: request.analysisProfileId }
         : { detectionEnabled: request.detectionEnabled ?? false }),

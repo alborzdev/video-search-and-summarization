@@ -57,11 +57,13 @@ accepting every current local image—run `thor-local.sh refresh-runtime` to
 record the exact staged IDs and immediately repeat `verify-offline`. Refreshing
 the lock is a provenance decision, not a harmless way to silence a check.
 
-`thor-local.sh preflight` also requires the root-owned
-`/usr/local/bin/sys-cache-cleaner.sh` loop on this Thor. It manages unified-memory
-startup headroom and is not installed as a repository service. Confirm it with
-`pgrep -af /usr/local/bin/sys-cache-cleaner.sh`; an operator with host authority
-must start it before lifecycle work if it is absent.
+The generic Thor-local Qwen lane requires the root-owned
+`/usr/local/bin/sys-cache-cleaner.sh` loop during preflight. The exact local
+Cosmos3 + Nemotron lane is a safety exception after two hardware-watchdog
+resets: keep that loop and the graph stopped, and follow
+[`thor-local/official-edge/README.md`](thor-local/official-edge/README.md).
+`thor-local.sh` selects the applicable policy and fails closed; do not start the
+cleaner merely to silence a failed exact-lane audit.
 
 ## Image inventory and validation
 

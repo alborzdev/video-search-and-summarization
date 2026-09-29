@@ -1,0 +1,247 @@
+{
+  "duration": 300,
+  "failure": null,
+  "min_available_gib": 104.464,
+  "samples": [
+    {
+      "elapsed": 0,
+      "available_gib": 105.281
+    },
+    {
+      "elapsed": 5,
+      "available_gib": 104.992
+    },
+    {
+      "elapsed": 10,
+      "available_gib": 105.032
+    },
+    {
+      "elapsed": 15,
+      "available_gib": 105.209
+    },
+    {
+      "elapsed": 20,
+      "available_gib": 105.164
+    },
+    {
+      "elapsed": 25,
+      "available_gib": 104.972
+    },
+    {
+      "elapsed": 30,
+      "available_gib": 105.002
+    },
+    {
+      "elapsed": 35,
+      "available_gib": 105.005
+    },
+    {
+      "elapsed": 40,
+      "available_gib": 104.902
+    },
+    {
+      "elapsed": 45,
+      "available_gib": 104.945
+    },
+    {
+      "elapsed": 50,
+      "available_gib": 105.185
+    },
+    {
+      "elapsed": 55,
+      "available_gib": 104.85
+    },
+    {
+      "elapsed": 60,
+      "available_gib": 104.888
+    },
+    {
+      "elapsed": 65,
+      "available_gib": 104.861
+    },
+    {
+      "elapsed": 70,
+      "available_gib": 104.885
+    },
+    {
+      "elapsed": 75,
+      "available_gib": 104.77
+    },
+    {
+      "elapsed": 80,
+      "available_gib": 104.954
+    },
+    {
+      "elapsed": 85,
+      "available_gib": 104.67
+    },
+    {
+      "elapsed": 90,
+      "available_gib": 104.898
+    },
+    {
+      "elapsed": 95,
+      "available_gib": 104.939
+    },
+    {
+      "elapsed": 100,
+      "available_gib": 104.787
+    },
+    {
+      "elapsed": 105,
+      "available_gib": 104.795
+    },
+    {
+      "elapsed": 110,
+      "available_gib": 104.904
+    },
+    {
+      "elapsed": 115,
+      "available_gib": 104.792
+    },
+    {
+      "elapsed": 120,
+      "available_gib": 104.666
+    },
+    {
+      "elapsed": 125,
+      "available_gib": 104.749
+    },
+    {
+      "elapsed": 130,
+      "available_gib": 104.636
+    },
+    {
+      "elapsed": 135,
+      "available_gib": 104.822
+    },
+    {
+      "elapsed": 140,
+      "available_gib": 104.872
+    },
+    {
+      "elapsed": 145,
+      "available_gib": 104.826
+    },
+    {
+      "elapsed": 150,
+      "available_gib": 104.81
+    },
+    {
+      "elapsed": 155,
+      "available_gib": 104.931
+    },
+    {
+      "elapsed": 160,
+      "available_gib": 104.711
+    },
+    {
+      "elapsed": 165,
+      "available_gib": 104.84
+    },
+    {
+      "elapsed": 170,
+      "available_gib": 104.896
+    },
+    {
+      "elapsed": 175,
+      "available_gib": 104.786
+    },
+    {
+      "elapsed": 180,
+      "available_gib": 104.722
+    },
+    {
+      "elapsed": 185,
+      "available_gib": 104.785
+    },
+    {
+      "elapsed": 190,
+      "available_gib": 104.766
+    },
+    {
+      "elapsed": 195,
+      "available_gib": 104.615
+    },
+    {
+      "elapsed": 200,
+      "available_gib": 104.607
+    },
+    {
+      "elapsed": 205,
+      "available_gib": 104.606
+    },
+    {
+      "elapsed": 210,
+      "available_gib": 104.789
+    },
+    {
+      "elapsed": 215,
+      "available_gib": 104.775
+    },
+    {
+      "elapsed": 220,
+      "available_gib": 104.558
+    },
+    {
+      "elapsed": 225,
+      "available_gib": 104.65
+    },
+    {
+      "elapsed": 230,
+      "available_gib": 104.7
+    },
+    {
+      "elapsed": 235,
+      "available_gib": 104.595
+    },
+    {
+      "elapsed": 240,
+      "available_gib": 104.621
+    },
+    {
+      "elapsed": 245,
+      "available_gib": 104.506
+    },
+    {
+      "elapsed": 250,
+      "available_gib": 104.566
+    },
+    {
+      "elapsed": 255,
+      "available_gib": 104.581
+    },
+    {
+      "elapsed": 260,
+      "available_gib": 104.728
+    },
+    {
+      "elapsed": 265,
+      "available_gib": 104.636
+    },
+    {
+      "elapsed": 270,
+      "available_gib": 104.712
+    },
+    {
+      "elapsed": 275,
+      "available_gib": 104.712
+    },
+    {
+      "elapsed": 280,
+      "available_gib": 104.605
+    },
+    {
+      "elapsed": 285,
+      "available_gib": 104.493
+    },
+    {
+      "elapsed": 290,
+      "available_gib": 104.464
+    },
+    {
+      "elapsed": 295,
+      "available_gib": 104.724
+    }
+  ]
+}

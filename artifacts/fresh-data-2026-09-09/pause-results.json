@@ -1,0 +1,72 @@
+[
+  {
+    "action": "pause",
+    "analysisActive": false,
+    "detectionEnabled": true,
+    "analysisProfileId": "warehouse-safety",
+    "message": "Live analysis paused; retained and indexed evidence was preserved",
+    "name": "IsaacSim_camNE",
+    "sensorId": "1bdc82a9-0e61-468f-a1e1-9ac96f82f068",
+    "state": "paused",
+    "steps": {
+      "embedding": true,
+      "detection": true
+    }
+  },
+  {
+    "action": "pause",
+    "analysisActive": false,
+    "detectionEnabled": true,
+    "analysisProfileId": "warehouse-safety",
+    "message": "Live analysis paused; retained and indexed evidence was preserved",
+    "name": "IsaacSim_camSW",
+    "sensorId": "26bb2ad8-7f30-41fb-871f-d70b6b66ab7a",
+    "state": "paused",
+    "steps": {
+      "embedding": true,
+      "detection": true
+    }
+  },
+  {
+    "action": "pause",
+    "analysisActive": false,
+    "detectionEnabled": true,
+    "analysisProfileId": "traffic-monitoring",
+    "message": "Live analysis paused; retained and indexed evidence was preserved",
+    "name": "sample-sim-jaywalking.mp4",
+    "sensorId": "a0d44114-9947-4edf-8355-14e5732999db",
+    "state": "paused",
+    "steps": {
+      "embedding": true,
+      "detection": true
+    }
+  },
+  {
+    "action": "pause",
+    "analysisActive": false,
+    "detectionEnabled": true,
+    "analysisProfileId": "warehouse-safety",
+    "message": "Live analysis paused; retained and indexed evidence was preserved",
+    "name": "IsaacSim_camSE",
+    "sensorId": "a791d7b0-a6cf-4cb1-979f-dfea812256ed",
+    "state": "paused",
+    "steps": {
+      "embedding": true,
+      "detection": true
+    }
+  },
+  {
+    "action": "pause",
+    "analysisActive": false,
+    "detectionEnabled": true,
+    "analysisProfileId": "warehouse-safety",
+    "message": "Live analysis paused; retained and indexed evidence was preserved",
+    "name": "IsaacSim_CamNW",
+    "sensorId": "f20f4337-1cbd-4981-af9d-994fc9fe7dfa",
+    "state": "paused",
+    "steps": {
+      "embedding": true,
+      "detection": true
+    }
+  }
+]

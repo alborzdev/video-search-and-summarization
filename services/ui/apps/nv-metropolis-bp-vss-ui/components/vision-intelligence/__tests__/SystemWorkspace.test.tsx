@@ -1,11 +1,45 @@
 // SPDX-License-Identifier: MIT
 
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import React from "react";
 
 import { SystemWorkspace } from "../SystemWorkspace";
 
 describe("SystemWorkspace", () => {
+  it("shows file spans without synthetic calendar dates and keeps live timestamps", () => {
+    const base = {
+      indexStatus: "indexed" as const,
+      lastSemanticAt: "2025-01-01T00:00:05.000Z",
+      recordingStatus: "retained" as const,
+      remediation: "Recorded evidence is available.",
+      semanticSegments: 2,
+      timelineStart: "2025-01-01T00:00:00.000Z",
+      timelineEnd: "2025-01-01T00:00:10.000Z",
+    };
+    render(<SystemWorkspace
+      health={null} panel="overview" onPanelChange={jest.fn()} onRefreshHealth={jest.fn()}
+      rules={null} sources={null} searchCoverageUnavailable={false}
+      workloadAdmissions={null} workloadCheckedAt={null}
+      searchCoverage={{
+        generatedAt: "2026-09-29T00:00:00Z",
+        sources: [
+          { ...base, sensorId: "file", name: "conveyor-box-movement-demo", sourceKind: "recording" },
+          { ...base, sensorId: "live", name: "Live feed", sourceKind: "live" },
+          { ...base, sensorId: "missing", name: "File with no timeline", sourceKind: "recording", timelineStart: null },
+        ],
+        summary: { configuredSources: 3, indexedSources: 3, retainedSources: 3, expiredIndexedSources: 0, unknownIndexSources: 0, unavailableRecordingSources: 0 },
+      }}
+    />);
+    const file = screen.getByText("Conveyor — Box Movement").closest("article")!;
+    expect(file).toHaveTextContent("Recorded file · retained recording window spans 0:10");
+    expect(file).not.toHaveTextContent(/latest indexed|retained through|2025|2024/);
+    const live = screen.getByText("Live Feed").closest("article")!;
+    expect(within(live).getByText(/latest indexed/)).toHaveTextContent("retained through");
+    const missing = screen.getByText("File With No Timeline").closest("article")!;
+    expect(missing).toHaveTextContent("Recorded file");
+    expect(missing).not.toHaveTextContent(/window spans|retained through|NaN/);
+  });
+
   it("shows search, retention, and remediation facts without estimating coverage", () => {
     render(
       <SystemWorkspace

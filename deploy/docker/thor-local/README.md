@@ -147,6 +147,11 @@ OpenAI providers do not receive the vLLM chat-template extension.
 
 ## First connected bootstrap
 
+The sequence in this section is only for the qualified Qwen alternate lane.
+It is not a recovery path for the exact local Cosmos3 + Nemotron graph, which
+is safety-locked on this 128 GiB host; use the official-edge runbook and a
+split/remote model topology for that feature set.
+
 From `deploy/docker`:
 
 ```bash

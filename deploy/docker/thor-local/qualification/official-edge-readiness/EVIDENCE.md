@@ -1,5 +1,10 @@
 # Read-only official-edge audit — 2026-08-09
 
+> **Safety supersession — 2026-08-30:** Historical evidence only. Two later
+> whole-host watchdog resets revoke this record as launch authorization for
+> the co-resident exact LLM/VLM graph. The previously reported ~11 GiB live
+> headroom is unsafe; keep the graph stopped and use a split/remote topology.
+
 The static official-edge verifier and exact artifact/image audit pass against
 the checked-in VSS 3.2.1 contract. The exact Nemotron and Cosmos3 trees and both
 digest-pinned model-serving images are local. No additional staging download is
@@ -26,8 +31,8 @@ both complete local trees.
 | Nemotron artifact | Immutable revision `3fe6dab7…` is present and bound to the reviewed Hugging Face LFS hashes. |
 | Cosmos3 artifact | The 34-file, 17,545,910,496-byte tree matches NVIDIA's signed NGC sigstore payload. |
 | Edge vLLM image | Exact digest `b587dd56…` is present and `locked_exact`; Thor's containerd store reports that manifest digest as the local image ID. |
-| Official unified-memory lane | NVIDIA's exact `0.25 + 0.35 + 0.20` lane still requires `0.80` prelaunch availability and remains available as the unchanged baseline. |
-| Thor demo unified-memory lane | The exact-model `0.12 + 0.35 + 0.23` admission passed before launch. Live Nemotron reported a 2.95 GiB / 54,560-token KV cache; Cosmos3 required the official `0.35` value. At the evidence timestamp the full graph retained `11,663,872` kB available. |
+| Official unified-memory lane | Historical only: NVIDIA's `0.25 + 0.35 + 0.20` fraction gate did not prevent the later whole-host stalls and is no longer sufficient launch authorization here. |
+| Thor demo unified-memory lane | Historical only: the `0.12 + 0.35 + 0.23` gate passed, but the full graph retained only `11,663,872` kB available and was later disqualified by watchdog resets. |
 | Elasticsearch disk admission | Thor's single-node overlay uses absolute free-space watermarks of 20/15/10 GB. Elasticsearch recovered from red to healthy without deleting data. |
 | Disk | Both model trees and both exact images are local, so required additional staging bytes are zero. The live graph retained `64,963,608,576` available bytes. |
 

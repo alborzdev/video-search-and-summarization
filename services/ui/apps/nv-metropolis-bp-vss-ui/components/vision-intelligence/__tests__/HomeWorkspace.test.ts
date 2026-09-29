@@ -28,6 +28,6 @@ describe("sourceTimelineContext", () => {
     jest.spyOn(Date, "now").mockReturnValue(Date.parse("2026-08-20T12:00:30.000Z"));
     expect(
       sourceTimelineContext(baseStream, "2026-08-20T12:00:00.000Z")
-    ).toBe("30s ago");
+    ).toBe("Last indexed 30s ago");
   });
 });

@@ -62,6 +62,7 @@ function validateEvidence(value: unknown): InvestigationEvidence[] {
       sensor_id: text(candidate.sensor_id, 160),
       source_name: text(candidate.source_name, 256),
       start_time: startTime,
+      ...(text(candidate.start_label, 120) ? { start_label: text(candidate.start_label, 120) } : {}),
       title: text(candidate.title, 500) || "Video evidence",
     };
   });
@@ -155,7 +156,28 @@ function escapeHtml(value: unknown): string {
     .replaceAll("'", "&#039;");
 }
 
-function reportHtml(record: InvestigationRecord): string {
+function reportHtml(record: InvestigationRecord, exportOrigin?: string): string {
+  const duplicateObservation = record.analysis.observations.length === 1 &&
+    record.analysis.observations[0].text === record.analysis.summary;
+  const observations = duplicateObservation ? [] : record.analysis.observations;
+  const summaryCitations = duplicateObservation
+    ? record.analysis.observations[0].evidence_ids.map((id) =>
+        `<a href="#${escapeHtml(id)}">View ${escapeHtml(id)}</a>`).join(" · ")
+    : "";
+  const sections = [
+    observations.length ? { title: "AI observations", claims: observations } : null,
+    record.analysis.interpretations.length ? { title: "AI interpretation", claims: record.analysis.interpretations } : null,
+  ].filter((section): section is NonNullable<typeof section> => section !== null);
+  const isEventReport = record.analysis.evidence.some((item) => item.inspection_source === "retained_event_record");
+  const briefingText = [
+    record.title,
+    record.analysis.question?.trim() ? `${isEventReport ? "Monitoring condition" : "Question"}: ${record.analysis.question}` : "",
+    `${isEventReport ? "Saved event record" : "Saved AI answer"}:\n${record.analysis.summary}`,
+    ...sections.map((section) => `${section.title}:\n${section.claims.map((entry) =>
+      `- ${entry.text} [${entry.evidence_ids.join(", ")}]`).join("\n")}`),
+    record.notes ? `Review notes:\n${record.notes}` : "",
+    `Saved: ${record.created_at}\nReview status: ${record.disposition.replaceAll("_", " ")}`,
+  ].filter(Boolean).join("\n\n");
   const evidence = new Map(
     record.analysis.evidence.map((item) => [item.evidence_id, item])
   );
@@ -176,8 +198,11 @@ function reportHtml(record: InvestigationRecord): string {
         item.media_status === "retained" && item.video_url
           ? item.video_url
           : "";
-      return `<article id="${evidenceId}">
-        <div class="evidence-media">
+      const inspectionText = inspected?.observation;
+      const repeatsClaim = inspectionText === record.analysis.summary ||
+        record.analysis.observations.some((entry) => entry.text === inspectionText);
+      return `<article id="${evidenceId}"${exportOrigin ? ' class="exported"' : ""}>
+        ${exportOrigin ? "" : `<div class="evidence-media">
           ${
             retainedVideo
               ? `<video preload="metadata" muted playsinline src="${escapeHtml(
@@ -188,58 +213,107 @@ function reportHtml(record: InvestigationRecord): string {
               : ""
           }
           ${retainedVideo ? "" : "<video controls hidden></video>"}
-        </div>
+        </div>`}
         <div><b>${evidenceId} · ${escapeHtml(item.title)}</b><span>${escapeHtml(
         item.source_name
-      )} · <time data-local-time="${escapeHtml(item.start_time)}">${escapeHtml(
-        item.start_time
-      )}</time></span>
-        <p>${escapeHtml(
-          inspected?.observation || "Evidence retained for review."
-        )}</p>
+      )} · ${item.start_label
+        ? `<time>${escapeHtml(item.start_label)}</time>`
+        : `<time data-local-time="${escapeHtml(item.start_time)}">${escapeHtml(item.start_time)}</time>`}</span>
+        ${inspectionText && !repeatsClaim ? `<p>${escapeHtml(inspectionText)}</p>` : ""}
+        <p>${inspected?.inspection_source === "fresh_cosmos_inspection"
+          ? "Fresh visual inspection of this clip."
+          : inspected?.inspection_source === "retained_cosmos_caption"
+          ? "Based on a previously captured visual caption."
+          : inspected?.inspection_source === "retained_event_record"
+          ? "Based on a saved event record. No new visual analysis was run when saving this report."
+          : "Selected evidence supporting this briefing."}</p>
         <small class="retention">${
           retainedVideo
             ? "Media retained locally on Thor"
             : "Playback follows the source retention window"
         }</small>
-        <button data-evidence="/api/vision/evidence?${escapeHtml(
+        ${exportOrigin ? `<a class="play-link" href="${escapeHtml(`${exportOrigin}${record.report_url}#${evidenceId}`)}" target="_blank" rel="noreferrer">Open playable evidence on Jetson</a>` : `<button data-evidence="/api/vision/evidence?${escapeHtml(
           params.toString()
         )}" data-retained="${escapeHtml(
           retainedVideo
-        )}" onclick="playEvidence(this)">Play exact clip</button></div>
+        )}" onclick="playEvidence(this)">Play exact clip</button>`}</div>
       </article>`;
     })
     .join("");
   return `<!doctype html><html><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/>
   <title>${escapeHtml(record.title)} · Vision Intelligence</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23050a0c'/%3E%3Cpath d='M16 32h32M32 16v32' stroke='%2318c5cd' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E"/><style>
-  :root{color-scheme:light;font-family:Aesthetica,"Manrope Variable",Manrope,system-ui,sans-serif;background:#f7f7f4;color:#173335}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 82% 0,rgba(20,154,154,.08),transparent 30%),#f7f7f4}main{width:min(1120px,calc(100% - 40px));margin:40px auto 80px}.brand{color:#0f7f80;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}h1{max-width:850px;margin:14px 0 10px;font-size:36px;line-height:1.12;letter-spacing:-.025em}.meta{display:flex;gap:8px;flex-wrap:wrap}.meta span{padding:6px 9px;border:1px solid #d5dfdc;border-radius:999px;color:#637574;background:#fff;font-size:11px}.summary,.section{margin-top:24px;padding:24px;border:1px solid #d8e1de;border-radius:12px;background:rgba(255,255,255,.86);box-shadow:0 12px 34px rgba(24,55,55,.04)}.summary p{font-size:18px;line-height:1.55}.columns{display:grid;grid-template-columns:1fr 1fr;gap:16px}.section h2{margin:0 0 16px;font-size:15px;color:#0f7f80}.section ul{display:grid;gap:11px;margin:0;padding:0;list-style:none}.section li{display:flex;gap:12px;justify-content:space-between;color:#355052;font-size:13px;line-height:1.5}.section small{white-space:nowrap}.section a{color:#176f92;text-decoration:none}.evidence{display:grid;gap:10px;margin-top:24px}.evidence article{display:grid;grid-template-columns:280px 1fr;gap:18px;min-height:165px;overflow:hidden;border:1px solid #d8e1de;border-radius:12px;background:#fff;box-shadow:0 12px 34px rgba(24,55,55,.04)}.evidence-media{background:#123033}.evidence img,.evidence video{width:100%;height:100%;min-height:165px;object-fit:cover}.evidence article>div:last-child{padding:20px 20px 16px 0}.evidence b,.evidence span{display:block}.evidence span{margin-top:5px;color:#728180;font-size:11px}.evidence p{color:#435b5c;font-size:12px;line-height:1.55}.evidence .retention{display:block;margin:0 0 10px;color:#0f7f80}.evidence button{padding:8px 11px;border:1px solid #149a9a;border-radius:6px;background:#f0f9f7;color:#0f7475;cursor:pointer}.notes{white-space:pre-wrap;color:#435b5c;line-height:1.6}@media(max-width:700px){.columns{grid-template-columns:1fr}.evidence article{grid-template-columns:1fr}.evidence article>div:last-child{padding:16px}.evidence-media{max-height:260px}}
-  </style></head><body><main><div class="brand">Vision Intelligence · Local NVIDIA Thor</div><h1>${escapeHtml(
+  :root{color-scheme:light;font-family:Aesthetica,"Manrope Variable",Manrope,system-ui,sans-serif;background:#f7f7f4;color:#173335}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 82% 0,rgba(20,154,154,.08),transparent 30%),#f7f7f4}main{width:min(1120px,calc(100% - 40px));margin:40px auto 80px}.brand{color:#0f7f80;font-size:11px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}h1{max-width:850px;margin:14px 0 10px;font-size:36px;line-height:1.12;letter-spacing:-.025em}.meta{display:flex;gap:8px;flex-wrap:wrap}.meta span{padding:6px 9px;border:1px solid #d5dfdc;border-radius:999px;color:#637574;background:#fff;font-size:11px}.summary,.section{margin-top:24px;padding:24px;border:1px solid #d8e1de;border-radius:12px;background:rgba(255,255,255,.86);box-shadow:0 12px 34px rgba(24,55,55,.04)}.summary p{font-size:18px;line-height:1.55}.columns{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:16px}.section h2{margin:0 0 16px;font-size:15px;color:#0f7f80}.section ul{display:grid;gap:11px;margin:0;padding:0;list-style:none}.section li{display:flex;gap:12px;justify-content:space-between;color:#355052;font-size:13px;line-height:1.5}.section small{white-space:nowrap}.section a{color:#176f92;text-decoration:none}.evidence{display:grid;gap:10px;margin-top:24px}.evidence article{display:grid;grid-template-columns:280px 1fr;gap:18px;min-height:165px;overflow:hidden;border:1px solid #d8e1de;border-radius:12px;background:#fff;box-shadow:0 12px 34px rgba(24,55,55,.04)}.evidence-media{background:#123033}.evidence img,.evidence video{width:100%;height:100%;min-height:165px;object-fit:cover}.evidence article>div:last-child{padding:20px 20px 16px 0}.evidence b,.evidence span{display:block}.evidence span{margin-top:5px;color:#728180;font-size:11px}.evidence p{color:#435b5c;font-size:12px;line-height:1.55}.evidence .retention{display:block;margin:0 0 10px;color:#0f7f80}.evidence button{padding:8px 11px;border:1px solid #149a9a;border-radius:6px;background:#f0f9f7;color:#0f7475;cursor:pointer}.notes{white-space:pre-wrap;color:#435b5c;line-height:1.6}@media(max-width:700px){.columns{grid-template-columns:1fr}.evidence article{grid-template-columns:1fr}.evidence article>div:last-child{padding:16px}.evidence-media{max-height:260px}}
+  .report-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:18px 0 8px}.report-actions a,.report-actions button{font:inherit;font-size:14px;color:inherit;background:transparent;border:1px solid #718783;border-radius:6px;padding:9px 12px;text-decoration:none;cursor:pointer}
+  .summary-citations a,.play-link{color:#0f7f80;font-size:14px}.summary-citations{margin-top:14px}.export-note{font-size:14px;line-height:1.6;color:#637574}.evidence article.exported{display:block;min-height:0;padding-left:20px}.play-link{display:inline-block;padding:10px 0}.evidence .retention{white-space:normal}
+  @media screen {
+    html[data-theme="dark"]{color-scheme:dark;background:#07100f;color:#eef5f3}
+    html[data-theme="dark"] body{background:radial-gradient(circle at 82% 0,rgba(59,188,188,.06),transparent 30%),#07100f}
+    html[data-theme="dark"] .summary,html[data-theme="dark"] .section,html[data-theme="dark"] .evidence article,html[data-theme="dark"] .meta span{background:#101918;border-color:#273936;box-shadow:none}
+    html[data-theme="dark"] .summary-citations a,html[data-theme="dark"] .play-link,html[data-theme="dark"] .brand,html[data-theme="dark"] .section h2,html[data-theme="dark"] .section a,html[data-theme="dark"] .retention{color:#65cecb}
+    html[data-theme="dark"] .section li,html[data-theme="dark"] .evidence p,html[data-theme="dark"] .notes{color:#ccd9d5}
+    html[data-theme="dark"] .export-note,html[data-theme="dark"] .meta span,html[data-theme="dark"] .evidence span{color:#a5b8b2}
+    html[data-theme="dark"] .evidence button{background:#17302d;color:#8fe1dd;border-color:#397e78}
+  }
+  @media print{.evidence button,.report-actions{display:none}main{margin:0;width:100%}.summary,.section,.evidence article{break-inside:avoid;box-shadow:none}}
+
+.evidence article.is-playing{grid-template-columns:1fr}.evidence article.is-playing .evidence-media{max-height:none}.evidence article.is-playing video{display:block;width:100%;height:auto;min-height:0;max-height:70vh;aspect-ratio:16/9;object-fit:contain}.evidence article.is-playing>div:last-child{padding:20px}
+</style><script>try{var theme=localStorage.getItem('ctai-vision-theme-v1')||'dark';document.documentElement.dataset.theme=theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):theme}catch(e){document.documentElement.dataset.theme='dark'}</script></head><body><main><div class="brand">Vision Intelligence · Local NVIDIA Thor</div><h1>${escapeHtml(
     record.title
-  )}</h1><div class="meta"><span>${escapeHtml(
+  )}</h1>${!exportOrigin ? `<nav class="report-actions" aria-label="Report actions"><a href="/">← Back to demo</a><a download="vision-investigation-${escapeHtml(record.id)}.html" href="${escapeHtml(record.report_url)}&amp;download=true">Download briefing (.html)</a><button onclick="copyBriefing(this)">Copy briefing</button><button onclick="window.print()">Print / Save PDF</button></nav><p id="copy-status" role="status"></p><textarea id="briefing-text" aria-label="Briefing text" readonly hidden>${escapeHtml(briefingText)}</textarea><p class="export-note">Download or copy the saved ${isEventReport ? "event record" : "answer"}, review notes and evidence links. Video stays on the Jetson; playback requires access to its network.</p>` : ""}<div class="meta"><span>${escapeHtml(
     record.severity
-  )} severity</span><span>${escapeHtml(
+   )} review priority</span><span>${escapeHtml(
     record.disposition.replaceAll("_", " ")
   )}</span><span><time data-local-time="${escapeHtml(
     record.created_at
   )}">${escapeHtml(record.created_at)}</time></span><span>${escapeHtml(
     record.id
-  )}</span></div><section class="summary"><div class="brand">Evidence briefing</div><p>${escapeHtml(
+  )}</span></div>${record.analysis.question?.trim() ? `<section class="section"><h2>${isEventReport ? "Monitoring condition" : "Question asked"}</h2><div class="notes">${escapeHtml(record.analysis.question)}</div></section>` : ""}<section class="summary"><div class="brand">Evidence briefing</div><p>${escapeHtml(
     record.analysis.summary
-  )}</p></section><div class="columns"><section class="section"><h2>Observed facts</h2><ul>${record.analysis.observations
-    .map(claim)
-    .join(
-      ""
-    )}</ul></section><section class="section"><h2>AI interpretation</h2><ul>${
-    record.analysis.interpretations.map(claim).join("") ||
-    "<li>No separate interpretation was recorded.</li>"
-  }</ul></section></div>${
+  )}</p>${summaryCitations ? `<div class="summary-citations">${summaryCitations}</div>` : ""}</section>
+  ${exportOrigin ? `<p class="export-note">This file contains the saved briefing and citations. Video stays on the Jetson; use the evidence links while connected to its network. Cached clips can expire.</p>` : ""}
+  ${sections.length ? `<div class="columns">${sections.map((section) =>
+    `<section class="section"><h2>${section.title}</h2><ul>${section.claims.map(claim).join("")}</ul></section>`
+  ).join("")}</div>` : ""}${
     record.notes
-      ? `<section class="section"><h2>Operator notes</h2><div class="notes">${escapeHtml(
+      ? `<section class="section"><h2>Review notes</h2><div class="notes">${escapeHtml(
           record.notes
         )}</div></section>`
       : ""
   }<section class="evidence">${evidenceCards}</section></main><script>
-  async function playEvidence(button){button.disabled=true;button.textContent='Preparing exact clip…';try{let videoUrl=button.dataset.retained;if(!videoUrl){const response=await fetch(button.dataset.evidence);const data=await response.json();if(!response.ok||!data.videoUrl)throw new Error(data.error||'Clip unavailable');videoUrl=data.videoUrl}const article=button.closest('article');const video=article.querySelector('video');article.querySelector('img')?.setAttribute('hidden','');if(video.src!==new URL(videoUrl,location.href).href)video.src=videoUrl;video.hidden=false;video.muted=false;video.controls=true;await video.play();button.textContent='Playing exact clip'}catch(error){button.disabled=false;button.textContent=error.message||'Clip unavailable'}}
+  async function copyBriefing(button){
+    const field=document.getElementById('briefing-text');
+    const status=document.getElementById('copy-status');
+    if(!field.dataset.linksAdded){
+      const links=Array.from(document.querySelectorAll('.evidence article')).map(article=>article.querySelector('b').textContent+' — '+article.querySelector('span').textContent+'\\n'+new URL('#'+article.id,location.href).href);
+      field.value+='\\n\\nEvidence links (video stays on the Jetson; network access required; retained clips can expire):\\n'+links.join('\\n\\n');
+      field.dataset.linksAdded='true';
+    }
+    let copied=false;
+    try{if(navigator.clipboard){await navigator.clipboard.writeText(field.value);copied=true}}catch(error){}
+    if(!copied){
+      field.hidden=false;field.style.cssText='width:100%;min-height:220px';
+    }
+    status.textContent=copied?'Briefing copied, including evidence links.':'Briefing selected. Press Ctrl+C (or Command+C on Mac) to copy, or use your device’s Copy action.';
+    if(copied)button.focus();else{field.focus();field.select()}
+  }
+  async function playEvidence(button){
+    button.disabled=true;button.textContent='Preparing exact clip…';
+    try{
+      let videoUrl=button.dataset.retained;
+      if(!videoUrl){const response=await fetch(button.dataset.evidence);const data=await response.json();if(!response.ok||!data.videoUrl)throw new Error(data.error||'Clip unavailable');videoUrl=data.videoUrl}
+      const article=button.closest('article');article.classList.add('is-playing');
+      const video=article.querySelector('video');
+      video.onplaying=function(){button.disabled=true;button.textContent='Playing exact clip'};
+      video.onpause=function(){button.disabled=false;button.textContent=video.ended?'Replay exact clip':'Resume exact clip'};
+      video.onended=function(){button.disabled=false;button.textContent='Replay exact clip'};
+      video.onerror=function(){button.disabled=false;button.textContent='Retry exact clip'};
+      article.querySelector('img')?.setAttribute('hidden','');
+      if(video.src!==new URL(videoUrl,location.href).href)video.src=videoUrl;
+      if(video.ended)video.currentTime=0;
+      video.hidden=false;video.muted=false;video.controls=true;
+      await video.play();
+    }catch(error){button.disabled=false;button.textContent=error.message||'Clip unavailable'}
+  }
   document.querySelectorAll('[data-local-time]').forEach(function(element){var value=element.getAttribute('data-local-time');var date=new Date(value);if(!Number.isNaN(date.getTime()))element.textContent=date.toLocaleString()});
   </script></body></html>`;
 }
@@ -307,13 +381,23 @@ export default async function handler(
               `attachment; filename="vision-investigation-${id}.html"`
             );
           }
-          return res.status(200).send(reportHtml(record));
+          const download = single(req.query.download) === "true";
+          let exportOrigin: string | undefined;
+          if (download) {
+            const protocol = single(req.headers["x-forwarded-proto"]) === "https" ? "https" : "http";
+            const host = single(req.headers.host);
+            const origin = new URL(`${protocol}://${host}`);
+            if (origin.host !== host || origin.username || origin.password) {
+              return res.status(422).json({ error: "A valid device address is required for export." });
+            }
+            exportOrigin = origin.origin;
+          }
+          return res.status(200).send(reportHtml(record, exportOrigin));
         }
         return res.status(200).json(record);
       }
       const files = (await readdir(STORE_DIR))
-        .filter((file) => ID_PATTERN.test(file.replace(/\.json$/, "")))
-        .slice(-100);
+        .filter((file) => ID_PATTERN.test(file.replace(/\.json$/, "")));
       const records = await Promise.all(
         files.map((file) => readRecord(file.replace(/\.json$/, "")))
       );

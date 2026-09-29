@@ -1,0 +1,62 @@
+{
+  "request": {
+    "query": "people moving",
+    "evidence": [
+      {
+        "client_id": "qa-final-frame",
+        "sensor_id": "edfe78cd-2a6d-47c2-8317-57e1ade9aafc",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "match_type": "Semantic Match"
+      }
+    ]
+  },
+  "elapsed_ms": 13031,
+  "response": {
+    "status": "complete",
+    "query": "people moving",
+    "question": "people moving",
+    "summary": "A person wearing a yellow safety vest and hard hat walks through a warehouse aisle carrying boxes. They move toward shelving unit E, then turn to face it while holding the boxes. Their position shifts from walking to standing near the shelf.",
+    "observations": [
+      {
+        "text": "A person wearing a yellow safety vest and hard hat walks through a warehouse aisle carrying boxes. They move toward shelving unit E, then turn to face it while holding the boxes. Their position shifts from walking to standing near the shelf.",
+        "evidence_ids": [
+          "E1"
+        ]
+      }
+    ],
+    "interpretations": [],
+    "timeline": [
+      {
+        "evidence_id": "E1",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "label": "Visual inspection"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "E1",
+        "client_id": "qa-final-frame",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "observation": "A person wearing a yellow safety vest and hard hat walks through a warehouse aisle carrying boxes. They move toward shelving unit E, then turn to face it while holding the boxes. Their position shifts from walking to standing near the shelf.",
+        "match_type": "Semantic Match",
+        "inspection_source": "fresh_cosmos_inspection"
+      }
+    ],
+    "suggested_questions": [
+      "What changes during this clip?",
+      "Where are the visible people and objects relative to each other?"
+    ],
+    "warning": null,
+    "timings_ms": {
+      "inspection": 12886.8,
+      "synthesis": 0,
+      "total": 12886.8
+    }
+  }
+}

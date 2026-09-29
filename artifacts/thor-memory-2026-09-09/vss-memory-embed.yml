@@ -1,0 +1,180 @@
+name: vss-memory-embed
+services:
+  test:
+    image: sha256:e481b8f293871ff312e5ac90430ba6312a17d6d3803abdc8eb176ca13c02a9dd
+    container_name: vss-memory-embed
+    runtime: nvidia
+    restart: 'no'
+    oom_score_adj: 500
+    environment:
+      NVIDIA_API_KEY: ''
+      NVIDIA_VISIBLE_DEVICES: all
+      REDIS_PASSWORD: ''
+      OTEL_TRACES_EXPORTER: console
+      RTVI_RTSP_RECONNECTION_WINDOW: '60'
+      REDIS_HOST: host.docker.internal
+      KAFKA_TOPIC: mdx-embed
+      NGC_API_KEY: ''
+      LOG_LEVEL: INFO
+      HF_TOKEN: ''
+      ENABLE_REDIS_ERROR_MESSAGES: 'true'
+      NUM_VLM_PROCS: ''
+      RTVI_RTSP_TIMEOUT: ''
+      MODEL_IMPLEMENTATION_PATH: /opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1
+      MODEL_REPOSITORY_SCRIPT_PATH: /opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1/create_triton_model_repo.py
+      ERROR_MESSAGE_TOPIC: vision-embed-errors
+      REDIS_DB: '0'
+      ASSET_DOWNLOAD_TOTAL_TIMEOUT: '300'
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      REDIS_PORT: '6379'
+      ENABLE_REQUEST_PROFILING: 'false'
+      NGC_CLI_API_KEY: ''
+      RTVI_RTSP_LATENCY: ''
+      OTEL_RESOURCE_ATTRIBUTES: ''
+      ASSET_DOWNLOAD_CONNECT_TIMEOUT: '10'
+      RTVI_RTSP_RECONNECTION_MAX_ATTEMPTS: '10'
+      FORCE_SW_AV1_DECODER: ''
+      KAFKA_BOOTSTRAP_SERVERS: 10.88.9.12:9092
+      INSTALL_PROPRIETARY_CODECS: 'false'
+      NUM_GPUS: ''
+      ENABLE_OTEL_MONITORING: 'true'
+      ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS: host.docker.internal
+      OTEL_SERVICE_NAME: vss-rtvi-embed-thor-local
+      MODEL_PATH: git:https://huggingface.co/nvidia/Cosmos-Embed1-448p-anomaly-detection
+      TRANSFORMERS_OFFLINE: '1'
+      RTVI_OFFLINE: 'true'
+      VLM_BATCH_SIZE: '2'
+      OTEL_METRICS_EXPORTER: none
+      HF_HUB_OFFLINE: '1'
+      KAFKA_ENABLED: 'true'
+      OTEL_METRIC_EXPORT_INTERVAL: '60000'
+      RTVI_RTSP_RECONNECTION_INTERVAL: '5'
+      PATH: /opt/proto/bin:/opt/tritonserver/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/mpi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ucx/bin:/opt/amazon/efa/bin:/opt/nvidia/rtvi/
+      NVIDIA_REQUIRE_JETPACK_HOST_MOUNTS: ''
+      GDRCOPY_VERSION: '2.5'
+      HPCX_VERSION: '2.24'
+      MOFED_VERSION: 5.4-rdmacore56.0
+      OPENUCX_VERSION: 1.19.0
+      OPENMPI_VERSION: 4.1.7
+      RDMACORE_VERSION: '56.0'
+      EFA_VERSION: 1.38.1
+      AWS_OFI_NCCL_VERSION: 1.14.0
+      OPAL_PREFIX: /opt/hpcx/ompi
+      OMPI_MCA_coll_hcoll_enable: '0'
+      CUDA_VERSION: 13.0.0.044
+      CUDA_DRIVER_VERSION: 580.65.06
+      NVVM_VERSION: 13.0.48
+      DOCA_VERSION: 3.1.0
+      _CUDA_COMPAT_PATH: /usr/local/cuda/compat
+      ENV: /etc/shinit_v2
+      BASH_ENV: /etc/bash.bashrc
+      SHELL: /bin/bash
+      NVIDIA_REQUIRE_CUDA: cuda>=9.0
+      NCCL_VERSION: 2.27.7
+      CUBLAS_VERSION: 13.0.0.19
+      CUFFT_VERSION: 12.0.0.15
+      CURAND_VERSION: 10.4.0.35
+      CUSPARSE_VERSION: 12.6.2.49
+      CUSPARSELT_VERSION: 0.8.0.4
+      CUSOLVER_VERSION: 12.0.3.29
+      NPP_VERSION: 13.0.0.50
+      NVJPEG_VERSION: 13.0.0.40
+      CUFILE_VERSION: 1.15.0.42
+      NVJITLINK_VERSION: 13.0.39
+      CUBLASMP_VERSION: 0.5.1.65
+      NVSHMEM_VERSION: 3.3.20
+      CUDLA_VERSION: 13.0.0.044
+      NVPTXCOMPILER_VERSION: 13.0.48
+      CUDNN_VERSION: 9.12.0.46
+      CUDNN_FRONTEND_VERSION: 1.13.0
+      TRT_VERSION: 10.13.2.6
+      TRTOSS_VERSION: ''
+      NSIGHT_SYSTEMS_VERSION: 2025.4.1.136
+      NSIGHT_COMPUTE_VERSION: 2025.3.0.19
+      DALI_VERSION: 1.51.2
+      DALI_BUILD: ''
+      DALI_URL_SUFFIX: '130'
+      POLYGRAPHY_VERSION: 0.49.24
+      TRANSFORMER_ENGINE_VERSION: '2.5'
+      MODEL_OPT_VERSION: 0.33.0
+      CUDA_ARCH_LIST: 8.0 8.6 9.0 10.0 11.0 12.0
+      NVRX_VERSION: 0.4.1+cuda13
+      LD_LIBRARY_PATH: /usr/local/lib/python3.12/dist-packages/nvidia/nvshmem/lib/:/usr/local/lib/python3.12/dist-packages/nvidia/nvshmem/lib:/opt/hpcx/ucx/lib:/opt/nvidia/deepstream/deepstream/lib:/opt/nvidia/deepstream/deepstream-9.0/lib:/usr/local/nvidia/lib64:/usr/local/cuda-12/targets/x86_64-linux/lib:/opt/tritonserver/lib:/usr/local/cuda-13.0/lib64:/opt/tritonserver/lib/:/usr/lib/x86_64-linux-gnu/
+      NVIDIA_DRIVER_CAPABILITIES: all,video
+      NVIDIA_PRODUCT_NAME: Triton Server
+      LIBRARY_PATH: '/usr/local/cuda/lib64/stubs:'
+      PIP_BREAK_SYSTEM_PACKAGES: '1'
+      TRITON_SERVER_VERSION: 2.60.0
+      NVIDIA_TRITON_SERVER_VERSION: '25.08'
+      UCX_MEM_EVENTS: 'no'
+      TF_ADJUST_HUE_FUSED: '1'
+      TF_ADJUST_SATURATION_FUSED: '1'
+      TF_ENABLE_WINOGRAD_NONFUSED: '1'
+      TF_AUTOTUNE_THRESHOLD: '2'
+      TRITON_SERVER_GPU_ENABLED: '1'
+      TRITON_SERVER_USER: triton-server
+      DEBIAN_FRONTEND: noninteractive
+      TCMALLOC_RELEASE_RATE: '200'
+      DCGM_VERSION: 4.4.0-1
+      PYTHONPATH: '/opt/tritonserver/backends/dali/wheel/dali:'
+      NVIDIA_BUILD_ID: '202022640'
+      DS_VERSION: '9.0'
+      HF_HOME: /tmp/huggingface
+      TORCH_CUDA_ARCH_LIST: 7.5 8.0 8.6 9.0 10.0 11.0 12.0+PTX
+      CUDA_CACHE_DISABLE: '0'
+      TRITON_CUDACRT_PATH: /usr/local/cuda/include
+      TRITON_CUDART_PATH: /usr/local/cuda/include
+      TRITON_CUOBJDUMP_PATH: /usr/local/cuda/bin/cuobjdump
+      TRITON_CUPTI_PATH: /usr/local/cuda/include
+      TRITON_NVDISASM_PATH: /usr/local/cuda/bin/nvdisasm
+      TRITON_PTXAS_PATH: /usr/local/cuda/bin/ptxas
+      GST_PLUGIN_PATH: /opt/nvidia/deepstream/deepstream/lib/gst-plugins
+    volumes:
+    - type: volume
+      source: existing0
+      target: /tmp/huggingface
+      read_only: false
+    - type: volume
+      source: existing1
+      target: /tmp/triton_model_repo
+      read_only: false
+    - type: volume
+      source: existing2
+      target: /dummy
+      read_only: false
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/data_log/vst/clip_storage
+      target: /home/vst/vst_release/streamer_videos
+      read_only: false
+    - type: volume
+      source: existing3
+      target: /opt/nvidia/rtvi/.rtvi/ngc_model_cache
+      read_only: false
+    entrypoint:
+    - /opt/nvidia/rtvi/start_rtvi_embed.sh
+    working_dir: /opt/nvidia/rtvi/
+    user: 1001:1001
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    ipc: host
+    networks:
+    - existing
+    ports:
+    - 127.0.0.1:8017:8000/tcp
+volumes:
+  existing0:
+    external: true
+    name: mdx_rtvi-hf-cache
+  existing1:
+    external: true
+    name: vss-memory-embed-triton-b2
+  existing2:
+    external: true
+    name: 183eff159de95175e758db9464be027943ea46ca65c7c95871e5bd79e80c060d
+  existing3:
+    external: true
+    name: mdx_rtvi-ngc-model-cache
+networks:
+  existing:
+    external: true
+    name: mdx_default

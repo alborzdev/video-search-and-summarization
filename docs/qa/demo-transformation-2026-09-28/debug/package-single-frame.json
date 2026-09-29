@@ -1,0 +1,27 @@
+{
+  "mode": "single frame at excerpt 4s, original 44s, 1280x720",
+  "question": "Describe the box's shape.",
+  "elapsed_seconds": 3.657,
+  "response": {
+    "id": "24ed7c9b-1616-427b-a673-98240ecbb3b4",
+    "object": "chat.completion",
+    "created": 1790638961,
+    "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "The box is rectangular. It has a flat top and bottom, with four sides connecting them.",
+          "reasoning_description": null
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 23,
+      "completion_tokens": 20,
+      "total_tokens": 43
+    }
+  }
+}

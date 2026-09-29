@@ -1,0 +1,579 @@
+[
+  {
+    "request_id": "056c9e30-2eaa-4f06-b496-86d33dfad590",
+    "captured_unix": 1790651539.7077432,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "0d274c6462e4e5c5066c2af459a496dbe885d05aa441a90bc39782f220309a53",
+    "frame_times": [
+      0.89,
+      3.42,
+      5.92,
+      8.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.398406374501992,
+      "duration": 7.53
+    },
+    "chunk": {
+      "chunkIdx": 0,
+      "start_ntp": "2026-09-29T03:12:12.076Z",
+      "end_ntp": "2026-09-29T03:12:19.607Z",
+      "start_pts": 888220906,
+      "end_pts": 8419917338
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.014990371884778142,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "056c9e30-2eaa-4f06-b496-86d33dfad590/frame-0.png",
+      "056c9e30-2eaa-4f06-b496-86d33dfad590/frame-1.png",
+      "056c9e30-2eaa-4f06-b496-86d33dfad590/frame-2.png",
+      "056c9e30-2eaa-4f06-b496-86d33dfad590/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1,
+        2
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "60629a42-8b81-4ee1-8284-a7a7117c8e10",
+    "captured_unix": 1790651549.6980476,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "a3024a23b8fc6a6491dbf24651acdf523901faa513dc67af31a450954372ae18",
+    "frame_times": [
+      10.92,
+      13.42,
+      15.92,
+      18.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.3999999999999999,
+      "duration": 7.500000000000002
+    },
+    "chunk": {
+      "chunkIdx": 1,
+      "start_ntp": "2026-09-29T03:12:22.076Z",
+      "end_ntp": "2026-09-29T03:12:29.607Z",
+      "start_pts": 10888220906,
+      "end_pts": 18419614323
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.008059495128691196,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "60629a42-8b81-4ee1-8284-a7a7117c8e10/frame-0.png",
+      "60629a42-8b81-4ee1-8284-a7a7117c8e10/frame-1.png",
+      "60629a42-8b81-4ee1-8284-a7a7117c8e10/frame-2.png",
+      "60629a42-8b81-4ee1-8284-a7a7117c8e10/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "6dff5195-2dc2-4443-88ad-de206f6746b7",
+    "captured_unix": 1790651559.7012956,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "64082f861404649bbbd3dab1c41620beb3f154d48f9c82faa7dc7ef85e13a2d5",
+    "frame_times": [
+      20.92,
+      23.42,
+      25.92,
+      28.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 2,
+      "start_ntp": "2026-09-29T03:12:32.076Z",
+      "end_ntp": "2026-09-29T03:12:39.607Z",
+      "start_pts": 20888220906,
+      "end_pts": 28419852387
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.01555891684256494,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "6dff5195-2dc2-4443-88ad-de206f6746b7/frame-0.png",
+      "6dff5195-2dc2-4443-88ad-de206f6746b7/frame-1.png",
+      "6dff5195-2dc2-4443-88ad-de206f6746b7/frame-2.png",
+      "6dff5195-2dc2-4443-88ad-de206f6746b7/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        0
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "4f4dfb0d-ad41-434b-82c4-a43f697283f8",
+    "captured_unix": 1790651569.696947,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "b08a5c07144bcd8d34bb1eeb0e476d12a232854f209cf0fa8668a85699b2b5a1",
+    "frame_times": [
+      30.92,
+      33.42,
+      35.92,
+      38.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 3,
+      "start_ntp": "2026-09-29T03:12:42.076Z",
+      "end_ntp": "2026-09-29T03:12:49.607Z",
+      "start_pts": 30888220906,
+      "end_pts": 38419484119
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.013047224842011929,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "4f4dfb0d-ad41-434b-82c4-a43f697283f8/frame-0.png",
+      "4f4dfb0d-ad41-434b-82c4-a43f697283f8/frame-1.png",
+      "4f4dfb0d-ad41-434b-82c4-a43f697283f8/frame-2.png",
+      "4f4dfb0d-ad41-434b-82c4-a43f697283f8/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "a2d98253-f96b-42bb-b289-549d3f202730",
+    "captured_unix": 1790651579.6997266,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "a637816c0565b775701419f52e93f8407f020106b8064082637e2631511071ec",
+    "frame_times": [
+      40.92,
+      43.42,
+      45.92,
+      48.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 4,
+      "start_ntp": "2026-09-29T03:12:52.076Z",
+      "end_ntp": "2026-09-29T03:12:59.607Z",
+      "start_pts": 40888220906,
+      "end_pts": 48419775724
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.011290641967207193,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "a2d98253-f96b-42bb-b289-549d3f202730/frame-0.png",
+      "a2d98253-f96b-42bb-b289-549d3f202730/frame-1.png",
+      "a2d98253-f96b-42bb-b289-549d3f202730/frame-2.png",
+      "a2d98253-f96b-42bb-b289-549d3f202730/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "99f21b86-c1a4-4687-854b-8b765d6d94c0",
+    "captured_unix": 1790651589.698981,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "e7a69c359638856cd15daf97c687d1870c7248f0aad5e0a3433a6795839f3c6f",
+    "frame_times": [
+      50.92,
+      53.42,
+      55.92,
+      58.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 5,
+      "start_ntp": "2026-09-29T03:13:02.076Z",
+      "end_ntp": "2026-09-29T03:13:09.607Z",
+      "start_pts": 50888220906,
+      "end_pts": 58419565299
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.012417993042618036,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "99f21b86-c1a4-4687-854b-8b765d6d94c0/frame-0.png",
+      "99f21b86-c1a4-4687-854b-8b765d6d94c0/frame-1.png",
+      "99f21b86-c1a4-4687-854b-8b765d6d94c0/frame-2.png",
+      "99f21b86-c1a4-4687-854b-8b765d6d94c0/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "2b3e8e16-0251-4e7d-8078-a55fb4b131a5",
+    "captured_unix": 1790651599.7007449,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "54ca8bea9c3246ccf081b5a45e4a4830dc877139a57393fef8f9415dd2d30d0c",
+    "frame_times": [
+      60.92,
+      63.42,
+      65.92,
+      68.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 6,
+      "start_ntp": "2026-09-29T03:13:12.076Z",
+      "end_ntp": "2026-09-29T03:13:19.608Z",
+      "start_pts": 60888220906,
+      "end_pts": 68421099541
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.012137121986597776,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "2b3e8e16-0251-4e7d-8078-a55fb4b131a5/frame-0.png",
+      "2b3e8e16-0251-4e7d-8078-a55fb4b131a5/frame-1.png",
+      "2b3e8e16-0251-4e7d-8078-a55fb4b131a5/frame-2.png",
+      "2b3e8e16-0251-4e7d-8078-a55fb4b131a5/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "82c19121-136b-4065-a866-4506ead8b4e6",
+    "captured_unix": 1790651609.6720753,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "23dcc711de381caf7ead8f24dda599f8433d2b8de835a2e8738b6140ec3b5f06",
+    "frame_times": [
+      70.92,
+      73.42,
+      75.92,
+      78.39
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4016064257028113,
+      "duration": 7.469999999999999
+    },
+    "chunk": {
+      "chunkIdx": 7,
+      "start_ntp": "2026-09-29T03:13:22.076Z",
+      "end_ntp": "2026-09-29T03:13:29.576Z",
+      "start_pts": 70888220906,
+      "end_pts": 78388548250
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.013660937082022429,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "82c19121-136b-4065-a866-4506ead8b4e6/frame-0.png",
+      "82c19121-136b-4065-a866-4506ead8b4e6/frame-1.png",
+      "82c19121-136b-4065-a866-4506ead8b4e6/frame-2.png",
+      "82c19121-136b-4065-a866-4506ead8b4e6/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  },
+  {
+    "request_id": "62ed0f96-afa5-4d27-98f7-9b34fa1c83a1",
+    "captured_unix": 1790651619.6967657,
+    "shape": [
+      4,
+      512,
+      512,
+      3
+    ],
+    "pixels_sha256": "456007bbed3ac2c8f25a076d0922a4fb103c14ecb2ae39002c0fec2c44cbb0e6",
+    "frame_times": [
+      80.92,
+      83.42,
+      85.89,
+      88.42
+    ],
+    "video_metadata": {
+      "total_num_frames": 4,
+      "frames_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "fps": 0.4,
+      "duration": 7.5
+    },
+    "chunk": {
+      "chunkIdx": 8,
+      "start_ntp": "2026-09-29T03:13:32.076Z",
+      "end_ntp": "2026-09-29T03:13:39.609Z",
+      "start_pts": 80888220906,
+      "end_pts": 88421510327
+    },
+    "sampling": {
+      "temperature": 0.4,
+      "seed": 1,
+      "top_p": 0.8,
+      "top_k": 20,
+      "max_tokens": 128,
+      "min_tokens": 0,
+      "ignore_eos": false,
+      "repetition_penalty": 1.1
+    },
+    "capture_seconds": 0.007400736911222339,
+    "outputs": [
+      "YES"
+    ],
+    "frames": [
+      "62ed0f96-afa5-4d27-98f7-9b34fa1c83a1/frame-0.png",
+      "62ed0f96-afa5-4d27-98f7-9b34fa1c83a1/frame-1.png",
+      "62ed0f96-afa5-4d27-98f7-9b34fa1c83a1/frame-2.png",
+      "62ed0f96-afa5-4d27-98f7-9b34fa1c83a1/frame-3.png"
+    ],
+    "manual_review": {
+      "expected": "YES",
+      "visible_frame_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "matches_response": true,
+      "scope": "Actual sampled input; not exhaustive video annotation"
+    }
+  }
+]

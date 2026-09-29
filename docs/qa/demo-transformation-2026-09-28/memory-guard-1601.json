@@ -1,0 +1,5716 @@
+{
+  "trip": {
+    "time": 1790625718.582724,
+    "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+    "available_gib": 47.659,
+    "free_gib": 1.911,
+    "slab_gib": 3.485,
+    "thermal_age": 0.33,
+    "tegrastats": "09-28-2026 16:01:58 RAM 76533/125772MB (lfb 7x4MB) CPU [39%@2601,45%@2601,37%@2601,35%@2601,52%@2601,41%@2601,37%@1080,45%@1080,48%@1458,39%@1458,45%@2601,49%@2601,32%@2601,23%@2601] cpu@45.781C tj@45.781C soc012@43.25C gpu@43.25C soc345@41.812C VDD_GPU 6325mW/2654mW VDD_CPU_SOC_MSS 15406mW/10530mW VIN_SYS_5V0 9448mW/7645mW VIN 39290mW/27239mW",
+    "reason": "reserve",
+    "floor_gib": 48.0
+  },
+  "samples": [
+    {
+      "time": 1790625628.8288517,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.648,
+      "free_gib": 2.854,
+      "slab_gib": 3.467,
+      "thermal_age": 0.95,
+      "tegrastats": "09-28-2026 16:00:27 RAM 75438/125772MB (lfb 7x4MB) CPU [30%@2430,41%@2430,20%@972,24%@972,40%@2484,38%@2484,35%@1890,29%@1890,34%@2601,48%@2601,69%@2601,27%@2601,16%@1080,33%@1080] cpu@45.343C tj@45.343C soc012@43.843C gpu@43.062C soc345@42.031C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13041mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 32704mW/27239mW"
+    },
+    {
+      "time": 1790625629.8329363,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.703,
+      "free_gib": 2.878,
+      "slab_gib": 3.498,
+      "thermal_age": 0.95,
+      "tegrastats": "09-28-2026 16:00:28 RAM 75361/125772MB (lfb 7x4MB) CPU [32%@972,16%@972,11%@972,13%@972,48%@2601,21%@2601,26%@1134,25%@1134,33%@1026,41%@1026,71%@1674,15%@1674,27%@972,23%@972] cpu@44.468C tj@44.468C soc012@42.125C gpu@42.937C soc345@41.843C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12256mW/10529mW VIN_SYS_5V0 8229mW/7645mW VIN 31432mW/27239mW"
+    },
+    {
+      "time": 1790625630.8353126,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.704,
+      "free_gib": 2.867,
+      "slab_gib": 3.516,
+      "thermal_age": 0.95,
+      "tegrastats": "09-28-2026 16:00:29 RAM 75339/125772MB (lfb 7x4MB) CPU [47%@972,44%@972,34%@2430,24%@2430,40%@2601,79%@2601,21%@972,21%@972,31%@2601,73%@2601,41%@2601,25%@2601,28%@1566,29%@1566] cpu@45.406C tj@45.406C soc012@43.218C gpu@43.031C soc345@41.812C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 13436mW/10529mW VIN_SYS_5V0 8331mW/7645mW VIN 35040mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 668,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 304,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 714,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 476,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 353,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 267,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 742,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 751,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1629,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625631.8642664,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.691,
+      "free_gib": 2.849,
+      "slab_gib": 3.518,
+      "thermal_age": 0.97,
+      "tegrastats": "09-28-2026 16:00:30 RAM 75348/125772MB (lfb 7x4MB) CPU [10%@972,36%@972,37%@2601,39%@2601,37%@2601,82%@2601,35%@1512,36%@1512,32%@972,65%@972,43%@1080,25%@1080,42%@1188,33%@1188] cpu@45.156C tj@45.156C soc012@42.031C gpu@42.937C soc345@41.875C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 13436mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 29076mW/27239mW"
+    },
+    {
+      "time": 1790625632.86804,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.689,
+      "free_gib": 2.849,
+      "slab_gib": 3.513,
+      "thermal_age": 0.97,
+      "tegrastats": "09-28-2026 16:00:31 RAM 75370/125772MB (lfb 7x4MB) CPU [16%@972,31%@972,56%@972,22%@972,29%@972,43%@972,30%@1242,53%@1242,26%@1026,34%@1026,38%@2601,32%@2601,46%@2601,22%@2601] cpu@46.281C tj@46.281C soc012@43.125C gpu@42.937C soc345@42.156C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13041mW/10529mW VIN_SYS_5V0 8331mW/7645mW VIN 32186mW/27239mW"
+    },
+    {
+      "time": 1790625633.8726285,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.664,
+      "free_gib": 2.824,
+      "slab_gib": 3.513,
+      "thermal_age": 0.97,
+      "tegrastats": "09-28-2026 16:00:32 RAM 75364/125772MB (lfb 7x4MB) CPU [30%@2601,30%@2601,82%@2601,26%@2601,35%@2601,20%@2601,27%@1620,56%@1620,31%@2601,32%@2601,37%@2601,33%@2601,43%@2601,21%@2601] cpu@45.125C tj@45.125C soc012@43.281C gpu@43C soc345@41.968C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13041mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 36016mW/27239mW"
+    },
+    {
+      "time": 1790625634.8744466,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.675,
+      "free_gib": 2.836,
+      "slab_gib": 3.513,
+      "thermal_age": 0.97,
+      "tegrastats": "09-28-2026 16:00:33 RAM 75391/125772MB (lfb 7x4MB) CPU [49%@2601,20%@2601,33%@972,24%@972,24%@972,21%@972,35%@972,16%@972,19%@972,43%@972,25%@972,25%@972,23%@972,8%@972] cpu@45.093C tj@45.093C soc012@42.031C gpu@42.937C soc345@41.843C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11070mW/10529mW VIN_SYS_5V0 8229mW/7645mW VIN 29510mW/27239mW"
+    },
+    {
+      "time": 1790625635.8759284,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.654,
+      "free_gib": 2.815,
+      "slab_gib": 3.509,
+      "thermal_age": 0.97,
+      "tegrastats": "09-28-2026 16:00:34 RAM 75378/125772MB (lfb 7x4MB) CPU [40%@972,28%@972,20%@1134,25%@1134,27%@1566,37%@1566,20%@972,32%@972,31%@2268,38%@2268,26%@972,28%@972,22%@2601,25%@2601] cpu@44.031C tj@44.031C soc012@42.5C gpu@43C soc345@41.937C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11465mW/10529mW VIN_SYS_5V0 8128mW/7645mW VIN 31006mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 686,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 305,
+          "wchan": "0"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 715,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 474,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 353,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 266,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 742,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 751,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1629,
+          "wchan": "0"
+        },
+        {
+          "pid": "3132631",
+          "name": "kworker/u28:1+devfreq_wq",
+          "state": "D",
+          "rss_mib": 0,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625636.9041696,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.557,
+      "free_gib": 2.723,
+      "slab_gib": 3.501,
+      "thermal_age": 0.99,
+      "tegrastats": "09-28-2026 16:00:35 RAM 75389/125772MB (lfb 7x4MB) CPU [33%@1350,27%@1350,26%@972,22%@972,37%@972,18%@972,31%@2601,61%@2601,35%@2376,29%@2376,24%@1134,24%@1134,29%@2601,80%@2601] cpu@44.125C tj@44.062C soc012@43.031C gpu@42.906C soc345@42.031C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12251mW/10529mW VIN_SYS_5V0 8331mW/7645mW VIN 29728mW/27239mW"
+    },
+    {
+      "time": 1790625637.9059925,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.635,
+      "free_gib": 2.802,
+      "slab_gib": 3.5,
+      "thermal_age": 0.99,
+      "tegrastats": "09-28-2026 16:00:36 RAM 75490/125772MB (lfb 7x4MB) CPU [50%@2601,15%@2601,31%@1782,27%@1782,36%@2601,85%@2601,38%@2052,36%@2052,33%@2322,28%@2322,42%@972,37%@972,22%@1998,80%@1998] cpu@45.656C tj@45.656C soc012@42.562C gpu@42.906C soc345@41.781C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 15017mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 36440mW/27239mW"
+    },
+    {
+      "time": 1790625638.9082708,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.618,
+      "free_gib": 2.831,
+      "slab_gib": 3.474,
+      "thermal_age": 0.99,
+      "tegrastats": "09-28-2026 16:00:37 RAM 75404/125772MB (lfb 7x4MB) CPU [35%@2484,34%@2484,41%@1404,26%@1404,35%@2601,28%@2601,21%@1566,28%@1566,33%@1296,23%@1296,30%@972,26%@972,42%@2601,75%@2601] cpu@44.937C tj@44.937C soc012@42.406C gpu@43C soc345@42C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11860mW/10529mW VIN_SYS_5V0 8229mW/7645mW VIN 35734mW/27239mW"
+    },
+    {
+      "time": 1790625639.9117365,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.651,
+      "free_gib": 2.821,
+      "slab_gib": 3.507,
+      "thermal_age": 0.99,
+      "tegrastats": "09-28-2026 16:00:38 RAM 75398/125772MB (lfb 7x4MB) CPU [26%@972,37%@972,37%@1836,22%@1836,33%@1728,44%@1728,52%@2601,34%@2601,30%@2106,39%@2106,28%@972,36%@972,33%@2601,21%@2601] cpu@44.187C tj@44.187C soc012@42.5C gpu@42.906C soc345@41.718C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 13436mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 30856mW/27239mW"
+    },
+    {
+      "time": 1790625640.9147577,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.77,
+      "free_gib": 2.94,
+      "slab_gib": 3.513,
+      "thermal_age": 0.99,
+      "tegrastats": "09-28-2026 16:00:39 RAM 75395/125772MB (lfb 7x4MB) CPU [33%@2601,30%@2601,45%@2268,54%@2268,40%@2601,32%@2601,35%@2592,29%@2592,40%@2601,55%@2601,72%@2601,45%@2601,21%@2106,48%@2106] cpu@45.75C tj@45.75C soc012@43.062C gpu@42.937C soc345@42.281C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 15011mW/10529mW VIN_SYS_5V0 8636mW/7645mW VIN 35078mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 597,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 716,
+          "wchan": "0"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 468,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 354,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 266,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 743,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 751,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1629,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625641.9414878,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.772,
+      "free_gib": 2.939,
+      "slab_gib": 3.508,
+      "thermal_age": 0.0,
+      "tegrastats": "09-28-2026 16:00:41 RAM 75272/125772MB (lfb 7x4MB) CPU [19%@972,40%@972,34%@972,34%@972,37%@2601,5%@2601,32%@972,29%@972,25%@1620,37%@1620,34%@2601,39%@2601,27%@2601,99%@2601] cpu@45.031C tj@45.031C soc012@44.375C gpu@43.031C soc345@42.031C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13436mW/10529mW VIN_SYS_5V0 8331mW/7645mW VIN 32620mW/27239mW"
+    },
+    {
+      "time": 1790625642.9427187,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.773,
+      "free_gib": 2.942,
+      "slab_gib": 3.509,
+      "thermal_age": 0.0,
+      "tegrastats": "09-28-2026 16:00:42 RAM 75272/125772MB (lfb 7x4MB) CPU [91%@2601,26%@2601,22%@1728,27%@1728,42%@2376,29%@2376,44%@1134,23%@1134,36%@2592,25%@2592,43%@2160,37%@2160,37%@1350,40%@1350] cpu@45.093C tj@45.093C soc012@43.5C gpu@42.937C soc345@41.937C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12646mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 38964mW/27239mW"
+    },
+    {
+      "time": 1790625643.9454398,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.787,
+      "free_gib": 2.959,
+      "slab_gib": 3.511,
+      "thermal_age": 1.0,
+      "tegrastats": "09-28-2026 16:00:42 RAM 75272/125772MB (lfb 7x4MB) CPU [91%@2601,26%@2601,22%@1728,27%@1728,42%@2376,29%@2376,44%@1134,23%@1134,36%@2592,25%@2592,43%@2160,37%@2160,37%@1350,40%@1350] cpu@45.093C tj@45.093C soc012@43.5C gpu@42.937C soc345@41.937C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12646mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 38964mW/27239mW"
+    },
+    {
+      "time": 1790625644.9465656,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.672,
+      "free_gib": 2.84,
+      "slab_gib": 3.512,
+      "thermal_age": 1.0,
+      "tegrastats": "09-28-2026 16:00:43 RAM 75260/125772MB (lfb 7x4MB) CPU [83%@2376,36%@2268,29%@1296,30%@1296,30%@972,25%@972,33%@1566,33%@1566,29%@2601,38%@2601,20%@1080,17%@1080,46%@2601,38%@2601] cpu@45.593C tj@45.593C soc012@42.781C gpu@43C soc345@42.343C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 13436mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 35846mW/27239mW"
+    },
+    {
+      "time": 1790625645.94943,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.599,
+      "free_gib": 2.801,
+      "slab_gib": 3.503,
+      "thermal_age": 1.0,
+      "tegrastats": "09-28-2026 16:00:44 RAM 75380/125772MB (lfb 7x4MB) CPU [39%@2601,58%@2601,40%@2601,50%@2601,38%@2601,42%@2601,50%@2601,46%@2601,50%@2601,48%@2601,50%@2601,42%@2601,58%@2601,46%@2601] cpu@47.468C tj@47.468C soc012@45.562C gpu@42.906C soc345@42.531C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 17784mW/10529mW VIN_SYS_5V0 9042mW/7645mW VIN 46078mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 606,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 712,
+          "wchan": "0"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 472,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 354,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 275,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 743,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1639,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625646.9835455,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.462,
+      "free_gib": 2.69,
+      "slab_gib": 3.498,
+      "thermal_age": 0.02,
+      "tegrastats": "09-28-2026 16:00:46 RAM 75578/125772MB (lfb 7x4MB) CPU [43%@1782,25%@1782,25%@1404,45%@1404,31%@2484,41%@2484,24%@972,21%@972,31%@1620,42%@1620,92%@2601,97%@2601,47%@2538,33%@2538] cpu@46.562C tj@46.562C soc012@45.156C gpu@43.093C soc345@42.406C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 15017mW/10529mW VIN_SYS_5V0 8636mW/7645mW VIN 32476mW/27239mW"
+    },
+    {
+      "time": 1790625647.9847958,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.446,
+      "free_gib": 2.675,
+      "slab_gib": 3.497,
+      "thermal_age": 0.02,
+      "tegrastats": "09-28-2026 16:00:47 RAM 75581/125772MB (lfb 7x4MB) CPU [43%@2601,52%@2601,29%@2601,70%@2601,35%@2601,43%@2601,43%@2601,46%@2601,35%@2268,46%@2268,59%@2601,67%@2601,59%@2430,66%@2430] cpu@47.562C tj@47.562C soc012@44.937C gpu@43.062C soc345@42.593C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 18566mW/10529mW VIN_SYS_5V0 8839mW/7645mW VIN 35208mW/27239mW"
+    },
+    {
+      "time": 1790625648.986012,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.375,
+      "free_gib": 2.603,
+      "slab_gib": 3.497,
+      "thermal_age": 0.02,
+      "tegrastats": "09-28-2026 16:00:48 RAM 75668/125772MB (lfb 7x4MB) CPU [37%@2601,97%@2601,29%@2601,100%@2601,29%@2601,50%@2601,28%@2601,37%@2601,54%@2601,49%@2601,50%@2430,42%@2430,32%@2052,27%@2052] cpu@47.562C tj@47.562C soc012@42.906C gpu@43.062C soc345@42.062C VDD_GPU 3162mW/2654mW VDD_CPU_SOC_MSS 16203mW/10529mW VIN_SYS_5V0 8737mW/7645mW VIN 35778mW/27239mW"
+    },
+    {
+      "time": 1790625649.9872143,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.326,
+      "free_gib": 2.551,
+      "slab_gib": 3.497,
+      "thermal_age": 0.02,
+      "tegrastats": "09-28-2026 16:00:49 RAM 75719/125772MB (lfb 7x4MB) CPU [49%@2592,54%@2592,50%@2601,45%@2601,32%@972,41%@972,38%@2601,44%@2601,40%@2106,52%@2106,33%@2601,84%@2601,35%@2052,44%@2052] cpu@44.968C tj@45.218C soc012@45.218C gpu@43.031C soc345@42.25C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 16196mW/10529mW VIN_SYS_5V0 8839mW/7645mW VIN 38444mW/27239mW"
+    },
+    {
+      "time": 1790625650.9882998,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.681,
+      "free_gib": 2.906,
+      "slab_gib": 3.497,
+      "thermal_age": 0.02,
+      "tegrastats": "09-28-2026 16:00:50 RAM 75354/125772MB (lfb 7x4MB) CPU [47%@1188,24%@1188,58%@972,20%@972,25%@972,4%@972,41%@972,36%@972,45%@1188,17%@1188,26%@972,72%@972,30%@972,23%@972] cpu@43.875C tj@43.875C soc012@42C gpu@43.062C soc345@41.937C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12256mW/10529mW VIN_SYS_5V0 8229mW/7645mW VIN 30848mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 622,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 307,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 711,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 469,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 334,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 274,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 743,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1639,
+          "wchan": "0"
+        },
+        {
+          "pid": "3132631",
+          "name": "kworker/u28:1+devfreq_wq",
+          "state": "D",
+          "rss_mib": 0,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625652.0115426,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.65,
+      "free_gib": 2.875,
+      "slab_gib": 3.497,
+      "thermal_age": 0.03,
+      "tegrastats": "09-28-2026 16:00:51 RAM 75388/125772MB (lfb 7x4MB) CPU [32%@1998,21%@1998,26%@1674,30%@1674,27%@2601,77%@2601,24%@2601,33%@2601,38%@1188,32%@1188,29%@1458,31%@1458,37%@2430,32%@2430] cpu@44.625C tj@44.625C soc012@42.937C gpu@43C soc345@42.031C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12251mW/10529mW VIN_SYS_5V0 8331mW/7645mW VIN 33886mW/27239mW"
+    },
+    {
+      "time": 1790625653.0149043,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.674,
+      "free_gib": 2.898,
+      "slab_gib": 3.497,
+      "thermal_age": 0.03,
+      "tegrastats": "09-28-2026 16:00:52 RAM 75361/125772MB (lfb 7x4MB) CPU [34%@1134,28%@1134,36%@972,31%@972,26%@2601,84%@2601,32%@972,24%@972,21%@972,30%@972,30%@972,30%@972,26%@972,31%@972] cpu@44.125C tj@44.125C soc012@42C gpu@42.906C soc345@41.843C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11465mW/10529mW VIN_SYS_5V0 8331mW/7645mW VIN 30044mW/27239mW"
+    },
+    {
+      "time": 1790625654.0165768,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.629,
+      "free_gib": 2.884,
+      "slab_gib": 3.483,
+      "thermal_age": 0.03,
+      "tegrastats": "09-28-2026 16:00:53 RAM 75395/125772MB (lfb 7x4MB) CPU [31%@1566,47%@1566,26%@972,38%@972,30%@1026,85%@1026,20%@2601,39%@2601,25%@972,24%@972,22%@972,19%@972,28%@2601,36%@2601] cpu@44.937C tj@44.937C soc012@42.343C gpu@42.906C soc345@42.218C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13041mW/10529mW VIN_SYS_5V0 8432mW/7645mW VIN 31242mW/27239mW"
+    },
+    {
+      "time": 1790625655.018962,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.613,
+      "free_gib": 2.868,
+      "slab_gib": 3.483,
+      "thermal_age": 0.03,
+      "tegrastats": "09-28-2026 16:00:54 RAM 75419/125772MB (lfb 7x4MB) CPU [39%@2601,33%@2601,41%@2601,26%@2601,63%@2601,26%@2601,27%@2601,48%@2601,32%@2601,32%@2601,32%@2601,42%@2601,56%@2601,36%@2601] cpu@45.937C tj@45.937C soc012@44.281C gpu@43C soc345@42.093C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13832mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 41192mW/27239mW"
+    },
+    {
+      "time": 1790625656.0212264,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.597,
+      "free_gib": 2.852,
+      "slab_gib": 3.483,
+      "thermal_age": 0.03,
+      "tegrastats": "09-28-2026 16:00:55 RAM 75426/125772MB (lfb 7x4MB) CPU [36%@972,37%@972,89%@972,19%@972,28%@972,15%@972,43%@972,16%@972,17%@1728,24%@1728,27%@2601,14%@2601,18%@972,19%@972] cpu@43.625C tj@44.25C soc012@44.25C gpu@42.937C soc345@41.812C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11860mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 29482mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 641,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 716,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 471,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 272,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 744,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1631,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625657.0515022,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.586,
+      "free_gib": 2.841,
+      "slab_gib": 3.483,
+      "thermal_age": 0.06,
+      "tegrastats": "09-28-2026 16:00:56 RAM 75440/125772MB (lfb 7x4MB) CPU [24%@1458,23%@1458,30%@1512,24%@1512,17%@2601,68%@2601,31%@1728,23%@1728,20%@1566,27%@1566,20%@1566,23%@1566,25%@1674,18%@1674] cpu@44C tj@44C soc012@41.687C gpu@42.843C soc345@41.75C VDD_GPU 3165mW/2654mW VDD_CPU_SOC_MSS 10279mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 27158mW/27239mW"
+    },
+    {
+      "time": 1790625658.0562053,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.585,
+      "free_gib": 2.839,
+      "slab_gib": 3.483,
+      "thermal_age": 0.05,
+      "tegrastats": "09-28-2026 16:00:58 RAM 75447/125772MB (lfb 7x4MB) CPU [32%@1512,30%@1512,29%@2601,73%@2601,32%@972,39%@972,36%@1296,26%@1296,29%@972,39%@972,27%@1674,35%@1674,26%@972,37%@972] cpu@45.062C tj@45.062C soc012@41.937C gpu@42.875C soc345@41.812C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11856mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 32618mW/27239mW"
+    },
+    {
+      "time": 1790625659.0573618,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.56,
+      "free_gib": 2.829,
+      "slab_gib": 3.47,
+      "thermal_age": 0.05,
+      "tegrastats": "09-28-2026 16:00:59 RAM 75439/125772MB (lfb 7x4MB) CPU [24%@972,36%@972,37%@2601,100%@2601,29%@2601,24%@2601,25%@1134,19%@1134,19%@972,31%@972,26%@1836,17%@1836,42%@2601,41%@2601] cpu@45.343C tj@45.343C soc012@41.968C gpu@42.781C soc345@42C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 13832mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 39236mW/27239mW"
+    },
+    {
+      "time": 1790625660.0588644,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.535,
+      "free_gib": 2.806,
+      "slab_gib": 3.46,
+      "thermal_age": 0.05,
+      "tegrastats": "09-28-2026 16:01:00 RAM 75467/125772MB (lfb 7x4MB) CPU [36%@972,43%@972,45%@2601,68%@2601,33%@2601,53%@2601,37%@1782,49%@1782,49%@972,36%@972,42%@972,36%@972,76%@972,35%@972] cpu@45.781C tj@45.781C soc012@41.968C gpu@42.812C soc345@41.75C VDD_GPU 3953mW/2654mW VDD_CPU_SOC_MSS 14622mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 34104mW/27239mW"
+    },
+    {
+      "time": 1790625661.0613835,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.692,
+      "free_gib": 2.911,
+      "slab_gib": 3.513,
+      "thermal_age": 0.05,
+      "tegrastats": "09-28-2026 16:01:01 RAM 75363/125772MB (lfb 7x4MB) CPU [49%@2601,23%@2601,28%@2601,100%@2601,25%@1836,26%@1836,28%@2601,40%@2601,40%@2592,44%@2592,41%@972,28%@972,32%@2601,31%@2601] cpu@45.718C tj@45.718C soc012@42.562C gpu@42.875C soc345@42.031C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 14227mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 34230mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 650,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 715,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 471,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 271,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 744,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1631,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625662.0900142,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.717,
+      "free_gib": 2.937,
+      "slab_gib": 3.516,
+      "thermal_age": 0.07,
+      "tegrastats": "09-28-2026 16:01:02 RAM 75334/125772MB (lfb 7x4MB) CPU [56%@2601,27%@2601,26%@972,34%@972,44%@972,32%@972,37%@972,38%@972,37%@1134,41%@1080,29%@2601,74%@2601,28%@972,35%@972] cpu@45.125C tj@45.25C soc012@44.718C gpu@42.781C soc345@41.843C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 14227mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 31848mW/27239mW"
+    },
+    {
+      "time": 1790625663.0911882,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.731,
+      "free_gib": 2.956,
+      "slab_gib": 3.518,
+      "thermal_age": 0.07,
+      "tegrastats": "09-28-2026 16:01:03 RAM 75311/125772MB (lfb 7x4MB) CPU [46%@2601,41%@2601,46%@2601,48%@2601,35%@972,38%@972,44%@1296,37%@1296,48%@972,29%@972,37%@2322,58%@2322,39%@2601,70%@2601] cpu@44.718C tj@44.718C soc012@43.125C gpu@42.937C soc345@41.937C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 14227mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 31950mW/27239mW"
+    },
+    {
+      "time": 1790625664.0926747,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.73,
+      "free_gib": 2.955,
+      "slab_gib": 3.517,
+      "thermal_age": 0.07,
+      "tegrastats": "09-28-2026 16:01:04 RAM 75306/125772MB (lfb 7x4MB) CPU [64%@2601,38%@2601,26%@2430,31%@2430,35%@1080,38%@1080,36%@972,31%@972,39%@1080,27%@1080,31%@1242,26%@1242,37%@2601,57%@2484] cpu@45.25C tj@45.25C soc012@42.125C gpu@42.937C soc345@41.937C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13832mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 31044mW/27239mW"
+    },
+    {
+      "time": 1790625665.0938642,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.7,
+      "free_gib": 2.932,
+      "slab_gib": 3.504,
+      "thermal_age": 0.06,
+      "tegrastats": "09-28-2026 16:01:05 RAM 75332/125772MB (lfb 7x4MB) CPU [28%@972,32%@972,70%@2601,23%@2601,27%@972,39%@972,41%@972,24%@972,20%@2601,85%@2601,29%@972,31%@972,29%@972,29%@972] cpu@44.031C tj@44.031C soc012@42.843C gpu@42.843C soc345@41.812C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12646mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 29998mW/27239mW"
+    },
+    {
+      "time": 1790625666.0955427,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.693,
+      "free_gib": 2.924,
+      "slab_gib": 3.504,
+      "thermal_age": 0.06,
+      "tegrastats": "09-28-2026 16:01:06 RAM 75344/125772MB (lfb 7x4MB) CPU [22%@2601,23%@2601,100%@2601,4%@2601,12%@1620,42%@1620,27%@2376,7%@2376,25%@972,32%@972,4%@1080,40%@1080,21%@1458,24%@1458] cpu@44.656C tj@44.656C soc012@42.343C gpu@42.843C soc345@41.687C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11070mW/10530mW VIN_SYS_5V0 8026mW/7645mW VIN 35692mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 677,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 304,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 714,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 472,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 271,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "0"
+        },
+        {
+          "pid": "353967",
+          "name": "kworker/4:2+events",
+          "state": "D",
+          "rss_mib": 0,
+          "wchan": "0"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 744,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1631,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "R",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "R",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 700,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625667.11859,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.679,
+      "free_gib": 2.911,
+      "slab_gib": 3.504,
+      "thermal_age": 0.08,
+      "tegrastats": "09-28-2026 16:01:07 RAM 75355/125772MB (lfb 7x4MB) CPU [61%@2601,19%@2601,40%@972,27%@972,27%@972,27%@972,41%@972,29%@972,34%@972,19%@972,31%@972,26%@972,15%@972,24%@972] cpu@44.937C tj@44.937C soc012@41.656C gpu@42.875C soc345@41.781C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11465mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 28258mW/27239mW"
+    },
+    {
+      "time": 1790625668.1206892,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.668,
+      "free_gib": 2.9,
+      "slab_gib": 3.504,
+      "thermal_age": 0.08,
+      "tegrastats": "09-28-2026 16:01:08 RAM 75369/125772MB (lfb 7x4MB) CPU [40%@1080,41%@1080,23%@972,20%@972,23%@972,23%@972,25%@2601,62%@2601,15%@972,20%@972,23%@972,25%@972,14%@972,31%@972] cpu@43.75C tj@43.75C soc012@42.218C gpu@42.718C soc345@41.656C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11070mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 30198mW/27239mW"
+    },
+    {
+      "time": 1790625669.1240418,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.593,
+      "free_gib": 2.844,
+      "slab_gib": 3.491,
+      "thermal_age": 0.08,
+      "tegrastats": "09-28-2026 16:01:09 RAM 75431/125772MB (lfb 7x4MB) CPU [20%@1566,46%@1566,39%@2601,37%@2601,42%@1512,25%@1512,29%@2601,100%@2601,27%@2430,1%@2430,39%@2160,37%@2160,21%@1674,30%@1674] cpu@45.031C tj@45.031C soc012@42.375C gpu@42.843C soc345@41.687C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13832mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 31282mW/27239mW"
+    },
+    {
+      "time": 1790625670.1255183,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.555,
+      "free_gib": 2.805,
+      "slab_gib": 3.491,
+      "thermal_age": 0.08,
+      "tegrastats": "09-28-2026 16:01:10 RAM 75470/125772MB (lfb 7x4MB) CPU [42%@972,32%@972,30%@2601,64%@2601,29%@972,28%@972,39%@1620,40%@1620,33%@2601,62%@2601,38%@1350,53%@1350,34%@972,42%@972] cpu@44.75C tj@44.75C soc012@44.406C gpu@42.781C soc345@41.718C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 13832mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 30376mW/27239mW"
+    },
+    {
+      "time": 1790625671.129612,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.429,
+      "free_gib": 2.68,
+      "slab_gib": 3.491,
+      "thermal_age": 0.07,
+      "tegrastats": "09-28-2026 16:01:11 RAM 75601/125772MB (lfb 7x4MB) CPU [50%@2601,79%@2601,39%@2601,34%@2601,31%@2601,33%@2601,45%@2601,34%@2601,34%@2601,59%@2601,49%@2601,46%@2601,48%@2601,30%@2601] cpu@45.656C tj@45.656C soc012@43.125C gpu@42.781C soc345@42.125C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 15017mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 40136mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 714,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 472,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 272,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 745,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1634,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625672.154663,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.542,
+      "free_gib": 2.793,
+      "slab_gib": 3.491,
+      "thermal_age": 0.09,
+      "tegrastats": "09-28-2026 16:01:12 RAM 75477/125772MB (lfb 7x4MB) CPU [29%@972,24%@972,20%@972,37%@972,24%@972,22%@972,19%@972,26%@972,100%@2601,3%@2601,18%@972,23%@972,26%@972,37%@972] cpu@44.937C tj@44.937C soc012@42.031C gpu@42.781C soc345@41.656C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11860mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 27072mW/27239mW"
+    },
+    {
+      "time": 1790625673.1559591,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.518,
+      "free_gib": 2.766,
+      "slab_gib": 3.491,
+      "thermal_age": 0.09,
+      "tegrastats": "09-28-2026 16:01:13 RAM 75507/125772MB (lfb 7x4MB) CPU [41%@972,34%@972,69%@2601,23%@2601,28%@972,25%@972,33%@972,27%@972,28%@972,39%@972,27%@972,34%@972,32%@972,26%@972] cpu@43.906C tj@43.906C soc012@41.75C gpu@42.75C soc345@41.531C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11860mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 27680mW/27239mW"
+    },
+    {
+      "time": 1790625674.1576238,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.517,
+      "free_gib": 2.765,
+      "slab_gib": 3.491,
+      "thermal_age": 0.09,
+      "tegrastats": "09-28-2026 16:01:14 RAM 75518/125772MB (lfb 7x4MB) CPU [29%@2601,9%@2601,84%@2601,19%@2601,19%@1782,23%@1782,29%@2601,29%@2601,29%@2601,25%@2601,31%@2601,31%@2601,45%@2601,13%@2601] cpu@45.781C tj@45.781C soc012@42.531C gpu@42.75C soc345@41.781C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11856mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 37478mW/27239mW"
+    },
+    {
+      "time": 1790625675.1590896,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.691,
+      "free_gib": 2.955,
+      "slab_gib": 3.491,
+      "thermal_age": 0.08,
+      "tegrastats": "09-28-2026 16:01:15 RAM 75330/125772MB (lfb 7x4MB) CPU [30%@972,24%@972,65%@2601,66%@2601,25%@972,31%@972,33%@972,27%@972,19%@972,23%@972,14%@972,34%@972,32%@972,31%@972] cpu@44.406C tj@44.406C soc012@41.562C gpu@42.75C soc345@41.562C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11860mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 30292mW/27239mW"
+    },
+    {
+      "time": 1790625676.1611598,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.679,
+      "free_gib": 2.954,
+      "slab_gib": 3.482,
+      "thermal_age": 0.08,
+      "tegrastats": "09-28-2026 16:01:16 RAM 75339/125772MB (lfb 7x4MB) CPU [17%@1404,16%@1404,55%@972,49%@972,38%@2601,30%@2601,22%@972,35%@972,4%@972,24%@972,24%@2601,17%@2601,47%@1026,23%@1026] cpu@44.187C tj@44.281C soc012@43C gpu@42.718C soc345@41.593C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11465mW/10530mW VIN_SYS_5V0 8026mW/7645mW VIN 29044mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 598,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 714,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 471,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 281,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 271,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 745,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1634,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625677.1854136,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.621,
+      "free_gib": 2.913,
+      "slab_gib": 3.468,
+      "thermal_age": 0.1,
+      "tegrastats": "09-28-2026 16:01:17 RAM 75386/125772MB (lfb 7x4MB) CPU [75%@2601,30%@2601,33%@2268,38%@2268,43%@1458,33%@1458,38%@2592,38%@2592,27%@2376,32%@2376,38%@2601,29%@2601,26%@2601,40%@2601] cpu@45.281C tj@45.281C soc012@42.312C gpu@42.687C soc345@41.687C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13041mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 34082mW/27239mW"
+    },
+    {
+      "time": 1790625678.1868327,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.627,
+      "free_gib": 2.924,
+      "slab_gib": 3.464,
+      "thermal_age": 0.1,
+      "tegrastats": "09-28-2026 16:01:18 RAM 75377/125772MB (lfb 7x4MB) CPU [52%@972,25%@972,34%@972,26%@972,44%@972,23%@972,44%@972,34%@972,41%@2601,21%@2601,25%@972,27%@972,30%@2601,31%@2601] cpu@44.343C tj@44.343C soc012@42.25C gpu@42.656C soc345@41.718C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12251mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 27862mW/27239mW"
+    },
+    {
+      "time": 1790625679.1882918,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.719,
+      "free_gib": 2.991,
+      "slab_gib": 3.473,
+      "thermal_age": 0.09,
+      "tegrastats": "09-28-2026 16:01:19 RAM 75277/125772MB (lfb 7x4MB) CPU [24%@972,16%@972,34%@2601,18%@2601,5%@972,12%@972,37%@972,22%@972,26%@1404,22%@1404,18%@2601,40%@2601,28%@972,95%@972] cpu@43.718C tj@43.718C soc012@42.843C gpu@42.625C soc345@41.531C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11465mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 31740mW/27239mW"
+    },
+    {
+      "time": 1790625680.1928716,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.747,
+      "free_gib": 3.018,
+      "slab_gib": 3.473,
+      "thermal_age": 0.1,
+      "tegrastats": "09-28-2026 16:01:20 RAM 75257/125772MB (lfb 7x4MB) CPU [29%@2601,63%@2601,29%@1080,32%@1080,23%@972,30%@972,38%@972,25%@972,29%@972,27%@972,28%@1350,30%@1350,41%@972,15%@972] cpu@45.718C tj@45.718C soc012@41.781C gpu@42.625C soc345@41.406C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11860mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 26906mW/27239mW"
+    },
+    {
+      "time": 1790625681.1948142,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.722,
+      "free_gib": 2.993,
+      "slab_gib": 3.473,
+      "thermal_age": 0.1,
+      "tegrastats": "09-28-2026 16:01:21 RAM 75279/125772MB (lfb 7x4MB) CPU [10%@972,69%@972,25%@972,20%@972,26%@972,40%@972,24%@972,26%@972,17%@972,21%@972,22%@2601,26%@2601,42%@1188,1%@1188] cpu@44.218C tj@44.218C soc012@41.718C gpu@42.718C soc345@41.562C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11465mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 32458mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 610,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 717,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 479,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 272,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 745,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625682.238658,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.66,
+      "free_gib": 2.931,
+      "slab_gib": 3.473,
+      "thermal_age": 0.13,
+      "tegrastats": "09-28-2026 16:01:22 RAM 75338/125772MB (lfb 7x4MB) CPU [50%@2601,29%@2601,51%@2601,23%@2601,32%@2601,31%@2601,28%@2430,25%@2430,70%@2601,34%@2601,43%@2601,35%@2601,29%@2601,27%@2601] cpu@45.625C tj@45.562C soc012@43.406C gpu@42.75C soc345@41.625C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13832mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 40474mW/27239mW"
+    },
+    {
+      "time": 1790625683.2403622,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.726,
+      "free_gib": 2.997,
+      "slab_gib": 3.473,
+      "thermal_age": 0.13,
+      "tegrastats": "09-28-2026 16:01:23 RAM 75263/125772MB (lfb 7x4MB) CPU [39%@972,32%@972,39%@972,36%@972,36%@972,41%@972,39%@2601,52%@2601,49%@1890,41%@1890,35%@2601,63%@2601,68%@1134,44%@1134] cpu@43.843C tj@44.218C soc012@44.218C gpu@42.687C soc345@41.656C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 14227mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 32040mW/27239mW"
+    },
+    {
+      "time": 1790625684.2419777,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.645,
+      "free_gib": 2.925,
+      "slab_gib": 3.473,
+      "thermal_age": 0.13,
+      "tegrastats": "09-28-2026 16:01:24 RAM 75360/125772MB (lfb 7x4MB) CPU [42%@2601,41%@2601,27%@972,28%@972,32%@972,27%@972,27%@972,34%@972,28%@972,33%@972,30%@972,80%@972,45%@1080,23%@1080] cpu@45.656C tj@45.656C soc012@41.875C gpu@42.687C soc345@41.593C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13436mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 29160mW/27239mW"
+    },
+    {
+      "time": 1790625685.243998,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.602,
+      "free_gib": 2.882,
+      "slab_gib": 3.473,
+      "thermal_age": 0.13,
+      "tegrastats": "09-28-2026 16:01:25 RAM 75401/125772MB (lfb 7x4MB) CPU [32%@2601,37%@2601,54%@2601,23%@2601,24%@972,33%@972,42%@1620,26%@1620,29%@2601,32%@2601,37%@2601,30%@2601,29%@2601,29%@2601] cpu@44.062C tj@44.062C soc012@42.5C gpu@42.656C soc345@41.656C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11860mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 32228mW/27239mW"
+    },
+    {
+      "time": 1790625686.248267,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.695,
+      "free_gib": 2.983,
+      "slab_gib": 3.472,
+      "thermal_age": 0.13,
+      "tegrastats": "09-28-2026 16:01:26 RAM 75303/125772MB (lfb 7x4MB) CPU [28%@972,13%@972,88%@972,9%@972,12%@972,4%@972,22%@972,24%@972,32%@972,34%@972,20%@972,8%@972,12%@2601,20%@2601] cpu@43.25C tj@43.25C soc012@42.125C gpu@42.687C soc345@41.5C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11070mW/10530mW VIN_SYS_5V0 8026mW/7645mW VIN 29060mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 623,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 717,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 480,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 284,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 272,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 747,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3808910",
+          "name": "kworker/4:3+events",
+          "state": "D",
+          "rss_mib": 0,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625687.3117995,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.704,
+      "free_gib": 3.0,
+      "slab_gib": 3.463,
+      "thermal_age": 0.19,
+      "tegrastats": "09-28-2026 16:01:27 RAM 75355/125772MB (lfb 7x4MB) CPU [33%@2601,17%@2601,28%@972,40%@972,20%@972,26%@972,37%@1296,33%@1296,34%@972,23%@972,26%@972,34%@972,26%@2601,64%@2601] cpu@44.093C tj@44.093C soc012@42.625C gpu@42.656C soc345@41.625C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11465mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 31490mW/27239mW"
+    },
+    {
+      "time": 1790625688.3138843,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.721,
+      "free_gib": 3.008,
+      "slab_gib": 3.463,
+      "thermal_age": 0.19,
+      "tegrastats": "09-28-2026 16:01:28 RAM 75270/125772MB (lfb 7x4MB) CPU [37%@1080,27%@1080,27%@972,30%@972,29%@2601,28%@2601,40%@972,32%@972,47%@2601,26%@2601,42%@1026,31%@1026,38%@972,55%@972] cpu@45C tj@45C soc012@41.937C gpu@42.437C soc345@41.5C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12646mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 31128mW/27239mW"
+    },
+    {
+      "time": 1790625689.3156376,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.727,
+      "free_gib": 3.013,
+      "slab_gib": 3.463,
+      "thermal_age": 0.18,
+      "tegrastats": "09-28-2026 16:01:29 RAM 75265/125772MB (lfb 7x4MB) CPU [33%@972,20%@972,22%@972,9%@972,14%@972,24%@972,27%@972,10%@972,100%@2601,2%@2601,19%@972,32%@972,36%@972,22%@972] cpu@45.062C tj@45.062C soc012@42.187C gpu@42.687C soc345@41.375C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11070mW/10530mW VIN_SYS_5V0 8026mW/7645mW VIN 26886mW/27239mW"
+    },
+    {
+      "time": 1790625690.3193433,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.709,
+      "free_gib": 2.996,
+      "slab_gib": 3.463,
+      "thermal_age": 0.18,
+      "tegrastats": "09-28-2026 16:01:30 RAM 75283/125772MB (lfb 7x4MB) CPU [25%@1890,27%@1890,31%@2601,23%@2601,39%@972,14%@972,25%@2601,64%@2601,28%@972,10%@972,21%@972,23%@972,29%@1134,24%@1134] cpu@43.468C tj@43.468C soc012@41.562C gpu@42.593C soc345@41.437C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 10674mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 32582mW/27239mW"
+    },
+    {
+      "time": 1790625691.320951,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.712,
+      "free_gib": 2.998,
+      "slab_gib": 3.463,
+      "thermal_age": 0.18,
+      "tegrastats": "09-28-2026 16:01:31 RAM 75293/125772MB (lfb 7x4MB) CPU [22%@972,31%@972,27%@2601,35%@2601,32%@972,29%@972,31%@2601,59%@2601,26%@1350,24%@1350,50%@972,33%@972,38%@1026,18%@1026] cpu@43.968C tj@43.968C soc012@41.812C gpu@42.531C soc345@41.375C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 12646mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 34964mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "263952",
+          "name": "kworker/u28:2+devfreq_wq",
+          "state": "D",
+          "rss_mib": 0,
+          "wchan": "0"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 635,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 716,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 477,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 284,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 272,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 257,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 747,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "R",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625692.3578627,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.686,
+      "free_gib": 2.955,
+      "slab_gib": 3.473,
+      "thermal_age": 0.22,
+      "tegrastats": "09-28-2026 16:01:32 RAM 75317/125772MB (lfb 7x4MB) CPU [21%@2601,26%@2601,27%@972,28%@972,38%@972,30%@972,39%@2601,25%@2601,26%@1296,32%@1296,57%@2601,18%@2601,28%@972,29%@972] cpu@44.437C tj@44.437C soc012@42C gpu@42.531C soc345@41.375C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11460mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 32454mW/27239mW"
+    },
+    {
+      "time": 1790625693.3597298,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.705,
+      "free_gib": 2.952,
+      "slab_gib": 3.5,
+      "thermal_age": 0.21,
+      "tegrastats": "09-28-2026 16:01:33 RAM 75306/125772MB (lfb 7x4MB) CPU [40%@2601,42%@2601,66%@2601,34%@2601,33%@2601,32%@2601,55%@2601,40%@2601,31%@2601,52%@2601,50%@2601,37%@2601,33%@2601,37%@2601] cpu@45.281C tj@45.281C soc012@42.812C gpu@42.625C soc345@41.718C VDD_GPU 3162mW/2654mW VDD_CPU_SOC_MSS 14622mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 37248mW/27239mW"
+    },
+    {
+      "time": 1790625694.364553,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.594,
+      "free_gib": 2.837,
+      "slab_gib": 3.514,
+      "thermal_age": 0.21,
+      "tegrastats": "09-28-2026 16:01:34 RAM 75464/125772MB (lfb 7x4MB) CPU [46%@2601,95%@2601,33%@1080,39%@1080,26%@1512,40%@1512,40%@2601,36%@2601,41%@1242,85%@1242,31%@2052,33%@2052,36%@2322,32%@2322] cpu@45.093C tj@45.093C soc012@42.531C gpu@42.593C soc345@41.531C VDD_GPU 3162mW/2654mW VDD_CPU_SOC_MSS 15412mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 34858mW/27239mW"
+    },
+    {
+      "time": 1790625695.3689337,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.774,
+      "free_gib": 3.02,
+      "slab_gib": 3.512,
+      "thermal_age": 0.21,
+      "tegrastats": "09-28-2026 16:01:35 RAM 75280/125772MB (lfb 7x4MB) CPU [33%@1728,11%@1728,28%@2592,30%@2601,37%@972,42%@972,20%@972,31%@972,37%@2601,57%@2601,36%@972,36%@972,30%@972,27%@972] cpu@44.343C tj@44.343C soc012@43.968C gpu@42.531C soc345@41.406C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 12651mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 30574mW/27239mW"
+    },
+    {
+      "time": 1790625696.3701437,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.68,
+      "free_gib": 2.924,
+      "slab_gib": 3.505,
+      "thermal_age": 0.21,
+      "tegrastats": "09-28-2026 16:01:36 RAM 75323/125772MB (lfb 7x4MB) CPU [25%@1728,30%@1728,41%@1458,33%@1458,41%@2601,30%@2601,29%@2601,39%@2601,46%@972,56%@972,38%@1242,33%@1242,29%@972,29%@972] cpu@44.75C tj@44.75C soc012@41.843C gpu@42.562C soc345@41.437C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13041mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 30416mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 558,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 594,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 717,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 470,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 284,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 271,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 256,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 747,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625697.4029925,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.716,
+      "free_gib": 2.958,
+      "slab_gib": 3.507,
+      "thermal_age": 0.24,
+      "tegrastats": "09-28-2026 16:01:37 RAM 75327/125772MB (lfb 7x4MB) CPU [36%@972,22%@972,21%@972,23%@972,33%@972,24%@972,20%@2601,100%@2601,34%@972,25%@972,40%@972,25%@972,32%@972,25%@972] cpu@43C tj@43C soc012@41.781C gpu@42.531C soc345@41.437C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 11860mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 26894mW/27239mW"
+    },
+    {
+      "time": 1790625698.4052436,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.695,
+      "free_gib": 2.935,
+      "slab_gib": 3.505,
+      "thermal_age": 0.23,
+      "tegrastats": "09-28-2026 16:01:38 RAM 75346/125772MB (lfb 7x4MB) CPU [22%@972,27%@972,35%@2601,56%@2601,28%@2601,21%@2601,36%@1674,40%@1674,26%@1836,26%@1836,36%@2601,32%@2601,34%@1026,38%@1026] cpu@44.468C tj@44.468C soc012@43.093C gpu@42.562C soc345@41.343C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 12256mW/10530mW VIN_SYS_5V0 8229mW/7645mW VIN 36008mW/27239mW"
+    },
+    {
+      "time": 1790625699.4075015,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.645,
+      "free_gib": 2.927,
+      "slab_gib": 3.482,
+      "thermal_age": 0.23,
+      "tegrastats": "09-28-2026 16:01:39 RAM 75366/125772MB (lfb 7x4MB) CPU [39%@2601,45%@2601,29%@2601,100%@2601,48%@1566,37%@1566,25%@2601,39%@2601,55%@1620,30%@1620,37%@2601,38%@2601,39%@1242,36%@1242] cpu@45.093C tj@45.093C soc012@42.468C gpu@42.656C soc345@41.656C VDD_GPU 3162mW/2654mW VDD_CPU_SOC_MSS 15808mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 32202mW/27239mW"
+    },
+    {
+      "time": 1790625700.4097424,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.685,
+      "free_gib": 2.965,
+      "slab_gib": 3.483,
+      "thermal_age": 0.23,
+      "tegrastats": "09-28-2026 16:01:40 RAM 75378/125772MB (lfb 7x4MB) CPU [47%@2601,38%@2601,54%@1674,58%@2601,31%@972,22%@972,28%@2538,97%@2538,36%@2601,54%@2601,28%@1242,45%@1242,19%@1296,30%@1296] cpu@45.437C tj@45.437C soc012@44.375C gpu@42.593C soc345@41.531C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 14227mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 32416mW/27239mW"
+    },
+    {
+      "time": 1790625701.4113312,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.69,
+      "free_gib": 2.944,
+      "slab_gib": 3.492,
+      "thermal_age": 0.23,
+      "tegrastats": "09-28-2026 16:01:41 RAM 75326/125772MB (lfb 7x4MB) CPU [99%@2601,47%@2601,20%@1026,25%@1026,16%@1674,37%@1674,35%@2601,1%@2601,30%@2601,100%@2601,50%@2214,43%@2214,15%@1242,33%@1242] cpu@45.406C tj@45.406C soc012@44.406C gpu@42.687C soc345@41.593C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 14227mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 33982mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 559,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 612,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 605,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 305,
+          "wchan": "0"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 723,
+          "wchan": "0"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 475,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 333,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 284,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 271,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 256,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 748,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625702.4427783,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.711,
+      "free_gib": 2.957,
+      "slab_gib": 3.515,
+      "thermal_age": 0.25,
+      "tegrastats": "09-28-2026 16:01:42 RAM 75324/125772MB (lfb 7x4MB) CPU [56%@2601,37%@2601,34%@1188,43%@1188,53%@2592,38%@2592,42%@1728,30%@1728,48%@2601,65%@2601,49%@2601,48%@2601,45%@2052,43%@2052] cpu@45C tj@45C soc012@44.843C gpu@42.656C soc345@41.656C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 15017mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 35974mW/27239mW"
+    },
+    {
+      "time": 1790625703.44468,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.683,
+      "free_gib": 2.931,
+      "slab_gib": 3.512,
+      "thermal_age": 0.25,
+      "tegrastats": "09-28-2026 16:01:43 RAM 75346/125772MB (lfb 7x4MB) CPU [41%@972,53%@972,65%@2601,42%@2601,50%@2430,64%@2430,78%@1728,48%@1728,59%@972,76%@972,53%@2601,46%@2601,39%@2601,78%@2601] cpu@45C tj@45C soc012@44C gpu@42.843C soc345@42.031C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 16986mW/10530mW VIN_SYS_5V0 8940mW/7645mW VIN 41002mW/27239mW"
+    },
+    {
+      "time": 1790625704.4461656,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.676,
+      "free_gib": 2.924,
+      "slab_gib": 3.512,
+      "thermal_age": 0.24,
+      "tegrastats": "09-28-2026 16:01:44 RAM 75359/125772MB (lfb 7x4MB) CPU [41%@2376,36%@2376,32%@972,27%@972,30%@972,21%@972,34%@972,28%@972,24%@1512,40%@1512,33%@2601,95%@2601,30%@2214,35%@2214] cpu@44.906C tj@45.031C soc012@45.031C gpu@42.781C soc345@41.75C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 12256mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 34582mW/27239mW"
+    },
+    {
+      "time": 1790625705.4477499,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.537,
+      "free_gib": 2.785,
+      "slab_gib": 3.512,
+      "thermal_age": 0.24,
+      "tegrastats": "09-28-2026 16:01:45 RAM 75471/125772MB (lfb 7x4MB) CPU [38%@1944,35%@1944,42%@1242,21%@1242,24%@1026,36%@1026,65%@2601,38%@2601,33%@1620,34%@1620,23%@2601,94%@2601,34%@972,25%@972] cpu@44.437C tj@44.437C soc012@44.312C gpu@42.656C soc345@41.718C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 14622mW/10530mW VIN_SYS_5V0 8534mW/7645mW VIN 30980mW/27239mW"
+    },
+    {
+      "time": 1790625706.4537365,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.676,
+      "free_gib": 2.924,
+      "slab_gib": 3.511,
+      "thermal_age": 0.24,
+      "tegrastats": "09-28-2026 16:01:46 RAM 75355/125772MB (lfb 7x4MB) CPU [30%@2538,48%@2538,23%@972,17%@972,27%@972,23%@972,81%@972,21%@972,26%@972,14%@972,19%@2601,30%@2601,32%@972,26%@972] cpu@44.281C tj@44.281C soc012@41.593C gpu@42.656C soc345@41.531C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 11465mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 27724mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 559,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "R",
+          "rss_mib": 613,
+          "wchan": "0"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 648,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 305,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 729,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 481,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 330,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 321,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 284,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 271,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 256,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 748,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625707.4999957,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.707,
+      "free_gib": 2.949,
+      "slab_gib": 3.514,
+      "thermal_age": 0.29,
+      "tegrastats": "09-28-2026 16:01:47 RAM 75330/125772MB (lfb 7x4MB) CPU [45%@2601,26%@2601,55%@2601,29%@2601,48%@972,27%@972,15%@1998,34%@1998,27%@2601,25%@2601,42%@972,18%@972,38%@2601,33%@2601] cpu@44.687C tj@44.687C soc012@42.125C gpu@42.656C soc345@41.687C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 12251mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 33820mW/27239mW"
+    },
+    {
+      "time": 1790625708.5022266,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.67,
+      "free_gib": 2.907,
+      "slab_gib": 3.519,
+      "thermal_age": 0.29,
+      "tegrastats": "09-28-2026 16:01:48 RAM 75383/125772MB (lfb 7x4MB) CPU [29%@1188,32%@1188,65%@2601,47%@2601,36%@1242,43%@1242,58%@2601,35%@2601,42%@1296,30%@1296,42%@1728,36%@1728,40%@1512,37%@1512] cpu@44.687C tj@44.687C soc012@42.031C gpu@42.687C soc345@41.562C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 15017mW/10530mW VIN_SYS_5V0 8737mW/7645mW VIN 32618mW/27239mW"
+    },
+    {
+      "time": 1790625709.5044537,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.673,
+      "free_gib": 2.904,
+      "slab_gib": 3.511,
+      "thermal_age": 0.28,
+      "tegrastats": "09-28-2026 16:01:49 RAM 75353/125772MB (lfb 7x4MB) CPU [25%@972,31%@972,25%@2601,100%@2601,33%@1134,20%@1134,94%@2601,27%@2601,32%@972,24%@972,41%@1458,19%@1458,35%@2601,34%@2601] cpu@44.593C tj@44.593C soc012@42.25C gpu@42.625C soc345@41.718C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 14227mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 35342mW/27239mW"
+    },
+    {
+      "time": 1790625710.5080802,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.694,
+      "free_gib": 2.927,
+      "slab_gib": 3.512,
+      "thermal_age": 0.28,
+      "tegrastats": "09-28-2026 16:01:50 RAM 75358/125772MB (lfb 7x4MB) CPU [29%@1620,37%@1620,47%@1404,61%@1404,35%@2601,27%@2601,83%@2601,33%@2601,36%@2601,51%@2601,37%@2601,32%@2601,27%@2601,34%@2601] cpu@44.968C tj@44.968C soc012@43.218C gpu@42.718C soc345@41.781C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 13832mW/10530mW VIN_SYS_5V0 8636mW/7645mW VIN 37332mW/27239mW"
+    },
+    {
+      "time": 1790625711.510678,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.697,
+      "free_gib": 2.939,
+      "slab_gib": 3.514,
+      "thermal_age": 0.28,
+      "tegrastats": "09-28-2026 16:01:51 RAM 75329/125772MB (lfb 7x4MB) CPU [40%@2601,41%@2601,39%@972,29%@972,16%@972,30%@972,100%@2601,16%@2601,26%@1242,20%@1242,25%@1404,36%@1404,29%@1512,37%@1512] cpu@44.312C tj@44.312C soc012@42.031C gpu@42.75C soc345@41.593C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13436mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 29524mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 559,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 613,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "263952",
+          "name": "kworker/u28:2+devfreq_wq",
+          "state": "D",
+          "rss_mib": 0,
+          "wchan": "0"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 661,
+          "wchan": "0"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 306,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 735,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 478,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 330,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 320,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 284,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 271,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 256,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 748,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "391511",
+          "name": "runc",
+          "state": "D",
+          "rss_mib": 12,
+          "wchan": "0"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625712.540838,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.709,
+      "free_gib": 2.953,
+      "slab_gib": 3.508,
+      "thermal_age": 0.31,
+      "tegrastats": "09-28-2026 16:01:52 RAM 75333/125772MB (lfb 7x4MB) CPU [34%@2601,42%@2601,36%@1944,16%@1944,34%@2484,30%@2484,56%@2601,31%@2601,58%@1890,34%@1890,40%@2052,28%@2052,23%@972,43%@972] cpu@45.156C tj@45.156C soc012@42.125C gpu@42.625C soc345@41.687C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13436mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 34886mW/27239mW"
+    },
+    {
+      "time": 1790625713.5425403,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.627,
+      "free_gib": 2.889,
+      "slab_gib": 3.497,
+      "thermal_age": 0.31,
+      "tegrastats": "09-28-2026 16:01:53 RAM 75411/125772MB (lfb 7x4MB) CPU [48%@2601,26%@2601,42%@2601,37%@2601,40%@2601,63%@2601,60%@2601,40%@2601,30%@2601,43%@2601,44%@2601,34%@2601,37%@2601,35%@2601] cpu@45.593C tj@45.593C soc012@43.437C gpu@42.718C soc345@41.75C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 14622mW/10530mW VIN_SYS_5V0 8737mW/7645mW VIN 41100mW/27239mW"
+    },
+    {
+      "time": 1790625714.5450518,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.591,
+      "free_gib": 2.869,
+      "slab_gib": 3.486,
+      "thermal_age": 0.31,
+      "tegrastats": "09-28-2026 16:01:54 RAM 75415/125772MB (lfb 7x4MB) CPU [39%@972,34%@972,38%@972,28%@972,18%@2601,100%@2601,27%@972,33%@972,44%@972,33%@972,30%@972,22%@972,37%@972,24%@972] cpu@44.375C tj@44.375C soc012@41.843C gpu@42.687C soc345@41.593C VDD_GPU 3559mW/2654mW VDD_CPU_SOC_MSS 13041mW/10530mW VIN_SYS_5V0 8331mW/7645mW VIN 30930mW/27239mW"
+    },
+    {
+      "time": 1790625715.5479958,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.553,
+      "free_gib": 2.83,
+      "slab_gib": 3.486,
+      "thermal_age": 0.31,
+      "tegrastats": "09-28-2026 16:01:55 RAM 75471/125772MB (lfb 7x4MB) CPU [48%@972,22%@972,62%@2601,18%@2601,20%@972,30%@972,25%@972,18%@972,15%@972,23%@972,26%@972,16%@972,27%@972,16%@972] cpu@43.781C tj@43.781C soc012@41.625C gpu@42.687C soc345@41.5C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 10674mW/10530mW VIN_SYS_5V0 8128mW/7645mW VIN 32118mW/27239mW"
+    },
+    {
+      "time": 1790625716.5512092,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.474,
+      "free_gib": 2.751,
+      "slab_gib": 3.486,
+      "thermal_age": 0.31,
+      "tegrastats": "09-28-2026 16:01:56 RAM 75500/125772MB (lfb 7x4MB) CPU [25%@2601,49%@2601,71%@2601,29%@2601,24%@1188,22%@1188,21%@2601,32%@2601,28%@2601,53%@2601,37%@2601,37%@2601,36%@2601,23%@2601] cpu@45.75C tj@45.75C soc012@43.843C gpu@42.562C soc345@41.718C VDD_GPU 3164mW/2654mW VDD_CPU_SOC_MSS 13436mW/10530mW VIN_SYS_5V0 8432mW/7645mW VIN 33842mW/27239mW",
+      "processes": [
+        {
+          "pid": "2836",
+          "name": "cups-browsed",
+          "state": "S",
+          "rss_mib": 377,
+          "wchan": "0"
+        },
+        {
+          "pid": "5926",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 559,
+          "wchan": "0"
+        },
+        {
+          "pid": "7925",
+          "name": "gnome-shell",
+          "state": "S",
+          "rss_mib": 613,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "8303",
+          "name": "gnome-software",
+          "state": "S",
+          "rss_mib": 286,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "284966",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 282,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 675,
+          "wchan": "do_sys_poll"
+        },
+        {
+          "pid": "295375",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 306,
+          "wchan": "0"
+        },
+        {
+          "pid": "295893",
+          "name": "ChatGPT",
+          "state": "R",
+          "rss_mib": 735,
+          "wchan": "0"
+        },
+        {
+          "pid": "295913",
+          "name": "codex",
+          "state": "S",
+          "rss_mib": 477,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "296330",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 330,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "297482",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 320,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "305861",
+          "name": "MainThread",
+          "state": "S",
+          "rss_mib": 283,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "306316",
+          "name": "ChatGPT",
+          "state": "S",
+          "rss_mib": 270,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "317630",
+          "name": "chrome",
+          "state": "S",
+          "rss_mib": 256,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "378186",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 719,
+          "wchan": "0"
+        },
+        {
+          "pid": "378735",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1706,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "379680",
+          "name": "python3.13",
+          "state": "S",
+          "rss_mib": 338,
+          "wchan": "0"
+        },
+        {
+          "pid": "379739",
+          "name": "prometheus",
+          "state": "S",
+          "rss_mib": 748,
+          "wchan": "0"
+        },
+        {
+          "pid": "379887",
+          "name": "grafana",
+          "state": "S",
+          "rss_mib": 278,
+          "wchan": "0"
+        },
+        {
+          "pid": "380039",
+          "name": "node",
+          "state": "S",
+          "rss_mib": 798,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900131",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1251,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "2900139",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 750,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "2900335",
+          "name": "launch_vst",
+          "state": "S",
+          "rss_mib": 727,
+          "wchan": "0"
+        },
+        {
+          "pid": "3041417",
+          "name": "java",
+          "state": "S",
+          "rss_mib": 1204,
+          "wchan": "futex_wait_queue"
+        },
+        {
+          "pid": "3073348",
+          "name": "next-server (v1",
+          "state": "S",
+          "rss_mib": 1632,
+          "wchan": "0"
+        },
+        {
+          "pid": "3929388",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1145,
+          "wchan": "0"
+        },
+        {
+          "pid": "3932056",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2370,
+          "wchan": "0"
+        },
+        {
+          "pid": "3940015",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 752,
+          "wchan": "0"
+        },
+        {
+          "pid": "3942973",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1374,
+          "wchan": "0"
+        },
+        {
+          "pid": "3945395",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1316,
+          "wchan": "0"
+        },
+        {
+          "pid": "3952326",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 689,
+          "wchan": "0"
+        },
+        {
+          "pid": "3953379",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1569,
+          "wchan": "0"
+        },
+        {
+          "pid": "3959003",
+          "name": "VLLM::EngineCor",
+          "state": "S",
+          "rss_mib": 2287,
+          "wchan": "0"
+        },
+        {
+          "pid": "3996432",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 1238,
+          "wchan": "0"
+        },
+        {
+          "pid": "4008372",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 399,
+          "wchan": "do_epoll_wait"
+        },
+        {
+          "pid": "4014072",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4044830",
+          "name": "python3",
+          "state": "S",
+          "rss_mib": 384,
+          "wchan": "hrtimer_nanosleep"
+        },
+        {
+          "pid": "4131815",
+          "name": "nat",
+          "state": "S",
+          "rss_mib": 701,
+          "wchan": "do_epoll_wait"
+        }
+      ]
+    },
+    {
+      "time": 1790625717.5806205,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 49.473,
+      "free_gib": 2.749,
+      "slab_gib": 3.489,
+      "thermal_age": 0.33,
+      "tegrastats": "09-28-2026 16:01:57 RAM 75655/125772MB (lfb 7x4MB) CPU [36%@2601,100%@2601,73%@2601,40%@2601,47%@2484,39%@2484,41%@2052,46%@2052,41%@2601,73%@2601,42%@972,51%@972,49%@1134,47%@1134] cpu@46.718C tj@46.718C soc012@42.75C gpu@42.75C soc345@41.656C VDD_GPU 3558mW/2654mW VDD_CPU_SOC_MSS 16196mW/10530mW VIN_SYS_5V0 8839mW/7645mW VIN 34764mW/27239mW"
+    },
+    {
+      "time": 1790625718.582724,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 47.659,
+      "free_gib": 1.911,
+      "slab_gib": 3.485,
+      "thermal_age": 0.33,
+      "tegrastats": "09-28-2026 16:01:58 RAM 76533/125772MB (lfb 7x4MB) CPU [39%@2601,45%@2601,37%@2601,35%@2601,52%@2601,41%@2601,37%@1080,45%@1080,48%@1458,39%@1458,45%@2601,49%@2601,32%@2601,23%@2601] cpu@45.781C tj@45.781C soc012@43.25C gpu@43.25C soc345@41.812C VDD_GPU 6325mW/2654mW VDD_CPU_SOC_MSS 15406mW/10530mW VIN_SYS_5V0 9448mW/7645mW VIN 39290mW/27239mW"
+    },
+    {
+      "time": 1790625721.8886726,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 60.084,
+      "free_gib": 14.314,
+      "slab_gib": 3.194,
+      "thermal_age": 0.63,
+      "tegrastats": "09-28-2026 16:02:01 RAM 64516/125772MB (lfb 59x4MB) CPU [45%@2601,99%@2601,22%@1890,36%@1890,39%@2322,15%@2322,57%@2601,36%@2601,37%@1674,41%@1674,47%@2601,24%@2601,34%@2601,31%@2601] cpu@46.687C tj@46.687C soc012@42.531C gpu@43.031C soc345@41.875C VDD_GPU 4348mW/2654mW VDD_CPU_SOC_MSS 14622mW/10530mW VIN_SYS_5V0 8940mW/7645mW VIN 34112mW/27239mW"
+    },
+    {
+      "time": 1790625722.893405,
+      "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+      "available_gib": 59.994,
+      "free_gib": 14.202,
+      "slab_gib": 3.214,
+      "thermal_age": 0.63,
+      "tegrastats": "09-28-2026 16:02:02 RAM 64633/125772MB (lfb 59x4MB) CPU [52%@972,54%@972,34%@972,47%@972,38%@972,48%@972,33%@972,42%@972,32%@2601,40%@2601,38%@1134,49%@1134,47%@972,38%@972] cpu@45.218C tj@45.218C soc012@42.593C gpu@42.906C soc345@41.812C VDD_GPU 3953mW/2654mW VDD_CPU_SOC_MSS 15412mW/10530mW VIN_SYS_5V0 8839mW/7645mW VIN 30360mW/27239mW"
+    }
+  ]
+}

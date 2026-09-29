@@ -1,0 +1,43 @@
+{
+  "owned_identifiers": [
+    "0321b0e1-5986-469a-8d16-0bb0db24490d",
+    "0f519bf8-0575-4c4e-87f0-e4a245f8912d",
+    "2d5bf954-941b-4565-ad89-fc1ea3f43bed",
+    "369984e2-0617-465c-9f85-c9aeb862d444",
+    "4fd1f909-cb9a-4328-b647-5df4e5d70a4f",
+    "54cfef72-9e63-43fb-a5ac-85cb79c956bd",
+    "59429198-c28a-4170-b212-f13ade7a0f9f",
+    "5f8cac8e-ed2f-49b1-9cfe-ac363d1ed8a1",
+    "65a36a46-c531-49be-adb1-41eb76a7e62d",
+    "771a5527-bcb8-4ccd-a22f-ccb89a8ae664",
+    "85b78cdc-6001-4546-8186-a31a9ff8e51b",
+    "86448b78-53e3-4314-abd8-6c50008d8152",
+    "8b0633e3-333c-4e3d-8feb-0790a7437ce2",
+    "ab0fc4d2-f916-4927-879b-b5763f071da8",
+    "bccf7960-668e-4631-a34e-dc525b920ce5",
+    "c4544e80-eb81-4b24-839e-d74b42fcba68",
+    "f0f00274-e109-4cab-8933-c4ffc1130a79",
+    "f10318ec-1c87-4ab9-b97f-8dcab806c7d1",
+    "fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+    "thor-memory-live-198dc999-6849-4042-a23e-50134b0f7c5b",
+    "thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5"
+  ],
+  "scoped_mdx_count": {
+    "count": 0,
+    "_shards": {
+      "total": 85,
+      "successful": 85,
+      "skipped": 0,
+      "failed": 0
+    }
+  },
+  "owned_lvs_indexes": [
+    "default_f10318ec_1c87_4ab9_b97f_8dcab806c7d1",
+    "default_5f8cac8e_ed2f_49b1_9cfe_ac363d1ed8a1",
+    "default_65a36a46_c531_49be_adb1_41eb76a7e62d",
+    "default_ab0fc4d2_f916_4927_879b_b5763f071da8",
+    "default_85b78cdc_6001_4546_8186_a31a9ff8e51b",
+    "default_bccf7960_668e_4631_a34e_dc525b920ce5"
+  ],
+  "owned_lvs_indexes_after_removal": []
+}

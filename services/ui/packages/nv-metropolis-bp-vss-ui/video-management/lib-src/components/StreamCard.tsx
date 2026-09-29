@@ -45,6 +45,7 @@ export const StreamCard: React.FC<StreamCardProps> = ({
   const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
   const [isLoadingThumbnail, setIsLoadingThumbnail] = useState(true);
   const [thumbnailError, setThumbnailError] = useState(false);
+  const [previewKind, setPreviewKind] = useState<"retained" | "camera" | null>(null);
   const currentObjectUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -64,6 +65,7 @@ export const StreamCard: React.FC<StreamCardProps> = ({
 
       try {
         let pictureUrl: string;
+        let nextPreviewKind: "retained" | "camera" = "retained";
 
         if (isRtsp) {
           // VST's live-picture endpoint can block until its server timeout
@@ -82,6 +84,7 @@ export const StreamCard: React.FC<StreamCardProps> = ({
             );
             return;
           }
+          nextPreviewKind = endTime ? "retained" : "camera";
           pictureUrl = endTime
             ? apiEndpoints.REPLAY_PICTURE(stream.streamId, endTime)
             : apiEndpoints.LIVE_PICTURE(stream.streamId);
@@ -109,6 +112,7 @@ export const StreamCard: React.FC<StreamCardProps> = ({
           }
           currentObjectUrlRef.current = newUrl;
           setThumbnailUrl(newUrl);
+          setPreviewKind(nextPreviewKind);
         } else {
           URL.revokeObjectURL(newUrl);
         }
@@ -238,7 +242,7 @@ export const StreamCard: React.FC<StreamCardProps> = ({
             <div className="animate-pulse w-8 h-8 rounded-full bg-gray-600" />
           </div>
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-200 dark:bg-neutral-900">
+          <div className="absolute inset-0 flex flex-col gap-2 items-center justify-center bg-gray-200 dark:bg-neutral-900">
             <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-300 dark:bg-gray-700">
               <svg
                 className="text-gray-500 dark:text-gray-400"
@@ -256,10 +260,11 @@ export const StreamCard: React.FC<StreamCardProps> = ({
                 <line x1="12" y1="16" x2="12.01" y2="16" />
               </svg>
             </div>
+            <span className="text-sm text-gray-600 dark:text-gray-300">Preview unavailable</span>
           </div>
         )}
 
-        <div className={`vm-stream-kind ${isRtsp ? "is-live" : ""}`}>
+        <div className="vm-stream-kind">
           {isRtsp && (
             <svg
               width="12"
@@ -274,7 +279,7 @@ export const StreamCard: React.FC<StreamCardProps> = ({
               <path d="M8.5 8.5a5 5 0 010 7M15.5 8.5a5 5 0 010 7" />
             </svg>
           )}
-          {isRtsp ? "LIVE · RTSP" : extension || "VIDEO"}
+          {isRtsp ? "RTSP CAMERA" : extension || "VIDEO"}
         </div>
 
         {onPlay && (
@@ -335,10 +340,8 @@ export const StreamCard: React.FC<StreamCardProps> = ({
       </div>
 
       <div className="vm-stream-card__footer px-3 py-2">
-        <span
-          className={isRtsp ? "vm-source-state is-live" : "vm-source-state"}
-        >
-          <i /> {isRtsp ? "Live source" : "Recorded source"}
+        <span className="vm-source-state">
+          {isLoadingThumbnail ? "Loading preview…" : thumbnailError ? "" : previewKind === "retained" ? "Recorded preview" : "Camera snapshot"}
         </span>
         <div className="flex items-center justify-end gap-2">
           {stream.metadata.codec && (

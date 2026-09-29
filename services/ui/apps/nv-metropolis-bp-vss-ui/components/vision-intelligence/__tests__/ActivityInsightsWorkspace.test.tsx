@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 
-import { ActivityInsightsWorkspace } from "../ActivityInsightsWorkspace";
+import { ActivityInsightsWorkspace, incidentRule } from "../ActivityInsightsWorkspace";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
+import type { MonitoringRule } from "../monitoringRules";
 
 const warehouseIncident = {
   Id: "incident-1",
@@ -20,15 +21,58 @@ const warehouseIncident = {
 };
 
 describe("ActivityInsightsWorkspace", () => {
+  it("does not attribute another rule's event to the only rule on the same source", () => {
+    const rule = { id: "local-old", backendRuleId: "backend-old", sourceId: warehouseIncident.sensorId, sourceRuntimeName: warehouseIncident.sensorId, sourceName: "Warehouse", kind: "semantic" } as MonitoringRule;
+    expect(incidentRule({ ...warehouseIncident, info: { ...warehouseIncident.info, alertRuleId: "backend-new" } }, [rule])).toBeNull();
+    expect(incidentRule(warehouseIncident, [rule])).toBeNull();
+    expect(incidentRule({ ...warehouseIncident, info: { ...warehouseIncident.info, alertRuleId: "backend-old" } }, [rule])).toBe(rule);
+  });
+
   afterEach(() => jest.restoreAllMocks());
 
-  it("regenerates incident clips from retained source footage instead of trusting expired temporary URLs", async () => {
+  it("explains missing insight evidence without presenting a zero confirmation rate", async () => {
+    global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ incidents: [], investigations: [], rules: [], states: {} }) })) as jest.Mock;
+    const onModeChange = jest.fn();
+    const onOpenRules = jest.fn();
+    render(<ActivityInsightsWorkspace initialMode="insights" onModeChange={onModeChange} onOpenRules={onOpenRules} />);
+    await screen.findByText("No event evidence to summarize yet");
+    expect(screen.queryByText("0% confirmed")).not.toBeInTheDocument();
+    expect(screen.queryByText("Events over time")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Check cameras" }));
+    expect(onModeChange).toHaveBeenCalledWith("live");
+    fireEvent.click(screen.getByRole("button", { name: "Review monitoring rules" }));
+    expect(onOpenRules).toHaveBeenCalled();
+  });
+
+  it("separates model matches from review state and retains their footage path in insights", async () => {
+    const match = { ...warehouseIncident, info: { verdict: "confirmed", alertCategory: "semantic", alertRuleId: "rule-1", triggerPhrase: "yes" } };
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => ({
+      ok: true,
+      json: async () => String(input).includes("/incident-state")
+        ? { states: { "incident-1": { state: "acknowledged" } } }
+        : { incidents: [match], investigations: [], rules: [] },
+    })) as jest.Mock;
+    const { rerender } = render(<ActivityInsightsWorkspace initialMode="insights" onModeChange={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+    await screen.findByText("Event overview");
+    expect(screen.getByText(/0 awaiting review; 1 direct model match/)).toBeInTheDocument();
+    expect(screen.queryByText(/100% confirmed/)).not.toBeInTheDocument();
+    expect(screen.getByText("Model outcomes")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Find footage" })).toBeEnabled();
+    expect(screen.getByText("acknowledged")).toBeInTheDocument();
+    rerender(<ActivityInsightsWorkspace initialMode="activity" onModeChange={jest.fn()} vstApiUrl="http://thor.test/vst/api" />);
+    fireEvent.change(screen.getByLabelText("Activity filter"), { target: { value: "model_match" } });
+    expect(screen.getByRole("button", { name: "Find footage" })).toBeEnabled();
+    fireEvent.change(screen.getByLabelText("Activity filter"), { target: { value: "confirmed" } });
+    expect(screen.queryByRole("button", { name: "Find footage" })).not.toBeInTheDocument();
+  });
+
+  it.each([true, false])("retrieves source footage when attached media exists: %s", async (attachedMedia) => {
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url === "/api/vision/incidents") {
         return {
           ok: true,
-          json: async () => ({ incidents: [warehouseIncident] }),
+          json: async () => ({ incidents: [{ ...warehouseIncident, info: attachedMedia ? warehouseIncident.info : { verdict: "confirmed", alertCategory: "semantic", alertRuleId: "rule-1", triggerPhrase: "yes", prompt: "Original condition preserved" } }] }),
         } as Response;
       }
       if (url === "/api/vision/investigations") {
@@ -76,11 +120,16 @@ describe("ActivityInsightsWorkspace", () => {
     );
 
     fireEvent.click(
-      await screen.findByRole("button", { name: "Open evidence" })
+      await screen.findByRole("button", { name: attachedMedia ? "Open evidence" : "Find footage" })
     );
     const dialog = await screen.findByRole("dialog", {
       name: "Incident evidence",
     });
+    if (!attachedMedia) {
+      expect(dialog).toHaveTextContent("Model match");
+      expect(dialog).toHaveTextContent("Original condition preserved");
+      expect(dialog).toHaveTextContent("Rule record unavailable");
+    }
     await waitFor(() =>
       expect(dialog.querySelector("video")).toHaveAttribute(
         "src",
@@ -154,7 +203,19 @@ describe("ActivityInsightsWorkspace", () => {
     expect(await screen.findByText("4 incidents")).toBeInTheDocument();
   });
 
-  it("keeps operator-created investigations discoverable after leaving search", async () => {
+  it("reveals older saved reports beyond the initial four", async () => {
+    const records = Array.from({ length: 6 }, (_, index) => ({ id: `saved-${index}`, title: `Saved briefing ${index}`, created_at: "2026-09-28T10:00:00Z", severity: "low", disposition: "resolved", evidence: [], report_url: `/reports/${index}` }));
+    global.fetch = jest.fn(async (input: RequestInfo | URL) => ({ ok: true, json: async () => String(input).includes("/investigations") ? { investigations: records } : { incidents: [], rules: [], states: {} } })) as jest.Mock;
+    render(<ActivityInsightsWorkspace initialMode="activity" onModeChange={jest.fn()} onOpenRules={jest.fn()} />);
+    await screen.findByText("Saved briefing 0");
+    expect(screen.queryByText("Saved briefing 5")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Show older reports" }));
+    expect(screen.getByText("Saved briefing 5")).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Open report" })).toHaveLength(6);
+    expect(screen.queryByRole("button", { name: "Show older reports" })).not.toBeInTheDocument();
+  });
+
+  it.each([true, false])("keeps saved investigations discoverable when analytics availability is %s", async (analyticsAvailable) => {
     global.fetch = jest.fn(async (input: RequestInfo | URL) =>
       String(input) === "/api/vision/investigations"
         ? ({
@@ -175,8 +236,9 @@ describe("ActivityInsightsWorkspace", () => {
             }),
           } as Response)
         : ({
-            ok: true,
-            json: async () => ({ incidents: [warehouseIncident] }),
+            ok: analyticsAvailable,
+            status: analyticsAvailable ? 200 : 503,
+            json: async () => ({ incidents: [warehouseIncident], error: analyticsAvailable ? undefined : "Analytics unavailable during test" }),
           } as Response)
     ) as jest.Mock;
 
@@ -189,8 +251,13 @@ describe("ActivityInsightsWorkspace", () => {
     );
 
     expect(
-      await screen.findByRole("region", { name: "Saved investigations" })
+      await screen.findByRole("region", { name: "Saved reports" })
     ).toHaveTextContent("Warehouse restricted-zone review");
+    if (!analyticsAvailable) {
+      expect(screen.getByText("Event data unavailable")).toBeInTheDocument();
+      expect(screen.queryByText("No detected events yet")).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Open evidence" })).not.toBeInTheDocument();
+    }
     expect(screen.getByRole("link", { name: "Open report" })).toHaveAttribute(
       "href",
       "/api/vision/investigations?id=11111111-1111-4111-8111-111111111111&format=html"

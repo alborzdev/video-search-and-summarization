@@ -4,6 +4,10 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { VideoManagementComponent } from '../../lib-src/VideoManagementComponent';
 import { videoStream, rtspStream } from '../helpers/streamFixtures';
 
+let mockCatalogError: string | null = null;
+const mockCatalogRetry = jest.fn();
+let mockCatalogStreams = [videoStream, rtspStream];
+
 const mockOpenVideoModal = jest.fn(() => Promise.resolve());
 const mockCloseVideoModal = jest.fn();
 
@@ -48,10 +52,10 @@ const mockTimelines = new Map([
 
 jest.mock('../../lib-src/hooks', () => ({
   useStreams: () => ({
-    streams: [videoStream, rtspStream],
+    streams: mockCatalogStreams,
     isLoading: false,
-    error: null,
-    refetch: jest.fn(),
+    error: mockCatalogError,
+    refetch: mockCatalogRetry,
   }),
   useStorageTimelines: () => ({
     timelines: mockTimelines,
@@ -208,5 +212,68 @@ describe('VideoManagementComponent — video playback', () => {
 
     fireEvent.click(screen.getByRole('checkbox', { name: `Select ${videoStream.name}` }));
     expect(screen.getByRole('button', { name: 'Clear live data (1)' })).toBeDisabled();
+  });
+});
+
+it('distinguishes an unavailable catalog from an empty source inventory and retries', () => {
+  mockCatalogError = 'Failed to fetch streams: 502';
+  try {
+    renderComponent();
+    expect(screen.getByRole('alert')).toHaveTextContent('Your saved sources have not been removed');
+    expect(screen.queryByText('Drop files here')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Retry loading sources' }));
+    expect(mockCatalogRetry).toHaveBeenCalled();
+  } finally { mockCatalogError = null; }
+});
+
+
+jest.mock('../../lib-src/components/AddRtspDialog', () => ({
+  AddRtspDialog: ({ isOpen, onSuccess, onClose }: any) => isOpen ? (
+    <button onClick={() => {
+      onSuccess({ status: 'success', sensorId: 'new-camera', name: 'Demo replay', analysisPaused: true, analysisProfileId: 'semantic-search' });
+      onClose();
+    }}>Complete camera connection</button>
+  ) : null,
+}));
+
+describe('camera catalog convergence', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    mockCatalogStreams = [videoStream, rtspStream];
+    mockCatalogRetry.mockClear();
+  });
+  afterEach(() => {
+    jest.useRealTimers();
+    mockCatalogStreams = [videoStream, rtspStream];
+  });
+
+  it('keeps checking a delayed catalog and stops when the registered camera appears', async () => {
+    const view = renderComponent();
+    fireEvent.click(screen.getByRole('button', { name: 'Add RTSP camera' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Complete camera connection' }));
+    expect(screen.getByRole('status')).toHaveTextContent('AI analysis is paused. Waiting for the camera inventory');
+    const firstCalls = mockCatalogRetry.mock.calls.length;
+    await act(async () => { jest.advanceTimersByTime(2000); });
+    expect(mockCatalogRetry.mock.calls.length).toBeGreaterThan(firstCalls);
+    mockCatalogStreams = [...mockCatalogStreams, { ...rtspStream, streamId: 'new-stream', sensorId: 'new-camera', name: 'Demo replay' }];
+    view.rerender(<VideoManagementComponent {...defaultProps} />);
+    expect(screen.getByRole('status')).toHaveTextContent('Demo replay is in Sources. AI analysis is paused. Select Play');
+    const settledCalls = mockCatalogRetry.mock.calls.length;
+    await act(async () => { jest.advanceTimersByTime(10000); });
+    expect(mockCatalogRetry).toHaveBeenCalledTimes(settledCalls);
+  });
+
+  it('ends bounded retries with an actionable message instead of claiming the camera is visible', async () => {
+    renderComponent();
+    fireEvent.click(screen.getByRole('button', { name: 'Add RTSP camera' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Complete camera connection' }));
+    for (let attempt = 0; attempt < 10; attempt++) {
+      await act(async () => { jest.advanceTimersByTime(2000); });
+    }
+    expect(screen.getByRole('alert')).toHaveTextContent('camera inventory has not updated');
+    expect(screen.getByRole('alert')).toHaveTextContent('do not reconnect it');
+    const settledCalls = mockCatalogRetry.mock.calls.length;
+    await act(async () => { jest.advanceTimersByTime(10000); });
+    expect(mockCatalogRetry).toHaveBeenCalledTimes(settledCalls);
   });
 });

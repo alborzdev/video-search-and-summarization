@@ -1,3 +1,5 @@
+> **Custom demo → DGX Spark:** [Deployment and Codex handoff](docs/spark-handoff.md). Use the custom branch and Spark bootstrap; historical Thor launchers are hardware-specific.
+
 <h2>NVIDIA AI Blueprint: Video Search and Summarization (VSS)</h2>
 
 **Build GPU-accelerated video AI agents that search, analyze, summarize, and reason over live or recorded video using natural language.**

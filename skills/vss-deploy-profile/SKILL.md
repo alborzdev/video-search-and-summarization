@@ -76,10 +76,11 @@ Export the resolved `$REPO`; if detection fails, ask the user for the checkout p
 
 Run before every deploy. The full system checklist and remediation steps live
 in [`references/prerequisites.md`](references/prerequisites.md#preflight).
-For DGX Spark / IGX Thor / AGX Thor, also run the cache-cleaner check in
-[`references/edge.md`](references/edge.md#cache-cleaner-every-edge-deploy). On
-Thor this link is for the host prerequisite only; model selection remains owned
-by [`references/thor-official-edge.md`](references/thor-official-edge.md).
+For DGX Spark / IGX Thor / AGX Thor, follow the cache policy in
+[`references/edge.md`](references/edge.md#cache-cleaner-every-edge-deploy).
+The exact Thor dual-model lane is an empirical safety exception: read
+[`references/thor-official-edge.md`](references/thor-official-edge.md) and keep
+the periodic cleaner stopped when its fail-closed audit applies.
 
 **Detect sudo mode first.** Several pre-flight remediations and the
 edge cache-cleaner installer call `sudo`. If the host requires a

@@ -1,0 +1,65 @@
+[
+  {
+    "chunk": 0,
+    "response_utc": "2026-09-29T03:08:07.610000+00:00",
+    "last_frame_utc": "2026-09-29T03:08:06.901Z",
+    "lag_seconds": 0.709,
+    "answer": "YES"
+  },
+  {
+    "chunk": 1,
+    "response_utc": "2026-09-29T03:08:17.477000+00:00",
+    "last_frame_utc": "2026-09-29T03:08:16.902Z",
+    "lag_seconds": 0.575,
+    "answer": "YES"
+  },
+  {
+    "chunk": 2,
+    "response_utc": "2026-09-29T03:08:27.501000+00:00",
+    "last_frame_utc": "2026-09-29T03:08:26.902Z",
+    "lag_seconds": 0.599,
+    "answer": "YES"
+  },
+  {
+    "chunk": 3,
+    "response_utc": "2026-09-29T03:08:37.460000+00:00",
+    "last_frame_utc": "2026-09-29T03:08:36.902Z",
+    "lag_seconds": 0.558,
+    "answer": "YES"
+  },
+  {
+    "chunk": 4,
+    "response_utc": "2026-09-29T03:08:47.534000+00:00",
+    "last_frame_utc": "2026-09-29T03:08:46.901Z",
+    "lag_seconds": 0.633,
+    "answer": "YES"
+  },
+  {
+    "chunk": 5,
+    "response_utc": "2026-09-29T03:08:57.565000+00:00",
+    "last_frame_utc": "2026-09-29T03:08:56.901Z",
+    "lag_seconds": 0.664,
+    "answer": "YES"
+  },
+  {
+    "chunk": 6,
+    "response_utc": "2026-09-29T03:09:07.478000+00:00",
+    "last_frame_utc": "2026-09-29T03:09:06.903Z",
+    "lag_seconds": 0.575,
+    "answer": "YES"
+  },
+  {
+    "chunk": 7,
+    "response_utc": "2026-09-29T03:09:17.507000+00:00",
+    "last_frame_utc": "2026-09-29T03:09:16.903Z",
+    "lag_seconds": 0.604,
+    "answer": "YES"
+  },
+  {
+    "chunk": 8,
+    "response_utc": "2026-09-29T03:09:27.582000+00:00",
+    "last_frame_utc": "2026-09-29T03:09:26.903Z",
+    "lag_seconds": 0.679,
+    "answer": "YES"
+  }
+]

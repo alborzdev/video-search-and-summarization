@@ -365,3 +365,30 @@ def test_cosmos3_vllm_plugin_entry_point_is_discoverable():
         ep.name == "register_cosmos3" and ep.value == "vllm_cosmos3:register"
         for ep in general_plugins
     )
+
+
+@pytest.mark.parametrize("seed", [0, 42])
+@pytest.mark.parametrize("temperature", [0.0, 0.4])
+def test_explicit_temperature_reaches_sampling_constructor(monkeypatch, temperature, seed):
+    constructor_calls = []
+
+    class RecordingSamplingParams:
+        def __init__(self, **kwargs):
+            constructor_calls.append(kwargs)
+            self.temperature = kwargs.get("temperature", 1.0)
+
+    monkeypatch.setitem(sys.modules, "vllm", SimpleNamespace(SamplingParams=RecordingSamplingParams))
+    model = VllmCompatible.__new__(VllmCompatible)
+    model._processor = SimpleNamespace(
+        apply_chat_template=lambda *args, **kwargs: "prompt",
+        tokenizer=SimpleNamespace(encode=lambda *args, **kwargs: [1]),
+    )
+    model._model_architecture = "test"
+    model._inflight_req_ids = []
+    model._event_loop = object()
+    model._process_text_only_async = lambda *args: object()
+    monkeypatch.setattr(asyncio, "run_coroutine_threadsafe", lambda value, loop: value)
+    config = vllm_compatible_model.VlmGenerationConfig(temperature=temperature, seed=seed)
+    model.generate_text_only([{"role": "user", "content": "describe"}], config)
+    assert constructor_calls[0]["temperature"] == temperature
+    assert constructor_calls[0]["seed"] == seed

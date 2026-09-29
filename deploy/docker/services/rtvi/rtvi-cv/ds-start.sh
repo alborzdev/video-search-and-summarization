@@ -46,7 +46,7 @@ apply_thor_tracker_tuning()
 
     is_thor_profile || return 0
 
-    echo "##### Applying Thor NvDCF VPI tracker tuning. #####"
+    echo "##### Applying Thor NvDCF VPI CUDA tracker tuning (PVA disabled). #####"
     sed -i '/^\[tracker\]/,/^\[/{/^compute-hw=/d;}' "$config_file"
     sed -i '/^\[tracker\]/a compute-hw=2' "$config_file"
     sed -i '/^\[source-list\]/,/^\[/{/^low-latency-mode=/d;}' "$config_file"
@@ -59,7 +59,8 @@ apply_thor_tracker_tuning()
 
     sed -i '/^VisualTracker:/,/^[A-Z][a-zA-Z]*:/ {/^[[:space:]]*visualTrackerType:/d;}' "$tracker_config"
     sed -i '/^VisualTracker:/,/^[A-Z][a-zA-Z]*:/ {/^[[:space:]]*vpiBackend4DcfTracker:/d;}' "$tracker_config"
-    sed -i '/^VisualTracker:/a \  visualTrackerType: 2\n\  vpiBackend4DcfTracker: 2' "$tracker_config"
+    # PVA triggered nvhost_pva kernel BUGs on this Thor R38.4; use VPI CUDA.
+    sed -i '/^VisualTracker:/a \  visualTrackerType: 2\n\  vpiBackend4DcfTracker: 1' "$tracker_config"
 
     max_sources=$(sed -n '/^\[source-list\]/,/^\[/{s/^max-batch-size=//p;}' "$config_file" | head -n 1)
     if [[ ! "$max_sources" =~ ^[1-9][0-9]*$ ]]; then

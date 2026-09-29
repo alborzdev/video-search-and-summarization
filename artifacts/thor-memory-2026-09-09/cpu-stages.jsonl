@@ -1,0 +1,28 @@
+{"time": "2026-09-09T11:41:38-0400", "stage": "baseline", "status": "VSS stopped; one-shot shrinker reclaim completed", "available_gib": 111.348, "used_gib": 11.476, "free_gib": 37.292}
+{"time": "2026-09-09T11:41:38-0400", "stage": "redis", "status": "starting", "available_gib": 111.347, "used_gib": 11.477, "free_gib": 37.208}
+{"time": "2026-09-09T11:41:43-0400", "stage": "redis", "status": "healthy", "available_gib": 111.138, "used_gib": 11.686, "free_gib": 34.832}
+{"time": "2026-09-09T11:41:53-0400", "stage": "redis", "status": "healthy + 10-second settle", "available_gib": 111.04, "used_gib": 11.784, "free_gib": 34.734}
+{"time": "2026-09-09T11:41:53-0400", "stage": "vss-vios-postgres", "status": "starting", "available_gib": 111.002, "used_gib": 11.822, "free_gib": 34.693}
+{"time": "2026-09-09T11:41:58-0400", "stage": "vss-vios-postgres", "status": "starting", "available_gib": 110.982, "used_gib": 11.842, "free_gib": 34.649}
+{"time": "2026-09-09T11:42:03-0400", "stage": "vss-vios-postgres", "status": "healthy", "available_gib": 110.924, "used_gib": 11.9, "free_gib": 34.59}
+{"time": "2026-09-09T11:42:13-0400", "stage": "vss-vios-postgres", "status": "healthy + 10-second settle", "available_gib": 111.025, "used_gib": 11.798, "free_gib": 34.691}
+{"time": "2026-09-09T11:42:14-0400", "stage": "kafka", "status": "starting", "available_gib": 111.019, "used_gib": 11.805, "free_gib": 34.677}
+{"time": "2026-09-09T11:42:19-0400", "stage": "kafka", "status": "starting", "available_gib": 110.473, "used_gib": 12.351, "free_gib": 33.988}
+{"time": "2026-09-09T11:42:24-0400", "stage": "kafka", "status": "healthy", "available_gib": 109.879, "used_gib": 12.945, "free_gib": 33.388}
+{"time": "2026-09-09T11:42:34-0400", "stage": "kafka", "status": "healthy + 10-second settle", "available_gib": 109.805, "used_gib": 13.019, "free_gib": 33.313}
+{"time": "2026-09-09T11:42:34-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 109.78, "used_gib": 13.044, "free_gib": 33.282}
+{"time": "2026-09-09T11:42:39-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 109.306, "used_gib": 13.518, "free_gib": 32.708}
+{"time": "2026-09-09T11:42:44-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 109.141, "used_gib": 13.683, "free_gib": 32.506}
+{"time": "2026-09-09T11:42:49-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 109.089, "used_gib": 13.734, "free_gib": 32.445}
+{"time": "2026-09-09T11:42:54-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 109.129, "used_gib": 13.695, "free_gib": 32.484}
+{"time": "2026-09-09T11:42:59-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 109.035, "used_gib": 13.789, "free_gib": 32.135}
+{"time": "2026-09-09T11:43:04-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 108.924, "used_gib": 13.9, "free_gib": 31.999}
+{"time": "2026-09-09T11:43:09-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 108.773, "used_gib": 14.051, "free_gib": 31.79}
+{"time": "2026-09-09T11:43:14-0400", "stage": "elasticsearch", "status": "starting", "available_gib": 108.678, "used_gib": 14.145, "free_gib": 31.694}
+{"time": "2026-09-09T11:43:19-0400", "stage": "elasticsearch", "status": "healthy", "available_gib": 108.685, "used_gib": 14.139, "free_gib": 31.697}
+{"time": "2026-09-09T11:43:29-0400", "stage": "elasticsearch", "status": "healthy + 10-second settle", "available_gib": 108.856, "used_gib": 13.968, "free_gib": 31.868}
+{"time": "2026-09-09T11:43:29-0400", "stage": "vss-graph-db", "status": "starting", "available_gib": 108.834, "used_gib": 13.99, "free_gib": 31.841}
+{"time": "2026-09-09T11:43:34-0400", "stage": "vss-graph-db", "status": "starting", "available_gib": 108.387, "used_gib": 14.437, "free_gib": 31.341}
+{"time": "2026-09-09T11:43:39-0400", "stage": "vss-graph-db", "status": "starting", "available_gib": 108.126, "used_gib": 14.698, "free_gib": 30.913}
+{"time": "2026-09-09T11:43:44-0400", "stage": "vss-graph-db", "status": "healthy", "available_gib": 108.152, "used_gib": 14.671, "free_gib": 30.94}
+{"time": "2026-09-09T11:43:54-0400", "stage": "vss-graph-db", "status": "healthy + 10-second settle", "available_gib": 108.246, "used_gib": 14.577, "free_gib": 31.034}

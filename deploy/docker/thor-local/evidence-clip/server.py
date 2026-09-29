@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -32,6 +33,8 @@ COSMOS_EMBED_MODEL = os.getenv(
 )
 VST_PATH_PREFIX = os.getenv("VST_PATH_PREFIX", "/home/vst/vst_release/vst_video").rstrip("/")
 MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", "/media")).resolve()
+RECORDING_PATH_PREFIX = os.getenv("RECORDING_PATH_PREFIX", "/home/vst/vst_release/streamer_videos").rstrip("/")
+RECORDING_ROOT = Path(os.getenv("RECORDING_ROOT", "/recordings")).resolve()
 CACHE_ROOT = Path(os.getenv("CACHE_ROOT", "/cache")).resolve()
 MAX_DURATION_SECONDS = int(os.getenv("MAX_DURATION_SECONDS", "600"))
 MAX_CACHE_BYTES = int(os.getenv("MAX_CACHE_BYTES", str(4 * 1024 * 1024 * 1024)))
@@ -62,11 +65,43 @@ def generate_text_embeddings(payload: object) -> dict[str, object]:
         raise ValueError("input must contain between 1 and 50 non-empty strings")
     if any(len(item) > 32_768 for item in texts):
         raise ValueError("Embedding input is too long")
+    # RT-Embed limits each echoed text to 1,000 characters. LVS summaries can
+    # be longer, so embed every chunk and pool them instead of losing the tail.
+    chunks = [text[offset:offset + 1000] for text in texts for offset in range(0, len(text), 1000)]
+    vectors = []
+    for offset in range(0, len(chunks), 50):
+        vectors.extend(_embed_text_batch(chunks[offset:offset + 50]))
+    embeddings: list[dict[str, object]] = []
+    offset = 0
+    for index, text in enumerate(texts):
+        count = (len(text) + 999) // 1000
+        parts = vectors[offset:offset + count]
+        if count == 1:
+            vector = parts[0]
+        else:
+            if any(len(part) != len(parts[0]) for part in parts):
+                raise RuntimeError("The local Cosmos embedding dimensions differed")
+            weights = [len(chunk) for chunk in chunks[offset:offset + count]]
+            vector = [sum(part[i] * weight for part, weight in zip(parts, weights)) / sum(weights)
+                      for i in range(len(parts[0]))]
+            norm = math.sqrt(sum(value * value for value in vector))
+            if not math.isfinite(norm) or norm == 0:
+                raise RuntimeError("The pooled Cosmos embedding was invalid")
+            vector = [value / norm for value in vector]
+        offset += count
+        embeddings.append({"embedding": vector, "index": index, "object": "embedding"})
+    return {
+        "data": embeddings,
+        "model": COSMOS_EMBED_MODEL,
+        "object": "list",
+        "usage": {"prompt_tokens": 0, "total_tokens": 0},
+    }
+
+
+def _embed_text_batch(texts: list[str]) -> list[list[float]]:
     upstream_request = Request(
         COSMOS_EMBED_API_URL,
-        data=json.dumps(
-            {"model": COSMOS_EMBED_MODEL, "text_input": texts}
-        ).encode("utf-8"),
+        data=json.dumps({"model": COSMOS_EMBED_MODEL, "text_input": texts}).encode("utf-8"),
         headers={"Accept": "application/json", "Content-Type": "application/json"},
         method="POST",
     )
@@ -78,24 +113,18 @@ def generate_text_embeddings(payload: object) -> dict[str, object]:
     data = upstream.get("data") if isinstance(upstream, dict) else None
     if not isinstance(data, list) or len(data) != len(texts):
         raise RuntimeError("The local Cosmos embedding response was incomplete")
-    embeddings: list[dict[str, object]] = []
-    for index, item in enumerate(data):
+    vectors = []
+    for item in data:
         vector = item.get("embeddings") if isinstance(item, dict) else None
         if (
             not isinstance(vector, list)
             or not vector
-            or any(not isinstance(value, (int, float)) for value in vector)
+            or any(isinstance(value, bool) or not isinstance(value, (int, float))
+                   or not math.isfinite(value) for value in vector)
         ):
             raise RuntimeError("The local Cosmos embedding response was invalid")
-        embeddings.append(
-            {"embedding": vector, "index": index, "object": "embedding"}
-        )
-    return {
-        "data": embeddings,
-        "model": COSMOS_EMBED_MODEL,
-        "object": "list",
-        "usage": {"prompt_tokens": 0, "total_tokens": 0},
-    }
+        vectors.append(vector)
+    return vectors
 
 
 def parse_timestamp(value: object) -> datetime:
@@ -109,13 +138,14 @@ def parse_timestamp(value: object) -> datetime:
 
 
 def local_media_path(vst_path: object) -> Path:
-    if not isinstance(vst_path, str) or not vst_path.startswith(f"{VST_PATH_PREFIX}/"):
-        raise ValueError("VIOS returned an invalid media path")
-    relative = vst_path[len(VST_PATH_PREFIX) :].lstrip("/")
-    candidate = (MEDIA_ROOT / relative).resolve()
-    if MEDIA_ROOT not in candidate.parents or not candidate.is_file():
-        raise ValueError("VIOS media is not available to the clip service")
-    return candidate
+    if isinstance(vst_path, str):
+        for prefix, root in ((VST_PATH_PREFIX, MEDIA_ROOT), (RECORDING_PATH_PREFIX, RECORDING_ROOT)):
+            if vst_path.startswith(f"{prefix}/"):
+                candidate = (root / vst_path[len(prefix) :].lstrip("/")).resolve()
+                if root not in candidate.parents or not candidate.is_file():
+                    raise ValueError("VIOS media is not available to the clip service")
+                return candidate
+    raise ValueError("VIOS returned an invalid media path")
 
 
 def get_media_paths(stream_id: str, start_time: str, end_time: str) -> list[Path]:
@@ -148,7 +178,7 @@ def probe_start_time(path: Path) -> float:
     return float(result.stdout.strip())
 
 
-def validate_output(path: Path) -> None:
+def validate_output(path: Path, expected_duration: float) -> None:
     result = subprocess.run(
         [
             "ffprobe", "-v", "error", "-show_entries", "format=duration",
@@ -159,8 +189,25 @@ def validate_output(path: Path) -> None:
         text=True,
         timeout=20,
     )
-    if float(result.stdout.strip()) <= 0 or path.stat().st_size <= 0:
+    actual = float(result.stdout.strip())
+    if not math.isfinite(actual) or actual <= 0 or path.stat().st_size <= 0:
         raise RuntimeError("Generated clip is empty")
+    if abs(actual - expected_duration) > 0.25:
+        raise RuntimeError("Generated clip does not cover the requested duration")
+
+
+def recording_start(stream_id: str, start: datetime, end: datetime) -> float:
+    """Resolve the wall-clock origin of a file whose media PTS starts at zero."""
+    url = f"{VST_API_URL}/v1/storage/{quote(stream_id, safe='')}/timelines"
+    with urlopen(Request(url, headers={"Accept": "application/json"}), timeout=20) as response:
+        timelines = json.load(response)
+    if isinstance(timelines, list):
+        for timeline in timelines:
+            origin = parse_timestamp(timeline.get("startTime"))
+            stop = parse_timestamp(timeline.get("endTime"))
+            if origin <= start < end <= stop:
+                return origin.timestamp()
+    raise ValueError("No recording timeline covers the selected interval")
 
 
 def purge_cache() -> None:
@@ -210,15 +257,24 @@ def build_clip(stream_id: str, start_time: str, end_time: str) -> tuple[str, str
     output = CACHE_ROOT / f"{key}.mp4"
     with PREPARE_LOCK:
         if output.is_file() and output.stat().st_size > 0:
-            os.utime(output, None)
-            output.with_suffix(".json").write_text(
-                json.dumps({"sensorId": stream_id}),
-                encoding="utf-8",
-            )
-            return key, start_time
+            try:
+                validate_output(output, duration)
+            except (subprocess.SubprocessError, ValueError, RuntimeError):
+                pass  # Rebuild incomplete clips made by older service versions.
+            else:
+                os.utime(output, None)
+                output.with_suffix(".json").write_text(
+                    json.dumps({"sensorId": stream_id}),
+                    encoding="utf-8",
+                )
+                return key, start_time
 
         paths = get_media_paths(stream_id, start_time, end_time)
-        source_start = probe_start_time(paths[0])
+        source_start = (
+            recording_start(stream_id, start, end)
+            if RECORDING_ROOT in paths[0].parents
+            else probe_start_time(paths[0])
+        )
         offset = max(0.0, start.timestamp() - source_start)
         CACHE_ROOT.mkdir(parents=True, exist_ok=True)
 
@@ -247,7 +303,7 @@ def build_clip(stream_id: str, start_time: str, end_time: str) -> tuple[str, str
             copy_command = common + ["-c:v", "copy", "-movflags", "+faststart", str(candidate)]
             try:
                 subprocess.run(copy_command, check=True, capture_output=True, timeout=120)
-                validate_output(candidate)
+                validate_output(candidate, duration)
             except (subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError, RuntimeError):
                 candidate.unlink(missing_ok=True)
                 transcode_command = common + [
@@ -255,7 +311,7 @@ def build_clip(stream_id: str, start_time: str, end_time: str) -> tuple[str, str
                     "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(candidate),
                 ]
                 subprocess.run(transcode_command, check=True, capture_output=True, timeout=300)
-                validate_output(candidate)
+                validate_output(candidate, duration)
             candidate.replace(output)
             output.with_suffix(".json").write_text(
                 json.dumps({"sensorId": stream_id}),

@@ -1,0 +1,436 @@
+{
+  "started_at": "2026-09-29T01:23:07.677308+00:00",
+  "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+  "profile": {
+    "sensor_id": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+    "sensor_name": "Conveyor \u2014 Recorded Simulation (RTSP Replay)",
+    "alert_type": "box_presence_cadence_qualification",
+    "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+    "system_prompt": "Answer yes or no",
+    "chunk_duration": 10,
+    "chunk_overlap_duration": 2,
+    "num_frames_per_second_or_fixed_frames_chunk": 4,
+    "use_fps_for_chunking": false,
+    "vlm_input_width": 512,
+    "vlm_input_height": 512,
+    "enable_reasoning": false,
+    "enable_audio": false,
+    "max_tokens": 128
+  },
+  "samples": [
+    {
+      "elapsed": 0.0,
+      "available_gib": 49.688
+    },
+    {
+      "elapsed": 1.0,
+      "available_gib": 49.691
+    },
+    {
+      "elapsed": 2.0,
+      "available_gib": 49.628
+    },
+    {
+      "elapsed": 3.0,
+      "available_gib": 49.652
+    },
+    {
+      "elapsed": 4.01,
+      "available_gib": 49.631
+    },
+    {
+      "elapsed": 5.01,
+      "available_gib": 49.531
+    },
+    {
+      "elapsed": 6.01,
+      "available_gib": 49.616
+    },
+    {
+      "elapsed": 7.01,
+      "available_gib": 49.616
+    },
+    {
+      "elapsed": 8.01,
+      "available_gib": 49.63
+    },
+    {
+      "elapsed": 9.01,
+      "available_gib": 49.611
+    },
+    {
+      "elapsed": 10.01,
+      "available_gib": 49.612
+    },
+    {
+      "elapsed": 11.02,
+      "available_gib": 49.579
+    },
+    {
+      "elapsed": 12.02,
+      "available_gib": 49.543
+    },
+    {
+      "elapsed": 13.02,
+      "available_gib": 49.57
+    },
+    {
+      "elapsed": 14.02,
+      "available_gib": 49.739
+    },
+    {
+      "elapsed": 15.02,
+      "available_gib": 49.73
+    },
+    {
+      "elapsed": 16.03,
+      "available_gib": 49.66
+    },
+    {
+      "elapsed": 17.03,
+      "available_gib": 49.736
+    },
+    {
+      "elapsed": 18.03,
+      "available_gib": 49.727
+    },
+    {
+      "elapsed": 19.03,
+      "available_gib": 49.712
+    },
+    {
+      "elapsed": 20.04,
+      "available_gib": 49.714
+    },
+    {
+      "elapsed": 21.04,
+      "available_gib": 49.696
+    },
+    {
+      "elapsed": 22.04,
+      "available_gib": 49.688
+    },
+    {
+      "elapsed": 23.04,
+      "available_gib": 49.667
+    },
+    {
+      "elapsed": 24.05,
+      "available_gib": 49.664
+    },
+    {
+      "elapsed": 25.05,
+      "available_gib": 49.701
+    },
+    {
+      "elapsed": 26.05,
+      "available_gib": 49.701
+    },
+    {
+      "elapsed": 27.05,
+      "available_gib": 49.714
+    },
+    {
+      "elapsed": 28.06,
+      "available_gib": 49.577
+    },
+    {
+      "elapsed": 29.06,
+      "available_gib": 49.728
+    },
+    {
+      "elapsed": 30.06,
+      "available_gib": 49.698
+    },
+    {
+      "elapsed": 31.06,
+      "available_gib": 49.694
+    },
+    {
+      "elapsed": 32.06,
+      "available_gib": 49.672
+    },
+    {
+      "elapsed": 33.06,
+      "available_gib": 49.663
+    },
+    {
+      "elapsed": 34.06,
+      "available_gib": 49.696
+    },
+    {
+      "elapsed": 35.06,
+      "available_gib": 49.703
+    },
+    {
+      "elapsed": 36.06,
+      "available_gib": 49.701
+    },
+    {
+      "elapsed": 37.07,
+      "available_gib": 49.691
+    },
+    {
+      "elapsed": 38.07,
+      "available_gib": 49.687
+    },
+    {
+      "elapsed": 39.07,
+      "available_gib": 49.622
+    },
+    {
+      "elapsed": 40.07,
+      "available_gib": 49.708
+    },
+    {
+      "elapsed": 41.07,
+      "available_gib": 49.693
+    },
+    {
+      "elapsed": 42.07,
+      "available_gib": 49.703
+    },
+    {
+      "elapsed": 43.07,
+      "available_gib": 49.714
+    },
+    {
+      "elapsed": 44.07,
+      "available_gib": 49.674
+    },
+    {
+      "elapsed": 45.08,
+      "available_gib": 49.647
+    },
+    {
+      "elapsed": 46.08,
+      "available_gib": 49.65
+    },
+    {
+      "elapsed": 47.08,
+      "available_gib": 49.63
+    },
+    {
+      "elapsed": 48.1,
+      "available_gib": 49.618
+    },
+    {
+      "elapsed": 49.1,
+      "available_gib": 49.632
+    },
+    {
+      "elapsed": 50.1,
+      "available_gib": 49.616
+    },
+    {
+      "elapsed": 51.1,
+      "available_gib": 49.55
+    },
+    {
+      "elapsed": 52.1,
+      "available_gib": 49.673
+    },
+    {
+      "elapsed": 53.11,
+      "available_gib": 49.649
+    },
+    {
+      "elapsed": 54.11,
+      "available_gib": 49.637
+    },
+    {
+      "elapsed": 55.11,
+      "available_gib": 49.753
+    },
+    {
+      "elapsed": 56.11,
+      "available_gib": 49.747
+    },
+    {
+      "elapsed": 57.11,
+      "available_gib": 49.762
+    },
+    {
+      "elapsed": 58.12,
+      "available_gib": 49.739
+    },
+    {
+      "elapsed": 59.12,
+      "available_gib": 49.722
+    },
+    {
+      "elapsed": 60.12,
+      "available_gib": 49.727
+    },
+    {
+      "elapsed": 61.12,
+      "available_gib": 49.703
+    },
+    {
+      "elapsed": 62.12,
+      "available_gib": 49.612
+    },
+    {
+      "elapsed": 63.12,
+      "available_gib": 49.763
+    },
+    {
+      "elapsed": 64.13,
+      "available_gib": 49.747
+    },
+    {
+      "elapsed": 65.13,
+      "available_gib": 49.704
+    },
+    {
+      "elapsed": 66.13,
+      "available_gib": 49.709
+    },
+    {
+      "elapsed": 67.13,
+      "available_gib": 49.715
+    },
+    {
+      "elapsed": 68.14,
+      "available_gib": 49.694
+    },
+    {
+      "elapsed": 69.14,
+      "available_gib": 49.713
+    },
+    {
+      "elapsed": 70.14,
+      "available_gib": 49.753
+    },
+    {
+      "elapsed": 71.14,
+      "available_gib": 49.729
+    },
+    {
+      "elapsed": 72.14,
+      "available_gib": 49.734
+    },
+    {
+      "elapsed": 73.15,
+      "available_gib": 49.677
+    },
+    {
+      "elapsed": 74.15,
+      "available_gib": 49.746
+    },
+    {
+      "elapsed": 75.15,
+      "available_gib": 49.749
+    },
+    {
+      "elapsed": 76.15,
+      "available_gib": 49.754
+    },
+    {
+      "elapsed": 77.15,
+      "available_gib": 49.749
+    },
+    {
+      "elapsed": 78.15,
+      "available_gib": 49.747
+    },
+    {
+      "elapsed": 79.15,
+      "available_gib": 49.717
+    },
+    {
+      "elapsed": 80.16,
+      "available_gib": 49.754
+    },
+    {
+      "elapsed": 81.16,
+      "available_gib": 49.709
+    },
+    {
+      "elapsed": 82.16,
+      "available_gib": 49.707
+    },
+    {
+      "elapsed": 83.16,
+      "available_gib": 49.723
+    },
+    {
+      "elapsed": 84.16,
+      "available_gib": 49.707
+    },
+    {
+      "elapsed": 85.16,
+      "available_gib": 49.552
+    },
+    {
+      "elapsed": 86.17,
+      "available_gib": 49.739
+    },
+    {
+      "elapsed": 87.17,
+      "available_gib": 49.697
+    },
+    {
+      "elapsed": 88.17,
+      "available_gib": 49.718
+    },
+    {
+      "elapsed": 89.17,
+      "available_gib": 49.683
+    },
+    {
+      "elapsed": 90.17,
+      "available_gib": 49.67
+    },
+    {
+      "elapsed": 91.18,
+      "available_gib": 49.642
+    },
+    {
+      "elapsed": 92.18,
+      "available_gib": 49.721
+    },
+    {
+      "elapsed": 93.18,
+      "available_gib": 49.745
+    },
+    {
+      "elapsed": 94.18,
+      "available_gib": 49.762
+    },
+    {
+      "elapsed": 95.18,
+      "available_gib": 49.757
+    },
+    {
+      "elapsed": 96.19,
+      "available_gib": 49.659
+    }
+  ],
+  "cleanup": [
+    {
+      "id": "a82abc1e-5bd6-434b-ab94-b5ebcda403e1",
+      "result": {
+        "status": "success",
+        "id": "a82abc1e-5bd6-434b-ab94-b5ebcda403e1",
+        "message": "Realtime alert rule deleted"
+      }
+    }
+  ],
+  "creation": {
+    "status": "success",
+    "id": "a82abc1e-5bd6-434b-ab94-b5ebcda403e1",
+    "created_at": "2026-09-29T01:23:07.681048+00:00",
+    "message": "Realtime alert rule created"
+  },
+  "stop_reason": "90-second limit",
+  "remaining_rules": [],
+  "stream_state": {
+    "status": "ok",
+    "stream_count": 0,
+    "stream_list": []
+  },
+  "finished_at": "2026-09-29T01:24:46.891745+00:00",
+  "final_available_gib": 49.756,
+  "final_boot_id": "ac75a3b5-980a-41c5-8301-200423326f72"
+}

@@ -1,0 +1,94 @@
+{
+  "request": {
+    "query": "worker carrying a box",
+    "question": "What changes between the first and second clip?",
+    "evidence": [
+      {
+        "client_id": "comparison-1",
+        "sensor_id": "edfe78cd-2a6d-47c2-8317-57e1ade9aafc",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "match_type": "Semantic Match"
+      },
+      {
+        "client_id": "comparison-2",
+        "sensor_id": "edfe78cd-2a6d-47c2-8317-57e1ade9aafc",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:05Z",
+        "end_time": "2025-01-01T00:00:10Z",
+        "match_type": "Semantic Match"
+      }
+    ]
+  },
+  "elapsed_ms": 30762,
+  "response": {
+    "status": "complete",
+    "query": "worker carrying a box",
+    "question": "What changes between the first and second clip?",
+    "summary": "E1: worker holds box while moving forward and stops near ladder. E2: worker climbs ladder while holding box, reaches top, and stabilizes near shelf E.",
+    "observations": [
+      {
+        "text": "The worker moves forward while holding a box, then stops near the green step ladder. They turn slightly to face away from the camera and hold the box steady in front of them. No further movement or change in position is observed after stopping.",
+        "evidence_ids": [
+          "E1"
+        ]
+      },
+      {
+        "text": "The worker climbs the green rolling ladder while holding a box. They reach the top platform and position themselves near shelf E to place the box. The worker's posture shifts from climbing to stabilizing on the platform during this sequence.",
+        "evidence_ids": [
+          "E2"
+        ]
+      }
+    ],
+    "interpretations": [],
+    "timeline": [
+      {
+        "evidence_id": "E1",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "label": "The worker moves forward while holding a box, then stops near the green step ladder. They turn slightly to face away from the camera and hold the box steady in front of them. No fu"
+      },
+      {
+        "evidence_id": "E2",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:05Z",
+        "end_time": "2025-01-01T00:00:10Z",
+        "label": "The worker climbs the green rolling ladder while holding a box. They reach the top platform and position themselves near shelf E to place the box. The worker's posture shifts from "
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "E1",
+        "client_id": "comparison-1",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:00Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "observation": "The worker moves forward while holding a box, then stops near the green step ladder. They turn slightly to face away from the camera and hold the box steady in front of them. No further movement or change in position is observed after stopping.",
+        "match_type": "Semantic Match",
+        "inspection_source": "fresh_cosmos_inspection"
+      },
+      {
+        "evidence_id": "E2",
+        "client_id": "comparison-2",
+        "source_name": "Qa Recovery 20260928",
+        "start_time": "2025-01-01T00:00:05Z",
+        "end_time": "2025-01-01T00:00:10Z",
+        "observation": "The worker climbs the green rolling ladder while holding a box. They reach the top platform and position themselves near shelf E to place the box. The worker's posture shifts from climbing to stabilizing on the platform during this sequence.",
+        "match_type": "Semantic Match",
+        "inspection_source": "fresh_cosmos_inspection"
+      }
+    ],
+    "suggested_questions": [
+      "What people and objects are visible in each clip?",
+      "How do the visible actions differ between the clips?"
+    ],
+    "warning": null,
+    "timings_ms": {
+      "inspection": 25804.6,
+      "synthesis": 4809,
+      "total": 30613.7
+    }
+  }
+}

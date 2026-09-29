@@ -1,0 +1,42 @@
+{
+  "processes": [
+    {
+      "pid": 1,
+      "name": "nat",
+      "rss_kib": 678772,
+      "pss_kib": 614238
+    },
+    {
+      "pid": 67,
+      "name": "python3",
+      "rss_kib": 19600,
+      "pss_kib": 14321
+    },
+    {
+      "pid": 70,
+      "name": "python3",
+      "rss_kib": 98524,
+      "pss_kib": 80629
+    },
+    {
+      "pid": 75,
+      "name": "python3",
+      "rss_kib": 99308,
+      "pss_kib": 81423
+    },
+    {
+      "pid": 78,
+      "name": "python3",
+      "rss_kib": 99912,
+      "pss_kib": 82014
+    },
+    {
+      "pid": 117,
+      "name": "python",
+      "rss_kib": 11868,
+      "pss_kib": 7434
+    }
+  ],
+  "pss_mib": 859.4326171875,
+  "cgroup_bytes": 819798016
+}

@@ -19,6 +19,10 @@ export function isLiveStream(stream: VisionStream): boolean {
 
 export function streamDisplayName(name: string): string {
   const normalized = name.toLowerCase().replace(/\.[a-z0-9]+$/i, "");
+  // Display alias for the inspected demo recording; preserve its source/index identity.
+  if (normalized === "qa-recovery-20260928") return "Warehouse — Box Handling";
+  if (normalized === "conveyor-package-review-demo") return "Conveyor — Package Review";
+  if (normalized === "conveyor-box-movement-demo") return "Conveyor — Box Movement";
   if (normalized === "sample-sim-traffic") return "Traffic — Main Intersection";
   if (normalized === "sample-sim-jaywalking") return "Traffic — Pedestrian Crossing";
   if (normalized.includes("nvidia-warehouse-loading-dock")) return "Warehouse — Loading Dock";

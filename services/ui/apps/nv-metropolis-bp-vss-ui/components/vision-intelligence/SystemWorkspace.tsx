@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import { formatMemory, healthLabel, type SystemHealth } from "./systemHealth";
+import { streamDisplayName } from "./utils";
 import {
   IconBellCog,
   IconBolt,
@@ -77,7 +78,7 @@ const WORKLOAD_ROWS: Array<{
 ];
 
 function admissionLabel(decision: "allow" | "block" | "queue"): string {
-  if (decision === "allow") return "Available";
+  if (decision === "allow") return "Lane available";
   if (decision === "queue") return "Waits for lane";
   return "Unavailable";
 }
@@ -98,6 +99,13 @@ function timeLabel(value: string | null): string | null {
   if (!value) return null;
   const timestamp = Date.parse(value);
   return Number.isFinite(timestamp) ? new Date(timestamp).toLocaleString() : null;
+}
+
+function recordingSpan(start: string | null, end: string | null): string | null {
+  if (!start || !end) return null;
+  const seconds = Math.round((Date.parse(end) - Date.parse(start)) / 1000);
+  if (!Number.isFinite(seconds) || seconds <= 0) return null;
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 }
 
 function metricValue(value: string, label: string) {
@@ -230,7 +238,7 @@ export function SystemWorkspace({
             <div className="vi-system-section-heading">
               <div>
                 <span className="vi-eyebrow">Compute admission</span>
-                <h2>What Thor can run now</h2>
+                <h2>Visual workload scheduling</h2>
               </div>
               <span>
                 Read-only plan ·{" "}
@@ -240,9 +248,10 @@ export function SystemWorkspace({
               </span>
             </div>
             <p>
-              Expensive visual work shares one local Cosmos lane. This plan
-              reports current ownership and qualification; it never starts,
-              stops, or pre-empts a workload.
+              Visual work shares one local Cosmos lane. These checks report
+              lane ownership and configured qualification gates. They do not
+              measure host memory headroom or qualify sustained monitoring.
+              A free lane alone does not establish live-demo readiness.
             </p>
             <div className="vi-admission-list">
               {WORKLOAD_ROWS.map((row) => {
@@ -301,12 +310,14 @@ export function SystemWorkspace({
                 </p>
                 <div className="vi-search-coverage-list">
                   {searchCoverage.sources.map((source) => {
-                    const indexedAt = timeLabel(source.lastSemanticAt);
-                    const retainedUntil = timeLabel(source.timelineEnd);
+                    const isRecording = source.sourceKind === "recording";
+                    const indexedAt = isRecording ? null : timeLabel(source.lastSemanticAt);
+                    const retainedUntil = isRecording ? null : timeLabel(source.timelineEnd);
+                    const span = isRecording ? recordingSpan(source.timelineStart, source.timelineEnd) : null;
                     return (
                       <article key={source.sensorId}>
                         <div className="vi-search-coverage-source">
-                          <strong>{source.name}</strong>
+                          <strong>{streamDisplayName(source.name)}</strong>
                           <small>{source.sensorId}</small>
                         </div>
                         <div className="vi-search-coverage-states">
@@ -324,6 +335,8 @@ export function SystemWorkspace({
                             : "Semantic count unavailable"}
                           {indexedAt ? ` · latest indexed ${indexedAt}` : ""}
                           {retainedUntil ? ` · retained through ${retainedUntil}` : ""}
+                          {isRecording ? " · Recorded file" : ""}
+                          {span ? ` · retained recording window spans ${span}` : ""}
                         </small>
                       </article>
                     );

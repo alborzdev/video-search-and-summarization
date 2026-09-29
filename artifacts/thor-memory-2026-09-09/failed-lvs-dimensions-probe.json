@@ -1,0 +1,20 @@
+[
+  {
+    "id": "c4544e80-eb81-4b24-839e-d74b42fcba68",
+    "repeat": 0,
+    "upload": {
+      "id": "c4544e80-eb81-4b24-839e-d74b42fcba68",
+      "bytes": 6313542,
+      "filename": "thor-memory-c4544e80-eb81-4b24-839e-d74b42fcba68.mp4",
+      "purpose": "vision",
+      "creation_time": null,
+      "sensor_name": "thor-memory-c4544e80-eb81-4b24-839e-d74b42fcba68",
+      "media_type": "video"
+    },
+    "cleanup": {
+      "id": "c4544e80-eb81-4b24-839e-d74b42fcba68",
+      "object": "file",
+      "deleted": true
+    }
+  }
+]

@@ -1,0 +1,736 @@
+{"time": "2026-09-09T11:49:39-0400", "stage": "baseline", "available_gib": 108.089, "used_gib": 14.735, "dstate": [{"pid": "2075841", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T11:49:40-0400", "stage": "loading", "available_gib": 108.05, "used_gib": 14.774, "dstate": [{"pid": "1961937", "comm": "kworker/u28:1+netns", "wchan": "0"}, {"pid": "2069948", "comm": "kworker/5:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T11:49:42-0400", "stage": "loading", "available_gib": 107.654, "used_gib": 15.17, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T11:49:44-0400", "stage": "loading", "available_gib": 107.555, "used_gib": 15.268, "dstate": []}
+{"time": "2026-09-09T11:49:46-0400", "stage": "loading", "available_gib": 107.522, "used_gib": 15.301, "dstate": []}
+{"time": "2026-09-09T11:49:48-0400", "stage": "loading", "available_gib": 107.406, "used_gib": 15.418, "dstate": []}
+{"time": "2026-09-09T11:49:51-0400", "stage": "loading", "available_gib": 107.364, "used_gib": 15.46, "dstate": []}
+{"time": "2026-09-09T11:49:53-0400", "stage": "loading", "available_gib": 107.033, "used_gib": 15.791, "dstate": []}
+{"time": "2026-09-09T11:49:55-0400", "stage": "loading", "available_gib": 106.925, "used_gib": 15.899, "dstate": [{"pid": "2075841", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T11:49:57-0400", "stage": "loading", "available_gib": 106.923, "used_gib": 15.901, "dstate": [{"pid": "2046398", "comm": "kworker/4:0+events", "wchan": "0"}, {"pid": "2075841", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T11:49:59-0400", "stage": "loading", "available_gib": 106.876, "used_gib": 15.948, "dstate": []}
+{"time": "2026-09-09T11:50:01-0400", "stage": "loading", "available_gib": 106.721, "used_gib": 16.103, "dstate": []}
+{"time": "2026-09-09T11:50:03-0400", "stage": "loading", "available_gib": 107.449, "used_gib": 15.375, "dstate": []}
+{"time": "2026-09-09T11:50:05-0400", "stage": "loading", "available_gib": 107.017, "used_gib": 15.807, "dstate": []}
+{"time": "2026-09-09T11:50:07-0400", "stage": "loading", "available_gib": 106.899, "used_gib": 15.925, "dstate": [{"pid": "1961937", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}, {"pid": "2059902", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T11:50:09-0400", "stage": "loading", "available_gib": 106.861, "used_gib": 15.963, "dstate": []}
+{"time": "2026-09-09T11:50:11-0400", "stage": "loading", "available_gib": 106.784, "used_gib": 16.04, "dstate": []}
+{"time": "2026-09-09T11:50:13-0400", "stage": "loading", "available_gib": 106.607, "used_gib": 16.217, "dstate": [{"pid": "2046398", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T11:50:15-0400", "stage": "loading", "available_gib": 106.25, "used_gib": 16.573, "dstate": [{"pid": "1961937", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T11:50:17-0400", "stage": "loading", "available_gib": 100.133, "used_gib": 22.691, "dstate": []}
+{"time": "2026-09-09T11:50:19-0400", "stage": "loading", "available_gib": 100.882, "used_gib": 21.942, "dstate": []}
+{"time": "2026-09-09T11:50:21-0400", "stage": "loading", "available_gib": 99.902, "used_gib": 22.922, "dstate": []}
+{"time": "2026-09-09T11:50:23-0400", "stage": "loading", "available_gib": 98.73, "used_gib": 24.094, "dstate": []}
+{"time": "2026-09-09T11:50:25-0400", "stage": "loading", "available_gib": 98.333, "used_gib": 24.491, "dstate": [{"pid": "1961937", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T11:50:27-0400", "stage": "loading", "available_gib": 98.29, "used_gib": 24.534, "dstate": []}
+{"time": "2026-09-09T11:50:29-0400", "stage": "loading", "available_gib": 98.231, "used_gib": 24.593, "dstate": []}
+{"time": "2026-09-09T11:50:31-0400", "stage": "loading", "available_gib": 98.262, "used_gib": 24.562, "dstate": []}
+{"time": "2026-09-09T11:50:33-0400", "stage": "loading", "available_gib": 98.072, "used_gib": 24.752, "dstate": []}
+{"time": "2026-09-09T11:50:35-0400", "stage": "loading", "available_gib": 98.026, "used_gib": 24.798, "dstate": []}
+{"time": "2026-09-09T11:50:35-0400", "stage": "ready", "available_gib": 98.025, "used_gib": 24.799, "dstate": []}
+{"time": "2026-09-09T12:25:56-0400", "stage": "baseline", "available_gib": 63.303, "used_gib": 59.521, "dstate": []}
+{"time": "2026-09-09T12:25:58-0400", "stage": "loading", "available_gib": 63.402, "used_gib": 59.422, "dstate": [{"pid": "2076911", "comm": "kworker/7:2+events", "wchan": "0"}, {"pid": "2094398", "comm": "kworker/u28:2+netns", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:00-0400", "stage": "loading", "available_gib": 63.343, "used_gib": 59.481, "dstate": []}
+{"time": "2026-09-09T12:26:02-0400", "stage": "loading", "available_gib": 63.218, "used_gib": 59.606, "dstate": [{"pid": "2342432", "comm": "python3", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:04-0400", "stage": "loading", "available_gib": 63.339, "used_gib": 59.485, "dstate": []}
+{"time": "2026-09-09T12:26:06-0400", "stage": "loading", "available_gib": 63.214, "used_gib": 59.61, "dstate": []}
+{"time": "2026-09-09T12:26:08-0400", "stage": "loading", "available_gib": 63.064, "used_gib": 59.76, "dstate": []}
+{"time": "2026-09-09T12:26:10-0400", "stage": "loading", "available_gib": 62.855, "used_gib": 59.968, "dstate": [{"pid": "2194765", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:12-0400", "stage": "loading", "available_gib": 62.811, "used_gib": 60.013, "dstate": []}
+{"time": "2026-09-09T12:26:14-0400", "stage": "loading", "available_gib": 62.706, "used_gib": 60.118, "dstate": []}
+{"time": "2026-09-09T12:26:16-0400", "stage": "loading", "available_gib": 62.689, "used_gib": 60.134, "dstate": []}
+{"time": "2026-09-09T12:26:18-0400", "stage": "loading", "available_gib": 62.644, "used_gib": 60.179, "dstate": []}
+{"time": "2026-09-09T12:26:20-0400", "stage": "loading", "available_gib": 62.986, "used_gib": 59.838, "dstate": [{"pid": "2194765", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:22-0400", "stage": "loading", "available_gib": 62.703, "used_gib": 60.12, "dstate": [{"pid": "2094398", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:24-0400", "stage": "loading", "available_gib": 62.662, "used_gib": 60.162, "dstate": [{"pid": "2345729", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:26-0400", "stage": "loading", "available_gib": 62.622, "used_gib": 60.201, "dstate": []}
+{"time": "2026-09-09T12:26:28-0400", "stage": "loading", "available_gib": 62.52, "used_gib": 60.304, "dstate": []}
+{"time": "2026-09-09T12:26:30-0400", "stage": "loading", "available_gib": 62.5, "used_gib": 60.324, "dstate": []}
+{"time": "2026-09-09T12:26:32-0400", "stage": "loading", "available_gib": 62.438, "used_gib": 60.386, "dstate": []}
+{"time": "2026-09-09T12:26:35-0400", "stage": "loading", "available_gib": 59.792, "used_gib": 63.032, "dstate": []}
+{"time": "2026-09-09T12:26:37-0400", "stage": "loading", "available_gib": 56.644, "used_gib": 66.18, "dstate": [{"pid": "2194765", "comm": "kworker/4:0+events", "wchan": "0"}, {"pid": "2338445", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:39-0400", "stage": "loading", "available_gib": 58.621, "used_gib": 64.203, "dstate": [{"pid": "2094398", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:41-0400", "stage": "loading", "available_gib": 55.789, "used_gib": 67.035, "dstate": [{"pid": "2345259", "comm": "VLLM::EngineCor", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:43-0400", "stage": "loading", "available_gib": 55.795, "used_gib": 67.029, "dstate": []}
+{"time": "2026-09-09T12:26:45-0400", "stage": "loading", "available_gib": 55.433, "used_gib": 67.39, "dstate": [{"pid": "2094398", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:26:47-0400", "stage": "loading", "available_gib": 55.36, "used_gib": 67.464, "dstate": []}
+{"time": "2026-09-09T12:26:49-0400", "stage": "loading", "available_gib": 55.325, "used_gib": 67.499, "dstate": []}
+{"time": "2026-09-09T12:26:51-0400", "stage": "loading", "available_gib": 55.252, "used_gib": 67.572, "dstate": []}
+{"time": "2026-09-09T12:26:53-0400", "stage": "loading", "available_gib": 55.129, "used_gib": 67.695, "dstate": []}
+{"time": "2026-09-09T12:26:55-0400", "stage": "loading", "available_gib": 55.258, "used_gib": 67.566, "dstate": []}
+{"time": "2026-09-09T12:26:57-0400", "stage": "loading", "available_gib": 55.229, "used_gib": 67.595, "dstate": []}
+{"time": "2026-09-09T12:26:59-0400", "stage": "loading", "available_gib": 55.217, "used_gib": 67.606, "dstate": []}
+{"time": "2026-09-09T12:27:01-0400", "stage": "loading", "available_gib": 55.317, "used_gib": 67.507, "dstate": []}
+{"time": "2026-09-09T12:27:03-0400", "stage": "loading", "available_gib": 55.397, "used_gib": 67.427, "dstate": []}
+{"time": "2026-09-09T12:27:05-0400", "stage": "loading", "available_gib": 55.321, "used_gib": 67.503, "dstate": [{"pid": "2194765", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:27:07-0400", "stage": "loading", "available_gib": 55.362, "used_gib": 67.462, "dstate": [{"pid": "2194765", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:27:09-0400", "stage": "loading", "available_gib": 55.149, "used_gib": 67.674, "dstate": [{"pid": "2194765", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:27:11-0400", "stage": "loading", "available_gib": 55.175, "used_gib": 67.649, "dstate": [{"pid": "2094398", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:27:13-0400", "stage": "loading", "available_gib": 55.154, "used_gib": 67.67, "dstate": []}
+{"time": "2026-09-09T12:27:15-0400", "stage": "loading", "available_gib": 55.196, "used_gib": 67.627, "dstate": []}
+{"time": "2026-09-09T12:27:17-0400", "stage": "loading", "available_gib": 55.18, "used_gib": 67.644, "dstate": []}
+{"time": "2026-09-09T12:27:19-0400", "stage": "loading", "available_gib": 55.186, "used_gib": 67.637, "dstate": []}
+{"time": "2026-09-09T12:27:22-0400", "stage": "loading", "available_gib": 55.158, "used_gib": 67.666, "dstate": []}
+{"time": "2026-09-09T12:27:24-0400", "stage": "loading", "available_gib": 55.211, "used_gib": 67.613, "dstate": [{"pid": "2338445", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:27:26-0400", "stage": "loading", "available_gib": 54.301, "used_gib": 68.523, "dstate": []}
+{"time": "2026-09-09T12:27:26-0400", "stage": "ready-settled", "available_gib": 54.283, "used_gib": 68.541, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:10-0400", "stage": "baseline", "available_gib": 62.654, "used_gib": 60.17, "dstate": []}
+{"time": "2026-09-09T14:42:11-0400", "stage": "loading", "available_gib": 62.696, "used_gib": 60.128, "dstate": [{"pid": "2944391", "comm": "kworker/u28:1+netns", "wchan": "0"}, {"pid": "3032869", "comm": "runc", "wchan": "0"}, {"pid": "3032870", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:13-0400", "stage": "loading", "available_gib": 62.432, "used_gib": 60.392, "dstate": [{"pid": "2937663", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:15-0400", "stage": "loading", "available_gib": 62.489, "used_gib": 60.334, "dstate": []}
+{"time": "2026-09-09T14:42:17-0400", "stage": "loading", "available_gib": 62.42, "used_gib": 60.404, "dstate": []}
+{"time": "2026-09-09T14:42:19-0400", "stage": "loading", "available_gib": 62.343, "used_gib": 60.481, "dstate": []}
+{"time": "2026-09-09T14:42:21-0400", "stage": "loading", "available_gib": 62.214, "used_gib": 60.61, "dstate": []}
+{"time": "2026-09-09T14:42:23-0400", "stage": "loading", "available_gib": 61.905, "used_gib": 60.918, "dstate": []}
+{"time": "2026-09-09T14:42:25-0400", "stage": "loading", "available_gib": 61.634, "used_gib": 61.19, "dstate": []}
+{"time": "2026-09-09T14:42:27-0400", "stage": "loading", "available_gib": 61.6, "used_gib": 61.223, "dstate": [{"pid": "2971125", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:29-0400", "stage": "loading", "available_gib": 61.632, "used_gib": 61.191, "dstate": []}
+{"time": "2026-09-09T14:42:31-0400", "stage": "loading", "available_gib": 61.592, "used_gib": 61.232, "dstate": []}
+{"time": "2026-09-09T14:42:33-0400", "stage": "loading", "available_gib": 62.095, "used_gib": 60.728, "dstate": []}
+{"time": "2026-09-09T14:42:35-0400", "stage": "loading", "available_gib": 61.691, "used_gib": 61.133, "dstate": [{"pid": "2937663", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:37-0400", "stage": "loading", "available_gib": 61.464, "used_gib": 61.359, "dstate": [{"pid": "3035365", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:39-0400", "stage": "loading", "available_gib": 61.401, "used_gib": 61.423, "dstate": []}
+{"time": "2026-09-09T14:42:41-0400", "stage": "loading", "available_gib": 61.318, "used_gib": 61.505, "dstate": []}
+{"time": "2026-09-09T14:42:43-0400", "stage": "loading", "available_gib": 61.197, "used_gib": 61.627, "dstate": []}
+{"time": "2026-09-09T14:42:45-0400", "stage": "loading", "available_gib": 61.187, "used_gib": 61.637, "dstate": []}
+{"time": "2026-09-09T14:42:47-0400", "stage": "loading", "available_gib": 56.439, "used_gib": 66.384, "dstate": [{"pid": "2937663", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:49-0400", "stage": "loading", "available_gib": 54.071, "used_gib": 68.753, "dstate": []}
+{"time": "2026-09-09T14:42:51-0400", "stage": "loading", "available_gib": 54.935, "used_gib": 67.889, "dstate": []}
+{"time": "2026-09-09T14:42:53-0400", "stage": "loading", "available_gib": 54.017, "used_gib": 68.807, "dstate": []}
+{"time": "2026-09-09T14:42:56-0400", "stage": "loading", "available_gib": 52.321, "used_gib": 70.502, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T14:42:58-0400", "stage": "loading", "available_gib": 52.122, "used_gib": 70.702, "dstate": []}
+{"time": "2026-09-09T14:43:00-0400", "stage": "loading", "available_gib": 52.135, "used_gib": 70.689, "dstate": []}
+{"time": "2026-09-09T14:43:02-0400", "stage": "loading", "available_gib": 52.25, "used_gib": 70.573, "dstate": []}
+{"time": "2026-09-09T14:43:04-0400", "stage": "loading", "available_gib": 52.235, "used_gib": 70.589, "dstate": []}
+{"time": "2026-09-09T14:43:06-0400", "stage": "loading", "available_gib": 52.204, "used_gib": 70.62, "dstate": []}
+{"time": "2026-09-09T14:43:08-0400", "stage": "loading", "available_gib": 52.054, "used_gib": 70.77, "dstate": []}
+{"time": "2026-09-09T14:43:10-0400", "stage": "loading", "available_gib": 52.004, "used_gib": 70.82, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T14:43:12-0400", "stage": "loading", "available_gib": 52.113, "used_gib": 70.711, "dstate": []}
+{"time": "2026-09-09T14:43:14-0400", "stage": "loading", "available_gib": 52.146, "used_gib": 70.678, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T14:43:16-0400", "stage": "loading", "available_gib": 52.22, "used_gib": 70.604, "dstate": []}
+{"time": "2026-09-09T14:43:18-0400", "stage": "loading", "available_gib": 52.022, "used_gib": 70.802, "dstate": []}
+{"time": "2026-09-09T14:43:20-0400", "stage": "loading", "available_gib": 52.158, "used_gib": 70.666, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T14:43:22-0400", "stage": "loading", "available_gib": 52.172, "used_gib": 70.651, "dstate": [{"pid": "3039799", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-09T14:43:24-0400", "stage": "loading", "available_gib": 52.044, "used_gib": 70.78, "dstate": []}
+{"time": "2026-09-09T14:43:26-0400", "stage": "loading", "available_gib": 52.091, "used_gib": 70.733, "dstate": []}
+{"time": "2026-09-09T14:43:28-0400", "stage": "loading", "available_gib": 52.034, "used_gib": 70.79, "dstate": []}
+{"time": "2026-09-09T14:43:30-0400", "stage": "loading", "available_gib": 52.026, "used_gib": 70.797, "dstate": []}
+{"time": "2026-09-09T14:43:32-0400", "stage": "loading", "available_gib": 52.0, "used_gib": 70.824, "dstate": []}
+{"time": "2026-09-09T14:43:34-0400", "stage": "loading", "available_gib": 52.008, "used_gib": 70.816, "dstate": []}
+{"time": "2026-09-09T14:43:36-0400", "stage": "loading", "available_gib": 52.012, "used_gib": 70.812, "dstate": [{"pid": "2944391", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T14:43:39-0400", "stage": "loading", "available_gib": 52.014, "used_gib": 70.81, "dstate": []}
+{"time": "2026-09-09T14:43:41-0400", "stage": "loading", "available_gib": 51.972, "used_gib": 70.852, "dstate": [{"pid": "2971125", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T14:43:41-0400", "stage": "ready-settled", "available_gib": 51.966, "used_gib": 70.858, "dstate": [{"pid": "2937663", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T15:09:52-0400", "stage": "baseline", "available_gib": 61.491, "used_gib": 61.333, "dstate": []}
+{"time": "2026-09-09T15:09:53-0400", "stage": "loading", "available_gib": 61.512, "used_gib": 61.312, "dstate": [{"pid": "3165653", "comm": "kworker/u28:2+netns", "wchan": "0"}]}
+{"time": "2026-09-09T15:09:55-0400", "stage": "loading", "available_gib": 61.131, "used_gib": 61.693, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "3108947", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T15:09:57-0400", "stage": "loading", "available_gib": 60.974, "used_gib": 61.849, "dstate": []}
+{"time": "2026-09-09T15:09:59-0400", "stage": "loading", "available_gib": 61.07, "used_gib": 61.754, "dstate": []}
+{"time": "2026-09-09T15:10:01-0400", "stage": "loading", "available_gib": 61.077, "used_gib": 61.747, "dstate": [{"pid": "3165653", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:03-0400", "stage": "loading", "available_gib": 60.86, "used_gib": 61.964, "dstate": []}
+{"time": "2026-09-09T15:10:05-0400", "stage": "loading", "available_gib": 60.689, "used_gib": 62.134, "dstate": []}
+{"time": "2026-09-09T15:10:07-0400", "stage": "loading", "available_gib": 60.712, "used_gib": 62.111, "dstate": [{"pid": "3108947", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:09-0400", "stage": "loading", "available_gib": 60.432, "used_gib": 62.392, "dstate": []}
+{"time": "2026-09-09T15:10:11-0400", "stage": "loading", "available_gib": 60.34, "used_gib": 62.484, "dstate": []}
+{"time": "2026-09-09T15:10:13-0400", "stage": "loading", "available_gib": 60.858, "used_gib": 61.966, "dstate": []}
+{"time": "2026-09-09T15:10:15-0400", "stage": "loading", "available_gib": 60.644, "used_gib": 62.18, "dstate": []}
+{"time": "2026-09-09T15:10:17-0400", "stage": "loading", "available_gib": 60.35, "used_gib": 62.474, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:19-0400", "stage": "loading", "available_gib": 60.19, "used_gib": 62.634, "dstate": []}
+{"time": "2026-09-09T15:10:21-0400", "stage": "loading", "available_gib": 60.38, "used_gib": 62.444, "dstate": []}
+{"time": "2026-09-09T15:10:23-0400", "stage": "loading", "available_gib": 60.145, "used_gib": 62.679, "dstate": []}
+{"time": "2026-09-09T15:10:26-0400", "stage": "loading", "available_gib": 60.078, "used_gib": 62.746, "dstate": []}
+{"time": "2026-09-09T15:10:28-0400", "stage": "loading", "available_gib": 58.983, "used_gib": 63.841, "dstate": [{"pid": "3135114", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:30-0400", "stage": "loading", "available_gib": 54.466, "used_gib": 68.358, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:32-0400", "stage": "loading", "available_gib": 52.325, "used_gib": 70.499, "dstate": []}
+{"time": "2026-09-09T15:10:34-0400", "stage": "loading", "available_gib": 54.198, "used_gib": 68.626, "dstate": []}
+{"time": "2026-09-09T15:10:36-0400", "stage": "loading", "available_gib": 52.427, "used_gib": 70.397, "dstate": [{"pid": "3108947", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:38-0400", "stage": "loading", "available_gib": 52.261, "used_gib": 70.563, "dstate": []}
+{"time": "2026-09-09T15:10:40-0400", "stage": "loading", "available_gib": 51.769, "used_gib": 71.055, "dstate": [{"pid": "3165653", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:42-0400", "stage": "loading", "available_gib": 50.63, "used_gib": 72.194, "dstate": [{"pid": "3165653", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:44-0400", "stage": "loading", "available_gib": 50.679, "used_gib": 72.145, "dstate": []}
+{"time": "2026-09-09T15:10:46-0400", "stage": "loading", "available_gib": 50.657, "used_gib": 72.167, "dstate": []}
+{"time": "2026-09-09T15:10:48-0400", "stage": "loading", "available_gib": 50.536, "used_gib": 72.288, "dstate": []}
+{"time": "2026-09-09T15:10:50-0400", "stage": "loading", "available_gib": 50.565, "used_gib": 72.259, "dstate": []}
+{"time": "2026-09-09T15:10:52-0400", "stage": "loading", "available_gib": 50.574, "used_gib": 72.25, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:54-0400", "stage": "loading", "available_gib": 50.483, "used_gib": 72.341, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:10:56-0400", "stage": "loading", "available_gib": 50.584, "used_gib": 72.24, "dstate": []}
+{"time": "2026-09-09T15:10:58-0400", "stage": "loading", "available_gib": 50.549, "used_gib": 72.275, "dstate": [{"pid": "3108947", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "3135114", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-09T15:11:00-0400", "stage": "loading", "available_gib": 51.797, "used_gib": 71.027, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:11:02-0400", "stage": "loading", "available_gib": 51.792, "used_gib": 71.031, "dstate": []}
+{"time": "2026-09-09T15:11:04-0400", "stage": "loading", "available_gib": 51.756, "used_gib": 71.068, "dstate": []}
+{"time": "2026-09-09T15:11:06-0400", "stage": "loading", "available_gib": 51.701, "used_gib": 71.123, "dstate": []}
+{"time": "2026-09-09T15:11:09-0400", "stage": "loading", "available_gib": 51.631, "used_gib": 71.193, "dstate": []}
+{"time": "2026-09-09T15:11:11-0400", "stage": "loading", "available_gib": 51.816, "used_gib": 71.008, "dstate": []}
+{"time": "2026-09-09T15:11:13-0400", "stage": "loading", "available_gib": 51.811, "used_gib": 71.013, "dstate": []}
+{"time": "2026-09-09T15:11:15-0400", "stage": "loading", "available_gib": 51.769, "used_gib": 71.054, "dstate": [{"pid": "3165653", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}, {"pid": "3229424", "comm": "redis-cli", "wchan": "0"}]}
+{"time": "2026-09-09T15:11:17-0400", "stage": "loading", "available_gib": 51.708, "used_gib": 71.115, "dstate": [{"pid": "3219135", "comm": "kworker/11:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T15:11:19-0400", "stage": "loading", "available_gib": 51.621, "used_gib": 71.203, "dstate": []}
+{"time": "2026-09-09T15:11:21-0400", "stage": "loading", "available_gib": 51.647, "used_gib": 71.176, "dstate": [{"pid": "1967753", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T15:11:21-0400", "stage": "ready-settled", "available_gib": 51.65, "used_gib": 71.174, "dstate": []}
+{"time": "2026-09-09T17:08:14-0400", "stage": "baseline", "available_gib": 91.319, "used_gib": 31.504, "dstate": []}
+{"time": "2026-09-09T17:08:16-0400", "stage": "loading", "available_gib": 91.297, "used_gib": 31.527, "dstate": [{"pid": "228", "comm": "jbd2/nvme0n1p1-8", "wchan": "0"}, {"pid": "132696", "comm": "kworker/u28:1+netns", "wchan": "0"}]}
+{"time": "2026-09-09T17:08:18-0400", "stage": "loading", "available_gib": 91.062, "used_gib": 31.762, "dstate": []}
+{"time": "2026-09-09T17:08:20-0400", "stage": "loading", "available_gib": 90.853, "used_gib": 31.971, "dstate": []}
+{"time": "2026-09-09T17:08:22-0400", "stage": "loading", "available_gib": 90.794, "used_gib": 32.03, "dstate": []}
+{"time": "2026-09-09T17:08:24-0400", "stage": "loading", "available_gib": 90.65, "used_gib": 32.174, "dstate": [{"pid": "183513", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:08:26-0400", "stage": "loading", "available_gib": 90.601, "used_gib": 32.223, "dstate": []}
+{"time": "2026-09-09T17:08:28-0400", "stage": "loading", "available_gib": 90.33, "used_gib": 32.494, "dstate": []}
+{"time": "2026-09-09T17:08:30-0400", "stage": "loading", "available_gib": 90.228, "used_gib": 32.596, "dstate": []}
+{"time": "2026-09-09T17:08:32-0400", "stage": "loading", "available_gib": 90.248, "used_gib": 32.576, "dstate": [{"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:08:34-0400", "stage": "loading", "available_gib": 90.226, "used_gib": 32.598, "dstate": []}
+{"time": "2026-09-09T17:08:36-0400", "stage": "loading", "available_gib": 90.157, "used_gib": 32.667, "dstate": []}
+{"time": "2026-09-09T17:08:38-0400", "stage": "loading", "available_gib": 90.134, "used_gib": 32.69, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:08:40-0400", "stage": "loading", "available_gib": 90.613, "used_gib": 32.211, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:08:42-0400", "stage": "loading", "available_gib": 90.084, "used_gib": 32.74, "dstate": []}
+{"time": "2026-09-09T17:08:44-0400", "stage": "loading", "available_gib": 90.009, "used_gib": 32.815, "dstate": [{"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:08:46-0400", "stage": "loading", "available_gib": 90.002, "used_gib": 32.821, "dstate": []}
+{"time": "2026-09-09T17:08:49-0400", "stage": "loading", "available_gib": 89.902, "used_gib": 32.922, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:08:51-0400", "stage": "loading", "available_gib": 89.843, "used_gib": 32.981, "dstate": []}
+{"time": "2026-09-09T17:08:53-0400", "stage": "loading", "available_gib": 89.728, "used_gib": 33.096, "dstate": []}
+{"time": "2026-09-09T17:08:55-0400", "stage": "loading", "available_gib": 87.601, "used_gib": 35.223, "dstate": []}
+{"time": "2026-09-09T17:08:57-0400", "stage": "loading", "available_gib": 83.044, "used_gib": 39.78, "dstate": []}
+{"time": "2026-09-09T17:08:59-0400", "stage": "loading", "available_gib": 80.795, "used_gib": 42.028, "dstate": []}
+{"time": "2026-09-09T17:09:01-0400", "stage": "loading", "available_gib": 83.074, "used_gib": 39.75, "dstate": []}
+{"time": "2026-09-09T17:09:03-0400", "stage": "loading", "available_gib": 80.247, "used_gib": 42.577, "dstate": []}
+{"time": "2026-09-09T17:09:05-0400", "stage": "loading", "available_gib": 80.046, "used_gib": 42.778, "dstate": []}
+{"time": "2026-09-09T17:09:07-0400", "stage": "loading", "available_gib": 79.882, "used_gib": 42.942, "dstate": [{"pid": "183513", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:09-0400", "stage": "loading", "available_gib": 79.702, "used_gib": 43.122, "dstate": [{"pid": "183513", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:11-0400", "stage": "loading", "available_gib": 79.811, "used_gib": 43.013, "dstate": []}
+{"time": "2026-09-09T17:09:13-0400", "stage": "loading", "available_gib": 79.866, "used_gib": 42.958, "dstate": [{"pid": "183513", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:15-0400", "stage": "loading", "available_gib": 79.939, "used_gib": 42.885, "dstate": []}
+{"time": "2026-09-09T17:09:17-0400", "stage": "loading", "available_gib": 79.916, "used_gib": 42.907, "dstate": []}
+{"time": "2026-09-09T17:09:19-0400", "stage": "loading", "available_gib": 79.979, "used_gib": 42.845, "dstate": []}
+{"time": "2026-09-09T17:09:21-0400", "stage": "loading", "available_gib": 79.994, "used_gib": 42.83, "dstate": []}
+{"time": "2026-09-09T17:09:24-0400", "stage": "loading", "available_gib": 79.895, "used_gib": 42.929, "dstate": []}
+{"time": "2026-09-09T17:09:26-0400", "stage": "loading", "available_gib": 79.925, "used_gib": 42.898, "dstate": []}
+{"time": "2026-09-09T17:09:28-0400", "stage": "loading", "available_gib": 80.013, "used_gib": 42.811, "dstate": []}
+{"time": "2026-09-09T17:09:30-0400", "stage": "loading", "available_gib": 80.127, "used_gib": 42.697, "dstate": []}
+{"time": "2026-09-09T17:09:32-0400", "stage": "loading", "available_gib": 80.188, "used_gib": 42.636, "dstate": []}
+{"time": "2026-09-09T17:09:34-0400", "stage": "loading", "available_gib": 80.274, "used_gib": 42.55, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:36-0400", "stage": "loading", "available_gib": 80.319, "used_gib": 42.505, "dstate": [{"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:38-0400", "stage": "loading", "available_gib": 80.333, "used_gib": 42.491, "dstate": [{"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:40-0400", "stage": "loading", "available_gib": 80.183, "used_gib": 42.641, "dstate": []}
+{"time": "2026-09-09T17:09:42-0400", "stage": "loading", "available_gib": 80.238, "used_gib": 42.586, "dstate": []}
+{"time": "2026-09-09T17:09:44-0400", "stage": "loading", "available_gib": 80.194, "used_gib": 42.63, "dstate": []}
+{"time": "2026-09-09T17:09:46-0400", "stage": "loading", "available_gib": 80.22, "used_gib": 42.604, "dstate": [{"pid": "273378", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:48-0400", "stage": "loading", "available_gib": 80.297, "used_gib": 42.527, "dstate": [{"pid": "183513", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:09:48-0400", "stage": "ready-settled", "available_gib": 80.3, "used_gib": 42.524, "dstate": []}
+{"time": "2026-09-09T17:19:20-0400", "stage": "baseline", "available_gib": 98.953, "used_gib": 23.871, "dstate": [{"pid": "390944", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:21-0400", "stage": "loading", "available_gib": 99.037, "used_gib": 23.787, "dstate": [{"pid": "360715", "comm": "kworker/u28:2+netns", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:23-0400", "stage": "loading", "available_gib": 98.915, "used_gib": 23.909, "dstate": []}
+{"time": "2026-09-09T17:19:25-0400", "stage": "loading", "available_gib": 99.049, "used_gib": 23.775, "dstate": []}
+{"time": "2026-09-09T17:19:27-0400", "stage": "loading", "available_gib": 98.948, "used_gib": 23.876, "dstate": [{"pid": "360715", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:29-0400", "stage": "loading", "available_gib": 98.848, "used_gib": 23.976, "dstate": [{"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:31-0400", "stage": "loading", "available_gib": 98.762, "used_gib": 24.062, "dstate": [{"pid": "651", "comm": "kworker/4:6+events", "wchan": "0"}, {"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:33-0400", "stage": "loading", "available_gib": 98.287, "used_gib": 24.537, "dstate": []}
+{"time": "2026-09-09T17:19:36-0400", "stage": "loading", "available_gib": 98.356, "used_gib": 24.468, "dstate": []}
+{"time": "2026-09-09T17:19:38-0400", "stage": "loading", "available_gib": 98.297, "used_gib": 24.527, "dstate": [{"pid": "286486", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:40-0400", "stage": "loading", "available_gib": 98.252, "used_gib": 24.572, "dstate": []}
+{"time": "2026-09-09T17:19:42-0400", "stage": "loading", "available_gib": 98.153, "used_gib": 24.671, "dstate": []}
+{"time": "2026-09-09T17:19:44-0400", "stage": "loading", "available_gib": 98.67, "used_gib": 24.154, "dstate": [{"pid": "286486", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:46-0400", "stage": "loading", "available_gib": 98.314, "used_gib": 24.51, "dstate": []}
+{"time": "2026-09-09T17:19:48-0400", "stage": "loading", "available_gib": 98.121, "used_gib": 24.703, "dstate": []}
+{"time": "2026-09-09T17:19:50-0400", "stage": "loading", "available_gib": 98.023, "used_gib": 24.801, "dstate": [{"pid": "132696", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}, {"pid": "394395", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:52-0400", "stage": "loading", "available_gib": 97.988, "used_gib": 24.836, "dstate": [{"pid": "132696", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:54-0400", "stage": "loading", "available_gib": 98.084, "used_gib": 24.739, "dstate": []}
+{"time": "2026-09-09T17:19:56-0400", "stage": "loading", "available_gib": 97.862, "used_gib": 24.962, "dstate": [{"pid": "132696", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:19:58-0400", "stage": "loading", "available_gib": 96.604, "used_gib": 26.22, "dstate": []}
+{"time": "2026-09-09T17:20:00-0400", "stage": "loading", "available_gib": 91.879, "used_gib": 30.945, "dstate": [{"pid": "286486", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "360715", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:02-0400", "stage": "loading", "available_gib": 92.867, "used_gib": 29.957, "dstate": [{"pid": "360715", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:04-0400", "stage": "loading", "available_gib": 91.465, "used_gib": 31.359, "dstate": []}
+{"time": "2026-09-09T17:20:06-0400", "stage": "loading", "available_gib": 89.272, "used_gib": 33.552, "dstate": [{"pid": "360715", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:08-0400", "stage": "loading", "available_gib": 88.8, "used_gib": 34.024, "dstate": [{"pid": "651", "comm": "kworker/4:6+events", "wchan": "0"}, {"pid": "286486", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:10-0400", "stage": "loading", "available_gib": 88.745, "used_gib": 34.079, "dstate": [{"pid": "651", "comm": "kworker/4:6+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:13-0400", "stage": "loading", "available_gib": 88.804, "used_gib": 34.02, "dstate": []}
+{"time": "2026-09-09T17:20:15-0400", "stage": "loading", "available_gib": 88.808, "used_gib": 34.016, "dstate": []}
+{"time": "2026-09-09T17:20:17-0400", "stage": "loading", "available_gib": 88.874, "used_gib": 33.95, "dstate": []}
+{"time": "2026-09-09T17:20:19-0400", "stage": "loading", "available_gib": 88.587, "used_gib": 34.237, "dstate": []}
+{"time": "2026-09-09T17:20:21-0400", "stage": "loading", "available_gib": 88.775, "used_gib": 34.049, "dstate": []}
+{"time": "2026-09-09T17:20:23-0400", "stage": "loading", "available_gib": 88.748, "used_gib": 34.076, "dstate": []}
+{"time": "2026-09-09T17:20:25-0400", "stage": "loading", "available_gib": 89.154, "used_gib": 33.67, "dstate": [{"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:27-0400", "stage": "loading", "available_gib": 89.081, "used_gib": 33.743, "dstate": []}
+{"time": "2026-09-09T17:20:29-0400", "stage": "loading", "available_gib": 89.285, "used_gib": 33.538, "dstate": [{"pid": "154509", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:31-0400", "stage": "loading", "available_gib": 89.149, "used_gib": 33.675, "dstate": []}
+{"time": "2026-09-09T17:20:33-0400", "stage": "loading", "available_gib": 89.13, "used_gib": 33.694, "dstate": []}
+{"time": "2026-09-09T17:20:35-0400", "stage": "loading", "available_gib": 89.149, "used_gib": 33.675, "dstate": []}
+{"time": "2026-09-09T17:20:37-0400", "stage": "loading", "available_gib": 89.238, "used_gib": 33.586, "dstate": []}
+{"time": "2026-09-09T17:20:39-0400", "stage": "loading", "available_gib": 89.088, "used_gib": 33.736, "dstate": []}
+{"time": "2026-09-09T17:20:41-0400", "stage": "loading", "available_gib": 89.026, "used_gib": 33.798, "dstate": [{"pid": "651", "comm": "kworker/4:6+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:43-0400", "stage": "loading", "available_gib": 89.063, "used_gib": 33.761, "dstate": []}
+{"time": "2026-09-09T17:20:45-0400", "stage": "loading", "available_gib": 89.13, "used_gib": 33.694, "dstate": []}
+{"time": "2026-09-09T17:20:48-0400", "stage": "loading", "available_gib": 89.06, "used_gib": 33.764, "dstate": [{"pid": "377793", "comm": "tegrastats", "wchan": "tegra_i2c_wait_completion"}]}
+{"time": "2026-09-09T17:20:50-0400", "stage": "loading", "available_gib": 89.091, "used_gib": 33.733, "dstate": [{"pid": "651", "comm": "kworker/4:6+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:20:52-0400", "stage": "loading", "available_gib": 89.053, "used_gib": 33.771, "dstate": []}
+{"time": "2026-09-09T17:20:52-0400", "stage": "ready-settled", "available_gib": 89.053, "used_gib": 33.771, "dstate": []}
+{"time": "2026-09-09T17:49:29-0400", "stage": "baseline", "available_gib": 104.849, "used_gib": 17.975, "dstate": [{"pid": "286486", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:49:30-0400", "stage": "loading", "available_gib": 104.865, "used_gib": 17.959, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "592324", "comm": "kworker/u28:1+netns", "wchan": "0"}]}
+{"time": "2026-09-09T17:49:32-0400", "stage": "loading", "available_gib": 104.699, "used_gib": 18.125, "dstate": []}
+{"time": "2026-09-09T17:49:34-0400", "stage": "loading", "available_gib": 104.635, "used_gib": 18.189, "dstate": []}
+{"time": "2026-09-09T17:49:36-0400", "stage": "loading", "available_gib": 104.588, "used_gib": 18.236, "dstate": []}
+{"time": "2026-09-09T17:49:38-0400", "stage": "loading", "available_gib": 104.453, "used_gib": 18.371, "dstate": []}
+{"time": "2026-09-09T17:49:40-0400", "stage": "loading", "available_gib": 104.178, "used_gib": 18.646, "dstate": [{"pid": "286486", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:49:43-0400", "stage": "loading", "available_gib": 104.012, "used_gib": 18.812, "dstate": []}
+{"time": "2026-09-09T17:49:45-0400", "stage": "loading", "available_gib": 103.872, "used_gib": 18.952, "dstate": []}
+{"time": "2026-09-09T17:49:47-0400", "stage": "loading", "available_gib": 103.893, "used_gib": 18.931, "dstate": [{"pid": "286486", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:49:49-0400", "stage": "loading", "available_gib": 103.913, "used_gib": 18.911, "dstate": []}
+{"time": "2026-09-09T17:49:51-0400", "stage": "loading", "available_gib": 103.863, "used_gib": 18.961, "dstate": []}
+{"time": "2026-09-09T17:49:53-0400", "stage": "loading", "available_gib": 104.469, "used_gib": 18.355, "dstate": [{"pid": "392839", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:49:55-0400", "stage": "loading", "available_gib": 103.837, "used_gib": 18.987, "dstate": []}
+{"time": "2026-09-09T17:49:57-0400", "stage": "loading", "available_gib": 103.712, "used_gib": 19.112, "dstate": []}
+{"time": "2026-09-09T17:49:59-0400", "stage": "loading", "available_gib": 103.612, "used_gib": 19.212, "dstate": []}
+{"time": "2026-09-09T17:50:01-0400", "stage": "loading", "available_gib": 103.506, "used_gib": 19.318, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:03-0400", "stage": "loading", "available_gib": 103.459, "used_gib": 19.365, "dstate": []}
+{"time": "2026-09-09T17:50:05-0400", "stage": "loading", "available_gib": 103.49, "used_gib": 19.334, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:07-0400", "stage": "loading", "available_gib": 101.115, "used_gib": 21.709, "dstate": [{"pid": "663314", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:09-0400", "stage": "loading", "available_gib": 95.127, "used_gib": 27.697, "dstate": []}
+{"time": "2026-09-09T17:50:11-0400", "stage": "loading", "available_gib": 97.599, "used_gib": 25.224, "dstate": []}
+{"time": "2026-09-09T17:50:13-0400", "stage": "loading", "available_gib": 94.448, "used_gib": 28.376, "dstate": [{"pid": "392839", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "607729", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:15-0400", "stage": "loading", "available_gib": 94.531, "used_gib": 28.293, "dstate": []}
+{"time": "2026-09-09T17:50:17-0400", "stage": "loading", "available_gib": 93.018, "used_gib": 29.806, "dstate": []}
+{"time": "2026-09-09T17:50:19-0400", "stage": "loading", "available_gib": 93.234, "used_gib": 29.59, "dstate": [{"pid": "665949", "comm": "git", "wchan": "__vm_munmap"}]}
+{"time": "2026-09-09T17:50:22-0400", "stage": "loading", "available_gib": 93.23, "used_gib": 29.594, "dstate": []}
+{"time": "2026-09-09T17:50:24-0400", "stage": "loading", "available_gib": 93.221, "used_gib": 29.602, "dstate": [{"pid": "11", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:26-0400", "stage": "loading", "available_gib": 93.036, "used_gib": 29.788, "dstate": [{"pid": "607729", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:28-0400", "stage": "loading", "available_gib": 93.1, "used_gib": 29.724, "dstate": []}
+{"time": "2026-09-09T17:50:30-0400", "stage": "loading", "available_gib": 92.956, "used_gib": 29.868, "dstate": [{"pid": "11", "comm": "kworker/u28:0-devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:32-0400", "stage": "loading", "available_gib": 92.929, "used_gib": 29.895, "dstate": []}
+{"time": "2026-09-09T17:50:34-0400", "stage": "loading", "available_gib": 93.069, "used_gib": 29.755, "dstate": [{"pid": "392839", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "592324", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:36-0400", "stage": "loading", "available_gib": 93.068, "used_gib": 29.756, "dstate": []}
+{"time": "2026-09-09T17:50:38-0400", "stage": "loading", "available_gib": 92.991, "used_gib": 29.832, "dstate": []}
+{"time": "2026-09-09T17:50:40-0400", "stage": "loading", "available_gib": 92.979, "used_gib": 29.845, "dstate": []}
+{"time": "2026-09-09T17:50:42-0400", "stage": "loading", "available_gib": 92.857, "used_gib": 29.966, "dstate": []}
+{"time": "2026-09-09T17:50:44-0400", "stage": "loading", "available_gib": 92.985, "used_gib": 29.839, "dstate": []}
+{"time": "2026-09-09T17:50:46-0400", "stage": "loading", "available_gib": 92.984, "used_gib": 29.84, "dstate": []}
+{"time": "2026-09-09T17:50:48-0400", "stage": "loading", "available_gib": 92.961, "used_gib": 29.863, "dstate": []}
+{"time": "2026-09-09T17:50:50-0400", "stage": "loading", "available_gib": 93.041, "used_gib": 29.783, "dstate": [{"pid": "607729", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:52-0400", "stage": "loading", "available_gib": 92.903, "used_gib": 29.921, "dstate": []}
+{"time": "2026-09-09T17:50:55-0400", "stage": "loading", "available_gib": 92.844, "used_gib": 29.98, "dstate": []}
+{"time": "2026-09-09T17:50:57-0400", "stage": "loading", "available_gib": 92.858, "used_gib": 29.966, "dstate": []}
+{"time": "2026-09-09T17:50:59-0400", "stage": "loading", "available_gib": 92.856, "used_gib": 29.968, "dstate": [{"pid": "592324", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T17:50:59-0400", "stage": "ready-settled", "available_gib": 92.864, "used_gib": 29.96, "dstate": []}
+{"time": "2026-09-28T11:29:51-0400", "stage": "baseline", "available_gib": 103.203, "used_gib": 19.621, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}, {"pid": "2839599", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:29:52-0400", "stage": "loading", "available_gib": 104.282, "used_gib": 18.542, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+netns", "wchan": "0"}]}
+{"time": "2026-09-28T11:29:54-0400", "stage": "loading", "available_gib": 103.874, "used_gib": 18.949, "dstate": []}
+{"time": "2026-09-28T11:29:56-0400", "stage": "loading", "available_gib": 103.569, "used_gib": 19.255, "dstate": []}
+{"time": "2026-09-28T11:29:58-0400", "stage": "loading", "available_gib": 102.919, "used_gib": 19.905, "dstate": [{"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:00-0400", "stage": "loading", "available_gib": 102.898, "used_gib": 19.926, "dstate": [{"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:02-0400", "stage": "loading", "available_gib": 102.664, "used_gib": 20.16, "dstate": []}
+{"time": "2026-09-28T11:30:04-0400", "stage": "loading", "available_gib": 102.257, "used_gib": 20.567, "dstate": [{"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:06-0400", "stage": "loading", "available_gib": 102.295, "used_gib": 20.529, "dstate": [{"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:08-0400", "stage": "loading", "available_gib": 102.145, "used_gib": 20.679, "dstate": []}
+{"time": "2026-09-28T11:30:10-0400", "stage": "loading", "available_gib": 101.937, "used_gib": 20.887, "dstate": []}
+{"time": "2026-09-28T11:30:12-0400", "stage": "loading", "available_gib": 101.899, "used_gib": 20.925, "dstate": [{"pid": "2839599", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:15-0400", "stage": "loading", "available_gib": 101.665, "used_gib": 21.159, "dstate": []}
+{"time": "2026-09-28T11:30:17-0400", "stage": "loading", "available_gib": 101.965, "used_gib": 20.859, "dstate": []}
+{"time": "2026-09-28T11:30:19-0400", "stage": "loading", "available_gib": 100.621, "used_gib": 22.203, "dstate": []}
+{"time": "2026-09-28T11:30:21-0400", "stage": "loading", "available_gib": 100.229, "used_gib": 22.595, "dstate": []}
+{"time": "2026-09-28T11:30:23-0400", "stage": "loading", "available_gib": 100.271, "used_gib": 22.553, "dstate": []}
+{"time": "2026-09-28T11:30:25-0400", "stage": "loading", "available_gib": 100.222, "used_gib": 22.602, "dstate": []}
+{"time": "2026-09-28T11:30:27-0400", "stage": "loading", "available_gib": 100.172, "used_gib": 22.652, "dstate": [{"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:29-0400", "stage": "loading", "available_gib": 100.142, "used_gib": 22.682, "dstate": []}
+{"time": "2026-09-28T11:30:31-0400", "stage": "loading", "available_gib": 99.145, "used_gib": 23.679, "dstate": []}
+{"time": "2026-09-28T11:30:33-0400", "stage": "loading", "available_gib": 94.42, "used_gib": 28.404, "dstate": [{"pid": "377793", "comm": "tegrastats", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:35-0400", "stage": "loading", "available_gib": 95.894, "used_gib": 26.93, "dstate": [{"pid": "2839599", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:37-0400", "stage": "loading", "available_gib": 94.982, "used_gib": 27.841, "dstate": []}
+{"time": "2026-09-28T11:30:39-0400", "stage": "loading", "available_gib": 92.375, "used_gib": 30.449, "dstate": []}
+{"time": "2026-09-28T11:30:41-0400", "stage": "loading", "available_gib": 91.87, "used_gib": 30.954, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:43-0400", "stage": "loading", "available_gib": 91.791, "used_gib": 31.033, "dstate": [{"pid": "2611920", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:45-0400", "stage": "loading", "available_gib": 91.739, "used_gib": 31.085, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:47-0400", "stage": "loading", "available_gib": 91.755, "used_gib": 31.069, "dstate": []}
+{"time": "2026-09-28T11:30:50-0400", "stage": "loading", "available_gib": 91.795, "used_gib": 31.029, "dstate": []}
+{"time": "2026-09-28T11:30:52-0400", "stage": "loading", "available_gib": 91.598, "used_gib": 31.226, "dstate": []}
+{"time": "2026-09-28T11:30:54-0400", "stage": "loading", "available_gib": 91.676, "used_gib": 31.148, "dstate": []}
+{"time": "2026-09-28T11:30:56-0400", "stage": "loading", "available_gib": 91.825, "used_gib": 30.999, "dstate": [{"pid": "2611920", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:30:58-0400", "stage": "loading", "available_gib": 91.722, "used_gib": 31.102, "dstate": []}
+{"time": "2026-09-28T11:31:00-0400", "stage": "loading", "available_gib": 91.753, "used_gib": 31.07, "dstate": []}
+{"time": "2026-09-28T11:31:02-0400", "stage": "loading", "available_gib": 91.908, "used_gib": 30.916, "dstate": []}
+{"time": "2026-09-28T11:31:04-0400", "stage": "loading", "available_gib": 91.959, "used_gib": 30.865, "dstate": [{"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:31:06-0400", "stage": "loading", "available_gib": 91.801, "used_gib": 31.023, "dstate": []}
+{"time": "2026-09-28T11:31:08-0400", "stage": "loading", "available_gib": 91.916, "used_gib": 30.908, "dstate": [{"pid": "2757982", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:31:10-0400", "stage": "loading", "available_gib": 91.917, "used_gib": 30.907, "dstate": []}
+{"time": "2026-09-28T11:31:12-0400", "stage": "loading", "available_gib": 91.847, "used_gib": 30.977, "dstate": []}
+{"time": "2026-09-28T11:31:14-0400", "stage": "loading", "available_gib": 91.839, "used_gib": 30.985, "dstate": [{"pid": "2909973", "comm": "runc", "wchan": "0"}, {"pid": "2909974", "comm": "runc", "wchan": "0"}, {"pid": "2909975", "comm": "runc", "wchan": "0"}, {"pid": "2909991", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T11:31:16-0400", "stage": "loading", "available_gib": 91.739, "used_gib": 31.085, "dstate": []}
+{"time": "2026-09-28T11:31:18-0400", "stage": "loading", "available_gib": 91.662, "used_gib": 31.162, "dstate": []}
+{"time": "2026-09-28T11:31:20-0400", "stage": "loading", "available_gib": 91.765, "used_gib": 31.059, "dstate": []}
+{"time": "2026-09-28T11:31:22-0400", "stage": "loading", "available_gib": 91.489, "used_gib": 31.335, "dstate": [{"pid": "2611920", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2839599", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "2871985", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T11:31:24-0400", "stage": "loading", "available_gib": 91.135, "used_gib": 31.689, "dstate": [{"pid": "2611920", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T11:31:24-0400", "stage": "ready-settled", "available_gib": 91.129, "used_gib": 31.695, "dstate": [{"pid": "2912091", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T14:17:40-0400", "stage": "baseline", "available_gib": 101.74, "used_gib": 21.084, "dstate": []}
+{"time": "2026-09-28T14:17:41-0400", "stage": "loading", "available_gib": 101.741, "used_gib": 21.083, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+netns", "wchan": "0"}, {"pid": "3929388", "comm": "python3", "wchan": "0"}]}
+{"time": "2026-09-28T14:17:43-0400", "stage": "loading", "available_gib": 101.454, "used_gib": 21.37, "dstate": []}
+{"time": "2026-09-28T14:17:45-0400", "stage": "loading", "available_gib": 101.322, "used_gib": 21.502, "dstate": []}
+{"time": "2026-09-28T14:17:48-0400", "stage": "loading", "available_gib": 101.32, "used_gib": 21.504, "dstate": [{"pid": "3280266", "comm": "kworker/4:0+events", "wchan": "0"}, {"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:17:50-0400", "stage": "loading", "available_gib": 101.029, "used_gib": 21.795, "dstate": []}
+{"time": "2026-09-28T14:17:52-0400", "stage": "loading", "available_gib": 101.002, "used_gib": 21.822, "dstate": []}
+{"time": "2026-09-28T14:17:54-0400", "stage": "loading", "available_gib": 100.893, "used_gib": 21.931, "dstate": [{"pid": "3280266", "comm": "kworker/4:0+events", "wchan": "0"}, {"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "3845108", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:17:56-0400", "stage": "loading", "available_gib": 100.771, "used_gib": 22.053, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}, {"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:17:58-0400", "stage": "loading", "available_gib": 100.707, "used_gib": 22.117, "dstate": []}
+{"time": "2026-09-28T14:18:00-0400", "stage": "loading", "available_gib": 100.666, "used_gib": 22.158, "dstate": [{"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:02-0400", "stage": "loading", "available_gib": 100.746, "used_gib": 22.078, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:04-0400", "stage": "loading", "available_gib": 101.214, "used_gib": 21.609, "dstate": [{"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "3845108", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:06-0400", "stage": "loading", "available_gib": 100.916, "used_gib": 21.908, "dstate": [{"pid": "3932057", "comm": "runc", "wchan": "0"}, {"pid": "3932063", "comm": "runc", "wchan": "0"}, {"pid": "3932064", "comm": "runc", "wchan": "0"}, {"pid": "3932067", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:08-0400", "stage": "loading", "available_gib": 100.686, "used_gib": 22.138, "dstate": []}
+{"time": "2026-09-28T14:18:10-0400", "stage": "loading", "available_gib": 100.61, "used_gib": 22.214, "dstate": [{"pid": "1216", "comm": "NetworkManager", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:12-0400", "stage": "loading", "available_gib": 100.317, "used_gib": 22.507, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:14-0400", "stage": "loading", "available_gib": 100.443, "used_gib": 22.381, "dstate": []}
+{"time": "2026-09-28T14:18:16-0400", "stage": "loading", "available_gib": 100.359, "used_gib": 22.465, "dstate": [{"pid": "3845108", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:18-0400", "stage": "loading", "available_gib": 98.221, "used_gib": 24.602, "dstate": []}
+{"time": "2026-09-28T14:18:20-0400", "stage": "loading", "available_gib": 94.074, "used_gib": 28.75, "dstate": []}
+{"time": "2026-09-28T14:18:23-0400", "stage": "loading", "available_gib": 92.2, "used_gib": 30.624, "dstate": []}
+{"time": "2026-09-28T14:18:25-0400", "stage": "loading", "available_gib": 94.17, "used_gib": 28.654, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:27-0400", "stage": "loading", "available_gib": 93.823, "used_gib": 29.001, "dstate": [{"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:29-0400", "stage": "loading", "available_gib": 91.749, "used_gib": 31.075, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:31-0400", "stage": "loading", "available_gib": 91.375, "used_gib": 31.449, "dstate": [{"pid": "2822750", "comm": "kworker/u28:3+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:33-0400", "stage": "loading", "available_gib": 91.258, "used_gib": 31.566, "dstate": []}
+{"time": "2026-09-28T14:18:35-0400", "stage": "loading", "available_gib": 91.021, "used_gib": 31.803, "dstate": [{"pid": "3934166", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:37-0400", "stage": "loading", "available_gib": 91.102, "used_gib": 31.722, "dstate": [{"pid": "3132631", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:39-0400", "stage": "loading", "available_gib": 91.047, "used_gib": 31.777, "dstate": []}
+{"time": "2026-09-28T14:18:41-0400", "stage": "loading", "available_gib": 90.777, "used_gib": 32.046, "dstate": [{"pid": "3132631", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:43-0400", "stage": "loading", "available_gib": 90.731, "used_gib": 32.093, "dstate": []}
+{"time": "2026-09-28T14:18:45-0400", "stage": "loading", "available_gib": 90.801, "used_gib": 32.023, "dstate": []}
+{"time": "2026-09-28T14:18:47-0400", "stage": "loading", "available_gib": 90.915, "used_gib": 31.909, "dstate": []}
+{"time": "2026-09-28T14:18:49-0400", "stage": "loading", "available_gib": 91.011, "used_gib": 31.812, "dstate": []}
+{"time": "2026-09-28T14:18:51-0400", "stage": "loading", "available_gib": 91.059, "used_gib": 31.765, "dstate": [{"pid": "3934166", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:18:53-0400", "stage": "loading", "available_gib": 90.964, "used_gib": 31.86, "dstate": []}
+{"time": "2026-09-28T14:18:55-0400", "stage": "loading", "available_gib": 90.956, "used_gib": 31.868, "dstate": []}
+{"time": "2026-09-28T14:18:58-0400", "stage": "loading", "available_gib": 90.795, "used_gib": 32.029, "dstate": []}
+{"time": "2026-09-28T14:19:00-0400", "stage": "loading", "available_gib": 90.891, "used_gib": 31.933, "dstate": [{"pid": "3845108", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:19:02-0400", "stage": "loading", "available_gib": 91.023, "used_gib": 31.8, "dstate": [{"pid": "3845108", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:19:04-0400", "stage": "loading", "available_gib": 91.084, "used_gib": 31.74, "dstate": []}
+{"time": "2026-09-28T14:19:06-0400", "stage": "loading", "available_gib": 91.055, "used_gib": 31.769, "dstate": [{"pid": "3934166", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T14:19:08-0400", "stage": "loading", "available_gib": 91.003, "used_gib": 31.821, "dstate": []}
+{"time": "2026-09-28T14:19:10-0400", "stage": "loading", "available_gib": 90.996, "used_gib": 31.828, "dstate": []}
+{"time": "2026-09-28T14:19:12-0400", "stage": "loading", "available_gib": 91.018, "used_gib": 31.806, "dstate": []}
+{"time": "2026-09-28T14:19:14-0400", "stage": "loading", "available_gib": 90.952, "used_gib": 31.872, "dstate": []}
+{"time": "2026-09-28T14:19:14-0400", "stage": "ready-settled", "available_gib": 90.964, "used_gib": 31.86, "dstate": []}
+{"time": "2026-09-28T16:03:23-0400", "stage": "baseline", "available_gib": 101.193, "used_gib": 21.631, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:24-0400", "stage": "loading", "available_gib": 101.068, "used_gib": 21.756, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}, {"pid": "3132631", "comm": "kworker/u28:1+netns", "wchan": "0"}, {"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:26-0400", "stage": "loading", "available_gib": 100.836, "used_gib": 21.988, "dstate": []}
+{"time": "2026-09-28T16:03:28-0400", "stage": "loading", "available_gib": 100.67, "used_gib": 22.154, "dstate": []}
+{"time": "2026-09-28T16:03:30-0400", "stage": "loading", "available_gib": 100.567, "used_gib": 22.257, "dstate": [{"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:32-0400", "stage": "loading", "available_gib": 100.506, "used_gib": 22.318, "dstate": []}
+{"time": "2026-09-28T16:03:34-0400", "stage": "loading", "available_gib": 100.445, "used_gib": 22.379, "dstate": []}
+{"time": "2026-09-28T16:03:36-0400", "stage": "loading", "available_gib": 100.284, "used_gib": 22.54, "dstate": []}
+{"time": "2026-09-28T16:03:38-0400", "stage": "loading", "available_gib": 100.245, "used_gib": 22.579, "dstate": []}
+{"time": "2026-09-28T16:03:40-0400", "stage": "loading", "available_gib": 100.102, "used_gib": 22.722, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:42-0400", "stage": "loading", "available_gib": 100.117, "used_gib": 22.707, "dstate": [{"pid": "141528", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:44-0400", "stage": "loading", "available_gib": 100.122, "used_gib": 22.702, "dstate": [{"pid": "141528", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:46-0400", "stage": "loading", "available_gib": 100.586, "used_gib": 22.238, "dstate": []}
+{"time": "2026-09-28T16:03:49-0400", "stage": "loading", "available_gib": 100.222, "used_gib": 22.602, "dstate": []}
+{"time": "2026-09-28T16:03:51-0400", "stage": "loading", "available_gib": 99.951, "used_gib": 22.873, "dstate": []}
+{"time": "2026-09-28T16:03:53-0400", "stage": "loading", "available_gib": 99.87, "used_gib": 22.954, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:55-0400", "stage": "loading", "available_gib": 99.773, "used_gib": 23.051, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:03:57-0400", "stage": "loading", "available_gib": 99.785, "used_gib": 23.039, "dstate": []}
+{"time": "2026-09-28T16:03:59-0400", "stage": "loading", "available_gib": 99.762, "used_gib": 23.062, "dstate": []}
+{"time": "2026-09-28T16:04:01-0400", "stage": "loading", "available_gib": 95.963, "used_gib": 26.861, "dstate": [{"pid": "405085", "comm": "runc", "wchan": "0"}, {"pid": "3132631", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}, {"pid": "3808910", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:03-0400", "stage": "loading", "available_gib": 92.173, "used_gib": 30.651, "dstate": [{"pid": "3132631", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:05-0400", "stage": "loading", "available_gib": 93.243, "used_gib": 29.581, "dstate": []}
+{"time": "2026-09-28T16:04:07-0400", "stage": "loading", "available_gib": 92.779, "used_gib": 30.045, "dstate": []}
+{"time": "2026-09-28T16:04:09-0400", "stage": "loading", "available_gib": 88.669, "used_gib": 34.155, "dstate": []}
+{"time": "2026-09-28T16:04:11-0400", "stage": "loading", "available_gib": 88.499, "used_gib": 34.325, "dstate": []}
+{"time": "2026-09-28T16:04:13-0400", "stage": "loading", "available_gib": 88.326, "used_gib": 34.498, "dstate": []}
+{"time": "2026-09-28T16:04:15-0400", "stage": "loading", "available_gib": 88.393, "used_gib": 34.431, "dstate": []}
+{"time": "2026-09-28T16:04:17-0400", "stage": "loading", "available_gib": 88.501, "used_gib": 34.323, "dstate": [{"pid": "141528", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:19-0400", "stage": "loading", "available_gib": 88.7, "used_gib": 34.124, "dstate": [{"pid": "141528", "comm": "kworker/4:4+events", "wchan": "0"}, {"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "407116", "comm": "runc", "wchan": "0"}, {"pid": "407117", "comm": "runc", "wchan": "0"}, {"pid": "407118", "comm": "runc", "wchan": "0"}, {"pid": "407119", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:22-0400", "stage": "loading", "available_gib": 88.91, "used_gib": 33.914, "dstate": []}
+{"time": "2026-09-28T16:04:24-0400", "stage": "loading", "available_gib": 88.943, "used_gib": 33.88, "dstate": []}
+{"time": "2026-09-28T16:04:26-0400", "stage": "loading", "available_gib": 88.884, "used_gib": 33.94, "dstate": [{"pid": "141528", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:28-0400", "stage": "loading", "available_gib": 88.846, "used_gib": 33.978, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:30-0400", "stage": "loading", "available_gib": 88.929, "used_gib": 33.895, "dstate": []}
+{"time": "2026-09-28T16:04:32-0400", "stage": "loading", "available_gib": 89.049, "used_gib": 33.775, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:34-0400", "stage": "loading", "available_gib": 88.994, "used_gib": 33.83, "dstate": []}
+{"time": "2026-09-28T16:04:36-0400", "stage": "loading", "available_gib": 88.884, "used_gib": 33.94, "dstate": []}
+{"time": "2026-09-28T16:04:38-0400", "stage": "loading", "available_gib": 88.958, "used_gib": 33.866, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:40-0400", "stage": "loading", "available_gib": 88.876, "used_gib": 33.948, "dstate": []}
+{"time": "2026-09-28T16:04:42-0400", "stage": "loading", "available_gib": 88.933, "used_gib": 33.891, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:44-0400", "stage": "loading", "available_gib": 88.967, "used_gib": 33.857, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:46-0400", "stage": "loading", "available_gib": 89.098, "used_gib": 33.726, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:48-0400", "stage": "loading", "available_gib": 89.052, "used_gib": 33.772, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:50-0400", "stage": "loading", "available_gib": 89.029, "used_gib": 33.795, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T16:04:52-0400", "stage": "loading", "available_gib": 89.038, "used_gib": 33.786, "dstate": []}
+{"time": "2026-09-28T16:04:54-0400", "stage": "loading", "available_gib": 89.012, "used_gib": 33.811, "dstate": []}
+{"time": "2026-09-28T16:04:55-0400", "stage": "ready-settled", "available_gib": 89.006, "used_gib": 33.818, "dstate": [{"pid": "263952", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:24:36-0400", "stage": "baseline", "available_gib": 101.812, "used_gib": 21.012, "dstate": []}
+{"time": "2026-09-28T17:24:37-0400", "stage": "loading", "available_gib": 101.784, "used_gib": 21.04, "dstate": [{"pid": "822357", "comm": "kworker/4:4+events", "wchan": "0"}, {"pid": "851608", "comm": "kworker/u28:1+netns", "wchan": "0"}]}
+{"time": "2026-09-28T17:24:39-0400", "stage": "loading", "available_gib": 101.306, "used_gib": 21.517, "dstate": []}
+{"time": "2026-09-28T17:24:41-0400", "stage": "loading", "available_gib": 101.252, "used_gib": 21.572, "dstate": []}
+{"time": "2026-09-28T17:24:43-0400", "stage": "loading", "available_gib": 101.265, "used_gib": 21.559, "dstate": [{"pid": "822357", "comm": "kworker/4:4+events", "wchan": "0"}, {"pid": "924780", "comm": "python3", "wchan": "0"}]}
+{"time": "2026-09-28T17:24:45-0400", "stage": "loading", "available_gib": 101.046, "used_gib": 21.778, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:24:47-0400", "stage": "loading", "available_gib": 100.949, "used_gib": 21.875, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T17:24:49-0400", "stage": "loading", "available_gib": 100.752, "used_gib": 22.072, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T17:24:51-0400", "stage": "loading", "available_gib": 100.763, "used_gib": 22.061, "dstate": []}
+{"time": "2026-09-28T17:24:53-0400", "stage": "loading", "available_gib": 100.711, "used_gib": 22.113, "dstate": []}
+{"time": "2026-09-28T17:24:55-0400", "stage": "loading", "available_gib": 100.557, "used_gib": 22.267, "dstate": []}
+{"time": "2026-09-28T17:24:57-0400", "stage": "loading", "available_gib": 100.583, "used_gib": 22.241, "dstate": []}
+{"time": "2026-09-28T17:24:59-0400", "stage": "loading", "available_gib": 101.106, "used_gib": 21.717, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:01-0400", "stage": "loading", "available_gib": 100.699, "used_gib": 22.125, "dstate": []}
+{"time": "2026-09-28T17:25:03-0400", "stage": "loading", "available_gib": 100.59, "used_gib": 22.234, "dstate": []}
+{"time": "2026-09-28T17:25:05-0400", "stage": "loading", "available_gib": 100.495, "used_gib": 22.328, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "822357", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:08-0400", "stage": "loading", "available_gib": 100.382, "used_gib": 22.442, "dstate": [{"pid": "851608", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:10-0400", "stage": "loading", "available_gib": 100.367, "used_gib": 22.457, "dstate": []}
+{"time": "2026-09-28T17:25:12-0400", "stage": "loading", "available_gib": 100.399, "used_gib": 22.425, "dstate": []}
+{"time": "2026-09-28T17:25:14-0400", "stage": "loading", "available_gib": 98.139, "used_gib": 24.684, "dstate": []}
+{"time": "2026-09-28T17:25:16-0400", "stage": "loading", "available_gib": 93.604, "used_gib": 29.22, "dstate": [{"pid": "863333", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:18-0400", "stage": "loading", "available_gib": 91.823, "used_gib": 31.001, "dstate": [{"pid": "851608", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:20-0400", "stage": "loading", "available_gib": 93.714, "used_gib": 29.11, "dstate": [{"pid": "851608", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:22-0400", "stage": "loading", "available_gib": 92.718, "used_gib": 30.106, "dstate": []}
+{"time": "2026-09-28T17:25:24-0400", "stage": "loading", "available_gib": 90.828, "used_gib": 31.996, "dstate": [{"pid": "863333", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:26-0400", "stage": "loading", "available_gib": 91.038, "used_gib": 31.786, "dstate": []}
+{"time": "2026-09-28T17:25:28-0400", "stage": "loading", "available_gib": 90.996, "used_gib": 31.828, "dstate": []}
+{"time": "2026-09-28T17:25:30-0400", "stage": "loading", "available_gib": 90.833, "used_gib": 31.991, "dstate": []}
+{"time": "2026-09-28T17:25:32-0400", "stage": "loading", "available_gib": 90.885, "used_gib": 31.939, "dstate": []}
+{"time": "2026-09-28T17:25:34-0400", "stage": "loading", "available_gib": 91.145, "used_gib": 31.679, "dstate": []}
+{"time": "2026-09-28T17:25:36-0400", "stage": "loading", "available_gib": 90.797, "used_gib": 32.027, "dstate": []}
+{"time": "2026-09-28T17:25:38-0400", "stage": "loading", "available_gib": 90.91, "used_gib": 31.914, "dstate": []}
+{"time": "2026-09-28T17:25:40-0400", "stage": "loading", "available_gib": 90.759, "used_gib": 32.065, "dstate": []}
+{"time": "2026-09-28T17:25:43-0400", "stage": "loading", "available_gib": 90.821, "used_gib": 32.002, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:45-0400", "stage": "loading", "available_gib": 90.949, "used_gib": 31.875, "dstate": []}
+{"time": "2026-09-28T17:25:47-0400", "stage": "loading", "available_gib": 91.017, "used_gib": 31.807, "dstate": []}
+{"time": "2026-09-28T17:25:49-0400", "stage": "loading", "available_gib": 91.013, "used_gib": 31.811, "dstate": []}
+{"time": "2026-09-28T17:25:51-0400", "stage": "loading", "available_gib": 90.864, "used_gib": 31.96, "dstate": []}
+{"time": "2026-09-28T17:25:53-0400", "stage": "loading", "available_gib": 90.737, "used_gib": 32.087, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:25:55-0400", "stage": "loading", "available_gib": 90.836, "used_gib": 31.988, "dstate": []}
+{"time": "2026-09-28T17:25:57-0400", "stage": "loading", "available_gib": 90.809, "used_gib": 32.015, "dstate": []}
+{"time": "2026-09-28T17:25:59-0400", "stage": "loading", "available_gib": 90.818, "used_gib": 32.006, "dstate": []}
+{"time": "2026-09-28T17:26:01-0400", "stage": "loading", "available_gib": 90.82, "used_gib": 32.004, "dstate": []}
+{"time": "2026-09-28T17:26:03-0400", "stage": "loading", "available_gib": 90.917, "used_gib": 31.907, "dstate": [{"pid": "353967", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "933908", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T17:26:05-0400", "stage": "loading", "available_gib": 90.955, "used_gib": 31.869, "dstate": []}
+{"time": "2026-09-28T17:26:07-0400", "stage": "loading", "available_gib": 90.891, "used_gib": 31.933, "dstate": []}
+{"time": "2026-09-28T17:26:09-0400", "stage": "loading", "available_gib": 90.901, "used_gib": 31.923, "dstate": [{"pid": "851608", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T17:26:09-0400", "stage": "ready-settled", "available_gib": 90.908, "used_gib": 31.916, "dstate": []}
+{"time": "2026-09-28T18:03:08-0400", "stage": "baseline", "available_gib": 101.733, "used_gib": 21.091, "dstate": []}
+{"time": "2026-09-28T18:03:09-0400", "stage": "loading", "available_gib": 101.636, "used_gib": 21.188, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+netns", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:11-0400", "stage": "loading", "available_gib": 101.295, "used_gib": 21.528, "dstate": []}
+{"time": "2026-09-28T18:03:13-0400", "stage": "loading", "available_gib": 101.305, "used_gib": 21.519, "dstate": []}
+{"time": "2026-09-28T18:03:15-0400", "stage": "loading", "available_gib": 101.242, "used_gib": 21.582, "dstate": [{"pid": "921810", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:17-0400", "stage": "loading", "available_gib": 101.184, "used_gib": 21.64, "dstate": []}
+{"time": "2026-09-28T18:03:19-0400", "stage": "loading", "available_gib": 101.175, "used_gib": 21.649, "dstate": [{"pid": "1133335", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:21-0400", "stage": "loading", "available_gib": 100.862, "used_gib": 21.962, "dstate": [{"pid": "1081801", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "1133335", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:23-0400", "stage": "loading", "available_gib": 100.788, "used_gib": 22.036, "dstate": []}
+{"time": "2026-09-28T18:03:25-0400", "stage": "loading", "available_gib": 100.631, "used_gib": 22.193, "dstate": [{"pid": "921810", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:27-0400", "stage": "loading", "available_gib": 100.543, "used_gib": 22.281, "dstate": [{"pid": "921810", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:29-0400", "stage": "loading", "available_gib": 100.537, "used_gib": 22.287, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:31-0400", "stage": "loading", "available_gib": 101.226, "used_gib": 21.598, "dstate": [{"pid": "1081801", "comm": "kworker/4:3+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:33-0400", "stage": "loading", "available_gib": 100.907, "used_gib": 21.917, "dstate": []}
+{"time": "2026-09-28T18:03:35-0400", "stage": "loading", "available_gib": 100.583, "used_gib": 22.241, "dstate": []}
+{"time": "2026-09-28T18:03:38-0400", "stage": "loading", "available_gib": 100.547, "used_gib": 22.277, "dstate": [{"pid": "921810", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:40-0400", "stage": "loading", "available_gib": 100.5, "used_gib": 22.324, "dstate": []}
+{"time": "2026-09-28T18:03:42-0400", "stage": "loading", "available_gib": 100.276, "used_gib": 22.547, "dstate": [{"pid": "921810", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:44-0400", "stage": "loading", "available_gib": 100.261, "used_gib": 22.563, "dstate": []}
+{"time": "2026-09-28T18:03:46-0400", "stage": "loading", "available_gib": 100.033, "used_gib": 22.791, "dstate": []}
+{"time": "2026-09-28T18:03:48-0400", "stage": "loading", "available_gib": 94.642, "used_gib": 28.182, "dstate": []}
+{"time": "2026-09-28T18:03:50-0400", "stage": "loading", "available_gib": 92.214, "used_gib": 30.61, "dstate": []}
+{"time": "2026-09-28T18:03:52-0400", "stage": "loading", "available_gib": 94.242, "used_gib": 28.582, "dstate": [{"pid": "1207437", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:54-0400", "stage": "loading", "available_gib": 93.618, "used_gib": 29.206, "dstate": []}
+{"time": "2026-09-28T18:03:56-0400", "stage": "loading", "available_gib": 91.83, "used_gib": 30.994, "dstate": [{"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:03:58-0400", "stage": "loading", "available_gib": 91.419, "used_gib": 31.405, "dstate": []}
+{"time": "2026-09-28T18:04:00-0400", "stage": "loading", "available_gib": 91.34, "used_gib": 31.484, "dstate": [{"pid": "1133335", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:02-0400", "stage": "loading", "available_gib": 91.301, "used_gib": 31.523, "dstate": []}
+{"time": "2026-09-28T18:04:04-0400", "stage": "loading", "available_gib": 91.273, "used_gib": 31.551, "dstate": [{"pid": "1133335", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:06-0400", "stage": "loading", "available_gib": 91.25, "used_gib": 31.574, "dstate": [{"pid": "1133335", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:08-0400", "stage": "loading", "available_gib": 90.988, "used_gib": 31.836, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "921810", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:10-0400", "stage": "loading", "available_gib": 90.946, "used_gib": 31.878, "dstate": [{"pid": "921810", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:13-0400", "stage": "loading", "available_gib": 90.974, "used_gib": 31.849, "dstate": []}
+{"time": "2026-09-28T18:04:15-0400", "stage": "loading", "available_gib": 91.105, "used_gib": 31.719, "dstate": []}
+{"time": "2026-09-28T18:04:17-0400", "stage": "loading", "available_gib": 91.133, "used_gib": 31.691, "dstate": []}
+{"time": "2026-09-28T18:04:19-0400", "stage": "loading", "available_gib": 91.168, "used_gib": 31.656, "dstate": []}
+{"time": "2026-09-28T18:04:21-0400", "stage": "loading", "available_gib": 91.155, "used_gib": 31.669, "dstate": []}
+{"time": "2026-09-28T18:04:23-0400", "stage": "loading", "available_gib": 91.093, "used_gib": 31.731, "dstate": []}
+{"time": "2026-09-28T18:04:25-0400", "stage": "loading", "available_gib": 91.019, "used_gib": 31.805, "dstate": []}
+{"time": "2026-09-28T18:04:27-0400", "stage": "loading", "available_gib": 90.994, "used_gib": 31.83, "dstate": []}
+{"time": "2026-09-28T18:04:29-0400", "stage": "loading", "available_gib": 91.053, "used_gib": 31.771, "dstate": []}
+{"time": "2026-09-28T18:04:31-0400", "stage": "loading", "available_gib": 90.913, "used_gib": 31.911, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:33-0400", "stage": "loading", "available_gib": 91.05, "used_gib": 31.774, "dstate": []}
+{"time": "2026-09-28T18:04:35-0400", "stage": "loading", "available_gib": 91.013, "used_gib": 31.811, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:37-0400", "stage": "loading", "available_gib": 91.11, "used_gib": 31.714, "dstate": [{"pid": "1081801", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:39-0400", "stage": "loading", "available_gib": 91.044, "used_gib": 31.78, "dstate": []}
+{"time": "2026-09-28T18:04:41-0400", "stage": "loading", "available_gib": 90.981, "used_gib": 31.843, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:04:41-0400", "stage": "ready-settled", "available_gib": 90.99, "used_gib": 31.834, "dstate": []}
+{"time": "2026-09-28T18:36:23-0400", "stage": "baseline", "available_gib": 100.455, "used_gib": 22.369, "dstate": []}
+{"time": "2026-09-28T18:36:24-0400", "stage": "loading", "available_gib": 100.42, "used_gib": 22.403, "dstate": [{"pid": "1438500", "comm": "kworker/u28:2+netns", "wchan": "0"}]}
+{"time": "2026-09-28T18:36:26-0400", "stage": "loading", "available_gib": 100.113, "used_gib": 22.711, "dstate": []}
+{"time": "2026-09-28T18:36:28-0400", "stage": "loading", "available_gib": 100.026, "used_gib": 22.798, "dstate": []}
+{"time": "2026-09-28T18:36:30-0400", "stage": "loading", "available_gib": 99.881, "used_gib": 22.943, "dstate": []}
+{"time": "2026-09-28T18:36:32-0400", "stage": "loading", "available_gib": 99.825, "used_gib": 22.999, "dstate": []}
+{"time": "2026-09-28T18:36:34-0400", "stage": "loading", "available_gib": 99.714, "used_gib": 23.11, "dstate": [{"pid": "1438500", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:36:36-0400", "stage": "loading", "available_gib": 99.668, "used_gib": 23.155, "dstate": []}
+{"time": "2026-09-28T18:36:38-0400", "stage": "loading", "available_gib": 99.627, "used_gib": 23.197, "dstate": []}
+{"time": "2026-09-28T18:36:40-0400", "stage": "loading", "available_gib": 99.53, "used_gib": 23.294, "dstate": []}
+{"time": "2026-09-28T18:36:42-0400", "stage": "loading", "available_gib": 99.467, "used_gib": 23.357, "dstate": [{"pid": "1081801", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:36:44-0400", "stage": "loading", "available_gib": 99.406, "used_gib": 23.418, "dstate": []}
+{"time": "2026-09-28T18:36:46-0400", "stage": "loading", "available_gib": 99.941, "used_gib": 22.883, "dstate": []}
+{"time": "2026-09-28T18:36:48-0400", "stage": "loading", "available_gib": 99.56, "used_gib": 23.263, "dstate": []}
+{"time": "2026-09-28T18:36:50-0400", "stage": "loading", "available_gib": 99.399, "used_gib": 23.425, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:36:52-0400", "stage": "loading", "available_gib": 99.247, "used_gib": 23.577, "dstate": [{"pid": "384510", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:36:54-0400", "stage": "loading", "available_gib": 99.241, "used_gib": 23.583, "dstate": []}
+{"time": "2026-09-28T18:36:56-0400", "stage": "loading", "available_gib": 99.024, "used_gib": 23.8, "dstate": []}
+{"time": "2026-09-28T18:36:58-0400", "stage": "loading", "available_gib": 98.972, "used_gib": 23.852, "dstate": []}
+{"time": "2026-09-28T18:37:01-0400", "stage": "loading", "available_gib": 96.815, "used_gib": 26.009, "dstate": [{"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:03-0400", "stage": "loading", "available_gib": 92.095, "used_gib": 30.729, "dstate": []}
+{"time": "2026-09-28T18:37:05-0400", "stage": "loading", "available_gib": 90.675, "used_gib": 32.149, "dstate": []}
+{"time": "2026-09-28T18:37:07-0400", "stage": "loading", "available_gib": 92.598, "used_gib": 30.226, "dstate": []}
+{"time": "2026-09-28T18:37:09-0400", "stage": "loading", "available_gib": 90.448, "used_gib": 32.376, "dstate": [{"pid": "1424101", "comm": "kworker/4:0+events", "wchan": "0"}, {"pid": "1459121", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:11-0400", "stage": "loading", "available_gib": 90.224, "used_gib": 32.6, "dstate": []}
+{"time": "2026-09-28T18:37:13-0400", "stage": "loading", "available_gib": 90.097, "used_gib": 32.726, "dstate": []}
+{"time": "2026-09-28T18:37:15-0400", "stage": "loading", "available_gib": 90.102, "used_gib": 32.722, "dstate": []}
+{"time": "2026-09-28T18:37:17-0400", "stage": "loading", "available_gib": 90.155, "used_gib": 32.669, "dstate": [{"pid": "1438500", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:19-0400", "stage": "loading", "available_gib": 90.117, "used_gib": 32.707, "dstate": [{"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:21-0400", "stage": "loading", "available_gib": 89.954, "used_gib": 32.87, "dstate": []}
+{"time": "2026-09-28T18:37:23-0400", "stage": "loading", "available_gib": 89.855, "used_gib": 32.969, "dstate": []}
+{"time": "2026-09-28T18:37:25-0400", "stage": "loading", "available_gib": 89.859, "used_gib": 32.965, "dstate": []}
+{"time": "2026-09-28T18:37:27-0400", "stage": "loading", "available_gib": 89.857, "used_gib": 32.967, "dstate": []}
+{"time": "2026-09-28T18:37:29-0400", "stage": "loading", "available_gib": 89.823, "used_gib": 33.001, "dstate": [{"pid": "1438500", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:31-0400", "stage": "loading", "available_gib": 89.977, "used_gib": 32.847, "dstate": [{"pid": "511663", "comm": "cadvisor", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:33-0400", "stage": "loading", "available_gib": 89.992, "used_gib": 32.832, "dstate": [{"pid": "1424101", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:36-0400", "stage": "loading", "available_gib": 90.015, "used_gib": 32.809, "dstate": []}
+{"time": "2026-09-28T18:37:38-0400", "stage": "loading", "available_gib": 89.923, "used_gib": 32.901, "dstate": []}
+{"time": "2026-09-28T18:37:40-0400", "stage": "loading", "available_gib": 89.876, "used_gib": 32.948, "dstate": [{"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:42-0400", "stage": "loading", "available_gib": 89.904, "used_gib": 32.92, "dstate": []}
+{"time": "2026-09-28T18:37:44-0400", "stage": "loading", "available_gib": 89.898, "used_gib": 32.926, "dstate": []}
+{"time": "2026-09-28T18:37:46-0400", "stage": "loading", "available_gib": 89.86, "used_gib": 32.964, "dstate": []}
+{"time": "2026-09-28T18:37:48-0400", "stage": "loading", "available_gib": 89.881, "used_gib": 32.943, "dstate": [{"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}, {"pid": "1424101", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T18:37:50-0400", "stage": "loading", "available_gib": 89.763, "used_gib": 33.061, "dstate": []}
+{"time": "2026-09-28T18:37:52-0400", "stage": "loading", "available_gib": 89.832, "used_gib": 32.992, "dstate": []}
+{"time": "2026-09-28T18:37:54-0400", "stage": "loading", "available_gib": 89.807, "used_gib": 33.017, "dstate": []}
+{"time": "2026-09-28T18:37:54-0400", "stage": "ready-settled", "available_gib": 89.794, "used_gib": 33.03, "dstate": [{"pid": "1148127", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:22:56-0400", "stage": "baseline", "available_gib": 100.04, "used_gib": 22.784, "dstate": []}
+{"time": "2026-09-28T20:22:56-0400", "stage": "loading", "available_gib": 100.041, "used_gib": 22.783, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+netns", "wchan": "0"}]}
+{"time": "2026-09-28T20:22:58-0400", "stage": "loading", "available_gib": 99.842, "used_gib": 22.982, "dstate": []}
+{"time": "2026-09-28T20:23:00-0400", "stage": "loading", "available_gib": 99.769, "used_gib": 23.055, "dstate": []}
+{"time": "2026-09-28T20:23:03-0400", "stage": "loading", "available_gib": 99.665, "used_gib": 23.159, "dstate": []}
+{"time": "2026-09-28T20:23:05-0400", "stage": "loading", "available_gib": 99.489, "used_gib": 23.334, "dstate": []}
+{"time": "2026-09-28T20:23:07-0400", "stage": "loading", "available_gib": 99.517, "used_gib": 23.307, "dstate": []}
+{"time": "2026-09-28T20:23:09-0400", "stage": "loading", "available_gib": 99.177, "used_gib": 23.647, "dstate": []}
+{"time": "2026-09-28T20:23:11-0400", "stage": "loading", "available_gib": 99.212, "used_gib": 23.612, "dstate": []}
+{"time": "2026-09-28T20:23:13-0400", "stage": "loading", "available_gib": 98.982, "used_gib": 23.842, "dstate": []}
+{"time": "2026-09-28T20:23:15-0400", "stage": "loading", "available_gib": 98.861, "used_gib": 23.962, "dstate": []}
+{"time": "2026-09-28T20:23:17-0400", "stage": "loading", "available_gib": 98.777, "used_gib": 24.046, "dstate": []}
+{"time": "2026-09-28T20:23:19-0400", "stage": "loading", "available_gib": 99.39, "used_gib": 23.434, "dstate": [{"pid": "228", "comm": "jbd2/nvme0n1p1-8", "wchan": "0"}, {"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:21-0400", "stage": "loading", "available_gib": 99.144, "used_gib": 23.679, "dstate": []}
+{"time": "2026-09-28T20:23:23-0400", "stage": "loading", "available_gib": 98.763, "used_gib": 24.061, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:25-0400", "stage": "loading", "available_gib": 98.654, "used_gib": 24.17, "dstate": []}
+{"time": "2026-09-28T20:23:27-0400", "stage": "loading", "available_gib": 98.59, "used_gib": 24.234, "dstate": [{"pid": "1873967", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:29-0400", "stage": "loading", "available_gib": 98.442, "used_gib": 24.382, "dstate": []}
+{"time": "2026-09-28T20:23:31-0400", "stage": "loading", "available_gib": 98.471, "used_gib": 24.353, "dstate": []}
+{"time": "2026-09-28T20:23:33-0400", "stage": "loading", "available_gib": 98.474, "used_gib": 24.35, "dstate": []}
+{"time": "2026-09-28T20:23:35-0400", "stage": "loading", "available_gib": 93.065, "used_gib": 29.759, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:38-0400", "stage": "loading", "available_gib": 90.859, "used_gib": 31.965, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:40-0400", "stage": "loading", "available_gib": 92.499, "used_gib": 30.325, "dstate": []}
+{"time": "2026-09-28T20:23:42-0400", "stage": "loading", "available_gib": 90.901, "used_gib": 31.923, "dstate": [{"pid": "1956142", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:44-0400", "stage": "loading", "available_gib": 88.603, "used_gib": 34.221, "dstate": []}
+{"time": "2026-09-28T20:23:46-0400", "stage": "loading", "available_gib": 88.188, "used_gib": 34.636, "dstate": []}
+{"time": "2026-09-28T20:23:48-0400", "stage": "loading", "available_gib": 88.202, "used_gib": 34.622, "dstate": [{"pid": "2116556", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:50-0400", "stage": "loading", "available_gib": 88.618, "used_gib": 34.206, "dstate": [{"pid": "1956142", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:52-0400", "stage": "loading", "available_gib": 89.248, "used_gib": 33.576, "dstate": []}
+{"time": "2026-09-28T20:23:54-0400", "stage": "loading", "available_gib": 89.382, "used_gib": 33.442, "dstate": []}
+{"time": "2026-09-28T20:23:56-0400", "stage": "loading", "available_gib": 89.131, "used_gib": 33.693, "dstate": [{"pid": "1956142", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:23:58-0400", "stage": "loading", "available_gib": 89.071, "used_gib": 33.753, "dstate": [{"pid": "2117708", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:00-0400", "stage": "loading", "available_gib": 89.11, "used_gib": 33.714, "dstate": [{"pid": "1216", "comm": "NetworkManager", "wchan": "0"}, {"pid": "1956142", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:02-0400", "stage": "loading", "available_gib": 89.115, "used_gib": 33.709, "dstate": []}
+{"time": "2026-09-28T20:24:04-0400", "stage": "loading", "available_gib": 89.194, "used_gib": 33.629, "dstate": []}
+{"time": "2026-09-28T20:24:06-0400", "stage": "loading", "available_gib": 89.208, "used_gib": 33.616, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:08-0400", "stage": "loading", "available_gib": 89.084, "used_gib": 33.74, "dstate": []}
+{"time": "2026-09-28T20:24:10-0400", "stage": "loading", "available_gib": 89.083, "used_gib": 33.741, "dstate": []}
+{"time": "2026-09-28T20:24:12-0400", "stage": "loading", "available_gib": 89.023, "used_gib": 33.801, "dstate": []}
+{"time": "2026-09-28T20:24:15-0400", "stage": "loading", "available_gib": 88.839, "used_gib": 33.985, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:17-0400", "stage": "loading", "available_gib": 89.003, "used_gib": 33.821, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:19-0400", "stage": "loading", "available_gib": 88.983, "used_gib": 33.841, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:21-0400", "stage": "loading", "available_gib": 88.981, "used_gib": 33.843, "dstate": [{"pid": "1081801", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:23-0400", "stage": "loading", "available_gib": 89.074, "used_gib": 33.75, "dstate": []}
+{"time": "2026-09-28T20:24:25-0400", "stage": "loading", "available_gib": 89.067, "used_gib": 33.757, "dstate": [{"pid": "1873967", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}, {"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T20:24:27-0400", "stage": "loading", "available_gib": 89.036, "used_gib": 33.788, "dstate": []}
+{"time": "2026-09-28T20:24:29-0400", "stage": "loading", "available_gib": 89.056, "used_gib": 33.768, "dstate": []}
+{"time": "2026-09-28T20:24:29-0400", "stage": "ready-settled", "available_gib": 89.056, "used_gib": 33.767, "dstate": []}
+{"time": "2026-09-28T22:20:07-0400", "stage": "baseline", "available_gib": 105.994, "used_gib": 16.83, "dstate": [{"pid": "2747234", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:08-0400", "stage": "loading", "available_gib": 105.93, "used_gib": 16.894, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}, {"pid": "2642954", "comm": "kworker/u28:1+netns", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:10-0400", "stage": "loading", "available_gib": 105.557, "used_gib": 17.267, "dstate": []}
+{"time": "2026-09-28T22:20:12-0400", "stage": "loading", "available_gib": 105.516, "used_gib": 17.307, "dstate": [{"pid": "2747234", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:14-0400", "stage": "loading", "available_gib": 105.471, "used_gib": 17.353, "dstate": []}
+{"time": "2026-09-28T22:20:16-0400", "stage": "loading", "available_gib": 105.314, "used_gib": 17.51, "dstate": []}
+{"time": "2026-09-28T22:20:18-0400", "stage": "loading", "available_gib": 105.103, "used_gib": 17.721, "dstate": []}
+{"time": "2026-09-28T22:20:21-0400", "stage": "loading", "available_gib": 104.843, "used_gib": 17.981, "dstate": []}
+{"time": "2026-09-28T22:20:23-0400", "stage": "loading", "available_gib": 104.908, "used_gib": 17.916, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:25-0400", "stage": "loading", "available_gib": 104.821, "used_gib": 18.003, "dstate": []}
+{"time": "2026-09-28T22:20:27-0400", "stage": "loading", "available_gib": 104.735, "used_gib": 18.089, "dstate": []}
+{"time": "2026-09-28T22:20:29-0400", "stage": "loading", "available_gib": 104.679, "used_gib": 18.145, "dstate": []}
+{"time": "2026-09-28T22:20:31-0400", "stage": "loading", "available_gib": 105.179, "used_gib": 17.645, "dstate": [{"pid": "2835433", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:33-0400", "stage": "loading", "available_gib": 104.399, "used_gib": 18.425, "dstate": []}
+{"time": "2026-09-28T22:20:35-0400", "stage": "loading", "available_gib": 104.335, "used_gib": 18.489, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "2747234", "comm": "kworker/4:4+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:37-0400", "stage": "loading", "available_gib": 104.343, "used_gib": 18.481, "dstate": []}
+{"time": "2026-09-28T22:20:39-0400", "stage": "loading", "available_gib": 104.273, "used_gib": 18.551, "dstate": []}
+{"time": "2026-09-28T22:20:41-0400", "stage": "loading", "available_gib": 104.273, "used_gib": 18.551, "dstate": []}
+{"time": "2026-09-28T22:20:43-0400", "stage": "loading", "available_gib": 104.043, "used_gib": 18.781, "dstate": []}
+{"time": "2026-09-28T22:20:45-0400", "stage": "loading", "available_gib": 98.102, "used_gib": 24.722, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:47-0400", "stage": "loading", "available_gib": 95.844, "used_gib": 26.98, "dstate": []}
+{"time": "2026-09-28T22:20:49-0400", "stage": "loading", "available_gib": 97.966, "used_gib": 24.858, "dstate": []}
+{"time": "2026-09-28T22:20:51-0400", "stage": "loading", "available_gib": 95.862, "used_gib": 26.962, "dstate": []}
+{"time": "2026-09-28T22:20:53-0400", "stage": "loading", "available_gib": 95.746, "used_gib": 27.077, "dstate": [{"pid": "2837855", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:56-0400", "stage": "loading", "available_gib": 95.276, "used_gib": 27.548, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:20:58-0400", "stage": "loading", "available_gib": 95.274, "used_gib": 27.549, "dstate": []}
+{"time": "2026-09-28T22:21:00-0400", "stage": "loading", "available_gib": 95.305, "used_gib": 27.519, "dstate": []}
+{"time": "2026-09-28T22:21:02-0400", "stage": "loading", "available_gib": 95.278, "used_gib": 27.546, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:04-0400", "stage": "loading", "available_gib": 95.08, "used_gib": 27.744, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:06-0400", "stage": "loading", "available_gib": 94.875, "used_gib": 27.949, "dstate": []}
+{"time": "2026-09-28T22:21:08-0400", "stage": "loading", "available_gib": 94.963, "used_gib": 27.861, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:10-0400", "stage": "loading", "available_gib": 94.896, "used_gib": 27.928, "dstate": []}
+{"time": "2026-09-28T22:21:12-0400", "stage": "loading", "available_gib": 94.863, "used_gib": 27.961, "dstate": []}
+{"time": "2026-09-28T22:21:14-0400", "stage": "loading", "available_gib": 94.854, "used_gib": 27.97, "dstate": []}
+{"time": "2026-09-28T22:21:16-0400", "stage": "loading", "available_gib": 94.941, "used_gib": 27.883, "dstate": []}
+{"time": "2026-09-28T22:21:18-0400", "stage": "loading", "available_gib": 94.95, "used_gib": 27.874, "dstate": [{"pid": "1988993", "comm": "kworker/u28:0+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:20-0400", "stage": "loading", "available_gib": 94.942, "used_gib": 27.882, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:22-0400", "stage": "loading", "available_gib": 95.034, "used_gib": 27.79, "dstate": [{"pid": "2840740", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:24-0400", "stage": "loading", "available_gib": 95.042, "used_gib": 27.782, "dstate": []}
+{"time": "2026-09-28T22:21:26-0400", "stage": "loading", "available_gib": 95.064, "used_gib": 27.76, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:28-0400", "stage": "loading", "available_gib": 94.925, "used_gib": 27.899, "dstate": []}
+{"time": "2026-09-28T22:21:31-0400", "stage": "loading", "available_gib": 95.018, "used_gib": 27.806, "dstate": []}
+{"time": "2026-09-28T22:21:33-0400", "stage": "loading", "available_gib": 94.991, "used_gib": 27.833, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:21:35-0400", "stage": "loading", "available_gib": 94.981, "used_gib": 27.843, "dstate": []}
+{"time": "2026-09-28T22:21:37-0400", "stage": "loading", "available_gib": 94.969, "used_gib": 27.855, "dstate": []}
+{"time": "2026-09-28T22:21:37-0400", "stage": "ready-settled", "available_gib": 94.963, "used_gib": 27.861, "dstate": []}
+{"time": "2026-09-28T22:58:31-0400", "stage": "baseline", "available_gib": 105.46, "used_gib": 17.364, "dstate": []}
+{"time": "2026-09-28T22:58:31-0400", "stage": "loading", "available_gib": 105.472, "used_gib": 17.352, "dstate": [{"pid": "2971151", "comm": "kworker/u28:2+netns", "wchan": "0"}]}
+{"time": "2026-09-28T22:58:34-0400", "stage": "loading", "available_gib": 105.112, "used_gib": 17.712, "dstate": []}
+{"time": "2026-09-28T22:58:36-0400", "stage": "loading", "available_gib": 104.998, "used_gib": 17.826, "dstate": []}
+{"time": "2026-09-28T22:58:38-0400", "stage": "loading", "available_gib": 104.926, "used_gib": 17.898, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2971151", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T22:58:40-0400", "stage": "loading", "available_gib": 104.824, "used_gib": 18.0, "dstate": [{"pid": "2971151", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T22:58:42-0400", "stage": "loading", "available_gib": 104.555, "used_gib": 18.269, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:58:44-0400", "stage": "loading", "available_gib": 104.369, "used_gib": 18.455, "dstate": []}
+{"time": "2026-09-28T22:58:46-0400", "stage": "loading", "available_gib": 104.297, "used_gib": 18.527, "dstate": []}
+{"time": "2026-09-28T22:58:48-0400", "stage": "loading", "available_gib": 104.371, "used_gib": 18.452, "dstate": []}
+{"time": "2026-09-28T22:58:50-0400", "stage": "loading", "available_gib": 104.323, "used_gib": 18.501, "dstate": []}
+{"time": "2026-09-28T22:58:52-0400", "stage": "loading", "available_gib": 104.278, "used_gib": 18.546, "dstate": []}
+{"time": "2026-09-28T22:58:54-0400", "stage": "loading", "available_gib": 104.751, "used_gib": 18.073, "dstate": []}
+{"time": "2026-09-28T22:58:56-0400", "stage": "loading", "available_gib": 104.293, "used_gib": 18.531, "dstate": []}
+{"time": "2026-09-28T22:58:58-0400", "stage": "loading", "available_gib": 104.241, "used_gib": 18.583, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:00-0400", "stage": "loading", "available_gib": 104.135, "used_gib": 18.689, "dstate": []}
+{"time": "2026-09-28T22:59:02-0400", "stage": "loading", "available_gib": 103.994, "used_gib": 18.83, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "2971151", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:04-0400", "stage": "loading", "available_gib": 103.983, "used_gib": 18.84, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:06-0400", "stage": "loading", "available_gib": 103.822, "used_gib": 19.002, "dstate": []}
+{"time": "2026-09-28T22:59:09-0400", "stage": "loading", "available_gib": 97.864, "used_gib": 24.96, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:11-0400", "stage": "loading", "available_gib": 95.097, "used_gib": 27.727, "dstate": []}
+{"time": "2026-09-28T22:59:13-0400", "stage": "loading", "available_gib": 98.52, "used_gib": 24.304, "dstate": []}
+{"time": "2026-09-28T22:59:15-0400", "stage": "loading", "available_gib": 95.368, "used_gib": 27.456, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2971151", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:17-0400", "stage": "loading", "available_gib": 95.164, "used_gib": 27.66, "dstate": []}
+{"time": "2026-09-28T22:59:19-0400", "stage": "loading", "available_gib": 94.718, "used_gib": 28.106, "dstate": [{"pid": "3110127", "comm": "runc", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:21-0400", "stage": "loading", "available_gib": 94.722, "used_gib": 28.102, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:23-0400", "stage": "loading", "available_gib": 94.673, "used_gib": 28.151, "dstate": []}
+{"time": "2026-09-28T22:59:25-0400", "stage": "loading", "available_gib": 94.681, "used_gib": 28.143, "dstate": []}
+{"time": "2026-09-28T22:59:27-0400", "stage": "loading", "available_gib": 94.401, "used_gib": 28.423, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2971151", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:29-0400", "stage": "loading", "available_gib": 94.34, "used_gib": 28.484, "dstate": []}
+{"time": "2026-09-28T22:59:31-0400", "stage": "loading", "available_gib": 94.321, "used_gib": 28.502, "dstate": []}
+{"time": "2026-09-28T22:59:33-0400", "stage": "loading", "available_gib": 94.233, "used_gib": 28.591, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:35-0400", "stage": "loading", "available_gib": 94.36, "used_gib": 28.464, "dstate": []}
+{"time": "2026-09-28T22:59:37-0400", "stage": "loading", "available_gib": 94.388, "used_gib": 28.436, "dstate": []}
+{"time": "2026-09-28T22:59:39-0400", "stage": "loading", "available_gib": 94.359, "used_gib": 28.465, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}, {"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}, {"pid": "3057545", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:41-0400", "stage": "loading", "available_gib": 94.332, "used_gib": 28.491, "dstate": []}
+{"time": "2026-09-28T22:59:43-0400", "stage": "loading", "available_gib": 94.408, "used_gib": 28.416, "dstate": []}
+{"time": "2026-09-28T22:59:46-0400", "stage": "loading", "available_gib": 94.438, "used_gib": 28.386, "dstate": []}
+{"time": "2026-09-28T22:59:48-0400", "stage": "loading", "available_gib": 94.482, "used_gib": 28.342, "dstate": [{"pid": "3057545", "comm": "kworker/4:0+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:50-0400", "stage": "loading", "available_gib": 94.516, "used_gib": 28.308, "dstate": []}
+{"time": "2026-09-28T22:59:52-0400", "stage": "loading", "available_gib": 94.455, "used_gib": 28.369, "dstate": []}
+{"time": "2026-09-28T22:59:54-0400", "stage": "loading", "available_gib": 94.473, "used_gib": 28.351, "dstate": [{"pid": "2241416", "comm": "kworker/4:2+events", "wchan": "0"}]}
+{"time": "2026-09-28T22:59:56-0400", "stage": "loading", "available_gib": 94.499, "used_gib": 28.324, "dstate": []}
+{"time": "2026-09-28T22:59:58-0400", "stage": "loading", "available_gib": 94.457, "used_gib": 28.367, "dstate": []}
+{"time": "2026-09-28T23:00:00-0400", "stage": "loading", "available_gib": 94.46, "used_gib": 28.364, "dstate": [{"pid": "2088572", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-28T23:00:00-0400", "stage": "ready-settled", "available_gib": 94.456, "used_gib": 28.368, "dstate": []}

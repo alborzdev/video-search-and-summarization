@@ -251,7 +251,7 @@ export const LiveStreamModal: React.FC<LiveStreamModalProps> = ({ isOpen, stream
             <h4 id="live-stream-modal-title" className="text-lg font-semibold">
               {title}
             </h4>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Live camera</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">RTSP video preview</p>
           </div>
           <button
             type="button"

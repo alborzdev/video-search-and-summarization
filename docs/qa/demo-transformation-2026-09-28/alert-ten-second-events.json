@@ -1,0 +1,90 @@
+[
+  {
+    "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+    "info": {
+      "requestedModel": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "verdict": "confirmed",
+      "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "alertCategory": "box_presence_cadence_qualification",
+      "requestId": "00036a65-ad7e-4fbc-8fb3-9456a6405a01",
+      "triggerPhrase": "yes",
+      "streamId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+      "chunkIdx": "7",
+      "systemPrompt": "Answer yes or no",
+      "alertRuleId": "a82abc1e-5bd6-434b-ab94-b5ebcda403e1"
+    },
+    "objectIds": [
+      "6776f3a6-446f-4da8-832e-cfcf4507de8c"
+    ],
+    "timestamp": "2026-09-29T01:24:19.513Z",
+    "end": "2026-09-29T01:24:27.013Z",
+    "Id": "e360d70b1481cfca74f5d0c17fbb95492fbbd541"
+  },
+  {
+    "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+    "info": {
+      "requestedModel": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "verdict": "confirmed",
+      "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "alertCategory": "box_presence_cadence_qualification",
+      "requestId": "00036a65-ad7e-4fbc-8fb3-9456a6405a01",
+      "triggerPhrase": "yes",
+      "streamId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+      "chunkIdx": "5",
+      "systemPrompt": "Answer yes or no",
+      "alertRuleId": "a82abc1e-5bd6-434b-ab94-b5ebcda403e1"
+    },
+    "objectIds": [
+      "6776f3a6-446f-4da8-832e-cfcf4507de8c"
+    ],
+    "timestamp": "2026-09-29T01:23:59.513Z",
+    "end": "2026-09-29T01:24:07.046Z",
+    "Id": "b1cf168f982fe8512dabf1ec8f7aa0d228baf68e"
+  },
+  {
+    "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+    "info": {
+      "requestedModel": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "verdict": "confirmed",
+      "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "alertCategory": "box_presence_cadence_qualification",
+      "requestId": "00036a65-ad7e-4fbc-8fb3-9456a6405a01",
+      "triggerPhrase": "yes",
+      "streamId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+      "chunkIdx": "3",
+      "systemPrompt": "Answer yes or no",
+      "alertRuleId": "a82abc1e-5bd6-434b-ab94-b5ebcda403e1"
+    },
+    "objectIds": [
+      "6776f3a6-446f-4da8-832e-cfcf4507de8c"
+    ],
+    "timestamp": "2026-09-29T01:23:39.513Z",
+    "end": "2026-09-29T01:23:47.013Z",
+    "Id": "b96ef26dfa9afbdb74650c9321192b801ca3f0cb"
+  },
+  {
+    "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+    "info": {
+      "requestedModel": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "verdict": "confirmed",
+      "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "alertCategory": "box_presence_cadence_qualification",
+      "requestId": "00036a65-ad7e-4fbc-8fb3-9456a6405a01",
+      "triggerPhrase": "yes",
+      "streamId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+      "chunkIdx": "1",
+      "systemPrompt": "Answer yes or no",
+      "alertRuleId": "a82abc1e-5bd6-434b-ab94-b5ebcda403e1"
+    },
+    "objectIds": [
+      "6776f3a6-446f-4da8-832e-cfcf4507de8c"
+    ],
+    "timestamp": "2026-09-29T01:23:19.513Z",
+    "end": "2026-09-29T01:23:27.046Z",
+    "Id": "f9a054aa3dc4401ad43fee6a0194c82dd78580b7"
+  }
+]

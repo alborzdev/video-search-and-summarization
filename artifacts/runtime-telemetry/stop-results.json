@@ -1,0 +1,34 @@
+[
+  {
+    "name": "vss-agent",
+    "code": 0
+  },
+  {
+    "name": "vss-vios-nvstreamer",
+    "code": 0
+  },
+  {
+    "name": "vss-memory-embed",
+    "code": 0
+  },
+  {
+    "name": "vss-memory-cosmos",
+    "code": 0
+  },
+  {
+    "name": "vss-memory-nemotron",
+    "code": 0
+  },
+  {
+    "name": "vss-rtvi-cv",
+    "code": 0
+  },
+  {
+    "name": "vss-rtvi-cv-traffic",
+    "code": 0
+  },
+  {
+    "name": "vss-lvs",
+    "code": 0
+  }
+]

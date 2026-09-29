@@ -96,6 +96,17 @@ describe('source intelligence API', () => {
     expect(harness.state.body).toEqual({ error: 'Source intelligence data is unavailable.' });
   });
 
+  it('accepts a readable Unicode source name as literal query data', async () => {
+    const name = 'Conveyor — Recorded Simulation (RTSP Replay)';
+    global.fetch = jest.fn(async () => jsonResponse({count:0,hits:{hits:[],total:{value:0}}}));
+    const harness = responseHarness();
+    await handler({method:'GET',query:{name,sensorId:'camera-1'}} as unknown as NextApiRequest,harness.response);
+    expect(harness.state.statusCode).toBe(200);
+    expect(harness.state.body.source).toEqual({name,sensorId:'camera-1'});
+    const requests = (global.fetch as jest.Mock).mock.calls.map(([,options])=>JSON.parse(options.body));
+    expect(requests.some(body=>JSON.stringify(body).includes(name))).toBe(true);
+  });
+
   it('rejects malformed source input without querying Elasticsearch', async () => {
     global.fetch = jest.fn();
     const harness = responseHarness();

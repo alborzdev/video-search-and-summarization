@@ -73,6 +73,7 @@ describe("AddRtspDialog accessibility", () => {
     expect(usernameInput).toHaveAttribute("autocomplete", "username");
     expect(passwordInput).toHaveAttribute("type", "password");
     expect(passwordInput).toHaveAttribute("autocomplete", "current-password");
+    fireEvent.click(screen.getByRole("checkbox", { name: /Start AI analysis/ }));
     await screen.findByRole("radio", { name: /Semantic search/i });
   });
 
@@ -103,9 +104,10 @@ describe("AddRtspDialog accessibility", () => {
       />
     );
 
+    fireEvent.click(screen.getByRole("checkbox", { name: /Start AI analysis/ }));
     expect(await screen.findByRole("radio", { name: /Semantic search/i })).toBeChecked();
     fireEvent.click(
-      screen.getByRole("radio", { name: /Warehouse safety/i })
+      screen.getByRole("radio", { name: /Track warehouse activity/i })
     );
     fireEvent.change(screen.getByLabelText(/RTSP URL/), {
       target: { value: "rtsp://camera.test/main" },
@@ -113,7 +115,7 @@ describe("AddRtspDialog accessibility", () => {
     fireEvent.change(screen.getByLabelText(/Sensor Name/), {
       target: { value: "Warehouse Main" },
     });
-    fireEvent.click(screen.getByRole("button", { name: "Connect camera" }));
+    fireEvent.click(screen.getByRole("button", { name: "Connect and analyze" }));
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(JSON.parse(String(fetchMock.mock.calls[1][1].body))).toEqual(
@@ -124,4 +126,19 @@ describe("AddRtspDialog accessibility", () => {
       })
     );
   });
+});
+
+
+it("connects preview without loading profiles or requesting monitoring setup", async () => {
+  const onSuccess = jest.fn();
+  global.fetch = jest.fn().mockResolvedValue({ok: true, json: async () => ({status: "success", sensorId: "preview", name: "Replay", analysisProfileId: "semantic-search", analysisPaused: true})});
+  render(<AddRtspDialog isOpen agentApiUrl="http://thor.test/api/v1" onClose={jest.fn()} onSuccess={onSuccess} />);
+  expect(screen.getByRole("checkbox", {name: /Start AI analysis/})).not.toBeChecked();
+  expect(global.fetch).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText(/RTSP URL/), {target:{value:"rtsp://source/replay"}});
+  fireEvent.change(screen.getByLabelText(/Sensor Name/), {target:{value:"Replay"}});
+  fireEvent.click(screen.getByRole("button", {name:"Connect preview only"}));
+  await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+  expect(global.fetch).toHaveBeenCalledTimes(1);
+  expect(JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body)).toEqual(expect.objectContaining({startAnalysis:false,analysisProfileId:"semantic-search"}));
 });

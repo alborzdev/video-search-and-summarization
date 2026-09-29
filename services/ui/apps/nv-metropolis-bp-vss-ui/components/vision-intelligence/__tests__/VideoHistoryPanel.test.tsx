@@ -277,3 +277,14 @@ describe("VideoHistoryPanel", () => {
     ).toHaveLength(2);
   });
 });
+
+it("shows a structured capacity rejection instead of polling a nonexistent build", async () => {
+  const fetchMock = jest.fn(async (_input: RequestInfo | URL, init?: RequestInit) => init?.method === "POST"
+    ? { ok: false, status: 503, json: async () => ({ code: "TELEMETRY_REQUIRED", error: "History needs fresh device telemetry before it can start." }) }
+    : { ok: true, json: async () => null });
+  global.fetch = fetchMock as jest.Mock;
+  render(<VideoHistoryPanel onClose={jest.fn()} onInvestigate={jest.fn()} stream={stream} />);
+  fireEvent.click(await screen.findByRole("button", { name: "Build searchable history" }));
+  expect(await screen.findByText("History needs fresh device telemetry before it can start.")).toBeInTheDocument();
+  expect(fetchMock).toHaveBeenCalledTimes(2);
+});

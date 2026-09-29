@@ -1,0 +1,24 @@
+{
+  "cv": {
+    "reason": "GET_LIVE_STREAM_INFO_SUCCESS",
+    "status": "HTTP/1.1 200 OK",
+    "stream-info": {
+      "stream-count": 0,
+      "stream-info": []
+    }
+  },
+  "traffic": {
+    "reason": "GET_LIVE_STREAM_INFO_SUCCESS",
+    "status": "HTTP/1.1 200 OK",
+    "stream-info": {
+      "stream-count": 0,
+      "stream-info": []
+    }
+  },
+  "embed": [],
+  "vlm": [],
+  "files": {
+    "data": [],
+    "object": "list"
+  }
+}

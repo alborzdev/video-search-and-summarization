@@ -1,0 +1,537 @@
+{
+  "name": "thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5",
+  "add": {
+    "status": "success",
+    "message": "Stream 'thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5' added successfully",
+    "sensorId": "fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+    "name": "thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5",
+    "detectionEnabled": true,
+    "analysisProfileId": "warehouse-safety"
+  },
+  "cv": {
+    "reason": "GET_LIVE_STREAM_INFO_SUCCESS",
+    "status": "HTTP/1.1 200 OK",
+    "stream-info": {
+      "stream-count": 1,
+      "stream-info": [
+        {
+          "camera_id": "fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+          "camera_name": "thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5",
+          "source_id": 0
+        }
+      ]
+    }
+  },
+  "embed": [
+    {
+      "id": "fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+      "liveStreamUrl": "rtsp://10.88.8.175:30554/live/fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+      "description": "VST live stream",
+      "chunk_duration": 5,
+      "chunk_overlap_duration": 0,
+      "place_name": "",
+      "place_type": "",
+      "place_lat": null,
+      "place_lon": null,
+      "place_alt": null,
+      "place_coordinate_x": null,
+      "place_coordinate_y": null
+    }
+  ],
+  "vlm": [
+    {
+      "id": "fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+      "liveStreamUrl": "rtsp://10.88.8.175:30554/live/fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+      "description": "thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5",
+      "chunk_duration": 0,
+      "chunk_overlap_duration": 0,
+      "place_name": "",
+      "place_type": "",
+      "place_lat": null,
+      "place_lon": null,
+      "place_alt": null,
+      "place_coordinate_x": null,
+      "place_coordinate_y": null
+    }
+  ],
+  "caption_events": [
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:53:25.126Z",
+        "end_timestamp": "2026-09-09T16:53:25.126Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 0,
+          "start_time": "2026-09-09T16:53:25.126Z",
+          "end_time": "2026-09-09T16:53:25.126Z",
+          "content": "The worker, standing on a green rolling step ladder positioned between aisles D and E, reaches up with their right hand to pick or place an item on shelf E. Their posture is slightly leaning forward for balance while reaching.",
+          "decode_latency_ms": 14.659,
+          "vlm_latency_ms": 8269.466,
+          "chunk_latency_ms": 8288.779,
+          "processing_latency_s": 8.289,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 46
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:53:30.126Z",
+        "end_timestamp": "2026-09-09T16:53:30.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 1,
+          "start_time": "2026-09-09T16:53:30.126Z",
+          "end_time": "2026-09-09T16:53:30.225Z",
+          "content": "The worker on the lift platform is placing a box onto the top shelf labeled 'E'.",
+          "decode_latency_ms": 6.891,
+          "vlm_latency_ms": 2194.285,
+          "chunk_latency_ms": 5382.018,
+          "processing_latency_s": 5.382,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 19
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:53:35.126Z",
+        "end_timestamp": "2026-09-09T16:53:35.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 2,
+          "start_time": "2026-09-09T16:53:35.126Z",
+          "end_time": "2026-09-09T16:53:35.225Z",
+          "content": "The worker reaches up to a shelf, appearing to retrieve or place an item.",
+          "decode_latency_ms": 9.958,
+          "vlm_latency_ms": 1718.803,
+          "chunk_latency_ms": 2105.761,
+          "processing_latency_s": 2.106,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 17
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:53:40.126Z",
+        "end_timestamp": "2026-09-09T16:53:40.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 3,
+          "start_time": "2026-09-09T16:53:40.126Z",
+          "end_time": "2026-09-09T16:53:40.225Z",
+          "content": "The worker wearing a yellow safety vest and helmet is climbing down from a green step ladder positioned in front of shelf 'E'.",
+          "decode_latency_ms": 1.459,
+          "vlm_latency_ms": 2554.319,
+          "chunk_latency_ms": 2559.813,
+          "processing_latency_s": 2.56,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 26
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:53:45.126Z",
+        "end_timestamp": "2026-09-09T16:53:45.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 4,
+          "start_time": "2026-09-09T16:53:45.126Z",
+          "end_time": "2026-09-09T16:53:45.225Z",
+          "content": "The worker is walking away from the camera down an aisle between two rows of storage racks labeled 'D' and 'E', approaching a set of stairs in the distance.",
+          "decode_latency_ms": 1.378,
+          "vlm_latency_ms": 3339.348,
+          "chunk_latency_ms": 3343.381,
+          "processing_latency_s": 3.343,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 35
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:53:50.126Z",
+        "end_timestamp": "2026-09-09T16:53:50.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 5,
+          "start_time": "2026-09-09T16:53:50.126Z",
+          "end_time": "2026-09-09T16:53:50.225Z",
+          "content": "The worker stands on a mobile step ladder, using both hands to pick up an item from shelf 'E' in the warehouse.",
+          "decode_latency_ms": 1.312,
+          "vlm_latency_ms": 2622.645,
+          "chunk_latency_ms": 2629.031,
+          "processing_latency_s": 2.629,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 27
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:53:55.126Z",
+        "end_timestamp": "2026-09-09T16:53:55.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 6,
+          "start_time": "2026-09-09T16:53:55.126Z",
+          "end_time": "2026-09-09T16:53:55.225Z",
+          "content": "A warehouse worker in a yellow safety vest and hard hat is standing on an elevated green platform, reaching to place or retrieve items from shelf E.",
+          "decode_latency_ms": 6.367,
+          "vlm_latency_ms": 2961.583,
+          "chunk_latency_ms": 2971.691,
+          "processing_latency_s": 2.972,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 30
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:00.126Z",
+        "end_timestamp": "2026-09-09T16:54:00.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 7,
+          "start_time": "2026-09-09T16:54:00.126Z",
+          "end_time": "2026-09-09T16:54:00.225Z",
+          "content": "The worker places a box on the top shelf of rack E, then adjusts its position for stability.",
+          "decode_latency_ms": 1.337,
+          "vlm_latency_ms": 2088.746,
+          "chunk_latency_ms": 2092.822,
+          "processing_latency_s": 2.093,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 21
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:05.126Z",
+        "end_timestamp": "2026-09-09T16:54:05.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 8,
+          "start_time": "2026-09-09T16:54:05.126Z",
+          "end_time": "2026-09-09T16:54:05.225Z",
+          "content": "A person wearing a yellow hard hat and high visibility vest is climbing on to the green forklift step ladder",
+          "decode_latency_ms": 6.917,
+          "vlm_latency_ms": 4886.869,
+          "chunk_latency_ms": 4899.095,
+          "processing_latency_s": 4.899,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 23
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:10.126Z",
+        "end_timestamp": "2026-09-09T16:54:10.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 9,
+          "start_time": "2026-09-09T16:54:10.126Z",
+          "end_time": "2026-09-09T16:54:10.225Z",
+          "content": "The worker in a yellow safety vest and helmet walks away from the camera down an aisle between tall metal shelving units labeled C, D, E, and F. They move steadily toward the back of the warehouse.",
+          "decode_latency_ms": 10.905,
+          "vlm_latency_ms": 7139.342,
+          "chunk_latency_ms": 7161.095,
+          "processing_latency_s": 7.161,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 44
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:15.126Z",
+        "end_timestamp": "2026-09-09T16:54:15.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 10,
+          "start_time": "2026-09-09T16:54:15.126Z",
+          "end_time": "2026-09-09T16:54:15.225Z",
+          "content": "The worker stands on a mobile step ladder, holding a device in one hand while reaching toward the upper shelves with the other.",
+          "decode_latency_ms": 6.39,
+          "vlm_latency_ms": 2838.985,
+          "chunk_latency_ms": 5001.158,
+          "processing_latency_s": 5.001,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 26
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:20.126Z",
+        "end_timestamp": "2026-09-09T16:54:20.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 11,
+          "start_time": "2026-09-09T16:54:20.126Z",
+          "end_time": "2026-09-09T16:54:20.225Z",
+          "content": "A worker wearing a yellow safety vest and hard hat is standing on an elevated platform, reaching up to retrieve or place a box on a high shelf in aisle E.",
+          "decode_latency_ms": 1.235,
+          "vlm_latency_ms": 3244.459,
+          "chunk_latency_ms": 3251.975,
+          "processing_latency_s": 3.252,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 34
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:25.126Z",
+        "end_timestamp": "2026-09-09T16:54:25.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 12,
+          "start_time": "2026-09-09T16:54:25.126Z",
+          "end_time": "2026-09-09T16:54:25.225Z",
+          "content": "The worker, wearing a yellow safety vest and helmet, stands on a green rolling ladder to reach high shelves in aisle E, reaching out with their right hand to adjust or retrieve an item among the boxes.",
+          "decode_latency_ms": 2.316,
+          "vlm_latency_ms": 4023.158,
+          "chunk_latency_ms": 4031.31,
+          "processing_latency_s": 4.031,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 42
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:30.126Z",
+        "end_timestamp": "2026-09-09T16:54:30.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 13,
+          "start_time": "2026-09-09T16:54:30.126Z",
+          "end_time": "2026-09-09T16:54:30.225Z",
+          "content": "The worker is descending a green rolling step ladder in an aisle between storage racks, wearing a yellow safety vest and hard hat.",
+          "decode_latency_ms": 1.312,
+          "vlm_latency_ms": 2500.308,
+          "chunk_latency_ms": 2503.919,
+          "processing_latency_s": 2.504,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 26
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:35.126Z",
+        "end_timestamp": "2026-09-09T16:54:35.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 14,
+          "start_time": "2026-09-09T16:54:35.126Z",
+          "end_time": "2026-09-09T16:54:35.225Z",
+          "content": "The worker is walking forward toward aisle D, away from the camera, in a warehouse setting.",
+          "decode_latency_ms": 1.828,
+          "vlm_latency_ms": 2068.663,
+          "chunk_latency_ms": 2072.713,
+          "processing_latency_s": 2.073,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 20
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:40.126Z",
+        "end_timestamp": "2026-09-09T16:54:40.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 15,
+          "start_time": "2026-09-09T16:54:40.126Z",
+          "end_time": "2026-09-09T16:54:40.225Z",
+          "content": "The worker stands on a green step ladder positioned between aisles E and F, reaching up to retrieve or place items on an upper shelf. He wears a high-visibility vest and yellow hard hat while performing this task.",
+          "decode_latency_ms": 1.257,
+          "vlm_latency_ms": 4259.291,
+          "chunk_latency_ms": 4265.516,
+          "processing_latency_s": 4.266,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 45
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:45.126Z",
+        "end_timestamp": "2026-09-09T16:54:45.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 16,
+          "start_time": "2026-09-09T16:54:45.126Z",
+          "end_time": "2026-09-09T16:54:45.225Z",
+          "content": "A person in a yellow vest is standing on a step ladder, reaching up to adjust or place an item on the top shelf labeled 'E'.",
+          "decode_latency_ms": 1.351,
+          "vlm_latency_ms": 2893.455,
+          "chunk_latency_ms": 2897.517,
+          "processing_latency_s": 2.898,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 30
+        }
+      ],
+      "usage": null
+    },
+    {
+      "id": "69070308-30a5-4612-9092-2d3edbfa21e3",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "created": 1788972804,
+      "media_info": {
+        "type": "timestamp",
+        "start_timestamp": "2026-09-09T16:54:50.126Z",
+        "end_timestamp": "2026-09-09T16:54:50.225Z"
+      },
+      "chunk_responses": [
+        {
+          "chunk_id": 17,
+          "start_time": "2026-09-09T16:54:50.126Z",
+          "end_time": "2026-09-09T16:54:50.225Z",
+          "content": "The warehouse worker wearing a yellow hard hat and high visibility vest, stands on a two-step platform ladder, placing a package into a stack of boxes on shelf E.",
+          "decode_latency_ms": 1.793,
+          "vlm_latency_ms": 3273.741,
+          "chunk_latency_ms": 3280.877,
+          "processing_latency_s": 3.281,
+          "frame_count": 1,
+          "input_tokens": 247,
+          "output_tokens": 34
+        }
+      ],
+      "usage": null
+    }
+  ],
+  "overlapping_agent": {
+    "value": "\n\n<agent-think><agent-think-step title=\"1 - Thought\">Plan:   1. Call `vst_video_list` to retrieve the list of available media (uploaded videos and live streams) from VST.</agent-think-step>\n<agent-think-step title=\"2 - Tool Call\">Tool: vst_video_list Args: {} Result: video_list=[{'name': 'IsaacSim_CamNW', 'media_type': 'rtsp', 'duration': 0.0}, {'name': 'IsaacSim_camNE', 'media_type': 'rtsp', 'duration': 0.0}, {'name': 'IsaacSim_camSW', 'media_type': 'rtsp', 'duration': 0.0}, {'name': 'sample-sim-jaywalking.mp4', 'media_type': 'rtsp', 'duration': 24877.37}, {'name': 'thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5', 'media_type': 'rtsp', 'duration': 31.432}, {'name': 'IsaacSim_camSE', 'media_type': 'rtsp', 'duration': 0.0}]</agent-think-step>\n<agent-think-step title=\"3 - Thought\">Updated Plan:  [ ] Call `vst_video_list` to retrieve the list of available media (uploaded videos and live streams) from V T.  --- ### Latest Tool Results `vst_video_list` result: video_list=[{'name': 'IsaacSim_CamNW', 'media_type': 'rtsp', 'duration': 0.0}, {'name': 'IsaacSim_camNE', 'media_type': 'rtsp', 'duration': 0.0}, {'name': 'IsaacSim_camSW', 'media_type': 'rtsp', 'duration': 0.0}, {'name': 'sample-sim-jaywalking.mp4', 'media_type': 'rtsp', 'duration': 24877.37}, {'name': 'thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5', 'media_type': 'rtsp', 'duration': 31.432}, {'name': 'IsaacSim_camSE', 'media_type': 'rtsp', 'duration': 0.0}]</agent-think-step></agent-think>\n\nThe available video names are: IsaacSim_CamNW, IsaacSim_camNE, IsaacSim_camSW, sample-sim-jaywalking.mp4, thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5, IsaacSim_camSE.\n\n"
+  },
+  "cleanup": {
+    "status": "success",
+    "message": "Stream 'thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5' deleted successfully",
+    "name": "thor-memory-live-2915124c-7a51-4bd5-8f9e-e5c9ec0485e5",
+    "sensorId": "fc1193bb-c6b4-491a-af34-d1daa87ce51b",
+    "generatedDataDeleted": 977
+  }
+}

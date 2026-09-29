@@ -1,0 +1,152 @@
+[
+  {
+    "id": "85b78cdc-6001-4546-8186-a31a9ff8e51b",
+    "repeat": 0,
+    "upload": {
+      "id": "85b78cdc-6001-4546-8186-a31a9ff8e51b",
+      "bytes": 6313542,
+      "filename": "thor-memory-85b78cdc-6001-4546-8186-a31a9ff8e51b.mp4",
+      "purpose": "vision",
+      "creation_time": null,
+      "sensor_name": "thor-memory-85b78cdc-6001-4546-8186-a31a9ff8e51b",
+      "media_type": "video"
+    },
+    "summary": {
+      "id": "d181747a-dcf5-4251-895d-99405c6c883a",
+      "video_id": "85b78cdc-6001-4546-8186-a31a9ff8e51b",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "{\"video_summary\": \"**Overall Summary:**  \\nA single warehouse worker performs a series of visible actions involving the retrieval and placement of items between aisles D and E, using various elevated platforms, ladders, and step stools. The worker consistently wears yellow safety gear (vest and hard hat), with a green safety vest and yellow helmet at different points. The actions span from 0.0 to 25.0 seconds, with the worker moving between aisles, reaching for items on high shelves, and placing boxes onto shelf E. The sequence includes stepping down from a metal platform, using a green rolling scaffold, and retrieving items from shelf E on the right side of aisle C-D-E-F.\", \"events\": [{\"start_time\": 0.0, \"end_time\": 25.0, \"description\": \"A person wearing a high-visibility yellow vest and a yellow hard hat walks down aisle D of a warehouse, approaching an electric pallet jack placed between aisles D and E. A person wearing a yellow safety vest is standing behind a ladder, reaching for an item among boxes on top of shelf E. A person wearing a yellow helmet and a green safety vest is standing on a metal platform, placing boxes onto shelf E using both hands, while a pair of blue boots with white soles can be seen stepping down from the top step of the platform. A person wearing a yellow safety vest and a yellow hard hat stands on a green rolling scaffold positioned between two aisles of storage racks labeled 'D' and 'E'. The individual is actively reaching towards a high shelf with their right arm, appearing to retrieve or place an item among stacked boxes. A person wearing a yellow safety helmet and vest stands on a green step stool, reaching up to retrieve an item from shelf 'E' on the right side of the aisle labeled 'C-D-E-F'.\", \"type\": \"visible actions by the warehouse worker\"}]}",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1788972591,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "media_info": {
+        "type": "offset",
+        "start_offset": null,
+        "end_offset": null
+      },
+      "object": "summarization.completion",
+      "usage": {
+        "query_processing_time": 60,
+        "total_chunks_processed": 5,
+        "summary_tokens": 1253,
+        "aggregation_tokens": 586,
+        "summary_requests": 1,
+        "summary_latency": 48.28304600715637,
+        "aggregation_latency": 4.856522083282471
+      }
+    },
+    "seconds": 60.356537297018804,
+    "cleanup": {
+      "id": "85b78cdc-6001-4546-8186-a31a9ff8e51b",
+      "object": "file",
+      "deleted": true
+    }
+  },
+  {
+    "id": "f10318ec-1c87-4ab9-b97f-8dcab806c7d1",
+    "repeat": 1,
+    "upload": {
+      "id": "f10318ec-1c87-4ab9-b97f-8dcab806c7d1",
+      "bytes": 6313542,
+      "filename": "thor-memory-f10318ec-1c87-4ab9-b97f-8dcab806c7d1.mp4",
+      "purpose": "vision",
+      "creation_time": null,
+      "sensor_name": "thor-memory-f10318ec-1c87-4ab9-b97f-8dcab806c7d1",
+      "media_type": "video"
+    },
+    "summary": {
+      "id": "8a91cf7a-cc77-482f-a07c-6b2711e9f5c6",
+      "video_id": "f10318ec-1c87-4ab9-b97f-8dcab806c7d1",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "{\"video_summary\": \"The warehouse worker performs a sequence of visible actions involving the handling and movement of cardboard boxes on a green scissor lift platform. Starting at time 0.0, the worker in a yellow safety vest and hard hat walks down an aisle between tall green metal shelving racks filled with stacked cardboard boxes labeled D, C, E, and F. At 5.0, the worker pulls out a cardboard box using a green hydraulic stand from an aisle with empty pallets. From 10.0 to 15.0, the worker picks up a brown box from the top shelf and places it onto a lower shelf. Between 15.0 and 20.0, the worker places the box onto the shelf using his arms while standing on the green hydraulic lift. At 20.0, the worker moves down from a green rolling ladder and steps onto the fifth step. The entire sequence involves coordinated lifting, placement, and movement of boxes, with the worker consistently wearing safety gear including a yellow safety vest, hard hat, and gloves.\", \"events\": [{\"start_time\": 0.0, \"end_time\": 25.0, \"description\": \"A worker wearing a yellow safety vest and hard hat walks away from the camera down an aisle between tall green metal shelving racks filled with stacked cardboard boxes labeled D, C, E, F. A person wearing a hi-vis vest and hard hat stands in front of an aisle containing empty pallets and pulls out a cardboard box using a green hydraulic stand. A worker wearing a yellow hard hat and high-visibility vest stands on a green scissor lift platform and picks up a brown box from the top shelf, then places it onto another shelf below. The worker in a yellow shirt and black pants, wearing a green safety vest and yellow hard hat, places a box onto the shelf using his arms while standing on the green hydraulic lift. A worker wearing a yellow safety vest, helmet, black shirt, blue jeans, and gloves moves down from the green rolling ladder and steps onto the fifth step.\", \"type\": \"visible actions by the warehouse worker\"}]}",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1788972662,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "media_info": {
+        "type": "offset",
+        "start_offset": null,
+        "end_offset": null
+      },
+      "object": "summarization.completion",
+      "usage": {
+        "query_processing_time": 60,
+        "total_chunks_processed": 5,
+        "summary_tokens": 1239,
+        "aggregation_tokens": 625,
+        "summary_requests": 1,
+        "summary_latency": 44.51712203025818,
+        "aggregation_latency": 7.740884780883789
+      }
+    },
+    "seconds": 60.094179239007644,
+    "cleanup": {
+      "id": "f10318ec-1c87-4ab9-b97f-8dcab806c7d1",
+      "object": "file",
+      "deleted": true
+    }
+  },
+  {
+    "id": "bccf7960-668e-4631-a34e-dc525b920ce5",
+    "repeat": 2,
+    "upload": {
+      "id": "bccf7960-668e-4631-a34e-dc525b920ce5",
+      "bytes": 6313542,
+      "filename": "thor-memory-bccf7960-668e-4631-a34e-dc525b920ce5.mp4",
+      "purpose": "vision",
+      "creation_time": null,
+      "sensor_name": "thor-memory-bccf7960-668e-4631-a34e-dc525b920ce5",
+      "media_type": "video"
+    },
+    "summary": {
+      "id": "6ce804f8-510d-4aa2-b708-d6a5c6399396",
+      "video_id": "bccf7960-668e-4631-a34e-dc525b920ce5",
+      "choices": [
+        {
+          "finish_reason": "stop",
+          "index": 0,
+          "message": {
+            "content": "{\"video_summary\": \"The warehouse worker activities in this batch involve a series of visible actions related to handling and adjusting packages on high shelves. The worker begins by walking along an aisle of boxes, then carries an item to their shoulder. They later stand on a green step stool, reach up, and place an object onto high shelves while using railings for support. The worker continues on green mobile stairs to adjust or place a package on a high shelf labeled 'E'. Finally, the worker steps out of a metal rolling step ladder, walks forward on the gray floor, and holds onto an item on the 'E' shelf. All actions are performed by a single warehouse worker wearing yellow safety vests, hard hats, and gloves, and involve careful handling of items on high shelves.\", \"events\": [{\"start_time\": 0.0, \"end_time\": 25.0, \"description\": \"A person wearing a yellow vest walks along an aisle of boxes surrounded by storage shelves. A person dressed in dark clothing with a neon safety vest walks on the side of the aisle between shelf columns E and F, carrying something to their right shoulder. Another person dressed in dark clothing and wearing a yellow construction hard hat is standing on green step stool, reaching up and placing an object onto high shelves above them, while holding onto railings for support. A worker wearing a yellow safety vest and hard hat stands on green mobile stairs, reaching up to place or adjust a package on a high shelf labeled 'E'. A person wearing a yellow safety vest, black pants, and gloves steps out of a metal rolling step ladder positioned between shelves and walks forward to the right on the gray floor while holding onto an item on top of a shelf labeled 'E'.\", \"type\": \"visible actions by the warehouse worker\"}]}",
+            "role": "assistant"
+          }
+        }
+      ],
+      "created": 1788972723,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "media_info": {
+        "type": "offset",
+        "start_offset": null,
+        "end_offset": null
+      },
+      "object": "summarization.completion",
+      "usage": {
+        "query_processing_time": 48,
+        "total_chunks_processed": 5,
+        "summary_tokens": 1111,
+        "aggregation_tokens": 554,
+        "summary_requests": 1,
+        "summary_latency": 41.26767444610596,
+        "aggregation_latency": 5.098123073577881
+      }
+    },
+    "seconds": 48.17728616797831,
+    "cleanup": {
+      "id": "bccf7960-668e-4631-a34e-dc525b920ce5",
+      "object": "file",
+      "deleted": true
+    }
+  }
+]

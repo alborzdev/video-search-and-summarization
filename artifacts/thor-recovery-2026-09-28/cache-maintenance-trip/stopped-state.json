@@ -1,0 +1,38 @@
+[
+  {
+    "name": "/vss-memory-cosmos",
+    "running": false,
+    "status": "exited",
+    "finished": "2026-09-29T00:21:07.084632903Z"
+  },
+  {
+    "name": "/vss-memory-nemotron",
+    "running": false,
+    "status": "exited",
+    "finished": "2026-09-29T00:21:07.726220195Z"
+  },
+  {
+    "name": "/vss-memory-embed",
+    "running": false,
+    "status": "exited",
+    "finished": "2026-09-29T00:21:07.485017558Z"
+  },
+  {
+    "name": "/vss-agent",
+    "running": false,
+    "status": "exited",
+    "finished": "2026-09-29T00:21:07.618959889Z"
+  },
+  {
+    "name": "/vss-lvs",
+    "running": false,
+    "status": "exited",
+    "finished": "2026-09-29T00:21:05.62388773Z"
+  },
+  {
+    "name": "/vss-vios-nvstreamer",
+    "running": false,
+    "status": "exited",
+    "finished": "2026-09-29T00:21:07.709769423Z"
+  }
+]

@@ -29,6 +29,7 @@ export function getStreamType(stream: StreamInfo): "rtsp" | "video" {
 export function getStreamDisplayName(name: string): string {
   if (!name) return "Unnamed source";
   const normalized = name.toLowerCase().replace(/\.[a-z0-9]+$/i, "");
+  if (normalized === "qa-recovery-20260928") return "Warehouse — Box Handling";
   if (normalized === "sample-sim-traffic") return "Traffic — Main Intersection";
   if (normalized === "sample-sim-jaywalking") return "Traffic — Pedestrian Crossing";
   if (normalized.includes("nvidia-warehouse-loading-dock")) return "Warehouse — Loading Dock";
@@ -275,6 +276,8 @@ class PictureFetchQueue {
       const response = await fetch(requestUrl);
       if (!response.ok)
         throw new Error(`Failed to fetch picture: ${response.status}`);
+      if (response.headers?.get("X-Vision-Image-Fallback"))
+        throw new Error("Source preview is unavailable");
       return response.blob();
     })
       .then((blob) => {
@@ -295,7 +298,7 @@ function proxyPictureUrl(url: string): string {
   if (typeof window === "undefined") return url;
   try {
     const target = new URL(url, window.location.href);
-    if (target.origin === window.location.origin) return target.toString();
+    if (!/\/v1\/(?:live|replay|storage)\/stream\/[^/]+\/picture$/.test(target.pathname)) return url;
     return `/api/vision/vst-image?path=${encodeURIComponent(
       `${target.pathname}${target.search}`
     )}`;

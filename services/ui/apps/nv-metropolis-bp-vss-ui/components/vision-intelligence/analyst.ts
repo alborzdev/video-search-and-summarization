@@ -37,6 +37,7 @@ export interface VisionAnalystResponse {
   generatedAt: string;
   grounded: true;
   observedRange?: VisionAnalystObservedRange;
+  observedWindow?: { startTime: string; endTime: string };
   query: string;
   scope: VisionAnalystRequest['scope'];
   sourceNames: string[];

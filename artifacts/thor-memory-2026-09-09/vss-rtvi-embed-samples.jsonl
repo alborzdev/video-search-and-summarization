@@ -1,0 +1,20 @@
+{"time": "2026-09-09T12:02:57-0400", "stage": "baseline", "available_gib": 108.095, "used_gib": 14.729, "dstate": [{"pid": "2059902", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "2094398", "comm": "kworker/u28:2+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:02:58-0400", "stage": "loading", "available_gib": 108.046, "used_gib": 14.778, "dstate": [{"pid": "2075518", "comm": "kworker/12:0+events", "wchan": "0"}, {"pid": "2094398", "comm": "kworker/u28:2+netns", "wchan": "0"}]}
+{"time": "2026-09-09T12:03:00-0400", "stage": "loading", "available_gib": 107.795, "used_gib": 15.029, "dstate": []}
+{"time": "2026-09-09T12:03:02-0400", "stage": "loading", "available_gib": 107.585, "used_gib": 15.239, "dstate": []}
+{"time": "2026-09-09T12:03:04-0400", "stage": "loading", "available_gib": 107.355, "used_gib": 15.469, "dstate": []}
+{"time": "2026-09-09T12:03:06-0400", "stage": "loading", "available_gib": 107.122, "used_gib": 15.702, "dstate": [{"pid": "1961937", "comm": "kworker/u28:1+devfreq_wq", "wchan": "0"}]}
+{"time": "2026-09-09T12:03:08-0400", "stage": "loading", "available_gib": 107.113, "used_gib": 15.711, "dstate": []}
+{"time": "2026-09-09T12:03:10-0400", "stage": "loading", "available_gib": 107.02, "used_gib": 15.804, "dstate": [{"pid": "2059902", "comm": "kworker/4:3+events", "wchan": "0"}, {"pid": "2075841", "comm": "kworker/4:1+events", "wchan": "0"}]}
+{"time": "2026-09-09T12:03:12-0400", "stage": "loading", "available_gib": 107.216, "used_gib": 15.608, "dstate": []}
+{"time": "2026-09-09T12:03:14-0400", "stage": "loading", "available_gib": 107.099, "used_gib": 15.724, "dstate": []}
+{"time": "2026-09-09T12:03:16-0400", "stage": "loading", "available_gib": 107.002, "used_gib": 15.822, "dstate": []}
+{"time": "2026-09-09T12:03:18-0400", "stage": "loading", "available_gib": 102.741, "used_gib": 20.083, "dstate": []}
+{"time": "2026-09-09T12:03:20-0400", "stage": "loading", "available_gib": 101.376, "used_gib": 21.448, "dstate": []}
+{"time": "2026-09-09T12:03:22-0400", "stage": "loading", "available_gib": 101.226, "used_gib": 21.598, "dstate": []}
+{"time": "2026-09-09T12:03:24-0400", "stage": "loading", "available_gib": 101.153, "used_gib": 21.671, "dstate": []}
+{"time": "2026-09-09T12:03:26-0400", "stage": "loading", "available_gib": 100.612, "used_gib": 22.212, "dstate": []}
+{"time": "2026-09-09T12:03:28-0400", "stage": "loading", "available_gib": 99.904, "used_gib": 22.919, "dstate": []}
+{"time": "2026-09-09T12:03:30-0400", "stage": "loading", "available_gib": 99.818, "used_gib": 23.006, "dstate": []}
+{"time": "2026-09-09T12:03:32-0400", "stage": "loading", "available_gib": 99.797, "used_gib": 23.026, "dstate": []}
+{"time": "2026-09-09T12:03:32-0400", "stage": "ready", "available_gib": 99.805, "used_gib": 23.019, "dstate": []}

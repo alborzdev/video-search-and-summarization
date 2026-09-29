@@ -34,6 +34,7 @@ export interface EvidenceVisualInspection {
   end_time: string;
   evidence_id: string;
   inspection_source:
+    | "retained_event_record"
     | "retained_cosmos_caption"
     | "fresh_cosmos_inspection";
   match_type: string;
@@ -43,6 +44,7 @@ export interface EvidenceVisualInspection {
 }
 
 export interface EvidenceAnalysisResponse {
+  timings_ms?: { inspection?: number; synthesis?: number; total?: number };
   evidence: EvidenceVisualInspection[];
   interpretations: EvidenceAnalysisClaim[];
   observations: EvidenceAnalysisClaim[];

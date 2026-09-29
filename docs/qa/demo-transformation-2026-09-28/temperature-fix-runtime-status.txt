@@ -1,0 +1,32 @@
+redis healthy
+vss-vios-postgres healthy
+kafka healthy
+elasticsearch healthy
+vss-graph-db healthy
+vss-vios-sensor healthy
+vss-vios-streamprocessing healthy
+vss-vios-ingress healthy
+vss-vios-sdr healthy
+vss-vios-mcp healthy
+logstash healthy
+vss-behavior-analytics running (no Docker health check)
+vss-behavior-analytics-thor-candidates running (no Docker health check)
+vss-video-analytics-api running (no Docker health check)
+vss-va-mcp healthy
+phoenix healthy
+prometheus healthy
+grafana healthy
+kibana healthy
+mdx-node-exporter-1 running (no Docker health check)
+mdx-cadvisor-1 healthy
+tegrastats-exporter healthy
+vss-agent-ui running (no Docker health check)
+vss-haproxy-ingress running (no Docker health check)
+vss-memory-cosmos running (no Docker health check)
+vss-memory-nemotron running (no Docker health check)
+vss-memory-embed running (no Docker health check)
+vss-memory-support healthy
+vss-lvs healthy
+vss-alert-bridge running (no Docker health check)
+vss-agent healthy
+31 service roles; 50.53 GiB available; failures: []

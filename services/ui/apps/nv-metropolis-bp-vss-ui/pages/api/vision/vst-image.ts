@@ -29,7 +29,7 @@ function sendUnavailable(
     temporary
       ? unavailablePicture(
           "Preview temporarily unavailable",
-          "The source is still connected. Try this preview again shortly."
+          "Check the source connection or try again shortly."
         )
       : unavailablePicture()
   );

@@ -1,0 +1,92 @@
+[
+  {
+    "window": 0,
+    "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "No",
+    "seconds": 0.776,
+    "matched": false,
+    "response": {
+      "id": "43a0017c-0d3c-4c36-a209-efc252b7550a",
+      "object": "chat.completion",
+      "created": 1790645400,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "No",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 23,
+        "completion_tokens": 2,
+        "total_tokens": 25
+      }
+    }
+  },
+  {
+    "window": 2,
+    "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "No",
+    "seconds": 0.77,
+    "matched": false,
+    "response": {
+      "id": "6c462568-3325-4652-aea8-039b3529ac2c",
+      "object": "chat.completion",
+      "created": 1790645400,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "No",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 23,
+        "completion_tokens": 2,
+        "total_tokens": 25
+      }
+    }
+  },
+  {
+    "window": 4,
+    "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+    "expected": "NO",
+    "answer": "No",
+    "seconds": 0.756,
+    "matched": true,
+    "response": {
+      "id": "e07ea4c2-5df3-4125-988d-29531fbc7519",
+      "object": "chat.completion",
+      "created": 1790645401,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "No",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 23,
+        "completion_tokens": 2,
+        "total_tokens": 25
+      }
+    }
+  }
+]

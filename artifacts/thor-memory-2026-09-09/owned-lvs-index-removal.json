@@ -1,0 +1,92 @@
+[
+  {
+    "index": "default_f10318ec_1c87_4ab9_b97f_8dcab806c7d1",
+    "before": {
+      "count": 0,
+      "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    "delete": {
+      "acknowledged": true
+    }
+  },
+  {
+    "index": "default_5f8cac8e_ed2f_49b1_9cfe_ac363d1ed8a1",
+    "before": {
+      "count": 0,
+      "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    "delete": {
+      "acknowledged": true
+    }
+  },
+  {
+    "index": "default_65a36a46_c531_49be_adb1_41eb76a7e62d",
+    "before": {
+      "count": 0,
+      "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    "delete": {
+      "acknowledged": true
+    }
+  },
+  {
+    "index": "default_ab0fc4d2_f916_4927_879b_b5763f071da8",
+    "before": {
+      "count": 0,
+      "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    "delete": {
+      "acknowledged": true
+    }
+  },
+  {
+    "index": "default_85b78cdc_6001_4546_8186_a31a9ff8e51b",
+    "before": {
+      "count": 0,
+      "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    "delete": {
+      "acknowledged": true
+    }
+  },
+  {
+    "index": "default_bccf7960_668e_4631_a34e_dc525b920ce5",
+    "before": {
+      "count": 0,
+      "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+      }
+    },
+    "delete": {
+      "acknowledged": true
+    }
+  }
+]

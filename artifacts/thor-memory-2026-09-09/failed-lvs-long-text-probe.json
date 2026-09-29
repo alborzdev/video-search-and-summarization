@@ -1,0 +1,20 @@
+[
+  {
+    "id": "f0f00274-e109-4cab-8933-c4ffc1130a79",
+    "repeat": 0,
+    "upload": {
+      "id": "f0f00274-e109-4cab-8933-c4ffc1130a79",
+      "bytes": 6313542,
+      "filename": "thor-memory-f0f00274-e109-4cab-8933-c4ffc1130a79.mp4",
+      "purpose": "vision",
+      "creation_time": null,
+      "sensor_name": "thor-memory-f0f00274-e109-4cab-8933-c4ffc1130a79",
+      "media_type": "video"
+    },
+    "cleanup": {
+      "id": "f0f00274-e109-4cab-8933-c4ffc1130a79",
+      "object": "file",
+      "deleted": true
+    }
+  }
+]

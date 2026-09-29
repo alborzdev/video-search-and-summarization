@@ -1,0 +1,59 @@
+[
+  {
+    "sample-sim-box-conveyor": [
+      {
+        "isMain": true,
+        "metadata": {
+          "bitrate": "1135970",
+          "codec": "h264",
+          "framerate": "30.0",
+          "govlength": "",
+          "resolution": "1920x1080"
+        },
+        "name": "sample-sim-box-conveyor",
+        "storageLocation": "Local",
+        "streamId": "sample-sim-box-conveyor",
+        "type": "Rtsp",
+        "url": "rtsp://10.88.9.12:31556/nvstream/home/vst/vst_release/streamer_videos/sample-sim-box-conveyor.mp4"
+      }
+    ]
+  },
+  {
+    "sample-sim-jaywalking": [
+      {
+        "isMain": true,
+        "metadata": {
+          "bitrate": "",
+          "codec": "h264",
+          "framerate": "30.0",
+          "govlength": "",
+          "resolution": "1920x1080"
+        },
+        "name": "sample-sim-jaywalking",
+        "storageLocation": "Local",
+        "streamId": "sample-sim-jaywalking",
+        "type": "Rtsp",
+        "url": "rtsp://10.88.9.12:31557/nvstream/home/vst/vst_release/streamer_videos/sample-sim-jaywalking.mp4"
+      }
+    ]
+  },
+  {
+    "warehouse_safety_0001": [
+      {
+        "isMain": true,
+        "metadata": {
+          "bitrate": "",
+          "codec": "h264",
+          "framerate": "10.0",
+          "govlength": "",
+          "resolution": "1920x1080"
+        },
+        "name": "warehouse_safety_0001",
+        "storageLocation": "Local",
+        "streamId": "warehouse_safety_0001",
+        "type": "Rtsp",
+        "url": "rtsp://10.88.9.12:31557/nvstream/home/vst/vst_release/streamer_videos/warehouse_safety_0001.mp4"
+      }
+    ]
+  }
+]

@@ -123,9 +123,96 @@ doctor_is_explicitly_offline_and_secret_safe() {
     ! sed -n '/^doctor()/,/^}/p' "${thor_local}" | grep -Eq 'curl .*https?://[^$]*\.(com|io|ai|org)'
 }
 
+stop_contains_every_fail_closed_overlay_service() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    test_root="$2"
+    docker() {
+      printf "%s\n" "$*" >>"${test_root}/docker.out"
+      if [[ "$1 $2" == "inspect --format" ]]; then
+        printf "true\n"
+      fi
+      return 0
+    }
+    stop_fail_closed_containers >"${test_root}/stop.out"
+    grep -q "update --restart=no vss-vios-nvstreamer" "${test_root}/docker.out" &&
+      grep -q "stop --timeout 15 vss-vios-nvstreamer" "${test_root}/docker.out" &&
+      grep -q "update --restart=no vss-nemotron-edge-4b" "${test_root}/docker.out" &&
+      grep -q "stop --timeout 15 vss-nemotron-edge-4b" "${test_root}/docker.out" &&
+      grep -q "update --restart=no vss-alert-bridge" "${test_root}/docker.out" &&
+      grep -q "stop --timeout 15 vss-alert-bridge" "${test_root}/docker.out" &&
+      grep -q "model, and GPU-heavy containers are stopped" "${test_root}/stop.out"
+  ' _ "${thor_local}" "${temporary_root}"
+}
+
+containment_attempts_every_target_after_an_error() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    test_root="$2"
+    docker() {
+      printf "%s\n" "$*" >>"${test_root}/docker-errors.out"
+      if [[ "$1 $2 $3" == "update --restart=no vss-nemotron-edge-4b" ]]; then
+        return 42
+      fi
+      if [[ "$1 $2" == "inspect --format" ]]; then
+        printf "true\n"
+      fi
+      return 0
+    }
+    containment_failures=0
+    stop_fail_closed_containers >"${test_root}/stop-errors.out" 2>&1
+    [[ ${containment_failures} -eq 1 ]] &&
+      grep -q "stop --timeout 15 vss-nemotron-edge-4b" "${test_root}/docker-errors.out" &&
+      grep -q "stop --timeout 15 vss-vios-sensor" "${test_root}/docker-errors.out"
+  ' _ "${thor_local}" "${temporary_root}"
+}
+
+stop_does_not_require_the_runtime_env_for_containment() {
+  local stop_block
+  stop_block="$(sed -n '/^  stop)$/,/^    ;;/p' "${thor_local}")"
+  [[ "${stop_block}" == *"stop_fail_closed_containers"* ]] &&
+    [[ "${stop_block}" == *"stop_application_project_containers"* ]] &&
+    [[ "${stop_block}" != *'die "Missing ${generated_env}"'* ]]
+}
+
+down_does_not_require_the_runtime_env_for_containment() {
+  local down_block
+  down_block="$(sed -n '/^  down)$/,/^    ;;/p' "${thor_local}")"
+  [[ "${down_block}" == *"stop_fail_closed_containers"* ]] &&
+    [[ "${down_block}" == *"stop_application_project_containers"* ]] &&
+    [[ "${down_block}" != *'die "Missing ${generated_env}"'* ]]
+}
+
+exact_lane_doctor_enforces_empirical_headroom() {
+  THOR_LOCAL_SOURCE_ONLY=true bash -c '
+    source "$1"
+    official_edge_lane_is_deployed() { return 0; }
+    nvidia-smi() { printf "NVIDIA Thor, 43, 0\n"; }
+    awk() {
+      if [[ "$*" == *"MemTotal:"* ]]; then
+        printf "134217728\n"
+      elif [[ "$*" == *"MemAvailable:"* ]]; then
+        printf "111149056\n"
+      else
+        command awk "$@"
+      fi
+    }
+    df() {
+      printf "Filesystem 1024-blocks Used Available Capacity Mounted on\n"
+      printf "/dev/test 1000000000 800000000 200000000 80%% /\n"
+    }
+    data_directory="$2"
+    doctor_reset
+    doctor_check_gpu_and_resources >"$2/exact-memory.out"
+    [[ ${doctor_failures} -eq 1 ]] &&
+      grep -q "empirical admission requires at least 128 GiB" "$2/exact-memory.out"
+  ' _ "${thor_local}" "${temporary_root}"
+}
+
 disk_percentage_does_not_override_ten_gib_floor() {
   THOR_LOCAL_SOURCE_ONLY=true bash -c '
     source "$1"
+    official_edge_lane_is_deployed() { return 1; }
     nvidia-smi() {
       printf "NVIDIA Thor, 43, 0\n"
     }
@@ -144,6 +231,7 @@ disk_percentage_does_not_override_ten_gib_floor() {
 disk_below_ten_gib_remains_fatal() {
   THOR_LOCAL_SOURCE_ONLY=true bash -c '
     source "$1"
+    official_edge_lane_is_deployed() { return 1; }
     nvidia-smi() {
       printf "NVIDIA Thor, 43, 0\n"
     }
@@ -168,6 +256,11 @@ check "doctor reports a noncompliant Docker cgroup driver" doctor_reports_cgroup
 check "warnings exit zero and failures exit nonzero" severity_contract_is_stable
 check "startup provisioner creates a private report directory" report_directory_is_private
 check "doctor is offline-only and does not disclose secrets" doctor_is_explicitly_offline_and_secret_safe
+check "stop contains exact overlays and the separate media source" stop_contains_every_fail_closed_overlay_service
+check "containment attempts every target after a Docker error" containment_attempts_every_target_after_an_error
+check "emergency containment does not depend on the runtime env" stop_does_not_require_the_runtime_env_for_containment
+check "destructive down contains first without the runtime env" down_does_not_require_the_runtime_env_for_containment
+check "exact lane doctor enforces empirical headroom" exact_lane_doctor_enforces_empirical_headroom
 check "98% usage with 18 GiB free is a warning" disk_percentage_does_not_override_ten_gib_floor
 check "less than 10 GiB free remains fatal" disk_below_ten_gib_remains_fatal
 

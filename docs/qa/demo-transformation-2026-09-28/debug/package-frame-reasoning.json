@@ -1,0 +1,11 @@
+{
+  "mode": "same single frame, reasoning enabled, 512 output token cap",
+  "elapsed_seconds": 33.5,
+  "answer": "The box is rectangular. It has a flat, angular shape typical of a standard cardboard box.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 23,
+    "completion_tokens": 264,
+    "total_tokens": 287
+  }
+}

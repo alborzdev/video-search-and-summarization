@@ -37,7 +37,8 @@ def make_runtime_env(root: Path) -> Path:
     runtime = root / "runtime.env"
     runtime.write_text(
         tracked.read_text(encoding="utf-8")
-        + "\nGRAPH_DB_PASSWORD=official-edge-unit-test\n",
+        + "\nGRAPH_DB_PASSWORD=official-edge-unit-test\n"
+        + "THOR_LOCAL_MODEL_BIND_HOST=172.17.0.1\n",
         encoding="utf-8",
     )
     return runtime
@@ -68,10 +69,24 @@ def reviewed_provenance(
 
 
 class OfficialEdgeStaticTests(unittest.TestCase):
+    def test_production_cli_has_no_meminfo_override(self) -> None:
+        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            oe._parser().parse_args(["--meminfo", "/tmp/fabricated", "audit"])
+
     def test_checked_in_static_contract_is_source_anchored(self) -> None:
         contract = oe.verify_static()
         self.assertEqual(contract["llm"]["served_model_id"], oe.EDGE_MODEL_ID)
         self.assertEqual(contract["vlm"]["artifact_id"], oe.COSMOS_ARTIFACT)
+
+    def test_agent_startup_live_stream_reconciliation_fails_closed(self) -> None:
+        overlay = oe._load_yaml(oe.OFFICIAL_AGENT_CONFIG)
+        self.assertIs(
+            overlay["general"]["front_end"]["streaming_ingest"][
+                "auto_resume_registered_live_sources"
+            ],
+            False,
+        )
+        oe.verify_agent_prompt_overlay()
 
     def test_versioned_docs_win_and_older_skill_model_stays_unqualified(self) -> None:
         contract = oe._load_json(oe.DEFAULT_CONTRACT)
@@ -166,20 +181,105 @@ class OfficialEdgeStaticTests(unittest.TestCase):
             with self.assertRaisesRegex(oe.ContractError, "0.25 Edge4B"):
                 oe.verify_memory(contract, meminfo)
 
+    def test_empirical_headroom_blocks_the_observed_128g_host_shape(self) -> None:
+        contract = oe._load_json(oe.DEFAULT_CONTRACT)
+        with tempfile.TemporaryDirectory() as temporary:
+            meminfo = Path(temporary) / "meminfo"
+            meminfo.write_text(
+                "MemTotal: 134217728 kB\nMemAvailable: 111149056 kB\n",
+                encoding="utf-8",
+            )
+            # The former fraction-only gate admits this 128 GiB shape.
+            oe.verify_memory(contract, meminfo)
+            with self.assertRaisesRegex(oe.ContractError, "64 GiB post-load reserve"):
+                oe.verify_empirical_headroom(meminfo)
+
+            meminfo.write_text(
+                "MemTotal: 268435456 kB\nMemAvailable: 134217728 kB\n",
+                encoding="utf-8",
+            )
+            oe.verify_empirical_headroom(meminfo)
+
+    def test_prelaunch_commands_enforce_empirical_headroom_only(self) -> None:
+        contract: dict[str, object] = {}
+        edge = Path("/verified/edge")
+        cosmos = Path("/verified/cosmos")
+
+        def invoke(command: str, side_effect: BaseException) -> tuple[int, mock.Mock]:
+            with (
+                mock.patch.object(oe, "_common_paths", return_value=(edge, cosmos)),
+                mock.patch.object(oe, "verify_static", return_value=contract),
+                mock.patch.object(oe, "verify_artifacts"),
+                mock.patch.object(oe, "verify_images"),
+                mock.patch.object(oe, "verify_memory"),
+                mock.patch.object(oe, "verify_resolved_compose", return_value={}),
+                mock.patch.object(oe, "verify_readiness"),
+                mock.patch.object(
+                    oe, "render_pull_free_command", return_value="launch"
+                ),
+                mock.patch.object(
+                    oe, "verify_empirical_headroom", side_effect=side_effect
+                ) as empirical,
+                redirect_stdout(io.StringIO()),
+                redirect_stderr(io.StringIO()),
+            ):
+                result = oe.main(
+                    [
+                        "--edge4b-snapshot",
+                        str(edge),
+                        "--cosmos3-cache",
+                        str(cosmos),
+                        command,
+                    ]
+                )
+            return result, empirical
+
+        audited, empirical = invoke(
+            "audit", oe.ContractError("empirical headroom blocked")
+        )
+        self.assertEqual(audited, 1)
+        empirical.assert_called_once_with(Path("/proc/meminfo"))
+
+        rendered, empirical = invoke(
+            "render-command", oe.ContractError("empirical headroom blocked")
+        )
+        self.assertEqual(rendered, 1)
+        empirical.assert_called_once_with(Path("/proc/meminfo"))
+
+        ready, empirical = invoke(
+            "readiness", AssertionError("readiness invoked prelaunch gate")
+        )
+        self.assertEqual(ready, 0)
+        empirical.assert_not_called()
+
     def test_pull_free_renderer_is_inert(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             edge, blobs = make_edge_cache(Path(temporary))
             cosmos = Path("/verified") / oe.COSMOS_CACHE_DIRECTORY
-            command = oe.render_pull_free_command(oe.DEFAULT_RUNTIME_ENV, edge, cosmos)
+            command = oe.render_pull_free_command(
+                oe.DEFAULT_RUNTIME_ENV, edge, cosmos, "172.17.0.1"
+            )
         self.assertIn("--no-build", command)
         self.assertIn("--pull never", command)
         self.assertNotIn("docker pull", command)
         self.assertNotIn("docker build", command)
-        self.assertTrue(command.endswith("up -d --no-build --pull never"))
+        self.assertTrue(
+            command.endswith("up -d --no-build --pull never --force-recreate")
+        )
         self.assertIn(f"THOR_OFFICIAL_EDGE4B_SNAPSHOT={edge}", command)
         self.assertIn(f"THOR_OFFICIAL_EDGE4B_BLOBS_DIR={blobs}", command)
         self.assertIn(f"THOR_OFFICIAL_COSMOS3_CACHE_DIR={cosmos}", command)
         self.assertIn("THOR_OFFICIAL_COSMOS3_CACHE_ROOT=/verified", command)
+        self.assertIn("THOR_LOCAL_MODEL_BIND_HOST=172.17.0.1", command)
+
+    def test_renderer_rejects_loopback_as_the_bridge_bind(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            edge, _ = make_edge_cache(Path(temporary))
+            cosmos = Path("/verified") / oe.COSMOS_CACHE_DIRECTORY
+            with self.assertRaisesRegex(oe.ContractError, "distinct private bridge"):
+                oe.render_pull_free_command(
+                    oe.DEFAULT_RUNTIME_ENV, edge, cosmos, "127.0.0.1"
+                )
 
     def test_renderer_cli_fails_before_printing_command_with_incomplete_lock(
         self,
@@ -229,7 +329,7 @@ class OfficialEdgeStaticTests(unittest.TestCase):
         self.assertNotIn("qwen3-vl-8b-instruct", resolved["services"])
         self.assertEqual(
             resolved["services"]["perception-2d-fusion"]["restart"],
-            "unless-stopped",
+            "no",
         )
 
     def test_search_detector_engine_batch_matches_primary_gie_batch(self) -> None:
@@ -291,9 +391,9 @@ class OfficialEdgeStaticTests(unittest.TestCase):
                 oe.verify_resolved_compose(tracked_env, edge, cosmos)
 
             consumer_leak = deepcopy(resolved)
-            consumer_leak["services"]["vss-agent"]["environment"][
-                "OPENAI_API_KEY"
-            ] = "secret"
+            consumer_leak["services"]["vss-agent"]["environment"]["OPENAI_API_KEY"] = (
+                "secret"
+            )
             with (
                 mock.patch.object(oe, "_run", return_value=json.dumps(consumer_leak)),
                 self.assertRaisesRegex(oe.ContractError, "credential environment"),
@@ -556,11 +656,18 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
             edge_snapshot, edge_blobs = make_edge_cache(root)
             cosmos_cache = root / oe.COSMOS_CACHE_DIRECTORY
             cosmos_cache.mkdir()
+            meminfo = root / "meminfo"
+            meminfo.write_text(
+                "MemTotal: 268435456 kB\nMemAvailable: 200000000 kB\n",
+                encoding="utf-8",
+            )
             edge_container = {
                 "Image": oe.EDGE_IMAGE_CONFIG_DIGEST,
                 "State": {"Running": True},
+                "HostConfig": {"RestartPolicy": {"Name": "no"}},
                 "Config": {
                     "Image": oe.EDGE_IMAGE,
+                    "Entrypoint": oe.EDGE_ENTRYPOINT,
                     "Cmd": oe.EDGE_COMMAND,
                     "Env": [
                         "HF_HUB_OFFLINE=1",
@@ -592,11 +699,10 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "Image": oe.RTVLM_IMAGE_ID,
                 "State": {"Running": True},
                 "HostConfig": {
+                    "RestartPolicy": {"Name": "no"},
                     "PortBindings": {
-                        "8000/tcp": [
-                            {"HostIp": "127.0.0.1", "HostPort": "8018"}
-                        ]
-                    }
+                        "8000/tcp": [{"HostIp": "127.0.0.1", "HostPort": "8018"}]
+                    },
                 },
                 "Config": {
                     "Image": oe.RTVLM_IMAGE,
@@ -643,6 +749,7 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "vss-agent": {
                     "Image": "sha256:agent",
                     "State": {"Running": True},
+                    "HostConfig": {"RestartPolicy": {"Name": "no"}},
                     "Config": {
                         "Image": "agent",
                         "Cmd": [oe.AGENT_CONFIG_CONTAINER],
@@ -660,10 +767,30 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                             f"EVAL_LLM_JUDGE_BASE_URL={oe.EDGE_BASE_URL}",
                         ],
                     },
+                    "Mounts": [
+                        {
+                            "Type": "bind",
+                            "Source": str(oe.DEPLOY_DOCKER.resolve()),
+                            "Destination": "/vss-agent/deploy/docker",
+                            "RW": False,
+                        },
+                        *[
+                            {
+                                "Type": "bind",
+                                "Source": str(source.resolve()),
+                                "Destination": destination,
+                                "RW": False,
+                            }
+                            for destination, (source, _expected_sha256) in (
+                                oe.AGENT_RUNTIME_OVERLAYS.items()
+                            )
+                        ],
+                    ],
                 },
                 "vss-lvs": {
                     "Image": "sha256:lvs",
                     "State": {"Running": True},
+                    "HostConfig": {"RestartPolicy": {"Name": "no"}},
                     "Config": {
                         "Image": "lvs",
                         "Cmd": None,
@@ -678,6 +805,7 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "vss-va-mcp": {
                     "Image": "sha256:mcp",
                     "State": {"Running": True},
+                    "HostConfig": {"RestartPolicy": {"Name": "no"}},
                     "Config": {
                         "Image": "mcp",
                         "Cmd": [],
@@ -691,6 +819,7 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "vss-alert-bridge": {
                     "Image": "sha256:alert",
                     "State": {"Running": True},
+                    "HostConfig": {"RestartPolicy": {"Name": "no"}},
                     "Config": {
                         "Image": "alert",
                         "Cmd": [],
@@ -698,10 +827,22 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                             f"VLM_NAME={oe.COSMOS_MODEL_ID}",
                             f"VLM_BASE_URL={oe.COSMOS_BASE_URL}",
                             "VLM_MODE=local_shared",
+                            "ALERT_ALWAYS_ON_ENABLED=false",
                         ],
                     },
                 },
             }
+            for name in (
+                "vss-rtvi-embed",
+                "vss-rtvi-cv",
+                "vss-rtvi-cv-traffic",
+                "vss-vios-streamprocessing",
+                "vss-vios-sensor",
+            ):
+                application_containers[name] = {
+                    "State": {"Running": True},
+                    "HostConfig": {"RestartPolicy": {"Name": "no"}},
+                }
 
             def container(name: str) -> dict[str, object]:
                 if name == "vss-nemotron-edge-4b":
@@ -723,10 +864,16 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 mock.patch.object(oe, "_get_json", side_effect=response),
             ):
                 contract = oe._load_json(oe.DEFAULT_CONTRACT)
-                contract["images"]["edge4b_vllm"][
-                    "image_id"
-                ] = oe.EDGE_IMAGE_CONFIG_DIGEST
-                oe.verify_readiness(contract, 1.0, edge_snapshot, cosmos_cache)
+                contract["images"]["edge4b_vllm"]["image_id"] = (
+                    oe.EDGE_IMAGE_CONFIG_DIGEST
+                )
+                oe.verify_readiness(
+                    contract,
+                    1.0,
+                    edge_snapshot,
+                    cosmos_cache,
+                    meminfo_path=meminfo,
+                )
 
     def test_alias_model_id_is_rejected(self) -> None:
         with mock.patch.object(
@@ -746,6 +893,7 @@ class OfficialEdgeReadinessTests(unittest.TestCase):
                 "State": {"Running": True},
                 "Config": {
                     "Image": oe.EDGE_IMAGE,
+                    "Entrypoint": oe.EDGE_ENTRYPOINT,
                     "Cmd": oe.EDGE_COMMAND,
                     "Env": ["HF_HUB_OFFLINE=1", "TRANSFORMERS_OFFLINE=1"],
                 },

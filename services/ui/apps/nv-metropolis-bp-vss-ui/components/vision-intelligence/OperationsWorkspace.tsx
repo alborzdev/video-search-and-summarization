@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import { useDialogAccessibility } from "@aiqtoolkit-ui/common";
+import { LiveAnswerReport } from "./LiveAnswerReport";
 import { LiveModeNav } from "./LiveModeNav";
 import { VideoHistoryPanel } from "./VideoHistoryPanel";
 import { VisionStreamCanvas } from "./VisionStreamCanvas";
@@ -85,8 +86,9 @@ function cameraAnalysisLabel(
   analysisState?: SourceAnalysisState,
   intelligence?: SourceIntelligence | null
 ): string {
+  if (stream.connectionState === "offline" || stream.connectionState === "removed") return "Disconnected";
   if (sourceKind(stream) !== "Live") return "Ready";
-  if (analysisState === "paused") return "Paused";
+  if (analysisState === "paused") return "Analysis paused";
   if (analysisState === "changing") return "Updating";
   if (analysisState === "partial") return "Needs attention";
   if (intelligence?.semanticFresh === true) return "Analyzing";
@@ -118,15 +120,17 @@ function sourceOverviewCopy(
   intelligence?: SourceIntelligence,
   incident?: ConsolidatedIncident
 ): string {
+  if (stream.connectionState === "offline" || stream.connectionState === "removed")
+    return "Video I/O reports this source as disconnected. Check the camera or simulator connection before resuming analysis.";
   if (incident) return incidentTitle(incident);
   if (analysisState === "paused")
-    return "Video is connected; intelligence processing is paused.";
+    return "Intelligence processing is paused. Press play to check the live connection.";
   if ((intelligence?.trackedObservations ?? 0) > 0)
     return `${intelligence?.trackedObservations?.toLocaleString()} tracked observations are ready to review.`;
   if ((intelligence?.semanticSegments ?? 0) > 0)
     return `${intelligence?.semanticSegments?.toLocaleString()} searchable moments are available.`;
   return sourceKind(stream) === "Live"
-    ? "Live video is connected and awaiting its first indexed moment."
+    ? "Source configured; waiting for live analysis status and indexed moments."
     : "Recorded footage is ready to inspect and search.";
 }
 
@@ -149,14 +153,14 @@ function CameraState({
     <div className="vi-source-state">
       <span
         className={
-          isLive && (analysisState === "paused" || analysisState === "partial")
+          isLive && (analysisState === "paused" || analysisState === "partial" || analysisLabel === "Disconnected")
             ? "vi-state-dot vi-state-dot--paused"
             : isLive
             ? "vi-state-dot"
             : "vi-state-dot vi-state-dot--replay"
         }
       />
-      <span>{isLive ? "Live" : "Replay"}</span>
+      <span>{isLive ? "RTSP feed" : "Recording"}</span>
       <span className="vi-source-state-separator">•</span>
       <span>{analysisLabel}</span>
     </div>
@@ -210,6 +214,7 @@ function SourceIntelligencePanel({
   const tracking = intelligence?.trackedObservations;
   const eventCandidates = intelligence?.evidenceEvents;
   const isLive = sourceKind(stream) === "Live";
+  const disconnected = isLive && (stream.connectionState === "offline" || stream.connectionState === "removed");
   const detectionEnabled = analysisProfile?.detectionEnabled ?? false;
   const formatCount = (
     count: number | null | undefined,
@@ -262,7 +267,9 @@ function SourceIntelligencePanel({
             label="Searchable through"
             value={
               intelligence?.lastSemanticAt
-                ? new Date(intelligence.lastSemanticAt).toLocaleTimeString([], {
+                ? new Date(intelligence.lastSemanticAt).toLocaleString([], {
+                    month: "short",
+                    day: "numeric",
                     hour: "numeric",
                     minute: "2-digit",
                     second: "2-digit",
@@ -282,6 +289,12 @@ function SourceIntelligencePanel({
                   : "Not measured"
                 : intelligence.indexingDelaySeconds < 2
                 ? "Live"
+                : intelligence.indexingDelaySeconds >= 86400
+                ? `${Math.floor(intelligence.indexingDelaySeconds / 86400)} days behind`
+                : intelligence.indexingDelaySeconds >= 3600
+                ? `${Math.floor(intelligence.indexingDelaySeconds / 3600)}h behind`
+                : intelligence.indexingDelaySeconds >= 60
+                ? `${Math.floor(intelligence.indexingDelaySeconds / 60)}m behind`
                 : `${intelligence.indexingDelaySeconds}s behind`
             }
           />
@@ -298,7 +311,9 @@ function SourceIntelligencePanel({
       <IntelligenceRow
         label="Ask this camera"
         value={
-          visualAnalystAvailable === null
+          disconnected
+            ? "No live frames — camera disconnected"
+            : visualAnalystAvailable === null
             ? "Checking…"
             : visualAnalystAvailable === false
             ? "Unavailable"
@@ -318,30 +333,30 @@ function SourceIntelligencePanel({
       <IntelligenceRow
         label="Detection + tracking"
         value={
-          !detectionEnabled
+          disconnected
+            ? "No live input"
+            : !detectionEnabled
             ? "Not enabled"
             : tracking
             ? `${tracking.toLocaleString()} observations`
             : isLoading
             ? "Checking…"
             : detectionEnabled
-            ? "Ready — no observations yet"
+            ? "No observations yet"
             : "Not enabled"
         }
       />
       <IntelligenceRow
         label="Event candidates"
-        value={
-          eventCandidates
-            ? formatCount(eventCandidates, "candidate", "candidates")
-            : isLoading
-            ? "Checking…"
-            : "None detected"
-        }
+        value={formatCount(eventCandidates, "saved candidate", "saved candidates")}
       />
       <p>
         {sourceKind(stream) === "Live"
-          ? detectionEnabled
+          ? analysisState === "paused"
+            ? "Analysis is paused. Previously indexed evidence remains searchable."
+            : analysisState !== "active"
+            ? "Live analysis is not confirmed. Check service readiness or retry this source."
+            : detectionEnabled
             ? `Semantic intelligence plus ${analysisProfile?.modelLabel ?? "the selected detector"} are active.`
             : "Semantic search, live history, alerts, and Cosmos reasoning stay active without an object detector."
           : tracking
@@ -404,6 +419,8 @@ function SourceIntelligencePanel({
         >
           {isUpdating
             ? "Updating analysis…"
+            : analysisState === "unknown"
+            ? "Analysis status unavailable"
             : analysisState === "paused"
             ? "Resume analysis"
             : "Pause analysis"}
@@ -540,6 +557,12 @@ function VisionAnalystBar({
 }
 
 function formatObservedRange(result: VisionAnalystResponse): string | null {
+  if (result.observedWindow) {
+    const formatTime = (value: string) => new Date(value).toLocaleString([], {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", timeZoneName: "short",
+    });
+    return `${formatTime(result.observedWindow.startTime)} – ${formatTime(result.observedWindow.endTime)}`;
+  }
   if (!result.observedRange) return null;
   const format = (seconds: number) => {
     const whole = Math.round(seconds);
@@ -558,6 +581,7 @@ function AnalystAnswerPanel({
   onClose,
   onInvestigate,
   onPlayEvidence,
+  reportSource,
   onRetry,
   result,
 }: {
@@ -566,6 +590,7 @@ function AnalystAnswerPanel({
   onClose: () => void;
   onInvestigate: () => void;
   onPlayEvidence?: () => void;
+  reportSource?: VisionAnalystRequest["sources"][number];
   onRetry: () => void;
   result: VisionAnalystResponse | null;
 }) {
@@ -648,6 +673,9 @@ function AnalystAnswerPanel({
               Find related clips <span>→</span>
             </button>
           </div>
+          {result.observedWindow && reportSource && (
+            <LiveAnswerReport key={result.generatedAt} result={result} source={reportSource} />
+          )}
         </>
       )}
     </aside>
@@ -657,11 +685,13 @@ function AnalystAnswerPanel({
 function AnalystEvidenceClip({
   onClose,
   range,
+  window: observedWindow,
   stream,
   vstApiUrl,
 }: {
   onClose: () => void;
-  range: { endSeconds: number; startSeconds: number };
+  range?: { endSeconds: number; startSeconds: number };
+  window?: { startTime: string; endTime: string };
   stream: VisionStream;
   vstApiUrl: string;
 }) {
@@ -674,31 +704,36 @@ function AnalystEvidenceClip({
     const controller = new AbortController();
     const prepare = async () => {
       try {
-        const timelineResponse = await fetch(
-          `${vstApiUrl}/v1/storage/${encodeURIComponent(
-            stream.streamId
-          )}/timelines`,
-          { signal: controller.signal }
-        );
-        if (!timelineResponse.ok)
-          throw new Error("The recording timeline is unavailable.");
-        const timelines = (await timelineResponse.json()) as Array<{
-          endTime: string;
-          startTime: string;
-        }>;
-        const timeline = timelines.at(-1);
-        if (!timeline) throw new Error("This source has no recorded timeline.");
-        const timelineStart = Date.parse(timeline.startTime);
-        const timelineEnd = Date.parse(timeline.endTime);
-        if (!Number.isFinite(timelineStart) || !Number.isFinite(timelineEnd)) {
-          throw new Error("The recording timeline is invalid.");
+        let startTime = observedWindow?.startTime;
+        let endTime = observedWindow?.endTime;
+        if (!startTime || !endTime) {
+          if (!range) throw new Error("The inspected interval is unavailable.");
+          const timelineResponse = await fetch(
+            `${vstApiUrl}/v1/storage/${encodeURIComponent(
+              stream.streamId
+            )}/timelines`,
+            { signal: controller.signal }
+          );
+          if (!timelineResponse.ok)
+            throw new Error("The recording timeline is unavailable.");
+          const timelines = (await timelineResponse.json()) as Array<{
+            endTime: string;
+            startTime: string;
+          }>;
+          const timeline = timelines.at(-1);
+          if (!timeline) throw new Error("This source has no recorded timeline.");
+          const timelineStart = Date.parse(timeline.startTime);
+          const timelineEnd = Date.parse(timeline.endTime);
+          if (!Number.isFinite(timelineStart) || !Number.isFinite(timelineEnd)) {
+            throw new Error("The recording timeline is invalid.");
+          }
+          startTime = new Date(
+            Math.min(timelineEnd, timelineStart + range.startSeconds * 1_000)
+          ).toISOString();
+          endTime = new Date(
+            Math.min(timelineEnd, timelineStart + range.endSeconds * 1_000)
+          ).toISOString();
         }
-        const startTime = new Date(
-          Math.min(timelineEnd, timelineStart + range.startSeconds * 1_000)
-        ).toISOString();
-        const endTime = new Date(
-          Math.min(timelineEnd, timelineStart + range.endSeconds * 1_000)
-        ).toISOString();
         const response = await fetch(
           evidenceClipEndpoint(stream.streamId, startTime, endTime),
           { signal: controller.signal }
@@ -723,7 +758,7 @@ function AnalystEvidenceClip({
     };
     void prepare();
     return () => controller.abort();
-  }, [range.endSeconds, range.startSeconds, stream.streamId, vstApiUrl]);
+  }, [range?.endSeconds, range?.startSeconds, observedWindow?.startTime, observedWindow?.endTime, stream.streamId, vstApiUrl]);
 
   return (
     <div
@@ -751,8 +786,9 @@ function AnalystEvidenceClip({
             The Analyst answer was grounded in{" "}
             {formatObservedRange({
               observedRange: range,
+              observedWindow,
             } as VisionAnalystResponse)}{" "}
-            of this recording.
+            {observedWindow ? "from this RTSP feed. This is a recent recorded interval, not the current frame." : "of this recording."}
           </p>
         </div>
         <div className="vi-analyst-clip-media">
@@ -1025,10 +1061,16 @@ function GridOperations({
   isAsking: boolean;
   vstApiUrl?: string | null;
 }) {
-  // A single Thor demo is designed for one to eight cameras. Keep every
-  // supported source visible in the overview; the grid scrolls when a third
-  // or fourth row is required instead of silently hiding cameras after four.
-  const visibleStreams = streams.slice(0, 8);
+  const liveStreams = streams.filter((stream) => sourceKind(stream) === "Live");
+  const disconnectedStreams = liveStreams.filter((stream) =>
+    stream.connectionState === "offline" || stream.connectionState === "removed"
+  );
+  const visibleStreams = liveStreams.filter((stream) =>
+    stream.connectionState !== "offline" && stream.connectionState !== "removed"
+  );
+  const noConnectedCameras = visibleStreams.length === 0;
+  const recordings = streams.filter((stream) => sourceKind(stream) === "Replay");
+  const availableRecording = recordings[0];
   const operatorIncidents = consolidateIncidents(incidents).filter(
     (incident) =>
       isOperatorRelevantIncident(incident) &&
@@ -1039,10 +1081,9 @@ function GridOperations({
   ).length;
   const analyzingCount = visibleStreams.filter(
     (stream) =>
-      sourceKind(stream) !== "Live" ||
-      !["paused", "partial"].includes(
-        analysisStateById[stream.streamId] ?? "unknown"
-      )
+      sourceKind(stream) === "Live" &&
+      stream.connectionState !== "offline" && stream.connectionState !== "removed" &&
+      analysisStateById[stream.streamId] === "active"
   ).length;
   const attentionItems = operatorIncidents.length
     ? operatorIncidents.slice(0, 5).map((incident) => ({
@@ -1055,6 +1096,7 @@ function GridOperations({
           incident.sensorId ??
           "Connected source",
         tone: "attention" as const,
+        source: undefined as VisionStream | undefined,
       }))
     : visibleStreams.slice(0, 5).map((stream) => {
         const state = analysisStateById[stream.streamId];
@@ -1064,20 +1106,57 @@ function GridOperations({
           description: sourceOverviewCopy(stream, state, intelligence),
           id: stream.streamId,
           label: streamDisplayName(stream.name),
+          source: stream,
           tone:
-            state === "paused" || state === "partial"
-              ? ("watch" as const)
-              : ("healthy" as const),
+            label === "Analyzing" || label === "Ready"
+              ? ("healthy" as const)
+              : ("watch" as const),
         };
       });
   return (
     <section className="vi-grid-workspace">
       <div className="vi-grid-status">
-        <span>{streams.length} Sources</span>
+        <span>{liveStreams.length} live cameras configured</span>
         <i>•</i>
-        <strong>{streams.length} Available</strong>
+        <strong>{recordings.length} {recordings.length === 1 ? "recording" : "recordings"}</strong>
       </div>
-      <div className="vi-live-overview">
+      {noConnectedCameras && (
+        <section className="vi-live-introduction" aria-label="Live camera availability">
+          <div>
+            <span className="vi-eyebrow">Live camera demo</span>
+            <h2>No live cameras connected</h2>
+            <p>Connect a camera to watch activity as it happens. Enable analysis to make new moments searchable.</p>
+            {availableRecording && <p>You can explore video AI now with the available recording.</p>}
+          </div>
+          {availableRecording && (
+            <button type="button" className="vi-button vi-button--primary" onClick={() => onFocus(availableRecording)}>
+              Open available recording <IconArrowRight size={18} />
+            </button>
+          )}
+        </section>
+      )}
+      {recordings.length > 0 && (
+        <section className="vi-recorded-source-links" aria-label="Available recordings">
+          <div><strong>Recorded footage</strong><span>Explore saved video separately from live cameras.</span></div>
+          {recordings.map((stream) => (
+            <button key={stream.streamId} type="button" className="vi-control" onClick={() => onFocus(stream)}>
+              <IconPlayerPlay size={17} /> {streamDisplayName(stream.name)}
+            </button>
+          ))}
+        </section>
+      )}
+      {disconnectedStreams.length > 0 && (
+        <details className="vi-disconnected-sources">
+          <summary>{disconnectedStreams.length} disconnected {disconnectedStreams.length === 1 ? "camera" : "cameras"} · Connection details</summary>
+          <p>Check the camera or simulator connection before resuming analysis.</p>
+          <div>{disconnectedStreams.map((stream) => (
+            <button key={stream.streamId} type="button" onClick={() => onFocus(stream)}>
+              <strong>{streamDisplayName(stream.name)}</strong><span>Disconnected</span><span>Review source <IconArrowRight size={15} /></span>
+            </button>
+          ))}</div>
+        </details>
+      )}
+      <div className={`vi-live-overview${attentionItems.length ? "" : " vi-live-overview--single"}`}>
         <div className="vi-live-overview-main">
           <section
             className="vi-environment-now"
@@ -1094,14 +1173,14 @@ function GridOperations({
                   {analyzingCount} {analyzingCount === 1 ? "source" : "sources"}{" "}
                   analyzing
                 </strong>
-                <span>Video feeds are connected to Thor.</span>
+                <span>{analyzingCount ? "Analysis is enabled on these sources." : "No sources are currently being analyzed."}</span>
               </div>
             </div>
             <div className="vi-environment-now-item is-intelligence">
               <IconSparkles size={21} />
               <div>
-                <strong>{searchableCount} searchable</strong>
-                <span>Indexed moments are ready for Explore.</span>
+                <strong>{searchableCount} live {searchableCount === 1 ? "camera" : "cameras"} searchable</strong>
+                <span>Indexed moments can be searched in Search video.</span>
               </div>
             </div>
             <div
@@ -1122,8 +1201,8 @@ function GridOperations({
                 </strong>
                 <span>
                   {operatorIncidents.length
-                    ? "Evidence is retained in Activity."
-                    : "No operator action is waiting."}
+                    ? "Open Events & reports to review the evidence."
+                    : "No verified alerts are listed. This does not confirm the scene is clear."}
                 </span>
               </div>
             </div>
@@ -1141,11 +1220,11 @@ function GridOperations({
                 analysisState,
                 intelligence
               );
-              const tone = incident
+              const tone = incident || stateLabel === "Disconnected"
                 ? "attention"
                 : analysisState === "paused" || analysisState === "partial"
                 ? "watch"
-                : "healthy";
+                : stateLabel === "Analyzing" || stateLabel === "Ready" ? "healthy" : "watch";
               return (
                 <article className="vi-grid-camera" key={stream.streamId}>
                   <header>
@@ -1193,7 +1272,7 @@ function GridOperations({
           </div>
         </div>
 
-        <aside className="vi-live-attention" aria-label="Changes and attention">
+        {attentionItems.length > 0 && <aside className="vi-live-attention" aria-label="Changes and attention">
           <header>
             <div>
               <span className="vi-eyebrow">Current state</span>
@@ -1205,7 +1284,7 @@ function GridOperations({
           </header>
           <div className="vi-live-attention-list">
             {attentionItems.map((item) => (
-              <button type="button" key={item.id} onClick={onOpenActivity}>
+              <button type="button" key={item.id} onClick={() => item.source ? onFocus(item.source) : onOpenActivity()}>
                 <span className={`is-${item.tone}`}>
                   {item.tone === "attention" ? (
                     <IconAlertCircle size={16} />
@@ -1220,7 +1299,7 @@ function GridOperations({
                   <p>{item.description}</p>
                   <small>
                     {item.tone === "healthy"
-                      ? "No action needed"
+                      ? "View source"
                       : "Review source"}
                   </small>
                 </div>
@@ -1228,7 +1307,7 @@ function GridOperations({
               </button>
             ))}
           </div>
-        </aside>
+        </aside>}
       </div>
       <VisionAnalystBar grid isLoading={isAsking} onAsk={onAsk} />
     </section>
@@ -1398,15 +1477,21 @@ export function OperationsWorkspace({
                 name: stream.name,
                 sensorId: stream.sensorId,
               });
-              const response = await fetch(
-                `/api/vision/source-intelligence?${params.toString()}`,
-                { cache: "no-store" }
-              );
-              if (!response.ok) return null;
-              return [
-                stream.streamId,
-                (await response.json()) as SourceIntelligence,
-              ] as const;
+              try {
+                const response = await fetch(
+                  `/api/vision/source-intelligence?${params.toString()}`,
+                  { cache: "no-store" }
+                );
+                if (!response.ok) return null;
+                return [
+                  stream.streamId,
+                  (await response.json()) as SourceIntelligence,
+                ] as const;
+              } catch {
+                // A disconnected request must not discard other sources or
+                // prevent their independent analysis states from settling.
+                return null;
+              }
             })
           ),
           Promise.all(
@@ -1821,20 +1906,22 @@ export function OperationsWorkspace({
             }
             onPlayEvidence={
               analystResult?.scope === "selected-source" &&
-              Boolean(analystResult.observedRange) &&
-              sourceKind(selected) === "Replay" &&
+              Boolean(analystResult.observedWindow || (analystResult.observedRange && sourceKind(selected) === "Replay")) &&
               Boolean(vstApiUrl)
                 ? () => setShowAnalystClip(true)
                 : undefined
             }
+            reportSource={analystRequest.scope === "selected-source" && analystRequest.sources.length === 1
+              ? analystRequest.sources[0] : undefined}
             onRetry={() => void ask(analystRequest.query)}
             result={analystResult}
           />
         )}
-        {showAnalystClip && analystResult?.observedRange && vstApiUrl && (
+        {showAnalystClip && (analystResult?.observedRange || analystResult?.observedWindow) && vstApiUrl && (
           <AnalystEvidenceClip
             onClose={() => setShowAnalystClip(false)}
             range={analystResult.observedRange}
+            window={analystResult.observedWindow}
             stream={selected}
             vstApiUrl={vstApiUrl}
           />

@@ -42,6 +42,18 @@ from vss_agents.api.front_end_config import StreamingIngestConfig
 _MISSING = object()
 
 
+def test_streaming_ingest_auto_resume_defaults_to_enabled() -> None:
+    """Profiles that do not opt into staged admission retain restart recovery."""
+    assert StreamingIngestConfig().auto_resume_registered_live_sources is True
+
+
+def test_streaming_ingest_auto_resume_can_be_disabled() -> None:
+    """A staged deployment can hold persisted sources inactive after startup."""
+    config = StreamingIngestConfig(auto_resume_registered_live_sources=False)
+
+    assert config.auto_resume_registered_live_sources is False
+
+
 def _make_worker(streaming_ingest):
     """Construct a worker bypassing the parent ``__init__`` so we can drive
     ``_register_streaming_routes`` directly without standing up a full NAT
@@ -243,6 +255,10 @@ async def test_direct_live_inspection_uses_recent_iso_evidence_window():
 
     assert result["evidence_tool"] == "video_understanding_iso"
     assert result["observed_range"] is None
+    assert result["observed_window"] == {
+        "start_time": "2026-08-13T12:00:00Z",
+        "end_time": "2026-08-13T12:00:25Z",
+    }
     tool_input = tool.ainvoke.await_args.kwargs["input"]
     assert tool_input["start_timestamp"] == "2026-08-13T12:00:00Z"
     assert tool_input["end_timestamp"] == "2026-08-13T12:00:25Z"

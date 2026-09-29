@@ -19,6 +19,10 @@ general:
   use_uvloop: true
   front_end:
     _type: vss_fastapi
+    # Thor demo: two background jobs plus NAT's cleanup worker. The default
+    # ten-job process pool consumes idle memory needed by local video models.
+    max_running_async_jobs: 2
+    dask_threads_per_worker: 1
     step_adaptor:
       mode: custom
       custom_event_types: [TOOL_START, TOOL_END]

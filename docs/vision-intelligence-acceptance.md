@@ -1,5 +1,13 @@
 # Vision Intelligence shakedown and acceptance record
 
+> **Safety status — 2026-08-30:** The deployed-runtime acceptance below is a
+> historical record and no longer authorizes the full co-resident local
+> Cosmos3 + Nemotron graph on this 128 GiB Thor. Two later host-wide stalls
+> ended in 120-second hardware-watchdog resets without a logged OOM or thermal
+> event. Both exact-model launchers now block this host. Keep the graph stopped
+> until one model is split to another machine or a remote endpoint and the new
+> topology receives runtime acceptance.
+
 Final acceptance was performed on NVIDIA Thor on 2026-08-19 against the
 rebuilt production image through the supported trusted-LAN gateway at
 `http://10.88.8.175:7777`.
@@ -91,9 +99,10 @@ event during the final acceptance window.
 
 ## Honest limitations and show-floor boundaries
 
-- The Thor-safe operating point is one continuously analyzed live stream plus
-  recorded archives. Keep additional streams paused unless a supervised demo
-  needs them and readiness/memory headroom remain healthy.
+- The historical acceptance used one continuously analyzed live stream plus
+  recorded archives. That operating point is no longer qualified for the
+  co-resident dual-model topology; do not use it to override the current
+  fail-closed admission gate.
 - General traffic scenes receive semantic embedding, captions, history, alerts,
   and visual reasoning, but not warehouse RT-DETR boxes. Enable **Warehouse
   detection + tracking** only for a compatible camera/model. Find Similar is
@@ -199,9 +208,10 @@ no model-heavy qualification workload was invoked during this pass.
 
 ### Open operational gates
 
-1. Preflight still stops because `/usr/local/bin/sys-cache-cleaner.sh` is not
-   running. Start it after reboot with operator-approved privilege before any
-   deployment or GPU-heavy demo.
+1. The full local Cosmos3 + Nemotron graph is empirically unqualified on this
+   128 GiB host after two hardware-watchdog resets. Keep the periodic cache
+   cleaner stopped and use a split/remote model lane; `thor_demo.py audit`
+   intentionally blocks the old co-resident launch.
 2. Offline verification intentionally fails until reviewed image provenance is
    reconciled. Four staged tags changed (`cti-vss-alert-bridge:thor-local`,
    `cti-vss-rt-embed:thor-local`,

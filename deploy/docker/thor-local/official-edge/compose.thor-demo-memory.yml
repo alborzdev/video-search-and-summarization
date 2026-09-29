@@ -1,7 +1,24 @@
-# Same exact NVIDIA VSS 3.2.1 Edge models with a smaller LLM KV-cache allocation.
-# This overlay changes only the Edge LLM GPU-memory utilization value. It exists for
-# a single Thor that is also hosting the desktop and Codex operator session.
+# Same exact NVIDIA VSS 3.2.1 Edge models with bounded LLM runtime memory.
+# This overlay reduces the Edge LLM KV-cache allocation and disables CUDA-graph
+# capture. It exists for a Thor that also hosts the desktop and operator session.
 services:
+  # Every service that can allocate unified GPU memory stays stopped after a
+  # host reboot. Only the audited launcher may admit these services again.
+  rtvi-embed:
+    restart: "no"
+
+  perception-2d-fusion:
+    restart: "no"
+
+  perception-2d-smartcity-thor:
+    restart: "no"
+
+  streamprocessing-ms:
+    restart: "no"
+
+  sensor-ms:
+    restart: "no"
+
   nemotron-edge:
     command:
       - python3
@@ -18,6 +35,7 @@ services:
       - 127.0.0.1
       - --port
       - "30081"
+      - --enforce-eager
       - --gpu-memory-utilization
       - "0.12"
       - --enable-auto-tool-choice

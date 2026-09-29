@@ -2,7 +2,7 @@
 
 import { InvestigateWorkspace } from "../InvestigateWorkspace";
 import type { VisionStream } from "../types";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 
 const liveCamera: VisionStream = {
@@ -106,10 +106,46 @@ describe("InvestigateWorkspace", () => {
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(requestBody(fetchMock, 0).min_cosine_similarity).toBe("0.25");
-    expect(requestBody(fetchMock, 1).min_cosine_similarity).toBe("0.15");
+    expect(requestBody(fetchMock, 1).min_cosine_similarity).toBe("0.12");
     expect(
       await screen.findByRole("heading", { name: "Older confirmed vehicle" })
     ).toBeInTheDocument();
+  });
+
+  it("keeps a 0.12 semantic candidate discoverable when scoped to its recording", async () => {
+    global.fetch = jest.fn(async (_url, options) => {
+      const body = JSON.parse(String(options?.body));
+      return { ok: true, json: async () => ({ data: Number(body.min_cosine_similarity) <= 0.12 ? [{
+        ...resultPayload[0], critic_result: null, description: "Person climbing the green steps",
+        sensor_id: recordedCamera.sensorId, video_name: "warehouse-main.mp4", similarity: 0.12,
+      }] : [] }) };
+    }) as jest.Mock;
+    render(<InvestigateWorkspace agentApiUrl="http://thor.test/agent"
+      initialRequest={{ camera: recordedCamera, query: "person climbing the green steps" }} />);
+    expect(await screen.findByRole("heading", { name: "Person climbing the green steps" })).toBeInTheDocument();
+  });
+
+  it("keeps independently searched clips and their original labels for comparison", async () => {
+    const fetchMock = jest.fn(async (url, options) => {
+      const body = JSON.parse(String(options?.body));
+      if (String(url) === "/api/vision/evidence-analysis") return { ok: false, json: async () => ({ error: "Stop after request verification" }) };
+      const later = body.query === "climbing steps";
+      return { ok: true, json: async () => ({ data: [{ ...resultPayload[later ? 1 : 0], description: "", critic_result: null }] }) };
+    });
+    global.fetch = fetchMock as jest.Mock;
+    render(<InvestigateWorkspace agentApiUrl="http://thor.test/agent"
+      initialRequest={{ camera: recordedCamera, query: "carrying box" }} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Ask about this clip: Carrying box" }));
+    fireEvent.change(screen.getByRole("textbox", { name: "Search video evidence" }), { target: { value: "climbing steps" } });
+    fireEvent.click(screen.getByRole("button", { name: "Search", exact: true }));
+    fireEvent.click(await screen.findByRole("button", { name: "Ask about this clip: Climbing steps" }));
+    expect(screen.getByRole("button", { name: "Play evidence 1: Carrying box" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Play evidence 2: Climbing steps" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Describe what happens" }));
+    await waitFor(() => expect(fetchMock.mock.calls.some(([url]) => url === "/api/vision/evidence-analysis")).toBe(true));
+    const call = fetchMock.mock.calls.find(([url]) => url === "/api/vision/evidence-analysis")!;
+    const payload = JSON.parse(String(call[1]?.body));
+    expect(payload.evidence.map((item: { start_time: string }) => item.start_time)).toEqual([resultPayload[0].start_time, resultPayload[1].start_time]);
   });
 
   it("explains when local search is unavailable instead of exposing a bare 422", async () => {
@@ -135,6 +171,13 @@ describe("InvestigateWorkspace", () => {
       )
     ).toBeInTheDocument();
     expect(screen.queryByText(/Search returned 422/i)).not.toBeInTheDocument();
+  });
+
+  it("explains a proxy outage without showing a bare HTTP status", async () => {
+    global.fetch = jest.fn(async () => ({ ok: false, status: 503, json: async () => { throw new Error("not JSON"); } })) as jest.Mock;
+    render(<InvestigateWorkspace agentApiUrl="http://thor.test/agent" initialRequest={{ camera: liveCamera, query: "car" }} />);
+    expect(await screen.findByText(/Video search is temporarily unavailable/)).toBeInTheDocument();
+    expect(screen.queryByText(/Search returned 503/)).not.toBeInTheDocument();
   });
 
   it("uses broad recall and source-diverse relevance for all-source searches", async () => {
@@ -586,6 +629,67 @@ describe("InvestigateWorkspace", () => {
     expect(screen.getByText("Showing 12 of 14 matches")).toBeInTheDocument();
   });
 
+  it("retries the same question and selected clips after an inspection failure", async () => {
+    const requests: unknown[] = [];
+    global.fetch = jest.fn(async (input, options) => {
+      if (String(input) === "/api/vision/evidence-analysis") {
+        requests.push(JSON.parse(String(options?.body)));
+        return { ok: false, status: 503, json: async () => ({ error: "Temporary inspection failure" }) };
+      }
+      return { ok: true, json: async () => ({ data: resultPayload }) };
+    }) as jest.Mock;
+    render(<InvestigateWorkspace agentApiUrl="http://thor.test/agent" initialRequest={{ query: "Find safety activity" }} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Ask about this clip: Older confirmed vehicle" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask about this clip: Newest unverified person" }));
+    fireEvent.change(screen.getByLabelText("Ask about selected evidence"), { target: { value: "How do these clips differ?" } });
+    fireEvent.click(screen.getByRole("button", { name: "Ask selected evidence" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Try again" }));
+    await waitFor(() => expect(requests).toHaveLength(2));
+    expect(requests[1]).toEqual(requests[0]);
+    expect(requests[1]).toEqual(expect.objectContaining({ question: "How do these clips differ?", evidence: expect.any(Array) }));
+    expect((requests[1] as { evidence: unknown[] }).evidence).toHaveLength(2);
+    await screen.findByText("Temporary inspection failure");
+    fireEvent.click(screen.getByRole("button", { name: "Describe what happens" }));
+    await waitFor(() => expect(requests).toHaveLength(3));
+    expect(requests[2]).not.toHaveProperty("question");
+  });
+
+  it("identifies retained selections that are outside the current search results", async () => {
+    let visibleResults = resultPayload;
+    global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ data: visibleResults }) })) as jest.Mock;
+    render(<InvestigateWorkspace agentApiUrl="http://thor.test/agent" initialRequest={{ query: "Vehicles" }} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Ask about this clip: Older confirmed vehicle" }));
+    expect(screen.queryByText(/Includes clips from earlier searches/)).not.toBeInTheDocument();
+    visibleResults = [resultPayload[1]];
+    fireEvent.change(screen.getByLabelText("Search video evidence"), { target: { value: "People" } });
+    fireEvent.click(screen.getByRole("button", { name: "Search", exact: true }));
+    await screen.findByText(/Includes clips from earlier searches/);
+    expect(screen.getByRole("button", { name: "Play evidence 1: Older confirmed vehicle" })).toBeInTheDocument();
+    expect(screen.getByText(/Selected earlier ·/)).toBeInTheDocument();
+    visibleResults = resultPayload;
+    fireEvent.change(screen.getByLabelText("Search video evidence"), { target: { value: "Vehicles again" } });
+    fireEvent.click(screen.getByRole("button", { name: "Search", exact: true }));
+    await waitFor(() => expect(screen.queryByText(/Includes clips from earlier searches/)).not.toBeInTheDocument());
+  });
+
+  it("discards an answer when evidence changes during inspection", async () => {
+    let finish!: (value: unknown) => void;
+    const pending = new Promise((resolve) => { finish = resolve; });
+    global.fetch = jest.fn(async (input) => String(input) === "/api/vision/evidence-analysis"
+      ? pending : { ok: true, json: async () => ({ data: resultPayload }) }) as jest.Mock;
+    render(<InvestigateWorkspace agentApiUrl="http://thor.test/agent" initialRequest={{ query: "Find safety activity" }} />);
+    fireEvent.click(await screen.findByRole("button", { name: "Ask about this clip: Older confirmed vehicle" }));
+    fireEvent.click(screen.getByRole("button", { name: "Describe what happens" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove evidence 1" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask about this clip: Newest unverified person" }));
+    await act(async () => {
+      finish({ ok: true, json: async () => ({ summary: "Stale answer from removed footage" }) });
+    });
+    expect(screen.queryByText("Stale answer from removed footage")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Describe what happens" })).toBeEnabled();
+    expect(screen.queryByRole("button", { name: "Save report" })).not.toBeInTheDocument();
+  });
+
   it("visually inspects selected clips and renders citation-bearing analysis", async () => {
     const fetchMock = jest.fn(
       async (input: RequestInfo | URL, options?: RequestInit) => {
@@ -668,21 +772,20 @@ describe("InvestigateWorkspace", () => {
     await waitFor(() =>
       expect(screen.getByText("Older confirmed vehicle")).toBeInTheDocument()
     );
-    fireEvent.click(
-      screen.getByRole("button", {
-        name: "Use Older confirmed vehicle as evidence",
-      })
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Play clip: Older confirmed vehicle" }));
+    fireEvent.click(screen.getByRole("button", { name: "Ask about this clip", exact: true }));
+    expect(screen.queryByLabelText("Evidence viewer")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Ask about selected evidence")).toHaveFocus();
     expect(
       screen.getByRole("button", {
-        name: "Remove Older confirmed vehicle from evidence",
+        name: "Remove clip: Older confirmed vehicle",
       })
     ).toHaveAttribute("aria-pressed", "true");
     expect(
       screen.getByRole("region", { name: "Selected evidence workspace" })
     ).toHaveTextContent("1 selected clip");
 
-    fireEvent.click(screen.getByRole("button", { name: "Analyze 1 selected" }));
+    fireEvent.click(screen.getByRole("button", { name: "Describe what happens" }));
     await waitFor(() =>
       expect(
         screen.getByRole("region", { name: "Selected evidence workspace" })
@@ -728,20 +831,21 @@ describe("InvestigateWorkspace", () => {
     );
 
     fireEvent.click(
-      screen.getByRole("button", { name: "Create incident and report" })
+      await screen.findByRole("button", { name: "Save report" })
     );
+    fireEvent.click(screen.getByText(/Review details ·/));
     fireEvent.change(
-      screen.getByRole("combobox", { name: "Investigation severity" }),
+      screen.getByRole("combobox", { name: "Review priority" }),
       { target: { value: "high" } }
     );
     fireEvent.change(
-      screen.getByRole("textbox", { name: "Investigation notes" }),
+      screen.getByRole("textbox", { name: "Report notes" }),
       { target: { value: "Operator reviewed this movement." } }
     );
-    fireEvent.click(screen.getByRole("button", { name: "Save investigation" }));
-    expect(await screen.findByText("Investigation saved")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Save report" }));
+    expect(await screen.findByText("Report saved")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "View evidence report" })
+      screen.getByRole("link", { name: "Open report" })
     ).toHaveAttribute(
       "href",
       "/api/vision/investigations?id=11111111-1111-4111-8111-111111111111&format=html"
@@ -751,7 +855,7 @@ describe("InvestigateWorkspace", () => {
     );
     expect(JSON.parse(String(investigationRequest?.[1]?.body))).toEqual(
       expect.objectContaining({
-        disposition: "open",
+        disposition: "under_review",
         evidence: [
           expect.objectContaining({
             sensor_id: "traffic-sensor",
@@ -766,7 +870,7 @@ describe("InvestigateWorkspace", () => {
     fireEvent.click(screen.getByRole("button", { name: "Clear" }));
     expect(
       screen.getByRole("button", {
-        name: "Use Older confirmed vehicle as evidence",
+        name: "Ask about this clip: Older confirmed vehicle",
       })
     ).toHaveAttribute("aria-pressed", "false");
   });
@@ -802,7 +906,12 @@ describe("InvestigateWorkspace", () => {
     expect(
       screen.getByText("3:10 into recording · 00:05 clip")
     ).toBeInTheDocument();
-    expect(screen.getByText("Semantic Match")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Ask about this clip: Forklift activity" }));
+    expect(
+      within(screen.getByRole("region", { name: "Selected evidence workspace" }))
+        .getByText(/3:10 into recording/)
+    ).toBeInTheDocument();
+    expect(screen.getAllByText("Semantic Match").length).toBeGreaterThan(0);
     expect(screen.getByText("Detector Match")).toBeInTheDocument();
     expect(
       screen.queryByText(/Model-ranked evidence/i)

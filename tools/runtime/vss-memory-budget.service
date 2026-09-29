@@ -1,0 +1,9 @@
+[Unit]
+Description=Persistent Thor VSS memory and telemetry guard
+[Service]
+ExecStart=/usr/bin/python3 /home/nvidia/cti-saa-thor/video-search-and-summarization/tools/runtime/guard.py
+Environment=VSS_MEMORY_FLOOR_GIB=48
+Restart=on-failure
+RestartSec=2
+[Install]
+WantedBy=default.target

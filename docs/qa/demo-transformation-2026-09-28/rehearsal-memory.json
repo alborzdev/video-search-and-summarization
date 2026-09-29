@@ -1,0 +1,14 @@
+{
+  "requested_start": 1790640002.341,
+  "requested_end": 1790640179.378,
+  "samples": 176,
+  "first": 1790640002.6258264,
+  "last": 1790640179.3185697,
+  "min_available_gib": 49.085,
+  "max_available_gib": 49.815,
+  "boot_ids": [
+    "ac75a3b5-980a-41c5-8301-200423326f72"
+  ],
+  "max_sample_gap_seconds": 1.0683069229125977,
+  "max_thermal_age_seconds": 1.0
+}

@@ -1,0 +1,5 @@
+services:
+  lvs-server:
+    environment:
+      LVS_EMB_DIMENSIONS: '768'
+      VSS_EXTRA_ARGS: --max-live-streams 2

@@ -1,0 +1,155 @@
+{
+  "results": [
+    {
+      "case": "short",
+      "repeat": 0,
+      "seconds": 45.33,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 32,
+        "total_tokens": 64,
+        "completion_tokens": 32,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "The user asks: \"Reply with just the number: what is 20 plus 22?\" So answer is 42. Must reply only the",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "tool",
+      "repeat": 0,
+      "seconds": 4.02,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 281,
+        "total_tokens": 330,
+        "completion_tokens": 49,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "I need to call the lookup_video function with the filename \"demo.mp4\". Let me do that.\n</think>\n",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [
+          {
+            "id": "chatcmpl-tool-a2e99b35b5b93e3f",
+            "type": "function",
+            "function": {
+              "name": "lookup_video",
+              "arguments": "{\"filename\": \"demo.mp4\"}"
+            }
+          }
+        ],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "long_context",
+      "repeat": 0,
+      "seconds": 27.07,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 11726,
+        "total_tokens": 11777,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "We need to summarize: \"one person walks past a stationary forklift.\" repeated many times. So common observation: a person walking past a stationary forklift. One sentence.\n</think>\nA person is walking past a stationary forklift.",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "short",
+      "repeat": 1,
+      "seconds": 1.11,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 32,
+        "total_tokens": 64,
+        "completion_tokens": 32,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "The user asks: \"Reply with just the number: what is 20 plus 22?\" So answer is 42. Must reply only the",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "tool",
+      "repeat": 1,
+      "seconds": 1.7,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 281,
+        "total_tokens": 330,
+        "completion_tokens": 49,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "I need to call the lookup_video function with the filename \"demo.mp4\". Let me do that.\n</think>\n",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [
+          {
+            "id": "chatcmpl-tool-93a2da6af59e3c5f",
+            "type": "function",
+            "function": {
+              "name": "lookup_video",
+              "arguments": "{\"filename\": \"demo.mp4\"}"
+            }
+          }
+        ],
+        "reasoning": null
+      }
+    },
+    {
+      "case": "long_context",
+      "repeat": 1,
+      "seconds": 3.47,
+      "passed": true,
+      "usage": {
+        "prompt_tokens": 11726,
+        "total_tokens": 11777,
+        "completion_tokens": 51,
+        "prompt_tokens_details": null
+      },
+      "message": {
+        "role": "assistant",
+        "content": "We need to summarize: \"one person walks past a stationary forklift.\" repeated many times. So common observation: a person walking past a stationary forklift. One sentence.\n</think>\nA person is walking past a stationary forklift.",
+        "refusal": null,
+        "annotations": null,
+        "audio": null,
+        "function_call": null,
+        "tool_calls": [],
+        "reasoning": null
+      }
+    }
+  ],
+  "minimum_available_gib": 97.21474838256836
+}

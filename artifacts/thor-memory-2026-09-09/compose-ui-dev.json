@@ -1,0 +1,29 @@
+{
+  "services": {
+    "vss-ui": {
+      "user": "65532:1000",
+      "working_dir": "/workspace/apps/nv-metropolis-bp-vss-ui",
+      "entrypoint": [],
+      "command": [
+        "node",
+        "../../node_modules/next/dist/bin/next",
+        "dev",
+        "--turbopack",
+        "-H",
+        "0.0.0.0",
+        "-p",
+        "3001"
+      ],
+      "volumes": [
+        "/home/nvidia/cti-saa-thor/video-search-and-summarization/services/ui:/workspace"
+      ],
+      "environment": {
+        "NODE_ENV": "development",
+        "NODE_OPTIONS": "--max-old-space-size=2048",
+        "NEXT_TELEMETRY_DISABLED": "1"
+      },
+      "mem_limit": "4g",
+      "memswap_limit": "4g"
+    }
+  }
+}

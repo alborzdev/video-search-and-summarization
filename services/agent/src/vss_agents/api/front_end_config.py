@@ -62,6 +62,16 @@ class StreamingIngestConfig(BaseModel):
         ),
     )
 
+    auto_resume_registered_live_sources: bool = Field(
+        default=True,
+        description=(
+            "Whether Agent startup continuously reconciles desired-active VST sources into "
+            "RTVI-CV, RTVI-Embed, and RTVI-VLM. Disable this for a staged deployment whose "
+            "post-load safety gate must approve downstream stream activation first. Explicit "
+            "source add and resume requests remain available."
+        ),
+    )
+
     rtvi_embed_base_url: str = Field(default="", description="Base URL for RTVI embedding service")
     rtvi_embed_model: str = Field(default="cosmos-embed1-448p", description="Embedding model name")
     rtvi_embed_chunk_duration: int = Field(default=5, description="Chunk duration in seconds for embedding")

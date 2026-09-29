@@ -1,0 +1,90 @@
+{
+  "processes": [
+    {
+      "pid": 1,
+      "name": "nat",
+      "rss_kib": 682660,
+      "pss_kib": 615347
+    },
+    {
+      "pid": 67,
+      "name": "python3",
+      "rss_kib": 19600,
+      "pss_kib": 13905
+    },
+    {
+      "pid": 72,
+      "name": "python3",
+      "rss_kib": 100372,
+      "pss_kib": 79819
+    },
+    {
+      "pid": 75,
+      "name": "python3",
+      "rss_kib": 100120,
+      "pss_kib": 79567
+    },
+    {
+      "pid": 78,
+      "name": "python3",
+      "rss_kib": 100656,
+      "pss_kib": 80103
+    },
+    {
+      "pid": 82,
+      "name": "python3",
+      "rss_kib": 99248,
+      "pss_kib": 78695
+    },
+    {
+      "pid": 88,
+      "name": "python3",
+      "rss_kib": 100316,
+      "pss_kib": 79774
+    },
+    {
+      "pid": 90,
+      "name": "python3",
+      "rss_kib": 101012,
+      "pss_kib": 80459
+    },
+    {
+      "pid": 95,
+      "name": "python3",
+      "rss_kib": 100968,
+      "pss_kib": 80415
+    },
+    {
+      "pid": 98,
+      "name": "python3",
+      "rss_kib": 100532,
+      "pss_kib": 79979
+    },
+    {
+      "pid": 103,
+      "name": "python3",
+      "rss_kib": 99780,
+      "pss_kib": 79227
+    },
+    {
+      "pid": 107,
+      "name": "python3",
+      "rss_kib": 99828,
+      "pss_kib": 79275
+    },
+    {
+      "pid": 110,
+      "name": "python3",
+      "rss_kib": 99516,
+      "pss_kib": 78963
+    },
+    {
+      "pid": 243,
+      "name": "python",
+      "rss_kib": 11856,
+      "pss_kib": 7110
+    }
+  ],
+  "pss_mib": 1477.185546875,
+  "cgroup_bytes": 1504559104
+}

@@ -9,12 +9,14 @@ import {
   IconPlus,
   IconPolygon,
   IconTrash,
+  IconRefresh,
 } from '@tabler/icons-react';
-import React, { MouseEvent, PointerEvent, useRef, useState } from 'react';
+import React, { MouseEvent, PointerEvent, useEffect, useRef, useState } from 'react';
 
 interface MonitoringRegionEditorProps {
   geometry: MonitoringGeometry;
   onChange: (geometry: MonitoringGeometry) => void;
+  onPreviewAvailable?: (available: boolean) => void;
   stream: VisionStream;
   vstApiUrl?: string | null;
 }
@@ -51,10 +53,22 @@ function keyboardPoint(points: MonitoringPoint[]): MonitoringPoint {
 export function MonitoringRegionEditor({
   geometry,
   onChange,
+  onPreviewAvailable,
   stream,
   vstApiUrl,
 }: MonitoringRegionEditorProps) {
   const [dragging, setDragging] = useState<number | null>(null);
+  const [previewAvailable, setPreviewAvailable] = useState(false);
+  const [previewTimedOut, setPreviewTimedOut] = useState(false);
+  const [previewAttempt, setPreviewAttempt] = useState(0);
+  useEffect(() => {
+    onPreviewAvailable?.(previewAvailable);
+  }, [onPreviewAvailable, previewAvailable]);
+  useEffect(() => {
+    if (previewAvailable) return;
+    const timeout = window.setTimeout(() => setPreviewTimedOut(true), 8_000);
+    return () => window.clearTimeout(timeout);
+  }, [previewAttempt, previewAvailable]);
   const moved = useRef(false);
   const polygon = geometry.points
     .map((point) => `${point.x * VIEWBOX_WIDTH},${point.y * VIEWBOX_HEIGHT}`)
@@ -80,15 +94,17 @@ export function MonitoringRegionEditor({
     <div className="vi-region-editor">
       <div className="vi-region-stage">
         <VisionStreamCanvas
+          key={`${stream.streamId}-${previewAttempt}`}
           className="vi-region-video"
           eager
           liveSnapshotEnabled
           showReplayControls={false}
           showStatus={false}
+          onPreviewAvailable={setPreviewAvailable}
           stream={stream}
           vstApiUrl={vstApiUrl}
         />
-        <svg
+        {previewAvailable && <svg
           aria-label="Monitoring area editor"
           className="vi-region-overlay"
           onClick={(event) => {
@@ -183,14 +199,26 @@ export function MonitoringRegionEditor({
               </text>
             </g>
           ))}
-        </svg>
+        </svg>}
+        {!previewAvailable && (
+          <div className="vi-region-unavailable" role="status" aria-label="Camera preview status">
+            <strong>{previewTimedOut ? 'No camera frame available' : 'Loading camera preview…'}</strong>
+            <span>{previewTimedOut
+              ? 'A visible frame is needed to place the area. Retry, or go back and choose another source.'
+              : 'The area editor will open when a video frame or retained image is visible.'}</span>
+            {previewTimedOut && <button type="button" onClick={() => {
+              setPreviewTimedOut(false);
+              setPreviewAttempt((attempt) => attempt + 1);
+            }}><IconRefresh size={16} /> Retry preview</button>}
+          </div>
+        )}
         <div className="vi-region-label">
           <IconPolygon size={16} /> Monitored area
         </div>
       </div>
       <div className="vi-region-toolbar">
         <div>
-          {geometry.points.length >= 3 ? (
+          {!previewAvailable ? <span>Waiting for a source frame before drawing</span> : geometry.points.length >= 3 ? (
             <span className="is-complete"><IconCheck size={15} /> Area ready · drag or focus points to refine</span>
           ) : (
             <span>Click the video or use Add point {3 - geometry.points.length} more {3 - geometry.points.length === 1 ? 'time' : 'times'} to close the area</span>
@@ -198,7 +226,7 @@ export function MonitoringRegionEditor({
         </div>
         <button
           type="button"
-          disabled={geometry.points.length >= 16}
+          disabled={!previewAvailable || geometry.points.length >= 16}
           onClick={() => onChange({
             ...geometry,
             points: [...geometry.points, keyboardPoint(geometry.points)],

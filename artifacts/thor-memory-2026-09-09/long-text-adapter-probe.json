@@ -1,0 +1,10 @@
+{
+  "status": 200,
+  "long_input_characters": 3510,
+  "dimensions": [
+    768,
+    768
+  ],
+  "norm": 1.0,
+  "finite": true
+}

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+import { readCosmosReservationState } from "../../../server/vision/cosmosReservation";
 import handler from "../../../pages/api/vision/evidence-analysis";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { readFile } from "node:fs/promises";
@@ -85,6 +86,36 @@ describe("evidence analysis API", () => {
     expect(setHeader).toHaveBeenCalledWith("Cache-Control", "no-store");
     expect(status).toHaveBeenCalledWith(200);
     expect(json).toHaveBeenCalledWith(payload);
+  });
+
+  it("forwards progressive chunks while retaining the reservation until upstream ends", async () => {
+    let end!: () => void;
+    const ending = new Promise<{ done: true }>((resolve) => { end = () => resolve({ done: true }); });
+    let first = true;
+    const chunk = Buffer.from('{"type":"inspection","inspection":{"evidence_id":"E1"}}\n');
+    global.fetch = jest.fn(async (url) => String(url).endsWith("/stream") ? {
+      ok: true, status: 200, body: { getReader: () => ({
+        read: async () => { if (first) { first = false; return { done: false, value: chunk }; } return ending; },
+        releaseLock: jest.fn(),
+      }) },
+    } : { ok: true, json: async () => ({ stream_list: [] }) }) as jest.Mock;
+    let wrote!: () => void;
+    const written = new Promise<void>((resolve) => { wrote = resolve; });
+    const response = {
+      status: jest.fn().mockReturnThis(), setHeader: jest.fn(), flushHeaders: jest.fn(),
+      write: jest.fn(() => { wrote(); return true; }), end: jest.fn(),
+      destroyed: false, writableEnded: false,
+    };
+    const operation = handler({ method: "POST", headers: { accept: "application/x-ndjson" },
+      body: { query: "movement", evidence: [evidence] } } as unknown as NextApiRequest,
+      response as unknown as NextApiResponse);
+    await written;
+    expect(response.write).toHaveBeenCalledWith(chunk);
+    expect(readCosmosReservationState().active).toBe(true);
+    end();
+    await operation;
+    expect(response.end).toHaveBeenCalled();
+    expect(readCosmosReservationState().active).toBe(false);
   });
 
   it("rejects duplicate or invalid evidence before calling the agent", async () => {

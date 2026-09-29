@@ -59,6 +59,7 @@ from torchvision.transforms import v2
 from common.chunk_info import ChunkInfo
 from common.logger import TimeMeasure, logger
 from utils.media_file_info import MediaFileInfo
+from utils.frame_sampling import SamplingUnavailable, discover_mp4_timestamps, select_frame_targets
 
 gi.require_version("Gst", "1.0")
 
@@ -214,6 +215,9 @@ class DefaultFrameSelector:
 
     def set_chunk(self, chunk: ChunkInfo):
         self._chunk = chunk
+        self._endpoint_sampling = False
+        self._decoder_to_stream_offset_ns = 0
+        self._file_targets = ()
         self._selected_pts_array = deque()
         self._select_all_frames = False
         start_pts = chunk.start_pts
@@ -279,6 +283,27 @@ class DefaultFrameSelector:
             len(self._selected_pts_array),
         )
 
+    def set_file_timestamps(self, frames):
+        """Apply a complete local-file plan without changing the frame budget."""
+        if self._select_all_frames:
+            return
+        targets = select_frame_targets(
+            frames, self._selection_start_pts, self._selection_end_pts, self._num_frames
+        )
+        offsets = {frame.stream_ns - frame.decoder_ns for frame in targets}
+        if len(offsets) != 1:
+            raise SamplingUnavailable("Sampling crosses incompatible video segments")
+        self._decoder_to_stream_offset_ns = offsets.pop()
+        self._file_targets = tuple(frame.decoder_ns for frame in targets)
+        self._selection_start_pts = self._file_targets[0]
+        self._selection_end_pts = self._file_targets[-1]
+        self._endpoint_sampling = True
+        self.reset_file_targets()
+
+    def reset_file_targets(self):
+        if self._endpoint_sampling:
+            self._selected_pts_array = deque(self._file_targets)
+
     def choose_frame(self, buffer, pts):
         if self._select_all_frames:
             return self._selection_start_pts <= pts <= self._selection_end_pts
@@ -288,12 +313,12 @@ class DefaultFrameSelector:
         if (
             len(self._selected_pts_array)
             and pts >= self._selected_pts_array[0]
-            and pts <= self._chunk.end_pts
+            and pts <= self._selection_end_pts
         ):
             while len(self._selected_pts_array) and pts >= self._selected_pts_array[0]:
                 self._selected_pts_array.popleft()  # O(1) instead of O(n) with pop(0)
             return True
-        if pts >= self._chunk.end_pts:
+        if pts >= self._selection_end_pts:
             self._selected_pts_array.clear()
         return False
 
@@ -2139,6 +2164,23 @@ class VideoFileFrameGetter:
         if self._is_live:
             self._add_gst_pad_probe(pad, Gst.PadProbeType.QUERY_DOWNSTREAM, cb_ntpquery, self)
 
+        if not self._is_live:
+            def reset_file_targets_on_segment(pad, info):
+                if info.get_event().type == Gst.EventType.SEGMENT:
+                    selector = self._frame_selector
+                    if getattr(selector, "_endpoint_sampling", False):
+                        selector.reset_file_targets()
+                        if self._timestamp_filter:
+                            self._timestamp_filter.set_property(
+                                "timestamps", ",".join(str(pts) for pts in selector._file_targets)
+                            )
+                return Gst.PadProbeReturn.OK
+
+            selection_pad = self._timestamp_filter.get_static_pad("sink") if self._timestamp_filter else pad
+            self._add_gst_pad_probe(
+                selection_pad, Gst.PadProbeType.EVENT_DOWNSTREAM, reset_file_targets_on_segment
+            )
+
         # Link timestampfilter between qvideoconvert and videoconvert for non-live streams
         if self._timestamp_filter:
             qvideoconvert.link(self._timestamp_filter)
@@ -2473,6 +2515,19 @@ class VideoFileFrameGetter:
         if frame_selector:
             self._frame_selector = frame_selector
         self._frame_selector.set_chunk(chunk)
+        if (
+            not self._is_live
+            and not enable_audio
+            and isinstance(self._frame_selector, DefaultFrameSelector)
+            and not self._frame_selector.selects_all_frames
+            and str(chunk.file).lower().endswith(".mp4")
+            and ";" not in chunk.file
+            and _env_bool("RTVI_INCLUDE_FILE_ENDPOINT", True)
+        ):
+            try:
+                self._frame_selector.set_file_timestamps(discover_mp4_timestamps(chunk.file))
+            except (SamplingUnavailable, OSError) as error:
+                logger.warning("Final-frame coverage unavailable; retaining legacy sampling: %s", error)
 
         if (
             self._pipeline
@@ -2800,7 +2855,20 @@ class VideoFileFrameGetter:
             self._cached_frames_pts = None
 
         # Adjust for the PTS offset if any.
-        cached_frames_pts = [t + chunk.pts_offset_ns / 1e9 for t in cached_frames_pts]
+        video_stream_offset = getattr(self._frame_selector, "_decoder_to_stream_offset_ns", 0)
+        cached_frames_pts = [
+            t + (video_stream_offset + chunk.pts_offset_ns) / 1e9 for t in cached_frames_pts
+        ]
+
+        if getattr(self._frame_selector, "_endpoint_sampling", False):
+            expected_end = (
+                self._frame_selector._file_targets[-1] + video_stream_offset + chunk.pts_offset_ns
+            ) / 1e9
+            logger.info(
+                "File endpoint sampling: decoded=%d planned=%d final_time=%s expected_final_time=%.9f",
+                len(cached_frames_pts), len(self._frame_selector._file_targets),
+                cached_frames_pts[-1] if cached_frames_pts else None, expected_end,
+            )
 
         for audio_frame in self._cached_audio_frames:
             audio_frame["start"] += chunk.pts_offset_ns / 1e9

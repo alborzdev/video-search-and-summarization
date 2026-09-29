@@ -1,6 +1,14 @@
 # Thor-full feature graph with NVIDIA's Edge 4B planning/response prompt overlay.
 base: ../../developer-profiles/dev-profile-thor-full/vss-agent/configs/config.yml
 
+general:
+  front_end:
+    streaming_ingest:
+      # Startup reconciliation admitted the persisted live stream immediately
+      # before the second host watchdog reset. Require an explicit operator
+      # resume after the complete graph has passed runtime acceptance.
+      auto_resume_registered_live_sources: false
+
 workflow:
   # Prompt without clarifying-question instructions, matching the official
   # base-profile Edge 4B compatibility contract.

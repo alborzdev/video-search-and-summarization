@@ -1,0 +1,47 @@
+[
+  {
+    "file": "0.mp4",
+    "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+    "expected": "YES"
+  },
+  {
+    "file": "1.mp4",
+    "sha256": "207b2b71ff47962b7b3f9d7df23a91f69a76858a1d20aaa61720a6b6e709ee56",
+    "expected": "YES"
+  },
+  {
+    "file": "2.mp4",
+    "sha256": "72c029e317bea3328e56d18cc40a9a0778083ffbced448f2fefefd2bc842ce0a",
+    "expected": "YES"
+  },
+  {
+    "file": "3.mp4",
+    "sha256": "a1eb173c492325c375bf527d26c4fced774589d497ea83c4062d2412dbb6b184",
+    "expected": "YES"
+  },
+  {
+    "file": "4.mp4",
+    "sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+    "expected": "NO"
+  },
+  {
+    "file": "5.mp4",
+    "sha256": "5686d02b72fa5169c1f66546f5c255677660a4ee46312bc146ef58b2345997bc",
+    "expected": "YES"
+  },
+  {
+    "file": "6.mp4",
+    "sha256": "55b861904f1a0e5bba2b14d4b1cc54a264c7cfd3d8e3ab371cc32d05a56e88cb",
+    "expected": "NO"
+  },
+  {
+    "file": "7.mp4",
+    "sha256": "d51efd9147bedc0d12a5443767c16514f8ce39c66f9f427f5f9ed2e43c68ff66",
+    "expected": "YES"
+  },
+  {
+    "file": "8.mp4",
+    "sha256": "b64d09ee5c3e67be4583f4d92c14299d59f0c8a40b700e0eeb810741ef1eec9b",
+    "expected": "NO"
+  }
+]

@@ -12,7 +12,8 @@ Thor-compatible image and NVIDIA's VSS 3.2.1 NvStreamer configuration.
 ./deploy/docker/thor-local/nvstreamer/nvstreamer.sh stop
 ```
 
-The container uses `restart: unless-stopped`, so it returns after a host reboot.
+The container uses `restart: "no"`, so a host reboot leaves media sources
+stopped until an operator explicitly starts them after runtime safety checks.
 
 ## Create a stream
 
@@ -34,4 +35,3 @@ List generated streams from the terminal with:
 
 Use the exact URL returned by NVStreamer; RTSP ports are assigned dynamically
 from the configured `31554-31561` pool.
-

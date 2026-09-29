@@ -1,0 +1,26 @@
+{
+  "incidents": [
+    {
+      "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+      "info": {
+        "requestedModel": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "streamId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+        "verdict": "confirmed",
+        "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+        "chunkIdx": "1",
+        "sensorId": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+        "alertCategory": "semantic",
+        "requestId": "e56fb38f-d868-4673-b16d-cd369a9bfc28",
+        "alertRuleId": "dcf041ca-a4d5-4847-9dce-06390212a004",
+        "triggerPhrase": "yes"
+      },
+      "objectIds": [
+        "6776f3a6-446f-4da8-832e-cfcf4507de8c"
+      ],
+      "timestamp": "2026-09-29T00:59:35.846Z",
+      "end": "2026-09-29T00:59:58.378Z",
+      "Id": "a02f86507251a9d877bc475edf06e5bf0a902350"
+    }
+  ],
+  "hasMore": false
+}

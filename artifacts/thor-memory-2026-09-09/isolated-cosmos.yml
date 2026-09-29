@@ -1,0 +1,270 @@
+name: vss-memory-cosmos
+services:
+  cosmos:
+    image: nvcr.io/nvidia/vss-core/vss-rt-vlm@sha256:5403e0c8fa8b149e7ad15ab1b063b78d610e7a50297dba6ca550ac5cc5ef9504
+    container_name: vss-memory-cosmos
+    runtime: nvidia
+    restart: 'no'
+    oom_score_adj: 500
+    ipc: host
+    entrypoint:
+    - python3
+    - /usr/local/bin/thor-startup-gate.py
+    - --tcp
+    - host.docker.internal:9092
+    - --
+    command:
+    - /opt/nvidia/rtvi/start_rtvi_vlm.sh
+    environment:
+      VLLM_MAX_NUM_BATCHED_TOKENS: '4096'
+      VIA_VLM_ENDPOINT: ''
+      OTEL_TRACES_EXPORTER: otlp
+      VLLM_ENFORCE_EAGER: 'true'
+      VIA_VLM_API_KEY: ''
+      VLM_INPUT_WIDTH: ''
+      VLM_DEFAULT_NUM_FRAMES_PER_SECOND_OR_FIXED_FRAMES_CHUNK: '1'
+      NUM_GPUS: '1'
+      VLLM_MM_ENCODER_ATTN_BACKEND: ''
+      RTVI_ENABLE_FILE_TIMESTAMP_FILTER: 'true'
+      MODEL_ROOT_DIR: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/models
+      RTVI_TIMESTAMP_PROMPT_PREFIX_FILE_SOURCE: ''
+      VLM_MODEL_SUPPORTS_AUDIO: 'false'
+      KAFKA_ENABLED: 'true'
+      VLLM_MM_PROCESSOR_CACHE_GB: '0'
+      RTVI_ADD_TIMESTAMP_TO_VLM_PROMPT: 'true'
+      RTVI_RTPJITTERBUFFER_DROP_ON_LATENCY: 'false'
+      VLLM_USE_NVFP4_CT_EMULATIONS: '0'
+      REDIS_DB: '0'
+      VLM_MODEL_TO_USE: cosmos-reason3
+      OPENAI_API_VERSION: ''
+      VLLM_DISABLE_MM_PREPROCESSOR_CACHE: 'true'
+      RTVI_RTSP_TIMEOUT: ''
+      LOG_LEVEL: INFO
+      VLM_SYSTEM_PROMPT: ''
+      RTVI_VIDEO_METADATA_ABSOLUTE_TIMESTAMPS: 'false'
+      RTVI_CAPTURE_INPUTS_DIR: ${RTVI_CAPTURE_INPUTS_DIR:-}
+      RTVI_CAPTURE_SOURCE_URL: ${RTVI_CAPTURE_SOURCE_URL:-}
+      HF_TOKEN: ''
+      KAFKA_TOPIC: mdx-vlm-captions
+      OPENAI_API_KEY: ''
+      VLM_INPUT_HEIGHT: ''
+      GST_ENABLE_CUSTOM_PARSER_MODIFICATIONS: '1'
+      REDIS_PASSWORD: ''
+      KAFKA_INCIDENT_TOPIC: mdx-vlm-incidents
+      KAFKA_ASYNC_SEND_QUEUE_MAXSIZE: '1024'
+      INSTALL_PROPRIETARY_CODECS: 'false'
+      RTVI_EMPTY_CUDA_CACHE_ON_RESULT: 'false'
+      VLLM_ENABLE_PREFIX_CACHING: 'false'
+      ERROR_MESSAGE_TOPIC: vision-llm-errors
+      VLLM_GPU_MEMORY_UTILIZATION: '0.30'
+      RTVI_STREAM_DELETE_BLOCKING_TIMEOUT_SEC: '300'
+      MODEL_IMPLEMENTATION_PATH: ''
+      RTVI_ENABLE_GOP_DECODE_OPT: 'true'
+      ENABLE_REDIS_ERROR_MESSAGES: 'false'
+      REDIS_HOST: host.docker.internal
+      OTEL_METRIC_EXPORT_INTERVAL: '60000'
+      NVIDIA_VISIBLE_DEVICES: all
+      VSS_NUM_GPUS_PER_VLM_PROC: ''
+      ENABLE_OTEL_MONITORING: 'false'
+      VLM_MAX_GENERATION_TOKENS: '4096'
+      RTVI_TIMESTAMP_PROMPT_SUFFIX_FILE_SOURCE: ''
+      NGC_API_KEY: ''
+      VLM_MAX_MODEL_LEN: '16384'
+      VLLM_IGNORE_EOS: 'false'
+      RTVI_RTSP_RECONNECTION_INTERVAL: '5'
+      VSS_SKIP_INPUT_MEDIA_VERIFICATION: ''
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      REDIS_PORT: '6379'
+      RTVI_ENABLE_LIVE_TIMESTAMP_FILTER: 'false'
+      FORCE_SW_AV1_DECODER: ''
+      KAFKA_BOOTSTRAP_SERVERS: 10.88.9.12:9092
+      VLLM_MM_TENSOR_IPC: ''
+      RTVI_RTSP_LATENCY: ''
+      VLLM_ROOT: /usr/local/lib/python3.12/dist-packages/vllm
+      VLLM_MULTIMODAL_TENSOR_IPC: ''
+      NVIDIA_API_KEY: ''
+      VLM_PROMPT_MAX_LENGTH: '10240'
+      RTVI_TIMESTAMP_PROMPT_SUFFIX_RTSP_SOURCE: ''
+      OTEL_RESOURCE_ATTRIBUTES: ''
+      VLLM_MOE_BACKEND: ''
+      RTVI_TIMESTAMP_PROMPT_PREFIX_RTSP_SOURCE: ''
+      VLM_BATCH_SIZE: '1'
+      VLLM_MAX_NUM_SEQS: '1'
+      NUM_VLM_PROCS: '1'
+      VLM_TRUST_REMOTE_CODE: 'false'
+      RTVI_RTSP_RECONNECTION_MAX_ATTEMPTS: '10'
+      VLLM_KV_CACHE_MEMORY_BYTES: '3221225472'
+      RTVI_EXTRA_ARGS: ''
+      VLLM_NUM_SCHEDULER_STEPS: '8'
+      MODEL_PATH: ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final
+      RTVI_RTSP_RECONNECTION_WINDOW: '60'
+      RTVI_RTPJITTERBUFFER_FASTSTART_MIN_PACKETS: '2'
+      VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME: nim_nvidia_cosmos3-nano-reasoner_bf16-final
+      PATH: /opt/proto/bin:/opt/tritonserver/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/mpi/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/ucx/bin:/opt/amazon/efa/bin:/opt/nvidia/rtvi/
+      NVIDIA_REQUIRE_JETPACK_HOST_MOUNTS: ''
+      GDRCOPY_VERSION: '2.5'
+      HPCX_VERSION: '2.24'
+      MOFED_VERSION: 5.4-rdmacore56.0
+      OPENUCX_VERSION: 1.19.0
+      OPENMPI_VERSION: 4.1.7
+      RDMACORE_VERSION: '56.0'
+      EFA_VERSION: 1.38.1
+      AWS_OFI_NCCL_VERSION: 1.14.0
+      OPAL_PREFIX: /opt/hpcx/ompi
+      OMPI_MCA_coll_hcoll_enable: '0'
+      CUDA_VERSION: 13.0.0.044
+      CUDA_DRIVER_VERSION: 580.65.06
+      NVVM_VERSION: 13.0.48
+      DOCA_VERSION: 3.1.0
+      _CUDA_COMPAT_PATH: /usr/local/cuda/compat
+      ENV: /etc/shinit_v2
+      BASH_ENV: /etc/bash.bashrc
+      SHELL: /bin/bash
+      NVIDIA_REQUIRE_CUDA: cuda>=9.0
+      NCCL_VERSION: 2.27.7
+      CUBLAS_VERSION: 13.0.0.19
+      CUFFT_VERSION: 12.0.0.15
+      CURAND_VERSION: 10.4.0.35
+      CUSPARSE_VERSION: 12.6.2.49
+      CUSPARSELT_VERSION: 0.8.0.4
+      CUSOLVER_VERSION: 12.0.3.29
+      NPP_VERSION: 13.0.0.50
+      NVJPEG_VERSION: 13.0.0.40
+      CUFILE_VERSION: 1.15.0.42
+      NVJITLINK_VERSION: 13.0.39
+      CUBLASMP_VERSION: 0.5.1.65
+      NVSHMEM_VERSION: 3.3.20
+      CUDLA_VERSION: 13.0.0.044
+      NVPTXCOMPILER_VERSION: 13.0.48
+      CUDNN_VERSION: 9.12.0.46
+      CUDNN_FRONTEND_VERSION: 1.13.0
+      TRT_VERSION: 10.13.2.6
+      TRTOSS_VERSION: ''
+      NSIGHT_SYSTEMS_VERSION: 2025.4.1.136
+      NSIGHT_COMPUTE_VERSION: 2025.3.0.19
+      DALI_VERSION: 1.51.2
+      DALI_BUILD: ''
+      DALI_URL_SUFFIX: '130'
+      POLYGRAPHY_VERSION: 0.49.24
+      TRANSFORMER_ENGINE_VERSION: '2.5'
+      MODEL_OPT_VERSION: 0.33.0
+      CUDA_ARCH_LIST: 8.0 8.6 9.0 10.0 11.0 12.0
+      NVRX_VERSION: 0.4.1+cuda13
+      LD_LIBRARY_PATH: /usr/local/lib/python3.12/dist-packages/nvidia/nvshmem/lib/:/usr/local/lib/python3.12/dist-packages/nvidia/nvshmem/lib:/opt/hpcx/ucx/lib:/opt/nvidia/deepstream/deepstream/lib:/opt/nvidia/deepstream/deepstream-9.0/lib:/usr/local/nvidia/lib64:/usr/local/cuda-12/targets/x86_64-linux/lib:/opt/tritonserver/lib:/usr/local/cuda-13.0/lib64:/opt/tritonserver/lib/:/usr/lib/x86_64-linux-gnu/
+      NVIDIA_DRIVER_CAPABILITIES: all,video
+      NVIDIA_PRODUCT_NAME: Triton Server
+      LIBRARY_PATH: '/usr/local/cuda/lib64/stubs:'
+      PIP_BREAK_SYSTEM_PACKAGES: '1'
+      TRITON_SERVER_VERSION: 2.60.0
+      NVIDIA_TRITON_SERVER_VERSION: '25.08'
+      UCX_MEM_EVENTS: 'no'
+      TF_ADJUST_HUE_FUSED: '1'
+      TF_ADJUST_SATURATION_FUSED: '1'
+      TF_ENABLE_WINOGRAD_NONFUSED: '1'
+      TF_AUTOTUNE_THRESHOLD: '2'
+      TRITON_SERVER_GPU_ENABLED: '1'
+      TRITON_SERVER_USER: triton-server
+      DEBIAN_FRONTEND: noninteractive
+      TCMALLOC_RELEASE_RATE: '200'
+      DCGM_VERSION: 4.4.0-1
+      PYTHONPATH: '/opt/tritonserver/backends/dali/wheel/dali:'
+      NVIDIA_BUILD_ID: '202022640'
+      DS_VERSION: '9.0'
+      HF_HOME: /tmp/huggingface
+      TORCH_CUDA_ARCH_LIST: 7.5 8.0 8.6 9.0 10.0 11.0 12.0+PTX
+      CUDA_CACHE_DISABLE: '0'
+      TRITON_CUDACRT_PATH: /usr/local/cuda/include
+      TRITON_CUDART_PATH: /usr/local/cuda/include
+      TRITON_CUOBJDUMP_PATH: /usr/local/cuda/bin/cuobjdump
+      TRITON_CUPTI_PATH: /usr/local/cuda/include
+      TRITON_NVDISASM_PATH: /usr/local/cuda/bin/nvdisasm
+      TRITON_PTXAS_PATH: /usr/local/cuda/bin/ptxas
+      GST_PLUGIN_PATH: /opt/nvidia/deepstream/deepstream/lib/gst-plugins
+      TORCHINDUCTOR_CACHE_DIR: /tmp/torch_cache
+      TORCH_CACHE_DIR: /tmp/torch_cache
+    volumes:
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/api_models/captions.py
+      target: /opt/nvidia/rtvi/rtvi/api_models/captions.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/server/rtvi_stream_handler.py
+      target: /opt/nvidia/rtvi/rtvi/server/rtvi_stream_handler.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py
+      target: /opt/nvidia/rtvi/rtvi/server/rtvi_vlm_server.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/utils/asset_manager.py
+      target: /opt/nvidia/rtvi/rtvi/utils/asset_manager.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/api_models/live_stream.py
+      target: /opt/nvidia/rtvi/rtvi/api_models/live_stream.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/vlm_pipeline/process_base.py
+      target: /opt/nvidia/rtvi/rtvi/vlm_pipeline/process_base.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/vlm_pipeline/vlm_pipeline.py
+      target: /opt/nvidia/rtvi/rtvi/vlm_pipeline/vlm_pipeline.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py
+      target: /opt/nvidia/rtvi/rtvi/models/vllm_compatible/vllm_compatible_model.py
+      read_only: true
+    - type: volume
+      source: existing0
+      target: /tmp/huggingface
+      read_only: false
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/thor-local/startup-gate.py
+      target: /usr/local/bin/thor-startup-gate.py
+      read_only: true
+    - type: volume
+      source: existing1
+      target: /dummy
+      read_only: false
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/models
+      target: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/models
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/deploy/docker/data-dir/data_log/vst/clip_storage
+      target: /home/vst/vst_release/streamer_videos
+      read_only: false
+    - type: bind
+      source: /home/nvidia/vss-official-edge-artifacts/ngc/model-cache
+      target: /opt/nvidia/rtvi/.rtvi/ngc_model_cache
+      read_only: false
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/vlm_pipeline/video_file_frame_getter.py
+      target: /opt/nvidia/rtvi/rtvi/vlm_pipeline/video_file_frame_getter.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/utils/frame_sampling.py
+      target: /opt/nvidia/rtvi/rtvi/utils/frame_sampling.py
+      read_only: true
+    - type: bind
+      source: /home/nvidia/cti-saa-thor/video-search-and-summarization/services/rtvi/rt-vlm/src/utils/input_capture.py
+      target: /opt/nvidia/rtvi/rtvi/utils/input_capture.py
+      read_only: true
+    networks:
+    - existing
+    ports:
+    - 127.0.0.1:8018:8000
+    extra_hosts:
+    - host.docker.internal:host-gateway
+networks:
+  existing:
+    external: true
+    name: mdx_default
+volumes:
+  existing0:
+    external: true
+    name: mdx_rtvi-hf-cache
+  existing1:
+    external: true
+    name: 915ff909a7f4b7eb00cc6af7485acdc19bbe03b1c0d0f3611e0e277cff8f1089

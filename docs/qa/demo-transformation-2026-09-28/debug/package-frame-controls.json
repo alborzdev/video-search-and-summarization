@@ -1,0 +1,56 @@
+[
+  {
+    "frame": "empty-frame",
+    "question": "Describe the main visible object, if any, on the conveyor belt. Answer in one sentence.",
+    "elapsed_seconds": 2.854,
+    "response": {
+      "id": "814064a4-d8f2-4cf3-956b-f670d19c97b8",
+      "object": "chat.completion",
+      "created": 1790639002,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "The conveyor belt is empty and has no objects on it.",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 20,
+        "completion_tokens": 13,
+        "total_tokens": 33
+      }
+    }
+  },
+  {
+    "frame": "model-frame",
+    "question": "Describe the main visible object, if any, on the conveyor belt. Answer in one sentence.",
+    "elapsed_seconds": 1.917,
+    "response": {
+      "id": "2ffec2cc-5fc7-4f5d-a872-1f75a74eb572",
+      "object": "chat.completion",
+      "created": 1790639005,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "A brown paper bag is on the conveyor belt.",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 20,
+        "completion_tokens": 11,
+        "total_tokens": 31
+      }
+    }
+  }
+]

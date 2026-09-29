@@ -1,5 +1,11 @@
 # Thor VSS demo-ready evidence — 2026-08-12
 
+> **Safety supersession — 2026-08-30:** Historical evidence only. Two later
+> whole-host watchdog resets revoke this record as launch authorization for
+> the co-resident exact LLM/VLM graph. Keep that graph stopped and follow the
+> current safety lock in [DEMO.md](../../DEMO.md); one model must move to a
+> remote or sibling host before full application bring-up.
+
 Status: **passed** against implementation commit `187c38dd8` on
 `agent/vss-3.2.1-thor-parity`.
 

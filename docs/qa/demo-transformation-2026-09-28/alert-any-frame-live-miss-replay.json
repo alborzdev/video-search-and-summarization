@@ -1,0 +1,32 @@
+[
+  {
+    "window": 5,
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "expected": "YES",
+    "answer": "YES",
+    "seconds": 1.064,
+    "matched": true,
+    "response": {
+      "id": "7a4d7cde-449d-4904-b720-933f4731e826",
+      "object": "chat.completion",
+      "created": 1790646131,
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "choices": [
+        {
+          "index": 0,
+          "message": {
+            "role": "assistant",
+            "content": "YES",
+            "reasoning_description": null
+          },
+          "finish_reason": "stop"
+        }
+      ],
+      "usage": {
+        "prompt_tokens": 45,
+        "completion_tokens": 2,
+        "total_tokens": 47
+      }
+    }
+  }
+]

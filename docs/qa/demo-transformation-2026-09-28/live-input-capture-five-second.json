@@ -1,0 +1,276 @@
+{
+  "started_at": "2026-09-29T03:15:53.230285+00:00",
+  "boot_id": "ac75a3b5-980a-41c5-8301-200423326f72",
+  "profile": {
+    "sensor_id": "6776f3a6-446f-4da8-832e-cfcf4507de8c",
+    "sensor_name": "Conveyor \u2014 Recorded Simulation (RTSP Replay)",
+    "alert_type": "box_any_frame_qualification",
+    "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+    "system_prompt": "Answer yes or no",
+    "chunk_duration": 5,
+    "chunk_overlap_duration": 2,
+    "num_frames_per_second_or_fixed_frames_chunk": 4,
+    "use_fps_for_chunking": false,
+    "vlm_input_width": 512,
+    "vlm_input_height": 512,
+    "enable_reasoning": false,
+    "enable_audio": false,
+    "max_tokens": 128
+  },
+  "samples": [
+    {
+      "elapsed": 0.0,
+      "available_gib": 54.405
+    },
+    {
+      "elapsed": 1.0,
+      "available_gib": 54.412
+    },
+    {
+      "elapsed": 2.01,
+      "available_gib": 54.398
+    },
+    {
+      "elapsed": 3.01,
+      "available_gib": 54.397
+    },
+    {
+      "elapsed": 4.01,
+      "available_gib": 54.365
+    },
+    {
+      "elapsed": 5.01,
+      "available_gib": 54.359
+    },
+    {
+      "elapsed": 6.01,
+      "available_gib": 54.357
+    },
+    {
+      "elapsed": 7.01,
+      "available_gib": 54.387
+    },
+    {
+      "elapsed": 8.01,
+      "available_gib": 54.267
+    },
+    {
+      "elapsed": 9.01,
+      "available_gib": 54.419
+    },
+    {
+      "elapsed": 10.01,
+      "available_gib": 54.461
+    },
+    {
+      "elapsed": 11.01,
+      "available_gib": 54.472
+    },
+    {
+      "elapsed": 12.02,
+      "available_gib": 54.486
+    },
+    {
+      "elapsed": 13.02,
+      "available_gib": 54.469
+    },
+    {
+      "elapsed": 14.02,
+      "available_gib": 54.484
+    },
+    {
+      "elapsed": 15.02,
+      "available_gib": 54.438
+    },
+    {
+      "elapsed": 16.02,
+      "available_gib": 54.451
+    },
+    {
+      "elapsed": 17.02,
+      "available_gib": 54.449
+    },
+    {
+      "elapsed": 18.02,
+      "available_gib": 54.46
+    },
+    {
+      "elapsed": 19.02,
+      "available_gib": 54.343
+    },
+    {
+      "elapsed": 20.03,
+      "available_gib": 54.468
+    },
+    {
+      "elapsed": 21.03,
+      "available_gib": 54.45
+    },
+    {
+      "elapsed": 22.03,
+      "available_gib": 54.432
+    },
+    {
+      "elapsed": 23.03,
+      "available_gib": 54.533
+    },
+    {
+      "elapsed": 24.03,
+      "available_gib": 54.477
+    },
+    {
+      "elapsed": 25.03,
+      "available_gib": 54.472
+    },
+    {
+      "elapsed": 26.03,
+      "available_gib": 54.458
+    },
+    {
+      "elapsed": 27.03,
+      "available_gib": 54.467
+    },
+    {
+      "elapsed": 28.03,
+      "available_gib": 54.436
+    },
+    {
+      "elapsed": 29.04,
+      "available_gib": 54.432
+    },
+    {
+      "elapsed": 30.04,
+      "available_gib": 54.385
+    },
+    {
+      "elapsed": 31.04,
+      "available_gib": 54.423
+    },
+    {
+      "elapsed": 32.04,
+      "available_gib": 54.417
+    },
+    {
+      "elapsed": 33.05,
+      "available_gib": 54.409
+    },
+    {
+      "elapsed": 34.05,
+      "available_gib": 54.446
+    },
+    {
+      "elapsed": 35.05,
+      "available_gib": 54.432
+    },
+    {
+      "elapsed": 36.05,
+      "available_gib": 54.438
+    },
+    {
+      "elapsed": 37.05,
+      "available_gib": 54.436
+    },
+    {
+      "elapsed": 38.05,
+      "available_gib": 54.432
+    },
+    {
+      "elapsed": 39.05,
+      "available_gib": 54.441
+    },
+    {
+      "elapsed": 40.05,
+      "available_gib": 54.45
+    },
+    {
+      "elapsed": 41.06,
+      "available_gib": 54.507
+    },
+    {
+      "elapsed": 42.06,
+      "available_gib": 54.373
+    },
+    {
+      "elapsed": 43.06,
+      "available_gib": 54.517
+    },
+    {
+      "elapsed": 44.06,
+      "available_gib": 54.51
+    },
+    {
+      "elapsed": 45.06,
+      "available_gib": 54.493
+    },
+    {
+      "elapsed": 46.06,
+      "available_gib": 54.472
+    },
+    {
+      "elapsed": 47.06,
+      "available_gib": 54.467
+    },
+    {
+      "elapsed": 48.07,
+      "available_gib": 54.473
+    },
+    {
+      "elapsed": 49.07,
+      "available_gib": 54.465
+    },
+    {
+      "elapsed": 50.07,
+      "available_gib": 54.445
+    },
+    {
+      "elapsed": 51.07,
+      "available_gib": 54.448
+    },
+    {
+      "elapsed": 52.07,
+      "available_gib": 54.45
+    },
+    {
+      "elapsed": 53.08,
+      "available_gib": 54.364
+    },
+    {
+      "elapsed": 54.08,
+      "available_gib": 54.406
+    },
+    {
+      "elapsed": 55.08,
+      "available_gib": 54.404
+    },
+    {
+      "elapsed": 56.08,
+      "available_gib": 54.403
+    }
+  ],
+  "cleanup": [
+    {
+      "id": "42d30f55-489e-456a-be15-129e25a5668c",
+      "result": {
+        "status": "success",
+        "id": "42d30f55-489e-456a-be15-129e25a5668c",
+        "message": "Realtime alert rule deleted"
+      }
+    }
+  ],
+  "creation": {
+    "status": "success",
+    "id": "42d30f55-489e-456a-be15-129e25a5668c",
+    "created_at": "2026-09-29T03:15:53.234530+00:00",
+    "message": "Realtime alert rule created"
+  },
+  "stop_reason": "50-second limit",
+  "remaining_rules": [],
+  "stream_state": {
+    "status": "ok",
+    "stream_count": 0,
+    "stream_list": []
+  },
+  "finished_at": "2026-09-29T03:16:51.822364+00:00",
+  "final_available_gib": 54.412,
+  "final_boot_id": "ac75a3b5-980a-41c5-8301-200423326f72"
+}

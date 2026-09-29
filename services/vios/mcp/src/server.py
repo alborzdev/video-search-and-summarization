@@ -24,6 +24,8 @@ from typing import Any, Dict, List, Optional, Union
 
 from mcp.server.fastmcp import FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from .config import settings
 from .cpp_client import CppApiClient, CppApiError
@@ -114,6 +116,12 @@ if settings.allow_all_hosts:
         )
 
 mcp = FastMCP(settings.server_name, transport_security=transport_security)
+
+
+@mcp.custom_route("/health", methods=["GET"])
+async def transport_health(request: Request) -> JSONResponse:
+    """Probe HTTP liveness without creating a persistent MCP session."""
+    return JSONResponse({"status": "healthy"})
 
 
 @mcp.prompt(name="sensors_count", title="Count Sensors", description="Count how many sensors are present")
@@ -1100,4 +1108,4 @@ def run_http_server(host: Optional[str] = None, port: Optional[int] = None):
     logger.info(f"MCP endpoint will be available at: http://{host}:{port}/mcp (no trailing slash)")
     
     # Run the server using FastMCP with Streamable HTTP transport
-    mcp.run(transport="streamable-http") 
+    mcp.run(transport="streamable-http")

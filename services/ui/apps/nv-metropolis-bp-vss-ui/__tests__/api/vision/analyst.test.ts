@@ -78,7 +78,7 @@ describe("Vision Analyst API", () => {
             JSON.stringify({
               answer: "A wheeled robot is visible.",
               evidence_tool: "video_understanding",
-              observed_range: { start_seconds: 0, end_seconds: 25 },
+              observed_window: { start_time: "2026-08-18T07:44:30Z", end_time: "2026-08-18T07:44:55Z" },
             }),
         };
       }
@@ -93,6 +93,7 @@ describe("Vision Analyst API", () => {
       expect.objectContaining({
         answer: "A wheeled robot is visible.",
         grounded: true,
+        observedWindow: { startTime: "2026-08-18T07:44:30Z", endTime: "2026-08-18T07:44:55Z" },
         sourceNames: ["Main floor"],
       })
     );

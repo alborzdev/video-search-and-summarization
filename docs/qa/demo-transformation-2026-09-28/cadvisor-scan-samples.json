@@ -1,0 +1,106 @@
+[
+  {
+    "time": 1790643192.577623,
+    "available_gib": 49.072,
+    "cgroup_bytes": 96468992,
+    "anon_bytes": 88899584,
+    "slab_reclaimable_bytes": 3718768,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643197.60382,
+    "available_gib": 49.064,
+    "cgroup_bytes": 98942976,
+    "anon_bytes": 91062272,
+    "slab_reclaimable_bytes": 3718768,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643202.6259148,
+    "available_gib": 49.045,
+    "cgroup_bytes": 101412864,
+    "anon_bytes": 93544448,
+    "slab_reclaimable_bytes": 3721480,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643207.6567478,
+    "available_gib": 49.125,
+    "cgroup_bytes": 109346816,
+    "anon_bytes": 101720064,
+    "slab_reclaimable_bytes": 3724192,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643212.6823854,
+    "available_gib": 48.991,
+    "cgroup_bytes": 131854336,
+    "anon_bytes": 124207104,
+    "slab_reclaimable_bytes": 3723152,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643217.70541,
+    "available_gib": 49.103,
+    "cgroup_bytes": 131858432,
+    "anon_bytes": 124211200,
+    "slab_reclaimable_bytes": 3723152,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643222.7263741,
+    "available_gib": 49.154,
+    "cgroup_bytes": 100253696,
+    "anon_bytes": 92598272,
+    "slab_reclaimable_bytes": 3723152,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643227.7475498,
+    "available_gib": 49.1,
+    "cgroup_bytes": 100270080,
+    "anon_bytes": 92614656,
+    "slab_reclaimable_bytes": 3725864,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643232.774269,
+    "available_gib": 49.154,
+    "cgroup_bytes": 28327936,
+    "anon_bytes": 20676608,
+    "slab_reclaimable_bytes": 3726768,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643237.7977011,
+    "available_gib": 49.01,
+    "cgroup_bytes": 104296448,
+    "anon_bytes": 96645120,
+    "slab_reclaimable_bytes": 3725864,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643242.8265636,
+    "available_gib": 48.983,
+    "cgroup_bytes": 106188800,
+    "anon_bytes": 98185216,
+    "slab_reclaimable_bytes": 3749048,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643247.8484757,
+    "available_gib": 49.122,
+    "cgroup_bytes": 107397120,
+    "anon_bytes": 99745792,
+    "slab_reclaimable_bytes": 3726768,
+    "health": "healthy"
+  },
+  {
+    "time": 1790643252.8713803,
+    "available_gib": 49.901,
+    "cgroup_bytes": 106749952,
+    "anon_bytes": 99094528,
+    "slab_reclaimable_bytes": 3728576,
+    "health": "healthy"
+  }
+]

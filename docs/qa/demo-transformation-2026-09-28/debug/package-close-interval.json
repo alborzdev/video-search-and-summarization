@@ -1,0 +1,65 @@
+{
+  "request": {
+    "query": "crumpled cardboard box on a conveyor",
+    "question": "Describe the box's shape.",
+    "evidence": [
+      {
+        "client_id": "package-condition-diagnostic",
+        "sensor_id": "ebb07ef6-8d22-479f-84b7-ccd77c45ebd4",
+        "source_name": "conveyor-package-review-demo",
+        "start_time": "2025-01-01T00:00:03Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "match_type": "Semantic Match",
+        "search_description": "Crumpled cardboard box on a conveyor"
+      }
+    ]
+  },
+  "response": {
+    "status": "complete",
+    "query": "crumpled cardboard box on a conveyor",
+    "question": "Describe the box's shape.",
+    "summary": "The box has a rectangular shape.",
+    "observations": [
+      {
+        "text": "The box has a rectangular shape.",
+        "evidence_ids": [
+          "E1"
+        ]
+      }
+    ],
+    "interpretations": [],
+    "timeline": [
+      {
+        "evidence_id": "E1",
+        "source_name": "conveyor-package-review-demo",
+        "start_time": "2025-01-01T00:00:03Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "label": "Visual inspection"
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "E1",
+        "client_id": "package-condition-diagnostic",
+        "source_name": "conveyor-package-review-demo",
+        "start_time": "2025-01-01T00:00:03Z",
+        "end_time": "2025-01-01T00:00:05Z",
+        "observation": "The box has a rectangular shape.",
+        "match_type": "Semantic Match",
+        "inspection_source": "fresh_cosmos_inspection"
+      }
+    ],
+    "suggested_questions": [
+      "What changes during this clip?",
+      "Where are the visible people and objects relative to each other?"
+    ],
+    "warning": null,
+    "timings_ms": {
+      "inspection": 7031.8,
+      "synthesis": 0,
+      "total": 7031.9
+    }
+  },
+  "elapsed_seconds": 7.177,
+  "mentions_visible_deformation": false
+}

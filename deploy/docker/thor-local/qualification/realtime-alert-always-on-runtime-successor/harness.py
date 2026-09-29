@@ -7,7 +7,6 @@ import argparse
 import datetime as dt
 import hashlib
 import json
-import os
 import re
 import signal
 import subprocess
@@ -29,10 +28,39 @@ PUBLISH_ORIGIN = "rtsp://127.0.0.1:8554"
 INPUT_ORIGIN = "rtsp://172.18.0.1:8554"
 RULE_INDEX = "ab-alert-realtime-rules"
 MAX_DURATION_SECONDS = 240
+EXACT_LANE_CONTAINERS = (
+    "vss-nemotron-edge-4b",
+    "vss-rtvi-vlm",
+    "vss-agent",
+)
 
 
 class QualificationFailure(RuntimeError):
     pass
+
+
+def exact_local_lane_is_present() -> bool:
+    """Reject the reboot-unsafe lane before creating any live workload."""
+
+    for name in EXACT_LANE_CONTAINERS:
+        result = subprocess.run(
+            [
+                "docker",
+                "inspect",
+                "--format",
+                '{{index .Config.Labels "com.docker.compose.project.config_files"}}',
+                name,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0 and (
+            "/official-edge/compose.yml" in result.stdout
+            or name == "vss-nemotron-edge-4b"
+        ):
+            return True
+    return False
 
 
 def stable(value: Any) -> Any:
@@ -119,7 +147,8 @@ def snapshot() -> dict[str, Any]:
 
 def unrelated_digest(items: list[dict[str, Any]], owned: set[str]) -> str:
     filtered = [
-        item for item in items
+        item
+        for item in items
         if not any(token and token in canonical(item).decode() for token in owned)
     ]
     filtered.sort(key=lambda item: canonical(item))
@@ -148,12 +177,12 @@ def rtvlm_worker_counts(sensor_id: str, since: str) -> tuple[int, int]:
     )
     logs = result.stdout + result.stderr
     quoted = re.escape(sensor_id)
-    created = len(re.findall(
-        rf"Created live stream query .* for videoId {quoted}", logs
-    ))
-    removed = len(re.findall(
-        rf"Removed live stream {quoted} from pipeline for query", logs
-    ))
+    created = len(
+        re.findall(rf"Created live stream query .* for videoId {quoted}", logs)
+    )
+    removed = len(
+        re.findall(rf"Removed live stream {quoted} from pipeline for query", logs)
+    )
     return created, removed
 
 
@@ -233,6 +262,12 @@ def main() -> int:
     args = parser.parse_args()
     if args.ack != ACK:
         raise QualificationFailure("explicit acknowledgement is required")
+    if exact_local_lane_is_present():
+        raise QualificationFailure(
+            "safety-superseded on the exact local lane: do not restart Alert "
+            "Bridge or create always-on Cosmos workers on this host; qualify "
+            "only after an accepted split/remote topology replaces it"
+        )
 
     started_monotonic = time.monotonic()
     since = dt.datetime.now(dt.timezone.utc).isoformat()
@@ -283,10 +318,23 @@ def main() -> int:
     try:
         publisher = subprocess.Popen(
             [
-                "/usr/bin/ffmpeg", "-hide_banner", "-loglevel", "error",
-                "-re", "-stream_loop", "-1", "-i", str(fixture_path),
-                "-an", "-c:v", "copy", "-f", "rtsp",
-                "-rtsp_transport", "tcp", publish_url,
+                "/usr/bin/ffmpeg",
+                "-hide_banner",
+                "-loglevel",
+                "error",
+                "-re",
+                "-stream_loop",
+                "-1",
+                "-i",
+                str(fixture_path),
+                "-an",
+                "-c:v",
+                "copy",
+                "-f",
+                "rtsp",
+                "-rtsp_transport",
+                "tcp",
+                publish_url,
             ],
             stdin=subprocess.DEVNULL,
             stdout=subprocess.DEVNULL,
@@ -299,17 +347,26 @@ def main() -> int:
         add_status, add_body = request_json(
             f"{RTVLM_ORIGIN}/v1/streams/add",
             method="POST",
-            body={"streams": [{
-                "id": sensor_id,
-                "liveStreamUrl": input_url,
-                "description": "owned always-on qualification fixture",
-            }]},
+            body={
+                "streams": [
+                    {
+                        "id": sensor_id,
+                        "liveStreamUrl": input_url,
+                        "description": "owned always-on qualification fixture",
+                    }
+                ]
+            },
             timeout=60,
         )
         mutation_sequence.append("POST /v1/streams/add")
         results = add_body.get("results", []) if isinstance(add_body, dict) else []
         errors = add_body.get("errors", []) if isinstance(add_body, dict) else []
-        if add_status != 200 or errors or len(results) != 1 or results[0].get("id") != sensor_id:
+        if (
+            add_status != 200
+            or errors
+            or len(results) != 1
+            or results[0].get("id") != sensor_id
+        ):
             raise QualificationFailure("owned RT-VLM stream registration failed")
         stream_added = True
 
@@ -322,7 +379,9 @@ def main() -> int:
         worker_created.append(created)
         worker_removed.append(removed)
 
-        assert_duplicate(post_event(sensor_id, sensor_name, input_url, "camera_streaming"))
+        assert_duplicate(
+            post_event(sensor_id, sensor_name, input_url, "camera_streaming")
+        )
         mutation_sequence.append("POST /api/v1/realtime/always-on duplicate")
         created, removed = assert_worker_count(sensor_id, since, 1)
         worker_created.append(created)
@@ -347,12 +406,18 @@ def main() -> int:
         camera_active = True
         created, removed = assert_worker_count(sensor_id, since, 1)
         if created != 2 or removed != 1:
-            raise QualificationFailure("restart replay did not replace exactly one worker")
+            raise QualificationFailure(
+                "restart replay did not replace exactly one worker"
+            )
         worker_created.append(created)
         worker_removed.append(removed)
 
-        assert_duplicate(post_event(sensor_id, sensor_name, input_url, "camera_streaming"))
-        mutation_sequence.append("POST /api/v1/realtime/always-on duplicate after restart")
+        assert_duplicate(
+            post_event(sensor_id, sensor_name, input_url, "camera_streaming")
+        )
+        mutation_sequence.append(
+            "POST /api/v1/realtime/always-on duplicate after restart"
+        )
         created, removed = assert_worker_count(sensor_id, since, 1)
         worker_created.append(created)
         worker_removed.append(removed)
@@ -361,7 +426,9 @@ def main() -> int:
             sensor_id, sensor_name, input_url, "camera_remove"
         )
         mutation_sequence.append("POST /api/v1/realtime/always-on camera_remove")
-        details = remove_body.get("details", []) if isinstance(remove_body, dict) else []
+        details = (
+            remove_body.get("details", []) if isinstance(remove_body, dict) else []
+        )
         if (
             remove_status != 200
             or remove_body.get("reason") != "STREAM_REMOVE_SUCCESS"
@@ -373,7 +440,9 @@ def main() -> int:
         camera_active = False
         created, removed = assert_worker_count(sensor_id, since, 0)
         if created != 2 or removed != 2:
-            raise QualificationFailure("camera_remove did not remove the replacement worker")
+            raise QualificationFailure(
+                "camera_remove did not remove the replacement worker"
+            )
         worker_created.append(created)
         worker_removed.append(removed)
 
@@ -382,7 +451,9 @@ def main() -> int:
             item.get("id") == sensor_id for item in streams_from(streams_body)
         )
         if not lifecycle_stream_removed:
-            raise QualificationFailure("camera_remove left the owned RT-VLM stream behind")
+            raise QualificationFailure(
+                "camera_remove left the owned RT-VLM stream behind"
+            )
         stream_added = False
     finally:
         if camera_active:
@@ -427,7 +498,9 @@ def main() -> int:
     if before_digests != after_digests or not owned_absent:
         raise QualificationFailure("exact unrelated runtime state was not restored")
     if before_count != after_count or before_running_sha != after_running_sha:
-        raise QualificationFailure("Alert Bridge restart changed the running container set")
+        raise QualificationFailure(
+            "Alert Bridge restart changed the running container set"
+        )
     final_created, final_removed = assert_worker_count(sensor_id, since, 0)
 
     duration_ms = round((time.monotonic() - started_monotonic) * 1000)
@@ -481,12 +554,17 @@ def main() -> int:
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_bytes(json.dumps(receipt, indent=2).encode() + b"\n")
-    print(json.dumps({
-        "package_id": receipt["package_id"],
-        "status": receipt["status"],
-        "duration_ms": duration_ms,
-        "receipt_sha256": sha(output_path.read_bytes()),
-    }, sort_keys=True))
+    print(
+        json.dumps(
+            {
+                "package_id": receipt["package_id"],
+                "status": receipt["status"],
+                "duration_ms": duration_ms,
+                "receipt_sha256": sha(output_path.read_bytes()),
+            },
+            sort_keys=True,
+        )
+    )
     return 0
 
 

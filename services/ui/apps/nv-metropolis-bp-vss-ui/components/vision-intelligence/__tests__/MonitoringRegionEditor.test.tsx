@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React, { useState } from 'react';
 
 import type { MonitoringGeometry } from '../monitoringRules';
@@ -8,7 +8,10 @@ import { MonitoringRegionEditor } from '../MonitoringRegionEditor';
 import type { VisionStream } from '../types';
 
 jest.mock('../VisionStreamCanvas', () => ({
-  VisionStreamCanvas: () => <div data-testid="stream-canvas" />,
+  VisionStreamCanvas: ({ onPreviewAvailable }: { onPreviewAvailable?: (available: boolean) => void }) => <div data-testid="stream-canvas">
+    <button onClick={() => onPreviewAvailable?.(true)}>Load camera frame</button>
+    <button onClick={() => onPreviewAvailable?.(false)}>Lose camera frame</button>
+  </div>,
 }));
 
 const stream: VisionStream = {
@@ -43,8 +46,31 @@ function geometry(): MonitoringGeometry {
 }
 
 describe('MonitoringRegionEditor keyboard workflow', () => {
+  it('offers recovery after a preview timeout and enables editing when a frame arrives', () => {
+    jest.useFakeTimers();
+    const view = render(<RegionHarness />);
+    try {
+      act(() => { jest.advanceTimersByTime(8_000); });
+      expect(screen.getByRole('status', { name: 'Camera preview status' })).toHaveTextContent('No camera frame available');
+      fireEvent.click(screen.getByRole('button', { name: 'Retry preview' }));
+      expect(screen.getByRole('status', { name: 'Camera preview status' })).toHaveTextContent('Loading camera preview');
+      fireEvent.click(screen.getByRole('button', { name: 'Load camera frame' }));
+      expect(screen.queryByRole('status', { name: 'Camera preview status' })).not.toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Add point' })).toBeEnabled();
+    } finally { view.unmount(); jest.useRealTimers(); }
+  });
+  it('prevents drawing a region without a visible source frame', () => {
+    render(<RegionHarness />);
+    expect(screen.getByRole('button', { name: 'Add point' })).toBeDisabled();
+    expect(screen.queryByLabelText('Monitoring area editor')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Load camera frame' }));
+    expect(screen.getByRole('button', { name: 'Add point' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Lose camera frame' }));
+    expect(screen.getByRole('button', { name: 'Add point' })).toBeDisabled();
+  });
   it('creates, moves, and removes polygon points without pointer input', () => {
     render(<RegionHarness />);
+    fireEvent.click(screen.getByRole('button', { name: 'Load camera frame' }));
 
     const addPoint = screen.getByRole('button', { name: 'Add point' });
     fireEvent.click(addPoint);

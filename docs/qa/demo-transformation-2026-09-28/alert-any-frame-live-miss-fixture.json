@@ -1,0 +1,12 @@
+{
+  "file": "artifacts/demo-boundary-probe-2026-09-28/live-miss-5.mp4",
+  "sha256": "6f5ae7f76fb6b3d89ced317347cc2e30655e1982a34f9f3a747e23f37c865d16",
+  "start": "2026-09-29T01:36:15.641Z",
+  "end": "2026-09-29T01:36:23.174Z",
+  "live_answer": "NO",
+  "fixed_file_answer": "YES",
+  "fixed_file_temperature": 0,
+  "fixed_file_seed": 42,
+  "live_temperature": "service default (not explicitly pinned)",
+  "live_seed": "service default (not explicitly pinned)"
+}
