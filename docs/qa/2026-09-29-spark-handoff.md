@@ -38,7 +38,19 @@ at this stage. No Thor runtime service was restarted for this migration.
 - Changed/untracked text scanned for common credential/token/private-key patterns;
   assignment matches reviewed as code identifiers/test strings. `.spark/` is ignored.
 
-Fresh tracked-checkout and remote push verification will be appended below.
+Fresh tracked-checkout verification passed at
+`516b7ad376dd92f33a93b4a9cd9afe5293173433`: a separate clone containing only
+tracked files resolved all 35 services, passed the three bootstrap tests, and
+verified the bundled plugin archive. It did not use the original checkout's
+ignored models, wheelhouse, generated environment, or data directories.
+
+The initial commit exposed ten empty local Git object files. Their original
+empty files and index were preserved under `.git/corrupt-object-backup-20260929`.
+Affected blobs were rebuilt from staged files with exact object-ID comparisons;
+trees were reconstructed from the index and matched the commit's original root
+tree exactly. The reachable branch has no missing objects and a fresh checkout
+succeeded. Unrelated historical Codex checkpoint refs reported by full fsck were
+not modified. No claim of repairing all app checkpoint metadata is made.
 
 ## Remaining target work
 
