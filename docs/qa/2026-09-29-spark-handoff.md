@@ -66,3 +66,9 @@ The application snapshot `516b7ad376dd92f33a93b4a9cd9afe5293173433` was pushed
 to `origin/agent/vss-3.2.1-thor-parity`; `git ls-remote` confirmed the same SHA.
 Git LFS reported all 12 new objects (36 MB) uploaded successfully. Follow-up
 documentation commits record verification and the Git LFS prerequisite.
+
+Independent remote verification also passed: a new shallow clone fetched directly
+from GitHub (no local object alternates) at
+`12d1aceec487e66824321b59cbc9e9c3a93920c3` passed all three bootstrap tests and
+`git lfs fsck`. All 35 services rendered from that remote checkout. The only
+subsequent change is this receipt; Spark execution remains pending as requested.
