@@ -1844,14 +1844,13 @@ export function InvestigateWorkspace({
                 <IconSparkles size={22} />
                 <div>
                   <strong>
-                    {visibleResults.length} relevant{" "}
-                    {visibleResults.length === 1 ? "clip" : "clips"} found
-                    across {visibleSourceCount}{" "}
+                    {visibleResults.length} candidate{" "}
+                    {visibleResults.length === 1 ? "clip" : "clips"} across {visibleSourceCount}{" "}
                     {visibleSourceCount === 1 ? "source" : "sources"}
                   </strong>
                   <span>
                     {visibleResults.length > 0
-                      ? `Matches for “${submittedQuery}”. Play a clip to check it, then choose Ask about this clip to ask your own question.`
+                      ? `Ranked for “${submittedQuery}”. Check that the activity is visible, then choose Ask about this clip for a focused answer.`
                       : `No playable matches for “${submittedQuery}” with the current filters. This does not establish that the activity never occurred.`}
                   </span>
                 </div>
@@ -2018,7 +2017,7 @@ export function InvestigateWorkspace({
                               {signalLabel(signal)}
                             </span>
                           ))}
-                          <span>Indexed locally on Thor</span>
+                          <span>Indexed locally on this device</span>
                           {recordingExpired && (
                             <span className="is-expired">
                               Recording expired

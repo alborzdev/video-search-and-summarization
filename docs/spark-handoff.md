@@ -2,7 +2,7 @@
 
 ## Status and purpose
 
-Prepared September 29, 2026. This checkout contains the demo UI redesign, backend
+Updated September 30, 2026. This checkout contains the demo UI redesign, backend
 fixes, research, presenter runbook, tests, and an independent **Spark candidate**
 bootstrap. It is ready to hand to Codex on the Spark for deployment and continued
 work. The Spark target has since passed first downloads/GB10 engine compilation
@@ -29,6 +29,21 @@ incidents and retained event playback passes; see the current
 post-trial state. Sustained ingestion and repeatable scene accuracy remain open.
 VSS stays up, with hospital source analysis paused, recording off and no active
 live rule. Sim remains running; Moondream stays stopped.
+
+The tradeshow UI now opens a live Sim desk: scene preview, source-scoped
+questions, explicit recording controls, inspected-interval replay, saved reports,
+and source-scoped search/alert entry points. The new desk is running through
+`python3 tools/spark/ui.py dev`, with source hot reload and a 4 GiB UI ceiling.
+Only the UI was recreated; model budgets and Sim were preserved. The September 30
+empty-scene rehearsal passes capture → question → replay → durable report →
+playback after capture stops. Its bounded 555.337-second observation stays above
+36.792 GiB available, with the 24 GiB guard active and no reboot. See the
+[tradeshow UI receipt](qa/2026-09-30-spark-tradeshow-ui.md) and current
+[presenter runbook](demo-presenter-runbook.md). Source analysis remains paused,
+recording is off, and no live rule is active. The built-image fallback still has
+the previous screen until deliberately packaged. The next rehearsal needs a
+repeatable avatar entrance/hold/exit sequence from the user; avatar accuracy and
+sustained tradeshow duration remain unqualified.
 
 The user's target is **Isaac Sim and VSS running together on the same Spark**,
 with a live RTSP stream from Sim. Do not stop or reconfigure Sim without discussing

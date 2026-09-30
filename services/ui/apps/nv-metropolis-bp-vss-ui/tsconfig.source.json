@@ -1,36 +1,21 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "es2019",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "types": [
-      "jest",
-      "node"
-    ],
     "paths": {
       "@aiqtoolkit-ui/common": [
         "../../packages/common/lib-src/index.ts"
       ],
       "@nemo-agent-toolkit/ui": [
-        "../../packages/nemo-agent-toolkit-ui/lib-src/index.d.ts"
+        "../../packages/nemo-agent-toolkit-ui/lib-src/dev-index.ts"
       ],
       "@nemo-agent-toolkit/ui/server": [
-        "../../packages/nemo-agent-toolkit-ui/lib-src/server.d.ts"
+        "../../packages/nemo-agent-toolkit-ui/lib-src/dev-server.ts"
+      ],
+      "@/contexts/*": [
+        "../../packages/nemo-agent-toolkit-ui/lib-src/contexts/*"
+      ],
+      "@/*": [
+        "../../packages/nemo-agent-toolkit-ui/*"
       ],
       "@nv-metropolis-bp-vss-ui/all": [
         "../../packages/nv-metropolis-bp-vss-ui/all/lib-src/index.ts"
@@ -67,26 +52,7 @@
       ],
       "@nv-metropolis-bp-vss-ui/video-management/server": [
         "../../packages/nv-metropolis-bp-vss-ui/video-management/lib-src/server.ts"
-      ],
-      "@/contexts/*": [
-        "../../packages/nemo-agent-toolkit-ui/lib-src/contexts/*"
-      ],
-      "@/*": [
-        "../../packages/nemo-agent-toolkit-ui/*"
       ]
     }
-  },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    ".next",
-    "__tests__",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "__mocks__"
-  ]
+  }
 }

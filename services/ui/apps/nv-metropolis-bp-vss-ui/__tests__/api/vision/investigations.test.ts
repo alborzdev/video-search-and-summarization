@@ -241,7 +241,7 @@ describe("vision investigations API", () => {
     expect(field.hidden).toBe(false);
     expect(field.select).toHaveBeenCalled();
     expect(copyStatus.textContent).toContain("Briefing selected. Press Ctrl+C");
-    expect(html).toContain("Media retained locally on Thor");
+    expect(html).toContain("Media retained locally on this device");
     expect(html).toContain(`/api/vision/evidence-media?key=${retainedKey}`);
     expect(html).toContain("sensorId=warehouse-sensor");
     expect(html).toContain("startTime=2026-08-12T10%3A00%3A00Z");
@@ -280,7 +280,7 @@ describe("vision investigations API", () => {
     expect(html).toContain("Question asked");
     expect(html).toContain("What does &lt;script&gt; mean here?");
     expect(html).not.toContain("What does <script>");
-    expect(html).toContain("Video stays on the Jetson");
+    expect(html).toContain("Video stays on this device");
     expect(html).not.toContain("<video");
     expect(html).not.toContain("<img");
     expect(html).not.toContain("<h2>AI interpretation</h2>");

@@ -165,7 +165,7 @@ describe('AlertRulesWorkspace', () => {
     const { rerender } = render(<MonitoringRuleWizard {...props} streams={[]} />);
     expect(screen.getByRole('heading', { name: 'Connect a source first' })).toBeInTheDocument();
     rerender(<MonitoringRuleWizard {...props} streams={[{ ...liveCatalog[0].live[0], sensorId: 'live' }]} />);
-    expect(await screen.findByRole('heading', { name: 'What should Thor watch for?' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'What should VSS watch for?' })).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: 'Monitoring source' })).toHaveTextContent('Traffic Intersection Live');
   });
 

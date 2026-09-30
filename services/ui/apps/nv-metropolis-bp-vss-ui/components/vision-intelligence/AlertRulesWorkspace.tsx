@@ -278,7 +278,7 @@ export function MonitoringRuleWizard({
       <div className="vi-rule-wizard-backdrop" role="presentation">
         <section ref={dialogRef} className="vi-rule-wizard vi-rule-wizard-empty" role="dialog" aria-modal="true" aria-labelledby="vi-rule-wizard-title">
           <header><div><span>New monitoring rule</span><h2 id="vi-rule-wizard-title">Connect a source first</h2></div><button type="button" onClick={onClose} aria-label="Close rule builder"><IconX size={20} /></button></header>
-          <div><IconBellCog size={28} /><p>A live camera or recorded video is needed before Thor can monitor a condition.</p><button className="is-primary" type="button" onClick={() => { onClose(); onManageSources?.(); }}>Back to sources</button></div>
+          <div><IconBellCog size={28} /><p>A live camera or recorded video is needed before VSS can monitor a condition.</p><button className="is-primary" type="button" onClick={() => { onClose(); onManageSources?.(); }}>Back to sources</button></div>
         </section>
       </div>
     );
@@ -300,7 +300,7 @@ export function MonitoringRuleWizard({
           <div>
             <span>New monitoring rule</span>
             <h2 id="vi-rule-wizard-title">
-              {step === 'condition' ? 'What should Thor watch for?' : step === 'region' ? 'Draw the monitored area' : 'Review and activate'}
+              {step === 'condition' ? 'What should VSS watch for?' : step === 'region' ? 'Draw the monitored area' : 'Review and activate'}
             </h2>
           </div>
           <div className="vi-rule-wizard-progress" aria-label={`Step ${stepNumber}`}>
@@ -326,8 +326,20 @@ export function MonitoringRuleWizard({
             )}
             <label className="vi-rule-natural-language">
               <span>Describe what matters</span>
-              <div><IconSparkles size={20} /><input aria-label="Monitoring intent" placeholder="Describe a visible event, such as a box appearing on the conveyor" value={intent} onChange={(event) => setIntent(event.target.value)} /></div>
+              <div><IconSparkles size={20} /><input aria-label="Monitoring intent" placeholder="Describe a visible event, such as a person appearing in the corridor" value={intent} onChange={(event) => setIntent(event.target.value)} /></div>
             </label>
+            {/hospital|digital.twin/i.test(`${stream?.name} ${stream?.url}`) && (
+              <div className="vi-rule-scene-prompts" role="group" aria-label="Sim alert examples">
+                {[
+                  ["Person appears", "At least one person is clearly visible in the hospital corridor in any sampled frame. A brief appearance counts. Do not count monitor carts or equipment as people."],
+                  ["Corridor obstruction", "A person or object visibly blocks passage through the hospital corridor. Do not count equipment parked beside the wall as blocking the passage."],
+                ].map(([label, prompt]) => <button type="button" key={label} onClick={() => {
+                  const visual = compatibleTemplates.find(candidate => candidate.engine === 'vlm');
+                  if (visual) applyTemplate(visual);
+                  setIntent(prompt);
+                }}>{label}</button>)}
+              </div>
+            )}
             <div className="vi-rule-recorded-note">
               <IconBolt size={17} />
               <span>

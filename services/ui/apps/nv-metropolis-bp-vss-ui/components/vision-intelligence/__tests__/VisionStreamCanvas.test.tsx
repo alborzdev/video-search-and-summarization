@@ -3,6 +3,7 @@
 import { VisionStreamCanvas } from "../VisionStreamCanvas";
 import {
   act,
+  cleanup,
   fireEvent,
   render,
   screen,
@@ -22,7 +23,17 @@ const replay = {
 };
 
 describe("VisionStreamCanvas", () => {
+  beforeEach(() => {
+    jest.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
+    jest
+      .spyOn(HTMLMediaElement.prototype, "pause")
+      .mockImplementation(() => undefined);
+    jest
+      .spyOn(HTMLMediaElement.prototype, "load")
+      .mockImplementation(() => undefined);
+  });
   afterEach(() => {
+    cleanup();
     jest.restoreAllMocks();
   });
 
@@ -31,7 +42,9 @@ describe("VisionStreamCanvas", () => {
     const video = container.querySelector("video")!;
     expect(video).toHaveStyle({ visibility: "hidden" });
     fireEvent.error(video);
-    expect(screen.queryByText(/Video could not be loaded/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Video could not be loaded/)
+    ).not.toBeInTheDocument();
     fireEvent.loadedData(video);
     expect(video).toHaveStyle({ visibility: "visible" });
     fireEvent.emptied(video);
@@ -43,14 +56,33 @@ describe("VisionStreamCanvas", () => {
 
   it("never treats an unavailable illustration as a usable camera frame", async () => {
     const onPreviewAvailable = jest.fn();
-    const blob = jest.fn(async () => new Blob(["<svg/>"], { type: "image/svg+xml" }));
-    global.fetch = jest.fn(async (input) => String(input).includes('/timelines')
-      ? { ok: true, json: async () => [{ startTime: '2025-01-01T00:00:00Z', endTime: '2025-01-01T00:00:10Z' }] }
-      : { ok: true, headers: { get: () => 'unavailable' }, blob }) as jest.Mock;
-    const { container } = render(<VisionStreamCanvas eager={false} stream={replay} vstApiUrl="http://thor.test/vst/api" onPreviewAvailable={onPreviewAvailable} />);
+    const blob = jest.fn(
+      async () => new Blob(["<svg/>"], { type: "image/svg+xml" })
+    );
+    global.fetch = jest.fn(async (input) =>
+      String(input).includes("/timelines")
+        ? {
+            ok: true,
+            json: async () => [
+              {
+                startTime: "2025-01-01T00:00:00Z",
+                endTime: "2025-01-01T00:00:10Z",
+              },
+            ],
+          }
+        : { ok: true, headers: { get: () => "unavailable" }, blob }
+    ) as jest.Mock;
+    const { container } = render(
+      <VisionStreamCanvas
+        eager={false}
+        stream={replay}
+        vstApiUrl="http://thor.test/vst/api"
+        onPreviewAvailable={onPreviewAvailable}
+      />
+    );
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
     expect(blob).not.toHaveBeenCalled();
-    expect(container.querySelector('img')).toBeNull();
+    expect(container.querySelector("img")).toBeNull();
     expect(onPreviewAvailable).toHaveBeenLastCalledWith(false);
   });
 
@@ -125,8 +157,11 @@ describe("VisionStreamCanvas", () => {
 
     // A returned image URL is not proof that the browser decoded a usable frame.
     expect(onPreviewAvailable).toHaveBeenLastCalledWith(false);
-    const poster = container.querySelector('img')!;
-    Object.defineProperty(poster, 'naturalWidth', { configurable:true, value:1280 });
+    const poster = container.querySelector("img")!;
+    Object.defineProperty(poster, "naturalWidth", {
+      configurable: true,
+      value: 1280,
+    });
     fireEvent.load(poster);
     expect(onPreviewAvailable).toHaveBeenLastCalledWith(true);
     fireEvent.error(poster);
@@ -295,6 +330,129 @@ describe("VisionStreamCanvas", () => {
     expect(String((global.fetch as jest.Mock).mock.calls[0][0])).toContain(
       "/timelines"
     );
+  });
+
+  it("does not claim live playback on ICE connection and waits for a decoded frame callback", async () => {
+    const originals = {
+      WebSocket: global.WebSocket,
+      RTCPeerConnection: global.RTCPeerConnection,
+      MediaStream: global.MediaStream,
+    };
+    const sockets: MockSocket[] = [];
+    const peers: MockPeer[] = [];
+    class MockSocket {
+      static OPEN = 1;
+      readyState = 1;
+      onopen: (() => void) | null = null;
+      onmessage: ((event: { data: string }) => void) | null = null;
+      send = jest.fn();
+      close = jest.fn();
+      constructor() {
+        sockets.push(this);
+      }
+    }
+    class MockPeer {
+      connectionState = "new";
+      localDescription = { type: "offer", sdp: "offer" };
+      onconnectionstatechange: (() => void) | null = null;
+      ontrack:
+        | ((event: { streams: MediaStream[]; track: MediaStreamTrack }) => void)
+        | null = null;
+      addTransceiver = jest.fn();
+      createOffer = jest
+        .fn()
+        .mockResolvedValue({ type: "offer", sdp: "offer" });
+      setLocalDescription = jest.fn().mockResolvedValue(undefined);
+      close = jest.fn();
+      constructor() {
+        peers.push(this);
+      }
+    }
+    const globals = {
+      WebSocket: MockSocket,
+      RTCPeerConnection: MockPeer,
+      MediaStream: class {
+        addTrack = jest.fn();
+      },
+    };
+    for (const [name, value] of Object.entries(globals))
+      Object.defineProperty(global, name, { configurable: true, value });
+    jest.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
+    jest
+      .spyOn(HTMLMediaElement.prototype, "pause")
+      .mockImplementation(() => undefined);
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 404 });
+    const onPlaybackStatus = jest.fn();
+    const view = render(
+      <VisionStreamCanvas
+        stream={{ ...replay, type: "rtsp", url: "rtsp://camera.test/live" }}
+        liveSnapshotEnabled={false}
+        vstApiUrl="http://vst.test/vst/api"
+        onPlaybackStatus={onPlaybackStatus}
+      />
+    );
+    try {
+      await waitFor(() => expect(sockets).toHaveLength(1));
+      act(() => {
+        sockets[0].onopen?.();
+        sockets[0].onmessage?.({
+          data: JSON.stringify({
+            apiKey: "api/v1/live/iceServers",
+            data: { iceServers: [] },
+          }),
+        });
+      });
+      await waitFor(() =>
+        expect(sockets[0].send).toHaveBeenCalledWith(
+          expect.stringContaining("api/v1/live/stream/start")
+        )
+      );
+      act(() => {
+        peers[0].connectionState = "connected";
+        peers[0].onconnectionstatechange?.();
+      });
+      const video = view.container.querySelector("video")!;
+      expect(onPlaybackStatus).not.toHaveBeenCalledWith("playing");
+      expect(video).toHaveStyle({ visibility: "hidden" });
+      let decodedFrame!: () => void;
+      const requestFrame = jest.fn((callback: () => void) => {
+        decodedFrame = callback;
+        return 42;
+      });
+      Object.defineProperty(video, "requestVideoFrameCallback", {
+        configurable: true,
+        value: requestFrame,
+      });
+      const cancelFrame = jest.fn();
+      Object.defineProperty(video, "cancelVideoFrameCallback", {
+        configurable: true,
+        value: cancelFrame,
+      });
+      act(() => {
+        peers[0].ontrack?.({ streams: [], track: {} as MediaStreamTrack });
+      });
+      expect(requestFrame).toHaveBeenCalledTimes(1);
+      expect(onPlaybackStatus).not.toHaveBeenCalledWith("playing");
+      act(() => {
+        decodedFrame();
+      });
+      expect(onPlaybackStatus).toHaveBeenLastCalledWith("playing");
+      expect(video).toHaveStyle({ visibility: "visible" });
+      act(() => {
+        peers[0].ontrack?.({ streams: [], track: {} as MediaStreamTrack });
+      });
+      view.unmount();
+      expect(cancelFrame).toHaveBeenCalledWith(42);
+      const callbacksBeforeLateFrame = onPlaybackStatus.mock.calls.length;
+      act(() => {
+        decodedFrame();
+      });
+      expect(onPlaybackStatus).toHaveBeenCalledTimes(callbacksBeforeLateFrame);
+    } finally {
+      view.unmount();
+      for (const [name, value] of Object.entries(originals))
+        Object.defineProperty(global, name, { configurable: true, value });
+    }
   });
 
   it("rescans a live camera that was offline when video services started", async () => {

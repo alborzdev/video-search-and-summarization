@@ -29,6 +29,8 @@ module.exports = {
   },
   localePath:
     typeof window === 'undefined'
-      ? require('path').resolve('../../node_modules/@nemo-agent-toolkit/ui/lib/public/locales')
+      ? process.env.NODE_ENV === 'development'
+        ? require('path').resolve(__dirname, '../../packages/nemo-agent-toolkit-ui/public/locales')
+        : require('path').resolve('../../node_modules/@nemo-agent-toolkit/ui/lib/public/locales')
       : '/public/locales',
 };

@@ -2444,3 +2444,27 @@ endpoints are removed from Spark control configuration, so pause now returns 200
 All test-owned rules are removed; source analysis/caption inference are paused
 and recording is off. Details, exact scope, tests and remaining limits are in
 the [joint trial receipt](qa/2026-09-29-spark-sim-joint.md).
+
+## September 30 — live tradeshow desk on Spark
+
+The user clarified the central story: avatars enter and leave the Sim, while VSS
+shows an understandable analytics layer on the same footage. The primary screen
+now leads with the live scene and ordinary-language questions, followed by
+exact inspected-interval replay, durable reviews, source-scoped search and alert
+examples for people and corridor obstruction. Device copy is neutral, and
+preview, recording, indexing and monitoring have distinct visible states.
+
+The Spark UI runs from source with Turbopack through a new UI-only helper. A
+1536×1024 ImageGen concept informed the real implementation; desktop and narrow
+browser checks pass. A real empty-scene question returns “There are no people
+present in the scene.” Its 25.001-second video plays in the desk and from the
+retained report after recording is stopped. The 555.337-second bounded
+observation records a 36.792 GiB minimum, with the user-authorized 24 GiB guard
+active and unchanged boot ID. Final review fixes stale capture polling,
+unverified stop state, replay/question ordering and decoded-preview labeling.
+
+The source remains paused with recording off and no live rule. Sim is unchanged
+and Moondream remains stopped. Avatar entrance/exit accuracy needs a repeatable
+sequence; earlier semantic candidates do not prove people were present. See the
+[UI and rehearsal receipt](qa/2026-09-30-spark-tradeshow-ui.md), including the
+concept fidelity ledger, verification scope and remaining gates.

@@ -131,7 +131,7 @@ const sectionMeta: Record<PrimarySection, { eyebrow: string; title: string }> =
     capabilities: { eyebrow: "Real demos", title: "What it can do" },
     events: { eyebrow: "Evidence-led review", title: "Events & reports" },
     explore: { eyebrow: "Search video in your own words", title: "Search video" },
-    home: { eyebrow: "Video AI demonstration", title: "Home" },
+    home: { eyebrow: "", title: "Digital twin analytics" },
     live: { eyebrow: "Connected sources", title: "Live cameras" },
     monitoring: { eyebrow: "Rules that create incidents", title: "Alert rules" },
     system: { eyebrow: "On-device runtime", title: "System" },
@@ -333,7 +333,7 @@ export default function VisionIntelligenceApp({
 
   const navItems = useMemo(
     () => [
-      { icon: IconHome, id: "home" as const, label: "Home" },
+      { icon: IconVideo, id: "home" as const, label: "Live demo" },
       { icon: IconSearch, id: "explore" as const, label: "Search video" },
       { icon: IconVideo, id: "live" as const, label: "Live cameras" },
       { icon: IconBell, id: "events" as const, label: "Events & reports" },
@@ -392,9 +392,10 @@ export default function VisionIntelligenceApp({
     <div
       className={
         presentationMode
-          ? "vi-app vi-brand-v2 is-presenting"
-          : "vi-app vi-brand-v2"
+          ? "vi-app vi-brand-v2 vi-tradeshow is-presenting"
+          : "vi-app vi-brand-v2 vi-tradeshow"
       }
+      data-workspace={section}
       data-theme={resolvedTheme}
       data-theme-preference={themePreference}
     >
@@ -440,9 +441,9 @@ export default function VisionIntelligenceApp({
         >
           <span className={presentationMode ? "is-presentation" : `is-${localProcessingStatus}`} />
           <div>
-            <strong>Local edge</strong>
+            <strong>Video + AI</strong>
             <em>
-              {presentationMode ? "NVIDIA Thor" : systemHealth ? healthLabel(systemHealth.status) : "Checking"}
+              On this device
             </em>
           </div>
         </button>
@@ -466,9 +467,9 @@ export default function VisionIntelligenceApp({
               <strong>LOCAL PROCESSING</strong>
               <em>
                 {presentationMode
-                  ? "NVIDIA THOR"
+                  ? "ON THIS DEVICE"
                   : systemHealth
-                  ? `NVIDIA THOR · ${localProcessingStatus.toUpperCase()}`
+                  ? `LOCAL AI · ${localProcessingStatus.toUpperCase()}`
                   : "CHECKING SERVICES"}
               </em>
             </div>
@@ -550,7 +551,7 @@ export default function VisionIntelligenceApp({
         >
           <div className="vi-system-popover-heading">
             <div>
-              <strong>Thor readiness</strong>
+              <strong>Local readiness</strong>
               <span>
                 {systemHealth
                   ? new Date(systemHealth.checkedAt).toLocaleTimeString()
@@ -667,6 +668,7 @@ export default function VisionIntelligenceApp({
             agentApiUrl={searchData?.agentApiUrl}
             onExplore={openInvestigation}
             onOpenEvents={openEvents}
+            onOpenRules={openRules}
             onOpenLive={openLive}
             onOpenSystem={() => navigateToSection("system")}
             systemHealth={systemHealth}

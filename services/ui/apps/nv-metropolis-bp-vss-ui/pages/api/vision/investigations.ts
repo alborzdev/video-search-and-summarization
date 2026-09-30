@@ -229,10 +229,10 @@ function reportHtml(record: InvestigationRecord, exportOrigin?: string): string 
           : "Selected evidence supporting this briefing."}</p>
         <small class="retention">${
           retainedVideo
-            ? "Media retained locally on Thor"
+            ? "Media retained locally on this device"
             : "Playback follows the source retention window"
         }</small>
-        ${exportOrigin ? `<a class="play-link" href="${escapeHtml(`${exportOrigin}${record.report_url}#${evidenceId}`)}" target="_blank" rel="noreferrer">Open playable evidence on Jetson</a>` : `<button data-evidence="/api/vision/evidence?${escapeHtml(
+        ${exportOrigin ? `<a class="play-link" href="${escapeHtml(`${exportOrigin}${record.report_url}#${evidenceId}`)}" target="_blank" rel="noreferrer">Open playable evidence on this device</a>` : `<button data-evidence="/api/vision/evidence?${escapeHtml(
           params.toString()
         )}" data-retained="${escapeHtml(
           retainedVideo
@@ -257,9 +257,9 @@ function reportHtml(record: InvestigationRecord, exportOrigin?: string): string 
   @media print{.evidence button,.report-actions{display:none}main{margin:0;width:100%}.summary,.section,.evidence article{break-inside:avoid;box-shadow:none}}
 
 .evidence article.is-playing{grid-template-columns:1fr}.evidence article.is-playing .evidence-media{max-height:none}.evidence article.is-playing video{display:block;width:100%;height:auto;min-height:0;max-height:70vh;aspect-ratio:16/9;object-fit:contain}.evidence article.is-playing>div:last-child{padding:20px}
-</style><script>try{var theme=localStorage.getItem('ctai-vision-theme-v1')||'dark';document.documentElement.dataset.theme=theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):theme}catch(e){document.documentElement.dataset.theme='dark'}</script></head><body><main><div class="brand">Vision Intelligence · Local NVIDIA Thor</div><h1>${escapeHtml(
+</style><script>try{var theme=localStorage.getItem('ctai-vision-theme-v1')||'dark';document.documentElement.dataset.theme=theme==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):theme}catch(e){document.documentElement.dataset.theme='dark'}</script></head><body><main><div class="brand">Vision Intelligence · Local video + AI</div><h1>${escapeHtml(
     record.title
-  )}</h1>${!exportOrigin ? `<nav class="report-actions" aria-label="Report actions"><a href="/">← Back to demo</a><a download="vision-investigation-${escapeHtml(record.id)}.html" href="${escapeHtml(record.report_url)}&amp;download=true">Download briefing (.html)</a><button onclick="copyBriefing(this)">Copy briefing</button><button onclick="window.print()">Print / Save PDF</button></nav><p id="copy-status" role="status"></p><textarea id="briefing-text" aria-label="Briefing text" readonly hidden>${escapeHtml(briefingText)}</textarea><p class="export-note">Download or copy the saved ${isEventReport ? "event record" : "answer"}, review notes and evidence links. Video stays on the Jetson; playback requires access to its network.</p>` : ""}<div class="meta"><span>${escapeHtml(
+  )}</h1>${!exportOrigin ? `<nav class="report-actions" aria-label="Report actions"><a href="/">← Back to demo</a><a download="vision-investigation-${escapeHtml(record.id)}.html" href="${escapeHtml(record.report_url)}&amp;download=true">Download briefing (.html)</a><button onclick="copyBriefing(this)">Copy briefing</button><button onclick="window.print()">Print / Save PDF</button></nav><p id="copy-status" role="status"></p><textarea id="briefing-text" aria-label="Briefing text" readonly hidden>${escapeHtml(briefingText)}</textarea><p class="export-note">Download or copy the saved ${isEventReport ? "event record" : "answer"}, review notes and evidence links. Video stays on this device; playback requires access to its network.</p>` : ""}<div class="meta"><span>${escapeHtml(
     record.severity
    )} review priority</span><span>${escapeHtml(
     record.disposition.replaceAll("_", " ")
@@ -270,7 +270,7 @@ function reportHtml(record: InvestigationRecord, exportOrigin?: string): string 
   )}</span></div>${record.analysis.question?.trim() ? `<section class="section"><h2>${isEventReport ? "Monitoring condition" : "Question asked"}</h2><div class="notes">${escapeHtml(record.analysis.question)}</div></section>` : ""}<section class="summary"><div class="brand">Evidence briefing</div><p>${escapeHtml(
     record.analysis.summary
   )}</p>${summaryCitations ? `<div class="summary-citations">${summaryCitations}</div>` : ""}</section>
-  ${exportOrigin ? `<p class="export-note">This file contains the saved briefing and citations. Video stays on the Jetson; use the evidence links while connected to its network. Cached clips can expire.</p>` : ""}
+  ${exportOrigin ? `<p class="export-note">This file contains the saved briefing and citations. Video stays on this device; use the evidence links while connected to its network. Cached clips can expire.</p>` : ""}
   ${sections.length ? `<div class="columns">${sections.map((section) =>
     `<section class="section"><h2>${section.title}</h2><ul>${section.claims.map(claim).join("")}</ul></section>`
   ).join("")}</div>` : ""}${
@@ -285,7 +285,7 @@ function reportHtml(record: InvestigationRecord, exportOrigin?: string): string 
     const status=document.getElementById('copy-status');
     if(!field.dataset.linksAdded){
       const links=Array.from(document.querySelectorAll('.evidence article')).map(article=>article.querySelector('b').textContent+' — '+article.querySelector('span').textContent+'\\n'+new URL('#'+article.id,location.href).href);
-      field.value+='\\n\\nEvidence links (video stays on the Jetson; network access required; retained clips can expire):\\n'+links.join('\\n\\n');
+      field.value+='\\n\\nEvidence links (video stays on this device; network access required; retained clips can expire):\\n'+links.join('\\n\\n');
       field.dataset.linksAdded='true';
     }
     let copied=false;

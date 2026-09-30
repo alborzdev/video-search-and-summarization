@@ -426,7 +426,7 @@ export function VideoHistoryPanel({
             <div>
               <strong>{buildingLabel}</strong>
               <span>
-                This runs locally on Thor. You can close this panel; the sync
+                This runs locally on this device. You can close this panel; the sync
                 continues in the background.
               </span>
             </div>

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import { VisionStreamCanvas } from "./VisionStreamCanvas";
+import { LiveDemoWorkspace } from "./LiveDemoWorkspace";
 import type { VisionAnalystRequest, VisionAnalystResponse } from "./analyst";
 import {
   consolidateIncidents,
@@ -39,6 +40,7 @@ interface HomeWorkspaceProps {
   agentApiUrl?: string | null;
   onExplore: (query: string, stream?: VisionStream) => void;
   onOpenEvents: () => void;
+  onOpenRules?: (stream?: VisionStream) => void;
   onOpenLive: (stream?: VisionStream) => void;
   onOpenSystem?: () => void;
   systemHealth: SystemHealth | null;
@@ -143,6 +145,8 @@ function sourceStatus(
 export function HomeWorkspace({
   agentApiUrl,
   onExplore,
+  onOpenEvents,
+  onOpenRules,
   onOpenLive,
   onOpenSystem,
   visualAnalystAvailable,
@@ -364,6 +368,9 @@ export function HomeWorkspace({
     );
   }
 
+  const liveStreams = streams.filter(stream => sourceKind(stream) === "Live");
+  if (liveStreams.length) return <LiveDemoWorkspace streams={liveStreams} analysisById={analysisById} onExplore={onExplore} onOpenEvents={onOpenEvents} onOpenLive={onOpenLive} onOpenRules={onOpenRules} visualAnalystAvailable={visualAnalystAvailable} vstApiUrl={vstApiUrl} />;
+
   return (
     <section className="vi-home vi-demo-home">
       {recordings.length > 1 && (
@@ -381,7 +388,7 @@ export function HomeWorkspace({
       {featured && (
         <div className="vi-demo-feature">
           <div className="vi-demo-start">
-            <span className="vi-demo-eyebrow">Video AI · On this Jetson</span>
+            <span className="vi-demo-eyebrow">Video AI · On this device</span>
             <h1>Ask your video<br />what happened.</h1>
             <p>Find an activity in video, ask about what you see, and open the footage behind the answer. All processed on this device.</p>
             <div className="vi-demo-invitation">

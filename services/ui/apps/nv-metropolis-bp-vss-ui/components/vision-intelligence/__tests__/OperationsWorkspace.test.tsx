@@ -247,11 +247,11 @@ describe("OperationsWorkspace", () => {
     await waitFor(() =>
       expect(screen.getByText("Warehouse Camera")).toBeInTheDocument()
     );
-    expect(
-      within(screen.getByLabelText("Source intelligence status")).getByText(
-        "Unavailable"
-      )
-    ).toBeInTheDocument();
+    const questionStatus = within(
+      screen.getByLabelText("Source intelligence status")
+    ).getByText("Ask this camera").closest(".vi-intelligence-row")!;
+    expect(within(questionStatus as HTMLElement).getByText("Unavailable"))
+      .toBeInTheDocument();
     expect(screen.getByLabelText("Ask Vision Analyst")).toBeDisabled();
     expect(
       screen.getByRole("button", { name: "Send question" })

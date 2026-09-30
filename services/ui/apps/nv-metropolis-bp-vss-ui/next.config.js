@@ -16,16 +16,22 @@ const nextConfig = {
   ],
   devIndicators: false,
   turbopack: {
-    resolveAlias: Object.fromEntries([
-      ['@aiqtoolkit-ui/common', 'common'],
-      ...['all', 'alerts', 'search', 'dashboard', 'map', 'video-management'].map(name => [`@nv-metropolis-bp-vss-ui/${name}`, `nv-metropolis-bp-vss-ui/${name}`]),
-    ].flatMap(([name, folder]) => {
-      const source = path.resolve(__dirname, '../../packages', folder, 'lib-src');
-      return [
-        [name, `../../packages/${folder}/lib-src/index.ts`],
-        ...(require('fs').existsSync(path.join(source, 'server.ts')) ? [[`${name}/server`, `../../packages/${folder}/lib-src/server.ts`]] : []),
-      ];
-    })),
+    resolveAlias: {
+      '@/contexts/*': '../../packages/nemo-agent-toolkit-ui/lib-src/contexts/*',
+      '@/*': '../../packages/nemo-agent-toolkit-ui/*',
+      '@nemo-agent-toolkit/ui': '../../packages/nemo-agent-toolkit-ui/lib-src/dev-index.ts',
+      '@nemo-agent-toolkit/ui/server': '../../packages/nemo-agent-toolkit-ui/lib-src/dev-server.ts',
+      ...Object.fromEntries([
+        ['@aiqtoolkit-ui/common', 'common'],
+        ...['all', 'alerts', 'search', 'dashboard', 'map', 'video-management'].map(name => [`@nv-metropolis-bp-vss-ui/${name}`, `nv-metropolis-bp-vss-ui/${name}`]),
+      ].flatMap(([name, folder]) => {
+        const source = path.resolve(__dirname, '../../packages', folder, 'lib-src');
+        return [
+          [name, `../../packages/${folder}/lib-src/index.ts`],
+          ...(require('fs').existsSync(path.join(source, 'server.ts')) ? [[`${name}/server`, `../../packages/${folder}/lib-src/server.ts`]] : []),
+        ];
+      })),
+    },
   },
   output: 'standalone',
   // Transpile packages from source for hot reload during development
@@ -57,6 +63,10 @@ const nextConfig = {
 
       config.resolve.alias = {
         ...config.resolve.alias,
+        '@/contexts': path.join(packagesPath, 'nemo-agent-toolkit-ui/lib-src/contexts'),
+        '@': path.join(packagesPath, 'nemo-agent-toolkit-ui'),
+        '@nemo-agent-toolkit/ui$': path.join(packagesPath, 'nemo-agent-toolkit-ui/lib-src/dev-index.ts'),
+        '@nemo-agent-toolkit/ui/server$': path.join(packagesPath, 'nemo-agent-toolkit-ui/lib-src/dev-server.ts'),
         '@aiqtoolkit-ui/common': path.join(packagesPath, 'common/lib-src'),
         '@nv-metropolis-bp-vss-ui/alerts': path.join(packagesPath, 'nv-metropolis-bp-vss-ui/alerts/lib-src'),
         '@nv-metropolis-bp-vss-ui/search': path.join(packagesPath, 'nv-metropolis-bp-vss-ui/search/lib-src'),

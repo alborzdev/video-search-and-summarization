@@ -238,7 +238,7 @@ function SourceIntelligencePanel({
           <IconSparkles size={18} />
           <span>Local intelligence</span>
         </div>
-        <em>NVIDIA Thor</em>
+        <em>Local processing</em>
         <button
           className="vi-source-intelligence-mobile-toggle"
           type="button"
@@ -653,7 +653,7 @@ function AnalystAnswerPanel({
                 : `${result.sourceNames.length} sources`}
             </span>
             {interval && <span>Observed {interval}</span>}
-            <span>Processed locally on Thor</span>
+            <span>Processed locally on this device</span>
           </div>
           <div className="vi-analyst-evidence-actions">
             {onPlayEvidence && (

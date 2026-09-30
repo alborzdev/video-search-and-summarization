@@ -129,7 +129,7 @@ describe("VisionIntelligenceApp shell", () => {
 
   it("applies and persists a complete appearance preference", async () => {
     const firstRender = render(<VisionIntelligenceApp />);
-    await screen.findByText("NVIDIA THOR · DEGRADED");
+    await screen.findByText("LOCAL AI · DEGRADED");
 
     fireEvent.click(screen.getByRole("button", { name: "Appearance: system" }));
     fireEvent.click(screen.getByRole("menuitemradio", { name: "Dark" }));
@@ -155,14 +155,14 @@ describe("VisionIntelligenceApp shell", () => {
     render(<VisionIntelligenceApp />);
     expect(await screen.findByText("Home workspace")).toBeInTheDocument();
     await waitFor(() =>
-      expect(screen.getByText("NVIDIA THOR · DEGRADED")).toBeInTheDocument()
+      expect(screen.getByText("LOCAL AI · DEGRADED")).toBeInTheDocument()
     );
     expect(global.fetch).toHaveBeenCalledWith("/api/vision/health", {
       cache: "no-store",
     });
 
     fireEvent.click(screen.getByRole("button", { name: "System readiness" }));
-    expect(screen.getByText("Thor readiness")).toBeInTheDocument();
+    expect(screen.getByText("Local readiness")).toBeInTheDocument();
     expect(screen.getByRole("region", { name: "Demo service checks" })).toHaveTextContent("Play videoAvailable");
     fireEvent.click(screen.getByText("Technical service checks"));
     expect(screen.getByText("Video I/O")).toBeInTheDocument();
@@ -174,12 +174,12 @@ describe("VisionIntelligenceApp shell", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Close system readiness" })
     );
-    expect(screen.queryByText("Thor readiness")).not.toBeInTheDocument();
+    expect(screen.queryByText("Local readiness")).not.toBeInTheDocument();
   });
 
   it("keeps navigation and in-workspace transitions coherent", async () => {
     render(<VisionIntelligenceApp />);
-    await screen.findByText("NVIDIA THOR · DEGRADED");
+    await screen.findByText("LOCAL AI · DEGRADED");
     await screen.findByText("Home workspace");
     fireEvent.click(screen.getByRole("button", { name: "Explore person" }));
     expect(
@@ -224,7 +224,7 @@ describe("VisionIntelligenceApp shell", () => {
       value: jest.fn().mockRejectedValue(new Error("fullscreen denied")),
     });
     render(<VisionIntelligenceApp />);
-    await screen.findByText("NVIDIA THOR · DEGRADED");
+    await screen.findByText("LOCAL AI · DEGRADED");
 
     fireEvent.click(screen.getByRole("button", { name: "Presentation Mode" }));
     await waitFor(() =>

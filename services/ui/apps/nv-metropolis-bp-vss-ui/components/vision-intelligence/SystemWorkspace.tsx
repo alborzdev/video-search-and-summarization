@@ -139,7 +139,7 @@ export function SystemWorkspace({
           <h1>{panel === "overview" ? "Running locally on the edge" : panel === "sources" ? "Sources" : "Alert rules"}</h1>
           <p>
             {panel === "overview"
-              ? "Live service health and hardware measurements from this NVIDIA Thor."
+              ? "Live service health and hardware measurements from this device."
               : panel === "sources"
               ? "Connect cameras and recordings, control analysis, and manage generated intelligence."
               : "Define the live conditions that should be verified and surfaced to operators."}

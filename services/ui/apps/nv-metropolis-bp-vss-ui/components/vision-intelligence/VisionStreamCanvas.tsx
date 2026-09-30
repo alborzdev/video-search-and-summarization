@@ -25,7 +25,7 @@ import React, {
   useState,
 } from "react";
 
-type PlaybackStatus = "idle" | "connecting" | "playing" | "poster" | "error";
+export type PlaybackStatus = "idle" | "connecting" | "playing" | "poster" | "error";
 
 interface VisionStreamCanvasProps {
   className?: string;
@@ -33,6 +33,7 @@ interface VisionStreamCanvasProps {
   evidenceEvents?: ReplayEvidenceEvent[];
   liveSnapshotEnabled?: boolean;
   onPreviewAvailable?: (available: boolean) => void;
+  onPlaybackStatus?: (status: PlaybackStatus) => void;
   onPlaybackContext?: (context: {
     capturedAt: string;
     currentTimeSeconds?: number;
@@ -95,6 +96,7 @@ export function VisionStreamCanvas({
   evidenceEvents = [],
   liveSnapshotEnabled = true,
   onPreviewAvailable,
+  onPlaybackStatus,
   onPlaybackContext,
   showStatus = true,
   showReplayControls = false,
@@ -124,7 +126,8 @@ export function VisionStreamCanvas({
   const liveSource = useMemo(() => isLiveStream(stream), [stream]);
   useEffect(() => {
     onPreviewAvailable?.(status === "playing" || Boolean(posterUrl && loadedPosterUrl === posterUrl));
-  }, [loadedPosterUrl, onPreviewAvailable, posterUrl, status]);
+    onPlaybackStatus?.(status);
+  }, [loadedPosterUrl, onPlaybackStatus, onPreviewAvailable, posterUrl, status]);
   const eventOffsets = useMemo(() => {
     if (!replayTimeline) return [];
     const timelineStart = Date.parse(replayTimeline.startTime);
@@ -272,6 +275,7 @@ export function VisionStreamCanvas({
     let mediaSessionId: string | null = null;
     let websocket: WebSocket | null = null;
     let retryTimer: number | null = null;
+    let frameCallback: number | null = null;
     const peerId = createPeerId();
     const pendingCandidates: RTCIceCandidateInit[] = [];
     const fallbackStream = new MediaStream();
@@ -323,6 +327,20 @@ export function VisionStreamCanvas({
           video.muted = true;
           void video.play();
         });
+        if (typeof video.requestVideoFrameCallback === "function") {
+          if (frameCallback !== null)
+            video.cancelVideoFrameCallback(frameCallback);
+          frameCallback = video.requestVideoFrameCallback(() => {
+            frameCallback = null;
+            if (
+              !disposed &&
+              !["failed", "disconnected", "closed"].includes(pc.connectionState)
+            ) {
+              setHasVideoFrame(true);
+              setStatus("playing");
+            }
+          });
+        }
       };
 
       pc.onicecandidate = (event) => {
@@ -334,7 +352,6 @@ export function VisionStreamCanvas({
       };
 
       pc.onconnectionstatechange = () => {
-        if (pc.connectionState === "connected") setStatus("playing");
         if (
           pc.connectionState === "failed" ||
           pc.connectionState === "disconnected"
@@ -463,6 +480,8 @@ export function VisionStreamCanvas({
       websocket?.close();
       peerConnection?.close();
       if (retryTimer !== null) window.clearTimeout(retryTimer);
+      if (frameCallback !== null)
+        videoElement?.cancelVideoFrameCallback(frameCallback);
       if (videoElement) videoElement.srcObject = null;
     };
   }, [liveSource, playRequested, retryKey, stream.streamId, vstApiUrl]);
