@@ -24,9 +24,9 @@ physical event are different things.
 1. Open **Live demo**. Confirm the correct source and actual advancing **Live
    preview**. A stored preview or connected-source label alone does not prove
    live frames are advancing.
-2. Check System if visual AI is unavailable. The omitted detectors do not need
-   to be started for a visual question. Do not restart the full stack to improve
-   the aggregate health badge.
+2. Check System if visual AI is unavailable. The hospital detector is now active;
+   a visual question also works independently of detection. Use the saved
+   single-camera setup; do not restart the full stack to improve a status badge.
 3. Keep the Spark memory guard active at the user-authorized **24 GiB** reserve.
    Moondream must stay stopped and must require explicit opt-in to start.
 4. Check a previously reviewed retained report as a fallback. **Earlier evidence**
@@ -50,13 +50,17 @@ Open **Live cameras** for the source browser, then **Review source** for the
 hospital camera. The full camera frame stays visible; **Ask this camera** sits
 below it. The activity rail separates **Live recording** (needed for recent
 questions and replay) from **Search indexing** (background searchable history).
-The current hospital recording is on and search indexing is paused. Choose a
+The current hospital recording and search indexing are on, with detection and
+tracking enabled. Choose a
 starter to fill the question, then choose **Ask the video** to run it.
 
 **Video history** opens this source's existing history workflow; building history
 is an explicit additional processing action. **Processing details** reveals
-caption/tracking coverage and analysis profiles. Avoid changing profiles or
-resuming indexing just to present the core question/replay story. **Sources**
+caption/tracking coverage and analysis profiles. The current profile is
+**Warehouse**, using its Person class for the avatar rehearsal. This model can
+mislabel hospital equipment; tracked observations are repeated metadata records,
+not a people count. Keep this profile while testing the configured one-camera
+worker. **Sources**
 returns to the browser, where recordings have their own **Open recording** action.
 The primary camera card uses a live preview; static VST pictures can still be
 damaged on this Spark, so use the advancing live video for the demonstration.
@@ -81,9 +85,10 @@ occupancy count or continuous person tracking.
 
 **Find a moment.** Select **Search this scene**. The source remains scoped to the
 Sim and the query starts with “person walking through a hospital corridor.”
-Search uses indexed video. While analysis is paused, those results are earlier
-footage. For new avatar activity, deliberately resume source analysis in **Live
-cameras**, allow indexing to catch up, then search. Play the retrieved interval
+Search uses indexed video. Hospital analysis is currently active; confirm that
+**Searchable through** advances to the time of the avatar activity, then search.
+If analysis was paused between rehearsals, use **Resume analysis** in **Live
+cameras** first. Play the retrieved interval
 before making a claim about its contents. A semantic match is not automatically
 verified by the visual model.
 
@@ -126,7 +131,10 @@ entrances, exits or a deterministic reset.
 
 Do not promise occupancy totals, movement trajectories, heatmaps, calibrated
 safety decisions, perfect brief-event detection or sustained tradeshow duration.
-Detectors and avatar quality remain unqualified. Rehearse an empty-scene baseline,
+The [Spark detector check](qa/2026-09-30-spark-detection-tracking.md) now verifies
+frames, tracking metadata and semantic indexing together. Avatar label accuracy
+remains unqualified, with industrial mislabels observed in the hospital scene.
+Rehearse an empty-scene baseline,
 a visible entrance, a person held in view, an exit, and a repeat; score answers
 and both positive and negative alert windows against the actual footage.
 

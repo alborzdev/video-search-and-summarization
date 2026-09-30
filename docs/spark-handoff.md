@@ -60,8 +60,23 @@ September 30 live camera check passes a fresh
 question, exact 25.001-second replay and locally retained report. Its bounded
 898.133-second observation records 33.825 GiB minimum available, unchanged boot
 ID and no new 24 GiB guard trip. The affected 72 tests and strict app typecheck
-pass. Current source remains recording on, analysis paused, detectors off,
+pass. At that checkpoint the source remained recording on, analysis paused, detectors off,
 with no live rules; model budgets, Sim and Moondream's explicit opt-in are unchanged.
+
+The subsequent user-requested detection/tracking stage is now active. Spark has
+one `vss-rtvi-cv` SBSA worker using RT-DETR Warehouse and CUDA NvDCF, with ReID
+disabled. Hospital source analysis is resumed with `warehouse-safety`; recording,
+detection, tracking and semantic indexing are on. Fresh metadata, downstream
+tracks, index progress and a concurrent question/replay pass. The bounded run
+has a 29.422 GiB overall memory minimum, with no new guard trip or reboot;
+active ingestion stays above 33.090 GiB. Startup now admits the worker only with
+the saved reserve plus 6 GiB, based on its measured first engine-build peak.
+The reserve remains 24 GiB. The opt-in detector flag is saved; Docker restart
+remains `no` and the agent's cold-start source gate remains in place. No live
+rule or continuous caption job was activated. Industrial mislabels appear in
+the hospital scene, so this qualifies the data path, not avatar accuracy or
+occupancy totals. See the [detector receipt](qa/2026-09-30-spark-detection-tracking.md)
+for model staging, restart instructions and remaining rehearsal gates.
 
 The user's target is **Isaac Sim and VSS running together on the same Spark**,
 with a live RTSP stream from Sim. Do not stop or reconfigure Sim without discussing

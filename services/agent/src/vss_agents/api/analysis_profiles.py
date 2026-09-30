@@ -34,6 +34,14 @@ TRAFFIC_PROFILE_ID = "traffic-monitoring"
 DEFAULT_DETECTION_PROFILE_ID = WAREHOUSE_PROFILE_ID
 
 
+def _warehouse_max_sources() -> int:
+    """Match admission to the deployed detector batch size, without overbooking."""
+    raw = os.getenv("VSS_WAREHOUSE_MAX_SOURCES", "8")
+    if raw not in {str(limit) for limit in range(1, 9)}:
+        raise ValueError("VSS_WAREHOUSE_MAX_SOURCES must be a decimal integer between 1 and 8")
+    return int(raw)
+
+
 @dataclass(frozen=True)
 class AnalysisProfileDefinition:
     id: str
@@ -94,7 +102,9 @@ ANALYSIS_PROFILES: tuple[AnalysisProfileDefinition, ...] = (
         # advertised. More templates can be added without changing the UI.
         rule_kinds=("area-entry", "proximity"),
         resource_tier="medium",
-        max_sources=8,
+        # Deployment-specific batch-one workers must advertise and admit one
+        # source. The existing eight-source deployment remains the default.
+        max_sources=_warehouse_max_sources(),
     ),
     AnalysisProfileDefinition(
         id=TRAFFIC_PROFILE_ID,
@@ -311,7 +321,7 @@ async def _profile_readiness(
     try:
         response = await client.get(f"{endpoint}/api/v1/health/get-dsready-state")
         response.raise_for_status()
-        return True, "Ready on NVIDIA Thor"
+        return True, "Detector ready"
     except Exception:
         return False, "Detector worker is offline"
 

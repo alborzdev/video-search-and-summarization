@@ -5,6 +5,6 @@ base: ../thor-local/official-edge/config_edge.yml
 general:
   front_end:
     streaming_ingest:
-      # The Spark core graph omits detector workers. Do not treat their
-      # inherited Thor endpoints as services that must be stopped on pause.
-      rtvi_cv_base_url: ''
+      # The opt-in Spark detector is independent of the inherited Thor worker.
+      # Core-only deployments leave this endpoint empty.
+      rtvi_cv_base_url: ${VSS_WAREHOUSE_RTVI_CV_URL:-''}

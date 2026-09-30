@@ -12,7 +12,7 @@ Sustained ingestion, repeatable scene accuracy and full rehearsal remain open.
 Use the [presenter guide](demo-presenter-runbook.md) for the walkthrough; dated
 entries below preserve development history.
 
-## Current Spark checkpoint — September 29, joint Sim trial
+## Prior Spark checkpoint — September 29, joint Sim trial
 
 - Moondream is stopped; Docker restart is `no` and the separate Scout launcher
   requires explicit `--moondream`. Sim and its RTSP publisher remain running.
@@ -2493,3 +2493,26 @@ observation stays above 33.825 GiB with no new guard trip or reboot. Recording
 remains on, source analysis paused, detectors off and no live rules. Sim, model
 budgets and the stopped Moondream workload are unchanged. The built fallback
 requires deliberate packaging to receive these source-mounted UI changes.
+
+## September 30 — Detection, tracking and indexing enabled
+
+At the user's request, added the opt-in Spark SBSA detector worker and resumed
+the hospital camera with `warehouse-safety`. RT-DETR Warehouse, CUDA NvDCF and
+the existing embedding/indexing path now run together. The worker processes
+about 29 fps; fresh raw observations and downstream tracks reach Elasticsearch.
+Search coverage advances from 241 to 374 segments at the recorded checkpoint,
+with an eight-second indexing delay. A visual question and exact 25.001-second
+replay pass concurrently. These are data-path checks, not verified person counts;
+the warehouse model emits industrial mislabels in the hospital setting.
+
+The 2070.237-second staging/observation trace has a 29.422 GiB minimum and no
+new trip or reboot. Active ingestion stays above 33.090 GiB. First engine build
+costs about 5.6 GiB of available memory, so future startup requires the saved
+reserve plus 6 GiB; the user's 24 GiB operating reserve is unchanged. Recording
+and analysis remain on for rehearsal, with no live rule or continuous caption
+job. Sim, loaded model budgets and Moondream opt-in are preserved. The saved
+detector flag retains this worker in future explicitly requested startup.
+Twelve Spark configuration/bootstrap tests and 27 focused agent tests pass.
+The full agent suite cannot collect in the available QA environment because
+`langchain_core` is absent. See the
+[runtime receipt](qa/2026-09-30-spark-detection-tracking.md).

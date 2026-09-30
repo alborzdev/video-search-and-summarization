@@ -29,6 +29,9 @@ PROFILE = 'bp_developer_thor_full_2d'
 DEFAULT_RESERVE_GIB = 48
 # Initial peak estimates; record target measurements before tuning these.
 MODEL_STARTUP_HEADROOM_GIB = {'spark-llm': 24, 'rtvi-embed': 20, 'rtvi-vlm': 24}
+# The first GB10 engine build lowered MemAvailable by about 5.6 GiB. Allow
+# 6 GiB before startup; the user's runtime reserve itself remains unchanged.
+DETECTOR_STARTUP_HEADROOM_GIB = 6
 MODEL_CACHE_ROOTS = {
     'spark-llm': ['/opt/nim/.cache/ngc'],
     'rtvi-embed': ['/opt/nvidia/rtvi/.rtvi/ngc_model_cache', '/tmp/triton_model_repo'],
@@ -119,13 +122,18 @@ def doctor():
     print(f'Spark preflight passed; {available():.1f} GiB available; {reserve:g} GiB runtime reserve. Driver/Docker versions still require comparison with NVIDIA prerequisites.')
 
 
-def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org', reserve_gib=None, cached_models=None):
+def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org', reserve_gib=None, cached_models=None, detector_enabled=None):
     reserve = memory_reserve() if reserve_gib is None else validate_reserve(reserve_gib)
     if cached_models is None:
         settings_path = STATE / 'settings.json'
         cached_models = json.loads(settings_path.read_text()).get('cached_models', False) if settings_path.exists() else False
     if not isinstance(cached_models, bool):
         raise RuntimeError('cached_models must be a boolean.')
+    if detector_enabled is None:
+        settings_path = STATE / 'settings.json'
+        detector_enabled = json.loads(settings_path.read_text()).get('detector_enabled', False) if settings_path.exists() else False
+    if not isinstance(detector_enabled, bool):
+        raise RuntimeError('detector_enabled must be a boolean.')
     ipaddress.IPv4Address(host_ip)
     ipaddress.IPv4Address(gateway)
     registry = urllib.parse.urlsplit(npm_registry)
@@ -237,10 +245,44 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     agent['command'] = ['serve', '--config_file', '/vss-agent/deploy/docker/spark/config.yml', '--host', '127.0.0.1', '--port', '8100']
     agent['environment'].update(
         VSS_AGENT_CONFIG_FILE='/vss-agent/deploy/docker/spark/config.yml',
+        VSS_WAREHOUSE_RTVI_CV_URL='http://127.0.0.1:9000' if detector_enabled else '',
         VSS_TRAFFIC_RTVI_CV_URL='',
         VST_CLIP_FALLBACK_URL='http://127.0.0.1:8098',
         VST_CLIP_FALLBACK_MEDIA_URL=f'http://{host_ip}:7777/api/vision/evidence-media',
         EVIDENCE_ALLOW_FRESH_INSPECTION_WHILE_BUSY='true')
+    if detector_enabled:
+        # A single Spark worker uses the SBSA runtime and the model-only
+        # warehouse pipeline. Do not select the inherited search profile:
+        # it also stages a vision encoder and enables tracker ReID.
+        services['spark-perception'] = {
+            'image': 'nvcr.io/nvidia/vss-core/vss-rt-cv:3.2.1-sbsa',
+            'container_name': 'vss-rtvi-cv', 'network_mode': 'host',
+            'runtime': 'nvidia', 'restart': 'no',
+            'working_dir': '/opt/nvidia/deepstream/deepstream/sources/apps/sample_apps/metropolis_perception_app',
+            'entrypoint': [], 'command': ['bash', '/opt/spark/detector-start.sh'],
+            'mem_limit': '6g', 'memswap_limit': '6g', 'shm_size': '2g', 'cpus': 4,
+            'environment': {
+                'HARDWARE_PROFILE': 'DGX-SPARK', 'NVIDIA_VISIBLE_DEVICES': '0',
+                'DS_MODEL_FAMILY': 'rtdetr-warehouse', 'DS_MODE_FLAG': '1',
+                'DS_MESSAGE_RATE': '1', 'DS_TRACKER_REID': 'false',
+                'DS_SHOW_SENSOR_ID': 'false', 'NUM_SENSORS': '1',
+                'STREAM_TYPE': 'kafka', 'DEEPSTREAM_ENABLE_SENSOR_ID_EXTRACTION': '1',
+                'GST_ENABLE_CUSTOM_PARSER_MODIFICATIONS': '1', 'OTEL_SDK_DISABLED': 'true',
+            },
+            'volumes': [
+                {'type': 'bind', 'source': str(ROOT / 'deploy/docker/spark'), 'target': '/opt/spark', 'read_only': True},
+                {'type': 'bind', 'source': str(ROOT / 'deploy/docker/industry-profiles/warehouse-operations/warehouse-2d-app/deepstream/configs'),
+                 'target': '/opt/spark-detector-templates', 'read_only': True},
+                {'type': 'bind', 'source': str(data / 'models/spark-detector'), 'target': '/opt/storage'},
+            ],
+            'healthcheck': {
+                'test': ['CMD', 'curl', '--fail', '--silent', '--connect-timeout', '2', '--max-time', '4',
+                         'http://127.0.0.1:9000/api/v1/health/get-dsready-state'],
+                'interval': '15s', 'timeout': '5s', 'retries': 40, 'start_period': '120s',
+            },
+        }
+        agent['environment']['VSS_WAREHOUSE_MAX_SOURCES'] = '1'
+        services['vss-ui']['environment']['RTVI_CV_HEALTH_URL'] = 'http://127.0.0.1:9000/api/v1/health/get-dsready-state'
     services['alert-bridge']['environment']['ALERT_ALWAYS_ON_ENABLED'] = 'false'
     services['lvs-server']['environment'].update(LVS_LLM_BASE_URL='http://127.0.0.1:30081/v1', LVS_LLM_MODEL_NAME=LLM,
         VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME=VLM, VIA_VLM_ENDPOINT='http://127.0.0.1:8018/v1/', LVS_EMB_DIMENSIONS='768')
@@ -272,7 +314,7 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     encoded = re.sub(r'(?<!\$)\$(?!\$)', lambda _: '$$', json.dumps(graph, indent=2))
     encoded = encoded.replace('$${NGC_API_KEY:-}', '${NGC_API_KEY:-}')
     private_write(STATE / 'compose.json', encoded + '\n')
-    private_write(STATE / 'settings.json', json.dumps({'host_ip': host_ip, 'data_dir': str(data), 'gateway': gateway, 'npm_registry': npm_registry, 'reserve_gib': reserve, 'cached_models': cached_models}, indent=2))
+    private_write(STATE / 'settings.json', json.dumps({'host_ip': host_ip, 'data_dir': str(data), 'gateway': gateway, 'npm_registry': npm_registry, 'reserve_gib': reserve, 'cached_models': cached_models, 'detector_enabled': detector_enabled}, indent=2))
     run(compose('config', '--quiet'), env=clean_env)
     print(f'Rendered {len(services)} services to {STATE}/compose.json (unqualified Spark candidate).')
 
@@ -327,14 +369,19 @@ def up():
     run(['systemctl', '--user', 'is-active', '--quiet', 'vss-spark-guard.service'])
     graph = json.loads((STATE / 'compose.json').read_text())
     models = ['spark-llm', 'rtvi-embed', 'rtvi-vlm']
+    detectors = ['spark-perception'] if 'spark-perception' in graph['services'] else []
     late = ['vss-agent', 'vss-ui', 'vss-haproxy-ingress', 'lvs-server', 'alert-bridge', 'vss-va-mcp']
-    early = [s for s in graph['services'] if s not in models + late]
-    order = startup_order(graph['services'], early, models, late)
+    early = [s for s in graph['services'] if s not in models + detectors + late]
+    order = startup_order(graph['services'], early, models + detectors, late)
     for service in order:
         if service in models:
             required = model_admission_gib(service)
             if available() < required:
                 raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} ({memory_reserve():g} reserve + {MODEL_STARTUP_HEADROOM_GIB[service]:g} startup headroom).')
+        if service in detectors:
+            required = memory_reserve() + DETECTOR_STARTUP_HEADROOM_GIB
+            if available() < required:
+                raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} ({memory_reserve():g} reserve + {DETECTOR_STARTUP_HEADROOM_GIB:g} startup headroom).')
         run(compose('up', '-d', '--no-deps', '--no-build', '--pull', 'never', service))
         await_service(service, graph['services'][service].get('restart') == 'no' and service in ('broker-health-check', 'elasticsearch-init-container', 'kafka-topic-init-container', 'kibana-init-container-thor-full', 'sdr-streamprocessing-init', 'spark-llm-cache-init'))
         if service in models:
@@ -409,6 +456,9 @@ def verify():
     probes = {'llm': 'http://127.0.0.1:30081/v1/models', 'vlm': 'http://127.0.0.1:8018/v1/health/ready',
               'embed': 'http://127.0.0.1:8017/v1/ready', 'agent': 'http://127.0.0.1:8100/health',
               'vios': 'http://127.0.0.1:30888/vst/api/v1/sensor/list'}
+    graph_path = STATE / 'compose.json'
+    if graph_path.exists() and 'spark-perception' in json.loads(graph_path.read_text()).get('services', {}):
+        probes['detector'] = 'http://127.0.0.1:9000/api/v1/health/get-dsready-state'
     for name, url in probes.items():
         try:
             with urllib.request.urlopen(url, timeout=15) as response:
@@ -434,13 +484,14 @@ def main():
     parser.add_argument('--npm-registry', default='https://registry.npmjs.org', help='HTTPS package registry for the source UI build')
     parser.add_argument('--reserve-gib', type=float, help='Runtime memory reserve; render preserves the saved value when omitted')
     parser.add_argument('--cached-models', action=argparse.BooleanOptionalAction, default=None, help='Cache-only model startup without download credentials; render preserves the saved mode when omitted')
+    parser.add_argument('--detector', action=argparse.BooleanOptionalAction, dest='detector_enabled', default=None, help='Enable the single-source Spark detection/tracking worker; render preserves the saved mode when omitted')
     args = parser.parse_args()
     if args.command == 'render':
         if not args.host_ip:
             parser.error('render requires --host-ip <Spark LAN IPv4>')
-        render(args.host_ip, args.data_dir, args.gateway, args.npm_registry, args.reserve_gib, args.cached_models)
-    elif args.reserve_gib is not None or args.cached_models is not None:
-        parser.error('--reserve-gib and --cached-models apply to render; restart the guard after changing its reserve')
+        render(args.host_ip, args.data_dir, args.gateway, args.npm_registry, args.reserve_gib, args.cached_models, args.detector_enabled)
+    elif args.reserve_gib is not None or args.cached_models is not None or args.detector_enabled is not None:
+        parser.error('--reserve-gib, --cached-models and --detector/--no-detector apply to render; restart the guard after changing its reserve')
     elif args.command == 'stop':
         run(compose('stop'))
     else:

@@ -1,5 +1,10 @@
 # SPDX-License-Identifier: MIT
 
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import patch
@@ -100,6 +105,7 @@ async def test_catalog_readiness_reflects_real_workers(monkeypatch):
         result = await router.routes[0].endpoint()
 
     assert [profile.ready for profile in result.profiles] == [True, True, True]
+    assert [profile.ready_detail for profile in result.profiles[1:]] == ["Detector ready", "Detector ready"]
     assert client.get.await_args_list[0].args[0].startswith("http://warehouse:9000/")
     assert client.get.await_args_list[1].args[0].startswith("http://traffic:9010/")
 
@@ -127,3 +133,93 @@ async def test_source_profile_endpoint_returns_durable_selected_profile(monkeypa
     assert result.source_id == "intersection-1"
     assert result.profile_id == TRAFFIC_PROFILE_ID
     assert result.profile.object_types == ["Bicycle", "Car", "Person", "Road sign"]
+
+
+def _profile_process(
+    max_sources: str | None,
+    state_path: Path,
+    script: str,
+) -> subprocess.CompletedProcess[str]:
+    """Import a fresh manifest, without changing the test process or real state."""
+    env = os.environ.copy()
+    env["PYTHONPATH"] = str(Path(__file__).resolve().parents[3] / "src")
+    env["VSS_SOURCE_ANALYSIS_STATE_FILE"] = str(state_path)
+    env.pop("VSS_TRAFFIC_RTVI_CV_URL", None)
+    if max_sources is None:
+        env.pop("VSS_WAREHOUSE_MAX_SOURCES", None)
+    else:
+        env["VSS_WAREHOUSE_MAX_SOURCES"] = max_sources
+    return subprocess.run(
+        [sys.executable, "-c", script],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=False,
+    )
+
+
+@pytest.mark.parametrize(("configured", "expected"), [(None, 8), ("1", 1), ("8", 8)])
+def test_deployed_warehouse_capacity_is_reported_and_enforced(
+    configured: str | None,
+    expected: int,
+    tmp_path: Path,
+) -> None:
+    result = _profile_process(
+        configured,
+        tmp_path / "source-analysis-state.json",
+        """
+import asyncio
+import json
+from vss_agents.api.analysis_profiles import create_analysis_profiles_router, WAREHOUSE_PROFILE_ID
+from vss_agents.api.analysis_profile_capacity import (
+    AnalysisProfileCapacityError, claim_source_analysis_profile_capacity,
+)
+from vss_agents.api.source_analysis_state import get_source_analysis_profile, set_source_analysis_profile
+
+catalog = asyncio.run(create_analysis_profiles_router("").routes[0].endpoint())
+warehouse = next(profile for profile in catalog.profiles if profile.id == WAREHOUSE_PROFILE_ID)
+set_source_analysis_profile("overflow-camera", "semantic-search")
+for index in range(warehouse.max_sources):
+    claim_source_analysis_profile_capacity(f"camera-{index}", WAREHOUSE_PROFILE_ID)
+try:
+    claim_source_analysis_profile_capacity("overflow-camera", WAREHOUSE_PROFILE_ID)
+except AnalysisProfileCapacityError as exc:
+    print(json.dumps({
+        "catalog": {profile.id: profile.max_sources for profile in catalog.profiles},
+        "conflict": exc.detail,
+        "overflowProfile": get_source_analysis_profile("overflow-camera"),
+    }))
+else:
+    raise AssertionError("Warehouse admission accepted more sources than advertised")
+""",
+    )
+
+    assert result.returncode == 0, result.stderr
+    payload = json.loads(result.stdout)
+    assert payload["catalog"] == {
+        SEMANTIC_PROFILE_ID: 8,
+        WAREHOUSE_PROFILE_ID: expected,
+        TRAFFIC_PROFILE_ID: 1,
+    }
+    assert payload["conflict"] == {
+        "code": "analysis_profile_capacity_exhausted",
+        "maxSources": expected,
+        "occupiedSourceIds": [f"camera-{index}" for index in range(expected)],
+        "pendingReservations": 0,
+        "profileId": WAREHOUSE_PROFILE_ID,
+    }
+    assert payload["overflowProfile"] != WAREHOUSE_PROFILE_ID
+
+
+@pytest.mark.parametrize("configured", ["", "0", "9", "-1", "1.0", "many", " 1", "1 ", "+1", "01", "\u0661"])
+def test_invalid_warehouse_capacity_fails_at_manifest_import(configured: str, tmp_path: Path) -> None:
+    result = _profile_process(
+        configured,
+        tmp_path / "source-analysis-state.json",
+        "import vss_agents.api.analysis_profiles",
+    )
+
+    assert result.returncode != 0
+    assert "VSS_WAREHOUSE_MAX_SOURCES must be a decimal integer between 1 and 8" in result.stderr
+    assert not (tmp_path / "source-analysis-state.json").exists()
