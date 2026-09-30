@@ -15,6 +15,14 @@ post-request observation also passes, with a 27.818 GiB minimum and no new trip.
 See [target evidence](qa/2026-09-29-spark-startup.md). Joint Isaac Sim operation
 and sustained live ingestion remain unqualified.
 
+Current target state: a later guard trip at 21:06:47 EDT stops VSS at 23.898 GiB
+available. This precedes the current Sim renderer's 21:29:33 EDT start; the cause
+is not established. The user supplied `rtsp://10.88.9.91:8554/digital-twin`, which
+responds with H.264 video and decodes on a CPU receiver. VSS remains stopped
+while permission to stop the separate Moondream workload for the joint test is
+pending. Preserve the 24 GiB floor and Sim. See the
+[Sim intake receipt](qa/2026-09-29-spark-sim-intake.md) before resuming.
+
 The user's target is **Isaac Sim and VSS running together on the same Spark**,
 with a live RTSP stream from Sim. Do not stop or reconfigure Sim without discussing
 it with the user. Start with one stream. The fresh-checkout default reserve is

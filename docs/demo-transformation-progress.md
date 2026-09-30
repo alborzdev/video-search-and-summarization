@@ -2340,8 +2340,8 @@ behavior still require current-session inspection.
 
 ## Next work (current)
 
-1. Agree audience/presentation emphasis and obtain Spark scene/RTSP/reset access.
-   This remains open, but does not block existing-footage improvements.
+1. Agree audience/presentation emphasis and obtain Spark scene/reset access.
+   The Sim RTSP URL is supplied; repeatable scene control remains open.
 2. Run a complete timed rehearsal of the current guide, with repeated samples,
    actual playback/answer checks and memory measurements; fix interruptions.
 3. Complete populated monitoring/analytics and remaining responsive/export
@@ -2384,3 +2384,23 @@ remain running. Public images/source builds are being prepared while local NGC
 credentials and privileged data-directory setup are requested. This is preparation,
 not target inference or joint-workload acceptance. See the
 [target startup receipt](qa/2026-09-29-spark-startup.md) for exact state and limits.
+
+## September 29 — Sim RTSP intake and later reserve trip
+
+The user supplied `rtsp://10.88.9.91:8554/digital-twin`. Read-only CPU checks
+receive H.264 at 1280×720 and capture a hospital corridor with mobile monitor
+carts. An eight-second re-encoded clip decodes all 480 output frames without
+errors; substantial duplication in that capture prevents a source-rate claim.
+A separate 60-second receiver probe without encoding or rate conversion takes
+32.932 seconds to decode its first frame, then receives 56 frames over 26.999
+seconds, with repeated approximately one-second gaps. Smooth delivery at the
+publisher's nominal 30 fps remains unresolved.
+
+A later 24 GiB guard trip at 21:06:47 EDT stops all 30 running VSS containers
+cleanly at 23.898 GiB available, with unchanged boot ID. The current Sim renderer
+starts at 21:29:33 EDT, so that process does not establish the cause of the earlier
+trip. Sim and Moondream remain running. Full VSS restart is pending user direction
+on the separate Moondream workload, which holds 23423 MiB in the GPU process
+listing. No live source or rule has been added to VSS during intake. The
+[Sim intake receipt](qa/2026-09-29-spark-sim-intake.md) records evidence and the
+remaining joint-test gates.

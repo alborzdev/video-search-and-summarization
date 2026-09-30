@@ -10,6 +10,13 @@ remain unqualified. The active Spark
 reserve is 24 GiB by explicit user instruction; earlier entries below retain
 their original 48 GiB setting.
 
+Later current-state update: a new guard trip at **21:06:47 EDT** stops VSS at
+23.898 GiB available. The active Sim renderer starts afterward, at 21:29:33 EDT;
+the trip is not attributed to that process. The user has now supplied the live
+Sim RTSP URL. CPU decoding works, but a passthrough timing probe shows a 32.9-second
+first-frame delay and sparse delivery. VSS remains stopped
+pending the joint-test memory decision. See the [Sim intake receipt](2026-09-29-spark-sim-intake.md).
+
 ## Host and checkout
 
 - DGX Spark / aarch64 / NVIDIA GB10, driver 580.142.
@@ -374,9 +381,10 @@ the existing base image and model cache.
   Retain the 24 GiB runtime guard.
 - Preserve existing non-VSS workloads. Stop or reconfigure them only with user
   direction if measured capacity requires it.
-- A user-provided Sim RTSP URL and scene-reset procedure are still needed for
-  one bounded live condition and joint workload memory/latency measurements.
-  The running Isaac Sim MCP container does not establish an active renderer.
+- The user-provided Sim RTSP URL is now available, and an actual renderer is
+  running. A scene-reset procedure and joint-test memory decision remain needed
+  for repeatable live-condition and workload measurements. See the
+  [Sim intake receipt](2026-09-29-spark-sim-intake.md).
 - Detector profiles are omitted, matching core scope. Spark GPU metrics are not
   implemented by the omitted Thor tegrastats exporter. Aggregate app readiness
   therefore has a warning even though the configured core services pass.
