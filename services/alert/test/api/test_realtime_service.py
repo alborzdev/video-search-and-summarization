@@ -679,6 +679,83 @@ class TestRTVIVLMClientGenerateCaptions:
     value. The required fields (id, prompt, model, etc.) are always present.
     """
 
+    @pytest.mark.parametrize(("verdict", "expected"), [
+        ("TRUE", ["true"]),
+        ("FALSE", []),
+        ("UNKNOWN", []),
+        ("The wheeled cart remains on the right side of the corridor.", []),
+    ])
+    def test_verdict_contract_matches_existing_incident_parser(self, verdict, expected):
+        # Exercise the production parser without importing the unrelated GPU
+        # model runtime into Alert Bridge's CPU-only unit test environment.
+        import ast
+        import re
+        from pathlib import Path
+
+        source = Path(__file__).resolve().parents[3] / (
+            "rtvi/rt-vlm/src/server/rtvi_stream_handler.py"
+        )
+        tree = ast.parse(source.read_text())
+        names = {
+            "_INCIDENT_POSITIVE_RE", "_INCIDENT_NEGATIVE_RE",
+            "_RFC3339_TIMESTAMP_RE", "_incident_trigger_tokens",
+        }
+        nodes = [node for node in tree.body if (
+            isinstance(node, ast.FunctionDef) and node.name in names
+        ) or (
+            isinstance(node, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id in names for target in node.targets)
+        )]
+        namespace = {"re": re}
+        exec(compile(ast.Module(body=nodes, type_ignores=[]), str(source), "exec"), namespace)
+        assert namespace["_incident_trigger_tokens"](verdict) == expected
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("alert_fields", [
+        {"alert_rule_id": "rule-1"},
+        {"alert_category": "semantic"},
+    ])
+    async def test_alert_condition_requests_explicit_visual_verdict(self, alert_fields):
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        config = make_config(
+            prompt="A wheeled medical monitor cart is visible on the right side.",
+            system_prompt="Inspect the hospital corridor.",
+        )
+        original_prompt = config.prompt
+        original_system_prompt = config.system_prompt
+        client = RTVIVLMClient("http://rtvi")
+        _install_caption_stream_mock(client)
+
+        await client.generate_captions(
+            stream_id="sid-1", prompt=config.prompt, model="cosmos",
+            system_prompt=config.system_prompt, **alert_fields,
+        )
+
+        payload = client._client.stream.call_args.kwargs["json"]
+        assert original_prompt in payload["prompt"]
+        assert "exactly one word: TRUE, FALSE, or UNKNOWN" in payload["prompt"]
+        assert "TRUE only when visible evidence satisfies" in payload["prompt"]
+        assert "FALSE when visible evidence shows" in payload["prompt"]
+        assert "UNKNOWN when the relevant scene cannot be seen or evidence is insufficient" in payload["prompt"]
+        assert payload["system_prompt"].startswith(original_system_prompt + "\n\n")
+        assert config.prompt == original_prompt
+        assert config.system_prompt == original_system_prompt
+
+    @pytest.mark.asyncio
+    async def test_ordinary_caption_prompt_is_unchanged(self):
+        from realtime.services.rtvi_client import RTVIVLMClient
+
+        client = RTVIVLMClient("http://rtvi")
+        _install_caption_stream_mock(client)
+        await client.generate_captions(
+            stream_id="sid-1", prompt="Describe visible activity.", model="cosmos",
+            system_prompt="Be concise.",
+        )
+        payload = client._client.stream.call_args.kwargs["json"]
+        assert payload["prompt"] == "Describe visible activity."
+        assert payload["system_prompt"] == "Be concise."
+
     @pytest.mark.asyncio
     async def test_required_fields_always_present(self):
         from unittest.mock import AsyncMock, MagicMock

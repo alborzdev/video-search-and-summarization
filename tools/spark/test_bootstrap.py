@@ -88,6 +88,8 @@ class BootstrapTests(unittest.TestCase):
     def test_actual_compose_render_and_secret_isolation(self):
         with tempfile.TemporaryDirectory() as temp:
             state = Path(temp)
+            thor_vst_path = b.ROOT / 'deploy/docker/thor-local/vios/vst_config.json'
+            thor_vst_before = thor_vst_path.read_bytes()
             with patch.object(b, 'STATE', state), patch.dict(b.os.environ, {'NGC_API_KEY': 'test-credential-must-not-leak', 'HOST_IP': '10.0.0.99'}):
                 b.render('192.0.2.10', str(state / 'data'), '172.17.0.1', 'https://registry.yarnpkg.com', 24)
                 rendered = (state / 'compose.json').read_text()
@@ -97,6 +99,15 @@ class BootstrapTests(unittest.TestCase):
                 self.assertEqual((state / 'compose.json').stat().st_mode & 0o777, 0o600)
                 self.assertEqual(json.loads((state / 'settings.json').read_text())['reserve_gib'], 24)
                 services = graph['services']
+                self.assertEqual(services['vss-agent']['environment']['VSS_TRAFFIC_RTVI_CV_URL'], '')
+                spark_vst_path = state / 'vst-config.json'
+                self.assertTrue(json.loads(spark_vst_path.read_text())['network']['rtsp_streaming_over_tcp'])
+                self.assertEqual(thor_vst_path.read_bytes(), thor_vst_before)
+                for name in ('sensor-ms', 'streamprocessing-ms'):
+                    config_mount = next(m for m in services[name]['volumes']
+                                        if m['target'] == '/home/vst/vst_release/configs/vst_config.json')
+                    self.assertEqual(config_mount['source'], str(spark_vst_path))
+                    self.assertTrue(config_mount['read_only'])
                 self.assertNotIn('tegrastats-exporter', services)
                 self.assertNotIn('perception-2d-fusion', services)
                 self.assertIn('-sbsa', services['rtvi-vlm']['build']['args']['BASE_IMAGE'])

@@ -1,9 +1,12 @@
 import io
 import json
+import hashlib
+import shutil
+import subprocess
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import server
 
@@ -59,6 +62,136 @@ class MediaPathTests(unittest.TestCase):
                         server.local_media_path(server.RECORDING_PATH_PREFIX + suffix)
                 with self.assertRaises(ValueError):
                     server.local_media_path("/unapproved/upload.mp4")
+
+
+class _NativeResponse(_Response):
+    def __init__(self, content, headers=None):
+        super().__init__(content)
+        self.headers = headers or {}
+
+
+class NativeRetentionTests(unittest.TestCase):
+    start = "2026-09-30T02:39:51.469000Z"
+    end = "2026-09-30T02:40:16.469000Z"
+
+    def opener(self, content=b"native mp4", start=None, headers=None):
+        opener = Mock()
+        opener.open.side_effect = [
+            _NativeResponse(json.dumps({
+                "videoUrl": "http://advertised.example/vst/storage/temp_files/clip.mp4",
+                "startTime": self.start if start is None else start,
+            }).encode()),
+            _NativeResponse(content, headers),
+        ]
+        return opener
+
+    def test_native_url_cannot_select_remote_origin_or_escape_storage(self):
+        with patch.object(server, "VST_API_URL", "http://127.0.0.1:30888/vst/api"):
+            self.assertEqual(
+                server.native_media_url("http://169.254.169.254/vst/storage/temp_files/clip.mp4"),
+                "http://127.0.0.1:30888/vst/storage/temp_files/clip.mp4",
+            )
+            for value in (
+                "file:///vst/storage/clip.mp4", "http://example.com/secrets.mp4",
+                "/vst/storage/%2e%2e/secrets.mp4", "/vst/storage/clip.mkv",
+                "/vst/storage/%252e%252e/secrets.mp4",
+                "/vst/storage/folder%5c..%5cclip.mp4",
+            ):
+                with self.subTest(url=value), self.assertRaises(ValueError):
+                    server.native_media_url(value)
+        self.assertIsNone(server._NoRedirect().redirect_request(None, None, 302, "", {}, "http://example.com"))
+
+    def test_retains_bytes_with_bounded_requests_and_exact_start_metadata(self):
+        opener = self.opener(headers={"Content-Length": "10"})
+        with TemporaryDirectory() as directory, patch.object(server, "build_opener", return_value=opener), \
+                patch.object(server, "validate_output") as validate:
+            candidate = Path(directory) / "candidate.mp4"
+            server.retain_native_clip("camera", self.start, self.end, candidate, 25)
+            self.assertEqual(candidate.read_bytes(), b"native mp4")
+            validate.assert_called_once_with(candidate, 25)
+            self.assertEqual(opener.open.call_count, 2)
+            self.assertTrue(all(0 < call.kwargs["timeout"] <= 20 for call in opener.open.call_args_list))
+            self.assertIn("transcode=full", opener.open.call_args_list[0].args[0].full_url)
+            self.assertNotIn("advertised.example", opener.open.call_args_list[1].args[0].full_url)
+
+    def test_rejects_wrong_interval_metadata_before_downloading(self):
+        opener = self.opener(start="2026-09-30T02:39:52.469000Z")
+        with TemporaryDirectory() as directory, patch.object(server, "build_opener", return_value=opener):
+            candidate = Path(directory) / "candidate.mp4"
+            with self.assertRaisesRegex(ValueError, "requested interval"):
+                server.retain_native_clip("camera", self.start, self.end, candidate, 25)
+            self.assertFalse(candidate.exists())
+            self.assertEqual(opener.open.call_count, 1)
+
+    def test_download_size_and_overall_time_are_bounded(self):
+        with TemporaryDirectory() as directory:
+            for headers in ({"Content-Length": "11"}, {}):
+                with self.subTest(headers=headers), patch.object(server, "MAX_NATIVE_CLIP_BYTES", 5), \
+                        patch.object(server, "build_opener", return_value=self.opener(headers=headers)):
+                    with self.assertRaisesRegex(ValueError, "size limit"):
+                        server.retain_native_clip("camera", self.start, self.end, Path(directory) / "clip.mp4", 25)
+            with patch.object(server, "build_opener", return_value=self.opener()), \
+                    patch.object(server.time, "monotonic", side_effect=[0, 46]):
+                with self.assertRaises(TimeoutError):
+                    server.retain_native_clip("camera", self.start, self.end, Path(directory) / "clip.mp4", 25)
+
+    def test_incomplete_download_is_rejected_before_metadata_probe(self):
+        with TemporaryDirectory() as directory, \
+                patch.object(server, "build_opener", return_value=self.opener(headers={"Content-Length": "100"})), \
+                patch.object(server, "validate_output") as validate:
+            with self.assertRaisesRegex(ValueError, "incomplete"):
+                server.retain_native_clip("camera", self.start, self.end, Path(directory) / "clip.mp4", 25)
+            validate.assert_not_called()
+
+    def test_native_failure_preserves_existing_recorded_media_fallback(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            media = root / "recordings"
+            cache = root / "cache"
+            media.mkdir()
+            source = media / "upload.mp4"
+            source.write_bytes(b"recorded media")
+
+            def export(command, **kwargs):
+                Path(command[-1]).write_bytes(b"retained recording")
+
+            with patch.object(server, "CACHE_ROOT", cache), patch.object(server, "RECORDING_ROOT", media), \
+                    patch.object(server, "retain_native_clip", side_effect=RuntimeError("native unavailable")), \
+                    patch.object(server, "get_media_paths", return_value=[source]), \
+                    patch.object(server, "recording_start", return_value=server.parse_timestamp(self.start).timestamp()), \
+                    patch.object(server.subprocess, "run", side_effect=export), patch.object(server, "validate_output"):
+                key, _ = server.build_clip("camera", self.start, self.end)
+            self.assertEqual((cache / f"{key}.mp4").read_bytes(), b"retained recording")
+            self.assertEqual(json.loads((cache / f"{key}.json").read_text()), {"sensorId": "camera"})
+            self.assertEqual(source.read_bytes(), b"recorded media")
+
+    @unittest.skipUnless(shutil.which("ffmpeg") and shutil.which("ffprobe"), "CPU FFmpeg required")
+    def test_epoch_interval_retains_real_native_25_second_mp4_and_rejects_short_clip(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            native = root / "native.mp4"
+            subprocess.run([
+                "ffmpeg", "-v", "error", "-f", "lavfi", "-i", "testsrc2=size=32x32:rate=10",
+                "-t", "25", "-c:v", "libx264", "-pix_fmt", "yuv420p", str(native),
+            ], check=True, timeout=20, capture_output=True)
+            contents = native.read_bytes()
+            cache = root / "cache"
+            with patch.object(server, "CACHE_ROOT", cache), \
+                    patch.object(server, "build_opener", return_value=self.opener(contents)), \
+                    patch.object(server, "get_media_paths", side_effect=AssertionError("Epoch MKV fallback must not run")):
+                key, clip_start = server.build_clip("camera", self.start, self.end)
+            expected_key = hashlib.sha256(f"v2\0camera\0{self.start}\0{self.end}".encode()).hexdigest()
+            self.assertEqual(key, expected_key)
+            self.assertEqual(clip_start, self.start)
+            retained = cache / f"{key}.mp4"
+            self.assertEqual(retained.read_bytes(), contents)
+            server.validate_output(retained, 25)
+            self.assertEqual(json.loads(retained.with_suffix(".json").read_text()), {"sensorId": "camera"})
+            # The real probe must continue rejecting a shorter native export;
+            # successful HTTP metadata alone cannot mark a clip retained.
+            with patch.object(server, "build_opener", return_value=self.opener(contents)):
+                with self.assertRaisesRegex(RuntimeError, "requested duration"):
+                    server.retain_native_clip("camera", self.start, self.end, root / "wrong.mp4", 30)
 
 
 class TextEmbeddingAdapterTests(unittest.TestCase):

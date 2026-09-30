@@ -25,9 +25,65 @@ from vss_agents.video_analytics.utils import build_sensor_map
 from vss_agents.video_analytics.utils import compute_bucket_size_seconds
 from vss_agents.video_analytics.utils import create_empty_histogram_buckets
 from vss_agents.video_analytics.utils import create_events_from_incidents
+from vss_agents.video_analytics.utils import normalize_incident_condition
 from vss_agents.video_analytics.utils import parse_vst_sensor_list_response
 from vss_agents.video_analytics.utils import sweep_overlapping_incidents
 from vss_agents.video_analytics.utils import validate_iso_timestamp
+
+
+class TestNormalizeIncidentCondition:
+    """The UI/MCP metadata contract preserves original conditions and provenance."""
+
+    def test_exact_bridge_protocol_preserves_original_condition(self) -> None:
+        import ast
+        from pathlib import Path
+
+        # Load the actual protocol constants without importing Alert Bridge's
+        # independently installed HTTP/service dependencies into Agent tests.
+        source = Path(__file__).resolve().parents[4] / "alert/realtime/services/rtvi_client.py"
+        names = {"_ALERT_CONDITION_PREFIX", "_ALERT_VERDICT_INSTRUCTIONS"}
+        tree = ast.parse(source.read_text())
+        nodes = [
+            node
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id in names for target in node.targets)
+        ]
+        namespace: dict[str, object] = {}
+        exec(compile(ast.Module(body=nodes, type_ignores=[]), str(source), "exec"), namespace)
+        condition = "A wheeled monitor cart is visible on the right side."
+        wrapped = (
+            str(namespace["_ALERT_CONDITION_PREFIX"])
+            + condition
+            + "\n\n"
+            + str(namespace["_ALERT_VERDICT_INSTRUCTIONS"])
+        )
+        incident = {
+            "Id": "incident-1",
+            "info": {"prompt": wrapped, "verdict": "confirmed", "alertRuleId": "deleted-rule"},
+            "llm": {"queries": [{"prompts": {"user": wrapped}, "response": "TRUE"}]},
+        }
+
+        normalized = normalize_incident_condition(incident)
+
+        assert normalized["info"]["prompt"] == condition
+        assert normalized["info"]["verdict"] == "confirmed"
+        assert normalized["llm"] == incident["llm"]
+        assert normalized["llm"]["queries"][0]["prompts"]["user"] == wrapped
+        assert incident["info"]["prompt"] == wrapped
+        assert normalize_incident_condition(normalized) == normalized
+
+    @pytest.mark.parametrize(
+        "incident",
+        [
+            {"info": {"prompt": "Ordinary historical condition."}},
+            {"info": {"prompt": "Visual alert condition to evaluate:\nCondition\n\nDifferent instructions."}},
+            {"info": {"prompt": None}},
+            {"Id": "incident-without-info"},
+        ],
+    )
+    def test_only_the_exact_wrapper_is_removed(self, incident: dict) -> None:
+        assert normalize_incident_condition(incident) == incident
 
 
 class TestValidateIsoTimestamp:

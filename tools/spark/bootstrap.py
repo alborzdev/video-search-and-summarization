@@ -184,6 +184,16 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     stream['image'] = 'nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1'
     stream['entrypoint'] = ['/bin/bash', '-ec', '/home/vst/vst_release/tools/user_additional_install.sh; exec /home/vst/vst_release/launch_vst']
     stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'true'
+    # Sim's MediaMTX publisher accepts TCP only. Keep the inherited Thor
+    # configuration intact and bind a generated Spark copy to each VST role.
+    vst_config = json.loads((ROOT / 'deploy/docker/thor-local/vios/vst_config.json').read_text())
+    vst_config['network']['rtsp_streaming_over_tcp'] = True
+    vst_config_path = STATE / 'vst-config.json'
+    private_write(vst_config_path, json.dumps(vst_config, indent=2) + '\n')
+    for service in services.values():
+        for mount in service.get('volumes', []):
+            if mount.get('target') == '/home/vst/vst_release/configs/vst_config.json':
+                mount['source'] = str(vst_config_path)
     services['sensor-ms']['environment'].pop('LD_LIBRARY_PATH', None)
     embed = services['rtvi-embed']['environment']
     embed.update(RTVI_OFFLINE='false', HF_HUB_OFFLINE='0', TRANSFORMERS_OFFLINE='0')
@@ -227,6 +237,7 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     agent['command'] = ['serve', '--config_file', '/vss-agent/deploy/docker/spark/config.yml', '--host', '127.0.0.1', '--port', '8100']
     agent['environment'].update(
         VSS_AGENT_CONFIG_FILE='/vss-agent/deploy/docker/spark/config.yml',
+        VSS_TRAFFIC_RTVI_CV_URL='',
         VST_CLIP_FALLBACK_URL='http://127.0.0.1:8098',
         VST_CLIP_FALLBACK_MEDIA_URL=f'http://{host_ip}:7777/api/vision/evidence-media',
         EVIDENCE_ALLOW_FRESH_INSPECTION_WHILE_BUSY='true')

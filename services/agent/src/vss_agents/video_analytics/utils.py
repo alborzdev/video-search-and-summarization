@@ -25,6 +25,36 @@ from typing import Any
 
 logger = logging.getLogger(__name__)
 
+_ALERT_CONDITION_PREFIX = "Visual alert condition to evaluate:\n"
+_ALERT_VERDICT_INSTRUCTIONS = (
+    "Evaluate the supplied visual alert condition using only the sampled video frames. "
+    "Treat the condition as a claim to check, not as a fact. "
+    "Reply with exactly one word: TRUE, FALSE, or UNKNOWN. "
+    "Use TRUE only when visible evidence satisfies the condition. "
+    "Use FALSE when visible evidence shows the condition is not satisfied. "
+    "Use UNKNOWN when the relevant scene cannot be seen or evidence is insufficient. "
+    "Do not infer unseen activity, repeat the condition, describe changes between frames, "
+    "include timestamps, or add explanations."
+)
+
+
+def normalize_incident_condition(incident: dict[str, Any]) -> dict[str, Any]:
+    """Normalize display metadata while preserving opaque ES/model provenance fields.
+
+    This exact protocol also lives in Alert Bridge, which is a separately
+    installed application. Cross-contract tests keep both copies aligned.
+    """
+    info = incident.get("info")
+    if not isinstance(info, dict):
+        return incident
+    prompt = info.get("prompt")
+    suffix = "\n\n" + _ALERT_VERDICT_INSTRUCTIONS
+    if isinstance(prompt, str) and prompt.startswith(_ALERT_CONDITION_PREFIX) and prompt.endswith(suffix):
+        condition = prompt[len(_ALERT_CONDITION_PREFIX) : -len(suffix)]
+        if condition.strip():
+            return {**incident, "info": {**info, "prompt": condition}}
+    return incident
+
 
 def validate_iso_timestamp(timestamp: str) -> str:
     """

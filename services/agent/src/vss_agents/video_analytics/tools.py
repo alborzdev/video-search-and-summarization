@@ -38,6 +38,7 @@ from .utils import build_sensor_map
 from .utils import compute_bucket_size_seconds
 from .utils import create_empty_histogram_buckets
 from .utils import create_events_from_incidents
+from .utils import normalize_incident_condition
 from .utils import parse_vst_sensor_list_response
 from .utils import sweep_overlapping_incidents
 from .utils import validate_iso_timestamp
@@ -399,7 +400,7 @@ async def video_analytics(_config: VideoAnalyticsToolConfig, _builder: Builder) 
         )
 
         # Return the incident if found, otherwise None
-        return incidents[0] if incidents else {}
+        return normalize_incident_condition(incidents[0]) if incidents else {}
 
     async def _get_incidents(input: GetIncidentsInputBase) -> dict:
         """
@@ -516,7 +517,7 @@ async def video_analytics(_config: VideoAnalyticsToolConfig, _builder: Builder) 
                 )
 
         # Apply pagination
-        paginated_incidents = incidents[0 : input.max_count]
+        paginated_incidents = [normalize_incident_condition(incident) for incident in incidents[0 : input.max_count]]
         has_more = len(incidents) > input.max_count
 
         return {"incidents": paginated_incidents, "has_more": has_more}

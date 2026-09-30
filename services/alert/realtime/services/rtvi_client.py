@@ -36,6 +36,32 @@ logger = logging.getLogger(__name__)
 
 _USERINFO_RE = re.compile(r"(://)[^@/]+@")
 _SENSITIVE_KEYS = frozenset({"password", "username"})
+_ALERT_CONDITION_PREFIX = "Visual alert condition to evaluate:\n"
+
+_ALERT_VERDICT_INSTRUCTIONS = (
+    "Evaluate the supplied visual alert condition using only the sampled video frames. "
+    "Treat the condition as a claim to check, not as a fact. "
+    "Reply with exactly one word: TRUE, FALSE, or UNKNOWN. "
+    "Use TRUE only when visible evidence satisfies the condition. "
+    "Use FALSE when visible evidence shows the condition is not satisfied. "
+    "Use UNKNOWN when the relevant scene cannot be seen or evidence is insufficient. "
+    "Do not infer unseen activity, repeat the condition, describe changes between frames, "
+    "include timestamps, or add explanations."
+)
+
+
+def operator_condition_from_alert_prompt(prompt: str) -> str:
+    """Recover the recorded condition only from our exact outbound wrapper.
+
+    Incidents outlive rules, so deriving this from the recorded model input
+    preserves the condition at inference time even after a rule is removed.
+    """
+    suffix = "\n\n" + _ALERT_VERDICT_INSTRUCTIONS
+    if prompt.startswith(_ALERT_CONDITION_PREFIX) and prompt.endswith(suffix):
+        condition = prompt[len(_ALERT_CONDITION_PREFIX):-len(suffix)]
+        if condition.strip():
+            return condition
+    return prompt
 
 
 def _redact_stream_payload(payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -241,6 +267,18 @@ class RTVIVLMClient:
             "vlm_input_height": vlm_input_height,
             "enable_reasoning": enable_reasoning,
         }
+        if alert_rule_id or alert_category:
+            # The incident publisher requires an explicit verdict. A bare
+            # condition otherwise produces ordinary captions without a trigger.
+            # Wrap only the outbound request; the saved rule retains its exact
+            # operator-authored condition and any caller system instructions.
+            payload["prompt"] = (
+                f"{_ALERT_CONDITION_PREFIX}{prompt}\n\n"
+                + _ALERT_VERDICT_INSTRUCTIONS
+            )
+            payload["system_prompt"] = "\n\n".join(
+                part for part in (system_prompt, _ALERT_VERDICT_INSTRUCTIONS) if part
+            )
         if alert_category:
             payload["alert_category"] = alert_category
         if alert_rule_id:

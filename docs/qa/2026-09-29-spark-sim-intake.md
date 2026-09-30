@@ -1,9 +1,12 @@
 # Spark Sim RTSP intake — September 29, 2026
 
-Status: the user-supplied stream responds and CPU video decoding works. This is
-transport intake, not VSS live ingestion or joint Sim/VSS acceptance. VSS is
-currently stopped; permission to stop the separate Moondream workload for the
-joint test is pending. The user-authorized Spark reserve remains **24 GiB**.
+Status at intake: the user-supplied stream responds and CPU video decoding works.
+This receipt preserves the period when VSS was stopped and the Moondream decision
+was pending. The user subsequently authorized stopping Moondream and disabling
+its automatic startup. VSS now runs alongside Sim; live preview, a fresh answer
+and exact playback pass after a Spark VST TCP configuration repair. See the
+[joint trial receipt](2026-09-29-spark-sim-joint.md) for current results and state.
+The user-authorized Spark reserve remains **24 GiB**.
 
 ## Later guard trip and actual Sim workload
 
@@ -78,7 +81,7 @@ availability is plausible because the publisher's `gop-size=30` counts encoded
 frames, but this is a hypothesis. Follow-up should compare fresh viewport
 captures, worker pushes, actual encoder output/keyframes and leaky-queue drops.
 
-## Next bounded test
+## Gates recorded at intake (superseded by joint trial receipt)
 
 1. Resolve the pending Moondream decision before full VSS startup. Do not infer
    permission from the supplied RTSP URL. Preserve the 24 GiB guard and active Sim.

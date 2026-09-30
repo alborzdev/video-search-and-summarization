@@ -17,8 +17,8 @@ from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote, urlencode, urlparse
-from urllib.request import Request, urlopen
+from urllib.parse import quote, unquote, urlencode, urlparse, urlunparse
+from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 
 
 HOST = os.getenv("EVIDENCE_CLIP_HOST", "127.0.0.1")
@@ -41,6 +41,88 @@ MAX_CACHE_BYTES = int(os.getenv("MAX_CACHE_BYTES", str(4 * 1024 * 1024 * 1024)))
 ID_PATTERN = re.compile(r"^[A-Za-z0-9_.:-]{1,160}$")
 KEY_PATTERN = re.compile(r"^[a-f0-9]{64}$")
 PREPARE_LOCK = threading.Lock()
+NATIVE_CLIP_TIMEOUT_SECONDS = 45
+MAX_NATIVE_CLIP_BYTES = min(MAX_CACHE_BYTES, 512 * 1024 * 1024)
+
+
+class _NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def native_media_url(value: object) -> str:
+    """Use only VIOS storage paths on the configured VIOS origin.
+
+    VIOS may advertise its public hostname; it never chooses the download host.
+    Redirects are also disabled when downloading, so an advertised URL cannot
+    cause the exporter to fetch another service or an arbitrary remote host.
+    """
+    if not isinstance(value, str):
+        raise ValueError("VIOS returned no native clip URL")
+    api = urlparse(VST_API_URL)
+    media = urlparse(value)
+    prefix = api.path.removesuffix("/api").rstrip("/") + "/storage/"
+    decoded = unquote(media.path)
+    if (
+        api.scheme not in {"http", "https"}
+        or not api.netloc
+        or media.scheme not in {"", "http", "https"}
+        or not decoded.startswith(prefix)
+        or not decoded.lower().endswith(".mp4")
+        or ".." in decoded.split("/")
+        or "%" in decoded
+        or "\\" in decoded
+        or any(ord(character) < 32 for character in decoded)
+    ):
+        raise ValueError("VIOS returned an invalid native storage path")
+    return urlunparse((api.scheme, api.netloc, media.path, "", media.query, ""))
+
+
+def retain_native_clip(stream_id: str, start_time: str, end_time: str, candidate: Path, duration: float) -> None:
+    """Retain the same native MP4 route used by evidence playback, if valid."""
+    query = urlencode({
+        "startTime": start_time, "endTime": end_time, "expiryMinutes": "60",
+        "container": "mp4", "disableAudio": "true", "transcode": "full",
+    })
+    endpoint = f"{VST_API_URL}/v1/storage/file/{quote(stream_id, safe='')}/url?{query}"
+    deadline = time.monotonic() + NATIVE_CLIP_TIMEOUT_SECONDS
+    opener = build_opener(_NoRedirect())
+
+    def remaining():
+        seconds = deadline - time.monotonic()
+        if seconds <= 0:
+            raise TimeoutError("Native clip retention timed out")
+        return min(seconds, 20)
+
+    with opener.open(Request(endpoint, headers={"Accept": "application/json"}), timeout=remaining()) as response:
+        raw = response.read(65_537)
+        if len(raw) > 65_536:
+            raise ValueError("VIOS native clip response is too large")
+        payload = json.loads(raw)
+    if not isinstance(payload, dict):
+        raise ValueError("VIOS returned an invalid native clip response")
+    if payload.get("startTime") is not None:
+        actual_start = parse_timestamp(payload["startTime"])
+        if abs((actual_start - parse_timestamp(start_time)).total_seconds()) > 0.25:
+            raise ValueError("VIOS native clip starts outside the requested interval")
+    url = native_media_url(payload.get("videoUrl"))
+    with opener.open(Request(url), timeout=remaining()) as response, candidate.open("wb") as output:
+        advertised_size = response.headers.get("Content-Length")
+        if advertised_size is not None and not 0 < int(advertised_size) <= MAX_NATIVE_CLIP_BYTES:
+            raise ValueError("VIOS native clip exceeds the retention size limit")
+        size = 0
+        while True:
+            remaining()
+            chunk = response.read(1024 * 1024)
+            if not chunk:
+                break
+            size += len(chunk)
+            if size > MAX_NATIVE_CLIP_BYTES:
+                raise ValueError("VIOS native clip exceeds the retention size limit")
+            output.write(chunk)
+        if advertised_size is not None and size != int(advertised_size):
+            raise ValueError("VIOS native clip download was incomplete")
+    validate_output(candidate, duration)
 
 
 def generate_text_embeddings(payload: object) -> dict[str, object]:
@@ -269,54 +351,60 @@ def build_clip(stream_id: str, start_time: str, end_time: str) -> tuple[str, str
                 )
                 return key, start_time
 
-        paths = get_media_paths(stream_id, start_time, end_time)
-        source_start = (
-            recording_start(stream_id, start, end)
-            if RECORDING_ROOT in paths[0].parents
-            else probe_start_time(paths[0])
-        )
-        offset = max(0.0, start.timestamp() - source_start)
         CACHE_ROOT.mkdir(parents=True, exist_ok=True)
 
         with tempfile.TemporaryDirectory(prefix="evidence-", dir=CACHE_ROOT) as temp_dir:
             temp = Path(temp_dir)
-            concat = temp / "inputs.txt"
-            concat.write_text(
-                "".join(f"file '{str(path).replace(chr(39), chr(39) + chr(92) + chr(39) + chr(39))}'\n" for path in paths),
-                encoding="utf-8",
-            )
             candidate = temp / "clip.mp4"
-            if len(paths) == 1:
-                input_args = ["-ss", f"{offset:.3f}", "-i", str(paths[0])]
-                output_seek: list[str] = []
-            else:
-                # The concat demuxer rebases timestamps. Seek after opening it so
-                # the requested offset remains relative to the joined recording.
-                input_args = ["-f", "concat", "-safe", "0", "-i", str(concat)]
-                output_seek = ["-ss", f"{offset:.3f}"]
-            common = [
-                "ffmpeg", "-y", "-nostdin", "-loglevel", "error",
-                *input_args, *output_seek, "-t", f"{duration:.3f}",
-                "-map", "0:v:0", "-an", "-fflags", "+genpts",
-                "-avoid_negative_ts", "make_zero",
-            ]
-            copy_command = common + ["-c:v", "copy", "-movflags", "+faststart", str(candidate)]
             try:
-                subprocess.run(copy_command, check=True, capture_output=True, timeout=120)
-                validate_output(candidate, duration)
-            except (subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError, RuntimeError):
+                retain_native_clip(stream_id, start_time, end_time, candidate, duration)
+            except (OSError, ValueError, RuntimeError, subprocess.SubprocessError):
+                # Native VIOS playback handles some epoch-PTS MKV recordings
+                # that local FFmpeg cannot trim accurately. When native export
+                # is unavailable, retain the existing recorded-media fallback.
                 candidate.unlink(missing_ok=True)
-                transcode_command = common + [
-                    "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
-                    "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(candidate),
+                paths = get_media_paths(stream_id, start_time, end_time)
+                source_start = (
+                    recording_start(stream_id, start, end)
+                    if RECORDING_ROOT in paths[0].parents
+                    else probe_start_time(paths[0])
+                )
+                offset = max(0.0, start.timestamp() - source_start)
+                concat = temp / "inputs.txt"
+                concat.write_text(
+                    "".join(f"file '{str(path).replace(chr(39), chr(39) + chr(92) + chr(39) + chr(39))}'\n" for path in paths),
+                    encoding="utf-8",
+                )
+                if len(paths) == 1:
+                    input_args = ["-ss", f"{offset:.3f}", "-i", str(paths[0])]
+                    output_seek: list[str] = []
+                else:
+                    # The concat demuxer rebases timestamps. Seek after opening it so
+                    # the requested offset remains relative to the joined recording.
+                    input_args = ["-f", "concat", "-safe", "0", "-i", str(concat)]
+                    output_seek = ["-ss", f"{offset:.3f}"]
+                common = [
+                    "ffmpeg", "-y", "-nostdin", "-loglevel", "error",
+                    *input_args, *output_seek, "-t", f"{duration:.3f}",
+                    "-map", "0:v:0", "-an", "-fflags", "+genpts",
+                    "-avoid_negative_ts", "make_zero",
                 ]
-                subprocess.run(transcode_command, check=True, capture_output=True, timeout=300)
-                validate_output(candidate, duration)
+                copy_command = common + ["-c:v", "copy", "-movflags", "+faststart", str(candidate)]
+                try:
+                    subprocess.run(copy_command, check=True, capture_output=True, timeout=120)
+                    validate_output(candidate, duration)
+                except (subprocess.CalledProcessError, subprocess.TimeoutExpired, ValueError, RuntimeError):
+                    candidate.unlink(missing_ok=True)
+                    transcode_command = common + [
+                        "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                        "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(candidate),
+                    ]
+                    subprocess.run(transcode_command, check=True, capture_output=True, timeout=300)
+                    validate_output(candidate, duration)
+            metadata = temp / "metadata.json"
+            metadata.write_text(json.dumps({"sensorId": stream_id}), encoding="utf-8")
             candidate.replace(output)
-            output.with_suffix(".json").write_text(
-                json.dumps({"sensorId": stream_id}),
-                encoding="utf-8",
-            )
+            metadata.replace(output.with_suffix(".json"))
         purge_cache()
     return key, start_time
 

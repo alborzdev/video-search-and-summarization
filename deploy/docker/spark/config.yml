@@ -1,3 +1,10 @@
 # Same demo capabilities and startup source gate as Thor; runtime endpoints and
 # model identity are supplied by the independent Spark environment.
 base: ../thor-local/official-edge/config_edge.yml
+
+general:
+  front_end:
+    streaming_ingest:
+      # The Spark core graph omits detector workers. Do not treat their
+      # inherited Thor endpoints as services that must be stopped on pause.
+      rtvi_cv_base_url: ''

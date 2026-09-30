@@ -12,16 +12,23 @@ also pass. After a later 24 GiB guard trip, attempt 10 verifies recovery with a
 smaller language-model allocation and the Cosmos pre-warmup cache fix: video/text
 warmup, fresh visual requests and retained-report playback pass. The 180-second
 post-request observation also passes, with a 27.818 GiB minimum and no new trip.
-See [target evidence](qa/2026-09-29-spark-startup.md). Joint Isaac Sim operation
-and sustained live ingestion remain unqualified.
+See [target evidence](qa/2026-09-29-spark-startup.md). The bounded joint Sim trial
+is recorded below; sustained live ingestion remains unqualified.
 
-Current target state: a later guard trip at 21:06:47 EDT stops VSS at 23.898 GiB
-available. This precedes the current Sim renderer's 21:29:33 EDT start; the cause
-is not established. The user supplied `rtsp://10.88.9.91:8554/digital-twin`, which
-responds with H.264 video and decodes on a CPU receiver. VSS remains stopped
-while permission to stop the separate Moondream workload for the joint test is
-pending. Preserve the 24 GiB floor and Sim. See the
-[Sim intake receipt](qa/2026-09-29-spark-sim-intake.md) before resuming.
+Current target state: the user authorized stopping Moondream and disabling its
+automatic startup. Moondream is stopped with Docker restart `no`; the Sim Scout
+launcher now starts it only with explicit `--moondream`. Attempt 11 completes
+cache-only VSS startup alongside the active Sim renderer in 609.196 seconds,
+with a 41.814 GiB startup minimum. A separate 15-minute live-analysis observation
+stays above 39.176 GiB with no trip or reboot. Live preview, embeddings/indexing,
+a fresh cart-location answer and exact 25-second playback pass. Spark's VST now
+uses TCP for the user's TCP-only MediaMTX publisher. Durable report retention
+and the alert verdict contract are repaired. The bounded retry produces three
+incidents and retained event playback passes; see the current
+[joint trial receipt](qa/2026-09-29-spark-sim-joint.md) for repair outcomes and
+post-trial state. Sustained ingestion and repeatable scene accuracy remain open.
+VSS stays up, with hospital source analysis paused, recording off and no active
+live rule. Sim remains running; Moondream stays stopped.
 
 The user's target is **Isaac Sim and VSS running together on the same Spark**,
 with a live RTSP stream from Sim. Do not stop or reconfigure Sim without discussing
@@ -176,7 +183,8 @@ answers return correctly in 1.423/0.942 seconds, and the saved report's retained
 video replays fully with no console warnings or errors. The 180.620-second
 post-request observation records 902 samples at 200 ms cadence, a 27.818 GiB
 minimum, no new guard trip and unchanged boot ID. Keep the guard; these bounded
-checks do not establish capacity for an active Sim renderer or sustained ingestion.
+checks alone do not establish joint or sustained capacity; the later bounded Sim
+trial is documented separately.
 
 The target reserve is saved in ignored `.spark/settings.json`; subsequent renders
 preserve it when `--reserve-gib` is omitted. To change it explicitly, render with
@@ -194,6 +202,11 @@ python3 tools/spark/bootstrap.py stop
 Use `docker compose -p vss-spark -f .spark/compose.json logs --tail 100 SERVICE`
 for diagnosis. Rendered config contains a generated database password; do not
 paste the whole file or `docker inspect` environment output into chat/logs.
+
+Spark generates a private VST config with RTSP-over-TCP enabled; the Thor base
+config is preserved. Detector workers are omitted, so Spark also clears their
+inherited control endpoints. A paused source must remain paused after explicit
+startup; do not infer live qualification from health alone.
 
 ## What is portable and what changes on Spark
 

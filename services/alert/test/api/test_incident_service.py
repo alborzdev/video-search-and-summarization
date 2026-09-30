@@ -31,6 +31,52 @@ class TestListIncidentsSuccess:
     """IncidentService.list_incidents — success paths."""
 
     @pytest.mark.asyncio
+    async def test_recorded_condition_excludes_wrapper_but_keeps_model_provenance(
+        self, incident_service, mock_es_client
+    ):
+        from realtime.services.rtvi_client import (
+            _ALERT_CONDITION_PREFIX, _ALERT_VERDICT_INSTRUCTIONS,
+        )
+
+        condition = "A medical monitor cart is visible on the right side."
+        wrapped = _ALERT_CONDITION_PREFIX + condition + "\n\n" + _ALERT_VERDICT_INSTRUCTIONS
+        source = {
+            "sensorId": "cam-1",
+            "info": {"prompt": wrapped, "alertRuleId": "deleted-rule", "verdict": "confirmed"},
+            "llm": {"queries": [{"prompts": {"user": wrapped}, "response": "TRUE"}]},
+        }
+        mock_es_client.client.search.return_value = {
+            "hits": {"total": {"value": 1}, "hits": [{"_id": "incident-1", "_source": source}]},
+        }
+
+        result, status = await incident_service.list_incidents()
+
+        assert status == 200
+        incident = result["incidents"][0]
+        assert incident["info"]["prompt"] == condition
+        assert incident["info"]["verdict"] == "confirmed"
+        assert incident["llm"] == source["llm"]
+        assert incident["llm"]["queries"][0]["prompts"]["user"] == wrapped
+        assert source["info"]["prompt"] == wrapped
+        assert "_id" not in source
+        mock_es_client.client.get.assert_not_called()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("prompt", [
+        "An ordinary recorded condition.",
+        "Visual alert condition to evaluate:\nOriginal text\n\nDifferent instructions.",
+    ])
+    async def test_other_recorded_prompts_are_not_rewritten(
+        self, incident_service, mock_es_client, prompt
+    ):
+        mock_es_client.client.search.return_value["hits"]["hits"][0]["_source"]["info"] = {
+            "prompt": prompt,
+        }
+        result, status = await incident_service.list_incidents()
+        assert status == 200
+        assert result["incidents"][0]["info"]["prompt"] == prompt
+
+    @pytest.mark.asyncio
     async def test_returns_200_with_hits(self, incident_service, mock_es_client):
         data, code = await incident_service.list_incidents()
 

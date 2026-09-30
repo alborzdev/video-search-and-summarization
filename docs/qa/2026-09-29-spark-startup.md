@@ -5,17 +5,20 @@ upload, indexed search, playable evidence, fresh visual answer, saved report and
 retained evidence replay. Attempt 10 passes cache-only recovery with the Cosmos
 pre-warmup cache fix, successful video/text warmup and fresh visual requests.
 The 180-second post-request memory observation also passes, with a 27.818 GiB
-minimum and no new guard trip. Joint Isaac Sim operation and live ingestion
-remain unqualified. The active Spark
+minimum and no new guard trip. Later bounded joint Sim results are linked below;
+sustained ingestion remains unqualified. The active Spark
 reserve is 24 GiB by explicit user instruction; earlier entries below retain
 their original 48 GiB setting.
 
-Later current-state update: a new guard trip at **21:06:47 EDT** stops VSS at
-23.898 GiB available. The active Sim renderer starts afterward, at 21:29:33 EDT;
-the trip is not attributed to that process. The user has now supplied the live
-Sim RTSP URL. CPU decoding works, but a passthrough timing probe shows a 32.9-second
-first-frame delay and sparse delivery. VSS remains stopped
-pending the joint-test memory decision. See the [Sim intake receipt](2026-09-29-spark-sim-intake.md).
+Later current-state update: after the user authorized stopping Moondream and
+turning off its automatic startup, attempt 11 passes full cache-only startup
+with the active Sim renderer: 609.196 seconds, startup minimum 41.814 GiB.
+Live preview, semantic indexing, a fresh recent-window answer and exact playback
+pass. A separate 15-minute observation records a 39.176 GiB minimum, no new trip
+and unchanged boot ID. Durable live retention and alert verdict bugs are repaired; the bounded retry
+produces three incidents and retained event replay passes. See the [joint trial receipt](2026-09-29-spark-sim-joint.md)
+for fixes, actual bounded results and current cleanup state. The earlier trip at
+21:06:47 EDT predates the current renderer's start and remains unexplained.
 
 ## Host and checkout
 

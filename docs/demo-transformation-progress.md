@@ -1,17 +1,35 @@
 # Edge video AI demo — running progress
 
 Started: September 28, 2026. Status: recorded-fixture acceptance passes on DGX
-Spark, including a fresh visual answer and saved evidence replay. A cache-only
-recovery now passes with the Cosmos initialization fix, successful video/text
-warmup, fresh answers and retained-report playback. The 180-second post-request
-observation passes with a 27.818 GiB minimum and no new guard trip. The user's Sim
-stream and joint live operation remain
-unqualified. See the [Spark startup receipt](qa/2026-09-29-spark-startup.md) for
-current target evidence. Full rehearsal and live monitoring qualification remain open.
-Use the [current presenter guide](demo-presenter-runbook.md) for the coherent
-walkthrough; dated entries below preserve the development history.
+Spark. After stopping Moondream at the user's request, cache-only VSS startup
+also passes alongside the active Sim renderer. Live preview, semantic indexing,
+a fresh recent-window answer and exact playback pass. A separate 15-minute
+observation stays above 39.176 GiB with no trip or reboot. Durable live retention
+and alert verdict bugs are repaired. The two-minute retry produces three incidents
+and retained event replay passes. Results are in the
+[joint trial receipt](qa/2026-09-29-spark-sim-joint.md).
+Sustained ingestion, repeatable scene accuracy and full rehearsal remain open.
+Use the [presenter guide](demo-presenter-runbook.md) for the walkthrough; dated
+entries below preserve development history.
 
-## Current Spark checkpoint — September 29
+## Current Spark checkpoint — September 29, joint Sim trial
+
+- Moondream is stopped; Docker restart is `no` and the separate Scout launcher
+  requires explicit `--moondream`. Sim and its RTSP publisher remain running.
+- The saved Spark reserve remains 24 GiB. Attempt 11 completes in 609.196 seconds,
+  with a 41.814 GiB startup minimum, passing warmup and a fresh visual request.
+- One hospital-corridor source passes preview, embeddings/indexing, recent-window
+  cart localization and exact 25-second playback after the TCP transport fix.
+- Native VST retention repairs the live report save; strict coverage checks stay
+  enabled. Alert requests now ask for explicit visible-condition verdicts. A
+  two-minute retry produces three incidents; exact footage and its retained event
+  report play fully after cleanup.
+- Test-owned rules are removed, analysis is paused and recording is stopped.
+  Current repair outcomes and subsequent runtime state are in the linked receipt.
+- Repeatable scene/reset control, scored negative windows, sustained ingestion,
+  multiple streams and a full timed presenter rehearsal remain open.
+
+## Spark startup history — September 29
 
 - Target preflight, six bootstrap tests, Git LFS integrity and fixture hashes pass.
 - The independent 36-service graph is rendered. The user explicitly authorized
@@ -2404,3 +2422,25 @@ on the separate Moondream workload, which holds 23423 MiB in the GPU process
 listing. No live source or rule has been added to VSS during intake. The
 [Sim intake receipt](qa/2026-09-29-spark-sim-intake.md) records evidence and the
 remaining joint-test gates.
+
+
+## September 29 — joint Sim startup and bounded live acceptance
+
+The user authorized stopping Moondream and disabling automatic startup. Its
+Docker restart policy is now `no`; the separate Sim Scout launcher requires
+explicit `--moondream`. Isaac Sim and its publisher remain active. Cache-only VSS
+startup completes in 609.196 seconds, minimum 41.814 GiB, with passing warmup.
+The authorized Spark reserve stays 24 GiB. A separate 15-minute live observation
+records a 39.176 GiB minimum with no trip or reboot.
+
+The hospital source passes preview, embedding/indexing, a fresh recent-window
+answer and exact 25-second playback. Diagnosed the TCP-only MediaMTX publisher
+versus inherited UDP VST setting; Spark now mounts a private TCP config, preserving
+Thor. Native VST export fixes durable report retention while retaining the strict
+duration check. An explicit alert verdict contract fixes healthy-but-silent
+rules: a two-minute retry produces three TRUE incidents. Exact incident footage
+and its retained event report play fully after recording is off. Omitted detector
+endpoints are removed from Spark control configuration, so pause now returns 200.
+All test-owned rules are removed; source analysis/caption inference are paused
+and recording is off. Details, exact scope, tests and remaining limits are in
+the [joint trial receipt](qa/2026-09-29-spark-sim-joint.md).

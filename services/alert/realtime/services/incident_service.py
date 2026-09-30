@@ -25,6 +25,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Optional, Tuple
 
 from ..config import ErrorCode, ResponseStatus
+from .rtvi_client import operator_condition_from_alert_prompt
 
 if TYPE_CHECKING:
     from elastic.elastic import ElasticClient
@@ -147,7 +148,17 @@ class IncidentService:
 
             incidents = []
             for hit in hits.get("hits", []):
-                doc = hit.get("_source", {})
+                doc = dict(hit.get("_source", {}))
+                info = doc.get("info")
+                if isinstance(info, dict) and isinstance(info.get("prompt"), str):
+                    # Display the recorded operator condition, keeping the
+                    # exact model instructions in llm.queries[].prompts for
+                    # provenance. Never rewrite the stored incident or infer
+                    # historical wording from a current/deleted rule.
+                    doc["info"] = {
+                        **info,
+                        "prompt": operator_condition_from_alert_prompt(info["prompt"]),
+                    }
                 doc["_id"] = hit.get("_id")
                 doc["_index"] = hit.get("_index")
                 incidents.append(doc)
