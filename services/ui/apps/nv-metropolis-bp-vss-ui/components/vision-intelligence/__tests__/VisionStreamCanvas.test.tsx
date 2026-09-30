@@ -302,6 +302,111 @@ describe("VisionStreamCanvas", () => {
     ).toBe(false);
   });
 
+  it.each([
+    {
+      kind: "live",
+      type: "rtsp",
+      url: "rtsp://camera.test/live",
+      expected: "2026-09-30T03:04:55.000Z",
+    },
+    {
+      kind: "replay",
+      type: "file",
+      url: "",
+      expected: "2026-09-30T00:00:10.000Z",
+    },
+  ])(
+    "uses a recent retained frame for $kind without changing replay poster selection",
+    async ({ type, url, expected }) => {
+      const timelines = [
+        {
+          startTime: "2026-09-30T03:04:00.000Z",
+          endTime: "2026-09-30T03:05:00.000Z",
+        },
+        { startTime: "invalid-start", endTime: "2100-01-01T00:00:00Z" },
+        {
+          startTime: "2026-09-30T00:00:00.000Z",
+          endTime: "2026-09-30T00:02:00.000Z",
+        },
+      ];
+      global.fetch = jest.fn(async (input) =>
+        String(input).includes("/timelines")
+          ? { ok: true, json: async () => timelines }
+          : { ok: false, status: 500 }
+      ) as jest.Mock;
+      render(
+        <VisionStreamCanvas
+          eager={false}
+          liveSnapshotEnabled={false}
+          stream={{ ...replay, type, url }}
+          vstApiUrl="http://thor.test/vst/api"
+        />
+      );
+      await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+      const picture = new URL(
+        String((global.fetch as jest.Mock).mock.calls[1][0]),
+        "http://ui.test"
+      );
+      const storedRequest = new URL(
+        picture.searchParams.get("path")!,
+        "http://thor.test"
+      );
+      expect(storedRequest.pathname).toBe(
+        `/vst/api/v1/storage/stream/${replay.streamId}/picture`
+      );
+      expect(storedRequest.searchParams.get("startTime")).toBe(expected);
+      expect(
+        (global.fetch as jest.Mock).mock.calls.every(
+          ([, init]) => !init?.method
+        )
+      ).toBe(true);
+    }
+  );
+
+  it.each([2_000, 500])(
+    "keeps a live poster timestamp inside a short %ims retained interval",
+    async (duration) => {
+      const start = Date.parse("2026-09-30T03:05:00.000Z");
+      const end = start + duration;
+      global.fetch = jest.fn(async (input) =>
+        String(input).includes("/timelines")
+          ? {
+              ok: true,
+              json: async () => [
+                {
+                  startTime: new Date(start).toISOString(),
+                  endTime: new Date(end).toISOString(),
+                },
+                {
+                  startTime: "2026-09-30T00:00:00.000Z",
+                  endTime: "2026-09-30T00:10:00.000Z",
+                },
+              ],
+            }
+          : { ok: false, status: 500 }
+      ) as jest.Mock;
+      render(
+        <VisionStreamCanvas
+          eager={false}
+          liveSnapshotEnabled={false}
+          stream={{ ...replay, type: "rtsp", url: "rtsp://camera.test/live" }}
+          vstApiUrl="http://thor.test/vst/api"
+        />
+      );
+      await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+      const proxy = new URL(
+        String((global.fetch as jest.Mock).mock.calls[1][0]),
+        "http://ui.test"
+      );
+      const timestamp = new URL(
+        proxy.searchParams.get("path")!,
+        "http://thor.test"
+      ).searchParams.get("startTime")!;
+      expect(Date.parse(timestamp)).toBeGreaterThanOrEqual(start);
+      expect(Date.parse(timestamp)).toBeLessThanOrEqual(end);
+    }
+  );
+
   it("does not probe the noisy live snapshot endpoint for an explicitly paused camera", async () => {
     global.fetch = jest.fn(async (input: RequestInfo | URL) => {
       if (String(input).includes("/timelines")) {
@@ -565,5 +670,253 @@ describe("VisionStreamCanvas", () => {
       configurable: true,
       value: realMediaStream,
     });
+  });
+});
+
+function mockLiveRtc() {
+  const originals = {
+    WebSocket: global.WebSocket,
+    RTCPeerConnection: global.RTCPeerConnection,
+    MediaStream: global.MediaStream,
+  };
+  const sockets: Socket[] = [];
+  const peers: Peer[] = [];
+  class Socket {
+    static OPEN = 1;
+    readyState = 1;
+    onopen: (() => void) | null = null;
+    onerror: (() => void) | null = null;
+    onmessage: ((event: { data: string }) => void) | null = null;
+    send = jest.fn();
+    close = jest.fn();
+    constructor(readonly url: string) {
+      sockets.push(this);
+    }
+    emit(payload: object) {
+      this.onmessage?.({ data: JSON.stringify(payload) });
+    }
+  }
+  class Peer {
+    connectionState = "new";
+    localDescription = { type: "offer", sdp: "offer" };
+    remoteDescription: unknown = null;
+    ontrack:
+      | ((event: { streams: MediaStream[]; track: MediaStreamTrack }) => void)
+      | null = null;
+    onconnectionstatechange: (() => void) | null = null;
+    onicecandidate: unknown = null;
+    addTransceiver = jest.fn();
+    addIceCandidate = jest.fn().mockResolvedValue(undefined);
+    createOffer = jest.fn().mockResolvedValue({ type: "offer", sdp: "offer" });
+    setLocalDescription = jest.fn().mockResolvedValue(undefined);
+    setRemoteDescription = jest.fn(async (description) => {
+      this.remoteDescription = description;
+    });
+    close = jest.fn();
+    constructor() {
+      peers.push(this);
+    }
+  }
+  for (const [name, value] of Object.entries({
+    WebSocket: Socket,
+    RTCPeerConnection: Peer,
+    MediaStream: class {
+      addTrack = jest.fn();
+    },
+  }))
+    Object.defineProperty(global, name, { configurable: true, value });
+  return {
+    sockets,
+    peers,
+    restore: () => {
+      for (const [name, value] of Object.entries(originals))
+        Object.defineProperty(global, name, { configurable: true, value });
+    },
+  };
+}
+
+let liveHandoffTestId = 0;
+describe("live Canvas handoff and decoded-frame deadline", () => {
+  let rtc: ReturnType<typeof mockLiveRtc>;
+  let live: typeof replay;
+  const endpoint = "http://handoff.test/vst/api";
+  const originalFetch = global.fetch;
+  beforeEach(() => {
+    jest.useFakeTimers({ now: new Date("2026-09-30T12:00:00Z") });
+    rtc = mockLiveRtc();
+    live = {
+      ...replay,
+      streamId: `handoff-${++liveHandoffTestId}`,
+      type: "rtsp",
+      url: "rtsp://camera.test/live",
+    };
+    jest.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue(undefined);
+    jest
+      .spyOn(HTMLMediaElement.prototype, "pause")
+      .mockImplementation(() => undefined);
+    jest
+      .spyOn(HTMLMediaElement.prototype, "load")
+      .mockImplementation(() => undefined);
+    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 404 });
+  });
+  afterEach(async () => {
+    await act(async () => {});
+    cleanup();
+    rtc.restore();
+    jest.restoreAllMocks();
+    jest.useRealTimers();
+    global.fetch = originalFetch;
+  });
+  const advance = async (ms: number) => {
+    await act(async () => {
+      jest.advanceTimersByTime(ms);
+    });
+  };
+  const mount = (
+    stream = live,
+    vstApiUrl = endpoint,
+    onPlaybackStatus?: (status: string) => void
+  ) =>
+    render(
+      <VisionStreamCanvas
+        stream={stream}
+        liveSnapshotEnabled={false}
+        vstApiUrl={vstApiUrl}
+        onPlaybackStatus={onPlaybackStatus}
+      />
+    );
+  const connect = async () => {
+    await act(async () => {
+      rtc.sockets[0].onopen?.();
+      rtc.sockets[0].emit({
+        apiKey: "api/v1/live/iceServers",
+        data: { iceServers: [] },
+      });
+    });
+    expect(rtc.peers).toHaveLength(1);
+    act(() => {
+      rtc.peers[0].connectionState = "connected";
+      rtc.peers[0].onconnectionstatechange?.();
+    });
+  };
+
+  it("waits for same-camera teardown before opening a replacement websocket", async () => {
+    const firstView = mount();
+    await advance(0);
+    expect(rtc.sockets).toHaveLength(1);
+    await connect();
+    await act(async () => {
+      rtc.sockets[0].emit({
+        apiKey: "api/v1/live/setAnswer",
+        data: { type: "answer", sdp: "answer", mediaSessionId: "old-session" },
+      });
+    });
+    firstView.unmount();
+    expect(rtc.sockets[0].send).toHaveBeenCalledWith(
+      expect.stringContaining("api/v1/live/stream/stop")
+    );
+    expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1);
+    mount();
+    await advance(1_199);
+    expect(rtc.sockets).toHaveLength(1);
+    await advance(1);
+    expect(rtc.sockets).toHaveLength(2);
+  });
+
+  it.each(["other-stream", "other-endpoint"])(
+    "does not hold an independent %s behind another camera teardown",
+    async (separation) => {
+      const firstView = mount();
+      await advance(0);
+      expect(rtc.sockets).toHaveLength(1);
+      firstView.unmount();
+      mount(
+        separation === "other-stream"
+          ? { ...live, streamId: `${live.streamId}-other` }
+          : live,
+        separation === "other-endpoint"
+          ? "http://other-vst.test/vst/api"
+          : endpoint
+      );
+      await advance(0);
+      expect(rtc.sockets).toHaveLength(2);
+    }
+  );
+
+  it("cancels an abandoned delayed mount without creating a websocket or late playback status", async () => {
+    const firstView = mount();
+    await advance(0);
+    firstView.unmount();
+    const onPlaybackStatus = jest.fn();
+    const replacement = mount(live, endpoint, onPlaybackStatus);
+    await advance(400);
+    expect(rtc.sockets).toHaveLength(1);
+    replacement.unmount();
+    const statusCount = onPlaybackStatus.mock.calls.length;
+    await advance(25_000);
+    expect(rtc.sockets).toHaveLength(1);
+    expect(onPlaybackStatus).toHaveBeenCalledTimes(statusCount);
+    expect(onPlaybackStatus).not.toHaveBeenCalledWith("error");
+  });
+
+  it("offers an explicit retry when ICE connects but no decoded video frame arrives", async () => {
+    const onPlaybackStatus = jest.fn();
+    const view = mount(live, endpoint, onPlaybackStatus);
+    await advance(0);
+    await connect();
+    const video = view.container.querySelector("video")!;
+    Object.defineProperty(video, "requestVideoFrameCallback", {
+      configurable: true,
+      value: jest.fn(() => 1),
+    });
+    Object.defineProperty(video, "cancelVideoFrameCallback", {
+      configurable: true,
+      value: jest.fn(),
+    });
+    await act(async () => {
+      rtc.peers[0].ontrack?.({ streams: [], track: {} as MediaStreamTrack });
+    });
+    await advance(19_999);
+    expect(
+      screen.queryByRole("button", { name: "Retry" })
+    ).not.toBeInTheDocument();
+    expect(onPlaybackStatus).not.toHaveBeenCalledWith("playing");
+    await advance(1);
+    expect(screen.getByRole("button", { name: "Retry" })).toBeInTheDocument();
+    expect(onPlaybackStatus).toHaveBeenLastCalledWith("error");
+    expect(video).toHaveStyle({ visibility: "hidden" });
+  });
+
+  it("clears the connection deadline only after a decoded frame and does not later replace playback with an error", async () => {
+    const onPlaybackStatus = jest.fn();
+    const view = mount(live, endpoint, onPlaybackStatus);
+    await advance(0);
+    await connect();
+    const video = view.container.querySelector("video")!;
+    let decodedFrame!: () => void;
+    Object.defineProperty(video, "requestVideoFrameCallback", {
+      configurable: true,
+      value: jest.fn((callback) => {
+        decodedFrame = callback;
+        return 1;
+      }),
+    });
+    Object.defineProperty(video, "cancelVideoFrameCallback", {
+      configurable: true,
+      value: jest.fn(),
+    });
+    await act(async () => {
+      rtc.peers[0].ontrack?.({ streams: [], track: {} as MediaStreamTrack });
+    });
+    await advance(19_999);
+    act(() => decodedFrame());
+    expect(onPlaybackStatus).toHaveBeenLastCalledWith("playing");
+    expect(video).toHaveStyle({ visibility: "visible" });
+    await advance(25_000);
+    expect(
+      screen.queryByRole("button", { name: "Retry" })
+    ).not.toBeInTheDocument();
+    expect(onPlaybackStatus).not.toHaveBeenCalledWith("error");
+    expect(onPlaybackStatus).toHaveBeenLastCalledWith("playing");
   });
 });

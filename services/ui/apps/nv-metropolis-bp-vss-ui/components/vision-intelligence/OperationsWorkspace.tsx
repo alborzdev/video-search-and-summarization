@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: MIT
 
-import { useDialogAccessibility } from "@aiqtoolkit-ui/common";
+import { CameraSourceCatalog } from "./CameraSourceCatalog";
 import { LiveAnswerReport } from "./LiveAnswerReport";
-import { LiveModeNav } from "./LiveModeNav";
+import { LiveCameraView } from "./LiveCameraView";
 import { VideoHistoryPanel } from "./VideoHistoryPanel";
 import { VisionStreamCanvas } from "./VisionStreamCanvas";
+import {
+  loadAnalysisProfileCatalog,
+  loadSourceAnalysisProfile,
+  type SourceAnalysisProfile,
+} from "./analysisProfiles";
 import type {
   VisionAnalystPlaybackContext,
   VisionAnalystRequest,
   VisionAnalystResponse,
 } from "./analyst";
 import { evidenceClipEndpoint } from "./evidenceClip";
-import {
-  loadAnalysisProfileCatalog,
-  loadSourceAnalysisProfile,
-  type SourceAnalysisProfile,
-} from "./analysisProfiles";
 import {
   consolidateIncidents,
   incidentTitle,
@@ -27,26 +27,22 @@ import {
 import type { OperationsView, VisionStream } from "./types";
 import { useVisionStreams } from "./useVisionStreams";
 import { createPeerId, sourceKind, streamDisplayName } from "./utils";
+import { useDialogAccessibility } from "@aiqtoolkit-ui/common";
 import {
   IconAlertCircle,
-  IconArrowRight,
-  IconArrowsMaximize,
-  IconCheck,
-  IconChevronDown,
-  IconChevronRight,
-  IconClock,
   IconEye,
-  IconGridDots,
-  IconHistory,
-  IconMicrophone,
   IconPlayerPlay,
   IconRefresh,
-  IconSend2,
-  IconShieldCheck,
   IconSparkles,
   IconX,
 } from "@tabler/icons-react";
-import React, { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 interface OperationsWorkspaceProps {
   agentApiUrl?: string | null;
@@ -61,9 +57,7 @@ interface OperationsWorkspaceProps {
   vstApiUrl?: string | null;
 }
 
-const defaultQuestion = "What is happening in this camera?";
-
-interface SourceIntelligence {
+export interface SourceIntelligence {
   captionSegments: number | null;
   evidenceEvents: number | null;
   indexingDelaySeconds: number | null;
@@ -74,494 +68,40 @@ interface SourceIntelligence {
   trackedObservations: number | null;
 }
 
-type SourceAnalysisState =
+export type SourceAnalysisState =
   | "active"
   | "changing"
   | "partial"
   | "paused"
   | "unknown";
 
-function cameraAnalysisLabel(
-  stream: VisionStream,
-  analysisState?: SourceAnalysisState,
-  intelligence?: SourceIntelligence | null
-): string {
-  if (stream.connectionState === "offline" || stream.connectionState === "removed") return "Disconnected";
-  if (sourceKind(stream) !== "Live") return "Ready";
-  if (analysisState === "paused") return "Analysis paused";
-  if (analysisState === "changing") return "Updating";
-  if (analysisState === "partial") return "Needs attention";
-  if (intelligence?.semanticFresh === true) return "Analyzing";
-  if (intelligence?.semanticFresh === false) return "Indexing delayed";
-  return "Checking ingest";
-}
-
 function incidentMatchesStream(
   incident: ConsolidatedIncident,
   stream: VisionStream
 ): boolean {
-  const normalize = (value: string) =>
-    value.toLowerCase().replace(/[^a-z0-9]/g, "");
-  const sensor = normalize(incident.sensorId ?? "");
-  if (!sensor) return false;
-  return [stream.name, stream.sensorId, stream.streamId]
-    .map(normalize)
-    .some(
-      (sourceId) =>
-        sourceId === sensor ||
-        sourceId.includes(sensor) ||
-        sensor.includes(sourceId)
-    );
-}
-
-function sourceOverviewCopy(
-  stream: VisionStream,
-  analysisState?: SourceAnalysisState,
-  intelligence?: SourceIntelligence,
-  incident?: ConsolidatedIncident
-): string {
-  if (stream.connectionState === "offline" || stream.connectionState === "removed")
-    return "Video I/O reports this source as disconnected. Check the camera or simulator connection before resuming analysis.";
-  if (incident) return incidentTitle(incident);
-  if (analysisState === "paused")
-    return "Intelligence processing is paused. Press play to check the live connection.";
-  if ((intelligence?.trackedObservations ?? 0) > 0)
-    return `${intelligence?.trackedObservations?.toLocaleString()} tracked observations are ready to review.`;
-  if ((intelligence?.semanticSegments ?? 0) > 0)
-    return `${intelligence?.semanticSegments?.toLocaleString()} searchable moments are available.`;
-  return sourceKind(stream) === "Live"
-    ? "Source configured; waiting for live analysis status and indexed moments."
-    : "Recorded footage is ready to inspect and search.";
-}
-
-function CameraState({
-  analysisState,
-  intelligence,
-  stream,
-}: {
-  analysisState?: SourceAnalysisState;
-  intelligence?: SourceIntelligence | null;
-  stream: VisionStream;
-}) {
-  const isLive = sourceKind(stream) === "Live";
-  const analysisLabel = cameraAnalysisLabel(
-    stream,
-    analysisState,
-    intelligence
-  );
+  const sensor = incident.sensorId?.trim();
   return (
-    <div className="vi-source-state">
-      <span
-        className={
-          isLive && (analysisState === "paused" || analysisState === "partial" || analysisLabel === "Disconnected")
-            ? "vi-state-dot vi-state-dot--paused"
-            : isLive
-            ? "vi-state-dot"
-            : "vi-state-dot vi-state-dot--replay"
-        }
-      />
-      <span>{isLive ? "RTSP feed" : "Recording"}</span>
-      <span className="vi-source-state-separator">•</span>
-      <span>{analysisLabel}</span>
-    </div>
-  );
-}
-
-function IntelligenceRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="vi-intelligence-row">
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </div>
-  );
-}
-
-function SourceIntelligencePanel({
-  analysisProfile,
-  analysisProfiles,
-  analysisState,
-  controlError,
-  intelligence,
-  isLoading,
-  isUpdating,
-  onToggleAnalysis,
-  onSetAnalysisProfile,
-  onInvestigate,
-  stream,
-  visualAnalystAvailable,
-}: {
-  analysisProfile: SourceAnalysisProfile | null;
-  analysisProfiles: SourceAnalysisProfile[];
-  analysisState: SourceAnalysisState;
-  controlError: string | null;
-  intelligence: SourceIntelligence | null;
-  isLoading: boolean;
-  isUpdating: boolean;
-  onToggleAnalysis: () => void;
-  onSetAnalysisProfile: (profileId: string) => void;
-  onInvestigate: () => void;
-  stream: VisionStream;
-  visualAnalystAvailable?: boolean | null;
-}) {
-  const [mobileExpanded, setMobileExpanded] = useState(false);
-  const [pendingProfileId, setPendingProfileId] = useState(
-    analysisProfile?.id ?? ""
-  );
-  useEffect(() => {
-    setPendingProfileId(analysisProfile?.id ?? "");
-  }, [analysisProfile?.id, stream.streamId]);
-  const semantic = intelligence?.semanticSegments;
-  const tracking = intelligence?.trackedObservations;
-  const eventCandidates = intelligence?.evidenceEvents;
-  const isLive = sourceKind(stream) === "Live";
-  const disconnected = isLive && (stream.connectionState === "offline" || stream.connectionState === "removed");
-  const detectionEnabled = analysisProfile?.detectionEnabled ?? false;
-  const formatCount = (
-    count: number | null | undefined,
-    singular: string,
-    plural: string
-  ) => {
-    if (isLoading) return "Checking…";
-    if (count === null || count === undefined) return "Unavailable";
-    return `${count.toLocaleString()} ${count === 1 ? singular : plural}`;
-  };
-
-  return (
-    <aside
-      className={`vi-source-intelligence${
-        mobileExpanded ? " is-mobile-expanded" : ""
-      }`}
-      aria-label="Source intelligence status"
-    >
-      <div className="vi-source-intelligence-heading">
-        <div>
-          <IconSparkles size={18} />
-          <span>Local intelligence</span>
-        </div>
-        <em>Local processing</em>
-        <button
-          className="vi-source-intelligence-mobile-toggle"
-          type="button"
-          aria-label={
-            mobileExpanded
-              ? "Collapse source intelligence"
-              : "Expand source intelligence"
-          }
-          aria-expanded={mobileExpanded}
-          onClick={() => setMobileExpanded((expanded) => !expanded)}
-        >
-          <IconChevronDown size={16} />
-        </button>
-      </div>
-      <IntelligenceRow
-        label="Visual search"
-        value={
-          semantic
-            ? `${semantic.toLocaleString()} indexed moments`
-            : formatCount(semantic, "moment", "moments")
-        }
-      />
-      {isLive && (
-        <>
-          <IntelligenceRow
-            label="Searchable through"
-            value={
-              intelligence?.lastSemanticAt
-                ? new Date(intelligence.lastSemanticAt).toLocaleString([], {
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })
-                : isLoading
-                ? "Checking…"
-                : "Waiting for first moment"
-            }
-          />
-          <IntelligenceRow
-            label="Indexing delay"
-            value={
-              intelligence?.indexingDelaySeconds === null ||
-              intelligence?.indexingDelaySeconds === undefined
-                ? isLoading
-                  ? "Checking…"
-                  : "Not measured"
-                : intelligence.indexingDelaySeconds < 2
-                ? "Live"
-                : intelligence.indexingDelaySeconds >= 86400
-                ? `${Math.floor(intelligence.indexingDelaySeconds / 86400)} days behind`
-                : intelligence.indexingDelaySeconds >= 3600
-                ? `${Math.floor(intelligence.indexingDelaySeconds / 3600)}h behind`
-                : intelligence.indexingDelaySeconds >= 60
-                ? `${Math.floor(intelligence.indexingDelaySeconds / 60)}m behind`
-                : `${intelligence.indexingDelaySeconds}s behind`
-            }
-          />
-          <IntelligenceRow
-            label="Caption history"
-            value={formatCount(
-              intelligence?.captionSegments,
-              "captioned moment",
-              "captioned moments"
-            )}
-          />
-        </>
-      )}
-      <IntelligenceRow
-        label="Ask this camera"
-        value={
-          disconnected
-            ? "No live frames — camera disconnected"
-            : visualAnalystAvailable === null
-            ? "Checking…"
-            : visualAnalystAvailable === false
-            ? "Unavailable"
-            : "Ready"
-        }
-      />
-      <IntelligenceRow
-        label="Analysis profile"
-        value={
-          analysisProfile
-            ? analysisProfile.shortName
-            : isLoading
-            ? "Checking…"
-            : "Unavailable"
-        }
-      />
-      <IntelligenceRow
-        label="Detection + tracking"
-        value={
-          disconnected
-            ? "No live input"
-            : !detectionEnabled
-            ? "Not enabled"
-            : tracking
-            ? `${tracking.toLocaleString()} observations`
-            : isLoading
-            ? "Checking…"
-            : detectionEnabled
-            ? "No observations yet"
-            : "Not enabled"
-        }
-      />
-      <IntelligenceRow
-        label="Event candidates"
-        value={formatCount(eventCandidates, "saved candidate", "saved candidates")}
-      />
-      <p>
-        {sourceKind(stream) === "Live"
-          ? analysisState === "paused"
-            ? "Analysis is paused. Previously indexed evidence remains searchable."
-            : analysisState !== "active"
-            ? "Live analysis is not confirmed. Check service readiness or retry this source."
-            : detectionEnabled
-            ? `Semantic intelligence plus ${analysisProfile?.modelLabel ?? "the selected detector"} are active.`
-            : "Semantic search, live history, alerts, and Cosmos reasoning stay active without an object detector."
-          : tracking
-          ? "Recorded analytics and semantic evidence are available."
-          : semantic
-          ? "This replay is searchable. It does not publish visual tracking overlays."
-          : "No indexed analytics are available for this replay yet."}
-      </p>
-      {controlError && (
-        <p className="vi-source-control-error">{controlError}</p>
-      )}
-      {analysisProfile && (
-        <label className="vi-source-analytics-mode">
-          <span>{isLive ? "Source analysis" : "Recording analysis"}</span>
-          <select
-            aria-label="Source analysis profile"
-            disabled={isUpdating || !analysisProfile}
-            onChange={(event) => {
-              const profileId = event.target.value;
-              if (isLive) onSetAnalysisProfile(profileId);
-              else setPendingProfileId(profileId);
-            }}
-            value={isLive ? analysisProfile.id : pendingProfileId}
-          >
-            {analysisProfiles.map((profile) => (
-              <option disabled={!profile.ready} key={profile.id} value={profile.id}>
-                {profile.shortName}{profile.ready ? "" : " · offline"}
-              </option>
-            ))}
-          </select>
-          {analysisProfile && (
-            <small>
-              {isLive
-                ? analysisProfile.modelLabel
-                : "Changing this replaces detector-derived evidence; semantic search and the uploaded video stay intact."}
-            </small>
-          )}
-          {!isLive && (
-            <button
-              className="vi-recording-reprocess"
-              type="button"
-              disabled={
-                isUpdating ||
-                !pendingProfileId ||
-                pendingProfileId === analysisProfile.id
-              }
-              onClick={() => onSetAnalysisProfile(pendingProfileId)}
-            >
-              {isUpdating ? "Reprocessing…" : "Apply and reprocess recording"}
-            </button>
-          )}
-        </label>
-      )}
-      {isLive && (
-        <button
-          className="vi-source-analysis-toggle"
-          type="button"
-          disabled={isUpdating || analysisState === "unknown"}
-          onClick={onToggleAnalysis}
-        >
-          {isUpdating
-            ? "Updating analysis…"
-            : analysisState === "unknown"
-            ? "Analysis status unavailable"
-            : analysisState === "paused"
-            ? "Resume analysis"
-            : "Pause analysis"}
-        </button>
-      )}
-      {Boolean((semantic ?? 0) + (eventCandidates ?? 0)) && (
-        <button
-          className="vi-source-explore"
-          type="button"
-          onClick={onInvestigate}
-        >
-          Explore evidence <span>→</span>
-        </button>
-      )}
-    </aside>
-  );
-}
-
-function VisionAnalystBar({
-  camera,
-  grid,
-  isLoading,
-  onAsk,
-  visualAnalystAvailable,
-}: {
-  camera?: VisionStream;
-  grid: boolean;
-  isLoading: boolean;
-  onAsk: (query: string) => void;
-  visualAnalystAvailable?: boolean | null;
-}) {
-  const [query, setQuery] = useState("");
-  const suggestions = grid
-    ? [
-        "Where is activity occurring?",
-        "Summarize verified events in these recordings",
-        "Which sources need attention?",
-      ]
-    : /traffic|road|intersection|vehicle|jaywalk/i.test(camera?.name ?? "")
-    ? [
-        "What traffic risks are visible?",
-        "Are pedestrians crossing safely?",
-        "Describe vehicle flow",
-      ]
-    : /warehouse|forklift|loading|dock/i.test(camera?.name ?? "")
-    ? [
-        "What safety risks are visible?",
-        "Where are people and forklifts?",
-        "Describe the current activity",
-      ]
-    : [
-        "What objects do you see?",
-        "What risks are visible?",
-        "Describe the current activity",
-      ];
-
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
-    if (visualAnalystAvailable === false) return;
-    const nextQuery = query.trim() || defaultQuestion;
-    onAsk(nextQuery);
-  };
-
-  return (
-    <div className="vi-analyst-bar">
-      <div
-        className="vi-analyst-mode"
-        aria-label={
-          grid
-            ? "Vision Analyst scope: all sources"
-            : "Vision Analyst scope: selected source"
-        }
-      >
-        <IconSparkles size={20} />
-        <span>Ask Vision Analyst</span>
-        <small>{grid ? "All sources" : "This source"}</small>
-      </div>
-      <form className="vi-analyst-form" onSubmit={submit}>
-        <input
-          aria-label="Ask Vision Analyst"
-          disabled={visualAnalystAvailable === false || isLoading}
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder={
-            visualAnalystAvailable === false
-              ? "Visual reasoning is offline — check System readiness"
-              : grid
-              ? "Ask across all sources…"
-              : `Ask about ${
-                  camera ? streamDisplayName(camera.name) : "this source"
-                }…`
-          }
-        />
-        <button
-          type="submit"
-          aria-label="Send question"
-          disabled={isLoading || visualAnalystAvailable === false}
-          title={
-            visualAnalystAvailable === false
-              ? "Cosmos visual reasoning is unavailable"
-              : undefined
-          }
-        >
-          {isLoading ? (
-            <span className="vi-spinner" />
-          ) : (
-            <IconSend2 size={21} />
-          )}
-        </button>
-      </form>
-      <button
-        className="vi-icon-button vi-voice-button"
-        type="button"
-        aria-label="Voice input unavailable"
-        disabled
-        title="Voice input is not enabled on this deployment"
-      >
-        <IconMicrophone size={21} />
-      </button>
-      <div className="vi-analyst-suggestions">
-        {suggestions.map((suggestion) => (
-          <button
-            key={suggestion}
-            type="button"
-            disabled={isLoading || visualAnalystAvailable === false}
-            onClick={() => onAsk(suggestion)}
-          >
-            {suggestion}
-          </button>
-        ))}
-      </div>
-    </div>
+    Boolean(sensor) &&
+    [stream.sensorId, stream.streamId].some(
+      (sourceId) => sourceId.trim() === sensor
+    )
   );
 }
 
 function formatObservedRange(result: VisionAnalystResponse): string | null {
   if (result.observedWindow) {
-    const formatTime = (value: string) => new Date(value).toLocaleString([], {
-      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit", timeZoneName: "short",
-    });
-    return `${formatTime(result.observedWindow.startTime)} – ${formatTime(result.observedWindow.endTime)}`;
+    const formatTime = (value: string) =>
+      new Date(value).toLocaleString([], {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        timeZoneName: "short",
+      });
+    return `${formatTime(result.observedWindow.startTime)} – ${formatTime(
+      result.observedWindow.endTime
+    )}`;
   }
   if (!result.observedRange) return null;
   const format = (seconds: number) => {
@@ -674,7 +214,11 @@ function AnalystAnswerPanel({
             </button>
           </div>
           {result.observedWindow && reportSource && (
-            <LiveAnswerReport key={result.generatedAt} result={result} source={reportSource} />
+            <LiveAnswerReport
+              key={result.generatedAt}
+              result={result}
+              source={reportSource}
+            />
           )}
         </>
       )}
@@ -698,8 +242,13 @@ function AnalystEvidenceClip({
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const dialogRef = useDialogAccessibility<HTMLDivElement>({ isOpen: true, onClose });
+  const dialogRef = useDialogAccessibility<HTMLDivElement>({
+    isOpen: true,
+    onClose,
+  });
 
+  const rangeStart = range?.startSeconds;
+  const rangeEnd = range?.endSeconds;
   useEffect(() => {
     const controller = new AbortController();
     const prepare = async () => {
@@ -707,7 +256,8 @@ function AnalystEvidenceClip({
         let startTime = observedWindow?.startTime;
         let endTime = observedWindow?.endTime;
         if (!startTime || !endTime) {
-          if (!range) throw new Error("The inspected interval is unavailable.");
+          if (rangeStart === undefined || rangeEnd === undefined)
+            throw new Error("The inspected interval is unavailable.");
           const timelineResponse = await fetch(
             `${vstApiUrl}/v1/storage/${encodeURIComponent(
               stream.streamId
@@ -721,17 +271,21 @@ function AnalystEvidenceClip({
             startTime: string;
           }>;
           const timeline = timelines.at(-1);
-          if (!timeline) throw new Error("This source has no recorded timeline.");
+          if (!timeline)
+            throw new Error("This source has no recorded timeline.");
           const timelineStart = Date.parse(timeline.startTime);
           const timelineEnd = Date.parse(timeline.endTime);
-          if (!Number.isFinite(timelineStart) || !Number.isFinite(timelineEnd)) {
+          if (
+            !Number.isFinite(timelineStart) ||
+            !Number.isFinite(timelineEnd)
+          ) {
             throw new Error("The recording timeline is invalid.");
           }
           startTime = new Date(
-            Math.min(timelineEnd, timelineStart + range.startSeconds * 1_000)
+            Math.min(timelineEnd, timelineStart + rangeStart * 1_000)
           ).toISOString();
           endTime = new Date(
-            Math.min(timelineEnd, timelineStart + range.endSeconds * 1_000)
+            Math.min(timelineEnd, timelineStart + rangeEnd * 1_000)
           ).toISOString();
         }
         const response = await fetch(
@@ -758,7 +312,14 @@ function AnalystEvidenceClip({
     };
     void prepare();
     return () => controller.abort();
-  }, [range?.endSeconds, range?.startSeconds, observedWindow?.startTime, observedWindow?.endTime, stream.streamId, vstApiUrl]);
+  }, [
+    rangeEnd,
+    rangeStart,
+    observedWindow?.startTime,
+    observedWindow?.endTime,
+    stream.streamId,
+    vstApiUrl,
+  ]);
 
   return (
     <div
@@ -788,7 +349,9 @@ function AnalystEvidenceClip({
               observedRange: range,
               observedWindow,
             } as VisionAnalystResponse)}{" "}
-            {observedWindow ? "from this RTSP feed. This is a recent recorded interval, not the current frame." : "of this recording."}
+            {observedWindow
+              ? "from this RTSP feed. This is a recent recorded interval, not the current frame."
+              : "of this recording."}
           </p>
         </div>
         <div className="vi-analyst-clip-media">
@@ -807,82 +370,6 @@ function AnalystEvidenceClip({
         </div>
       </div>
     </div>
-  );
-}
-
-function CameraPicker({
-  analysisStateById,
-  intelligenceById,
-  onClose,
-  onSelect,
-  selectedId,
-  streams,
-  vstApiUrl,
-}: {
-  analysisStateById: Record<string, SourceAnalysisState>;
-  intelligenceById: Record<string, SourceIntelligence>;
-  onClose: () => void;
-  onSelect: (stream: VisionStream) => void;
-  selectedId?: string;
-  streams: VisionStream[];
-  vstApiUrl?: string | null;
-}) {
-  return (
-    <aside className="vi-camera-picker" aria-label="Camera sources">
-      <div className="vi-camera-picker-heading">
-        <div>
-          <span>Sources</span>
-          <strong>{streams.length} available</strong>
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Close source picker"
-        >
-          ×
-        </button>
-      </div>
-      <div className="vi-camera-picker-list">
-        {streams.map((stream) => {
-          const displayName = streamDisplayName(stream.name);
-          const isSelected = stream.streamId === selectedId;
-          return (
-            <div
-              className={
-                isSelected ? "vi-camera-option is-selected" : "vi-camera-option"
-              }
-              key={stream.streamId}
-            >
-              <div className="vi-camera-option-media">
-                <VisionStreamCanvas
-                  stream={stream}
-                  vstApiUrl={vstApiUrl}
-                  eager={false}
-                  liveSnapshotEnabled={
-                    analysisStateById[stream.streamId] !== "paused"
-                  }
-                  showStatus={false}
-                />
-              </div>
-              <button
-                aria-label={`Select ${displayName}`}
-                aria-pressed={isSelected}
-                className="vi-camera-option-select"
-                type="button"
-                onClick={() => onSelect(stream)}
-              >
-                <strong>{displayName}</strong>
-                <CameraState
-                  analysisState={analysisStateById[stream.streamId]}
-                  intelligence={intelligenceById[stream.streamId]}
-                  stream={stream}
-                />
-              </button>
-            </div>
-          );
-        })}
-      </div>
-    </aside>
   );
 }
 
@@ -920,408 +407,12 @@ function EmptyOperations({
   );
 }
 
-function FocusedOperations({
-  analysisProfile,
-  analysisProfiles,
-  analysisState,
-  camera,
-  controlError,
-  intelligence,
-  intelligenceLoading,
-  isAsking,
-  isUpdatingAnalysis,
-  onAsk,
-  onPlaybackContext,
-  onOpenHistory,
-  onInvestigateSource,
-  onToggleAnalysis,
-  onSetAnalysisProfile,
-  onShowCameras,
-  evidenceEvents,
-  showIntelligence,
-  observedRange,
-  vstApiUrl,
-  visualAnalystAvailable,
-}: {
-  analysisProfile: SourceAnalysisProfile | null;
-  analysisProfiles: SourceAnalysisProfile[];
-  analysisState: SourceAnalysisState;
-  camera: VisionStream;
-  controlError: string | null;
-  intelligence: SourceIntelligence | null;
-  intelligenceLoading: boolean;
-  isAsking: boolean;
-  isUpdatingAnalysis: boolean;
-  onAsk: (query: string) => void;
-  onPlaybackContext: (context: VisionAnalystPlaybackContext) => void;
-  onOpenHistory: () => void;
-  onInvestigateSource: () => void;
-  onToggleAnalysis: () => void;
-  onSetAnalysisProfile: (profileId: string) => void;
-  onShowCameras: () => void;
-  evidenceEvents: Array<{
-    endTime?: string;
-    id: string;
-    label: string;
-    startTime: string;
-  }>;
-  showIntelligence: boolean;
-  observedRange?: { endSeconds: number; startSeconds: number };
-  vstApiUrl?: string | null;
-  visualAnalystAvailable?: boolean | null;
-}) {
-  return (
-    <section className="vi-focused-workspace">
-      <VisionStreamCanvas
-        evidenceEvents={evidenceEvents}
-        liveSnapshotEnabled={analysisState !== "paused"}
-        observedRange={observedRange}
-        showReplayControls={sourceKind(camera) === "Replay"}
-        stream={camera}
-        vstApiUrl={vstApiUrl}
-        onPlaybackContext={onPlaybackContext}
-      />
-      <div className="vi-camera-label">
-        <strong>{streamDisplayName(camera.name)}</strong>
-        <CameraState
-          analysisState={analysisState}
-          intelligence={intelligence}
-          stream={camera}
-        />
-      </div>
-      <div className="vi-focused-actions">
-        <button
-          type="button"
-          className="vi-control"
-          aria-label="Sources"
-          onClick={onShowCameras}
-        >
-          <IconEye size={21} /> <span>Sources</span>{" "}
-          <IconChevronDown size={17} />
-        </button>
-      </div>
-      {showIntelligence && (
-        <SourceIntelligencePanel
-          analysisProfile={analysisProfile}
-          analysisProfiles={analysisProfiles}
-          analysisState={analysisState}
-          controlError={controlError}
-          intelligence={intelligence}
-          isLoading={intelligenceLoading}
-          isUpdating={isUpdatingAnalysis}
-          onInvestigate={onInvestigateSource}
-          onToggleAnalysis={onToggleAnalysis}
-          onSetAnalysisProfile={onSetAnalysisProfile}
-          stream={camera}
-          visualAnalystAvailable={visualAnalystAvailable}
-        />
-      )}
-      <div className="vi-focused-bottom">
-        <VisionAnalystBar
-          camera={camera}
-          grid={false}
-          isLoading={isAsking}
-          onAsk={onAsk}
-          visualAnalystAvailable={visualAnalystAvailable}
-        />
-        <div className="vi-bottom-links">
-          <button
-            type="button"
-            aria-label="Video history"
-            onClick={onOpenHistory}
-          >
-            <IconHistory size={20} /> <span>History</span>
-          </button>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function GridOperations({
-  analysisStateById,
-  incidents,
-  intelligenceById,
-  onAsk,
-  onFocus,
-  onOpenActivity,
-  onOpenRules,
-  streams,
-  isAsking,
-  vstApiUrl,
-}: {
-  analysisStateById: Record<string, SourceAnalysisState>;
-  incidents: AnalyticsIncident[];
-  intelligenceById: Record<string, SourceIntelligence>;
-  onAsk: (query: string) => void;
-  onFocus: (stream: VisionStream) => void;
-  onOpenActivity: () => void;
-  onOpenRules: (stream: VisionStream) => void;
-  streams: VisionStream[];
-  isAsking: boolean;
-  vstApiUrl?: string | null;
-}) {
-  const liveStreams = streams.filter((stream) => sourceKind(stream) === "Live");
-  const disconnectedStreams = liveStreams.filter((stream) =>
-    stream.connectionState === "offline" || stream.connectionState === "removed"
-  );
-  const visibleStreams = liveStreams.filter((stream) =>
-    stream.connectionState !== "offline" && stream.connectionState !== "removed"
-  );
-  const noConnectedCameras = visibleStreams.length === 0;
-  const recordings = streams.filter((stream) => sourceKind(stream) === "Replay");
-  const availableRecording = recordings[0];
-  const operatorIncidents = consolidateIncidents(incidents).filter(
-    (incident) =>
-      isOperatorRelevantIncident(incident) &&
-      incidentVerdict(incident) !== "rejected"
-  );
-  const searchableCount = visibleStreams.filter(
-    (stream) => (intelligenceById[stream.streamId]?.semanticSegments ?? 0) > 0
-  ).length;
-  const analyzingCount = visibleStreams.filter(
-    (stream) =>
-      sourceKind(stream) === "Live" &&
-      stream.connectionState !== "offline" && stream.connectionState !== "removed" &&
-      analysisStateById[stream.streamId] === "active"
-  ).length;
-  const attentionItems = operatorIncidents.length
-    ? operatorIncidents.slice(0, 5).map((incident) => ({
-        description: incidentTitle(incident),
-        id: incident.Id,
-        label:
-          visibleStreams.find((stream) =>
-            incidentMatchesStream(incident, stream)
-          )?.name ??
-          incident.sensorId ??
-          "Connected source",
-        tone: "attention" as const,
-        source: undefined as VisionStream | undefined,
-      }))
-    : visibleStreams.slice(0, 5).map((stream) => {
-        const state = analysisStateById[stream.streamId];
-        const intelligence = intelligenceById[stream.streamId];
-        const label = cameraAnalysisLabel(stream, state, intelligence);
-        return {
-          description: sourceOverviewCopy(stream, state, intelligence),
-          id: stream.streamId,
-          label: streamDisplayName(stream.name),
-          source: stream,
-          tone:
-            label === "Analyzing" || label === "Ready"
-              ? ("healthy" as const)
-              : ("watch" as const),
-        };
-      });
-  return (
-    <section className="vi-grid-workspace">
-      <div className="vi-grid-status">
-        <span>{liveStreams.length} live cameras configured</span>
-        <i>•</i>
-        <strong>{recordings.length} {recordings.length === 1 ? "recording" : "recordings"}</strong>
-      </div>
-      {noConnectedCameras && (
-        <section className="vi-live-introduction" aria-label="Live camera availability">
-          <div>
-            <span className="vi-eyebrow">Live camera demo</span>
-            <h2>No live cameras connected</h2>
-            <p>Connect a camera to watch activity as it happens. Enable analysis to make new moments searchable.</p>
-            {availableRecording && <p>You can explore video AI now with the available recording.</p>}
-          </div>
-          {availableRecording && (
-            <button type="button" className="vi-button vi-button--primary" onClick={() => onFocus(availableRecording)}>
-              Open available recording <IconArrowRight size={18} />
-            </button>
-          )}
-        </section>
-      )}
-      {recordings.length > 0 && (
-        <section className="vi-recorded-source-links" aria-label="Available recordings">
-          <div><strong>Recorded footage</strong><span>Explore saved video separately from live cameras.</span></div>
-          {recordings.map((stream) => (
-            <button key={stream.streamId} type="button" className="vi-control" onClick={() => onFocus(stream)}>
-              <IconPlayerPlay size={17} /> {streamDisplayName(stream.name)}
-            </button>
-          ))}
-        </section>
-      )}
-      {disconnectedStreams.length > 0 && (
-        <details className="vi-disconnected-sources">
-          <summary>{disconnectedStreams.length} disconnected {disconnectedStreams.length === 1 ? "camera" : "cameras"} · Connection details</summary>
-          <p>Check the camera or simulator connection before resuming analysis.</p>
-          <div>{disconnectedStreams.map((stream) => (
-            <button key={stream.streamId} type="button" onClick={() => onFocus(stream)}>
-              <strong>{streamDisplayName(stream.name)}</strong><span>Disconnected</span><span>Review source <IconArrowRight size={15} /></span>
-            </button>
-          ))}</div>
-        </details>
-      )}
-      <div className={`vi-live-overview${attentionItems.length ? "" : " vi-live-overview--single"}`}>
-        <div className="vi-live-overview-main">
-          <section
-            className="vi-environment-now"
-            aria-label="Current environment status"
-          >
-            <div className="vi-environment-now-heading">
-              <strong>Environment now</strong>
-              <span>Live status</span>
-            </div>
-            <div className="vi-environment-now-item is-healthy">
-              <IconShieldCheck size={21} />
-              <div>
-                <strong>
-                  {analyzingCount} {analyzingCount === 1 ? "source" : "sources"}{" "}
-                  analyzing
-                </strong>
-                <span>{analyzingCount ? "Analysis is enabled on these sources." : "No sources are currently being analyzed."}</span>
-              </div>
-            </div>
-            <div className="vi-environment-now-item is-intelligence">
-              <IconSparkles size={21} />
-              <div>
-                <strong>{searchableCount} live {searchableCount === 1 ? "camera" : "cameras"} searchable</strong>
-                <span>Indexed moments can be searched in Search video.</span>
-              </div>
-            </div>
-            <div
-              className={`vi-environment-now-item ${
-                operatorIncidents.length ? "is-attention" : "is-healthy"
-              }`}
-            >
-              {operatorIncidents.length ? (
-                <IconAlertCircle size={21} />
-              ) : (
-                <IconCheck size={21} />
-              )}
-              <div>
-                <strong>
-                  {operatorIncidents.length
-                    ? `${operatorIncidents.length} need review`
-                    : "No verified alerts"}
-                </strong>
-                <span>
-                  {operatorIncidents.length
-                    ? "Open Events & reports to review the evidence."
-                    : "No verified alerts are listed. This does not confirm the scene is clear."}
-                </span>
-              </div>
-            </div>
-          </section>
-
-          <div className="vi-camera-grid">
-            {visibleStreams.map((stream) => {
-              const analysisState = analysisStateById[stream.streamId];
-              const intelligence = intelligenceById[stream.streamId];
-              const incident = operatorIncidents.find((candidate) =>
-                incidentMatchesStream(candidate, stream)
-              );
-              const stateLabel = cameraAnalysisLabel(
-                stream,
-                analysisState,
-                intelligence
-              );
-              const tone = incident || stateLabel === "Disconnected"
-                ? "attention"
-                : analysisState === "paused" || analysisState === "partial"
-                ? "watch"
-                : stateLabel === "Analyzing" || stateLabel === "Ready" ? "healthy" : "watch";
-              return (
-                <article className="vi-grid-camera" key={stream.streamId}>
-                  <header>
-                    <strong>{streamDisplayName(stream.name)}</strong>
-                    <span className={`is-${tone}`}>{stateLabel}</span>
-                  </header>
-                  <div className="vi-grid-camera-media">
-                    <VisionStreamCanvas
-                      stream={stream}
-                      vstApiUrl={vstApiUrl}
-                      eager={false}
-                      liveSnapshotEnabled={analysisState !== "paused"}
-                      showStatus={false}
-                    />
-                    <button
-                      className="vi-grid-focus"
-                      type="button"
-                      onClick={() => onFocus(stream)}
-                      aria-label={`Focus ${streamDisplayName(stream.name)}`}
-                    >
-                      <IconArrowsMaximize size={18} />
-                    </button>
-                  </div>
-                  <footer>
-                    <p>
-                      {sourceOverviewCopy(
-                        stream,
-                        analysisState,
-                        intelligence,
-                        incident
-                      )}
-                    </p>
-                    <CameraState
-                      analysisState={analysisState}
-                      intelligence={intelligence}
-                      stream={stream}
-                    />
-                    <button className="vi-grid-rule-link" type="button" onClick={() => onOpenRules(stream)}>
-                      <IconShieldCheck size={14} /> Monitoring rules
-                    </button>
-                  </footer>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-
-        {attentionItems.length > 0 && <aside className="vi-live-attention" aria-label="Changes and attention">
-          <header>
-            <div>
-              <span className="vi-eyebrow">Current state</span>
-              <h2>Changes &amp; attention</h2>
-            </div>
-            <button type="button" onClick={onOpenActivity}>
-              Activity <IconArrowRight size={15} />
-            </button>
-          </header>
-          <div className="vi-live-attention-list">
-            {attentionItems.map((item) => (
-              <button type="button" key={item.id} onClick={() => item.source ? onFocus(item.source) : onOpenActivity()}>
-                <span className={`is-${item.tone}`}>
-                  {item.tone === "attention" ? (
-                    <IconAlertCircle size={16} />
-                  ) : item.tone === "watch" ? (
-                    <IconClock size={16} />
-                  ) : (
-                    <IconCheck size={16} />
-                  )}
-                </span>
-                <div>
-                  <strong>{streamDisplayName(item.label)}</strong>
-                  <p>{item.description}</p>
-                  <small>
-                    {item.tone === "healthy"
-                      ? "View source"
-                      : "Review source"}
-                  </small>
-                </div>
-                <IconChevronRight size={16} />
-              </button>
-            ))}
-          </div>
-        </aside>}
-      </div>
-      <VisionAnalystBar grid isLoading={isAsking} onAsk={onAsk} />
-    </section>
-  );
-}
-
 export function OperationsWorkspace({
   agentApiUrl,
   initialPanel,
   initialStreamId,
   initialView = "focused",
   onInvestigate,
-  onOpenActivity,
-  onOpenInsights,
   onOpenRules,
   visualAnalystAvailable,
   vstApiUrl,
@@ -1331,7 +422,6 @@ export function OperationsWorkspace({
   const [selectedId, setSelectedId] = useState<string | undefined>(
     initialStreamId
   );
-  const [showCameras, setShowCameras] = useState(false);
   const [analystRequest, setAnalystRequest] =
     useState<VisionAnalystRequest | null>(null);
   const [analystResult, setAnalystResult] =
@@ -1349,7 +439,9 @@ export function OperationsWorkspace({
   const [sourceAnalysisStateById, setSourceAnalysisStateById] = useState<
     Record<string, SourceAnalysisState>
   >({});
-  const [analysisProfiles, setAnalysisProfiles] = useState<SourceAnalysisProfile[]>([]);
+  const [analysisProfiles, setAnalysisProfiles] = useState<
+    SourceAnalysisProfile[]
+  >([]);
   const [sourceAnalysisProfileById, setSourceAnalysisProfileById] = useState<
     Record<string, SourceAnalysisProfile>
   >({});
@@ -1366,27 +458,73 @@ export function OperationsWorkspace({
     AnalyticsIncident[]
   >([]);
   const sourceSelectionIsManual = useRef(Boolean(initialStreamId));
+  const questionGeneration = useRef(0);
+  const questionController = useRef<AbortController | null>(null);
+  const questionScope = useRef("");
+  const playbackSource = useRef("");
+  const historySource = useRef("");
+  const pollGeneration = useRef(0);
+  const controlVersions = useRef<Record<string, number>>({});
+  const controlMutations = useRef(new Set<string>());
+  const workspaceMounted = useRef(true);
+
+  const invalidateAsyncWork = useCallback(() => {
+    workspaceMounted.current = false;
+    ++questionGeneration.current;
+    ++pollGeneration.current;
+    questionController.current?.abort();
+  }, []);
+  useEffect(() => {
+    workspaceMounted.current = true;
+    return invalidateAsyncWork;
+  }, [invalidateAsyncWork]);
 
   useEffect(() => {
     const controller = new AbortController();
     loadAnalysisProfileCatalog(controller.signal)
-      .then(setAnalysisProfiles)
-      .catch(() => setAnalysisProfiles([]));
+      .then((profiles) => {
+        if (!controller.signal.aborted) setAnalysisProfiles(profiles);
+      })
+      .catch(() => {
+        if (!controller.signal.aborted) setAnalysisProfiles([]);
+      });
     return () => controller.abort();
   }, []);
 
   useEffect(() => {
     if (!streams.length) return;
     const controller = new AbortController();
-    Promise.all(streams.map(async (stream) => {
-      try {
-        return [stream.streamId, await loadSourceAnalysisProfile(stream.sensorId, controller.signal)] as const;
-      } catch {
-        return null;
-      }
-    })).then((entries) => {
+    Promise.all(
+      streams.map(async (stream) => {
+        const version = controlVersions.current[stream.streamId] ?? 0;
+        if (controlMutations.current.has(stream.streamId)) return null;
+        try {
+          const profile = await loadSourceAnalysisProfile(
+            stream.sensorId,
+            controller.signal
+          );
+          if (
+            controller.signal.aborted ||
+            controlMutations.current.has(stream.streamId) ||
+            (controlVersions.current[stream.streamId] ?? 0) !== version
+          )
+            return null;
+          return [stream.streamId, profile] as const;
+        } catch {
+          return null;
+        }
+      })
+    ).then((entries) => {
       if (!controller.signal.aborted) {
-        setSourceAnalysisProfileById(Object.fromEntries(entries.filter((entry): entry is readonly [string, SourceAnalysisProfile] => entry !== null)));
+        setSourceAnalysisProfileById((current) => ({
+          ...current,
+          ...Object.fromEntries(
+            entries.filter(
+              (entry): entry is readonly [string, SourceAnalysisProfile] =>
+                entry !== null
+            )
+          ),
+        }));
       }
     });
     return () => controller.abort();
@@ -1416,6 +554,10 @@ export function OperationsWorkspace({
   const selected =
     prioritizedStreams.find((stream) => stream.streamId === selectedId) ??
     prioritizedStreams[0];
+  const selectedSourceKey = selected
+    ? `${selected.sensorId}\0${selected.streamId}`
+    : "";
+  questionScope.current = `${selectedSourceKey}\0${view}`;
 
   useEffect(() => {
     let disposed = false;
@@ -1436,26 +578,13 @@ export function OperationsWorkspace({
 
   const selectedEvidenceEvents = useMemo(() => {
     if (!selected) return [];
-    const normalize = (value: string) =>
-      value.toLowerCase().replace(/[^a-z0-9]/g, "");
-    const sourceIds = [selected.name, selected.sensorId, selected.streamId].map(
-      normalize
-    );
     return consolidateIncidents(analyticsIncidents)
-      .filter((incident) => {
-        const sensor = normalize(incident.sensorId ?? "");
-        return (
-          Boolean(sensor) &&
+      .filter(
+        (incident) =>
+          incidentMatchesStream(incident, selected) &&
           isOperatorRelevantIncident(incident) &&
-          incidentVerdict(incident) === "confirmed" &&
-          sourceIds.some(
-            (sourceId) =>
-              sourceId === sensor ||
-              sourceId.includes(sensor) ||
-              sensor.includes(sourceId)
-          )
-        );
-      })
+          incidentVerdict(incident) === "confirmed"
+      )
       .map((incident) => ({
         endTime: incident.end,
         id: incident.Id,
@@ -1466,8 +595,13 @@ export function OperationsWorkspace({
 
   useEffect(() => {
     if (!streams.length) return;
-    let disposed = false;
+    const controller = new AbortController();
     const loadIntelligence = async () => {
+      const generation = ++pollGeneration.current;
+      const current = () =>
+        !controller.signal.aborted &&
+        workspaceMounted.current &&
+        generation === pollGeneration.current;
       setIntelligenceLoading(true);
       try {
         const [intelligenceEntries, statusEntries] = await Promise.all([
@@ -1480,7 +614,7 @@ export function OperationsWorkspace({
               try {
                 const response = await fetch(
                   `/api/vision/source-intelligence?${params.toString()}`,
-                  { cache: "no-store" }
+                  { cache: "no-store", signal: controller.signal }
                 );
                 if (!response.ok) return null;
                 return [
@@ -1488,8 +622,6 @@ export function OperationsWorkspace({
                   (await response.json()) as SourceIntelligence,
                 ] as const;
               } catch {
-                // A disconnected request must not discard other sources or
-                // prevent their independent analysis states from settling.
                 return null;
               }
             })
@@ -1498,42 +630,47 @@ export function OperationsWorkspace({
             streams
               .filter((stream) => sourceKind(stream) === "Live")
               .map(async (stream) => {
+                if (controlMutations.current.has(stream.streamId)) return null;
                 if (!agentApiUrl)
                   return [
                     stream.streamId,
-                    "unknown" as const,
+                    "unknown" as SourceAnalysisState,
+                    undefined,
                   ] as const;
                 try {
                   const response = await fetch(
                     `${agentApiUrl}/rtsp-streams/${encodeURIComponent(
                       stream.sensorId
                     )}/analysis`,
-                    { cache: "no-store" }
+                    { cache: "no-store", signal: controller.signal }
                   );
                   const payload = (await response.json()) as {
                     analysisProfileId?: string;
                     state?: SourceAnalysisState;
                   };
-                  if (response.ok && payload.analysisProfileId) {
-                    const profile = analysisProfiles.find((candidate) => candidate.id === payload.analysisProfileId);
-                    if (profile) {
-                      setSourceAnalysisProfileById((current) => ({ ...current, [stream.streamId]: profile }));
-                    }
-                  }
+                  const state =
+                    response.ok &&
+                    ["active", "paused", "partial", "unknown"].includes(
+                      payload.state ?? ""
+                    )
+                      ? (payload.state as SourceAnalysisState)
+                      : "unknown";
                   return [
                     stream.streamId,
-                    response.ok && payload.state ? payload.state : "unknown",
+                    state,
+                    response.ok ? payload.analysisProfileId : undefined,
                   ] as const;
                 } catch {
                   return [
                     stream.streamId,
-                    "unknown" as const,
+                    "unknown" as SourceAnalysisState,
+                    undefined,
                   ] as const;
                 }
               })
           ),
         ]);
-        if (disposed) return;
+        if (!current()) return;
         const next = Object.fromEntries(
           intelligenceEntries.filter(
             (entry): entry is readonly [string, SourceIntelligence] =>
@@ -1541,9 +678,21 @@ export function OperationsWorkspace({
           )
         );
         setSourceIntelligenceById(next);
-        setSourceAnalysisStateById(
-          Object.fromEntries(statusEntries.map(([id, state]) => [id, state]))
-        );
+        const states: Record<string, SourceAnalysisState> = {};
+        const profiles: Record<string, SourceAnalysisProfile> = {};
+        for (const entry of statusEntries) {
+          if (!entry || controlMutations.current.has(entry[0])) continue;
+          states[entry[0]] = entry[1];
+          const profile = analysisProfiles.find(
+            (candidate) => candidate.id === entry[2]
+          );
+          if (profile) profiles[entry[0]] = profile;
+        }
+        setSourceAnalysisStateById((previous) => ({ ...previous, ...states }));
+        setSourceAnalysisProfileById((previous) => ({
+          ...previous,
+          ...profiles,
+        }));
         if (!sourceSelectionIsManual.current) {
           const ranked = [...streams].sort((left, right) => {
             const score = (stream: VisionStream) =>
@@ -1556,23 +705,33 @@ export function OperationsWorkspace({
           if (ranked[0]) setSelectedId(ranked[0].streamId);
         }
       } finally {
-        if (!disposed) setIntelligenceLoading(false);
+        if (current()) setIntelligenceLoading(false);
       }
     };
     void loadIntelligence();
-    const interval = window.setInterval(loadIntelligence, 15_000);
+    const interval = window.setInterval(() => void loadIntelligence(), 15_000);
     return () => {
-      disposed = true;
+      controller.abort();
       window.clearInterval(interval);
     };
   }, [agentApiUrl, analysisProfiles, intelligenceRefresh, streams]);
 
   useEffect(() => {
+    ++questionGeneration.current;
+    questionController.current?.abort();
+    questionController.current = null;
     setConversationId(createPeerId());
     setAnalystRequest(null);
     setAnalystResult(null);
     setAnalystError(null);
-  }, [selected?.streamId, view]);
+    setIsAsking(false);
+    setShowAnalystClip(false);
+    setPlaybackContext({ capturedAt: new Date().toISOString() });
+    playbackSource.current = selectedSourceKey;
+    if (historySource.current && historySource.current !== selectedSourceKey)
+      setShowVideoHistory(false);
+    historySource.current = selectedSourceKey;
+  }, [selectedSourceKey, view]);
 
   if (!selected) {
     return (
@@ -1585,6 +744,16 @@ export function OperationsWorkspace({
   }
 
   const ask = async (query: string) => {
+    questionController.current?.abort();
+    const controller = new AbortController();
+    questionController.current = controller;
+    const generation = ++questionGeneration.current;
+    const scope = questionScope.current;
+    const current = () =>
+      workspaceMounted.current &&
+      !controller.signal.aborted &&
+      questionGeneration.current === generation &&
+      questionScope.current === scope;
     const scopedStreams = view === "grid" ? prioritizedStreams : [selected];
     const request: VisionAnalystRequest = {
       askedAt: new Date().toISOString(),
@@ -1595,7 +764,12 @@ export function OperationsWorkspace({
         kind: sourceKind(stream) === "Live" ? "live" : "replay",
         name: stream.name,
         ...(view === "focused" && stream.streamId === selected.streamId
-          ? { playback: playbackContext }
+          ? {
+              playback:
+                playbackSource.current === selectedSourceKey
+                  ? playbackContext
+                  : { capturedAt: new Date().toISOString() },
+            }
           : {}),
         sensorId: stream.sensorId,
         streamId: stream.streamId,
@@ -1608,6 +782,7 @@ export function OperationsWorkspace({
     try {
       const response = await fetch("/api/vision/analyst", {
         method: "POST",
+        signal: controller.signal,
         headers: {
           "Content-Type": "application/json",
           "X-Timezone": Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -1621,224 +796,236 @@ export function OperationsWorkspace({
         throw new Error(
           payload.error || `Vision Analyst returned ${response.status}.`
         );
-      setAnalystResult(payload);
+      if (current()) setAnalystResult(payload);
     } catch (requestError) {
-      setAnalystError(
-        requestError instanceof Error
-          ? requestError.message
-          : "The local Vision Analyst is unavailable."
-      );
-      // Do not let a failed or ungrounded agent turn contaminate the next
-      // attempt through server-side conversation memory.
-      setConversationId(createPeerId());
+      if (current()) {
+        setAnalystError(
+          requestError instanceof Error
+            ? requestError.message
+            : "The local Vision Analyst is unavailable."
+        );
+        setConversationId(createPeerId());
+      }
     } finally {
-      setIsAsking(false);
+      if (current()) setIsAsking(false);
     }
   };
+
   const focus = (stream: VisionStream) => {
     sourceSelectionIsManual.current = true;
     setSelectedId(stream.streamId);
     setView("focused");
   };
   const openCameraPicker = () => {
-    setShowCameras(true);
+    setView("grid");
   };
-  const toggleSelectedAnalysis = async () => {
-    if (!agentApiUrl || sourceKind(selected) !== "Live") return;
-    const current = sourceAnalysisStateById[selected.streamId] ?? "unknown";
-    const action = current === "paused" ? "resume" : "pause";
-    setSourceControlErrorById((errors) => ({
-      ...errors,
-      [selected.streamId]: "",
-    }));
-    setSourceAnalysisStateById((states) => ({
-      ...states,
-      [selected.streamId]: "changing",
-    }));
+  const changeSelectedAnalysis = async (
+    action: "pause" | "resume" | "configure",
+    requestedProfile?: SourceAnalysisProfile
+  ) => {
+    if (!agentApiUrl || controlMutations.current.has(selected.streamId)) return;
+    const source = selected;
+    const isLiveSource = sourceKind(source) === "Live";
+    if (action !== "configure" && !isLiveSource) return;
+    const id = source.streamId;
+    const version = (controlVersions.current[id] ?? 0) + 1;
+    controlVersions.current[id] = version;
+    controlMutations.current.add(id);
+    ++pollGeneration.current;
+    const current = () =>
+      workspaceMounted.current && controlVersions.current[id] === version;
+    const validState = (value?: SourceAnalysisState) =>
+      value && ["active", "paused", "partial"].includes(value) ? value : null;
+    const expected = (state: SourceAnalysisState | null, profileId?: string) =>
+      action === "configure"
+        ? Boolean(
+            state && state !== "partial" && profileId === requestedProfile?.id
+          )
+        : state === (action === "pause" ? "paused" : "active");
+    const apply = (state: SourceAnalysisState, profileId?: string) => {
+      if (!current()) return;
+      setSourceAnalysisStateById((states) => ({ ...states, [id]: state }));
+      const profile = analysisProfiles.find(
+        (candidate) => candidate.id === profileId
+      );
+      if (profile)
+        setSourceAnalysisProfileById((profiles) => ({
+          ...profiles,
+          [id]: profile,
+        }));
+    };
+    setSourceControlErrorById((errors) => ({ ...errors, [id]: "" }));
+    setSourceAnalysisStateById((states) => ({ ...states, [id]: "changing" }));
+    let verifiedState: SourceAnalysisState | null = null;
     try {
       const response = await fetch("/api/vision/source-analysis", {
         body: JSON.stringify({
           action,
-          name: selected.name,
-          sourceId: selected.sensorId,
-        }),
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
-      });
-      const payload = (await response.json()) as {
-        message?: string;
-        state?: SourceAnalysisState;
-      };
-      if (!response.ok || payload.state === "partial" || !payload.state)
-        throw new Error(
-          payload.message || "Live analysis could not be updated."
-        );
-      setSourceAnalysisStateById((states) => ({
-        ...states,
-        [selected.streamId]: payload.state as SourceAnalysisState,
-      }));
-      setIntelligenceRefresh((value) => value + 1);
-    } catch (controlError) {
-      // The local control route coordinates several independent services. A
-      // late dependency failure can produce a 5xx even after the requested
-      // state has already been reached. Reconcile once before presenting a
-      // partial failure so the UI reflects the actual Thor state.
-      try {
-        await new Promise((resolve) => window.setTimeout(resolve, 400));
-        const statusResponse = await fetch(
-          `${agentApiUrl}/rtsp-streams/${encodeURIComponent(
-            selected.sensorId
-          )}/analysis`,
-          { cache: "no-store" }
-        );
-        const statusPayload = (await statusResponse.json()) as {
-          state?: SourceAnalysisState;
-        };
-        const expectedState: SourceAnalysisState =
-          action === "pause" ? "paused" : "active";
-        if (statusResponse.ok && statusPayload.state === expectedState) {
-          setSourceAnalysisStateById((states) => ({
-            ...states,
-            [selected.streamId]: expectedState,
-          }));
-          setSourceControlErrorById((errors) => ({
-            ...errors,
-            [selected.streamId]: "",
-          }));
-          setIntelligenceRefresh((value) => value + 1);
-          return;
-        }
-      } catch {
-        // Preserve the original control error below.
-      }
-      setSourceAnalysisStateById((states) => ({
-        ...states,
-        [selected.streamId]: "partial",
-      }));
-      setSourceControlErrorById((errors) => ({
-        ...errors,
-        [selected.streamId]:
-          controlError instanceof Error
-            ? controlError.message
-            : "Live analysis could not be updated.",
-      }));
-    }
-  };
-
-  const setSelectedAnalysisProfile = async (profileId: string) => {
-    if (!agentApiUrl) return;
-    const isLiveSource = sourceKind(selected) === "Live";
-    const requestedProfile = analysisProfiles.find((profile) => profile.id === profileId);
-    if (!requestedProfile?.ready) return;
-    setSourceControlErrorById((errors) => ({
-      ...errors,
-      [selected.streamId]: "",
-    }));
-    setSourceAnalysisStateById((states) => ({
-      ...states,
-      [selected.streamId]: "changing",
-    }));
-    try {
-      const response = await fetch("/api/vision/source-analysis", {
-        body: JSON.stringify({
-          action: "configure",
-          analysisProfileId: profileId,
-          name: selected.name,
-          sourceKind: isLiveSource ? "live" : "recorded",
-          sourceId: selected.sensorId,
+          name: source.name,
+          sourceId: source.sensorId,
+          ...(action === "configure"
+            ? {
+                analysisProfileId: requestedProfile?.id,
+                sourceKind: isLiveSource ? "live" : "recorded",
+              }
+            : {}),
         }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
       const payload = (await response.json()) as {
         analysisProfileId?: string;
+        error?: string;
         message?: string;
         state?: SourceAnalysisState;
       };
-      if (
-        !response.ok ||
-        payload.state === "partial" ||
-        payload.analysisProfileId !== profileId ||
-        !payload.state
-      ) {
+      verifiedState = validState(payload.state);
+      if (verifiedState) apply(verifiedState, payload.analysisProfileId);
+      if (!response.ok || !expected(verifiedState, payload.analysisProfileId))
         throw new Error(
-          payload.message ||
-            (isLiveSource
-              ? "The scene analytics mode could not be updated."
-              : "The recording could not be reprocessed.")
+          payload.error ||
+            payload.message ||
+            (action === "configure"
+              ? isLiveSource
+                ? "The scene analytics mode could not be updated."
+                : "The recording could not be reprocessed."
+              : "Live analysis could not be updated.")
         );
+      if (requestedProfile && current())
+        setSourceAnalysisProfileById((profiles) => ({
+          ...profiles,
+          [id]: requestedProfile,
+        }));
+      if (current()) setIntelligenceRefresh((value) => value + 1);
+    } catch (failure) {
+      // A failed multi-service update can still have reached the requested state.
+      // Prefer a verified returned state; reconcile once only when none was supplied.
+      if (!verifiedState && current()) {
+        try {
+          await new Promise((resolve) => window.setTimeout(resolve, 400));
+          if (!current()) return;
+          const response = await fetch(
+            `${agentApiUrl}/rtsp-streams/${encodeURIComponent(
+              source.sensorId
+            )}/analysis`,
+            { cache: "no-store" }
+          );
+          const payload = (await response.json()) as {
+            state?: SourceAnalysisState;
+            analysisProfileId?: string;
+          };
+          const state = response.ok ? validState(payload.state) : null;
+          if (state) {
+            verifiedState = state;
+            apply(state, payload.analysisProfileId);
+          }
+          if (expected(state, payload.analysisProfileId) && current()) {
+            setSourceControlErrorById((errors) => ({ ...errors, [id]: "" }));
+            setIntelligenceRefresh((value) => value + 1);
+            return;
+          }
+        } catch {
+          /* Preserve the original backend error. */
+        }
       }
-      setSourceAnalysisProfileById((profiles) => ({
-        ...profiles,
-        [selected.streamId]: requestedProfile,
-      }));
-      setSourceAnalysisStateById((states) => ({
-        ...states,
-        [selected.streamId]: payload.state as SourceAnalysisState,
-      }));
-      setIntelligenceRefresh((value) => value + 1);
-    } catch (profileError) {
-      setSourceAnalysisStateById((states) => ({
-        ...states,
-        [selected.streamId]: "partial",
-      }));
-      setSourceControlErrorById((errors) => ({
-        ...errors,
-        [selected.streamId]:
-          profileError instanceof Error
-            ? profileError.message
-            : isLiveSource
-            ? "The scene analytics mode could not be updated."
-            : "The recording could not be reprocessed.",
-      }));
+      if (current()) {
+        if (!verifiedState) apply("partial");
+        setSourceControlErrorById((errors) => ({
+          ...errors,
+          [id]:
+            failure instanceof Error
+              ? failure.message
+              : "Source analysis could not be updated.",
+        }));
+      }
+    } finally {
+      if (controlVersions.current[id] === version) {
+        controlMutations.current.delete(id);
+        ++pollGeneration.current;
+        if (workspaceMounted.current) setIntelligenceLoading(false);
+      }
     }
   };
 
+  const toggleSelectedAnalysis = async () => {
+    const state = sourceAnalysisStateById[selected.streamId] ?? "unknown";
+    if (state === "unknown" || state === "changing") return;
+    await changeSelectedAnalysis(state === "paused" ? "resume" : "pause");
+  };
+
+  const setSelectedAnalysisProfile = async (profileId: string) => {
+    const profile = analysisProfiles.find(
+      (candidate) => candidate.id === profileId
+    );
+    if (profile?.ready) await changeSelectedAnalysis("configure", profile);
+  };
+
+  const answer = analystRequest ? (
+    <AnalystAnswerPanel
+      error={analystError}
+      isLoading={isAsking}
+      onClose={() => {
+        ++questionGeneration.current;
+        questionController.current?.abort();
+        questionController.current = null;
+        setIsAsking(false);
+        setShowAnalystClip(false);
+        setConversationId(createPeerId());
+        setAnalystRequest(null);
+        setAnalystResult(null);
+        setAnalystError(null);
+      }}
+      onInvestigate={() =>
+        onInvestigate(
+          analystRequest.query,
+          analystRequest.scope === "selected-source" ? selected : undefined
+        )
+      }
+      onPlayEvidence={
+        analystResult?.scope === "selected-source" &&
+        Boolean(
+          analystResult.observedWindow ||
+            (analystResult.observedRange && sourceKind(selected) === "Replay")
+        ) &&
+        Boolean(vstApiUrl)
+          ? () => setShowAnalystClip(true)
+          : undefined
+      }
+      reportSource={
+        analystRequest.scope === "selected-source" &&
+        analystRequest.sources.length === 1
+          ? analystRequest.sources[0]
+          : undefined
+      }
+      onRetry={() => void ask(analystRequest.query)}
+      result={analystResult}
+    />
+  ) : undefined;
+
   return (
-    <div className="vi-operations">
-      <LiveModeNav
-        active="monitor"
-        action={
-          <button
-            className="vi-live-sources-button"
-            type="button"
-            onClick={openCameraPicker}
-          >
-            <IconGridDots size={17} /> All sources
-          </button>
-        }
-        onSelect={(mode) => {
-          if (mode === "activity") onOpenActivity();
-          else if (mode === "insights") onOpenInsights();
-          else if (mode === "rules") onOpenRules();
-          else {
-            setView("grid");
-            setShowCameras(false);
-          }
-        }}
-      />
-      <div className="vi-operations-content">
+    <div className="vi-camera-workspace" data-view={view}>
+      <div className="vi-camera-workspace-content">
         {view === "grid" ? (
-          <GridOperations
+          <CameraSourceCatalog
             analysisStateById={sourceAnalysisStateById}
-            incidents={analyticsIncidents}
             intelligenceById={sourceIntelligenceById}
-            isAsking={isAsking}
-            onAsk={ask}
             onFocus={focus}
-            onOpenActivity={onOpenActivity}
+            onBack={() => setView("focused")}
             onOpenRules={onOpenRules}
             streams={prioritizedStreams}
             vstApiUrl={vstApiUrl}
           />
         ) : (
-          <FocusedOperations
+          <LiveCameraView
+            key={selectedSourceKey}
             analysisState={
               sourceAnalysisStateById[selected.streamId] ?? "unknown"
             }
             camera={selected}
             controlError={sourceControlErrorById[selected.streamId] || null}
-            analysisProfile={sourceAnalysisProfileById[selected.streamId] ?? null}
+            analysisProfile={
+              sourceAnalysisProfileById[selected.streamId] ?? null
+            }
             analysisProfiles={analysisProfiles}
             evidenceEvents={selectedEvidenceEvents}
             intelligence={sourceIntelligenceById[selected.streamId] ?? null}
@@ -1866,68 +1053,25 @@ export function OperationsWorkspace({
                 ? analystResult.observedRange
                 : undefined
             }
-            showIntelligence={!showCameras}
             visualAnalystAvailable={visualAnalystAvailable}
             vstApiUrl={vstApiUrl}
+            answer={answer}
           />
         )}
-
-        {showCameras && (
-          <CameraPicker
-            analysisStateById={sourceAnalysisStateById}
-            intelligenceById={sourceIntelligenceById}
-            onClose={() => setShowCameras(false)}
-            onSelect={(stream) => {
-              focus(stream);
-              setShowCameras(false);
-            }}
-            selectedId={selected.streamId}
-            streams={prioritizedStreams}
-            vstApiUrl={vstApiUrl}
-          />
-        )}
-
-        {analystRequest && (
-          <AnalystAnswerPanel
-            error={analystError}
-            isLoading={isAsking}
-            onClose={() => {
-              setAnalystRequest(null);
-              setAnalystResult(null);
-              setAnalystError(null);
-            }}
-            onInvestigate={() =>
-              onInvestigate(
-                analystRequest.query,
-                analystRequest.scope === "selected-source"
-                  ? selected
-                  : undefined
-              )
-            }
-            onPlayEvidence={
-              analystResult?.scope === "selected-source" &&
-              Boolean(analystResult.observedWindow || (analystResult.observedRange && sourceKind(selected) === "Replay")) &&
-              Boolean(vstApiUrl)
-                ? () => setShowAnalystClip(true)
-                : undefined
-            }
-            reportSource={analystRequest.scope === "selected-source" && analystRequest.sources.length === 1
-              ? analystRequest.sources[0] : undefined}
-            onRetry={() => void ask(analystRequest.query)}
-            result={analystResult}
-          />
-        )}
-        {showAnalystClip && (analystResult?.observedRange || analystResult?.observedWindow) && vstApiUrl && (
-          <AnalystEvidenceClip
-            onClose={() => setShowAnalystClip(false)}
-            range={analystResult.observedRange}
-            window={analystResult.observedWindow}
-            stream={selected}
-            vstApiUrl={vstApiUrl}
-          />
-        )}
+        {showAnalystClip &&
+          (analystResult?.observedRange || analystResult?.observedWindow) &&
+          vstApiUrl && (
+            <AnalystEvidenceClip
+              onClose={() => setShowAnalystClip(false)}
+              range={analystResult.observedRange}
+              window={analystResult.observedWindow}
+              stream={selected}
+              vstApiUrl={vstApiUrl}
+            />
+          )}
         {showVideoHistory && (
           <VideoHistoryPanel
+            key={`history:${selectedSourceKey}`}
             onClose={() => setShowVideoHistory(false)}
             onInvestigate={(query) => {
               setShowVideoHistory(false);

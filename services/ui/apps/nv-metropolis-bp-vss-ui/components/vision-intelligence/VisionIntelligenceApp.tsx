@@ -132,7 +132,7 @@ const sectionMeta: Record<PrimarySection, { eyebrow: string; title: string }> =
     events: { eyebrow: "Evidence-led review", title: "Events & reports" },
     explore: { eyebrow: "Search video in your own words", title: "Search video" },
     home: { eyebrow: "", title: "Digital twin analytics" },
-    live: { eyebrow: "Connected sources", title: "Live cameras" },
+    live: { eyebrow: "", title: "Live cameras" },
     monitoring: { eyebrow: "Rules that create incidents", title: "Alert rules" },
     system: { eyebrow: "On-device runtime", title: "System" },
   };

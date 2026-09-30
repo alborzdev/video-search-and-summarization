@@ -25,7 +25,18 @@ import React, {
   useState,
 } from "react";
 
-export type PlaybackStatus = "idle" | "connecting" | "playing" | "poster" | "error";
+// VST tears down a decoder asynchronously after a preview stops. Reusing the
+// same stream immediately can connect ICE while its old pipeline is destroyed.
+const liveSessionCooldowns = new Map<string, number>();
+const LIVE_HANDOFF_DELAY_MS = 1_200;
+const LIVE_FRAME_TIMEOUT_MS = 20_000;
+
+export type PlaybackStatus =
+  | "idle"
+  | "connecting"
+  | "playing"
+  | "poster"
+  | "error";
 
 interface VisionStreamCanvasProps {
   className?: string;
@@ -78,15 +89,28 @@ function signalingError(data: Record<string, unknown>): {
   };
 }
 
-function chooseSnapshotTime(timelines: StreamTimeline[]): string | null {
-  const timeline = timelines.at(-1);
+function chooseSnapshotTime(
+  timelines: StreamTimeline[],
+  recent = false
+): string | null {
+  const timeline = recent
+    ? [...timelines]
+        .filter((item) => {
+          const start = Date.parse(item.startTime);
+          const end = Date.parse(item.endTime);
+          return Number.isFinite(start) && Number.isFinite(end) && end > start;
+        })
+        .sort((a, b) => Date.parse(b.endTime) - Date.parse(a.endTime))[0]
+    : timelines.at(-1);
   if (!timeline) return null;
   const start = Date.parse(timeline.startTime);
   const end = Date.parse(timeline.endTime);
   if (!Number.isFinite(start) || !Number.isFinite(end))
     return timeline.startTime;
   return new Date(
-    start + Math.min(10_000, Math.max(1_000, (end - start) / 2))
+    recent
+      ? end - Math.min(5_000, (end - start) / 2)
+      : start + Math.min(10_000, Math.max(1_000, (end - start) / 2))
   ).toISOString();
 }
 
@@ -105,6 +129,7 @@ export function VisionStreamCanvas({
   observedRange,
 }: VisionStreamCanvasProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const decodedLiveFrame = useRef<(() => void) | null>(null);
   const posterUrlRef = useRef<string | null>(null);
   const [status, setStatus] = useState<PlaybackStatus>(
     eager ? "connecting" : "idle"
@@ -125,9 +150,18 @@ export function VisionStreamCanvas({
   const autoRescanAttempted = useRef<string | null>(null);
   const liveSource = useMemo(() => isLiveStream(stream), [stream]);
   useEffect(() => {
-    onPreviewAvailable?.(status === "playing" || Boolean(posterUrl && loadedPosterUrl === posterUrl));
+    onPreviewAvailable?.(
+      status === "playing" ||
+        Boolean(posterUrl && loadedPosterUrl === posterUrl)
+    );
     onPlaybackStatus?.(status);
-  }, [loadedPosterUrl, onPlaybackStatus, onPreviewAvailable, posterUrl, status]);
+  }, [
+    loadedPosterUrl,
+    onPlaybackStatus,
+    onPreviewAvailable,
+    posterUrl,
+    status,
+  ]);
   const eventOffsets = useMemo(() => {
     if (!replayTimeline) return [];
     const timelineStart = Date.parse(replayTimeline.startTime);
@@ -159,14 +193,18 @@ export function VisionStreamCanvas({
       .padStart(2, "0")}`;
   };
 
-  const seekReplay = useCallback((seconds: number) => {
-    const video = videoRef.current;
-    if (!video) return;
-    const duration =
-      replayDuration || (Number.isFinite(video.duration) ? video.duration : 0);
-    video.currentTime = Math.min(duration || seconds, Math.max(0, seconds));
-    setReplayTime(video.currentTime);
-  }, [replayDuration]);
+  const seekReplay = useCallback(
+    (seconds: number) => {
+      const video = videoRef.current;
+      if (!video) return;
+      const duration =
+        replayDuration ||
+        (Number.isFinite(video.duration) ? video.duration : 0);
+      video.currentTime = Math.min(duration || seconds, Math.max(0, seconds));
+      setReplayTime(video.currentTime);
+    },
+    [replayDuration]
+  );
 
   useEffect(() => {
     if (
@@ -221,7 +259,9 @@ export function VisionStreamCanvas({
         if (timelinesResponse.ok) {
           const timelines =
             (await timelinesResponse.json()) as StreamTimeline[];
-          const startTime = chooseSnapshotTime(timelines);
+          // A live card should represent the newest retained footage, rather
+          // than a startup frame from a recording session many hours earlier.
+          const startTime = chooseSnapshotTime(timelines, liveSource);
           if (startTime) {
             response = await fetch(
               proxyVstPictureUrl(
@@ -249,7 +289,8 @@ export function VisionStreamCanvas({
           );
         }
 
-        if (!response?.ok || response.headers?.get("X-Vision-Image-Fallback")) return;
+        if (!response?.ok || response.headers?.get("X-Vision-Image-Fallback"))
+          return;
         const blob = await response.blob();
         if (!blob.type.startsWith("image/")) return;
         objectUrl = URL.createObjectURL(blob);
@@ -276,12 +317,25 @@ export function VisionStreamCanvas({
     let websocket: WebSocket | null = null;
     let retryTimer: number | null = null;
     let frameCallback: number | null = null;
+    let startTimer: number | null = null;
+    let frameTimer: number | null = null;
+    const sessionKey = `${vstApiUrl}\0${stream.streamId}`;
     const peerId = createPeerId();
     const pendingCandidates: RTCIceCandidateInit[] = [];
     const fallbackStream = new MediaStream();
 
     setStatus("connecting");
+    setHasVideoFrame(false);
     setErrorMessage("");
+
+    const markDecodedFrame = () => {
+      if (disposed) return;
+      if (frameTimer !== null) window.clearTimeout(frameTimer);
+      frameTimer = null;
+      setHasVideoFrame(true);
+      setStatus("playing");
+    };
+    decodedLiveFrame.current = markDecodedFrame;
 
     const fail = (message: string) => {
       if (disposed) return;
@@ -295,6 +349,7 @@ export function VisionStreamCanvas({
     };
 
     const addRemoteCandidate = async (candidate: RTCIceCandidateInit) => {
+      if (disposed) return;
       if (!peerConnection?.remoteDescription) {
         pendingCandidates.push(candidate);
         return;
@@ -314,6 +369,7 @@ export function VisionStreamCanvas({
       pc.addTransceiver("video", { direction: "recvonly" });
 
       pc.ontrack = (event) => {
+        if (disposed) return;
         const video = videoElement;
         if (!video) return;
         const remoteStream = event.streams[0];
@@ -324,8 +380,9 @@ export function VisionStreamCanvas({
           video.srcObject = fallbackStream;
         }
         void video.play().catch(() => {
+          if (disposed) return;
           video.muted = true;
-          void video.play();
+          void video.play().catch(() => undefined);
         });
         if (typeof video.requestVideoFrameCallback === "function") {
           if (frameCallback !== null)
@@ -336,15 +393,14 @@ export function VisionStreamCanvas({
               !disposed &&
               !["failed", "disconnected", "closed"].includes(pc.connectionState)
             ) {
-              setHasVideoFrame(true);
-              setStatus("playing");
+              markDecodedFrame();
             }
           });
         }
       };
 
       pc.onicecandidate = (event) => {
-        if (!event.candidate) return;
+        if (disposed || !event.candidate) return;
         send("api/v1/live/iceCandidate", {
           candidate: event.candidate.toJSON(),
           peerId,
@@ -352,6 +408,7 @@ export function VisionStreamCanvas({
       };
 
       pc.onconnectionstatechange = () => {
+        if (disposed) return;
         if (
           pc.connectionState === "failed" ||
           pc.connectionState === "disconnected"
@@ -361,7 +418,9 @@ export function VisionStreamCanvas({
       };
 
       const offer = await pc.createOffer();
+      if (disposed) return;
       await pc.setLocalDescription(offer);
+      if (disposed) return;
       send("api/v1/live/stream/start", {
         clientIpAddr: null,
         options: { quality: "auto", rtptransport: "udp", timeout: 60 },
@@ -371,109 +430,142 @@ export function VisionStreamCanvas({
       });
     };
 
-    try {
-      websocket = new WebSocket(
-        createLiveWebSocketUrl(vstApiUrl, stream.streamId, peerId)
-      );
-    } catch {
-      fail("The video endpoint is not configured correctly.");
-      return;
-    }
+    const startSession = () => {
+      startTimer = null;
+      if (disposed) return;
+      liveSessionCooldowns.delete(sessionKey);
+      frameTimer = window.setTimeout(() => {
+        if (disposed) return;
+        setErrorMessage("No live video frames arrived. Retry the connection.");
+        setHasVideoFrame(false);
+        setStatus("error");
+      }, LIVE_FRAME_TIMEOUT_MS);
+      try {
+        websocket = new WebSocket(
+          createLiveWebSocketUrl(vstApiUrl, stream.streamId, peerId)
+        );
+      } catch {
+        fail("The video endpoint is not configured correctly.");
+        return;
+      }
 
-    websocket.onopen = () => send("api/v1/live/iceServers", { peerId });
-    websocket.onerror = () => fail("Could not connect to the video service.");
-    websocket.onmessage = (event) => {
-      void (async () => {
-        let message: SignalingMessage;
-        try {
-          message = JSON.parse(String(event.data)) as SignalingMessage;
-        } catch {
-          return;
-        }
-        const data = message.data ?? {};
-
-        if (message.apiKey === "api/v1/live/iceServers") {
-          const record = Array.isArray(data) ? {} : data;
-          const iceServers = Array.isArray(record.iceServers)
-            ? (record.iceServers as RTCIceServer[])
-            : [];
+      websocket.onopen = () => {
+        if (!disposed) send("api/v1/live/iceServers", { peerId });
+      };
+      websocket.onerror = () => fail("Could not connect to the video service.");
+      websocket.onmessage = (event) => {
+        if (disposed) return;
+        void (async () => {
+          let message: SignalingMessage;
           try {
-            await startPeerConnection(iceServers);
+            message = JSON.parse(String(event.data)) as SignalingMessage;
           } catch {
-            fail("Could not initialize video playback.");
-          }
-          return;
-        }
-
-        if (message.apiKey === "api/v1/live/setAnswer") {
-          if (!peerConnection || Array.isArray(data)) return;
-          mediaSessionId =
-            typeof data.mediaSessionId === "string"
-              ? data.mediaSessionId
-              : null;
-          if (typeof data.sdp !== "string" || typeof data.type !== "string") {
-            const signalingFailure = signalingError(data);
-            if (
-              signalingFailure.code === "CameraNotFoundError" &&
-              autoRescanAttempted.current !== stream.streamId
-            ) {
-              autoRescanAttempted.current = stream.streamId;
-              setErrorMessage(
-                "This camera was offline when video services started. Retrying its connection…"
-              );
-              setStatus("connecting");
-              try {
-                await fetch(`${vstApiUrl}/v1/sensor/scan`, { method: "POST" });
-              } catch {
-                // The retry below can still succeed if another service restored the sensor.
-              }
-              if (!disposed) {
-                retryTimer = window.setTimeout(
-                  () => setRetryKey((value) => value + 1),
-                  1_200
-                );
-              }
-              return;
-            }
-            fail(
-              signalingFailure.code === "CameraNotFoundError"
-                ? "The camera is still reconnecting. Its indexed history remains searchable."
-                : signalingFailure.message ||
-                    "The video service could not start this camera."
-            );
             return;
           }
-          try {
-            await peerConnection.setRemoteDescription({
-              sdp: data.sdp,
-              type: data.type as RTCSdpType,
-            });
-            for (const candidate of pendingCandidates.splice(0)) {
-              await peerConnection.addIceCandidate(candidate);
-            }
-          } catch {
-            fail("The video answer could not be applied.");
-          }
-          return;
-        }
+          const data = message.data ?? {};
 
-        if (message.apiKey === "api/v1/live/iceCandidate") {
-          const candidates = Array.isArray(data) ? data : Object.values(data);
-          for (const candidate of candidates) {
-            if (
-              candidate &&
-              typeof candidate === "object" &&
-              "candidate" in candidate
-            ) {
-              await addRemoteCandidate(candidate as RTCIceCandidateInit);
+          if (message.apiKey === "api/v1/live/iceServers") {
+            const record = Array.isArray(data) ? {} : data;
+            const iceServers = Array.isArray(record.iceServers)
+              ? (record.iceServers as RTCIceServer[])
+              : [];
+            try {
+              await startPeerConnection(iceServers);
+            } catch {
+              fail("Could not initialize video playback.");
+            }
+            return;
+          }
+
+          if (message.apiKey === "api/v1/live/setAnswer") {
+            if (!peerConnection || Array.isArray(data)) return;
+            mediaSessionId =
+              typeof data.mediaSessionId === "string"
+                ? data.mediaSessionId
+                : null;
+            if (typeof data.sdp !== "string" || typeof data.type !== "string") {
+              const signalingFailure = signalingError(data);
+              if (
+                signalingFailure.code === "CameraNotFoundError" &&
+                autoRescanAttempted.current !== stream.streamId
+              ) {
+                autoRescanAttempted.current = stream.streamId;
+                setErrorMessage(
+                  "This camera was offline when video services started. Retrying its connection…"
+                );
+                setStatus("connecting");
+                try {
+                  await fetch(`${vstApiUrl}/v1/sensor/scan`, {
+                    method: "POST",
+                  });
+                } catch {
+                  // The retry below can still succeed if another service restored the sensor.
+                }
+                if (!disposed) {
+                  retryTimer = window.setTimeout(
+                    () => setRetryKey((value) => value + 1),
+                    1_200
+                  );
+                }
+                return;
+              }
+              fail(
+                signalingFailure.code === "CameraNotFoundError"
+                  ? "The camera is still reconnecting. Its indexed history remains searchable."
+                  : signalingFailure.message ||
+                      "The video service could not start this camera."
+              );
+              return;
+            }
+            try {
+              await peerConnection.setRemoteDescription({
+                sdp: data.sdp,
+                type: data.type as RTCSdpType,
+              });
+              if (disposed) return;
+              for (const candidate of pendingCandidates.splice(0)) {
+                if (disposed) return;
+                await peerConnection.addIceCandidate(candidate);
+              }
+            } catch {
+              fail("The video answer could not be applied.");
+            }
+            return;
+          }
+
+          if (message.apiKey === "api/v1/live/iceCandidate") {
+            const candidates = Array.isArray(data) ? data : Object.values(data);
+            for (const candidate of candidates) {
+              if (
+                candidate &&
+                typeof candidate === "object" &&
+                "candidate" in candidate
+              ) {
+                await addRemoteCandidate(candidate as RTCIceCandidateInit);
+              }
             }
           }
-        }
-      })();
+        })();
+      };
     };
+    const remaining = Math.max(
+      0,
+      (liveSessionCooldowns.get(sessionKey) ?? 0) - Date.now()
+    );
+    if (remaining) startTimer = window.setTimeout(startSession, remaining);
+    else startSession();
 
     return () => {
       disposed = true;
+      const now = Date.now();
+      for (const [key, expires] of liveSessionCooldowns) {
+        if (expires <= now) liveSessionCooldowns.delete(key);
+      }
+      liveSessionCooldowns.set(sessionKey, now + LIVE_HANDOFF_DELAY_MS);
+      if (startTimer !== null) window.clearTimeout(startTimer);
+      if (frameTimer !== null) window.clearTimeout(frameTimer);
+      if (decodedLiveFrame.current === markDecodedFrame)
+        decodedLiveFrame.current = null;
       if (websocket?.readyState === WebSocket.OPEN && mediaSessionId) {
         send("api/v1/live/stream/stop", { mediaSessionId, peerId });
       }
@@ -564,7 +656,8 @@ export function VisionStreamCanvas({
           alt=""
           aria-hidden="true"
           onLoad={(event) => {
-            if (event.currentTarget.naturalWidth > 0) setLoadedPosterUrl(posterUrl);
+            if (event.currentTarget.naturalWidth > 0)
+              setLoadedPosterUrl(posterUrl);
           }}
           onError={() => setLoadedPosterUrl(null)}
         />
@@ -574,7 +667,10 @@ export function VisionStreamCanvas({
         className="vi-stream-video"
         style={{ visibility: hasVideoFrame ? "visible" : "hidden" }}
         aria-hidden={!hasVideoFrame}
-        onLoadedData={() => setHasVideoFrame(true)}
+        onLoadedData={() => {
+          if (liveSource) decodedLiveFrame.current?.();
+          else setHasVideoFrame(true);
+        }}
         onEmptied={() => setHasVideoFrame(false)}
         autoPlay
         muted
@@ -595,7 +691,7 @@ export function VisionStreamCanvas({
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
         onPlaying={() => {
-          setStatus("playing");
+          if (!liveSource) setStatus("playing");
           setIsPlaying(true);
         }}
         onError={(event) => {
@@ -603,7 +699,9 @@ export function VisionStreamCanvas({
           // Cleanup and initial mounting have no media source to fail.
           if (!video.getAttribute("src") && !video.srcObject) return;
           setHasVideoFrame(false);
-          setErrorMessage("Video could not be loaded. Retry or choose another source.");
+          setErrorMessage(
+            "Video could not be loaded. Retry or choose another source."
+          );
           setStatus(posterUrlRef.current ? "poster" : "error");
         }}
         onTimeUpdate={(event) => setReplayTime(event.currentTarget.currentTime)}

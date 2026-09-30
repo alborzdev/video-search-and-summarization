@@ -9,6 +9,7 @@ import { APPLICATION_TITLE } from '../constants/constants';
 import '../styles/globals.css';
 import '../styles/vision-intelligence.css';
 import '../styles/live-demo.css';
+import '../styles/live-cameras.css';
 import 'rsuite/dist/rsuite.min.css';
 import '../styles/rsuite-custom.css';
 

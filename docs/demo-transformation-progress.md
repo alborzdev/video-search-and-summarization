@@ -2468,3 +2468,28 @@ and Moondream remains stopped. Avatar entrance/exit accuracy needs a repeatable
 sequence; earlier semantic candidates do not prove people were present. See the
 [UI and rehearsal receipt](qa/2026-09-30-spark-tradeshow-ui.md), including the
 concept fidelity ledger, verification scope and remaining gates.
+## September 30 — Live cameras redesign
+
+Replaced the legacy floating controls, cropped camera backdrop and duplicate
+navigation with a full 16:9 video, normal-flow question/answer section, compact
+recording/indexing rail and optional processing details. Sources now browses
+live cameras and recorded footage with separate source-specific actions. The
+primary card opens a clean live preview; the native stored-picture endpoint
+still damages some images, which remains a fallback limitation. Live poster
+selection now uses the newest valid recorded interval, while replay poster
+selection keeps its previous early-frame behavior.
+
+Shared capture state preserves explicit recording controls and model/warmup
+gating across Live demo and Live cameras. Questions, playback and history reset
+on exact sensor/storage source changes; stale replies and control polls cannot
+overwrite the new source or a verified mutation. A same-camera preview handoff
+guard fixes VST decoder teardown/start races; no-frame connections expose a
+retry rather than an indefinite spinner. Presentation Mode keeps a single
+full-width column after the existing shell's sidebar width override. The real hospital question
+returns the observed empty scene, exact 25.001-second playback and a locally
+retained report. Desktop, narrow and optional-details checks pass; 72 affected
+tests, strict app TypeScript and changed-file ESLint pass. A bounded 898.133-second
+observation stays above 33.825 GiB with no new guard trip or reboot. Recording
+remains on, source analysis paused, detectors off and no live rules. Sim, model
+budgets and the stopped Moondream workload are unchanged. The built fallback
+requires deliberate packaging to receive these source-mounted UI changes.

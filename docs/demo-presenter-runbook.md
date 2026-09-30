@@ -44,6 +44,23 @@ Opening the page never starts capture or AI ingestion. Capture continues across
 workspace navigation until **Stop capture** is used. Presentation Mode adjusts
 the display; it does not qualify any workload.
 
+## Review cameras and recordings
+
+Open **Live cameras** for the source browser, then **Review source** for the
+hospital camera. The full camera frame stays visible; **Ask this camera** sits
+below it. The activity rail separates **Live recording** (needed for recent
+questions and replay) from **Search indexing** (background searchable history).
+The current hospital recording is on and search indexing is paused. Choose a
+starter to fill the question, then choose **Ask the video** to run it.
+
+**Video history** opens this source's existing history workflow; building history
+is an explicit additional processing action. **Processing details** reveals
+caption/tracking coverage and analysis profiles. Avoid changing profiles or
+resuming indexing just to present the core question/replay story. **Sources**
+returns to the browser, where recordings have their own **Open recording** action.
+The primary camera card uses a live preview; static VST pictures can still be
+damaged on this Spark, so use the advancing live video for the demonstration.
+
 ## Two-minute core story — watch, ask, verify, save
 
 | Action | Suggested wording | Visitor takeaway |

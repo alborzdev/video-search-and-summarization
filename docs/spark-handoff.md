@@ -27,8 +27,9 @@ and the alert verdict contract are repaired. The bounded retry produces three
 incidents and retained event playback passes; see the current
 [joint trial receipt](qa/2026-09-29-spark-sim-joint.md) for repair outcomes and
 post-trial state. Sustained ingestion and repeatable scene accuracy remain open.
-VSS stays up, with hospital source analysis paused, recording off and no active
-live rule. Sim remains running; Moondream stays stopped.
+The joint trial left hospital source analysis paused, recording off and no active
+live rule. Sim remains running; Moondream stays stopped. The current UI trial
+state is recorded below.
 
 The tradeshow UI now opens a live Sim desk: scene preview, source-scoped
 questions, explicit recording controls, inspected-interval replay, saved reports,
@@ -40,10 +41,27 @@ playback after capture stops. Its bounded 555.337-second observation stays above
 36.792 GiB available, with the 24 GiB guard active and no reboot. See the
 [tradeshow UI receipt](qa/2026-09-30-spark-tradeshow-ui.md) and current
 [presenter runbook](demo-presenter-runbook.md). Source analysis remains paused,
-recording is off, and no live rule is active. The built-image fallback still has
+recording is currently **on**, and no live rule is active. The built-image fallback still has
 the previous screen until deliberately packaged. The next rehearsal needs a
 repeatable avatar entrance/hold/exit sequence from the user; avatar accuracy and
 sustained tradeshow duration remain unqualified.
+
+Live cameras now uses a full 16:9 frame, questions and answers below the video,
+a compact recording/indexing rail, optional processing details, and a separate
+camera/recording browser. Opening either workspace never starts recording or
+analysis. The primary catalog camera uses a live preview; VST's stored-picture
+endpoint still returns damaged frames on this target, so remaining static
+previews and disconnected fallbacks can inherit that limitation. Capture gating
+is shared with the demo desk, and source changes cancel old questions and reset
+playback/history context. Same-camera preview navigation now waits for VST
+session teardown, with a decoded-frame deadline and explicit retry. The
+presentation layout also fills the display without retaining a sidebar column. The
+September 30 live camera check passes a fresh
+question, exact 25.001-second replay and locally retained report. Its bounded
+898.133-second observation records 33.825 GiB minimum available, unchanged boot
+ID and no new 24 GiB guard trip. The affected 72 tests and strict app typecheck
+pass. Current source remains recording on, analysis paused, detectors off,
+with no live rules; model budgets, Sim and Moondream's explicit opt-in are unchanged.
 
 The user's target is **Isaac Sim and VSS running together on the same Spark**,
 with a live RTSP stream from Sim. Do not stop or reconfigure Sim without discussing

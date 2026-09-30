@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 
+import { useLiveCapture } from "./useLiveCapture";
 import { LiveAnswerReport } from "./LiveAnswerReport";
 import { VisionStreamCanvas, type PlaybackStatus } from "./VisionStreamCanvas";
 import type { VisionAnalystRequest, VisionAnalystResponse } from "./analyst";
@@ -17,7 +18,7 @@ import {
   IconList,
   IconFileText,
 } from "@tabler/icons-react";
-import React, { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 
 interface Props {
   streams: VisionStream[];
@@ -72,11 +73,6 @@ function LiveSceneDesk({
   const [answer, setAnswer] = useState<VisionAnalystResponse | null>(null);
   const [asking, setAsking] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [capture, setCapture] = useState<"on" | "off" | "unknown">("unknown");
-  const [changing, setChanging] = useState(false);
-  const [captureError, setCaptureError] = useState<string | null>(null);
-  const [readyAt, setReadyAt] = useState(0);
-  const [now, setNow] = useState(Date.now());
   const [clip, setClip] = useState<string | null>(null);
   const [preparingClip, setPreparingClip] = useState(false);
   const [clipError, setClipError] = useState<string | null>(null);
@@ -87,20 +83,13 @@ function LiveSceneDesk({
     useState<PlaybackStatus>("connecting");
   const previewAvailable = playbackStatus === "playing";
   const mounted = useRef(true);
-  const captureMutation = useRef(false);
-  const captureGeneration = useRef(0);
-  const observedCapture = useRef<"on" | "off" | "unknown">("unknown");
   const disconnected =
     stream.connectionState === "offline" ||
     stream.connectionState === "removed";
-  const warming = capture === "on" && now < readyAt;
-  const canAsk =
-    visualAnalystAvailable === true &&
-    capture === "on" &&
-    !warming &&
-    !disconnected &&
-    !changing &&
-    !preparingClip;
+  const { capture, changing, error: captureError, warming, remainingSeconds,
+    canAsk, toggle: toggleCapture } = useLiveCapture(stream, {
+      visualAnalystAvailable, busy: asking || preparingClip,
+    });
   const source: VisionAnalystRequest["sources"][number] = {
     kind: "live",
     name: stream.name,
@@ -108,59 +97,10 @@ function LiveSceneDesk({
     streamId: stream.streamId,
   };
 
-  const applyCapture = useCallback((status: "on" | "off" | "unknown") => {
-    if (status === "on" && observedCapture.current !== "on") {
-      setReadyAt(Date.now() + 30_000);
-      setNow(Date.now());
-    } else if (status !== "on") {
-      setReadyAt(0);
-    }
-    observedCapture.current = status;
-    setCapture(status);
-  }, []);
-
   useEffect(() => {
     mounted.current = true;
     const controller = new AbortController();
-    // Read-only status and saved results. Opening the demo never starts capture or AI ingestion.
-    const readCapture = async () => {
-      if (captureMutation.current) return;
-      const generation = ++captureGeneration.current;
-      try {
-        const response = await fetch(
-          `/api/vision/live-capture?streamId=${encodeURIComponent(
-            stream.streamId
-          )}`,
-          { cache: "no-store", signal: controller.signal }
-        );
-        const payload = await response.json();
-        if (!response.ok || !["on", "off"].includes(payload.recordingStatus))
-          throw new Error(payload.error || "Capture status is unavailable.");
-        if (
-          mounted.current &&
-          !captureMutation.current &&
-          generation === captureGeneration.current
-        ) {
-          applyCapture(payload.recordingStatus);
-          setCaptureError(null);
-        }
-      } catch (failure) {
-        if (
-          !controller.signal.aborted &&
-          mounted.current &&
-          !captureMutation.current &&
-          generation === captureGeneration.current
-        ) {
-          applyCapture("unknown");
-          setCaptureError(
-            failure instanceof Error
-              ? failure.message
-              : "Capture status is unavailable."
-          );
-        }
-      }
-    };
-    void readCapture();
+    // Saved reviews are read-only; capture state is owned by useLiveCapture.
     void fetch("/api/vision/investigations", {
       cache: "no-store",
       signal: controller.signal,
@@ -189,55 +129,11 @@ function LiveSceneDesk({
         if (!controller.signal.aborted && mounted.current)
           setReportsLoading(false);
       });
-    const poll = window.setInterval(() => void readCapture(), 15_000);
     return () => {
       mounted.current = false;
       controller.abort();
-      window.clearInterval(poll);
     };
-  }, [applyCapture, stream.sensorId, stream.streamId]);
-
-  useEffect(() => {
-    if (!readyAt) return;
-    const tick = window.setInterval(() => setNow(Date.now()), 1_000);
-    return () => window.clearInterval(tick);
-  }, [readyAt]);
-
-  const toggleCapture = async () => {
-    if (changing || captureMutation.current || asking || capture === "unknown")
-      return;
-    setChanging(true);
-    captureMutation.current = true;
-    ++captureGeneration.current;
-    setCaptureError(null);
-    const action = capture === "on" ? "stop" : "start";
-    let verified = false;
-    try {
-      const response = await fetch("/api/vision/live-capture", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ streamId: stream.streamId, action }),
-      });
-      const payload = await response.json();
-      verified = ["on", "off"].includes(payload.recordingStatus);
-      if (mounted.current && verified) applyCapture(payload.recordingStatus);
-      if (!response.ok)
-        throw new Error(payload.error || "Capture could not be updated.");
-      if (!verified) throw new Error("Capture status could not be verified.");
-    } catch (failure) {
-      if (mounted.current) {
-        if (!verified) applyCapture("unknown");
-        setCaptureError(
-          failure instanceof Error
-            ? failure.message
-            : "Capture could not be updated."
-        );
-      }
-    } finally {
-      captureMutation.current = false;
-      if (mounted.current) setChanging(false);
-    }
-  };
+  }, [stream.sensorId, stream.streamId]);
 
   const ask = async (event: FormEvent) => {
     event.preventDefault();
@@ -413,10 +309,7 @@ function LiveSceneDesk({
               <strong>
                 {capture === "on"
                   ? warming
-                    ? `Capturing video · ready in ${Math.max(
-                        1,
-                        Math.ceil((readyAt - now) / 1000)
-                      )}s`
+                    ? `Capturing video · ready in ${remainingSeconds}s`
                     : "Live questions ready"
                   : capture === "off"
                   ? "Start capture to ask about new activity"
