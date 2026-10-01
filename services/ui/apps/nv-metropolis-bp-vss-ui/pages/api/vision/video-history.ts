@@ -8,8 +8,9 @@ import type {
   VideoHistoryStartRequest,
 } from "../../../components/vision-intelligence/videoHistory";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
+import { mkdir, readFile, unlink } from "node:fs/promises";
 import path from "node:path";
+import { writeVideoHistoryRecord as writeRecord } from "../../../server/vision/historyFiles";
 
 import { THOR_LIVE_CAPTION_PROFILE } from "../../../server/vision/liveCaptionProfile";
 import { isSourceLiveAlertFocused } from "../../../server/vision/liveAlertReservation";
@@ -42,7 +43,7 @@ const liveCaptionRepairAttemptedAt = new Map<string, number>();
 const LIVE_CAPTION_REPAIR_COOLDOWN_MS = 30_000;
 const LIVE_HISTORY_WINDOW_MS =
   Math.min(
-    24 * 60,
+    process.env.HARDWARE_PROFILE === "DGX-SPARK" ? 30 : 24 * 60,
     Math.max(
       5,
       Number(process.env.VISION_HISTORY_LIVE_WINDOW_MINUTES || 30)
@@ -74,18 +75,6 @@ function recordPath(sourceId: string): string {
 
 async function readRecord(sourceId: string): Promise<VideoHistoryRecord> {
   return JSON.parse(await readFile(recordPath(sourceId), "utf8"));
-}
-
-async function writeRecord(record: VideoHistoryRecord): Promise<void> {
-  const temporary = path.join(
-    STORE_DIR,
-    `.${record.sourceId}.${process.pid}.${Date.now()}.tmp`
-  );
-  await writeFile(temporary, JSON.stringify(record, null, 2), {
-    encoding: "utf8",
-    flag: "wx",
-  });
-  await rename(temporary, recordPath(record.sourceId));
 }
 
 async function jsonRequest<T>(
@@ -509,6 +498,10 @@ async function buildReplayHistory(
   previous?: VideoHistoryRecord
 ): Promise<VideoHistoryRecord> {
   const timeline = await sourceTimeline(request.source.id);
+  if (process.env.HARDWARE_PROFILE === "DGX-SPARK" &&
+      Date.parse(timeline.endTime) - Date.parse(timeline.startTime) > 30 * 60_000) {
+    throw new HistoryError("Spark replay history supports at most 30 minutes per build. Select a shorter recording to build searchable history.", 422);
+  }
   const params = new URLSearchParams({
     container: "mp4",
     disableAudio: "true",

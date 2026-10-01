@@ -15,6 +15,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Fail if parsing or a topic-creation command fails; an empty topic list must
+# not make the one-shot initializer appear successful.
+set -euo pipefail
+
+# Prefer a bundled or previously cached binary. Desktop cache-only startup
+# must never attempt the download fallback.
+if command -v jq >/dev/null 2>&1; then
+    jq --version >/dev/null
+elif [ -x "${HOME}/jqbin/jq" ]; then
+    export PATH="${HOME}/jqbin:${PATH}"
+    jq --version >/dev/null
+elif [ "${KAFKA_INIT_OFFLINE:-false}" = "true" ]; then
+    echo "Offline Kafka initialization requires a cached jq binary" >&2
+    exit 1
+else
 # installing required binaries
 ARCH=$(uname -m)
 JQ_URL=""
@@ -29,10 +44,12 @@ else
 fi
 
 mkdir -p ~/jqbin
-curl -L -o ~/jqbin/jq "$JQ_URL"
+curl --fail -L -o ~/jqbin/jq "$JQ_URL"
 chmod +x ~/jqbin/jq
 
-export PATH="/home/appuser/jqbin:${PATH}"
+export PATH="${HOME}/jqbin:${PATH}"
+jq --version >/dev/null
+fi
 
 # bootstrap kafka hosts
 KAFKA_HOST=${BOOTSTRAP_HOST:-localhost}
@@ -84,5 +101,5 @@ then
       kafka-topics --bootstrap-server $KAFKA_HOST:$KAFKA_PORT --list
 else 
   echo "Kafka is not healthy, Please check if Kafka is Running and $KAFKA_HOST:$KAFKA_PORT is reachable"
-
+  exit 1
 fi

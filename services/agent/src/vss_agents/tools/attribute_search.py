@@ -37,6 +37,7 @@ from pydantic import Field
 from vss_agents.embed.embed import EmbedClient
 from vss_agents.embed.rtvi_cv_embed import RTVICVEmbedClient
 from vss_agents.tools.vst.snapshot import build_screenshot_url
+from vss_agents.tools.vst.utils import get_name_to_stream_id_map
 from vss_agents.utils.es_client import VSSESClient
 from vss_agents.utils.time_measure import TimeMeasure
 from vss_agents.utils.uuid_string import is_standard_uuid_string
@@ -52,6 +53,14 @@ MIN_CLIP_DURATION_SECONDS = 1.0
 
 # Default behavior index name — shared across SearchConfig, SearchAgentConfig, AttributeSearchConfig
 DEFAULT_BEHAVIOR_INDEX = "mdx-behavior-2025-01-01"
+
+
+class ReferenceEmbeddingError(ValueError):
+    """An exact selected track could not supply a genuine appearance vector."""
+
+    def __init__(self, message: str, code: str) -> None:
+        super().__init__(message)
+        self.code = code
 
 
 def resolve_index_by_source_type(
@@ -489,7 +498,7 @@ async def _fetch_object_embedding(
         "query": {"term": {"object.id.keyword": object_id}},
         "size": 1,
         "sort": [{"timestamp": {"order": "desc"}}],
-        "_source": ["embeddings.vector"],
+        "_source": {"includes": ["embeddings.vector"], "exclude_vectors": False},
     }
     response = await es.search(index=search_index_str, body=query)
     hits = response["hits"]["hits"]
@@ -511,6 +520,7 @@ async def _fetch_reference_object_embedding(
     timestamp: datetime,
     behavior_index: str | list[str],
     es: AsyncElasticsearch,
+    sensor_aliases: list[str] | None = None,
 ) -> list[float]:
     """Fetch the embedding for one unambiguously identified tracked object.
 
@@ -534,13 +544,17 @@ async def _fetch_reference_object_embedding(
         ValueError: If the exact object segment is missing or has no embedding.
     """
     search_index_str = behavior_index if isinstance(behavior_index, str) else ",".join(behavior_index)
+    aliases = sensor_aliases or [sensor_name]
+    behavior_sensor_filter = (
+        {"term": {"sensor.id.keyword": aliases[0]}} if len(aliases) == 1 else {"terms": {"sensor.id.keyword": aliases}}
+    )
     timestamp_iso = timestamp.isoformat()
     query = {
         "query": {
             "bool": {
                 "filter": [
                     {"term": {"object.id.keyword": object_id}},
-                    {"term": {"sensor.id.keyword": sensor_name}},
+                    behavior_sensor_filter,
                     {"range": {"timestamp": {"lte": timestamp_iso}}},
                     {"range": {"end": {"gte": timestamp_iso}}},
                 ]
@@ -552,10 +566,17 @@ async def _fetch_reference_object_embedding(
             {"end": {"order": "asc"}},
             {"Id.keyword": {"order": "asc"}},
         ],
-        "_source": ["embeddings.vector"],
+        "_source": {"includes": ["embeddings.vector"], "exclude_vectors": False},
     }
-    response = await es.search(index=search_index_str, body=query)
+    try:
+        response = await es.search(index=search_index_str, body=query, ignore_unavailable=True)
+    except Exception as error:
+        raise ReferenceEmbeddingError(
+            "The visual-similarity index could not be read. Check the search service and try again.",
+            "REFERENCE_INDEX_UNAVAILABLE",
+        ) from error
     hits = response["hits"]["hits"]
+    found_reference = bool(hits)
     reference = f"object ID '{object_id}' on sensor '{sensor_name}' at '{timestamp_iso}'"
     if hits:
         embeddings = hits[0]["_source"].get("embeddings", {})
@@ -577,7 +598,11 @@ async def _fetch_reference_object_embedding(
         "query": {
             "bool": {
                 "filter": [
-                    {"term": {"sensorId.keyword": sensor_name}},
+                    (
+                        {"term": {"sensorId.keyword": aliases[0]}}
+                        if len(aliases) == 1
+                        else {"terms": {"sensorId.keyword": aliases}}
+                    ),
                     {
                         "range": {
                             "timestamp": {
@@ -597,20 +622,65 @@ async def _fetch_reference_object_embedding(
         },
         "size": 10,
         "sort": [{"timestamp": {"order": "desc"}}],
-        "_source": ["timestamp", "objects.id", "objects.embedding.vector"],
+        "_source": {
+            "includes": ["timestamp", "objects.id", "objects.embedding.vector"],
+            "exclude_vectors": False,
+        },
     }
-    raw_response = await es.search(index=raw_index_str, body=raw_query)
+    try:
+        raw_response = await es.search(index=raw_index_str, body=raw_query, ignore_unavailable=True)
+    except Exception as error:
+        raise ReferenceEmbeddingError(
+            "The selected detection's visual features could not be read. Check the search service and try again.",
+            "REFERENCE_INDEX_UNAVAILABLE",
+        ) from error
     for hit in raw_response["hits"]["hits"]:
         for raw_object in hit["_source"].get("objects", []):
             if str(raw_object.get("id")) != object_id:
                 continue
+            found_reference = True
             vector = raw_object.get("embedding", {}).get("vector", [])
             if vector:
                 return [float(value) for value in vector]
 
-    if hits:
-        raise ValueError(f"Reference {reference} has no embedding vector")
-    raise ValueError(f"Reference {reference} not found in behavior or raw detector indexes")
+    if found_reference:
+        raise ReferenceEmbeddingError(
+            f"Reference {reference} has no embedding vector. Appearance features have not been generated for this track.",
+            "REFERENCE_VECTOR_UNAVAILABLE",
+        )
+    raise ReferenceEmbeddingError(
+        f"Reference {reference} not found in behavior or raw detector indexes", "REFERENCE_NOT_INDEXED"
+    )
+
+
+async def _reference_sensor_aliases(sensor_id: str, vst_internal_url: str | None) -> list[str]:
+    """Use only the selected UUID and catalog names proven to identify that UUID."""
+    aliases = [sensor_id]
+    try:
+        async with asyncio.timeout(4):
+            catalog = await get_name_to_stream_id_map(vst_internal_url)
+        aliases.extend(name for name, stream_id in catalog.items() if stream_id == sensor_id and name != sensor_id)
+    except Exception:
+        # Retained UUID-indexed evidence can still be inspected while VST is
+        # unavailable. Unverified display names must never broaden the seed.
+        logger.warning("Could not verify reference source name; resolving the exact stream ID only")
+    return list(dict.fromkeys(aliases))
+
+
+def _is_reference_segment(
+    result: "AttributeSearchResult", object_id: str, aliases: list[str], timestamp: datetime
+) -> bool:
+    """Exclude the selected occurrence without hiding reused track IDs later."""
+    metadata = result.metadata
+    if metadata.sensor_id not in aliases or str(metadata.object_id) != object_id:
+        return False
+    try:
+        start = datetime.fromisoformat((metadata.start_time or metadata.frame_timestamp).replace("Z", "+00:00"))
+        end = datetime.fromisoformat((metadata.end_time or metadata.frame_timestamp).replace("Z", "+00:00"))
+        return start <= timestamp <= end
+    except (ValueError, TypeError):
+        # Missing timestamps cannot prove this is the selected occurrence.
+        return False
 
 
 async def search_by_object_embedding(
@@ -625,6 +695,9 @@ async def search_by_object_embedding(
     source_type: str = "video_file",
     reference_sensor_name: str | None = None,
     reference_timestamp: datetime | None = None,
+    reference_sensor_id: str | None = None,
+    reference_behavior_index: str | list[str] | None = None,
+    vst_internal_url: str | None = None,
 ) -> list["AttributeSearchResult"]:
     """Search for similar objects using a known object's embedding from the behavior index.
 
@@ -653,15 +726,60 @@ async def search_by_object_embedding(
     has_reference_timestamp = reference_timestamp is not None
     if has_reference_sensor != has_reference_timestamp:
         raise ValueError("reference_sensor_name and reference_timestamp must be supplied together")
+    if reference_sensor_id is not None and not has_reference_sensor:
+        raise ValueError("reference_sensor_id requires a reference sensor and timestamp")
+
+    aliases = (
+        await _reference_sensor_aliases(reference_sensor_id, vst_internal_url)
+        if reference_sensor_id is not None
+        else [reference_sensor_name]
+        if reference_sensor_name is not None
+        else []
+    )
 
     if reference_sensor_name is not None and reference_timestamp is not None:
-        embedding = await _fetch_reference_object_embedding(
-            object_id=object_id,
-            sensor_name=reference_sensor_name,
-            timestamp=reference_timestamp,
-            behavior_index=behavior_index,
-            es=es,
-        )
+        try:
+            embedding = await _fetch_reference_object_embedding(
+                object_id=object_id,
+                sensor_name=reference_sensor_name,
+                timestamp=reference_timestamp,
+                behavior_index=reference_behavior_index if reference_behavior_index is not None else behavior_index,
+                es=es,
+                sensor_aliases=aliases,
+            )
+        except ReferenceEmbeddingError as error:
+            if reference_sensor_id is None or error.code not in {
+                "REFERENCE_NOT_INDEXED",
+                "REFERENCE_VECTOR_UNAVAILABLE",
+            }:
+                raise
+            # The separately qualified appearance path crops real selected
+            # footage and uses its own model-specific vector index. It never
+            # mixes those vectors into the legacy behavior embedding space.
+            from vss_agents.tools.object_appearance_search import search_reference_appearance
+
+            appearance_results = await search_reference_appearance(
+                object_id=object_id,
+                reference_sensor_id=reference_sensor_id,
+                reference_sensor_name=reference_sensor_name,
+                reference_timestamp=reference_timestamp,
+                verified_sensor_aliases=aliases,
+                es=es,
+                source_type=source_type,
+                top_k=top_k + 1,
+                min_similarity=min_similarity,
+                video_sources=video_sources,
+                timestamp_start=timestamp_start,
+                timestamp_end=timestamp_end,
+                vst_internal_url=vst_internal_url,
+            )
+            if appearance_results is None:
+                raise error
+            return [
+                result
+                for result in appearance_results
+                if not _is_reference_segment(result, object_id, aliases, reference_timestamp)
+            ][:top_k]
         candidate_top_k = top_k + 1
     else:
         embedding = await _fetch_object_embedding(object_id, behavior_index, es)
@@ -679,11 +797,9 @@ async def search_by_object_embedding(
         source_type=source_type,
     )
 
-    if reference_sensor_name is not None:
+    if reference_timestamp is not None:
         results = [
-            result
-            for result in results
-            if not (result.metadata.sensor_id == reference_sensor_name and str(result.metadata.object_id) == object_id)
+            result for result in results if not _is_reference_segment(result, object_id, aliases, reference_timestamp)
         ]
     return results[:top_k]
 

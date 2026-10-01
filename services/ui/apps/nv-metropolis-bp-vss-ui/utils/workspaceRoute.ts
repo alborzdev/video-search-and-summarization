@@ -4,6 +4,7 @@ import type { PrimarySection } from '../components/vision-intelligence/types';
 
 const PRIMARY_SECTIONS: readonly PrimarySection[] = [
   'home',
+  'guided',
   'live',
   'monitoring',
   'explore',

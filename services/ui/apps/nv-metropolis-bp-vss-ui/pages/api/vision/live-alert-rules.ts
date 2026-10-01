@@ -228,7 +228,7 @@ async function deleteRule(req: NextApiRequest, res: NextApiResponse) {
           `/realtime/${encodeURIComponent(rule.id)}`,
           { method: 'DELETE' }
         );
-        if (!response.ok) {
+        if (!response.ok && response.status !== 404) {
           return res.status(response.status).json({
             error: apiError(payload, response.status, 'Alert service could not release the source rule'),
           });
@@ -256,7 +256,7 @@ async function deleteRule(req: NextApiRequest, res: NextApiResponse) {
       `/realtime/${encodeURIComponent(ruleId)}`,
       { method: 'DELETE' }
     );
-    if (!response.ok) {
+    if (!response.ok && response.status !== 404) {
       return res.status(response.status).json({
         error: apiError(payload, response.status, 'Alert service could not delete the rule'),
       });
@@ -273,7 +273,10 @@ async function deleteRule(req: NextApiRequest, res: NextApiResponse) {
     await removeLiveAlertReservation(ruleId);
 
     res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).json({ ...payload, historyResumed });
+    return res.status(200).json({
+      ...(response.status === 404 ? { id: ruleId, status: 'success', alreadyMissing: true } : payload),
+      historyResumed,
+    });
   });
 }
 

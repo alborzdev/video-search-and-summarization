@@ -47,7 +47,7 @@ export function LiveAnswerReport({result, source}: {result: VisionAnalystRespons
     <p>{record.evidence.every(item => item.media_status === "retained")
       ? "The inspected clip is cached locally with this report."
       : "The answer and timestamps are saved. Video still depends on source retention."}</p>
-    <a className="vi-analyst-investigate" href={record.report_url}>Open report</a>
+    <a className="vi-analyst-investigate" href={record.report_url} target="_blank" rel="noopener noreferrer">Open report</a>
   </div>;
   if (!open) return <button className="vi-analyst-investigate" type="button" onClick={() => setOpen(true)}>Save report</button>;
   return <form className="vi-live-report" aria-label="Save live answer report" onSubmit={async event => {

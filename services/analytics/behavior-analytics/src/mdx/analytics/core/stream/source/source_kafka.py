@@ -48,6 +48,7 @@ class SourceKafka(Source):
         self._config = config.kafka
         self._get_topic = config.get_kafka_topic
         self._consumers: dict[str, Consumer] = {}
+        self._assignment_messages: dict[str, list] = {}
 
 
     def read(
@@ -73,7 +74,8 @@ class SourceKafka(Source):
         group_id = self._get_group_id(topic, self._config.group, group_id_suffix)
         consumer = self._get_consumer(topic, group_id)
 
-        messages = consumer.consume(num_messages = self._config.consumer.maxPollRecords, timeout = self._config.consumer.timeout)
+        messages = self._assignment_messages.pop(group_id, [])
+        messages.extend(consumer.consume(num_messages = self._config.consumer.maxPollRecords, timeout = self._config.consumer.timeout))
 
         result = []
         for msg in messages:
@@ -101,6 +103,7 @@ class SourceKafka(Source):
             self._close_consumer_with_timeout(consumer)
 
         self._consumers.clear()
+        self._assignment_messages.clear()
 
     def _close_consumer_with_timeout(self, consumer: Consumer, timeout: float = CLOSE_TIMEOUT_SECONDS) -> bool:
         """Close consumer with a hard wall-clock bound on the caller's wait.
@@ -171,7 +174,12 @@ class SourceKafka(Source):
 
         for _ in range(max_attempts):
             # triggers group join and assignment
-            consumer.poll(interval_sec)
+            message = consumer.poll(interval_sec)
+            # poll() may deliver the first real frame in the same call that
+            # completes group assignment. Preserve it for read(), rather than
+            # silently losing detector data on every reconnect/startup.
+            if message is not None and not message.error():
+                self._assignment_messages.setdefault(group_id, []).append(message)
             if self._consumers.get(group_id):
                 return True
         return False

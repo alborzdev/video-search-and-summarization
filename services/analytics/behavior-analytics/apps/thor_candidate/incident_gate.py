@@ -37,3 +37,24 @@ def first_incident_per_activity(
     if was_reported:
         return []
     return incidents[:1]
+
+
+def gate_fov_incidents(
+    sensor_id: str,
+    incidents: list[T],
+    activity_active: bool,
+    reported_sensors: set[str],
+) -> list[T]:
+    """Bound generic FOV notifications while retaining authored rule events.
+
+    Always drain the state manager's complete incident list. Area/proximity
+    events must pass through even while a previously reported person remains
+    visible, and completed states must be consumed regularly.
+    """
+    fov_incidents = [incident for incident in incidents
+                     if getattr(incident, "category", None) == "FOV Count Violation"]
+    rule_incidents = [incident for incident in incidents
+                      if getattr(incident, "category", None) != "FOV Count Violation"]
+    return rule_incidents + first_incident_per_activity(
+        sensor_id, fov_incidents, activity_active, reported_sensors,
+    )

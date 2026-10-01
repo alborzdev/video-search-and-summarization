@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { mkdir, rm, unlink, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, unlink, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const sourceId = '11111111-1111-4111-8111-111111111111';
@@ -101,6 +101,79 @@ describe('source analysis orchestration', () => {
 
     expect(harness.state.statusCode).toBe(200);
     expect(harness.state.body).toEqual(expect.objectContaining({ captioning: 'paused', state: 'paused' }));
+  });
+
+  it.each([{ streams: [] }, { streams: [{ id: `${sourceId}-other`, chunk_duration: 30 }] }])(
+    'pauses saved history after a fresh offline boot when RTVI confirms the source is absent ($streams)',
+    async ({ streams }) => {
+      const historyPath = path.join(storeDirectory, `${sourceId}.json`);
+      const retainedHistory = await readFile(historyPath, 'utf8');
+      const actions: string[] = [];
+      global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (url.startsWith('http://agent.test/')) {
+          actions.push(JSON.parse(String(init?.body)).action);
+          return jsonResponse({ state: 'paused', steps: { detection: true, embedding: true } });
+        }
+        if (url === `http://vlm.test/v1/generate_captions/${sourceId}`) {
+          expect(init?.method).toBe('DELETE');
+          return jsonResponse({ code: 'BadParameter', message: `No such resource ${sourceId}` }, 400);
+        }
+        if (url === 'http://vlm.test/v1/streams/get-stream-info') {
+          expect(init?.method).toBe('GET');
+          return jsonResponse(streams);
+        }
+        throw new Error(`Unexpected request: ${url}`);
+      });
+      const harness = responseHarness();
+
+      await handler(request('pause'), harness.response);
+
+      expect(harness.state.statusCode).toBe(200);
+      expect(harness.state.body).toEqual(expect.objectContaining({
+        analysisActive: false, captioning: 'paused', state: 'paused',
+      }));
+      expect(actions).toEqual(['pause']);
+      expect(await readFile(historyPath, 'utf8')).toBe(retainedHistory);
+    }
+  );
+
+  it.each([
+    { captionStatus: 503, message: 'Caption worker unavailable' },
+    { captionStatus: 400, message: 'Invalid caption parameters' },
+    { captionStatus: 400, message: `No such resource ${sourceId}-other` },
+    { captionStatus: 400, message: `No such resource ${sourceId}`, streams: [{ id: sourceId, chunk_duration: 30 }] },
+    { captionStatus: 400, message: `No such resource ${sourceId}`, streams: [{}] },
+    { captionStatus: 400, message: `No such resource ${sourceId}`, streams: [], inventoryStatus: 503 },
+    { captionStatus: 0, message: 'Caption connection refused' },
+  ])('rolls back real or unverified caption pause failures without reporting paused ($message)', async failure => {
+    const actions: string[] = [];
+    global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url.startsWith('http://agent.test/')) {
+        const action = JSON.parse(String(init?.body)).action;
+        actions.push(action);
+        return jsonResponse({ state: action === 'resume' ? 'active' : 'paused' });
+      }
+      if (url === `http://vlm.test/v1/generate_captions/${sourceId}`) {
+        if (!failure.captionStatus) throw new Error(failure.message);
+        return jsonResponse({ code: 'BadParameter', message: failure.message }, failure.captionStatus);
+      }
+      if (url === 'http://vlm.test/v1/streams/get-stream-info') {
+        if (!('streams' in failure)) throw new Error('Unrelated failure must not be treated as missing');
+        return jsonResponse(failure.streams, failure.inventoryStatus || 200);
+      }
+      throw new Error(`Unexpected request: ${url}`);
+    });
+    const harness = responseHarness();
+
+    await handler(request('pause'), harness.response);
+
+    expect(harness.state.statusCode).toBe(502);
+    expect(harness.state.body).not.toHaveProperty('state', 'paused');
+    expect(harness.state.body).not.toHaveProperty('analysisActive', false);
+    expect(harness.state.body.error).toContain(failure.message);
+    expect(actions).toEqual(['pause', 'resume']);
   });
 
   it('resumes using the saved scenario and event recipe', async () => {

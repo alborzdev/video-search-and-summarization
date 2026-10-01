@@ -782,3 +782,32 @@ class TestSourceKafkaGetConsumerExceptionHandling:
         # Sleep happens between attempts (4 times for 5 attempts), each at 1.5s.
         assert mock_sleep.call_count == 4
         mock_sleep.assert_called_with(1.5)
+
+
+def test_assignment_preserves_first_live_frame_across_eight_hour_reconnects():
+    config = Mock()
+    config.kafka.group = "test-group"
+    config.kafka.consumer.maxPollRecords = 100
+    config.kafka.consumer.timeout = 0.1
+    config.get_kafka_topic.return_value = "raw"
+    source = SourceKafka(config)
+    consumer = Mock()
+    consumer.consume.return_value = []
+    group = source._get_group_id("raw", "test-group", None)
+    for hour in range(9):
+        message = Mock()
+        message.error.return_value = None
+        message.key.return_value = b"warehouse"
+        message.value.return_value = str(hour).encode()
+        message.headers.return_value = []
+        message.timestamp.return_value = (1, hour * 3_600_000)
+        def assign_and_deliver(_timeout):
+            source._on_assign(group)(consumer, [])
+            return message
+        consumer.poll.side_effect = assign_and_deliver
+        assert source._wait_for_assignment(consumer, group, max_attempts=1)
+        frames = source.read("raw")
+        assert len(frames) == 1
+        assert frames[0].value == str(hour).encode()
+        assert source._assignment_messages == {}
+        source._consumers.clear()

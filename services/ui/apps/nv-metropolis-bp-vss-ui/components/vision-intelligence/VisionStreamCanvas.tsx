@@ -148,7 +148,34 @@ export function VisionStreamCanvas({
   const [hasVideoFrame, setHasVideoFrame] = useState(false);
   const initialEventApplied = useRef(false);
   const autoRescanAttempted = useRef<string | null>(null);
+  const previousConnectionState = useRef(stream.connectionState);
   const liveSource = useMemo(() => isLiveStream(stream), [stream]);
+  useEffect(() => {
+    const previous = previousConnectionState.current;
+    previousConnectionState.current = stream.connectionState;
+    if (liveSource && playRequested && stream.connectionState === "online" &&
+        (previous === "offline" || previous === "removed") &&
+        (status === "error" || status === "poster")) {
+      autoRescanAttempted.current = null;
+      setRetryKey((value) => value + 1);
+    }
+  }, [liveSource, playRequested, status, stream.connectionState]);
+  useEffect(() => {
+    if (!liveSource || !playRequested) return;
+    const recover = () => {
+      if (document.visibilityState === "visible" &&
+          (status === "error" || status === "poster")) {
+        autoRescanAttempted.current = null;
+        setRetryKey((value) => value + 1);
+      }
+    };
+    window.addEventListener("online", recover);
+    document.addEventListener("visibilitychange", recover);
+    return () => {
+      window.removeEventListener("online", recover);
+      document.removeEventListener("visibilitychange", recover);
+    };
+  }, [liveSource, playRequested, status]);
   useEffect(() => {
     onPreviewAvailable?.(
       status === "playing" ||
@@ -247,13 +274,15 @@ export function VisionStreamCanvas({
     if (!vstApiUrl) return;
     let disposed = false;
     let objectUrl: string | null = null;
+    const controller = new AbortController();
 
     const loadPoster = async () => {
       try {
         const timelinesResponse = await fetch(
           `${vstApiUrl}/v1/storage/${encodeURIComponent(
             stream.streamId
-          )}/timelines`
+          )}/timelines`,
+          { signal: controller.signal }
         );
         let response: Response | null = null;
         if (timelinesResponse.ok) {
@@ -270,7 +299,8 @@ export function VisionStreamCanvas({
                 )}/picture?startTime=${encodeURIComponent(
                   startTime
                 )}&width=1280&height=720`
-              )
+              ),
+              { signal: controller.signal }
             );
           }
         }
@@ -285,14 +315,15 @@ export function VisionStreamCanvas({
                 stream.streamId
               )}/picture?width=1280&height=720`
             ),
-            { headers: { streamId: stream.streamId } }
+            { headers: { streamId: stream.streamId }, signal: controller.signal }
           );
         }
 
         if (!response?.ok || response.headers?.get("X-Vision-Image-Fallback"))
           return;
         const blob = await response.blob();
-        if (!blob.type.startsWith("image/")) return;
+        // Cleanup may have already run while the response body was loading.
+        if (disposed || !blob.type.startsWith("image/")) return;
         objectUrl = URL.createObjectURL(blob);
         if (!disposed) setPosterUrl(objectUrl);
       } catch {
@@ -303,6 +334,7 @@ export function VisionStreamCanvas({
     void loadPoster();
     return () => {
       disposed = true;
+      controller.abort();
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
   }, [liveSnapshotEnabled, liveSource, stream.streamId, vstApiUrl]);
@@ -595,6 +627,7 @@ export function VisionStreamCanvas({
         if (!timelineResponse.ok)
           throw new Error("Recording timeline is unavailable.");
         const timelines = (await timelineResponse.json()) as StreamTimeline[];
+        if (controller.signal.aborted) return;
         const timeline = timelines.at(-1);
         if (!timeline) throw new Error("This source has no recorded timeline.");
         setReplayTimeline(timeline);
@@ -614,6 +647,7 @@ export function VisionStreamCanvas({
         );
         if (!videoResponse.ok) throw new Error("Replay could not be prepared.");
         const data = (await videoResponse.json()) as { videoUrl?: string };
+        if (controller.signal.aborted) return;
         if (!data.videoUrl) throw new Error("Replay URL was not returned.");
 
         const apiOrigin = new URL(vstApiUrl).origin;

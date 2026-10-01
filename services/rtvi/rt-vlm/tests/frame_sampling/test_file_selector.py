@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 import unittest
 from utils.frame_sampling import FrameTimestamp as F, SamplingUnavailable, select_frame_targets
+from utils.media_io_kwargs import get_frame_sampling_params_from_media_io_kwargs
 
 source = Path(__file__).parents[2] / 'src/vlm_pipeline/video_file_frame_getter.py'
 node = next(n for n in ast.parse(source.read_text()).body
@@ -21,6 +22,25 @@ def chunk(start=0, end=50, offset=0):
 
 
 class FileSelectorTests(unittest.TestCase):
+    def test_per_request_live_question_budget_overrides_twenty_frame_default(self):
+        for duration, expected_frames in ((1, 1), (2, 2), (15, 15), (30, 20), (60, 20)):
+            with self.subTest(duration=duration):
+                params = get_frame_sampling_params_from_media_io_kwargs(
+                    {"video": {"num_frames": expected_frames}}
+                )
+                selector = Selector(
+                    params['num_frames_per_second_or_fixed_frames_chunk'],
+                    use_fps_for_chunking=params['use_fps_for_chunking'],
+                )
+                selector.set_chunk(chunk(0, duration * 1_000_000_000))
+                frames = [F(n * 100_000_000, n * 100_000_000) for n in range(duration * 10)]
+                selector.set_file_timestamps(frames)
+                self.assertEqual(len(selector._selected_pts_array), expected_frames)
+        # The explicit query override doesn't mutate the existing selector.
+        default_selector = Selector(20)
+        default_selector.set_chunk(chunk(0, 60_000_000_000))
+        self.assertEqual(len(default_selector._selected_pts_array), 20)
+
     def test_native_targets_and_python_selection_agree(self):
         selector = Selector(10)
         selector.set_chunk(chunk())

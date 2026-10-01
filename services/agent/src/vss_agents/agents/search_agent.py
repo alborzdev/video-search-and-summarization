@@ -476,7 +476,11 @@ async def search_agent(config: SearchAgentConfig, builder: Builder) -> AsyncGene
             await stream_name_resolver.resolve(search_output.data),
             search_agent_input,
         )
-        return SearchOutput(data=final_results, search_messages=search_output.search_messages)
+        return SearchOutput(
+            data=final_results,
+            search_messages=search_output.search_messages,
+            reference_status=search_output.reference_status,
+        )
 
     async def _execute_search_stream(
         search_agent_input: SearchAgentInput,

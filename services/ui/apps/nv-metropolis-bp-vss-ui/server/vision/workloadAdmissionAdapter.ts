@@ -81,16 +81,36 @@ async function readTelemetry(): Promise<WorkloadAdmissionFacts["telemetry"]> {
   }
 }
 
+export async function readSparkCapacity(): Promise<NonNullable<WorkloadAdmissionFacts["sparkCapacity"]>> {
+  const unknown = { state: "unknown" as const, guardActive: false, availableGiB: null, reserveGiB: null };
+  const token = process.env.HISTORY_METADATA_TOKEN;
+  if (!token) return unknown;
+  try {
+    const response = await fetch(process.env.SPARK_CAPACITY_URL || "http://127.0.0.1:8102/capacity", {
+      cache: "no-store", signal: AbortSignal.timeout(3_000),
+      headers: { "X-History-Metadata-Token": token },
+    });
+    if (!response.ok) return unknown;
+    const payload = await response.json();
+    const age = Date.now() / 1000 - payload.sampledAt;
+    if (payload.hardwareProfile !== "DGX-SPARK" || payload.guardActive !== true ||
+        !Number.isFinite(age) || age < 0 || age > 5 ||
+        !Number.isFinite(payload.availableGiB) || !Number.isFinite(payload.reserveGiB) || payload.reserveGiB < 24) return unknown;
+    return { state: "fresh", guardActive: true, availableGiB: payload.availableGiB, reserveGiB: payload.reserveGiB };
+  } catch { return unknown; }
+}
+
 /**
  * Observes the local workload state without acquiring, yielding, or starting
  * a visual lane. Keeping the probes here lets status routes and enforcement
  * share exactly the same conservative policy input.
  */
 export async function readWorkloadAdmissionFacts(): Promise<WorkloadAdmissionFacts> {
-  const [vlm, captions, telemetry, alertResult] = await Promise.all([
+  const isSpark = process.env.HARDWARE_PROFILE === "DGX-SPARK";
+  const [vlm, captions, telemetry, alertResult, sparkCapacity] = await Promise.all([
     readVlmReadiness(),
     readCaptionLane(),
-    readTelemetry(),
+    isSpark ? Promise.resolve({ state: "unknown" as const, gpuUtilizationPercent: null }) : readTelemetry(),
     readActiveLiveAlertReservations()
       .then((reservations) => ({
         rules: reservations.map(({ reservation, ruleId }) => ({
@@ -100,8 +120,11 @@ export async function readWorkloadAdmissionFacts(): Promise<WorkloadAdmissionFac
         state: "known" as const,
       }))
       .catch(() => ({ rules: [], state: "unknown" as const })),
+    isSpark ? readSparkCapacity() : Promise.resolve(undefined),
   ]);
   return {
+    runtime: isSpark ? "spark" : "thor",
+    sparkCapacity,
     captions,
     liveAlertReservations: alertResult,
     localCosmosReservation: readCosmosReservationState(),

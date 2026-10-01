@@ -5,6 +5,7 @@ import { parseWorkspace, workspaceHref } from '../../utils/workspaceRoute';
 describe('workspaceRoute', () => {
   it('accepts only known primary workspaces', () => {
     expect(parseWorkspace('monitoring')).toBe('monitoring');
+    expect(parseWorkspace('guided')).toBe('guided');
     expect(parseWorkspace(['live', 'system'])).toBe('live');
     expect(parseWorkspace('unknown')).toBe('home');
     expect(parseWorkspace(undefined)).toBe('home');

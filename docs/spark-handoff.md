@@ -2,6 +2,40 @@
 
 ## Status and purpose
 
+**October 1 pre-rehearsal audit:** The launcher now recovers late RTSP
+publication even with capture off, retries discovery outages, preserves warm
+sessions on UI/readiness failures, and finishes capture independently of a
+failed monitoring pause. The UI discovers cameras registered after an empty
+startup catalog and discards stale endpoint responses. Index fact requests have
+five-second deadlines. Event review and the all-camera overview include detector
+rule events, retain healthy feeds during a partial outage, and show incomplete
+coverage explicitly. Rule resume rechecks source capabilities; competing
+proximity rules cannot falsely appear active. Offline asset preflight passes,
+as do 94 UI/API regressions, 46 Spark tooling tests and strict app typechecking.
+The browser verified a fresh three-second forklift answer, a retained question
+draft through background polling, and the detector event feed. Launcher tests
+now isolate their state so shutdown checks cannot pause the real source.
+The active source is recording and indexing again, the test alert is paused,
+and Sim/models/reserve are unchanged. A disconnected reboot after these latest
+edits still needs the next rehearsal.
+
+**October 1 desktop entrypoints:** **Start VSS** and **Stop VSS** are installed on
+the Spark Desktop and in Applications. Start the Sim first, then Start VSS. The
+launcher verifies cached assets, starts guarded services, restores the current
+source-mounted app, and verifies fresh recording/indexing with detection and
+tracking. Cold startup and a repeat start pass; source identity and historical
+recording intervals are preserved. The current app entrypoint is
+`http://127.0.0.1:7777/?workspace=guided`, replacing the changing LAN address for
+on-device use. Internal container URLs use the Docker gateway `172.17.0.1` and
+the Sim is ingested through host loopback. Startup has no image pulls, model
+downloads, npm installs, or VST package installation. See
+[staff instructions](spark-desktop-startup.md) and
+[verification receipt](qa/2026-10-01-spark-desktop-launcher.md). At this checkpoint
+VSS is running with recording and source analysis on, visual rules paused,
+reserve 24 GiB, Sim unchanged and Moondream stopped. Historical checkpoint
+states below are superseded by this entry. A full disconnected show-duration
+rehearsal and the warehouse scene's accuracy remain unqualified.
+
 Updated September 30, 2026. This checkout contains the demo UI redesign, backend
 fixes, research, presenter runbook, tests, and an independent **Spark candidate**
 bootstrap. It is ready to hand to Codex on the Spark for deployment and continued
@@ -257,6 +291,61 @@ inherited control endpoints. A paused source must remain paused after explicit
 startup; do not infer live qualification from health alone.
 
 ## What is portable and what changes on Spark
+
+**October 1, second offline/full-day audit:** startup now applies an idempotent
+overlay to the existing cached graph, adding missing Docker file-log rotation and
+the patched Kafka source bind for both analytics services. It preserves model
+configuration, budgets, addresses and unrelated mounts. Only the two CPU analytics
+workers were recreated for this audit; fresh processing was observed, all loaded
+model container IDs were unchanged, and the restarted memory guard reported its
+existing 24 GiB floor. The guard tolerates status-write/Docker failures and retries
+stops while memory remains below that floor. Private settings/status writes are
+atomic, and launcher Docker readiness operations have deadlines.
+
+The UI cancels obsolete preview/replay responses, avoids late object-URL leaks,
+and retries failed previews on reconnect/background resume. Cosmos reservations
+now have cancellation, a maximum of three waiting requests and a 30-second queue
+deadline. Verification passed 52 Spark tooling tests, 46 affected UI/API tests,
+seven candidate-state regressions, the deployed Kafka reconnect regression, the
+strict app typecheck and the offline cache preflight. A browser question returned
+a real answer for a recorded three-second warehouse interval.
+
+Eleven read-only samples over 300.9 seconds showed continuously fresh semantic
+coverage and 36.63–36.83 GiB available memory. Video grew by 307,136,192 bytes,
+projecting to 29.4 GB for eight hours at this rate; measured total disk growth
+projects to 33.4 GB. About 1.27 TB remained free. Samples are saved privately at
+`.spark/desktop-logs/20261001-eight-hour-audit-samples.jsonl`. An actual eight-hour
+offline rehearsal with representative simulator activity remains unverified.
+The analytics workers have no processing heartbeat endpoint, and their Kafka
+configuration does not acknowledge offsets after successful batch processing;
+health alone cannot prove output, and automatic replay of detector events missed
+during a worker outage is not guaranteed. These are remaining qualification and
+recovery limits, not evidence of a successful full-day soak. See
+[desktop startup](spark-desktop-startup.md) for the operator flow.
+
+**Further October 1 fresh-boot triage:** the launcher tolerates a bounded Docker
+reboot delay, clears a partial model session before cold admission, derives init
+jobs from completion dependencies, reports dead/removing containers promptly,
+and preserves the original failure if shutdown cleanup also fails. Its local
+Sim probe now gates capture/indexing even when discovery has a stale online
+flag. The unavailable-publisher branch was exercised read-only against the live
+runtime; it returns an actionable message and preserves loaded model containers.
+
+VLM rule Resume validates the actual job and recreates only definitive missing
+jobs; failed/stopped jobs require Pause before Resume. Pause/Delete handle
+missing jobs idempotently and release persisted visual ownership. Cold startup
+also clears Sim-source orphaned ownership before source analysis, preventing a
+stale reservation from disabling questions after reboot. UI health polling no
+longer switches the selected camera or destroys drafts/workflow chapters, empty
+background catalogs retain desks with unknown health, and Connected requires
+actual playing live frames. Fresh recording can still permit questions while
+preview is unavailable. No service/model/Sim restart or reserve change was made
+in this pass. Offline assets/cache and isolated regression checks passed; the
+physical offline cold boot and eight-hour workload rehearsal remain unverified.
+The final scoped run passed 60 Spark tooling tests and 52 affected UI/API tests
+(112 total), plus the strict app typecheck and offline cache preflight. The real
+unavailable-publisher check returned after 46.4 seconds with unchanged model
+container IDs and the existing 24 GiB reserve.
 
 | Component | Spark candidate |
 |---|---|

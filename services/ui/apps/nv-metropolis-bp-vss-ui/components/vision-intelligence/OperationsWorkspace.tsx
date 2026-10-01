@@ -26,6 +26,7 @@ import {
 } from "./incidentModel";
 import type { OperationsView, VisionStream } from "./types";
 import { useVisionStreams } from "./useVisionStreams";
+import { isBeforeHistoryCutoff, useHistoryClear } from "./useHistoryClear";
 import { createPeerId, sourceKind, streamDisplayName } from "./utils";
 import { useDialogAccessibility } from "@aiqtoolkit-ui/common";
 import {
@@ -152,7 +153,7 @@ function AnalystAnswerPanel({
               ? "Inspecting local video evidence"
               : error
               ? "Could not complete this question"
-              : "Grounded in local video"}
+              : "AI observation · check the clip"}
           </span>
         </div>
         <button
@@ -168,8 +169,8 @@ function AnalystAnswerPanel({
         <div className="vi-analyst-answer-loading">
           <span className="vi-spinner" />
           <p>
-            The local VSS agent is inspecting the selected footage. This may
-            take a moment.
+            The agent retrieves a recent recorded interval, samples its frames,
+            and uses the local vision model to answer your question.
           </p>
         </div>
       )}
@@ -182,8 +183,9 @@ function AnalystAnswerPanel({
           </button>
         </div>
       )}
-      {result && !isLoading && !error && (
+      {result && !isLoading && (
         <>
+          {error && <p className="vi-analyst-question">Previous successful answer</p>}
           <p className="vi-analyst-question">“{result.query}”</p>
           <p className="vi-analyst-response">{result.answer}</p>
           <div className="vi-analyst-grounding">
@@ -344,7 +346,7 @@ function AnalystEvidenceClip({
           </span>
           <h2>{streamDisplayName(stream.name)}</h2>
           <p>
-            The Analyst answer was grounded in{" "}
+            The Analyst inspected{" "}
             {formatObservedRange({
               observedRange: range,
               observedWindow,
@@ -467,6 +469,18 @@ export function OperationsWorkspace({
   const controlVersions = useRef<Record<string, number>>({});
   const controlMutations = useRef(new Set<string>());
   const workspaceMounted = useRef(true);
+  const clearedCutoff = useHistoryClear((cutoff) => {
+    if (isBeforeHistoryCutoff(analystResult?.generatedAt, cutoff)) {
+      setAnalystResult(null);
+      setAnalystRequest(null);
+      setAnalystError(null);
+      setShowAnalystClip(false);
+      setConversationId(createPeerId());
+    }
+    setAnalyticsIncidents((previous) => previous.filter((incident) => !isBeforeHistoryCutoff(incident.timestamp, cutoff)));
+    setSourceIntelligenceById({});
+    setIntelligenceRefresh((value) => value + 1);
+  });
 
   const invalidateAsyncWork = useCallback(() => {
     workspaceMounted.current = false;
@@ -574,7 +588,7 @@ export function OperationsWorkspace({
     return () => {
       disposed = true;
     };
-  }, []);
+  }, [intelligenceRefresh]);
 
   const selectedEvidenceEvents = useMemo(() => {
     if (!selected) return [];
@@ -743,7 +757,7 @@ export function OperationsWorkspace({
     );
   }
 
-  const ask = async (query: string) => {
+  const ask = async (query: string, lookbackSeconds?: number) => {
     questionController.current?.abort();
     const controller = new AbortController();
     questionController.current = controller;
@@ -759,6 +773,7 @@ export function OperationsWorkspace({
       askedAt: new Date().toISOString(),
       conversationId,
       query,
+      ...(lookbackSeconds !== undefined ? { lookbackSeconds } : {}),
       scope: view === "grid" ? "all-sources" : "selected-source",
       sources: scopedStreams.map((stream) => ({
         kind: sourceKind(stream) === "Live" ? "live" : "replay",
@@ -776,7 +791,6 @@ export function OperationsWorkspace({
       })),
     };
     setAnalystRequest(request);
-    setAnalystResult(null);
     setAnalystError(null);
     setIsAsking(true);
     try {
@@ -796,7 +810,13 @@ export function OperationsWorkspace({
         throw new Error(
           payload.error || `Vision Analyst returned ${response.status}.`
         );
-      if (current()) setAnalystResult(payload);
+      if (current()) {
+        if (isBeforeHistoryCutoff(payload.generatedAt, clearedCutoff.current)) setAnalystRequest(null);
+        else {
+          setAnalystResult(payload);
+          setShowAnalystClip(false);
+        }
+      }
     } catch (requestError) {
       if (current()) {
         setAnalystError(
@@ -950,7 +970,7 @@ export function OperationsWorkspace({
   const toggleSelectedAnalysis = async () => {
     const state = sourceAnalysisStateById[selected.streamId] ?? "unknown";
     if (state === "unknown" || state === "changing") return;
-    await changeSelectedAnalysis(state === "paused" ? "resume" : "pause");
+    await changeSelectedAnalysis(state === "active" ? "pause" : "resume");
   };
 
   const setSelectedAnalysisProfile = async (profileId: string) => {
@@ -977,8 +997,8 @@ export function OperationsWorkspace({
       }}
       onInvestigate={() =>
         onInvestigate(
-          analystRequest.query,
-          analystRequest.scope === "selected-source" ? selected : undefined
+          analystResult?.query ?? analystRequest.query,
+          (analystResult?.scope ?? analystRequest.scope) === "selected-source" ? selected : undefined
         )
       }
       onPlayEvidence={
@@ -997,7 +1017,7 @@ export function OperationsWorkspace({
           ? analystRequest.sources[0]
           : undefined
       }
-      onRetry={() => void ask(analystRequest.query)}
+      onRetry={() => void ask(analystRequest.query, analystRequest.lookbackSeconds)}
       result={analystResult}
     />
   ) : undefined;

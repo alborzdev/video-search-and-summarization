@@ -1,0 +1,39 @@
+.trigger { align-items: center; background: transparent; border: 1px solid var(--vi-border-strong, #cbd5d5); border-radius: 8px; color: var(--vi-muted, #53616a); cursor: pointer; display: inline-flex; font-size: 12px; font-weight: 650; gap: 7px; padding: 9px 12px; white-space: nowrap; }
+.trigger:hover { background: var(--vi-surface-soft, #edf3f3); color: var(--vi-text, #152326); }
+.backdrop { align-items: center; background: rgba(0, 8, 11, .68); display: flex; inset: 0; justify-content: center; padding: 24px; position: fixed; z-index: 1500; }
+.dialog { background: var(--vi-surface-raised, #fff); border: 1px solid var(--vi-border-strong, #cbd5d5); border-radius: 18px; box-shadow: 0 24px 80px rgba(0, 0, 0, .35); color: var(--vi-text, #152326); max-height: calc(100dvh - 48px); max-width: 580px; outline: none; overflow-y: auto; padding: 25px; width: 100%; }
+.dialog header { align-items: flex-start; display: flex; gap: 20px; justify-content: space-between; }
+.eyebrow { color: var(--vi-muted, #53616a); font-size: 11px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+.dialog h2 { font-size: 24px; line-height: 1.25; margin: 6px 0 16px; }
+.dialog p { color: var(--vi-muted, #53616a); font-size: 13px; line-height: 1.65; margin: 0 0 18px; }
+.dialog button { align-items: center; background: var(--vi-surface-soft, #edf3f3); border: 1px solid var(--vi-border-strong, #cbd5d5); border-radius: 8px; color: var(--vi-text, #152326); cursor: pointer; display: inline-flex; font-family: inherit; font-size: 12px; font-weight: 650; gap: 7px; justify-content: center; padding: 10px 14px; }
+.dialog button:disabled { cursor: wait; opacity: .55; }
+.dialog button:focus-visible, .trigger:focus-visible { outline: 2px solid var(--vi-accent, #10aeb6); outline-offset: 3px; }
+.dialog .close { background: transparent; border: 0; padding: 4px; }
+.keep { align-items: flex-start; background: color-mix(in srgb, var(--vi-accent, #10aeb6) 7%, transparent); border: 1px solid color-mix(in srgb, var(--vi-accent, #10aeb6) 25%, transparent); border-radius: 10px; display: flex; gap: 10px; margin: 6px 0 20px; padding: 13px; }
+.keep > svg { color: var(--vi-accent, #10aeb6); flex-shrink: 0; margin-top: 2px; }
+.keep strong { font-size: 13px; }
+.keep p { font-size: 12px; line-height: 1.5; margin: 4px 0 0; }
+.counts { display: grid; gap: 9px; grid-template-columns: repeat(3, 1fr); }
+.counts > div { background: var(--vi-surface-soft, #edf3f3); border: 1px solid var(--vi-border, #dbe4e4); border-radius: 9px; display: flex; flex-direction: column; gap: 5px; padding: 12px; }
+.counts strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.counts span { color: var(--vi-muted, #53616a); font-size: 11px; }
+.dialog .cutoff { font-size: 11px; margin-top: 12px; }
+.dialog .warning { background: rgba(231, 153, 87, .1); border-radius: 8px; color: var(--vi-text, #152326); font-size: 12px; line-height: 1.6; margin: 14px 0; padding: 12px 15px; }
+ul.warning { padding-left: 30px !important; }
+.status { padding: 15px 0; }
+.steps { list-style: none; margin: 0; padding: 0; }
+.steps li { align-items: start; border-bottom: 1px solid var(--vi-border, #dbe4e4); display: flex; gap: 9px; padding: 12px 0; }
+.steps li > span { align-items: center; color: var(--vi-muted, #53616a); display: flex; justify-content: center; min-height: 18px; width: 18px; }
+.steps li > span i { background: currentColor; border-radius: 50%; height: 5px; width: 5px; }
+.steps li[data-status="complete"] > span { color: var(--vi-accent, #10aeb6); }
+.steps li[data-status="failed"] > span { color: #e99181; }
+.steps li > div { flex: 1; }
+.steps strong { font-size: 12px; }
+.steps p { font-size: 11px; margin: 4px 0 0; }
+.steps em { color: var(--vi-muted, #53616a); font-size: 11px; font-style: normal; text-align: right; }
+.dialog footer { background: var(--vi-surface-raised, #fff); bottom: 0; display: flex; gap: 9px; justify-content: flex-end; margin-top: 18px; padding-top: 10px; position: sticky; }
+.dialog .danger { background: #ae3937; border-color: #ae3937; color: #fff; }
+.dialog .danger:hover:not(:disabled) { background: #c14642; }
+.dialog .footnote { font-size: 11px; margin: 12px 0 0; text-align: right; }
+@media (max-width: 520px) { .backdrop { padding: 12px; } .dialog { max-height: calc(100dvh - 24px); padding: 20px; } .counts { grid-template-columns: repeat(2, 1fr); } .dialog footer { flex-wrap: wrap; } }

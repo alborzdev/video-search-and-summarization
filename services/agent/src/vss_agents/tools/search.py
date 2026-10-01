@@ -1056,6 +1056,11 @@ async def execute_core_search(
                     source_type=search_input.source_type,
                     reference_sensor_name=reference_object.sensor_name if reference_object is not None else None,
                     reference_timestamp=reference_object.timestamp if reference_object is not None else None,
+                    reference_sensor_id=reference_object.sensor_id if reference_object is not None else None,
+                    # Seed provenance is independent of the candidate source
+                    # filter: a live object can be compared with uploaded clips.
+                    reference_behavior_index="mdx-behavior-*" if reference_object is not None else None,
+                    vst_internal_url=config.vst_internal_url,
                 )
             except ValueError:
                 if reference_object is not None:
@@ -1063,6 +1068,10 @@ async def execute_core_search(
                 logger.warning(f"Object ID {oid} was not found or had no embedding")
                 return []
             except Exception as e:
+                if reference_object is not None:
+                    raise ValueError(
+                        "Visual similarity search failed. Check the visual index service and try again."
+                    ) from e
                 logger.warning(f"Object ID {oid} search failed: {e}")
                 return []
 
@@ -1070,7 +1079,7 @@ async def execute_core_search(
             try:
                 results_list = await asyncio.gather(*[_safe_object_search(oid) for oid in object_ids])
             except ValueError as error:
-                yield SearchOutput(data=[], search_messages=[str(error)])
+                yield SearchOutput(data=[], search_messages=[str(error)], reference_status=getattr(error, "code", None))
                 return
 
         all_results: list[AttributeSearchResult] = []
@@ -1079,9 +1088,11 @@ async def execute_core_search(
 
         # Tracker IDs are only unique within a sensor, so preserve the same ID
         # observed on another source while collapsing true duplicates.
-        seen: dict[tuple[str, str], AttributeSearchResult] = {}
+        seen: dict[tuple[str, ...], AttributeSearchResult] = {}
         for r in all_results:
-            key = (r.metadata.sensor_id, str(r.metadata.object_id))
+            key: tuple[str, ...] = (r.metadata.sensor_id, str(r.metadata.object_id))
+            if reference_object is not None:
+                key = (*key, r.metadata.start_time or r.metadata.frame_timestamp, r.metadata.end_time or "")
             if key not in seen or r.metadata.behavior_score > seen[key].metadata.behavior_score:
                 seen[key] = r
         attr_results = sorted(seen.values(), key=lambda r: r.metadata.behavior_score, reverse=True)[:top_k]
@@ -1801,6 +1812,10 @@ class SearchOutput(BaseModel):
     search_messages: list[str] = Field(
         default_factory=list,
         description="Non-fatal messages from the search pipeline to surface in the response.",
+    )
+    reference_status: str | None = Field(
+        default=None,
+        description="Structured availability status for a selected object's appearance vector.",
     )
 
 

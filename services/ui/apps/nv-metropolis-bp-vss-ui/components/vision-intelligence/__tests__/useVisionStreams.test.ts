@@ -51,3 +51,59 @@ it("tracks disconnection and recovery independently from the catalog and stops p
     expect(global.fetch).toHaveBeenCalledTimes(calls);
   } finally { unmount(); jest.useRealTimers(); }
 });
+
+it("discovers a camera registered after a successful empty startup catalog", async () => {
+  jest.useFakeTimers();
+  let registered = false;
+  global.fetch = jest.fn(async (input) => ({ ok: true, json: async () => String(input).endsWith('/sensor/status')
+    ? { camera: { state: 'online' } }
+    : registered ? [{ camera: [{ streamId: 'camera', name: 'Camera', type: 'Rtsp', url: 'rtsp://camera', metadata: {}, isMain: true }] }] : [] }));
+  const { result, unmount } = renderHook(() => useVisionStreams('/vst/api'));
+  try {
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.streams).toEqual([]);
+    expect(result.current.error).toBeNull();
+    registered = true;
+    await act(async () => { jest.advanceTimersByTime(15000); });
+    expect(result.current.streams[0].connectionState).toBe('online');
+  } finally { unmount(); jest.useRealTimers(); }
+});
+
+it("ignores an old catalog when the endpoint changes during a request", async () => {
+  let finishOld!: (response: unknown) => void;
+  global.fetch = jest.fn((input) => String(input).startsWith('/old')
+    ? new Promise((resolve) => { finishOld = resolve; })
+    : Promise.resolve({ ok: true, json: async () => [] }));
+  const { result, rerender, unmount } = renderHook(({ url }) => useVisionStreams(url), { initialProps: { url: '/old' } });
+  try {
+    await act(async () => { rerender({ url: '/new' }); });
+    await act(async () => { finishOld({ ok: true, json: async () => [{ camera: [{ streamId: 'camera', name: 'Old camera', type: 'Rtsp', url: 'rtsp://old', metadata: {}, isMain: true }] }] }); });
+    expect(result.current.streams).toEqual([]);
+    expect(result.current.isLoading).toBe(false);
+  } finally { unmount(); }
+});
+
+it('retains sources through an empty background startup snapshot while respecting catalog replacements and explicit refresh', async () => {
+  jest.useFakeTimers();
+  let catalog = [{ camera: [{ streamId: 'camera', name: 'Camera', type: 'Rtsp', url: 'rtsp://camera', metadata: {}, isMain: true }] }];
+  global.fetch = jest.fn(async (input) => ({ ok: true, json: async () => String(input).endsWith('/sensor/status') ? { camera: { state: 'online' } } : catalog }));
+  const { result, unmount } = renderHook(() => useVisionStreams('/vst/api'));
+  try {
+    await act(async () => { await Promise.resolve(); });
+    expect(result.current.streams[0].streamId).toBe('camera');
+    expect(result.current.streams[0].connectionState).toBe('online');
+    catalog = [];
+    await act(async () => { jest.advanceTimersByTime(15000); });
+    expect(result.current.streams[0].streamId).toBe('camera');
+    expect(result.current.streams[0].connectionState).toBe('unknown');
+    expect(result.current.error).toContain('restoring its source catalog');
+    catalog = [{ camera: [{ streamId: 'replacement', name: 'Camera', type: 'Rtsp', url: 'rtsp://camera', metadata: {}, isMain: true }] }];
+    await act(async () => { jest.advanceTimersByTime(15000); });
+    expect(result.current.streams[0].streamId).toBe('replacement');
+    expect(result.current.streams[0].connectionState).toBe('online');
+    expect(result.current.error).toBeNull();
+    catalog = [];
+    await act(async () => { await result.current.refresh(); });
+    expect(result.current.streams).toEqual([]);
+  } finally { unmount(); jest.useRealTimers(); }
+});

@@ -46,6 +46,7 @@ async function countDocuments(
         }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
+        signal: AbortSignal.timeout(5_000),
       }
     );
     if (!response.ok) return null;
@@ -81,6 +82,7 @@ async function latestDocumentTimestamp(
         }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
+        signal: AbortSignal.timeout(5_000),
       }
     );
     if (!response.ok) return null;
@@ -114,6 +116,7 @@ async function captionStatus(
         }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
+        signal: AbortSignal.timeout(5_000),
       }
     );
     if (response.status === 404) return { count: 0, latest: null };

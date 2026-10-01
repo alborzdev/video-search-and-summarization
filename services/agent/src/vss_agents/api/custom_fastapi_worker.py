@@ -36,6 +36,7 @@ from pydantic import model_validator
 
 from vss_agents.api.analysis_profiles import register_analysis_profile_routes
 from vss_agents.api.evidence_analysis import register_evidence_analysis_routes
+from vss_agents.api.history_clear import register_history_clear_routes
 from vss_agents.api.rtsp_delete import register_rtsp_delete_routes
 from vss_agents.api.rtsp_ingest import register_rtsp_ingest_routes
 from vss_agents.api.source_control import register_source_control_routes
@@ -72,13 +73,35 @@ class VisionInspectionRequest(BaseModel):
     asked_at: datetime
     current_time_seconds: float | None = Field(default=None, ge=0)
     duration_seconds: float | None = Field(default=None, gt=0)
+    live_start_time: datetime | None = None
+    live_end_time: datetime | None = None
+    lookback_seconds: int = Field(default=3, ge=1, le=60, strict=True)
+    frame_count: int | None = Field(default=None, ge=1, le=20, strict=True)
 
     model_config = {"extra": "forbid"}
 
     @model_validator(mode="after")
-    def validate_playback(self):
+    def validate_playback(self) -> "VisionInspectionRequest":
         if self.source_kind == "live" and (self.current_time_seconds is not None or self.duration_seconds is not None):
             raise ValueError("Live inspection requests cannot include replay offsets")
+        if self.source_kind == "replay" and (self.lookback_seconds != 3 or self.frame_count is not None):
+            raise ValueError("Recent-footage duration and frame count apply only to live inspections")
+        if self.frame_count is not None and self.frame_count != min(self.lookback_seconds, 20):
+            raise ValueError("Live inspections sample one frame per second, capped at 20 frames")
+        if (self.live_start_time is None) != (self.live_end_time is None):
+            raise ValueError("Provide both live recording window timestamps")
+        if self.live_start_time is not None and self.live_end_time is not None:
+            if self.source_kind != "live":
+                raise ValueError("Replay inspections cannot include a live recording window")
+            if self.live_start_time.tzinfo is None or self.live_end_time.tzinfo is None or self.asked_at.tzinfo is None:
+                raise ValueError("Live recording timestamps must include a timezone")
+            duration = (self.live_end_time - self.live_start_time).total_seconds()
+            if abs(duration - self.lookback_seconds) > 0.001:
+                raise ValueError("Live recording interval must match the selected recent-footage duration")
+            if self.live_end_time > self.asked_at - timedelta(seconds=5):
+                raise ValueError("Live recording windows must allow five seconds for storage")
+            if self.live_end_time < self.asked_at - timedelta(seconds=30):
+                raise ValueError("Live recording windows must include recent footage")
         return self
 
 
@@ -114,8 +137,14 @@ async def inspect_vision_source(builder: WorkflowBuilder, request: VisionInspect
         tool_name = "video_understanding_iso"
         asked_at = request.asked_at.astimezone(UTC)
         # Allow a small ingest/storage delay at the live edge.
-        start_timestamp: str | float | None = (asked_at - timedelta(seconds=30)).isoformat().replace("+00:00", "Z")
-        end_timestamp: str | float | None = (asked_at - timedelta(seconds=5)).isoformat().replace("+00:00", "Z")
+        end = request.live_end_time.astimezone(UTC) if request.live_end_time else asked_at - timedelta(seconds=5)
+        start = (
+            request.live_start_time.astimezone(UTC)
+            if request.live_start_time
+            else end - timedelta(seconds=request.lookback_seconds)
+        )
+        start_timestamp: str | float | None = start.isoformat().replace("+00:00", "Z")
+        end_timestamp: str | float | None = end.isoformat().replace("+00:00", "Z")
         observed_range = None
     else:
         tool_name = "video_understanding"
@@ -137,10 +166,22 @@ async def inspect_vision_source(builder: WorkflowBuilder, request: VisionInspect
             "end_timestamp": end_timestamp,
             "user_prompt": (
                 "Answer the visitor's question only from visible evidence in this video. "
-                "Be concise, name important objects or activity, and do not infer facts that are not visible. "
+                "First check whether the people, objects, or events mentioned in the question are actually visible; "
+                "the question is not evidence that they exist. If they are not visible, say so plainly. "
+                "For every question, including a general scene summary, check for clearly identifiable people "
+                "before describing any human activity. Identify a person only when visible human body features "
+                "support that identification. Distant colored shapes, red equipment, monitor carts, and detector "
+                "boxes alone do not establish a person. If a small or distant shape is ambiguous, describe it as "
+                "an unclear shape and do not assign clothing, walking, or other human activity to it. "
+                "Describe people and their activity only when people are clearly visible. "
+                "Claim motion, entering, or leaving only when changes across frames support it. "
+                "Do not treat text labels or detector boxes as proof of an object or event. "
+                "If the view is unclear, state that limitation instead of guessing. "
+                "Be concise and do not infer facts that are not visible. "
                 f"Question: {request.query.strip()}"
             ),
             "vlm_reasoning": False,
+            **({"frame_count": min(request.lookback_seconds, 20)} if request.source_kind == "live" else {}),
         }
     )
     answer_text = str(answer).strip()
@@ -150,6 +191,7 @@ async def inspect_vision_source(builder: WorkflowBuilder, request: VisionInspect
         "answer": answer_text,
         "evidence_tool": tool_name,
         "observed_range": observed_range,
+        **({"frame_count": min(request.lookback_seconds, 20)} if request.source_kind == "live" else {}),
         **(
             {"observed_window": {"start_time": start_timestamp, "end_time": end_timestamp}}
             if request.source_kind == "live"
@@ -311,5 +353,6 @@ class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
         register_analysis_profile_routes(app, self.config)
         register_rtsp_delete_routes(app, self.config)
         register_source_reset_routes(app, self.config)
+        register_history_clear_routes(app, self.config)
         register_source_control_routes(app, self.config)
         register_video_delete_routes(app, self.config)

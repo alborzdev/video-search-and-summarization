@@ -23,6 +23,7 @@ from typing import Literal
 
 import aiohttp
 import boto3
+from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.prompts import MessagesPlaceholder
@@ -328,6 +329,13 @@ class VideoUnderstandingInput(BaseModel):
         default=None,
         description="Enable VLM reasoning mode. If None, uses config.reasoning default.",
     )
+    frame_count: int | None = Field(
+        default=None,
+        ge=1,
+        le=20,
+        strict=True,
+        description="Optional per-request live question frame budget; capped at 20 frames.",
+    )
     model_config = {
         "extra": "forbid",
     }
@@ -513,6 +521,16 @@ def _split_vlm_image_messages(
     return batches
 
 
+def _frame_sampling_extra_body(base_vlm: BaseChatModel, num_frames: int) -> dict[str, Any]:
+    """Preserve provider-specific request fields while overriding live question sampling."""
+    # OpenAI-compatible providers expose extra_body directly; other wrappers
+    # retain it in model_kwargs. Values are heterogeneous provider parameters.
+    original = getattr(base_vlm, "extra_body", None)
+    if original is None:
+        original = getattr(base_vlm, "model_kwargs", {}).get("extra_body", {})
+    return {**(original or {}), "media_io_kwargs": {"video": {"num_frames": num_frames}}}
+
+
 @register_function(config_type=VideoUnderstandingConfig, framework_wrappers=[LLMFrameworkEnum.LANGCHAIN])
 async def video_understanding(config: VideoUnderstandingConfig, builder: Builder) -> AsyncGenerator[FunctionInfo]:
     base_vlm = await builder.get_llm(config.vlm_name, wrapper_type=LLMFrameworkEnum.LANGCHAIN)
@@ -642,6 +660,9 @@ async def video_understanding(config: VideoUnderstandingConfig, builder: Builder
         num_frames = min(int(video_length_seconds) * config.max_fps, config.max_frames)
         # Ensure at least 1 frame
         num_frames = max(num_frames, 1)
+        requested_frame_count = getattr(video_understanding_input, "frame_count", None)
+        if requested_frame_count is not None:
+            num_frames = min(requested_frame_count, config.max_frames)
         logger.info(
             f"Video length: {video_length_seconds:.1f}s, num_frames: {num_frames} (max_fps={config.max_fps}, max_frames={config.max_frames})"
         )
@@ -659,6 +680,11 @@ async def video_understanding(config: VideoUnderstandingConfig, builder: Builder
                 mm_processor_kwargs=mm_processor_kwargs,
                 media_io_kwargs=media_io_kwargs,
             )
+        elif requested_frame_count is not None:
+            # local RTVI uses an OpenAI-compatible transport. Its legacy profile
+            # extra_body selects 20 frames; media_io_kwargs overrides that per
+            # request in the existing RTVI decoder without changing the profile.
+            vlm = base_vlm.bind(extra_body=_frame_sampling_extra_body(base_vlm, num_frames))
         elif config.enable_audio and _is_omni_audio_model(model_name):
             # Nemotron Omni: MP4 audio is ignored unless use_audio_in_video is set.
             # See NVIDIA NIM Omni API docs (mm_processor_kwargs).

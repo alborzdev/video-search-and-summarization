@@ -6,6 +6,10 @@ import {
   parseVisionStreams,
 } from "../../../components/vision-intelligence/utils";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { readLiveRecordingWindow } from "../../../server/vision/liveRecordingWindow";
+import { DEFAULT_LOOKBACK_SECONDS, validLookbackSeconds } from "../../../components/vision-intelligence/footageWindow";
+
+import { visualQuestionBlockReason } from "../../../server/vision/visualQuestionReadiness";
 
 const ID_PATTERN = /^[A-Za-z0-9._:-]{1,160}$/;
 
@@ -95,7 +99,7 @@ function validCatalog(data: unknown): data is VisionStreamsApiResponse {
   );
 }
 
-async function recordingStatus(streamId: string): Promise<{
+async function recordingStatus(streamId: string, transitionRetries = 0): Promise<{
   recordingStatus: "on" | "off";
   vstRecordingMode: string;
 }> {
@@ -107,6 +111,13 @@ async function recordingStatus(streamId: string): Promise<{
     recordingStatus?: unknown;
   } | null;
   const mode = payload?.recordingStatus;
+  // An acknowledged manual start can precede recorder/database initialization:
+  // VIOS briefly emits "error" or "statusUnknown" before the real user mode.
+  // Wait a bounded interval for verified state; persistent errors still fail.
+  if ((mode === "statusUnknown" || mode === "error") && transitionRetries > 0) {
+    await new Promise(resolve => setTimeout(resolve, 250));
+    return recordingStatus(streamId, transitionRetries - 1);
+  }
   // VIOS translateRecordStateToString emits modes, not a boolean. Event mode
   // can wait for a trigger and discard footage outside triggered intervals.
   if (mode === "event") {
@@ -142,9 +153,15 @@ export default async function handler(
       .status(403)
       .json({ error: "Start or stop live capture from this application." });
   }
-  const body = req.body as { streamId?: unknown; action?: unknown } | null;
+  const body = req.body as { streamId?: unknown; action?: unknown; lookbackSeconds?: unknown } | null;
   const streamId = req.method === "GET" ? req.query.streamId : body?.streamId;
   const action = body?.action;
+  const requestedSeconds = req.method === "GET" ? req.query.lookbackSeconds : body?.lookbackSeconds;
+  const lookbackSeconds = requestedSeconds === undefined ? DEFAULT_LOOKBACK_SECONDS
+    : req.method === "GET" && typeof requestedSeconds === "string" ? Number(requestedSeconds) : requestedSeconds;
+  if (!validLookbackSeconds(lookbackSeconds)) {
+    return res.status(422).json({ error: "Choose a whole number from 1 to 60 seconds of footage." });
+  }
   if (
     typeof streamId !== "string" ||
     !ID_PATTERN.test(streamId) ||
@@ -195,7 +212,7 @@ export default async function handler(
     }
     let state: Awaited<ReturnType<typeof recordingStatus>>;
     try {
-      state = await recordingStatus(streamId);
+      state = await recordingStatus(streamId, req.method === "POST" && !mutationFailure ? 8 : 0);
     } catch (failure) {
       if (!mutationFailure) throw failure;
       return res.status(502).json({
@@ -225,7 +242,17 @@ export default async function handler(
           `Live capture did not ${action}; recording is still ${status}. Check the source connection and retry.`,
       });
     }
-    return res.status(200).json(result);
+    const readiness = status === "on"
+      ? await readLiveRecordingWindow(stream.sensorId, undefined, lookbackSeconds)
+      : null;
+    const questionBlockReason = await visualQuestionBlockReason();
+    return res.status(200).json({
+      ...result,
+      questionReady: readiness?.ready === true,
+      ...(questionBlockReason ? { questionBlockReason } : {}),
+      remainingSeconds: readiness?.remainingSeconds ?? null,
+      ...(readiness?.error ? { questionReadinessError: readiness.error } : {}),
+    });
   } catch (error) {
     return res.status(502).json({
       error:

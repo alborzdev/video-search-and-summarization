@@ -48,8 +48,12 @@ jest.mock("../HomeWorkspace", () => ({
   ),
 }));
 
-jest.mock("../CapabilitiesWorkspace", () => ({
-  CapabilitiesWorkspace: () => <div>Capabilities workspace</div>,
+jest.mock("../VssStoryWorkspace", () => ({
+  VssStoryWorkspace: () => <div>Capabilities workspace</div>,
+}));
+
+jest.mock("../GuidedDemoWorkspace", () => ({
+  GuidedDemoWorkspace: () => <div>Video workflow workspace</div>,
 }));
 
 jest.mock("../InvestigateWorkspace", () => ({
@@ -112,6 +116,15 @@ describe("VisionIntelligenceApp shell", () => {
     document.documentElement.classList.remove("dark");
     document.documentElement.style.removeProperty("color-scheme");
     window.localStorage.clear();
+  });
+
+  it("opens the source-backed guide from primary navigation", async () => {
+    render(<VisionIntelligenceApp />);
+    await screen.findByText("Home workspace");
+    fireEvent.click(screen.getByRole("button", { name: "Video workflow" }));
+    expect(await screen.findByText("Video workflow workspace")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Video workflow" })).toHaveAttribute("aria-current", "page");
+    expect(document.querySelector(".vi-app")).toHaveAttribute("data-workspace", "guided");
   });
 
   it("retains the investigation when the presenter visits another workspace", async () => {

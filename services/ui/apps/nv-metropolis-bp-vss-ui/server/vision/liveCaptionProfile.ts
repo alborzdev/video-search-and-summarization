@@ -12,6 +12,8 @@
  */
 export const THOR_LIVE_CAPTION_PROFILE = {
   chunk_duration: 30,
+  enable_audio: false,
+  enable_reasoning: false,
   max_tokens: 256,
   num_frames_per_second_or_fixed_frames_chunk: 4,
   use_fps_for_chunking: false,

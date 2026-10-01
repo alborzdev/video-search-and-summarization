@@ -24,8 +24,14 @@ export class CosmosReservationError extends Error {
   }
 }
 
-let reservationQueue: Promise<void> = Promise.resolve();
-let queuedReservations = 0;
+let reservationActive = false;
+interface ReservationWaiter {
+  resolve: () => void;
+  cleanup: () => void;
+}
+const reservationWaiters: ReservationWaiter[] = [];
+const MAX_WAITING_RESERVATIONS = 3;
+const RESERVATION_WAIT_MS = 30_000;
 
 export interface CosmosReservationState {
   active: boolean;
@@ -38,9 +44,56 @@ export interface CosmosReservationState {
  */
 export function readCosmosReservationState(): CosmosReservationState {
   return {
-    active: queuedReservations > 0,
-    waitingCount: Math.max(queuedReservations - 1, 0),
+    active: reservationActive,
+    waitingCount: reservationWaiters.length,
   };
+}
+
+function assertReservationCurrent(signal?: AbortSignal): void {
+  if (signal?.aborted) throw new CosmosReservationError(
+    "The visual inspection request expired. Try again when the local model is available.", 504
+  );
+}
+
+async function acquireReservation(signal?: AbortSignal): Promise<void> {
+  assertReservationCurrent(signal);
+  if (!reservationActive) {
+    reservationActive = true;
+    return;
+  }
+  if (reservationWaiters.length >= MAX_WAITING_RESERVATIONS) {
+    throw new CosmosReservationError("The local visual model is busy. Wait for the current inspection to finish, then retry.", 503);
+  }
+  await new Promise<void>((resolve, reject) => {
+    const cancel = (statusCode: number) => {
+      const index = reservationWaiters.indexOf(waiter);
+      if (index < 0) return;
+      reservationWaiters.splice(index, 1);
+      waiter.cleanup();
+      reject(new CosmosReservationError(
+        statusCode === 504 ? "The visual inspection request expired. Try again when the local model is available."
+          : "The local visual model is still busy. Wait for the current inspection to finish, then retry.",
+        statusCode,
+      ));
+    };
+    const abort = () => cancel(504);
+    const timer = setTimeout(() => cancel(503), RESERVATION_WAIT_MS);
+    const waiter: ReservationWaiter = {
+      resolve,
+      cleanup: () => { clearTimeout(timer); signal?.removeEventListener("abort", abort); },
+    };
+    reservationWaiters.push(waiter);
+    signal?.addEventListener("abort", abort, { once: true });
+    if (signal?.aborted) abort();
+  });
+}
+
+function releaseReservation(): void {
+  const next = reservationWaiters.shift();
+  if (next) {
+    next.cleanup();
+    next.resolve();
+  } else reservationActive = false;
 }
 
 function historyDirectory(): string {
@@ -195,22 +248,18 @@ async function resumeCaptioning(session: CaptionSession): Promise<boolean> {
  * model queue. Reservations are process-wide and serialized to avoid two UI
  * requests racing while captions are suspended.
  */
-export async function withCosmosReservation<T>(operation: () => Promise<T>): Promise<T> {
-  queuedReservations += 1;
-  const previous = reservationQueue;
-  let release: () => void = () => undefined;
-  reservationQueue = new Promise<void>((resolve) => {
-    release = resolve;
-  });
-  await previous;
-
+export async function withCosmosReservation<T>(operation: () => Promise<T>, signal?: AbortSignal): Promise<T> {
+  await acquireReservation(signal);
   const suspended: CaptionSession[] = [];
   try {
+    assertReservationCurrent(signal);
     const sessions = await activeCaptionSessions();
     for (const session of sessions) {
       await suspendCaptioning(session);
       suspended.push(session);
+      assertReservationCurrent(signal);
     }
+    assertReservationCurrent(signal);
     return await operation();
   } finally {
     try {
@@ -224,8 +273,7 @@ export async function withCosmosReservation<T>(operation: () => Promise<T>): Pro
       // Never strand later callers if restoration or even failure reporting
       // throws unexpectedly. The Agent boundary independently enforces the
       // same invariant for direct, non-UI callers.
-      release();
-      queuedReservations -= 1;
+      releaseReservation();
     }
   }
 }

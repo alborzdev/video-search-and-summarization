@@ -6,6 +6,20 @@ import React from "react";
 import { SystemWorkspace } from "../SystemWorkspace";
 
 describe("SystemWorkspace", () => {
+  it("labels Spark and displays measured reserve and guard facts", () => {
+    render(<SystemWorkspace
+      health={{ checkedAt: new Date().toISOString(), status: "online", services: [], hardwareProfile: "DGX-SPARK", thor: null,
+        sparkCapacity: { state: "fresh", guardActive: true, availableGiB: 36.5, reserveGiB: 24 } }}
+      panel="overview" onPanelChange={jest.fn()} onRefreshHealth={jest.fn()} rules={null} sources={null}
+      searchCoverage={null} searchCoverageUnavailable={false} workloadAdmissions={null} workloadCheckedAt={null}
+    />);
+    expect(screen.getByText("DGX SPARK")).toBeVisible();
+    expect(screen.getByText("36.5 GiB")).toBeVisible();
+    expect(screen.getByText("24 GiB")).toBeVisible();
+    expect(screen.getByText("Memory guard").closest("div")).toHaveTextContent("Active");
+    expect(screen.queryByText(/local Thor runtime/)).not.toBeInTheDocument();
+  });
+
   it("shows file spans without synthetic calendar dates and keeps live timestamps", () => {
     const base = {
       indexStatus: "indexed" as const,

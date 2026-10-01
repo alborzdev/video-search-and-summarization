@@ -5,6 +5,7 @@ export type PrimarySection =
   | 'events'
   | 'explore'
   | 'home'
+  | 'guided'
   | 'live'
   | 'monitoring'
   | 'system';

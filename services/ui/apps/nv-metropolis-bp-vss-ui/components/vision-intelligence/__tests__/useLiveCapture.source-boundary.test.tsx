@@ -71,13 +71,13 @@ describe("source-bound live capture", () => {
     global.fetch = originalFetch;
   });
 
-  it("ignores a late previous-source read and warms the newly selected source independently", async () => {
+  it("ignores a late previous-source read and uses the new source’s verified footage without a delay", async () => {
     jest.useFakeTimers({ now: new Date("2026-09-30T03:00:00Z") });
     const oldRead = deferred();
     global.fetch = jest.fn(async (input) =>
       String(input).includes(first.streamId)
         ? oldRead.promise
-        : json({ streamId: second.streamId, recordingStatus: "on" })
+        : json({ streamId: second.streamId, recordingStatus: "on", questionReady: true, remainingSeconds: 0 })
     ) as jest.Mock;
     const view = render(<CaptureHarness stream={first} />);
     expect(
@@ -87,25 +87,14 @@ describe("source-bound live capture", () => {
     await waitFor(() =>
       expect(screen.getByLabelText("Capture state")).toHaveTextContent("on")
     );
-    expect(screen.getByLabelText("Capture warmup")).toHaveTextContent("30");
+    expect(screen.getByLabelText("Capture warmup")).toHaveTextContent("0");
     await act(async () => {
       oldRead.resolve(
         json({ streamId: first.streamId, recordingStatus: "off" })
       );
     });
     expect(screen.getByLabelText("Capture state")).toHaveTextContent("on");
-    await act(async () => {
-      jest.advanceTimersByTime(29_000);
-    });
-    expect(
-      screen.getByRole("button", { name: "Ask this source" })
-    ).toBeDisabled();
-    await act(async () => {
-      jest.advanceTimersByTime(1_000);
-    });
-    expect(
-      screen.getByRole("button", { name: "Ask this source" })
-    ).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Ask this source" })).toBeEnabled();
     expect(
       (global.fetch as jest.Mock).mock.calls.every(([, init]) => !init?.method)
     ).toBe(true);

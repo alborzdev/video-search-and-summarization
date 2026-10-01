@@ -13,13 +13,13 @@ import {
 } from "@testing-library/react";
 import React from "react";
 
-let mockPlaybackStatus: "poster" | "playing" = "playing";
+let mockPlaybackStatus: "poster" | "playing" | "connecting" | "error" = "playing";
 function MockCanvas({
   stream,
   onPlaybackStatus,
 }: {
   stream: VisionStream;
-  onPlaybackStatus?: (status: "poster" | "playing") => void;
+  onPlaybackStatus?: (status: "poster" | "playing" | "connecting" | "error") => void;
 }) {
   React.useEffect(() => {
     onPlaybackStatus?.(mockPlaybackStatus);
@@ -62,7 +62,7 @@ const answer: VisionAnalystResponse = {
   evidenceTools: ["video_understanding_iso"],
   generatedAt: "2026-09-30T03:00:30Z",
   grounded: true,
-  query: "Describe the people and their activity",
+  query: "Describe the scene.",
   scope: "selected-source",
   sourceNames: [hospital.name],
   observedWindow: {
@@ -102,19 +102,23 @@ function mockApi({
     [hospital.streamId]: recordingStatus,
     [other.streamId]: recordingStatus,
   };
+  const readyAt: Record<string, number> = { [hospital.streamId]: recordingStatus === "on" ? 0 : Infinity, [other.streamId]: recordingStatus === "on" ? 0 : Infinity };
   const fetchMock = jest.fn(
     async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
       if (url.startsWith("/api/vision/live-capture?") && !init?.method) {
         const id = new URL(url, "http://ui.test").searchParams.get("streamId")!;
-        return jsonResponse({ streamId: id, recordingStatus: statuses[id] });
+        return jsonResponse({ streamId: id, recordingStatus: statuses[id], questionReady: statuses[id] === "on" && Date.now() >= readyAt[id], remainingSeconds: Math.max(0, Math.ceil((readyAt[id] - Date.now()) / 1000)) });
       }
       if (url === "/api/vision/live-capture" && init?.method === "POST") {
         const body = JSON.parse(String(init.body));
         statuses[body.streamId] = body.action === "start" ? "on" : "off";
+        readyAt[body.streamId] = body.action === "start" ? Date.now() + 20_000 : Infinity;
         return jsonResponse({
           streamId: body.streamId,
           recordingStatus: statuses[body.streamId],
+          questionReady: false,
+          remainingSeconds: body.action === "start" ? 20 : null,
         });
       }
       if (url === "/api/vision/investigations" && !init?.method)
@@ -146,7 +150,7 @@ function props(streams = [hospital]) {
 async function askQuestion() {
   fireEvent.click(
     screen.getByRole("button", {
-      name: "Describe the people and their activity",
+      name: "Describe the scene.",
     })
   );
   fireEvent.click(screen.getByRole("button", { name: "Ask the video" }));
@@ -166,10 +170,62 @@ describe("live demo workspace", () => {
   beforeEach(() => {
     mockPlaybackStatus = "playing";
   });
+  it("uses the chosen duration without remounting video or changing recording", async () => {
+    const fetchMock = mockApi({ recordingStatus: "on" });
+    render(<LiveDemoWorkspace {...props()} />);
+    await screen.findByText("Live questions ready");
+    const preview = screen.getByTestId("live-preview");
+    const input = screen.getByRole("spinbutton", { name: "Seconds of footage" });
+    expect(input).toHaveValue(3);
+    fireEvent.change(input, { target: { value: "2" } });
+    await screen.findByText("Live questions ready");
+    await askQuestion();
+    const call = fetchMock.mock.calls.find(([url]) => url === "/api/vision/analyst")!;
+    expect(JSON.parse(String(call[1]?.body)).lookbackSeconds).toBe(2);
+    expect(fetchMock.mock.calls.some(([url]) => String(url).includes("lookbackSeconds=2"))).toBe(true);
+    expect(screen.getByTestId("live-preview")).toBe(preview);
+    expect(fetchMock.mock.calls.some(([url, init]) => url === "/api/vision/live-capture" && init?.method === "POST")).toBe(false);
+  });
+
+  it("keeps the question but blocks submission while duration is blank or invalid", async () => {
+    const fetchMock = mockApi({ recordingStatus: "on" });
+    render(<LiveDemoWorkspace {...props()} />);
+    await screen.findByText("Live questions ready");
+    const question = screen.getByLabelText("Your question");
+    fireEvent.change(question, { target: { value: "Describe this scene" } });
+    for (const value of ["", "0", "61", "1.5"]) {
+      fireEvent.change(screen.getByRole("spinbutton", { name: "Seconds of footage" }), { target: { value } });
+      expect(screen.getByRole("button", { name: "Ask the video" })).toBeDisabled();
+      fireEvent.submit(question.closest("form")!);
+    }
+    expect(question).toHaveValue("Describe this scene");
+    expect(fetchMock.mock.calls.some(([url]) => url === "/api/vision/analyst")).toBe(false);
+  });
   afterEach(() => {
     cleanup();
     jest.useRealTimers();
     global.fetch = originalFetch;
+  });
+
+  it.each([
+    ["2026-09-30T03:00:31Z", false],
+    ["2026-09-30T03:00:29Z", true],
+  ])("clears previous answers at cutoff %s while keeping the live player and capture", async (cutoff, keepAnswer) => {
+    jest.useFakeTimers();
+    const fetchMock = mockApi({ recordingStatus: "on" });
+    render(<LiveDemoWorkspace {...props()} />);
+    await waitForCaptureWindow();
+    await askQuestion();
+    const preview = screen.getByTestId("live-preview");
+    const mutationsBefore = fetchMock.mock.calls.filter(([, init]) => init?.method === "POST").length;
+    const reportsBefore = fetchMock.mock.calls.filter(([url]) => url === "/api/vision/investigations").length;
+    await act(async () => { window.dispatchEvent(new CustomEvent("vision:history-cleared", { detail: { job: { status: "complete", cutoff } } })); });
+    await waitFor(() => expect(fetchMock.mock.calls.filter(([url]) => url === "/api/vision/investigations")).toHaveLength(reportsBefore + 1));
+    expect(screen.queryByText(answer.answer) !== null).toBe(keepAnswer);
+    expect(screen.getByTestId("live-preview")).toBe(preview);
+    expect(screen.getByRole("button", { name: "Stop capture" })).toBeEnabled();
+    expect(fetchMock.mock.calls.filter(([, init]) => init?.method === "POST")).toHaveLength(mutationsBefore);
+    expect(fetchMock.mock.calls.filter(([url, init]) => url === "/api/vision/live-capture" && init?.method === "POST")).toHaveLength(0);
   });
 
   it("opens the Sim source with read-only capture/report calls and no automatic inference", async () => {
@@ -213,7 +269,7 @@ describe("live demo workspace", () => {
     );
   });
 
-  it("requires thirty seconds of newly started capture before allowing a question", async () => {
+  it("requires verified recorded footage from a newly started capture before allowing a question", async () => {
     jest.useFakeTimers({ now: new Date("2026-09-30T03:00:00Z") });
     const fetchMock = mockApi();
     render(<LiveDemoWorkspace {...props()} />);
@@ -242,13 +298,13 @@ describe("live demo workspace", () => {
       )
     ).toEqual({ streamId: hospital.streamId, action: "start" });
     await act(async () => {
-      jest.advanceTimersByTime(29_000);
+      jest.advanceTimersByTime(18_000);
     });
     expect(
       screen.getByRole("button", { name: "Ask the video" })
     ).toBeDisabled();
     await act(async () => {
-      jest.advanceTimersByTime(1_000);
+      jest.advanceTimersByTime(3_000);
     });
     expect(screen.getByRole("button", { name: "Ask the video" })).toBeEnabled();
     expect(
@@ -256,36 +312,17 @@ describe("live demo workspace", () => {
     ).toHaveLength(1);
   });
 
-  it("requires a newly observed on state to collect an interval on each mount", async () => {
-    jest.useFakeTimers();
+  it("enables questions immediately when capture already has recorded footage, including after remount", async () => {
     const fetchMock = mockApi({ recordingStatus: "on" });
     const view = render(<LiveDemoWorkspace {...props()} />);
     await screen.findByRole("button", { name: "Stop capture" });
-    fireEvent.change(screen.getByLabelText("Your question"), {
-      target: { value: "What is visible?" },
-    });
-    expect(
-      screen.getByRole("button", { name: "Ask the video" })
-    ).toBeDisabled();
-    await act(async () => {
-      jest.advanceTimersByTime(29_000);
-    });
-    expect(
-      screen.getByRole("button", { name: "Ask the video" })
-    ).toBeDisabled();
-    await act(async () => {
-      jest.advanceTimersByTime(1_000);
-    });
+    fireEvent.change(screen.getByLabelText("Your question"), { target: { value: "What is visible?" } });
     expect(screen.getByRole("button", { name: "Ask the video" })).toBeEnabled();
     view.unmount();
     render(<LiveDemoWorkspace {...props()} />);
     await screen.findByRole("button", { name: "Stop capture" });
-    fireEvent.change(screen.getByLabelText("Your question"), {
-      target: { value: "What is visible now?" },
-    });
-    expect(
-      screen.getByRole("button", { name: "Ask the video" })
-    ).toBeDisabled();
+    fireEvent.change(screen.getByLabelText("Your question"), { target: { value: "What is visible now?" } });
+    expect(screen.getByRole("button", { name: "Ask the video" })).toBeEnabled();
     expect(fetchMock.mock.calls.every(([, init]) => !init?.method)).toBe(true);
   });
 
@@ -537,7 +574,7 @@ describe("live demo workspace", () => {
       screen.getByRole("button", { name: "Replay inspected clip" })
     );
     await screen.findByLabelText("Inspected video evidence");
-    fireEvent.change(screen.getByLabelText("Demo camera"), {
+    fireEvent.change(screen.getByLabelText("Live camera"), {
       target: { value: other.streamId },
     });
     await waitFor(() =>
@@ -562,4 +599,74 @@ describe("live demo workspace", () => {
       `/api/vision/live-capture?streamId=${other.streamId}`
     );
   });
+  it('retains the initially chosen generic camera and draft through health changes', async () => {
+    mockApi({ recordingStatus: 'on' });
+    const first = { ...hospital, name: 'Camera One', url: 'rtsp://camera/one' };
+    const view = render(<LiveDemoWorkspace {...props([first, other])} />);
+    await screen.findByText('Live questions ready');
+    fireEvent.change(screen.getByLabelText('Your question'), { target: { value: 'Keep my draft' } });
+    view.rerender(<LiveDemoWorkspace {...props([{ ...first, connectionState: 'offline' }, other])} />);
+    expect(screen.getByTestId('live-preview')).toHaveTextContent(first.streamId);
+    expect(screen.getByLabelText('Your question')).toHaveValue('Keep my draft');
+  });
+
+  it.each(['connecting', 'error', 'poster'] as const)('does not claim stale catalog online is Connected while the preview is %s', async (status) => {
+    mockPlaybackStatus = status;
+    mockApi({ recordingStatus: 'on' });
+    render(<LiveDemoWorkspace {...props()} />);
+    await screen.findByText('Live questions ready');
+    expect(screen.queryByText('Connected', { exact: true })).not.toBeInTheDocument();
+    expect(screen.getByText(status === 'connecting' ? 'Connecting to live video' : 'Live video unavailable', { exact: true })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Your question'), { target: { value: 'What happened in the recorded footage?' } });
+    expect(screen.getByRole('button', { name: 'Ask the video' })).toBeEnabled();
+  });
+
+  it('confirms Connected only from playing live frames, and keeps a stopped-publisher capture hint honest', async () => {
+    mockPlaybackStatus = 'error';
+    mockApi();
+    const view = render(<LiveDemoWorkspace {...props()} />);
+    await screen.findByText('Start capture to ask about new activity');
+    expect(screen.getByText('Capture needs a publishing camera to record new footage.')).toBeInTheDocument();
+    mockPlaybackStatus = 'playing';
+    view.unmount();
+    render(<LiveDemoWorkspace {...props()} />);
+    expect(await screen.findByText('Connected', { exact: true })).toBeInTheDocument();
+  });
+
+  it('explains visual monitoring contention and blocks presets without changing capture', async () => {
+    const api = mockApi({ recordingStatus: 'on' });
+    global.fetch = jest.fn(async (input, options) => {
+      const response = await api(input, options);
+      if (String(input).startsWith('/api/vision/live-capture?')) {
+        const payload = await response.json();
+        return jsonResponse({ ...payload, questionBlockReason: 'Pause visual monitoring in Alert rules to ask a question.' });
+      }
+      return response;
+    });
+    render(<LiveDemoWorkspace {...props()} />);
+    expect(await screen.findByText('Pause visual monitoring in Alert rules to ask a question.')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Describe the scene.' })).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Your question'), { target: { value: 'Keep my question' } });
+    expect(screen.getByRole('button', { name: 'Ask the video' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Stop capture' })).toBeEnabled();
+    expect(screen.queryByText('Visual AI is unavailable. Check System before asking.')).not.toBeInTheDocument();
+  });
+
+  it('preserves the last good answer when a later question is rejected', async () => {
+    const api = mockApi({ recordingStatus: 'on' });
+    render(<LiveDemoWorkspace {...props()} />);
+    await screen.findByText('Live questions ready');
+    await askQuestion();
+    fireEvent.click(screen.getByRole("button", { name: "Replay inspected clip" }));
+    await screen.findByLabelText("Inspected video evidence");
+    global.fetch = jest.fn(async (input, options) => input === '/api/vision/analyst'
+      ? jsonResponse({ error: 'Pause visual monitoring in Alert rules to ask a question.' }, false)
+      : api(input, options));
+    fireEvent.change(screen.getByLabelText('Your question'), { target: { value: 'Another question' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Ask the video' }));
+    await screen.findByText(/Pause visual monitoring in Alert rules to ask a question/);
+    expect(screen.getByText(answer.answer)).toBeInTheDocument();
+    expect(screen.getByLabelText("Inspected video evidence")).toHaveAttribute("src", "/retained/inspected.mp4");
+  });
+
 });

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import { ActivityInsightsWorkspace, incidentRule } from "../ActivityInsightsWorkspace";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import type { MonitoringRule } from "../monitoringRules";
 
@@ -29,6 +29,59 @@ describe("ActivityInsightsWorkspace", () => {
   });
 
   afterEach(() => jest.restoreAllMocks());
+
+  it.each(["activity", "insights"] as const)("explains incomplete %s coverage instead of claiming no events", async (initialMode) => {
+    global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({
+      incidents: [], investigations: [], rules: [], states: {}, partial: true, errors: { detector: "warming up" },
+    }) }));
+    render(<ActivityInsightsWorkspace initialMode={initialMode} onModeChange={jest.fn()} onOpenRules={jest.fn()} />);
+    expect(await screen.findByText("Event coverage is incomplete")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("detection rule events are unavailable");
+    expect(screen.queryByText("No detected events yet")).not.toBeInTheDocument();
+    expect(screen.queryByText("No event evidence to summarize yet")).not.toBeInTheDocument();
+  });
+
+  it("keeps available events visible when the other incident feed is unavailable", async () => {
+    global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({
+      incidents: [warehouseIncident], investigations: [], rules: [], states: {}, partial: true, errors: { visual: "warming up" },
+    }) }));
+    render(<ActivityInsightsWorkspace initialMode="activity" onModeChange={jest.fn()} onOpenRules={jest.fn()} />);
+    expect(await screen.findByText("1 loaded incident")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("visual rule events are unavailable");
+    expect(screen.getByRole("button", { name: "Open evidence" })).toBeEnabled();
+  });
+
+  it("shows a detector-backed rule match in Needs attention with its real rule name and pending review", async () => {
+    const rule = { id: "aisle-rule", name: "Forklift enters the aisle", engine: "deepstream", sourceId: "warehouse" };
+    global.fetch = jest.fn(async (input) => ({ ok: true, json: async () => String(input).includes("monitoring-rules")
+      ? { rules: [rule] }
+      : { incidents: [{ Id: "area-incident", category: "Restricted Area Violation", sensorId: "warehouse", objectIds: ["17"],
+          timestamp: "2026-10-01T17:59:48Z", end: "2026-10-01T18:00:10Z", info: { alertRuleId: "aisle-rule" } }], investigations: [], states: {} } })) as jest.Mock;
+    render(<ActivityInsightsWorkspace initialMode="activity" onModeChange={jest.fn()} onOpenRules={jest.fn()} />);
+    expect(await screen.findByText("Forklift enters the aisle")).toBeInTheDocument();
+    expect(screen.getByText("Pending review")).toBeInTheDocument();
+    expect(screen.getByText("Detection and tracking matched this rule. Review the footage.")).toBeInTheDocument();
+    expect(screen.queryByText("No events match this filter")).not.toBeInTheDocument();
+  });
+
+  it("refreshes reports and events after cleanup without changing sources or rules", async () => {
+    const record = { id: "old-report", title: "Previous briefing", created_at: "2026-09-28T10:00:00Z", severity: "low", disposition: "resolved", evidence: [], report_url: "/reports/old" };
+    let cleared = false;
+    const fetchMock = jest.fn(async (input: RequestInfo | URL) => ({
+      ok: true,
+      json: async () => String(input) === "/api/vision/investigations" ? { investigations: cleared ? [] : [record] } : { incidents: cleared ? [] : [warehouseIncident], rules: [], states: {} },
+    }));
+    global.fetch = fetchMock as jest.Mock;
+    render(<ActivityInsightsWorkspace initialMode="activity" onModeChange={jest.fn()} />);
+    await screen.findByText("Previous briefing");
+    const before = fetchMock.mock.calls.length;
+    cleared = true;
+    await act(async () => { window.dispatchEvent(new CustomEvent("vision:history-cleared", { detail: { job: { status: "partial", cutoff: "2026-10-01T12:00:00Z" } } })); });
+    await waitFor(() => expect(screen.queryByText("Previous briefing")).not.toBeInTheDocument());
+    await waitFor(() => expect(fetchMock.mock.calls.length).toBeGreaterThan(before));
+    expect(fetchMock.mock.calls.slice(before).map(([url]) => String(url))).toEqual(expect.arrayContaining(["/api/vision/incidents", "/api/vision/investigations", "/api/vision/incident-state", "/api/vision/monitoring-rules"]));
+    expect(screen.queryByText("1 incident")).not.toBeInTheDocument();
+  });
 
   it("explains missing insight evidence without presenting a zero confirmation rate", async () => {
     global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ incidents: [], investigations: [], rules: [], states: {} }) })) as jest.Mock;
@@ -263,4 +316,25 @@ describe("ActivityInsightsWorkspace", () => {
       "/api/vision/investigations?id=11111111-1111-4111-8111-111111111111&format=html"
     );
   });
+});
+
+it('filters events by exact source identifiers or name and saved reports by evidence source IDs', async () => {
+  const source = { name: 'Hospital corridor', sensorId: 'hospital-sensor', streamId: 'hospital-stream', url: 'rtsp://camera/digital-twin', vodUrl: '', isMain: true, metadata: {} };
+  const incidents = [source.sensorId, source.streamId, source.name, 'hospital-sensor-extra'].map((sensorId, index) => ({ ...warehouseIncident, Id: `event-${index}`, sensorId }));
+  const report = (id: string, sensor_id: string) => ({ id, title: `Report ${id}`, created_at: '2026-09-30T21:00:00Z', severity: 'low', disposition: 'resolved', evidence: [{ sensor_id }], report_url: `/reports/${id}` });
+  global.fetch = jest.fn(async input => ({ ok: true, json: async () => String(input).includes('/investigations')
+    ? { investigations: [report('sensor-match', source.sensorId), report('stream-match', source.streamId), report('unrelated', 'hospital-sensor-extra')] }
+    : { incidents, rules: [], states: {} } })) as jest.Mock;
+  render(<ActivityInsightsWorkspace source={source} initialMode="activity" onModeChange={jest.fn()} />);
+  await screen.findByText('3 incidents');
+  expect(screen.queryByText('hospital-sensor-extra')).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'Open report' })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Show saved reports (2)' }));
+  expect(screen.getByText('Report sensor-match')).toBeInTheDocument();
+  expect(screen.getByText('Report stream-match')).toBeInTheDocument();
+  expect(screen.queryByText('Report unrelated')).not.toBeInTheDocument();
+  const links = screen.getAllByRole('link', { name: 'Open report' });
+  expect(links).toHaveLength(2);
+  links.forEach(link => expect(link).toHaveAttribute('target', '_blank'));
+  expect(links[0]).toHaveAttribute('href', '/reports/sensor-match');
 });

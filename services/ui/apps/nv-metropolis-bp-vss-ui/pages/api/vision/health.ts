@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 import type { NextApiRequest, NextApiResponse } from "next";
+import { readSparkCapacity } from "../../../server/vision/workloadAdmissionAdapter";
 
 type ServiceKey =
   | "agent"
@@ -142,7 +143,8 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed." });
   }
 
-  const [video, agent, analytics, perception, embedding, vlm, llm, thor] =
+  const spark = process.env.HARDWARE_PROFILE === "DGX-SPARK";
+  const [video, agent, analytics, perception, embedding, vlm, llm, thor, sparkCapacity] =
     await Promise.all([
       probe(
         "video",
@@ -181,7 +183,8 @@ export default async function handler(
         "Nemotron synthesis",
         process.env.NEMOTRON_HEALTH_URL || "http://127.0.0.1:30081/v1/models"
       ),
-      readThorMetrics(),
+      spark ? Promise.resolve(null) : readThorMetrics(),
+      spark ? readSparkCapacity() : Promise.resolve(null),
     ]);
   const services = [video, agent, analytics, perception, embedding, vlm, llm];
   const healthy = services.filter((service) => service.ok).length;
@@ -194,5 +197,7 @@ export default async function handler(
     services,
     status,
     thor,
+    hardwareProfile: spark ? "DGX-SPARK" : thor ? "JETSON-THOR" : "EDGE-DEVICE",
+    sparkCapacity,
   });
 }

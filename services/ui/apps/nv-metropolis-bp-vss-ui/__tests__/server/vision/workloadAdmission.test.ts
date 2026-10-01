@@ -22,6 +22,21 @@ function facts(
 }
 
 describe("workload admission", () => {
+  it("uses the real Spark reserve margin while preserving exclusive visual lane gates", () => {
+    const spark = facts({ runtime: "spark", telemetry: { state: "unknown", gpuUtilizationPercent: null },
+      sparkCapacity: { state: "fresh", guardActive: true, availableGiB: 32, reserveGiB: 24 } });
+    expect(evaluateWorkloadAdmission("long_video_history_build", spark).decision).toBe("allow");
+    for (const capacity of [undefined, { ...spark.sparkCapacity!, state: "unknown" as const },
+      { ...spark.sparkCapacity!, guardActive: false }, { ...spark.sparkCapacity!, reserveGiB: 0 },
+      { ...spark.sparkCapacity!, availableGiB: Number.NaN }]) {
+      expect(evaluateWorkloadAdmission("long_video_history_build", { ...spark, sparkCapacity: capacity }).reasonCode).toBe("SPARK_CAPACITY_REQUIRED");
+    }
+    expect(evaluateWorkloadAdmission("long_video_history_build", { ...spark,
+      sparkCapacity: { ...spark.sparkCapacity!, availableGiB: 31.9 } }).reasonCode).toBe("SPARK_HEADROOM_REQUIRED");
+    expect(evaluateWorkloadAdmission("long_video_history_build", { ...spark,
+      liveAlertReservations: { state: "known", rules: [{ ruleId: "rule", sourceId: "camera" }] } }).reasonCode).toBe("LIVE_ALERT_RESERVATION_ACTIVE");
+    expect(evaluateWorkloadAdmission("long_video_history_build", facts({ telemetry: { state: "unknown", gpuUtilizationPercent: null } })).reasonCode).toBe("TELEMETRY_REQUIRED");
+  });
   it("evaluates every class from one shared observation snapshot", () => {
     const admissions = evaluateAllWorkloadAdmissions(facts());
 

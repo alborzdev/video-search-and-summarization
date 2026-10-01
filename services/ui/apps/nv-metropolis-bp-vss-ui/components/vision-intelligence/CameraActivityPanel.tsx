@@ -39,6 +39,7 @@ export function CameraActivityPanel({
   isAsking,
   controlError,
   capture,
+  livePreviewAvailable = false,
   visualAnalystAvailable,
   onToggleAnalysis,
   onSetAnalysisProfile,
@@ -54,6 +55,7 @@ export function CameraActivityPanel({
   isAsking: boolean;
   controlError: string | null;
   capture: ReturnType<typeof useLiveCapture>;
+  livePreviewAvailable?: boolean;
   visualAnalystAvailable?: boolean | null;
   onToggleAnalysis: () => void;
   onSetAnalysisProfile: (profileId: string) => void;
@@ -63,8 +65,9 @@ export function CameraActivityPanel({
     analysisProfile?.id ?? ""
   );
   const live = sourceKind(stream) === "Live";
+  const removed = stream.connectionState === "removed";
   const disconnected =
-    live && ["offline", "removed"].includes(stream.connectionState ?? "");
+    live && (removed || (stream.connectionState === "offline" && !livePreviewAvailable));
   const count = (value: number | null | undefined, suffix = "") =>
     value === null || value === undefined
       ? isLoading
@@ -131,7 +134,7 @@ export function CameraActivityPanel({
               isAsking ||
               capture.changing ||
               capture.capture === "unknown" ||
-              (disconnected && capture.capture === "off")
+              (removed && capture.capture === "off")
             }
             onClick={() => void capture.toggle()}
           >
@@ -168,23 +171,23 @@ export function CameraActivityPanel({
         </div>
         <p>
           {disconnected
-            ? "Check the camera or simulator connection before resuming analysis."
+            ? "Check the camera or simulator connection, then retry analysis to verify recovery."
             : !live
             ? "Search and inspect this recording at its playback position."
             : analysisState === "paused"
             ? "Earlier footage stays searchable. Resume to index new activity."
             : analysisState === "active"
-            ? "New footage is being processed for search. Check coverage below."
+            ? "Cosmos Embed turns video segments into searchable embeddings. Coverage below shows how recent the index is."
             : "Live analysis is not confirmed. Check readiness or retry this source."}
         </p>
         {live && (
           <button
             className="vi-camera-primary"
             type="button"
-            disabled={isUpdating || analysisState === "unknown" || disconnected}
+            disabled={isUpdating || analysisState === "unknown" || removed}
             onClick={onToggleAnalysis}
           >
-            {analysisState === "paused" ? (
+            {analysisState !== "active" ? (
               <IconPlayerPlayFilled size={16} />
             ) : (
               <IconPlayerPause size={16} />
@@ -195,6 +198,8 @@ export function CameraActivityPanel({
               ? "Analysis status unavailable"
               : analysisState === "paused"
               ? "Resume analysis"
+              : analysisState === "partial"
+              ? "Retry analysis"
               : "Pause analysis"}
           </button>
         )}
@@ -206,7 +211,7 @@ export function CameraActivityPanel({
       </section>
       <div className="vi-camera-metrics">
         <Metric
-          label="Indexed moments"
+          label="Searchable video segments"
           value={count(intelligence?.semanticSegments)}
         />
         {live && <Metric label="Searchable through" value={indexedTime} />}
@@ -229,7 +234,7 @@ export function CameraActivityPanel({
         <Metric
           label={live ? "Ask this camera" : "Ask this recording"}
           value={
-            disconnected
+            disconnected && !capture.canAsk
               ? "No live frames — camera disconnected"
               : visualAnalystAvailable !== true
               ? visualAnalystAvailable === false

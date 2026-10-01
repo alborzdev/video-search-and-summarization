@@ -41,7 +41,7 @@ export function EventReport({ onSaved, ...context }: EventContext & { onSaved?: 
   if (record) return <div className="vi-live-report" role="status">
     <strong>Event report saved</strong>
     <p>{record.evidence.every(item => item.media_status === "retained") ? "The event clip is cached locally with this report." : "The event and notes are saved. Video still depends on source retention."}</p>
-    <a className="vi-analyst-investigate" href={record.report_url}>Open event report</a>
+    <a className="vi-analyst-investigate" href={record.report_url} target="_blank" rel="noopener noreferrer">Open event report</a>
   </div>;
   if (!open) return <button className="vi-analyst-investigate" type="button" onClick={() => setOpen(true)}>Save event report</button>;
   return <form className="vi-live-report" aria-label="Save event report" onSubmit={async event => {

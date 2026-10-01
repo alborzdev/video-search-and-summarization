@@ -472,7 +472,9 @@ int RtspStreams::connect()
 
             if (is_stream_offline)
             {
-                LOG(error) << "Rtsp Url is Not online: " << secureUrlForLogging(sensor->url) << " sensor: " << sensor->name << " id: " << sensor->id << endl;
+                const auto streams = sensor->getStreams();
+                const string liveUrl = streams.empty() ? sensor->url : streams[0]->live_url;
+                LOG(error) << "Rtsp Url is Not online: " << secureUrlForLogging(liveUrl) << " sensor: " << sensor->name << " id: " << sensor->id << endl;
                 sensor->updateSensorStatus(SensorStatusOffline);
                 sensor->updateHttpErrorStatus(translateVmsErrorCodeToCameraHttpErrorCode(CameraNotFoundError));
                 ++it;
@@ -492,6 +494,7 @@ int RtspStreams::connect()
             LOG(info) << "Online RTSP URL for sensor: " << sensor->name << " id: " << sensor->id << " online sensors cnt:" << online_sensors << endl;
 
             sensor->updateSensorStatus(SensorStatusEvent::SensorStatusOnline);
+            sensor->updateHttpErrorStatus(translateVmsErrorCodeToCameraHttpErrorCode(NoError));
             ++online_sensors;
         }
         result = 0;

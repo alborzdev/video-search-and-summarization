@@ -29,9 +29,18 @@ export type AdmissionReasonCode =
   | "LIVE_CAPTION_LANE_ACTIVE"
   | "LIVE_CAPTION_LANE_UNKNOWN"
   | "TELEMETRY_REQUIRED"
+  | "SPARK_CAPACITY_REQUIRED"
+  | "SPARK_HEADROOM_REQUIRED"
   | "GPU_BUSY";
 
 export interface WorkloadAdmissionFacts {
+  runtime?: "thor" | "spark";
+  sparkCapacity?: {
+    state: "fresh" | "unknown";
+    guardActive: boolean;
+    availableGiB: number | null;
+    reserveGiB: number | null;
+  };
   captions: {
     sourceIds: string[];
     state: "known" | "unknown";
@@ -152,7 +161,7 @@ export function evaluateWorkloadAdmission(
       facts,
       "block",
       "CALIBRATION_NOT_QUALIFIED",
-      "Calibration remains disabled until this Thor has an explicit workload-admission qualification.",
+      "Calibration remains disabled until this device has an explicit workload-admission qualification.",
       "Set THOR_WORKLOAD_ADMISSION_CALIBRATION_QUALIFIED=true only after the calibration workflow has been qualified."
     );
   }
@@ -166,12 +175,28 @@ export function evaluateWorkloadAdmission(
       facts,
       "block",
       "EXPERIMENTAL_AUDIO_NOT_QUALIFIED",
-      "Experimental audio remains disabled until this Thor has an explicit workload-admission qualification.",
+      "Experimental audio remains disabled until this device has an explicit workload-admission qualification.",
       "Set THOR_WORKLOAD_ADMISSION_EXPERIMENTAL_AUDIO_QUALIFIED=true only after the audio path has been qualified."
     );
   }
 
-  if (isVeryHeavy && facts.telemetry.state !== "fresh") {
+  if (isVeryHeavy && facts.runtime === "spark") {
+    const capacity = facts.sparkCapacity;
+    if (!capacity || capacity.state !== "fresh" || !capacity.guardActive ||
+        capacity.reserveGiB === null || !Number.isFinite(capacity.reserveGiB) || capacity.reserveGiB < 24 ||
+        capacity.availableGiB === null || !Number.isFinite(capacity.availableGiB)) {
+      return result(workload, facts, "block", "SPARK_CAPACITY_REQUIRED",
+        "Fresh Spark memory capacity and an active reserve guard are required for this history workload.",
+        "Restore the local Spark capacity probe and memory guard, then try again.");
+    }
+    if (capacity.availableGiB < capacity.reserveGiB + 8) {
+      return result(workload, facts, "block", "SPARK_HEADROOM_REQUIRED",
+        "Spark needs 8 GiB of available memory above its saved reserve for bounded history inference.",
+        "Wait for memory headroom to recover before building history.");
+    }
+  }
+
+  if (isVeryHeavy && facts.runtime !== "spark" && facts.telemetry.state !== "fresh") {
     return result(
       workload,
       facts,

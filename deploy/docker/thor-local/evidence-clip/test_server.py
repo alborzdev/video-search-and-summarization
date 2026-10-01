@@ -1,14 +1,90 @@
 import io
+import base64
 import json
 import hashlib
 import shutil
 import subprocess
+import os
+import time
 import unittest
+import struct
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
 
 import server
+
+
+class CacheHistoryTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = TemporaryDirectory()
+        self.root = Path(self.directory.name)
+        self.patch = patch.object(server, "CACHE_ROOT", self.root)
+        self.patch.start()
+        server.HISTORY_PLANS.clear()
+
+    def tearDown(self):
+        server.HISTORY_PLANS.clear()
+        self.patch.stop()
+        self.directory.cleanup()
+
+    def old_clip(self, key):
+        clip = self.root / f"{key}.mp4"
+        metadata = clip.with_suffix(".json")
+        clip.write_bytes(b"generated clip")
+        metadata.write_text('{"sensorId":"camera"}')
+        for path in (clip, metadata):
+            os.utime(path, (time.time() - 60, time.time() - 60))
+        return clip
+
+    def preview(self):
+        from datetime import datetime, timezone
+        return server.preview_cache_history(datetime.now(timezone.utc).isoformat())
+
+    def test_exact_snapshot_keeps_new_clips_and_is_idempotent(self):
+        old = self.old_clip("a" * 64)
+        plan = self.preview()
+        fresh = self.old_clip("b" * 64)
+        result = server.clear_cache_history(plan["planToken"])
+        self.assertEqual(result, {"deleted": 1, "retained": 0})
+        self.assertFalse(old.exists())
+        self.assertTrue(fresh.exists())
+        self.assertEqual(server.clear_cache_history(plan["planToken"]), result)
+
+    def test_regenerated_or_referenced_existing_key_is_retained(self):
+        clip = self.old_clip("a" * 64)
+        plan = self.preview()
+        os.utime(clip, None)
+        result = server.clear_cache_history(plan["planToken"])
+        self.assertEqual(result, {"deleted": 0, "retained": 1})
+        self.assertTrue(clip.exists())
+        self.assertTrue(clip.with_suffix(".json").exists())
+
+    def test_symlink_and_unrelated_files_are_retained(self):
+        original = self.root / "settings.json"
+        original.write_text("keep me")
+        (self.root / f"{'a' * 64}.mp4").symlink_to(original)
+        plan = self.preview()
+        self.assertEqual(plan["count"], 0)
+        self.assertEqual(plan["retained"], 1)
+        self.assertTrue(original.exists())
+
+    def test_expired_token_rejected_without_mutation(self):
+        clip = self.old_clip("a" * 64)
+        plan = self.preview()
+        server.HISTORY_PLANS[plan["planToken"]]["expires"] = 0
+        with self.assertRaises(ValueError):
+            server.clear_cache_history(plan["planToken"])
+        self.assertTrue(clip.exists())
+
+    def test_cancel_releases_preview_without_removing_media(self):
+        clip = self.old_clip("a" * 64)
+        plan = self.preview()
+        self.assertGreater(server.HISTORY_PLANS[plan["planToken"]]["expires"] - time.monotonic(), 25 * 60)
+        self.assertEqual(server.cancel_cache_history(plan["planToken"]), {"status": "cancelled"})
+        self.assertEqual(server.cancel_cache_history(plan["planToken"]), {"status": "cancelled"})
+        self.assertTrue(clip.exists())
+        self.assertFalse(server.HISTORY_PLANS)
 
 
 class _Response(io.BytesIO):
@@ -68,6 +144,123 @@ class _NativeResponse(_Response):
     def __init__(self, content, headers=None):
         super().__init__(content)
         self.headers = headers or {}
+
+
+class AppearanceCropTests(unittest.TestCase):
+    sensor = "3688c328-7e71-493c-a1c7-011ad2fb3893"
+    timestamp = "2026-10-01T15:50:49.791Z"
+    png = b"\x89PNG\r\n\x1a\n" + b"test crop"
+
+    def payload(self, **updates):
+        payload = {"sensorId": self.sensor, "timestamp": self.timestamp,
+                   "bbox": {"leftX": 100, "topY": 150, "rightX": 200, "bottomY": 350}}
+        payload.update(updates)
+        return payload
+
+    def opener(self, data=b"\xff\xd8jpeg", headers=None):
+        opener = Mock()
+        opener.open.return_value = _NativeResponse(data, headers)
+        return opener
+
+    def export(self, command, **kwargs):
+        self.assertLessEqual(kwargs["timeout"], 8)
+        self.assertIn("-hwaccel", command)
+        self.assertEqual(command[command.index("-hwaccel") + 1], "none")
+        self.assertEqual(command[command.index("-frames:v") + 1], "1")
+        self.assertEqual(command[command.index("-threads") + 1], "1")
+        self.assertIn("scale=1280:720,crop=100:200:100:150:exact=1", command[command.index("-vf") + 1])
+        Path(command[-1]).write_bytes(self.png)
+
+    def test_raw_bbox_clamps_and_rejects_invalid_requests_before_network(self):
+        payload = self.payload(bbox={"leftX": -5, "topY": -20, "rightX": 1300, "bottomY": 800})
+        self.assertEqual(server.appearance_request(payload)[2], (0, 0, 1280, 720))
+        invalid = [None, self.payload(sensorId="../../etc/passwd"),
+                   self.payload(timestamp="2026-10-01T15:50:49"),
+                   self.payload(bbox={"leftX": 1300, "topY": 0, "rightX": 1400, "bottomY": 10})]
+        for value in (True, float("nan"), "100", None):
+            box = self.payload()["bbox"]
+            box["leftX"] = value
+            invalid.append(self.payload(bbox=box))
+        with patch.object(server, "build_opener") as opener:
+            for payload in invalid:
+                with self.subTest(payload=payload), self.assertRaises(ValueError):
+                    server.generate_appearance_crop(payload)
+            opener.assert_not_called()
+
+    def test_fixed_origin_picture_becomes_bounded_cpu_png(self):
+        opener = self.opener(headers={"Content-Length": "6"})
+        with patch.object(server, "build_opener", return_value=opener), \
+                patch.object(server.subprocess, "run", side_effect=self.export), \
+                patch.object(server, "appearance_clip_frame") as fallback:
+            result = server.generate_appearance_crop(self.payload())
+        self.assertEqual(base64.b64decode(result["image_base64"]), self.png)
+        request = opener.open.call_args.args[0]
+        self.assertTrue(request.full_url.startswith(server.VST_API_URL + "/v1/replay/stream/" + self.sensor + "/picture?"))
+        self.assertIn("startTime=2026-10-01T15%3A50%3A49.791000Z", request.full_url)
+        fallback.assert_not_called()
+
+    def test_bad_or_oversized_picture_uses_one_second_clip_fallback(self):
+        for data, headers in ((b"not jpeg", {}), (b"\xff\xd8jpeg", {"Content-Length": "999999999"})):
+            with self.subTest(data=data), patch.object(server, "build_opener", return_value=self.opener(data, headers)), \
+                    patch.object(server, "appearance_clip_frame", return_value=Path("/cache/local.mp4")) as fallback, \
+                    patch.object(server.subprocess, "run", side_effect=self.export):
+                server.generate_appearance_crop(self.payload())
+                self.assertEqual(fallback.call_args.args[:2], (self.sensor, "2026-10-01T15:50:49.791000Z"))
+
+    def test_concurrent_crop_is_rejected_and_failed_crop_releases_slot(self):
+        with server.APPEARANCE_LOCK:
+            with self.assertRaises(server.AppearanceBusy):
+                server.generate_appearance_crop(self.payload())
+        with patch.object(server, "build_opener", return_value=self.opener()), \
+                patch.object(server.subprocess, "run", side_effect=subprocess.TimeoutExpired("ffmpeg", 8)):
+            with self.assertRaises(subprocess.TimeoutExpired):
+                server.generate_appearance_crop(self.payload())
+        self.assertTrue(server.APPEARANCE_LOCK.acquire(blocking=False))
+        server.APPEARANCE_LOCK.release()
+
+    def test_fallback_timeout_kills_entire_child_group_and_releases_clip_lock(self):
+        process = Mock(pid=123)
+        process.communicate.side_effect = [subprocess.TimeoutExpired("clip", 35), (b"", None)]
+        with patch.object(server.subprocess, "Popen", return_value=process) as popen, \
+                patch.object(server.os, "killpg") as kill:
+            with self.assertRaisesRegex(RuntimeError, "timed out"):
+                server.appearance_clip_frame(self.sensor, self.timestamp, time.monotonic() + 50)
+        kill.assert_called_once_with(123, server.signal.SIGKILL)
+        self.assertTrue(popen.call_args.kwargs["start_new_session"])
+        self.assertIn("cpu_only=True", popen.call_args.args[0][2])
+        self.assertTrue(server.PREPARE_LOCK.acquire(blocking=False))
+        server.PREPARE_LOCK.release()
+
+    def test_http_route_and_request_size(self):
+        handler = server.Handler.__new__(server.Handler)
+        handler.path = "/appearance-crop"
+        body = json.dumps(self.payload()).encode()
+        handler.headers = {"Content-Length": str(len(body))}
+        handler.rfile = io.BytesIO(body)
+        handler.json_response = Mock()
+        with patch.object(server, "generate_appearance_crop", return_value={"image_base64": "PNG"}) as crop:
+            handler.do_POST()
+            crop.assert_called_once_with(self.payload())
+        handler.json_response.assert_called_once_with(200, {"image_base64": "PNG"})
+        handler.headers = {"Content-Length": "4097"}
+        handler.json_response.reset_mock()
+        handler.do_POST()
+        self.assertEqual(handler.json_response.call_args.args[0], 422)
+
+    @unittest.skipUnless(shutil.which("ffmpeg"), "CPU FFmpeg required")
+    def test_real_ffmpeg_returns_one_png_with_bounded_crop_dimensions(self):
+        with TemporaryDirectory() as directory:
+            frame = Path(directory) / "frame.jpg"
+            subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi", "-i",
+                "testsrc2=size=1280x720:rate=1", "-frames:v", "1", "-threads", "1", str(frame),
+            ], check=True, timeout=8, capture_output=True)
+            with patch.object(server, "build_opener", return_value=self.opener(frame.read_bytes())):
+                result = server.generate_appearance_crop(self.payload())
+            png = base64.b64decode(result["image_base64"])
+            self.assertEqual(png[:8], b"\x89PNG\r\n\x1a\n")
+            self.assertEqual(struct.unpack(">II", png[16:24]), (224, 448))
+            self.assertLessEqual(len(png), server.MAX_APPEARANCE_PNG_BYTES)
 
 
 class NativeRetentionTests(unittest.TestCase):

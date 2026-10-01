@@ -10,6 +10,11 @@ const nextConfig = {
   i18n,
   allowedDevOrigins: [
     'localhost',
+    // The offline desktop launcher opens the gateway on IPv4 loopback.
+    // Without this origin Next rejects HMR and its reconnect loop reloads
+    // the entire page, discarding in-progress questions and rule drafts.
+    '127.0.0.1',
+    '[::1]',
     ...[process.env.NEXT_PUBLIC_VST_API_URL]
       .filter(Boolean)
       .map(url => new URL(url).hostname),

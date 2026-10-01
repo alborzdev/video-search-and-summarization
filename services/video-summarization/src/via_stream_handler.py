@@ -3467,11 +3467,15 @@ class ViaStreamHandler:
         # Timestamp format varies: seconds for video files, ISO 8601 for livestreams
         if is_livestream:
             time_format_instruction = (
-                "Provide the result in json format with timestamp in ISO 8601 format "
-                '(e.g. "2026-04-30T10:39:20.934Z") for demarcation of each event.'
+                "Return exactly one concise event for this sampled video chunk as a JSON array. "
+                "Use the first and last observed frame timestamps supplied with the images "
+                "as start_time and end_time, verbatim in ISO 8601 format. "
+                "Do not invent or copy example dates. Describe only visible evidence in "
+                "at most 35 words; do not infer PPE, objects, or activities that are not visible. "
+                "Choose the closest requested event type, or use scene observation if none applies. "
+                "Output complete JSON only, without markdown, commentary, or reasoning. "
+                "Keys: start_time, end_time, type, description."
             )
-            time_example_start = '"ISO 8601 timestamp"'
-            time_example_end = '"ISO 8601 timestamp"'
         else:
             time_format_instruction = (
                 "Provide the result in json format with 'seconds' for time depiction "
@@ -3480,7 +3484,10 @@ class ViaStreamHandler:
             time_example_start = "t_start"
             time_example_end = "t_end"
 
-        default_structured_output = f"""\
+        if is_livestream:
+            default_structured_output = time_format_instruction
+        else:
+            default_structured_output = f"""\
 {time_format_instruction} \
 Use keywords 'start_time', 'end_time', 'description', "type" \
 in the json output. "type" should be the event type and chosen from \

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const sourceId = '11111111-1111-4111-8111-111111111111';
@@ -264,5 +264,74 @@ describe('resource-safe live alert orchestration', () => {
     expect(fetchMock.mock.calls.some(
       ([input, init]) => String(input) === 'http://bridge.test/api/v1/realtime' && init?.method === 'POST'
     )).toBe(false);
+  });
+
+  it('releases orphaned visual ownership and restores history after a bridge restart', async () => {
+    const reservationPath = path.join(storeDirectory, '.live-alert-lost-job.json');
+    await writeFile(reservationPath, JSON.stringify({ sourceId, resumeHistory: true }));
+    const fetchMock = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === 'http://bridge.test/api/v1/realtime') return jsonResponse({ rules: [] });
+      if (url.endsWith('/realtime/lost-job') && init?.method === 'DELETE') {
+        return jsonResponse({ message: 'No active alert rule' }, 404);
+      }
+      if (url === 'http://lvs.test/v1/generate_captions') return jsonResponse({ status: 'accepted' });
+      throw new Error(`Unexpected request: ${url}`);
+    });
+    global.fetch = fetchMock as jest.Mock;
+    const harness = responseHarness();
+
+    await handler(request('DELETE', {}, { id: 'lost-job' }), harness.response);
+
+    expect(harness.state.statusCode).toBe(200);
+    expect(harness.state.body).toEqual({ id: 'lost-job', status: 'success', alreadyMissing: true, historyResumed: true });
+    await expect(readFile(reservationPath)).rejects.toMatchObject({ code: 'ENOENT' });
+    expect(fetchMock.mock.calls.some(([input]) => String(input) === 'http://lvs.test/v1/generate_captions')).toBe(true);
+  });
+
+  it('keeps ownership on a temporary bridge failure instead of freeing an unknown visual lane', async () => {
+    const reservationPath = path.join(storeDirectory, '.live-alert-unavailable-job.json');
+    const reservation = { sourceId, resumeHistory: true };
+    await writeFile(reservationPath, JSON.stringify(reservation));
+    const fetchMock = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === 'http://bridge.test/api/v1/realtime') {
+        return jsonResponse({ rules: [{ id: 'unavailable-job', sensor_id: sourceId, status: 'active' }] });
+      }
+      if (url.endsWith('/realtime/unavailable-job') && init?.method === 'DELETE') {
+        return jsonResponse({ message: 'Temporarily unavailable' }, 503);
+      }
+      throw new Error(`Unexpected request: ${url}`);
+    });
+    global.fetch = fetchMock as jest.Mock;
+    const harness = responseHarness();
+    try {
+      await handler(request('DELETE', {}, { id: 'unavailable-job' }), harness.response);
+      expect(harness.state.statusCode).toBe(503);
+      expect(JSON.parse(await readFile(reservationPath, 'utf8'))).toEqual(reservation);
+      expect(fetchMock.mock.calls.some(([input]) => String(input) === 'http://lvs.test/v1/generate_captions')).toBe(false);
+    } finally {
+      await rm(reservationPath, { force: true });
+    }
+  });
+
+  it('finishes cold-start source cleanup if a listed job disappears before deletion', async () => {
+    const reservationPath = path.join(storeDirectory, '.live-alert-raced-job.json');
+    await writeFile(reservationPath, JSON.stringify({ sourceId, resumeHistory: true }));
+    global.fetch = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === 'http://bridge.test/api/v1/realtime') {
+        return jsonResponse({ rules: [{ id: 'raced-job', sensor_id: sourceId, status: 'active' }] });
+      }
+      if (url.endsWith('/realtime/raced-job') && init?.method === 'DELETE') return jsonResponse({}, 404);
+      throw new Error(`Unexpected request: ${url}`);
+    }) as jest.Mock;
+    const harness = responseHarness();
+
+    await handler(request('DELETE', {}, { sourceId }), harness.response);
+
+    expect(harness.state.statusCode).toBe(200);
+    expect(harness.state.body).toEqual({ deleted: 1, sourceId });
+    await expect(readFile(reservationPath)).rejects.toMatchObject({ code: 'ENOENT' });
   });
 });

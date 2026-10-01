@@ -42,6 +42,18 @@ const warehouseProfile = {
 describe('AlertRulesWorkspace', () => {
   afterEach(() => jest.restoreAllMocks());
 
+  it('uses warehouse examples for the simulator even when its saved name is from the old hospital scene', async () => {
+    global.fetch = jest.fn(async input => ({ ok: true, json: async () => String(input).includes('?sourceId=') ? { profile: warehouseProfile } : { profiles: [warehouseProfile] } })) as jest.Mock;
+    render(<MonitoringRuleWizard onClose={jest.fn()} onCreated={jest.fn()} streams={[{ ...liveCatalog[0].live[0], name: 'Spark Hospital Corridor', url: 'rtsp://camera/digital-twin', sensorId: 'sim' }]} />);
+    await screen.findByText(/Warehouse safety · NVIDIA RT-DETR Warehouse/);
+    expect(screen.queryByRole('button', { name: 'Medical cart visible' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Forklift visible' }));
+    fireEvent.click(screen.getByRole('button', { name: /Continue/i }));
+    expect(screen.getByRole('textbox', { name: 'Rule name' })).toHaveValue('Forklift visible');
+    expect(screen.getByRole('textbox', { name: 'Visual condition' })).toHaveValue('A forklift is clearly visible in the warehouse in any sampled frame. Do not count storage racks or pallets as forklifts.');
+    expect((global.fetch as jest.Mock).mock.calls.some(([, init]) => init?.method === 'POST')).toBe(false);
+  });
+
   it('prefers a connected camera but honors explicit source selection', () => {
     const offline = { ...liveCatalog[0].live[0], sensorId: 'offline', streamId: 'offline', connectionState: 'offline' as const };
     const online = { ...offline, sensorId: 'online', streamId: 'online', connectionState: 'online' as const };
@@ -194,4 +206,48 @@ describe('AlertRulesWorkspace', () => {
     expect(await screen.findByText(/Search-only recordings do not publish object tracks/i)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Object enters an area/i })).not.toBeInTheDocument();
   });
+});
+
+it('scopes the rule catalog to the supplied source and opens its preselected wizard only on demand', async () => {
+  const source = { ...liveCatalog[0].live[0], name: 'Hospital corridor', sensorId: 'hospital', streamId: 'hospital-stream' };
+  const other = { ...source, name: 'Other corridor', sensorId: 'other', streamId: 'other-stream' };
+  const rule = { engine: 'vlm', status: 'paused', backendStatus: 'pending', severity: 'info', sourceKind: 'live', description: '', cooldownSeconds: 30 };
+  global.fetch = jest.fn(async input => {
+    const url = String(input);
+    const payload = url.endsWith('/v1/live/streams') ? [{ other: [other], hospital: [source] }]
+      : url.endsWith('/sensor/status') ? { hospital: { state: 'online' }, other: { state: 'online' } }
+      : url.includes('/analysis-profiles?sourceId=') ? { profile: semanticProfile }
+      : { rules: [{ ...rule, id: 'hospital-rule', sourceId: 'hospital', sourceName: source.name, name: 'Hospital cart rule' }, { ...rule, id: 'other-rule', sourceId: 'other', sourceName: other.name, name: 'Other cart rule' }] };
+    return { ok: true, json: async () => payload } as Response;
+  }) as jest.Mock;
+  render(<AlertRulesWorkspace source={source} onManageSources={jest.fn()} vstApiUrl="http://video.test" />);
+  await screen.findByText('Hospital cart rule');
+  expect(screen.queryByText('Other cart rule')).not.toBeInTheDocument();
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'New monitoring rule' }));
+  await screen.findByRole('dialog');
+  await waitFor(() => expect(screen.getByRole('combobox', { name: 'Monitoring source' })).toHaveValue('hospital-stream'));
+  expect((global.fetch as jest.Mock).mock.calls.some(([, init]) => init?.method && init.method !== 'GET')).toBe(false);
+});
+
+
+it('reports a failed source profile check accurately and recovers on retry without a page refresh', async () => {
+  let available = false;
+  global.fetch = jest.fn(async input => String(input).includes('?sourceId=')
+    ? { ok: available, status: available ? 200 : 503, json: async () => available ? { profile: warehouseProfile } : { error: 'Local analytics unavailable' } }
+    : { ok: true, json: async () => ({ profiles: [warehouseProfile] }) });
+  const stream = { ...liveCatalog[0].live[0], sensorId: 'live' };
+  const props = { onClose: jest.fn(), onCreated: jest.fn() };
+  const { rerender } = render(<MonitoringRuleWizard {...props} streams={[stream]} />);
+  expect(await screen.findByRole('alert')).toHaveTextContent('analysis profile could not be verified');
+  expect(screen.queryByText(/Search-only recordings do not publish object tracks/i)).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /Continue/i })).toBeDisabled();
+  const calls = (global.fetch as jest.Mock).mock.calls.length;
+  rerender(<MonitoringRuleWizard {...props} streams={[{ ...stream, connectionState: 'online' }]} />);
+  expect((global.fetch as jest.Mock).mock.calls.length).toBe(calls);
+  available = true;
+  fireEvent.click(screen.getByRole('button', { name: 'Retry profile check' }));
+  expect(await screen.findByRole('button', { name: /Object enters an area/i })).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByRole('button', { name: /Continue/i })).toBeEnabled());
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });

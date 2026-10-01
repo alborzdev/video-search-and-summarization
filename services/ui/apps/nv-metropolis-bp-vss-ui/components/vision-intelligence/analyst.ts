@@ -22,6 +22,8 @@ export interface VisionAnalystRequest {
   askedAt: string;
   conversationId: string;
   query: string;
+  /** Recent live footage to inspect, in seconds; omitted uses the 3-second default. */
+  lookbackSeconds?: number;
   scope: 'all-sources' | 'selected-source';
   sources: VisionAnalystSource[];
 }

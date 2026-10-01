@@ -516,7 +516,7 @@ describe("OperationsWorkspace", () => {
       if (url.startsWith("/api/vision/live-capture?"))
         return {
           ok: true,
-          json: async () => ({ streamId: "camera", recordingStatus: "on" }),
+          json: async () => ({ streamId: "camera", recordingStatus: "on", questionReady: true, remainingSeconds: 0 }),
         };
       if (url.endsWith("/sensor/status"))
         return {
@@ -666,14 +666,14 @@ describe("OperationsWorkspace", () => {
       expect(screen.getByText("Warehouse Camera")).toBeInTheDocument()
     );
     fireEvent.click(
-      screen.getByRole("button", { name: "What risks are visible?" })
+      screen.getByRole("button", { name: "Are people wearing PPE?" })
     );
     expect(onInvestigate).not.toHaveBeenCalled();
     expect(
       screen.queryByText("A forklift moves across the warehouse floor.")
     ).not.toBeInTheDocument();
     expect(screen.getByLabelText("Ask Vision Analyst")).toHaveValue(
-      "What risks are visible?"
+      "Are people wearing PPE?"
     );
     fireEvent.change(screen.getByLabelText("Ask Vision Analyst"), {
       target: { value: "What safety risks are visible?" },
@@ -1207,7 +1207,7 @@ function reviewedAnswer(name = reviewSource.name, query = "What is visible?") {
   };
 }
 function sourceApi(sources = [reviewSource, secondSource]) {
-  const state = { analysis: "paused", profile: searchProfile, capture: "off" };
+  const state = { analysis: "paused", profile: searchProfile, capture: "off", questionReady: false };
   const base = async (
     input: RequestInfo | URL,
     init?: RequestInit
@@ -1249,6 +1249,8 @@ function sourceApi(sources = [reviewSource, secondSource]) {
       return responseJson({
         streamId: liveReviewSource.streamId,
         recordingStatus: state.capture,
+        questionReady: state.questionReady,
+        remainingSeconds: state.questionReady ? 0 : 8,
       });
     if (url === "/api/vision/live-capture" && init?.method === "POST") {
       const body = JSON.parse(String(init.body));
@@ -1256,6 +1258,8 @@ function sourceApi(sources = [reviewSource, secondSource]) {
       return responseJson({
         streamId: body.streamId,
         recordingStatus: state.capture,
+        questionReady: state.questionReady,
+        remainingSeconds: state.questionReady ? 0 : 8,
       });
     }
     if (url === "/api/vision/incidents") return responseJson({ incidents: [] });
@@ -1361,7 +1365,7 @@ describe("Operations selected-source safety", () => {
 
   it("requires capture warmup, then submits the exact source and preserves absolute answer evidence", async () => {
     jest.useFakeTimers({ now: new Date("2026-09-30T03:00:00Z") });
-    const { fetchMock, base } = sourceApi([liveReviewSource]);
+    const { fetchMock, base, state } = sourceApi([liveReviewSource]);
     const liveAnswer = {
       ...reviewedAnswer(),
       observedRange: undefined,
@@ -1398,8 +1402,9 @@ describe("Operations selected-source safety", () => {
     expect(
       screen.getByRole("button", { name: "Send question" })
     ).toBeDisabled();
+    state.questionReady = true;
     await act(async () => {
-      jest.advanceTimersByTime(1_000);
+      jest.advanceTimersByTime(3_000);
     });
     expect(screen.getByRole("button", { name: "Send question" })).toBeEnabled();
     fireEvent.click(screen.getByRole("button", { name: "Send question" }));
@@ -1452,6 +1457,75 @@ describe("Operations selected-source safety", () => {
         ([url]) => String(url) === "/api/vision/source-analysis"
       )
     ).toEqual([]);
+  });
+
+  it("retries a recovering source without pausing its remaining analysis", async () => {
+    const { fetchMock, base, state } = sourceApi([liveReviewSource]);
+    state.analysis = "partial";
+    fetchMock.mockImplementation((input, init) => String(input) === "/api/vision/source-analysis" && init?.method === "POST"
+      ? Promise.resolve(responseJson({ state: "active", analysisActive: true }))
+      : base(input, init));
+    render(<OperationsTestWorkspace agentApiUrl="/agent" />);
+    fireEvent.click(await screen.findByRole("button", { name: "Retry analysis" }));
+    await waitFor(() => expect(fetchMock.mock.calls.some(([url, init]) => String(url) === "/api/vision/source-analysis" && init?.method === "POST")).toBe(true));
+    const call = fetchMock.mock.calls.find(([url, init]) => String(url) === "/api/vision/source-analysis" && init?.method === "POST")!;
+    expect(JSON.parse(String(call[1]?.body)).action).toBe("resume");
+  });
+
+  it("keeps a successful answer and its related query when a follow-up fails", async () => {
+    const { fetchMock, base, state } = sourceApi([liveReviewSource]);
+    state.capture = "on";
+    state.questionReady = true;
+    const answer = {
+      ...reviewedAnswer(liveReviewSource.name, "What is visible?"),
+      observedRange: undefined,
+      observedWindow: { startTime: "2026-09-30T03:00:00Z", endTime: "2026-09-30T03:00:03Z" },
+    };
+    const report = jest.spyOn(reportComponent, "LiveAnswerReport").mockImplementation(() => <div>Save source report</div>);
+    const onInvestigate = jest.fn();
+    let attempts = 0;
+    fetchMock.mockImplementation((input, init) => String(input) === "/api/vision/analyst"
+      ? Promise.resolve(++attempts === 1 ? responseJson(answer) : responseJson({ error: "Please try again" }, 503))
+      : base(input, init));
+    render(<OperationsTestWorkspace agentApiUrl="/agent" onInvestigate={onInvestigate} />);
+    await screen.findByRole("button", { name: "Stop capture" });
+    submitQuestion("What is visible?");
+    await screen.findByText(answer.answer);
+    submitQuestion("Are people wearing PPE?");
+    await screen.findByText("Please try again");
+    expect(screen.getByText(answer.answer)).toBeVisible();
+    expect(screen.getByText("Previous successful answer")).toBeVisible();
+    expect(screen.getByRole("button", { name: "Play inspected clip" })).toBeEnabled();
+    expect(screen.getByText("Save source report")).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: "Find related clips →" }));
+    expect(onInvestigate).toHaveBeenCalledWith(answer.query, expect.objectContaining({ streamId: liveReviewSource.streamId }));
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    await waitFor(() => expect(attempts).toBe(3));
+    const requests = fetchMock.mock.calls.filter(([url]) => String(url) === "/api/vision/analyst");
+    expect(JSON.parse(String(requests[2][1]?.body)).query).toBe("Are people wearing PPE?");
+    report.mockRestore();
+  });
+
+  it("passes the chosen live duration and preserves it when retrying a failed question", async () => {
+    const { fetchMock, base, state } = sourceApi([liveReviewSource]);
+    state.capture = "on";
+    state.questionReady = true;
+    let attempts = 0;
+    fetchMock.mockImplementation((input, init) => String(input) === "/api/vision/analyst"
+      ? Promise.resolve(++attempts === 1 ? responseJson({ error: "Please try again" }, 503) : responseJson(reviewedAnswer()))
+      : base(input, init));
+    render(<OperationsTestWorkspace agentApiUrl="/agent" />);
+    await screen.findByRole("button", { name: "Stop capture" });
+    fireEvent.change(screen.getByRole("spinbutton", { name: "Seconds of footage" }), { target: { value: "2" } });
+    fireEvent.change(screen.getByLabelText("Ask Vision Analyst"), { target: { value: "What is visible?" } });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Send question" })).toBeEnabled());
+    fireEvent.click(screen.getByRole("button", { name: "Send question" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Try again" }));
+    await screen.findByText(reviewedAnswer().answer);
+    const requests = fetchMock.mock.calls.filter(([url]) => String(url) === "/api/vision/analyst");
+    expect(requests).toHaveLength(2);
+    expect(requests.map(([, init]) => JSON.parse(String(init?.body)).lookbackSeconds)).toEqual([2, 2]);
+    expect(fetchMock.mock.calls.some(([url, init]) => String(url) === "/api/vision/live-capture" && init?.method === "POST")).toBe(false);
   });
 
   it("discards a late source-A answer and resets playback and conversation before asking source B", async () => {

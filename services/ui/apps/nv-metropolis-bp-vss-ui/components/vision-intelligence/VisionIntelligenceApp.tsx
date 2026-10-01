@@ -17,6 +17,7 @@ import {
   IconSearch,
   IconSun,
   IconVideo,
+  IconRoute,
   IconX,
 } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
@@ -28,6 +29,7 @@ import type {
   WorkloadAdmissions,
 } from "../../server/vision/workloadAdmission";
 import type { SearchCoverageSnapshot } from "../../server/vision/searchCoverage";
+import { ClearHistoryControl } from "./ClearHistoryControl";
 
 const workspaceLoading = (workspace: string) => () => (
   <div className="vi-workspace-loading" role="status" aria-live="polite">
@@ -38,6 +40,10 @@ const workspaceLoading = (workspace: string) => () => (
 const HomeWorkspace = dynamic(
   () => import("./HomeWorkspace").then((module) => module.HomeWorkspace),
   { loading: workspaceLoading("Home") }
+);
+const GuidedDemoWorkspace = dynamic(
+  () => import("./GuidedDemoWorkspace").then((module) => module.GuidedDemoWorkspace),
+  { loading: workspaceLoading("Video workflow") }
 );
 const OperationsWorkspace = dynamic(
   () => import("./OperationsWorkspace").then((module) => module.OperationsWorkspace),
@@ -51,8 +57,8 @@ const ActivityInsightsWorkspace = dynamic(
   () => import("./ActivityInsightsWorkspace").then((module) => module.ActivityInsightsWorkspace),
   { loading: workspaceLoading("Events") }
 );
-const CapabilitiesWorkspace = dynamic(
-  () => import("./CapabilitiesWorkspace").then((module) => module.CapabilitiesWorkspace),
+const VssStoryWorkspace = dynamic(
+  () => import("./VssStoryWorkspace").then((module) => module.VssStoryWorkspace),
   { loading: workspaceLoading("Capabilities") }
 );
 const AlertRulesWorkspace = dynamic(
@@ -128,10 +134,11 @@ const THEME_STORAGE_KEY = "ctai-vision-theme-v1";
 
 const sectionMeta: Record<PrimarySection, { eyebrow: string; title: string }> =
   {
-    capabilities: { eyebrow: "Real demos", title: "What it can do" },
+    capabilities: { eyebrow: "Video Search & Summarization", title: "What it can do" },
     events: { eyebrow: "Evidence-led review", title: "Events & reports" },
     explore: { eyebrow: "Search video in your own words", title: "Search video" },
     home: { eyebrow: "", title: "Digital twin analytics" },
+    guided: { eyebrow: "", title: "Video workflow" },
     live: { eyebrow: "", title: "Live cameras" },
     monitoring: { eyebrow: "Rules that create incidents", title: "Alert rules" },
     system: { eyebrow: "On-device runtime", title: "System" },
@@ -199,6 +206,7 @@ export default function VisionIntelligenceApp({
 
   const navigateToSection = useCallback(
     (nextSection: PrimarySection) => {
+      if (nextSection !== "monitoring") setMonitoringSourceId(null);
       setSection(nextSection);
       window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
       if (!router.isReady) return;
@@ -295,6 +303,18 @@ export default function VisionIntelligenceApp({
   }, [refreshSearchCoverage, section]);
 
   useEffect(() => {
+    const refreshAfterClear = (event: Event) => {
+      const status = (event as CustomEvent).detail?.job?.status;
+      if (status !== "complete" && status !== "partial") return;
+      void refreshHealth();
+      void refreshSearchCoverage();
+      void refreshWorkloadAdmission();
+    };
+    window.addEventListener("vision:history-cleared", refreshAfterClear);
+    return () => window.removeEventListener("vision:history-cleared", refreshAfterClear);
+  }, [refreshHealth, refreshSearchCoverage, refreshWorkloadAdmission]);
+
+  useEffect(() => {
     const storedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
     if (
       storedTheme === "dark" ||
@@ -333,7 +353,8 @@ export default function VisionIntelligenceApp({
 
   const navItems = useMemo(
     () => [
-      { icon: IconVideo, id: "home" as const, label: "Live demo" },
+      { icon: IconVideo, id: "home" as const, label: "Live view" },
+      { icon: IconRoute, id: "guided" as const, label: "Video workflow" },
       { icon: IconSearch, id: "explore" as const, label: "Search video" },
       { icon: IconVideo, id: "live" as const, label: "Live cameras" },
       { icon: IconBell, id: "events" as const, label: "Events & reports" },
@@ -392,8 +413,8 @@ export default function VisionIntelligenceApp({
     <div
       className={
         presentationMode
-          ? "vi-app vi-brand-v2 vi-tradeshow is-presenting"
-          : "vi-app vi-brand-v2 vi-tradeshow"
+          ? `vi-app vi-brand-v2 vi-tradeshow is-presenting${section === "capabilities" ? " vi-story-mode" : section === "guided" ? " vi-guided-mode" : ""}`
+          : `vi-app vi-brand-v2 vi-tradeshow${section === "capabilities" ? " vi-story-mode" : section === "guided" ? " vi-guided-mode" : ""}`
       }
       data-workspace={section}
       data-theme={resolvedTheme}
@@ -455,6 +476,7 @@ export default function VisionIntelligenceApp({
           <strong>{sectionMeta[section].title}</strong>
         </div>
         <div className="vi-context-actions">
+          <ClearHistoryControl />
           <button
             className="vi-processing-status"
             type="button"
@@ -663,6 +685,18 @@ export default function VisionIntelligenceApp({
       )}
 
       <main className="vi-main">
+        {section === "guided" && (
+          <GuidedDemoWorkspace
+            agentApiUrl={searchData?.agentApiUrl}
+            mdxWebApiUrl={searchData?.mdxWebApiUrl}
+            searchByImageEnabled={searchData?.mediaWithObjectsBbox === true}
+            visualAnalystAvailable={visualAnalystAvailable}
+            vstApiUrl={vstApiUrl}
+            onOpenLive={openLive}
+            onOpenSystem={() => { setSystemPanel("sources"); navigateToSection("system"); }}
+            onOpenExplainer={() => navigateToSection("capabilities")}
+          />
+        )}
         {section === "home" && (
           <HomeWorkspace
             agentApiUrl={searchData?.agentApiUrl}
@@ -717,7 +751,8 @@ export default function VisionIntelligenceApp({
           />
         )}
         {section === "capabilities" && (
-          <CapabilitiesWorkspace
+          <VssStoryWorkspace
+            onOpenDemo={() => navigateToSection("guided")}
             onExplore={(query) => openInvestigation(query)}
             onOpenEvents={openEvents}
             onOpenLive={(mode = "grid") =>

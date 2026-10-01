@@ -32,7 +32,8 @@ import {
   IconSparkles,
   IconX,
 } from "@tabler/icons-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { isBeforeHistoryCutoff, useHistoryClear } from "./useHistoryClear";
 
 type AnalyticsMode = "activity" | "insights";
 type ActivityFilter =
@@ -49,6 +50,7 @@ type ActivityFilter =
 const ACTIVITY_PAGE_SIZE = 6;
 
 interface ActivityInsightsWorkspaceProps {
+  source?: import("./types").VisionStream;
   initialMode: AnalyticsMode;
   onModeChange: (mode: "live" | AnalyticsMode) => void;
   onOpenRules: () => void;
@@ -123,7 +125,7 @@ export function incidentRule(
   const ruleId = incident.info?.alertRuleId;
   if (!ruleId) return null;
   // Shared source or similar wording does not establish which rule fired.
-  return rules.find(rule => rule.backendRuleId === ruleId || rule.id === ruleId) ?? null;
+  return rules.find(rule => rule.backendRuleId === ruleId || rule.backendRuleIds?.includes(ruleId) || rule.id === ruleId) ?? null;
 }
 
 function IncidentMedia({
@@ -259,13 +261,15 @@ function IncidentMedia({
           <span className={`vi-verdict vi-verdict--${verdictFor(incident)}`}>
             {incidentVerdictLabel(incident)}
           </span>
-          <h2>{rule?.engine === "vlm" ? rule.name : incidentTitle(incident)}</h2>
+          <h2>{rule?.name || incidentTitle(incident)}</h2>
           <p>
             {!isOperatorIncidentCandidate(incident)
               ? "Backend processing record retained for audit."
               : incident.info?.reasoning ||
                 incident.info?.verificationResponseStatus ||
-                (incident.info?.triggerPhrase ? "The visual model matched the rule condition. Review the footage before confirming what happened." : "No model reasoning was recorded for this incident.")}
+                (rule?.engine === "deepstream"
+                  ? "Detection and tracking matched this rule. Review the recorded footage before confirming what happened."
+                  : incident.info?.triggerPhrase ? "The visual model matched the rule condition. Review the footage before confirming what happened." : "No model reasoning was recorded for this incident.")}
           </p>
           {incident.info?.prompt && <p><strong>Recorded condition</strong><br />{incident.info.prompt}</p>}
           <dl>
@@ -304,6 +308,7 @@ function IncidentMedia({
 }
 
 export function ActivityInsightsWorkspace({
+  source,
   initialMode,
   onModeChange,
   onOpenRules,
@@ -320,13 +325,18 @@ export function ActivityInsightsWorkspace({
   const [workflowStates, setWorkflowStates] = useState<Record<string, IncidentStateRecord>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [feedWarning, setFeedWarning] = useState<string | null>(null);
   const [selected, setSelected] = useState<ConsolidatedIncident | null>(null);
   const [activityFilter, setActivityFilter] =
     useState<ActivityFilter>("actionable");
   const [visibleInvestigations, setVisibleInvestigations] = useState(4);
+  const [showSavedReports, setShowSavedReports] = useState(!source);
   const [visibleCount, setVisibleCount] = useState(ACTIVITY_PAGE_SIZE);
+  const refreshGeneration = useRef(0);
 
   const refresh = useCallback(async () => {
+    const generation = ++refreshGeneration.current;
+    const current = () => generation === refreshGeneration.current;
     setLoading(true);
     setError(null);
     setInvestigationsError(null);
@@ -341,27 +351,40 @@ export function ActivityInsightsWorkspace({
           fetch("/api/vision/monitoring-rules", { cache: "no-store" }),
           fetch("/api/vision/incident-state", { cache: "no-store" }),
         ]);
+      if (!current()) return;
       try {
         if (investigationResult.status === "rejected" || !investigationResult.value.ok) {
           throw new Error("Saved reports could not be refreshed.");
         }
         const saved = await investigationResult.value.json() as { investigations?: InvestigationRecord[] };
-        setInvestigations(saved.investigations ?? []);
+        if (!current()) return;
+        setInvestigations((saved.investigations ?? []).filter((report) => !source || report.evidence.some((item) => [source.sensorId, source.streamId].includes(item.sensor_id))));
       } catch {
+        if (!current()) return;
         setInvestigationsError("Saved reports could not be refreshed. Any shown below are from the last successful load.");
       }
       if (incidentResult.status === "rejected") throw incidentResult.reason;
       const data = (await incidentResult.value.json()) as {
         incidents?: AnalyticsIncident[];
         error?: string;
+        partial?: boolean;
+        errors?: Record<string, string>;
       };
+      if (!current()) return;
       if (!incidentResult.value.ok)
         throw new Error(
           data.error || `Analytics returned ${incidentResult.value.status}.`
         );
-      setIncidents(data.incidents ?? []);
+      setIncidents((data.incidents ?? []).filter((incident) => !source || [source.sensorId, source.streamId, source.name].includes(incident.sensorId ?? "")));
+      const missingFeeds = Object.keys(data.errors ?? {}).map(key => ({
+        visual: "visual rule events", detector: "detection rule events", rules: "rule names",
+      }[key])).filter(Boolean).join(", ");
+      setFeedWarning(data.partial
+        ? `Event coverage is incomplete${missingFeeds ? `: ${missingFeeds} are unavailable` : ""}. Showing the available records. Use Refresh to retry.`
+        : null);
       if (sourceResult.status === "fulfilled" && sourceResult.value?.ok) {
         const catalog = (await sourceResult.value.json()) as unknown;
+        if (!current()) return;
         if (Array.isArray(catalog)) {
           const names: Record<string, string> = {};
           for (const sensor of catalog) {
@@ -391,25 +414,36 @@ export function ActivityInsightsWorkspace({
       }
       if (rulesResult.status === "fulfilled" && rulesResult.value.ok) {
         const value = await rulesResult.value.json() as { rules?: MonitoringRule[] };
+        if (!current()) return;
         setRules(value.rules ?? []);
       } else setRules([]);
       if (stateResult.status === "fulfilled" && stateResult.value.ok) {
         const value = await stateResult.value.json() as { states?: Record<string, IncidentStateRecord> };
+        if (!current()) return;
         setWorkflowStates(value.states ?? {});
       } else setWorkflowStates({});
     } catch (requestError) {
+      if (!current()) return;
       setError(
         requestError instanceof Error
           ? requestError.message
           : "Analytics are unavailable."
       );
     } finally {
-      setLoading(false);
+      if (current()) setLoading(false);
     }
-  }, [vstApiUrl]);
+  }, [vstApiUrl, source?.sensorId, source?.streamId, source?.name]);
+  useHistoryClear((cutoff) => {
+    setInvestigations((previous) => previous.filter((report) => !isBeforeHistoryCutoff(report.created_at, cutoff)));
+    setIncidents((previous) => previous.filter((incident) => !isBeforeHistoryCutoff(incident.timestamp, cutoff)));
+    setWorkflowStates((previous) => Object.fromEntries(Object.entries(previous).filter(([, record]) => !isBeforeHistoryCutoff(record.updatedAt, cutoff))));
+    if (isBeforeHistoryCutoff(selected?.timestamp, cutoff)) setSelected(null);
+    void refresh();
+  });
 
   useEffect(() => {
     void refresh();
+    return () => { refreshGeneration.current += 1; };
   }, [refresh]);
 
   const consolidatedIncidents = useMemo(
@@ -508,6 +542,11 @@ export function ActivityInsightsWorkspace({
           <IconAlertTriangle size={20} /> {error}
         </div>
       )}
+      {!error && feedWarning && (
+        <div className="vi-investigate-error" role="status">
+          <IconAlertTriangle size={20} /> {feedWarning}
+        </div>
+      )}
 
       {!loading && !error && initialMode === "insights" && !operatorIncidents.length && (
         <section className="vi-insights-start" aria-label="Insights awaiting event evidence">
@@ -521,8 +560,8 @@ export function ActivityInsightsWorkspace({
           </dl>
           <div className="vi-activity-empty">
             <IconActivity size={24} />
-            <strong>No event evidence to summarize yet</strong>
-            <p>Charts appear when incident records are available. This view does not measure camera uptime or establish that a scene is safe.</p>
+            <strong>{feedWarning ? "Event coverage is incomplete" : "No event evidence to summarize yet"}</strong>
+            <p>{feedWarning ? "No events were returned by the available services. Retry when local analytics are ready." : "Charts appear when incident records are available. This view does not measure camera uptime or establish that a scene is safe."}</p>
             <div className="vi-activity-empty-actions">
               <button type="button" onClick={() => onModeChange("live")}>Check cameras</button>
               <button type="button" onClick={onOpenRules}>Review monitoring rules</button>
@@ -708,11 +747,12 @@ export function ActivityInsightsWorkspace({
               </select>
             </label>
             <span>
-              {error ? "Event data unavailable" : `${activityIncidents.length} ${activityIncidents.length === 1 ? "incident" : "incidents"}`}
+              {error ? "Event data unavailable" : `${activityIncidents.length}${feedWarning ? " loaded" : ""} ${activityIncidents.length === 1 ? "incident" : "incidents"}`}
             </span>
           </div>
           {investigationsError && <p role="status" className="vi-investigate-error">{investigationsError}</p>}
-          {investigations.length > 0 && (
+          {source && investigations.length > 0 && <button type="button" className="vi-button" aria-expanded={showSavedReports} onClick={() => setShowSavedReports(value => !value)}>{showSavedReports ? "Hide saved reports" : "Show saved reports"} ({investigations.length})</button>}
+          {investigations.length > 0 && showSavedReports && (
             <section
               className="vi-saved-investigations"
               aria-label="Saved reports"
@@ -757,6 +797,8 @@ export function ActivityInsightsWorkspace({
                     </div>
                     <a
                       href={investigation.report_url}
+                      target={source ? "_blank" : undefined}
+                      rel={source ? "noopener noreferrer" : undefined}
                     >
                       <IconFileReport size={15} /> Open report
                     </a>
@@ -786,8 +828,8 @@ export function ActivityInsightsWorkspace({
           ) : (
             <div className="vi-activity-empty">
               <IconActivity size={24} />
-              <strong>{consolidatedIncidents.length ? "No events match this filter" : "No detected events yet"}</strong>
-              <p>{consolidatedIncidents.length
+              <strong>{feedWarning ? "Event coverage is incomplete" : consolidatedIncidents.length ? "No events match this filter" : "No detected events yet"}</strong>
+              <p>{feedWarning ? "No matching events were returned by the available services. Use Refresh to retry." : consolidatedIncidents.length
                 ? "Other review states or diagnostic records may be available."
                 : "When a monitored condition is detected, review its footage and verification here. An empty event list does not confirm that cameras are connected or monitoring is active."}</p>
               <div className="vi-activity-empty-actions">
@@ -869,13 +911,15 @@ function IncidentRow({
         <span className={`vi-verdict vi-verdict--${verdictFor(incident)}`}>
           {incidentVerdictLabel(incident)}
         </span>
-        <h2>{rule?.engine === "vlm" ? rule.name : incidentTitle(incident)}</h2>
+        <h2>{rule?.name || incidentTitle(incident)}</h2>
         <p>
           {!isOperatorIncidentCandidate(incident)
             ? "Backend processing record retained for audit."
             : incident.info?.reasoning ||
               incident.info?.verificationResponseStatus ||
-              (incident.info?.triggerPhrase ? "The visual model matched the rule condition. Review the footage." : "Visual observation retained for review.")}
+              (rule?.engine === "deepstream"
+                ? "Detection and tracking matched this rule. Review the footage."
+                : incident.info?.triggerPhrase ? "The visual model matched the rule condition. Review the footage." : "Visual observation retained for review.")}
         </p>
         <time>
           <IconClock size={14} /> {formatIncidentTime(incident.timestamp)} ·{" "}

@@ -1,144 +1,149 @@
-# Live digital twin analytics — presenter runbook
+# Warehouse video workflow — booth playbook
 
-Current Spark walkthrough, September 30, 2026. Open
-[Vision Intelligence](http://10.88.9.91:7777/) beside the user's live Isaac Sim.
-The primary source is **Spark Hospital Corridor**, published at
-`rtsp://10.88.9.91:8554/digital-twin`. The intended story is a broad operations
-and safety demonstration; audience details and the repeatable avatar controls
-are still pending. Earlier Thor and recorded-only scripts are preserved in the
-[historical checkpoints](qa/demo-transformation-2026-09-28/presenter-runbook-checkpoints.md).
+Use [Video workflow](http://127.0.0.1:7777/?workspace=guided) on the Spark for the repeatable
+flow: **Watch → Ask → Find → Follow → Monitor → Review**. The product uses ordinary
+workspace language; optional **Workflow tips** explain each tool. The explainer’s
+**Explore your video** button opens the same workspace.
 
-## What the visitor should understand
+The planned scene is a warehouse published at `rtsp://127.0.0.1:8554/digital-twin`
+on the Spark. The local launcher uses stable addresses without venue Internet.
+The September 30 recorded rehearsal used the earlier hospital scene. Those old
+reports demonstrate the plumbing, not verified warehouse behavior. Do a fresh
+warehouse rehearsal after changing the simulator scene. The source currently
+retains its original registered name; confirm the actual footage before renaming
+it, and preserve the source ID and earlier evidence attribution.
 
-“Video can answer a question, take you to a relevant moment, surface a visible
-condition, and keep the footage behind a review. We are showing that analytics
-layer on this live digital twin, with the video and AI running on this device.”
+## Before opening
 
-Start with the scene and a question. Show one clear result and its footage before
-opening technical service information. Describe AI observations as observations
-for review. Search relevance, an alert match, a tracked person and a distinct
-physical event are different things.
+Start the simulator using its existing Desktop shortcut, then double-click
+**Start VSS**. Allow about 10 minutes for a cold start and wait for the readiness
+message. **Stop VSS** ends the VSS session while retaining recordings and reports;
+the Sim stays separate. See [desktop startup instructions](spark-desktop-startup.md).
 
-## Prepare the desk
+1. Confirm the warehouse is visible in Watch, connection is healthy, capture is
+   enabled, and searchable coverage advances. Recording supports questions and
+   replay; semantic indexing supports search.
+2. Keep visual monitoring paused while asking questions. One continuous visual
+   rule occupies the local visual reasoning slot.
+3. Run a short warehouse sequence: empty aisle, person in view, forklift in view
+   if supported. Let coverage pass the activity and verify search and replay.
+4. Keep old hospital rules paused. Create warehouse rules from the new examples;
+   do not rename historical medical-cart evidence to imply warehouse activity.
+5. Rehearse an actual positive and negative rule window. Do not promise alerts
+   for unsupported simulator objects or behaviors.
 
-1. Open **Live demo**. Confirm the correct source and actual advancing **Live
-   preview**. A stored preview or connected-source label alone does not prove
-   live frames are advancing.
-2. Check System if visual AI is unavailable. The hospital detector is now active;
-   a visual question also works independently of detection. Use the saved
-   single-camera setup; do not restart the full stack to improve a status badge.
-3. Keep the Spark memory guard active at the user-authorized **24 GiB** reserve.
-   Moondream must stay stopped and must require explicit opt-in to start.
-4. Check a previously reviewed retained report as a fallback. **Earlier evidence**
-   is explicitly historical; do not present it as a new discovery.
-5. Select **Start live capture**. Wait for the 30-second preparation period and
-   **Live questions ready**. The same preparation period applies when the desk
-   first observes recording already on, so returning to the desk may require
-   a short wait. Starting capture starts recording only. It does not start
-   background indexing, captions, object detection or an alert rule.
-6. Run the agreed avatar sequence in the Sim. Keep the relevant action in view
-   long enough to be included in the inspected interval. Current visual analysis
-   samples footage; a brief appearance can be missed.
+## The walkthrough
 
-Opening the page never starts capture or AI ingestion. Capture continues across
-workspace navigation until **Stop capture** is used. Presentation Mode adjusts
-the display; it does not qualify any workload.
+### Watch
 
-## Review cameras and recordings
+Show the live warehouse feed and the advancing indexed coverage.
 
-Open **Live cameras** for the source browser, then **Review source** for the
-hospital camera. The full camera frame stays visible; **Ask this camera** sits
-below it. The activity rail separates **Live recording** (needed for recent
-questions and replay) from **Search indexing** (background searchable history).
-The current hospital recording and search indexing are on, with detection and
-tracking enabled. Choose a
-starter to fill the question, then choose **Ask the video** to run it.
+Say: “This is an RTSP camera from our simulator. The same workflow can take a
+network camera feed. Video is recorded and indexed here on the device.”
 
-**Video history** opens this source's existing history workflow; building history
-is an explicit additional processing action. **Processing details** reveals
-caption/tracking coverage and analysis profiles. The current profile is
-**Warehouse**, using its Person class for the avatar rehearsal. This model can
-mislabel hospital equipment; tracked observations are repeated metadata records,
-not a people count. Keep this profile while testing the configured one-camera
-worker. **Sources**
-returns to the browser, where recordings have their own **Open recording** action.
-The primary camera card uses a live preview; static VST pictures can still be
-damaged on this Spark, so use the advancing live video for the demonstration.
+Point to camera connection, local AI availability and searchable history. An
+indexed segment is a video interval, not a count of objects or people.
 
-## Two-minute core story — watch, ask, verify, save
+### Ask
 
-| Action | Suggested wording | Visitor takeaway |
-| --- | --- | --- |
-| Show an avatar in the live scene | “Here is activity in the digital twin.” | The source is visibly connected to the simulation. |
-| Choose **Describe the people and their activity**, then **Ask the video** | “We can ask a question in ordinary language.” | The selected scene is inspected locally. |
-| Read the answer and its inspected time window | “This answer refers to these recorded seconds.” | The answer has a defined scope, rather than an assumed current-frame view. |
-| Choose **Replay inspected clip** | “Let's check what the video actually shows.” | The customer can verify or challenge the observation. |
-| Choose **Save report**, add a useful title and review notes, then save | “We can keep the answer and its footage for someone to review.” | The output is evidence someone can open and discuss. |
-| Open the report and play its retained video | “The evidence stays available after live capture stops.” | A retained report is useful beyond the live demonstration. |
+Choose **Summarize this scene**, then **Ask the video**. Replay the inspected
+interval. Ask about equipment or people only when their presence is unambiguous.
 
-Use **Return to live** to restore the current scene. If no person is visible,
-accept a supported “no people visible” answer as a baseline, then repeat after
-an avatar appears. Do not suggest that a plausible answer proves a calibrated
-occupancy count or continuous person tracking.
+Use **Recent footage** to choose 1–60 seconds; the default is 3 seconds.
+For a quick scene description, try 2–5 seconds. Keep 15 seconds or more when
+asking about activity over time. Sampling uses about one frame per second,
+capped at 20 frames across the selected interval; a two-second question requests
+two frames. Longer intervals provide more context but can miss brief activity
+between sampled frames.
 
-## Extend the story — search and alerts
+Live questions inspect the latest retained interval, allowing five seconds for
+recording storage to settle. An already running recording becomes ready as soon
+as the chosen interval is verified; a newly started recording waits for actual
+footage. Changing the duration leaves capture and indexing running. The answer
+shows the precise inspected timestamps.
 
-**Find a moment.** Select **Search this scene**. The source remains scoped to the
-Sim and the query starts with “person walking through a hospital corridor.”
-Search uses indexed video. Hospital analysis is currently active; confirm that
-**Searchable through** advances to the time of the avatar activity, then search.
-If analysis was paused between rehearsals, use **Resume analysis** in **Live
-cameras** first. Play the retrieved interval
-before making a claim about its contents. A semantic match is not automatically
-verified by the visual model.
+Say: “The agent inspects recorded footage and gives us an answer we can check
+against the exact clip.”
 
-**Watch a condition.** Select **Set an alert**. The Sim camera is preselected.
-**Person appears** and **Corridor obstruction** fill plain-language examples
-for review; neither activates a rule by itself. Start with a visible, repeatable
-condition. Review the prompt, activate one rule, then inspect matching footage
-in **Events & reports**. Visual rules inspect sampled windows and can emit
-repeated observations of the same condition. Do not describe three matching
-observations as three different people or incidents.
+The model can misinterpret distant objects. Review before calling an answer
+confirmed. Save useful, verified answers as reports.
 
-A live visual rule reserves the visual lane. Pause or remove it before returning
-to interactive questions. Recording, source analysis and monitoring are separate
-controls: pausing analysis does not stop recording, and stopping capture does
-not disable a rule. End a rehearsal by removing its rules, pausing background
-analysis and stopping capture. Verify the resulting state.
+### Find
 
-## Confirmed scope and remaining rehearsal gates
+Search **pallets and storage racks** for a static warehouse scene. After a person
+appears, try **person walking through a warehouse aisle**. Use **forklift near a
+pallet** only if a forklift is actually present. The default window is the last
+15 minutes; broaden it through Refine search when needed.
 
-The prior Spark trial demonstrated advancing 1280×720 preview, fresh visual
-inspection, exact 25-second evidence, retained report playback after capture
-stopped, semantic indexing and a bounded positive cart-condition rule.
-[Exact joint trial receipt](qa/2026-09-29-spark-sim-joint.md).
-This is a foundation for the avatar story, not a scored avatar evaluation.
+Open **How this was answered**, then play a candidate clip.
 
-The September 30 desk rehearsal also passes capture → question → 25-second
-replay → saved report → retained playback after capture stops. Its actual
-answer, “There are no people present in the scene,” matches the empty-corridor
-baseline. The [UI receipt](qa/2026-09-30-spark-tradeshow-ui.md) records checks and
-limits; the [retained baseline report](http://10.88.9.91:7777/api/vision/investigations?id=8b984b20-7482-4c9c-8048-d553848c5a54&format=html)
-is available in **Earlier evidence**.
+Say: “Cosmos Embed represents visual meaning in an index. We search with a
+phrase and retrieve relevant intervals with the camera and time attached.”
 
-The Sim's population +/- controls stage scenario configuration; they are not
-individual live spawn/despawn controls. Its allow-listed web protocol currently
-has no per-avatar spawn command. **Reset Demo** clears actors but incoming Kafka
-updates may recreate them; `scene.reset` reloads the stage and interrupts RTSP.
-The hospital near-fall scenario is blocked pending a qualified adapter. Agree on
-a repeatable external avatar sequence before promising customer-triggered
-entrances, exits or a deterministic reset.
+A ranked result is a candidate to inspect. Use **Ask about this clip** for a
+question about a specific retrieved interval.
 
-Do not promise occupancy totals, movement trajectories, heatmaps, calibrated
-safety decisions, perfect brief-event detection or sustained tradeshow duration.
-The [Spark detector check](qa/2026-09-30-spark-detection-tracking.md) now verifies
-frames, tracking metadata and semantic indexing together. Avatar label accuracy
-remains unqualified, with industrial mislabels observed in the hospital scene.
-Rehearse an empty-scene baseline,
-a visible entrance, a person held in view, an exit, and a repeat; score answers
-and both positive and negative alert windows against the actual footage.
+### Follow
 
-For fast iteration, use the [Spark source-mounted UI workflow](ui-development.md).
-Only the UI is recreated. The existing built UI is a rollback to its previous
-screen until deliberately refreshed; switching to it does not package the new
-live desk.
+Open a clip and choose **Inspect detected objects**. Compare its boxes, labels
+and track IDs against the actual frame. Tracking links recorded observations;
+it does not prove identity across cameras.
+
+**Find similar** compares the selected object's appearance with other retained
+moments from the same camera. When a detection has no appearance features yet,
+VSS prepares crops from retained footage with the local Cosmos Embed model and
+caches the features. The first lookup can take around 20 seconds; cached lookups
+are faster. Review the ranked clips: similar appearance does not prove identity.
+
+### Monitor
+
+Choose **New monitoring rule**. The current camera is preselected. Examples:
+
+- **Forklift visible** — a clearly identifiable forklift in a sampled frame.
+- **Person in aisle** — a clearly visible person, without assuming motion.
+- **Aisle obstruction** — an object blocking passage, excluding normally stored pallets.
+
+Choose a condition the scene can actually demonstrate. Review the exact prompt
+and rule name before **Activate monitoring**. These visual conditions are model
+assessments, not measured safety distances or certified safety alarms.
+
+Say: “We describe the condition and let local visual reasoning examine sampled
+windows. When it finds a match, there is footage to review.”
+
+Allow a sampling window plus processing time. Pause the rule after the example
+and before asking another visual question.
+
+### Review
+
+Choose **Refresh**, check the rule, camera and time, then **Find footage**. Replay
+and verify what matched. Acknowledge or resolve only after reviewing the evidence.
+Save a report with notes about what was actually confirmed.
+
+**Show saved reports** reveals retained evidence. Reports open separately so the
+workflow stays in place. Earlier hospital reports remain historical examples.
+Repeated windows of the same condition are not counts of unique incidents.
+
+Choose **Back to the live scene** for the next walkthrough. Confirm monitoring is
+paused. Capture and indexing can stay enabled for the agreed session.
+
+## Verification history
+
+The earlier browser rehearsals verified real question submission, semantic
+search, recorded playback, monitoring activation/pause and a positive medical-cart
+alert with evidence. They did not qualify warehouse recognition, avatar motion,
+multi-camera capacity or a full show-day workload. The October 1 appearance-search
+check returned nine ranked moments for Person 523, including earlier and later
+moments of the same track, and confirmed a result preview loads. The cached API
+lookup took 0.29 seconds; the initial preparation took about 21 seconds.
+
+See [guided workflow receipt](qa/2026-09-30-guided-demo.md) and
+[earlier browser rehearsal](qa/2026-09-30-booth-browser-rehearsal.md).
+
+
+## Start with fresh history
+
+Use **Clear history** in the top bar, or **System → Clear history**. Review the counts, then choose **Clear all previous history**. Wait for **History cleared**; the dialog can close while cleanup continues in the background.
+
+This removes the old indexed moments, completed live recordings, detections/tracks, caption and AI knowledge, retained evidence clips, saved reports and past event states captured by that preview. Cameras, rules, analysis profiles, preferences, cached models and uploaded source videos stay in place. Capture and ingestion keep their current state: a running camera keeps producing fresh history; a paused source stays paused. The open recording fragment, cutoff-spanning intervals and anything newly created or updated during cleanup are retained. Counts can start rising again immediately.
+
+If a step fails, the dialog reports **Some history remains** with the affected step. Use **Review remaining history** to create a new preview and retry. Canceling the confirmation only releases the preview; it does not delete data. Clear history cannot undo a completed reset.

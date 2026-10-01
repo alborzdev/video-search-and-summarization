@@ -69,6 +69,33 @@ describe('cross-source analysis', () => {
     expect(answer).not.toContain('confirmed incident');
   });
 
+  it('does not treat an incomplete event feed as proof that no incident requires attention', () => {
+    const answer = summarizeCrossSourceEvidence(request, { ...evidence, incidents: [], incidentCoverage: 'partial' }).answer;
+    expect(answer).toContain('Event coverage is incomplete');
+    expect(answer).not.toContain('No operator-ready incident');
+  });
+
+  it('distinguishes a direct visual rule match from a confirmed incident', () => {
+    const answer = summarizeCrossSourceEvidence(request, { ...evidence, incidents: [{
+      ...evidence.incidents[0], info: { verdict: 'confirmed', alertRuleId: 'rule', alertCategory: 'semantic', triggerPhrase: 'yes' },
+    }] }).answer;
+    expect(answer).toContain('1 visual rule match');
+    expect(answer).not.toContain('1 confirmed incident');
+  });
+
+  it('counts a long visual rule match and its separated contained windows once', () => {
+    const info = { verdict: 'confirmed', alertRuleId: 'rule', alertCategory: 'Browser check forklift visible', triggerPhrase: 'forklift visible' };
+    const incidents = [
+      { Id: 'whole', sensorId: 'warehouse-camera', timestamp: '2026-10-01T18:54:49Z', end: '2026-10-01T18:57:23Z', info },
+      { Id: 'one', sensorId: 'warehouse-camera', timestamp: '2026-10-01T18:55:13Z', end: '2026-10-01T18:55:36Z', info },
+      { Id: 'two', sensorId: 'warehouse-camera', timestamp: '2026-10-01T18:55:43Z', end: '2026-10-01T18:56:06Z', info },
+      { Id: 'three', sensorId: 'warehouse-camera', timestamp: '2026-10-01T18:56:13Z', end: '2026-10-01T18:56:36Z', info },
+    ];
+    const answer = summarizeCrossSourceEvidence(request, { ...evidence, incidents }).answer;
+    expect(answer).toContain('1 visual rule match');
+    expect(answer).not.toContain('4 visual rule matches');
+  });
+
   it('excludes internal analytics records that have no operator evidence', () => {
     const internalOnly = {
       incidents: [{

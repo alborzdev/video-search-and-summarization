@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
 
 import handler from "../../../pages/api/vision/live-capture";
+import { readLiveRecordingWindow } from "../../../server/vision/liveRecordingWindow";
+jest.mock("../../../server/vision/liveRecordingWindow", () => ({ readLiveRecordingWindow: jest.fn() }));
+jest.mock("../../../server/vision/visualQuestionReadiness", () => ({ visualQuestionBlockReason: jest.fn().mockResolvedValue(null) }));
+import { visualQuestionBlockReason } from "../../../server/vision/visualQuestionReadiness";
+const readWindow = readLiveRecordingWindow as jest.MockedFunction<typeof readLiveRecordingWindow>;
 import type { NextApiRequest, NextApiResponse } from "next";
 
 const streamId = "live-stream";
@@ -49,6 +54,9 @@ describe("live capture API", () => {
 
   beforeEach(() => {
     process.env.VST_INTERNAL_API_URL = base;
+    (visualQuestionBlockReason as jest.Mock).mockResolvedValue(null);
+    readWindow.mockReset();
+    readWindow.mockResolvedValue({ ready: true, remainingSeconds: 0, window: { startTime: "2026-10-01T12:00:00Z", endTime: "2026-10-01T12:00:15Z" } });
   });
   afterEach(() => {
     global.fetch = originalFetch;
@@ -72,6 +80,8 @@ describe("live capture API", () => {
         sensorId,
         recordingStatus: recordingStatus === "off" ? "off" : "on",
         vstRecordingMode: recordingStatus,
+        questionReady: recordingStatus !== "off",
+        remainingSeconds: recordingStatus === "off" ? null : 0,
       });
       expect(h.setHeader).toHaveBeenCalledWith("Cache-Control", "no-store");
       expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
@@ -90,6 +100,47 @@ describe("live capture API", () => {
       }
     }
   );
+
+  it("reports capture on while waiting for actual recorded footage", async () => {
+    readWindow.mockResolvedValue({ ready: false, window: null, remainingSeconds: 7 });
+    global.fetch = jest.fn().mockResolvedValueOnce(jsonResponse(catalog))
+      .mockResolvedValueOnce(jsonResponse({ recordingStatus: "on" }));
+    const h = responseHarness();
+    await handler(request(), h.response);
+    expect(h.status).toHaveBeenCalledWith(200);
+    expect(h.json).toHaveBeenCalledWith(expect.objectContaining({ recordingStatus: "on", questionReady: false, remainingSeconds: 7 }));
+    expect(readWindow).toHaveBeenCalledWith(sensorId, undefined, 3);
+    expect((global.fetch as jest.Mock).mock.calls.every(([, init]) => !init.method)).toBe(true);
+  });
+
+  it("GET checks the selected duration without mutating recording", async () => {
+    global.fetch = jest.fn().mockResolvedValueOnce(jsonResponse(catalog))
+      .mockResolvedValueOnce(jsonResponse({ recordingStatus: "on" }));
+    const h = responseHarness();
+    await handler(request("GET", { query: { streamId, lookbackSeconds: "2" } }), h.response);
+    expect(h.status).toHaveBeenCalledWith(200);
+    expect(readWindow).toHaveBeenCalledWith(sensorId, undefined, 2);
+    expect((global.fetch as jest.Mock).mock.calls.every(([, init]) => !init.method)).toBe(true);
+  });
+
+  it.each(["0", "61", "2.5", "invalid", ["2", "15"]])("rejects invalid duration %p before reading VST", async (lookbackSeconds) => {
+    global.fetch = jest.fn();
+    const h = responseHarness();
+    await handler(request("GET", { query: { streamId, lookbackSeconds } }), h.response);
+    expect(h.status).toHaveBeenCalledWith(422);
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(readWindow).not.toHaveBeenCalled();
+  });
+
+  it("keeps capture state verified while footage readiness is temporarily unavailable", async () => {
+    readWindow.mockResolvedValue({ ready: false, window: null, remainingSeconds: null, error: "Recent recording is catching up" });
+    global.fetch = jest.fn().mockResolvedValueOnce(jsonResponse(catalog))
+      .mockResolvedValueOnce(jsonResponse({ recordingStatus: "alwaysOn" }));
+    const h = responseHarness();
+    await handler(request(), h.response);
+    expect(h.status).toHaveBeenCalledWith(200);
+    expect(h.json).toHaveBeenCalledWith(expect.objectContaining({ recordingStatus: "on", questionReady: false, questionReadinessError: "Recent recording is catching up" }));
+  });
 
   it.each([
     [
@@ -166,6 +217,8 @@ describe("live capture API", () => {
         sensorId,
         recordingStatus,
         vstRecordingMode: recordingStatus,
+        questionReady: recordingStatus === "on",
+        remainingSeconds: recordingStatus === "on" ? 0 : null,
       });
       expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
         `${base}/v1/live/streams`,
@@ -202,6 +255,38 @@ describe("live capture API", () => {
     );
   });
 
+  it.each(["statusUnknown", "error"])("waits for initial %s after an acknowledged start to become verified capture", async (initial) => {
+    global.fetch = jest.fn()
+      .mockResolvedValueOnce(jsonResponse(catalog))
+      .mockResolvedValueOnce(jsonResponse(null))
+      .mockResolvedValueOnce(jsonResponse({ recordingStatus: initial }))
+      .mockResolvedValueOnce(jsonResponse({ recordingStatus: "user" }));
+    const h = responseHarness();
+    await handler(request("POST"), h.response);
+    expect(h.status).toHaveBeenCalledWith(200);
+    expect(h.json).toHaveBeenCalledWith(expect.objectContaining({ recordingStatus: "on", questionReady: true }));
+    expect(global.fetch).toHaveBeenCalledTimes(4);
+  });
+
+  it.each(["statusUnknown", "error"])("bounds transition polling and still rejects persistent %s", async (initial) => {
+    jest.useFakeTimers();
+    try {
+      global.fetch = jest.fn()
+        .mockResolvedValueOnce(jsonResponse(catalog))
+        .mockResolvedValueOnce(jsonResponse(null))
+        .mockResolvedValue(jsonResponse({ recordingStatus: initial }));
+      const h = responseHarness();
+      const pending = handler(request("POST"), h.response);
+      await jest.runAllTimersAsync();
+      await pending;
+      expect(h.status).toHaveBeenCalledWith(502);
+      expect(h.json).toHaveBeenCalledWith(expect.objectContaining({ error: expect.stringContaining("did not report a usable recording state") }));
+      expect(global.fetch).toHaveBeenCalledTimes(11);
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("verifies manual VIOS recording after start and preserves its raw user mode", async () => {
     global.fetch = jest
       .fn()
@@ -216,6 +301,8 @@ describe("live capture API", () => {
       sensorId,
       recordingStatus: "on",
       vstRecordingMode: "user",
+      questionReady: true,
+      remainingSeconds: 0,
     });
   });
 
@@ -306,6 +393,8 @@ describe("live capture API", () => {
         sensorId,
         recordingStatus: mode === "off" ? "off" : "on",
         vstRecordingMode: mode,
+        questionReady: mode !== "off",
+        remainingSeconds: mode === "off" ? null : 0,
       });
       expect(fetchMock.mock.calls.map(([url]) => url)).toEqual([
         `${base}/v1/live/streams`,
@@ -452,4 +541,14 @@ describe("live capture API", () => {
       expect(global.fetch).not.toHaveBeenCalled();
     }
   );
+  it('reports exclusive monitoring separately from recorded-footage readiness using local rules', async () => {
+    (visualQuestionBlockReason as jest.Mock).mockResolvedValue('Pause visual monitoring in Alert rules to ask a question.');
+    global.fetch = jest.fn().mockResolvedValueOnce(jsonResponse(catalog)).mockResolvedValueOnce(jsonResponse({ recordingStatus: 'on' }));
+    const h = responseHarness();
+    await handler(request(), h.response);
+    expect(h.json).toHaveBeenCalledWith(expect.objectContaining({ recordingStatus: 'on', questionReady: true,
+      questionBlockReason: 'Pause visual monitoring in Alert rules to ask a question.' }));
+    expect((global.fetch as jest.Mock).mock.calls.every(([, options]) => !options?.method)).toBe(true);
+  });
+
 });

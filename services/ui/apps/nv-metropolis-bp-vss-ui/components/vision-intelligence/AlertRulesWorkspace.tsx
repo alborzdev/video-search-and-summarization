@@ -42,6 +42,7 @@ import {
 import React, { FormEvent, useCallback, useEffect, useState } from 'react';
 
 interface AlertRulesWorkspaceProps {
+  source?: VisionStream;
   initialSourceId?: string | null;
   onManageSources: () => void;
   onModeChange?: (mode: Exclude<LiveMode, 'rules'>) => void;
@@ -112,6 +113,9 @@ export function MonitoringRuleWizard({
   const [profilesBySource, setProfilesBySource] = useState<Record<string, SourceAnalysisProfile>>({});
 
   const [profilesLoading, setProfilesLoading] = useState(true);
+  const [profileRetry, setProfileRetry] = useState(0);
+  // Polling can replace stream objects without changing profile identities.
+  const profileSourceIds = JSON.stringify([...new Set(streams.map(candidate => candidate.sensorId))].sort());
 
   const dialogRef = useDialogAccessibility<HTMLElement>({ isOpen: true, onClose });
 
@@ -131,9 +135,9 @@ export function MonitoringRuleWizard({
     setProfilesLoading(true);
     Promise.all([
       loadAnalysisProfileCatalog(controller.signal),
-      Promise.all(streams.map(async (candidate) => {
+      Promise.all((JSON.parse(profileSourceIds) as string[]).map(async (sourceId) => {
         try {
-          return [candidate.sensorId, await loadSourceAnalysisProfile(candidate.sensorId, controller.signal)] as const;
+          return [sourceId, await loadSourceAnalysisProfile(sourceId, controller.signal)] as const;
         } catch {
           return null;
         }
@@ -152,7 +156,7 @@ export function MonitoringRuleWizard({
         if (!controller.signal.aborted) setProfilesLoading(false);
       });
     return () => controller.abort();
-  }, [streams]);
+  }, [profileRetry, profileSourceIds]);
 
   useEffect(() => {
     if (draft || !streams.length) return;
@@ -224,7 +228,7 @@ export function MonitoringRuleWizard({
     applyTemplate(allowed);
     setRegionPreviewAvailable(false);
     if (allowed.engine === 'vlm' && intent.trim()) {
-      setDraft((current) => current ? { ...current, prompt: intent.trim() } : current);
+      setDraft((current) => current ? { ...current, name: draft.name, prompt: intent.trim() } : current);
     }
     setStep(allowed.geometry === 'polygon' ? 'region' : 'review');
   };
@@ -235,7 +239,7 @@ export function MonitoringRuleWizard({
     setError(null);
     let liveRuleId = '';
     try {
-      let requestDraft: MonitoringRuleDraft & { backendRuleId?: string } = draft;
+      let requestDraft: MonitoringRuleDraft & { backendRuleId?: string; liveStreamUrl?: string } = draft;
       if (draft.engine === 'vlm') {
         const bridgeResponse = await fetch('/api/vision/live-alert-rules', {
           body: JSON.stringify({
@@ -253,7 +257,7 @@ export function MonitoringRuleWizard({
           throw new Error(bridgePayload.error || bridgePayload.message || 'The visual rule could not be started.');
         }
         liveRuleId = bridgePayload.id;
-        requestDraft = { ...draft, backendRuleId: liveRuleId };
+        requestDraft = { ...draft, backendRuleId: liveRuleId, liveStreamUrl: stream.url };
       }
       const response = await fetch('/api/vision/monitoring-rules', {
         body: JSON.stringify(requestDraft),
@@ -326,17 +330,19 @@ export function MonitoringRuleWizard({
             )}
             <label className="vi-rule-natural-language">
               <span>Describe what matters</span>
-              <div><IconSparkles size={20} /><input aria-label="Monitoring intent" placeholder="Describe a visible event, such as a person appearing in the corridor" value={intent} onChange={(event) => setIntent(event.target.value)} /></div>
+              <div><IconSparkles size={20} /><input aria-label="Monitoring intent" placeholder="Describe a visible event, such as a forklift appearing in an aisle" value={intent} onChange={(event) => setIntent(event.target.value)} /></div>
             </label>
-            {/hospital|digital.twin/i.test(`${stream?.name} ${stream?.url}`) && (
-              <div className="vi-rule-scene-prompts" role="group" aria-label="Sim alert examples">
+            {stream && (
+              <div className="vi-rule-scene-prompts" role="group" aria-label="Monitoring examples">
                 {[
-                  ["Person appears", "At least one person is clearly visible in the hospital corridor in any sampled frame. A brief appearance counts. Do not count monitor carts or equipment as people."],
-                  ["Corridor obstruction", "A person or object visibly blocks passage through the hospital corridor. Do not count equipment parked beside the wall as blocking the passage."],
+                  ["Forklift visible", "A forklift is clearly visible in the warehouse in any sampled frame. Do not count storage racks or pallets as forklifts."],
+                  ["Person in aisle", "At least one person is clearly visible in a warehouse aisle in any sampled frame. Do not infer movement from a single frame."],
+                  ["Aisle obstruction", "An object visibly blocks a warehouse aisle. Do not count pallets stored inside racks or beside a clear passage as obstructions."],
                 ].map(([label, prompt]) => <button type="button" key={label} onClick={() => {
                   const visual = compatibleTemplates.find(candidate => candidate.engine === 'vlm');
                   if (visual) applyTemplate(visual);
                   setIntent(prompt);
+                  setDraft(current => current ? { ...current, name: label } : current);
                 }}>{label}</button>)}
               </div>
             )}
@@ -371,7 +377,13 @@ export function MonitoringRuleWizard({
                 );
               })}
             </div>
-            {!profilesLoading && compatibleTemplates.length === 0 && (
+            {!profilesLoading && !analysisProfile && (
+              <div className="vi-rule-error" role="alert">
+                <IconAlertTriangle size={17} /> This source’s analysis profile could not be verified. Check the local analytics service and retry.
+                <button type="button" onClick={() => setProfileRetry(current => current + 1)}>Retry profile check</button>
+              </div>
+            )}
+            {!profilesLoading && analysisProfile && compatibleTemplates.length === 0 && (
               <div className="vi-rule-error">
                 <IconAlertTriangle size={17} /> Search-only recordings do not publish object tracks. Reprocess this source with a compatible detector profile to add area or proximity rules.
               </div>
@@ -379,7 +391,7 @@ export function MonitoringRuleWizard({
             {!isLiveStream(stream) && (
               <div className="vi-rule-recorded-note"><IconClock size={17} /><span>Recorded rules evaluate while the file is processed. Results appear as historical incidents on its timeline.</span></div>
             )}
-            <footer><button type="button" onClick={onClose}>Skip for now</button><button className="is-primary" type="submit" disabled={profilesLoading || !analysisProfile || (draft.engine === 'vlm' && !intent.trim())}>Continue <span>→</span></button></footer>
+            <footer><button type="button" onClick={onClose}>Skip for now</button><button className="is-primary" type="submit" disabled={profilesLoading || !analysisProfile || compatibleTemplates.length === 0 || (draft.engine === 'vlm' && !intent.trim())}>Continue <span>→</span></button></footer>
           </form>
         )}
 
@@ -427,7 +439,7 @@ export function MonitoringRuleWizard({
   );
 }
 
-export function AlertRulesWorkspace({ initialSourceId, onManageSources, onModeChange, vstApiUrl }: AlertRulesWorkspaceProps) {
+export function AlertRulesWorkspace({ source, initialSourceId, onManageSources, onModeChange, vstApiUrl }: AlertRulesWorkspaceProps) {
   const { streams, isLoading: sourcesLoading, error: sourcesError, refresh: refreshSources } = useVisionStreams(vstApiUrl);
   const [rules, setRules] = useState<MonitoringRule[]>([]);
   const [loading, setLoading] = useState(true);
@@ -436,6 +448,7 @@ export function AlertRulesWorkspace({ initialSourceId, onManageSources, onModeCh
   const [showWizard, setShowWizard] = useState(false);
   const [wizardSourceId, setWizardSourceId] = useState<string | null>(initialSourceId ?? null);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const [updatingRuleId, setUpdatingRuleId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -460,10 +473,13 @@ export function AlertRulesWorkspace({ initialSourceId, onManageSources, onModeCh
     setShowWizard(true);
   }, [initialSourceId]);
 
-  const activeCount = rules.filter((rule) => rule.status === 'active').length;
-  const sourceCount = new Set(rules.map((rule) => rule.sourceId)).size;
+  const visibleRules = source ? rules.filter((rule) => [source.sensorId, source.streamId].includes(rule.sourceId)) : rules;
+  const activeCount = visibleRules.filter((rule) => rule.status === 'active').length;
+  const sourceCount = new Set(visibleRules.map((rule) => rule.sourceId)).size;
 
   const updateState = async (rule: MonitoringRule, action: 'pause' | 'resume') => {
+    if (updatingRuleId) return;
+    setUpdatingRuleId(rule.id);
     setError(null);
     try {
       const response = await fetch(`/api/vision/monitoring-rules?id=${encodeURIComponent(rule.id)}`, {
@@ -476,7 +492,7 @@ export function AlertRulesWorkspace({ initialSourceId, onManageSources, onModeCh
       setRules((current) => current.map((candidate) => candidate.id === rule.id ? payload.rule! : candidate));
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'The rule could not be updated.');
-    }
+    } finally { setUpdatingRuleId(null); }
   };
 
   const deleteRule = async (rule: MonitoringRule) => {
@@ -512,7 +528,7 @@ export function AlertRulesWorkspace({ initialSourceId, onManageSources, onModeCh
       <div className="vi-monitoring-content">
         <div className="vi-monitoring-heading">
           <div><span className="vi-eyebrow">Watch for what matters</span><h1>What should trigger a review?</h1><p>Choose a camera and a visible condition, such as a person entering a marked area. Review matching footage in Events &amp; reports.</p></div>
-          <button type="button" onClick={() => { setWizardSourceId(null); setShowWizard(true); }}><IconPlus size={18} /> New monitoring rule</button>
+          <button type="button" onClick={() => { setWizardSourceId(source?.sensorId ?? null); setShowWizard(true); }}><IconPlus size={18} /> New monitoring rule</button>
         </div>
         <div className="vi-monitoring-summary" aria-busy={loading}>
           {!hasLoadedRules ? <span role="status">{loading ? 'Checking monitoring rules…' : 'Rule counts unavailable'}</span> : <>
@@ -526,16 +542,16 @@ export function AlertRulesWorkspace({ initialSourceId, onManageSources, onModeCh
         <p className="vi-rule-readiness-note">Enabled means the rule is configured. Live monitoring also needs a connected camera and running analysis; recorded rules apply to a processing run.</p>
         <div className="vi-monitoring-list-heading"><div><h2>Rules by source</h2><span>Rules define which activity to flag. Review the resulting events and their footage before acting.</span></div><button type="button" onClick={onManageSources}>Manage sources</button></div>
         <div className="vi-monitoring-list">
-          {loading && !hasLoadedRules ? <div className="vi-monitoring-empty"><span className="vi-spinner" /> Loading local rules…</div> : !hasLoadedRules ? null : rules.length ? rules.map((rule) => (
+          {loading && !hasLoadedRules ? <div className="vi-monitoring-empty"><span className="vi-spinner" /> Loading local rules…</div> : !hasLoadedRules ? null : visibleRules.length ? visibleRules.map((rule) => (
             <article key={rule.id}>
               <div className={`vi-monitoring-rule-icon is-${rule.engine}`}>{rule.engine === 'vlm' ? <IconBrain size={21} /> : <IconShieldCheck size={21} />}</div>
-              <div className="vi-monitoring-rule-copy"><div><span className={`vi-monitoring-status is-${rule.status}`}>{ruleStatusCopy(rule)}</span><em>{rule.severity}</em></div><h3>{rule.name}</h3><p>{rule.description}</p><small>{rule.sourceName} · {rule.sourceKind === 'live' ? 'Continuous' : 'Recorded run'} · {monitoringEngineLabel(rule.engine)}{rule.engine === 'deepstream' ? ` · ${rule.cooldownSeconds}s cooldown` : ' · Matches per sampled window'}</small><p>{ruleSourceState(rule, streams, sourcesLoading, sourcesError)}</p></div>
+              <div className="vi-monitoring-rule-copy"><div><span className={`vi-monitoring-status is-${rule.status}`}>{ruleStatusCopy(rule)}</span><em>{rule.severity}</em></div><h3>{rule.name}</h3><p>{rule.engine === 'vlm' && rule.prompt ? rule.prompt : rule.description}</p><small>{rule.sourceName} · {rule.sourceKind === 'live' ? 'Continuous' : 'Recorded run'} · {monitoringEngineLabel(rule.engine)}{rule.engine === 'deepstream' ? ` · ${rule.cooldownSeconds}s cooldown` : ' · Matches per sampled window'}</small><p>{ruleSourceState(rule, streams, sourcesLoading, sourcesError)}</p></div>
               <div className="vi-monitoring-rule-actions">
-                {rule.engine === 'deepstream' && <button type="button" onClick={() => void updateState(rule, rule.status === 'active' ? 'pause' : 'resume')}>{rule.status === 'active' ? <><IconPlayerPause size={17} /> Pause</> : <><IconPlayerPlay size={17} /> Resume</>}</button>}
+                {<button type="button" disabled={updatingRuleId !== null} onClick={() => void updateState(rule, rule.status === 'active' ? 'pause' : 'resume')}>{rule.status === 'active' ? <><IconPlayerPause size={17} /> Pause</> : <><IconPlayerPlay size={17} /> Resume</>}</button>}
                 {pendingDelete === rule.id ? <div><button className="is-danger" type="button" onClick={() => void deleteRule(rule)}>Delete rule</button><button type="button" onClick={() => setPendingDelete(null)}>Cancel</button></div> : <button type="button" aria-label={`Delete ${rule.name}`} onClick={() => setPendingDelete(rule.id)}><IconTrash size={17} /></button>}
               </div>
             </article>
-          )) : <div className="vi-monitoring-empty"><IconBellCog size={25} /><strong>No monitoring rules yet</strong><span>Create one in plain language, then draw an area only when the condition needs it.</span><button type="button" onClick={() => setShowWizard(true)}>Create first rule</button></div>}
+          )) : <div className="vi-monitoring-empty"><IconBellCog size={25} /><strong>No monitoring rules yet</strong><span>Create one in plain language, then draw an area only when the condition needs it.</span><button type="button" onClick={() => { setWizardSourceId(source?.sensorId ?? null); setShowWizard(true); }}>Create first rule</button></div>}
         </div>
       </div>
       {showWizard && <MonitoringRuleWizard onClose={() => setShowWizard(false)} onCreated={(rule) => { setRules((current) => [...current, rule]); setShowWizard(false); }} onManageSources={onManageSources} preselectedSourceId={wizardSourceId} streams={streams} vstApiUrl={vstApiUrl} />}

@@ -34,7 +34,7 @@ class DetectorTests(unittest.TestCase):
             for name in baseline['services']:
                 if name not in ('vss-agent', 'vss-ui'):
                     self.assertEqual(services[name], baseline['services'][name], name)
-            for name, allowed in [('vss-agent', ('VSS_WAREHOUSE_RTVI_CV_URL', 'VSS_WAREHOUSE_MAX_SOURCES')),
+            for name, allowed in [('vss-agent', ('VSS_WAREHOUSE_RTVI_CV_URL', 'VSS_WAREHOUSE_MAX_SOURCES', 'VSS_OBJECT_APPEARANCE_ENABLED')),
                                   ('vss-ui', ('RTVI_CV_HEALTH_URL',))]:
                 before, after = baseline['services'][name].copy(), services[name].copy()
                 before['environment'] = {k: v for k, v in before['environment'].items() if k not in allowed}

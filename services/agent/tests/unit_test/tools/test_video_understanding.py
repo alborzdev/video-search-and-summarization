@@ -18,14 +18,92 @@ from langchain_core.messages import HumanMessage
 import pytest
 
 from vss_agents.tools.video_understanding import VideoUnderstandingConfig
+from vss_agents.tools.video_understanding import VideoUnderstandingInput
 from vss_agents.tools.video_understanding import _build_vlm_messages
 from vss_agents.tools.video_understanding import _effective_system_prompt
+from vss_agents.tools.video_understanding import _frame_sampling_extra_body
 from vss_agents.tools.video_understanding import _is_cosmos_model
 from vss_agents.tools.video_understanding import _is_omni_audio_model
 from vss_agents.tools.video_understanding import _parse_thinking_from_content
 from vss_agents.tools.video_understanding import _should_use_video_base64
 from vss_agents.tools.video_understanding import _should_use_video_file_base64
 from vss_agents.tools.video_understanding import _split_vlm_image_messages
+from vss_agents.tools.video_understanding import video_understanding
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("frames", [None, 2, 15, 20])
+async def test_live_tool_binds_frame_budget_to_actual_local_transport(
+    frames: int | None, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock
+    from unittest.mock import MagicMock
+
+    from langchain_core.messages import AIMessage
+    from langchain_core.messages import BaseMessage
+    from langchain_core.outputs import ChatGeneration
+    from langchain_core.outputs import ChatResult
+    from langchain_openai import ChatOpenAI
+
+    requests: list[dict] = []
+
+    async def generate(self: ChatOpenAI, messages: list[BaseMessage], **kwargs: object) -> ChatResult:
+        requests.append(kwargs)
+        return ChatResult(generations=[ChatGeneration(message=AIMessage(content="An empty corridor."))])
+
+    monkeypatch.setattr(ChatOpenAI, "_agenerate", generate)
+    profile = {"num_frames_per_second_or_fixed_frames_chunk": 20, "vlm_input_width": 1280, "vlm_input_height": 720}
+    llm = ChatOpenAI(model="nvidia/cosmos-reason2-8b", api_key="test", extra_body=profile)
+    builder = MagicMock()
+    builder.get_llm = AsyncMock(return_value=llm)
+    url_tool = MagicMock()
+    url_tool.ainvoke = AsyncMock(return_value=SimpleNamespace(video_url="http://vst.test/video.mp4"))
+    builder.get_tool = AsyncMock(return_value=url_tool)
+    config = VideoUnderstandingConfig(
+        vlm_name="rtvi_vlm",
+        video_url_tool="vst_video_url",
+        vlm_mode="local_shared",
+        max_frames=30,
+    )
+    generator = video_understanding.__wrapped__(config, builder)
+    try:
+        function = await generator.__anext__()
+        result = await function.single_fn(
+            VideoUnderstandingInput(
+                sensor_id="camera",
+                start_timestamp="2026-10-01T12:00:00Z",
+                end_timestamp="2026-10-01T12:00:30Z",
+                user_prompt="What is visible?",
+                frame_count=frames,
+            )
+        )
+        assert result == "An empty corridor."
+        if frames is None:
+            assert "extra_body" not in requests[0]
+        else:
+            assert requests[0]["extra_body"] == {**profile, "media_io_kwargs": {"video": {"num_frames": frames}}}
+        assert llm.extra_body == profile
+    finally:
+        await generator.aclose()
+
+
+@pytest.mark.parametrize("frames", [1, 2, 15, 20])
+def test_local_sampling_override_reaches_openai_request_and_preserves_profile(frames: int) -> None:
+    from langchain_openai import ChatOpenAI
+
+    profile = {
+        "num_frames_per_second_or_fixed_frames_chunk": 20,
+        "use_fps_for_chunking": False,
+        "vlm_input_width": 1280,
+        "vlm_input_height": 720,
+    }
+    llm = ChatOpenAI(model="nvidia/cosmos-reason2-8b", api_key="test", extra_body=profile)
+    override = _frame_sampling_extra_body(llm, frames)
+    payload = llm._get_request_payload([HumanMessage(content="Describe this clip.")], extra_body=override)
+    assert payload["extra_body"] == {**profile, "media_io_kwargs": {"video": {"num_frames": frames}}}
+    assert llm.extra_body == profile
+    assert "media_io_kwargs" not in llm.extra_body
 
 
 class TestParseThinkingFromContent:

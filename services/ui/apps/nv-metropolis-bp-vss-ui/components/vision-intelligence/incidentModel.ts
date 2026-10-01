@@ -15,6 +15,7 @@ export interface AnalyticsIncidentInfo {
 
 export interface AnalyticsIncident {
   Id: string;
+  category?: string;
   end?: string;
   info?: AnalyticsIncidentInfo;
   objectIds?: string[];
@@ -80,6 +81,7 @@ export function incidentTitle(incident: AnalyticsIncident): string {
   const configured =
     incident.info?.alertCategory?.trim() || incident.info?.description?.trim();
   if (configured) return configured;
+  if (incident.info?.alertRuleId && incident.category) return incident.category;
   const reasoning = incident.info?.reasoning ?? "";
   if (
     /forklift/i.test(reasoning) &&
@@ -139,6 +141,8 @@ export function hasOperatorIncidentEvidence(
   const info = incident.info;
   return Boolean(
     hasText(info?.alertCategory) ||
+      (hasText(info?.alertRuleId) && hasText(incident.category) &&
+        hasText(incident.sensorId) && Boolean(incident.objectIds?.length)) ||
       hasText(info?.description) ||
       hasText(info?.reasoning) ||
       hasText(info?.videoSource) ||
@@ -188,11 +192,16 @@ export function consolidateIncidents(
   );
   const groups: AnalyticsIncident[][] = [];
   for (const incident of sorted) {
-    const group = groups.find((candidate) =>
-      candidate.some((member) => overlap(member, incident))
-    );
-    if (group) group.push(incident);
-    else groups.push([incident]);
+    const merged = [incident];
+    // A long event can arrive after several separated short candidates. Union
+    // every group it overlaps so contained records do not survive as extra cards.
+    for (let index = groups.length - 1; index >= 0; index -= 1) {
+      if (groups[index].some((member) => overlap(member, incident))) {
+        merged.push(...groups[index]);
+        groups.splice(index, 1);
+      }
+    }
+    groups.push(merged.sort((left, right) => Date.parse(right.timestamp) - Date.parse(left.timestamp)));
   }
   return groups.map((group) => {
     const primary = [...group].sort(

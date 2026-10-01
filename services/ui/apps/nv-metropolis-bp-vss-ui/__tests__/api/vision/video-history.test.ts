@@ -8,6 +8,7 @@ const liveSourceId = "33333333-3333-4333-8333-333333333333";
 const pausedSourceId = "44444444-4444-4444-8444-444444444444";
 const knowledgeId = "22222222-2222-4222-8222-222222222222";
 const storeDirectory = `/tmp/vss-video-history-test-${process.pid}`;
+const originalHardwareProfile = process.env.HARDWARE_PROFILE;
 
 type Handler = (
   request: NextApiRequest,
@@ -87,6 +88,8 @@ describe("video history API", () => {
   });
 
   beforeEach(() => {
+    // Baseline cases exercise Thor telemetry; Spark-specific cases opt in below.
+    process.env.HARDWARE_PROFILE = "THOR";
     pausedAnalysisSources.clear();
     let liveCaptioningStarted = false;
     fetchMock = jest.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -221,6 +224,8 @@ describe("video history API", () => {
   });
 
   afterAll(async () => {
+    if (originalHardwareProfile === undefined) delete process.env.HARDWARE_PROFILE;
+    else process.env.HARDWARE_PROFILE = originalHardwareProfile;
     await rm(storeDirectory, { force: true, recursive: true });
     delete process.env.VISION_HISTORY_DIR;
     delete process.env.LVS_BACKEND_URL;
@@ -494,5 +499,38 @@ describe("video history API", () => {
       code: "TELEMETRY_REQUIRED",
       admission: expect.objectContaining({ workload: "long_video_history_build" }),
     }));
+  });
+
+  it("rejects a Spark replay over 30 minutes before requesting heavy summarization", async () => {
+    process.env.HARDWARE_PROFILE = "DGX-SPARK";
+    process.env.HISTORY_METADATA_TOKEN = "test-local-token";
+    const originalImplementation = fetchMock.getMockImplementation();
+    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).endsWith("/capacity")) return jsonResponse({ hardwareProfile: "DGX-SPARK",
+        sampledAt: Date.now() / 1000, guardActive: true, reserveGiB: 24, availableGiB: 36 });
+      if (String(input).endsWith(`/v1/storage/${sourceId}/timelines`)) return jsonResponse([
+        { startTime: "2026-08-12T10:00:00Z", endTime: "2026-08-12T10:31:00Z" },
+      ]);
+      return originalImplementation!(input, init);
+    });
+    try {
+      const build = responseHarness();
+      await handler(request("POST", { action: "start", events: ["forklift"], scenario: "warehouse",
+        source: { id: sourceId, kind: "replay", name: "Warehouse" } }), build.response);
+      expect(build.state.statusCode).toBe(202);
+      let body: { status?: string; error?: string } = {};
+      for (let attempt = 0; attempt < 100; attempt++) {
+        const status = responseHarness();
+        await handler(request("GET", undefined, { sourceId }), status.response);
+        body = status.state.body as typeof body;
+        if (body.status === "error") break;
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+      expect(body.error).toContain("at most 30 minutes");
+      expect(fetchMock.mock.calls.some(([url]) => String(url).endsWith("/v1/summarize"))).toBe(false);
+    } finally {
+      delete process.env.HARDWARE_PROFILE;
+      delete process.env.HISTORY_METADATA_TOKEN;
+    }
   });
 });

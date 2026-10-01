@@ -1,0 +1,12 @@
+.control { border: 1px solid var(--vi-border); border-radius: 9px; background: var(--vi-surface-soft); margin: 12px 0; padding: 10px 12px; }
+.row { align-items: center; display: flex; flex-wrap: wrap; gap: 8px 12px; }
+.row label { color: var(--vi-text); font-size: 12px; font-weight: 650; margin: 0 !important; }
+.input { align-items: center; display: inline-flex; gap: 7px; }
+.input input { background: var(--vi-surface-raised); border: 1px solid var(--vi-border-strong); border-radius: 6px; color: var(--vi-text); font-family: inherit; font-size: 13px; font-variant-numeric: tabular-nums; height: 32px; margin: 0; padding: 4px 6px 4px 10px; width: 65px; }
+.input input:focus-visible { outline: 2px solid var(--vi-accent); outline-offset: 2px; }
+.input input[aria-invalid="true"] { border-color: var(--vi-warning); }
+.input input:disabled { opacity: .6; }
+.input span { color: var(--vi-muted); font-size: 12px; }
+.frames { color: var(--vi-accent-strong, var(--vi-accent)); font-size: 11px; margin-left: auto; white-space: nowrap; }
+.hint { color: var(--vi-muted); display: block; font-size: 10px; line-height: 1.5; margin-top: 6px; }
+@media (max-width: 420px) { .frames { flex-basis: 100%; margin-left: 0; } }

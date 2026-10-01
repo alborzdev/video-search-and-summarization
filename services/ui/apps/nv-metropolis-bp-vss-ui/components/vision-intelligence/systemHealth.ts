@@ -22,6 +22,13 @@ export interface SystemHealth {
   services: VisionServiceHealth[];
   status: "degraded" | "offline" | "online";
   thor?: ThorHealthMetrics | null;
+  hardwareProfile?: string;
+  sparkCapacity?: {
+    state: "fresh" | "unknown";
+    guardActive: boolean;
+    availableGiB: number | null;
+    reserveGiB: number | null;
+  } | null;
 }
 
 const DEMO_SERVICE_DEPENDENCIES = [

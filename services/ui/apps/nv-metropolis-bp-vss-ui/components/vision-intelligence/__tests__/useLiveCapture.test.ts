@@ -16,7 +16,7 @@ const live: VisionStream = {
   isMain: true,
 };
 const response = (recordingStatus: string, ok = true, error?: string) =>
-  ({ ok, json: async () => ({ recordingStatus, error }) } as Response);
+  ({ ok, json: async () => ({ recordingStatus, error, questionReady: recordingStatus === "on", remainingSeconds: recordingStatus === "on" ? 0 : null }) } as Response);
 
 afterEach(() => {
   jest.useRealTimers();
@@ -99,23 +99,87 @@ it("preserves verified off state and backend failure detail without permitting q
   });
 });
 
-it("waits thirty seconds after observing capture and blocks disconnected or busy live questions", async () => {
-  jest.useFakeTimers();
+it("uses verified recent footage despite stale sensor discovery, but blocks busy and removed sources", async () => {
   global.fetch = jest.fn(async () => response("on"));
   const { result, rerender } = renderHook(
-    ({ stream, busy }) =>
-      useLiveCapture(stream, { visualAnalystAvailable: true, busy }),
+    ({ stream, busy }) => useLiveCapture(stream, { visualAnalystAvailable: true, busy }),
     { initialProps: { stream: live, busy: false } }
   );
-  await act(async () => {});
-  expect(result.current.remainingSeconds).toBe(30);
-  expect(result.current.canAsk).toBe(false);
-  await act(async () => {
-    jest.advanceTimersByTime(30_000);
-  });
-  expect(result.current.canAsk).toBe(true);
+  await waitFor(() => expect(result.current.canAsk).toBe(true));
+  expect(result.current.remainingSeconds).toBe(0);
+  expect(result.current.warming).toBe(false);
   rerender({ stream: live, busy: true });
   expect(result.current.canAsk).toBe(false);
   rerender({ stream: { ...live, connectionState: "offline" }, busy: false });
+  expect(result.current.canAsk).toBe(true);
+  rerender({ stream: { ...live, connectionState: "removed" }, busy: false });
   expect(result.current.canAsk).toBe(false);
+});
+
+it("blocks disconnected questions when no fresh recorded interval is verified", async () => {
+  global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ recordingStatus: "on", questionReady: false }) } as Response));
+  const { result } = renderHook(() => useLiveCapture({ ...live, connectionState: "offline" }, { visualAnalystAvailable: true }));
+  await waitFor(() => expect(result.current.capture).toBe("on"));
+  expect(result.current.canAsk).toBe(false);
+});
+
+it("waits for verified footage rather than enabling questions after an arbitrary timer", async () => {
+  jest.useFakeTimers();
+  let ready = false;
+  global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ recordingStatus: "on", questionReady: ready, remainingSeconds: ready ? 0 : 8 }) } as Response));
+  const { result } = renderHook(() => useLiveCapture(live, { visualAnalystAvailable: true }));
+  await act(async () => {});
+  expect(result.current.remainingSeconds).toBe(8);
+  expect(result.current.canAsk).toBe(false);
+  await act(async () => { jest.advanceTimersByTime(30_000); });
+  expect(result.current.canAsk).toBe(false);
+  ready = true;
+  await act(async () => { jest.advanceTimersByTime(3_000); });
+  expect(result.current.canAsk).toBe(true);
+});
+
+it("does not invent readiness from recording status alone", async () => {
+  global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ recordingStatus: "on" }) } as Response));
+  const { result } = renderHook(() => useLiveCapture(live, { visualAnalystAvailable: true }));
+  await waitFor(() => expect(result.current.capture).toBe("on"));
+  expect(result.current.canAsk).toBe(false);
+  expect(result.current.warming).toBe(true);
+  expect(result.current.remainingSeconds).toBeNull();
+});
+
+it("discards readiness for the old duration and only reads metadata when duration changes", async () => {
+  let oldRead: (value: Response) => void = () => {};
+  global.fetch = jest.fn((input) => String(input).includes("lookbackSeconds=60")
+    ? Promise.resolve({ ok: true, json: async () => ({ recordingStatus: "on", questionReady: false, remainingSeconds: 45 }) } as Response)
+    : new Promise<Response>(resolve => { oldRead = resolve; }));
+  const { result, rerender } = renderHook(
+    ({ seconds }) => useLiveCapture(live, { visualAnalystAvailable: true, lookbackSeconds: seconds }),
+    { initialProps: { seconds: 15 } }
+  );
+  rerender({ seconds: 60 });
+  await waitFor(() => expect(result.current.remainingSeconds).toBe(45));
+  await act(async () => { oldRead(response("on")); });
+  expect(result.current.canAsk).toBe(false);
+  expect(result.current.remainingSeconds).toBe(45);
+  expect((global.fetch as jest.Mock).mock.calls.every(([, init]) => !init.method)).toBe(true);
+});
+
+it('blocks questions for exclusive visual monitoring without stopping verified recording, then recovers when paused', async () => {
+  jest.useFakeTimers();
+  let blocked = true;
+  global.fetch = jest.fn(async () => ({ ok: true, json: async () => ({ recordingStatus: 'on', questionReady: true, remainingSeconds: 0,
+    questionBlockReason: blocked ? 'Pause visual monitoring in Alert rules to ask a question.' : null }) } as Response));
+  const { result, unmount } = renderHook(() => useLiveCapture(live, { visualAnalystAvailable: true }));
+  try {
+    await act(async () => {});
+    expect(result.current.capture).toBe('on');
+    expect(result.current.warming).toBe(false);
+    expect(result.current.canAsk).toBe(false);
+    expect(result.current.questionBlockReason).toContain('Pause visual monitoring');
+    blocked = false;
+    await act(async () => { jest.advanceTimersByTime(3000); });
+    expect(result.current.canAsk).toBe(true);
+    expect(result.current.questionBlockReason).toBeNull();
+    expect((global.fetch as jest.Mock).mock.calls.every(([, options]) => !options?.method)).toBe(true);
+  } finally { unmount(); }
 });

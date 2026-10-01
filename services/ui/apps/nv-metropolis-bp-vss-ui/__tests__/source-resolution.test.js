@@ -45,6 +45,21 @@ test('Turbopack aliases resolve actual source files without built workspace expo
   }
 });
 
+test('desktop loopback HMR origins pass the Next dev guard without accepting arbitrary hosts', () => {
+  const { blockCrossSite } = require('next/dist/server/lib/router-utils/block-cross-site');
+  const origins = loadConfig('next.config.js').allowedDevOrigins;
+  for (const origin of ['http://127.0.0.1:7777', 'http://localhost:7777', 'http://[::1]:7777']) {
+    const socket = { end: jest.fn() };
+    expect(blockCrossSite({ url: '/_next/webpack-hmr', headers: { origin } }, socket, origins, '0.0.0.0')).toBe(false);
+    expect(socket.end).not.toHaveBeenCalled();
+  }
+  const socket = { end: jest.fn() };
+  const warning = jest.spyOn(console, 'warn').mockImplementation(() => {});
+  expect(blockCrossSite({ url: '/_next/webpack-hmr', headers: { origin: 'http://untrusted.example' } }, socket, origins, '0.0.0.0')).toBe(true);
+  expect(socket.end).toHaveBeenCalledWith('Unauthorized');
+  warning.mockRestore();
+});
+
 test('app typecheck preserves strictness and consumes source plus the existing Nemo contracts', () => {
   const options = compilerOptions('tsconfig.json');
   expect(options.strict).toBe(true);

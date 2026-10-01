@@ -581,6 +581,8 @@ class TestSearchInner:
         assert mock_object_search.await_args.kwargs["object_id"] == "42"
         assert mock_object_search.await_args.kwargs["behavior_index"] == "mdx-behavior-2025-01-01"
         assert mock_object_search.await_args.kwargs["reference_sensor_name"] == "warehouse-east"
+        assert mock_object_search.await_args.kwargs["reference_sensor_id"] == "7f8fcbf4-9e1b-41b9-bf52-1e6ce1ca9f6c"
+        assert mock_object_search.await_args.kwargs["reference_behavior_index"] == "mdx-behavior-*"
         assert mock_object_search.await_args.kwargs["reference_timestamp"] == timestamp
 
     @pytest.mark.asyncio
@@ -600,7 +602,11 @@ class TestSearchInner:
         monkeypatch.setattr(search_module.VSSESClient, "get_es_client", AsyncMock(return_value=object()))
 
         async def missing_reference(**_kwargs: object) -> list[object]:
-            raise ValueError("Reference object ID '42' on sensor 'warehouse-east' was not found")
+            from vss_agents.tools.attribute_search import ReferenceEmbeddingError
+
+            raise ReferenceEmbeddingError(
+                "Reference object ID '42' on sensor 'warehouse-east' was not found", "REFERENCE_NOT_INDEXED"
+            )
 
         monkeypatch.setattr(attribute_search_module, "search_by_object_embedding", missing_reference)
 
@@ -623,6 +629,7 @@ class TestSearchInner:
 
         assert output.data == []
         assert output.search_messages == ["Reference object ID '42' on sensor 'warehouse-east' was not found"]
+        assert output.reference_status == "REFERENCE_NOT_INDEXED"
         mock_embed.ainvoke.assert_not_awaited()
 
     @pytest.mark.asyncio

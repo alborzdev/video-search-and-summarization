@@ -13,7 +13,7 @@ from mdx.analytics.core.utils.processing_stats import BatchStats
 from mdx.analytics.core.utils.schema_util import group_frames_by_sensor_id
 
 from fov_adapter import ensure_fov_metric
-from incident_gate import first_incident_per_activity
+from incident_gate import gate_fov_incidents
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +51,8 @@ class ThorCandidateApp(BaseApp):
             self.frame_state_mgmt.update_frames(sensor_id, sensor_frames)
             state = self.frame_state_mgmt.get_state(sensor_id)
             activity_active = bool(state and state.fov_count_violation_state)
-            if activity_active and sensor_id in self.reported_fov_sensors:
-                continue
-
             incidents = self.frame_state_mgmt.get_incidents(sensor_id)
-            incidents = first_incident_per_activity(
+            incidents = gate_fov_incidents(
                 sensor_id,
                 incidents,
                 activity_active,

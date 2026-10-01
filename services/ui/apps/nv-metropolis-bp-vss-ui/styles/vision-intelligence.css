@@ -4074,6 +4074,16 @@ textarea {
   color: var(--vi-warning) !important;
 }
 
+/* The video canvas stays dark in both themes; its controls need local ink
+   colors, including the loading/error state rendered outside the canvas. */
+.vi-object-selector,
+.vi-object-selector-state {
+  --vi-text: #f1f6f4;
+  --vi-muted: #97aaa6;
+  --vi-muted-strong: #c2cfcc;
+  --vi-border-strong: #3a504b;
+  background: #010203;
+}
 .vi-object-selector {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;

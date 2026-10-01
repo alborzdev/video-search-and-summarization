@@ -671,6 +671,39 @@ describe("VisionStreamCanvas", () => {
       value: realMediaStream,
     });
   });
+  it("does not allocate a poster object URL after its canvas was unmounted", async () => {
+    let finishBlob!: (blob: Blob) => void;
+    const body = new Promise<Blob>((resolve) => { finishBlob = resolve; });
+    Object.defineProperty(URL, "createObjectURL", { configurable: true, value: jest.fn(() => "blob:late") });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: jest.fn() });
+    global.fetch = jest.fn(async (input) => String(input).includes('/timelines')
+      ? { ok: true, json: async () => [{ startTime: '2026-10-01T00:00:00Z', endTime: '2026-10-01T00:01:00Z' }] }
+      : { ok: true, headers: { get: () => null }, blob: () => body }) as jest.Mock;
+    const view = render(<VisionStreamCanvas eager={false} stream={replay} vstApiUrl="http://thor.test/vst/api" />);
+    await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(2));
+    view.unmount();
+    for (const [, options] of (global.fetch as jest.Mock).mock.calls) expect(options.signal.aborted).toBe(true);
+    await act(async () => { finishBlob(new Blob(['poster'], { type: 'image/jpeg' })); });
+    expect(URL.createObjectURL).not.toHaveBeenCalled();
+  });
+
+  it("ignores a late replay response body after switching cameras", async () => {
+    let finishOld!: (body: { videoUrl: string }) => void;
+    const oldBody = new Promise<{ videoUrl: string }>((resolve) => { finishOld = resolve; });
+    global.fetch = jest.fn(async (input) => {
+      const url = String(input);
+      if (url.includes('/timelines')) return { ok: true, json: async () => [{ startTime: '2026-10-01T00:00:00Z', endTime: '2026-10-01T00:01:00Z' }] };
+      if (url.includes('/api/vision/evidence?')) return { ok: true, json: () => url.includes('traffic-stream-id') ? oldBody : Promise.resolve({ videoUrl: 'http://thor.test/new-camera.mp4' }) };
+      return { ok: false };
+    }) as jest.Mock;
+    const view = render(<VisionStreamCanvas stream={replay} vstApiUrl="http://thor.test/vst/api" />);
+    await waitFor(() => expect((global.fetch as jest.Mock).mock.calls.some(([url]) => String(url).includes('/api/vision/evidence?'))).toBe(true));
+    view.rerender(<VisionStreamCanvas stream={{ ...replay, streamId: 'new-camera' }} vstApiUrl="http://thor.test/vst/api" />);
+    await waitFor(() => expect(view.container.querySelector('video')).toHaveAttribute('src', 'http://thor.test/new-camera.mp4'));
+    await act(async () => { finishOld({ videoUrl: 'http://thor.test/old-camera.mp4' }); });
+    expect(view.container.querySelector('video')).toHaveAttribute('src', 'http://thor.test/new-camera.mp4');
+  });
+
 });
 
 function mockLiveRtc() {
@@ -919,4 +952,40 @@ describe("live Canvas handoff and decoded-frame deadline", () => {
     expect(onPlaybackStatus).not.toHaveBeenCalledWith("error");
     expect(onPlaybackStatus).toHaveBeenLastCalledWith("playing");
   });
+  it("reconnects a failed preview after the same camera publisher returns online", async () => {
+    const view = mount({ ...live, connectionState: 'offline' } as typeof live);
+    await advance(20_000);
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    view.rerender(<VisionStreamCanvas stream={{ ...live, connectionState: 'online' }} liveSnapshotEnabled={false} vstApiUrl={endpoint} />);
+    expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1);
+    await advance(1200);
+    expect(rtc.sockets).toHaveLength(2);
+    view.rerender(<VisionStreamCanvas stream={{ ...live, connectionState: 'online' }} liveSnapshotEnabled={false} vstApiUrl={endpoint} />);
+    await advance(1000);
+    expect(rtc.sockets).toHaveLength(2);
+    view.unmount();
+    expect(rtc.sockets[1].close).toHaveBeenCalledTimes(1);
+    await advance(8 * 60 * 60 * 1000);
+    expect(rtc.sockets).toHaveLength(2);
+  });
+
+  it("retries a failed live preview when a long-hidden browser returns, and removes resume listeners on unmount", async () => {
+    const view = mount();
+    await advance(20_000);
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'hidden' });
+    fireEvent(document, new Event('visibilitychange'));
+    await advance(8 * 60 * 60 * 1000);
+    expect(rtc.sockets).toHaveLength(1);
+    Object.defineProperty(document, 'visibilityState', { configurable: true, value: 'visible' });
+    fireEvent(document, new Event('visibilitychange'));
+    await advance(1200);
+    expect(rtc.sockets).toHaveLength(2);
+    view.unmount();
+    fireEvent(window, new Event('online'));
+    fireEvent(document, new Event('visibilitychange'));
+    await advance(20_000);
+    expect(rtc.sockets).toHaveLength(2);
+  });
+
 });

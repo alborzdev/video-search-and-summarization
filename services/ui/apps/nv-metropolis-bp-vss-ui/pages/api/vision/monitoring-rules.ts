@@ -9,6 +9,20 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
+import liveAlertHandler from './live-alert-rules';
+
+async function applyLiveAlert(method: 'POST' | 'DELETE', body?: unknown, id?: string): Promise<Record<string, any>> {
+  let statusCode = 200;
+  let payload: Record<string, any> = {};
+  const response = {
+    setHeader() { return response; },
+    status(code: number) { statusCode = code; return response; },
+    json(value: Record<string, any>) { payload = value; return response; },
+  } as unknown as NextApiResponse;
+  await liveAlertHandler({ method, body, query: id ? { id } : {} } as NextApiRequest, response);
+  if (statusCode >= 400) throw new Error(String(payload.error || payload.message || 'The live rule could not be applied.'));
+  return payload;
+}
 
 const STORE_DIR = process.env.VISION_RULES_DIR || '/tmp/vss-vision-intelligence-rules';
 const STORE_PATH = path.join(STORE_DIR, 'rules.json');
@@ -96,7 +110,7 @@ async function jsonRequest(url: string, init: RequestInit = {}, timeoutMs = 25_0
   let payload: Record<string, any> = {};
   try { payload = text ? JSON.parse(text) as Record<string, any> : {}; } catch { /* use empty */ }
   if (!response.ok) {
-    throw new Error(String(payload.message || payload.error || `${url} returned ${response.status}.`));
+    throw Object.assign(new Error(String(payload.message || payload.error || `${url} returned ${response.status}.`)), { status: response.status });
   }
   return payload;
 }
@@ -178,13 +192,22 @@ function asPixels(points: MonitoringPoint[], width: number, height: number): Cal
   }));
 }
 
-async function syncStructuredSource(sourceId: string, rules: MonitoringRule[]): Promise<void> {
+async function syncStructuredSource(sourceId: string, rules: MonitoringRule[], previousRules: MonitoringRule[] = []): Promise<void> {
   const allActive = rules.filter(
     (rule) => rule.engine === 'deepstream' && rule.status === 'active',
   );
   const active = rules.filter(
     (rule) => rule.sourceId === sourceId && rule.engine === 'deepstream' && rule.status === 'active',
   );
+  // RT-CV publishes its registered runtime name as sensorId. VST and rule
+  // storage use the source UUID, so configure both identities for the same ROI.
+  // Include paused rules to clear the runtime alias when the last rule stops.
+  const runtimeNames = [...rules, ...previousRules].filter(rule => rule.sourceId === sourceId && rule.engine === 'deepstream')
+    .map(rule => rule.sourceRuntimeName?.trim()).filter((name): name is string => Boolean(name));
+  const analyticsSensorIds = [...new Set([sourceId, ...runtimeNames])];
+  if (active.filter(rule => rule.kind === 'proximity').length > 1) {
+    throw new Error('This source supports one active proximity rule. Pause the existing proximity rule before enabling another.');
+  }
   const calibration = await jsonRequest(
     `${VIDEO_ANALYTICS_URL}/config/calibration?sensorId=${encodeURIComponent(sourceId)}`,
     { cache: 'no-store' },
@@ -212,18 +235,18 @@ async function syncStructuredSource(sourceId: string, rules: MonitoringRule[]): 
     body: JSON.stringify({
       calibrationType: calibration.calibrationType || 'image',
       osmURL: calibration.osmURL || '',
-      sensors: [{
-        ...defaultSensor(sourceId),
+      sensors: analyticsSensorIds.map(analyticsSensorId => ({
+        ...defaultSensor(analyticsSensorId),
         ...existing,
         attributes,
-        id: sourceId,
+        id: analyticsSensorId,
         rois: [...unmanagedRois, ...managedRois],
         // VST may return a placeholder calibration with an empty sensor type.
         // The analytics schema requires a non-empty value, and spreading that
         // placeholder over our defaults would otherwise invalidate every ROI
         // upsert for the source.
         type: existing.type?.trim() || 'camera',
-      }],
+      })),
       version: calibration.version || '1.0',
     }),
     headers: { 'Content-Type': 'application/json' },
@@ -237,15 +260,15 @@ async function syncStructuredSource(sourceId: string, rules: MonitoringRule[]): 
     { name: 'restrictedAreaViolationIncidentExpirationWindow', value: String(Math.max(1, Math.round(Math.max(...allActive.map((rule) => rule.cooldownSeconds), 30) / 60))) },
     { name: 'proximityViolationIncidentEnable', value: allActive.some((rule) => rule.kind === 'proximity') ? 'true' : 'false' },
   ];
-  const sensors = [{
+  const sensors = analyticsSensorIds.map(analyticsSensorId => ({
     configs: [
       { name: 'proximityDetectionEnable', value: proximity ? 'true' : 'false' },
       { name: 'proximityDetectionThreshold', value: String(proximity?.threshold.proximityPixels ?? 140) },
       { name: 'proximityDetectionCenterClasses', value: JSON.stringify(proximity?.objectTypes.slice(0, 1) ?? ['Person']) },
       { name: 'proximityDetectionSurroundingClasses', value: JSON.stringify(proximity?.objectTypes.slice(1) ?? ['Forklift']) },
     ],
-    id: sourceId,
-  }];
+    id: analyticsSensorId,
+  }));
   await jsonRequest(`${VIDEO_ANALYTICS_URL}/config/update/behavior-analytics`, {
     body: JSON.stringify({ app, sensors }),
     headers: { 'Content-Type': 'application/json' },
@@ -299,13 +322,13 @@ async function createRule(req: NextApiRequest, res: NextApiResponse) {
   }
   return exclusive(async () => {
     const rules = await readRules();
-    if (draft.engine === 'vlm' && rules.some((rule) => rule.engine === 'vlm' && rule.status === 'active')) {
+    if (draft.engine === 'vlm' && draft.status === 'active' && rules.some((rule) => rule.engine === 'vlm' && rule.status === 'active')) {
       return res.status(409).json({ error: 'Thor is already focused on one continuous visual rule. Detection-based rules can continue in parallel.' });
     }
     const now = new Date().toISOString();
     const rule: MonitoringRule = {
       ...draft,
-      backendStatus: draft.status === 'draft' ? 'pending' : 'active',
+      backendStatus: draft.status === 'active' ? 'active' : 'pending',
       createdAt: now,
       id: randomUUID(),
       updatedAt: now,
@@ -343,22 +366,77 @@ async function updateRule(req: NextApiRequest, res: NextApiResponse) {
     if (index < 0) return res.status(404).json({ error: 'Monitoring rule not found.' });
     const action = (req.body as { action?: string }).action;
     if (action !== 'pause' && action !== 'resume') return res.status(422).json({ error: 'Choose pause or resume.' });
+    if (action === 'resume' && rules[index].engine === 'vlm' && rules.some(
+      (rule) => rule.id !== id && rule.engine === 'vlm' && rule.status === 'active',
+    )) {
+      return res.status(409).json({ error: 'One continuous visual rule is already active. Pause it before resuming another.' });
+    }
     const next: MonitoringRule = {
       ...rules[index],
       status: action === 'pause' ? 'paused' : 'active',
       updatedAt: new Date().toISOString(),
     };
     const updated = rules.map((rule, ruleIndex) => ruleIndex === index ? next : rule);
+    let resumedBackendId: string | undefined;
     try {
       if (next.engine === 'deepstream') {
-        if (action === 'resume') await enableLiveDetection(next);
+        if (action === 'resume') {
+          await assertProfileSupportsRule(next);
+          await enableLiveDetection(next);
+        }
         await syncStructuredSource(next.sourceId, updated);
+      } else if (action === 'pause' && rules[index].status === 'active' && next.backendRuleId) {
+        const bridgeUrl = (process.env.ALERT_BRIDGE_INTERNAL_URL || 'http://127.0.0.1:9080/api/v1').replace(/\/$/, '');
+        try {
+          const backend = await jsonRequest(`${bridgeUrl}/realtime/${encodeURIComponent(next.backendRuleId)}`);
+          next.liveStreamUrl = next.liveStreamUrl || backend.live_stream_url || backend.rule?.live_stream_url;
+          await applyLiveAlert('DELETE', undefined, next.backendRuleId);
+        } catch (error) {
+          // A restarted bridge may already have lost this process-local job.
+          // Only a definitive missing job means pause is already complete.
+          if ((error as { status?: number }).status !== 404) throw error;
+          // The ownership reservation survives a lost remote job. Release it
+          // through the idempotent alert adapter before persisting pause.
+          await applyLiveAlert('DELETE', undefined, next.backendRuleId);
+        }
+      } else if (action === 'resume') {
+        let jobExists = false;
+        if (rules[index].status === 'active' && next.backendRuleId) {
+          const bridgeUrl = (process.env.ALERT_BRIDGE_INTERNAL_URL || 'http://127.0.0.1:9080/api/v1').replace(/\/$/, '');
+          try {
+            const backend = await jsonRequest(`${bridgeUrl}/realtime/${encodeURIComponent(next.backendRuleId)}`);
+            const backendState = backend.rule?.status || backend.status;
+            if (!['active', 'pending', 'starting'].includes(backendState)) {
+              throw new Error(`The saved visual job is ${backendState || 'unverified'}. Pause it before resuming monitoring.`);
+            }
+            jobExists = true;
+          } catch (error) {
+            if ((error as { status?: number }).status !== 404) throw error;
+          }
+        }
+        if (!jobExists) {
+          if (!next.liveStreamUrl) throw new Error('This rule has no saved live stream URL. Recreate it to resume monitoring.');
+          const backend = await applyLiveAlert('POST', {
+            alert_type: next.kind,
+            live_stream_url: next.liveStreamUrl,
+            prompt: next.prompt,
+            sensor_id: next.sourceId,
+            sensor_name: next.sourceName,
+          });
+          if (!ID_PATTERN.test(backend.id || '')) throw new Error('The live rule returned an invalid identifier.');
+          resumedBackendId = backend.id;
+          next.backendRuleIds = Array.from(new Set([
+            ...(next.backendRuleIds || []), ...(next.backendRuleId ? [next.backendRuleId] : []), backend.id,
+          ]));
+          next.backendRuleId = backend.id;
+        }
       }
       next.backendStatus = action === 'pause' ? 'pending' : 'active';
       updated[index] = next;
       await writeRules(updated);
       return res.status(200).json({ rule: next });
     } catch (error) {
+      if (resumedBackendId) await applyLiveAlert('DELETE', undefined, resumedBackendId).catch(() => undefined);
       return res.status(502).json({ error: error instanceof Error ? error.message : 'The rule state could not be applied.' });
     }
   });
@@ -373,7 +451,7 @@ async function deleteRule(req: NextApiRequest, res: NextApiResponse) {
     if (!target) return res.status(404).json({ error: 'Monitoring rule not found.' });
     const remaining = rules.filter((rule) => rule.id !== id);
     try {
-      if (target.engine === 'deepstream') await syncStructuredSource(target.sourceId, remaining);
+      if (target.engine === 'deepstream') await syncStructuredSource(target.sourceId, remaining, [target]);
       await writeRules(remaining);
       return res.status(200).json({ deleted: id });
     } catch (error) {
@@ -390,7 +468,7 @@ async function deleteSourceRules(sourceId: string, res: NextApiResponse) {
     const remaining = rules.filter((rule) => rule.sourceId !== sourceId);
     try {
       if (targets.some((rule) => rule.engine === 'deepstream')) {
-        await syncStructuredSource(sourceId, remaining);
+        await syncStructuredSource(sourceId, remaining, targets);
       }
       await writeRules(remaining);
       return res.status(200).json({ deleted: targets.length, sourceId });

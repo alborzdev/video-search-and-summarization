@@ -3,22 +3,28 @@
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import json
 import math
 import os
 import re
+import secrets
+import signal
+import stat
 import subprocess
+import sys
 import tempfile
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, unquote, urlencode, urlparse, urlunparse
 from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
+from uuid import UUID
 
 
 HOST = os.getenv("EVIDENCE_CLIP_HOST", "127.0.0.1")
@@ -41,8 +47,143 @@ MAX_CACHE_BYTES = int(os.getenv("MAX_CACHE_BYTES", str(4 * 1024 * 1024 * 1024)))
 ID_PATTERN = re.compile(r"^[A-Za-z0-9_.:-]{1,160}$")
 KEY_PATTERN = re.compile(r"^[a-f0-9]{64}$")
 PREPARE_LOCK = threading.Lock()
+HISTORY_PLANS: dict[str, dict] = {}
 NATIVE_CLIP_TIMEOUT_SECONDS = 45
 MAX_NATIVE_CLIP_BYTES = min(MAX_CACHE_BYTES, 512 * 1024 * 1024)
+APPEARANCE_LOCK = threading.Lock()
+MAX_APPEARANCE_FRAME_BYTES = 4 * 1024 * 1024
+MAX_APPEARANCE_PNG_BYTES = 1024 * 1024
+APPEARANCE_TIMEOUT_SECONDS = 50
+
+
+class AppearanceBusy(RuntimeError):
+    pass
+
+
+def appearance_request(payload: object) -> tuple[str, str, tuple[int, int, int, int]]:
+    """Accept only a canonical source, instant and raw 1280x720 detector box."""
+    if not isinstance(payload, dict):
+        raise ValueError("A valid appearance crop request is required")
+    sensor = payload.get("sensorId")
+    if not isinstance(sensor, str) or len(sensor) != 36:
+        raise ValueError("sensorId must be a UUID")
+    try:
+        sensor = str(UUID(sensor))
+    except ValueError as error:
+        raise ValueError("sensorId must be a UUID") from error
+    timestamp = payload.get("timestamp")
+    if not isinstance(timestamp, str) or len(timestamp) > 64:
+        raise ValueError("timestamp must be an ISO-8601 instant")
+    instant = parse_timestamp(timestamp).astimezone(timezone.utc)
+    timestamp = instant.isoformat().replace("+00:00", "Z")
+    box = payload.get("bbox")
+    names = ("leftX", "topY", "rightX", "bottomY")
+    if not isinstance(box, dict):
+        raise ValueError("bbox must contain raw frame coordinates")
+    values = [box.get(name) for name in names]
+    if any(isinstance(value, bool) or not isinstance(value, (int, float))
+           or not math.isfinite(value) for value in values):
+        raise ValueError("bbox coordinates must be finite numbers")
+    left, top, right, bottom = values
+    if left >= right or top >= bottom:
+        raise ValueError("bbox must have positive width and height")
+    left = max(0, min(1280, math.floor(left)))
+    top = max(0, min(720, math.floor(top)))
+    right = max(0, min(1280, math.ceil(right)))
+    bottom = max(0, min(720, math.ceil(bottom)))
+    if right <= left or bottom <= top:
+        raise ValueError("bbox does not intersect the raw frame")
+    return sensor, timestamp, (left, top, right, bottom)
+
+
+def appearance_clip_frame(sensor: str, timestamp: str, deadline: float) -> Path:
+    """Bound the existing clip fallback, including all of its FFmpeg children."""
+    if not PREPARE_LOCK.acquire(blocking=False):
+        raise AppearanceBusy("Evidence preparation is busy")
+    try:
+        end = (parse_timestamp(timestamp) + timedelta(seconds=1)).isoformat()
+        code = ("import json,server,sys; server.MAX_NATIVE_CLIP_BYTES=16777216; "
+                "print(json.dumps(server.build_clip(sys.argv[1],sys.argv[2],sys.argv[3],cpu_only=True)))")
+        process = subprocess.Popen(
+            [sys.executable, "-c", code, sensor, timestamp, end],
+            cwd=str(Path(__file__).resolve().parent), stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL, start_new_session=True,
+        )
+        try:
+            stdout, _ = process.communicate(timeout=max(0.01, min(35, deadline - time.monotonic())))
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid, signal.SIGKILL)
+            process.communicate()
+            raise RuntimeError("Appearance clip fallback timed out") from None
+        if process.returncode or len(stdout) > 4096:
+            raise RuntimeError("Recorded appearance frame is unavailable")
+        result = json.loads(stdout)
+        if not isinstance(result, list) or len(result) != 2 or not KEY_PATTERN.fullmatch(str(result[0])):
+            raise RuntimeError("Appearance clip fallback returned an invalid key")
+        path = CACHE_ROOT / f"{result[0]}.mp4"
+        if not path.is_file() or path.stat().st_size > MAX_APPEARANCE_FRAME_BYTES * 4:
+            raise RuntimeError("Appearance clip fallback exceeded the size limit")
+        return path
+    finally:
+        PREPARE_LOCK.release()
+
+
+def generate_appearance_crop(payload: object) -> dict[str, str]:
+    sensor, timestamp, (left, top, right, bottom) = appearance_request(payload)
+    if not APPEARANCE_LOCK.acquire(blocking=False):
+        raise AppearanceBusy("Appearance crop service is busy")
+    try:
+        deadline = time.monotonic() + APPEARANCE_TIMEOUT_SECONDS
+        with tempfile.TemporaryDirectory(prefix="appearance-") as directory:
+            frame = Path(directory) / "frame.jpg"
+            endpoint = (f"{VST_API_URL}/v1/replay/stream/{sensor}/picture?"
+                        + urlencode({"startTime": timestamp}))
+            try:
+                with build_opener(_NoRedirect()).open(
+                    Request(endpoint, headers={"Accept": "image/jpeg"}), timeout=8,
+                ) as response:
+                    advertised = response.headers.get("Content-Length")
+                    if advertised is not None and not 0 < int(advertised) <= MAX_APPEARANCE_FRAME_BYTES:
+                        raise RuntimeError("Appearance frame exceeds the size limit")
+                    chunks = []
+                    size = 0
+                    picture_deadline = min(deadline, time.monotonic() + 10)
+                    while True:
+                        if time.monotonic() >= picture_deadline:
+                            raise RuntimeError("Appearance frame download timed out")
+                        chunk = response.read1(min(65536, MAX_APPEARANCE_FRAME_BYTES + 1 - size))
+                        if not chunk:
+                            break
+                        chunks.append(chunk)
+                        size += len(chunk)
+                        if size > MAX_APPEARANCE_FRAME_BYTES:
+                            raise RuntimeError("Appearance frame exceeds the size limit")
+                    data = b"".join(chunks)
+                if (not data.startswith(b"\xff\xd8") or len(data) > MAX_APPEARANCE_FRAME_BYTES
+                        or (advertised is not None and len(data) != int(advertised))):
+                    raise RuntimeError("VIOS returned an invalid appearance frame")
+                frame.write_bytes(data)
+            except (OSError, ValueError, RuntimeError):
+                frame = appearance_clip_frame(sensor, timestamp, deadline)
+            output = Path(directory) / "crop.png"
+            # Replay pictures may be resized by VIOS. Restore the detector's
+            # raw coordinate space before cropping, then cap the model input.
+            filters = (f"scale=1280:720,crop={right-left}:{bottom-top}:{left}:{top}:exact=1,"
+                       "scale=448:448:force_original_aspect_ratio=decrease")
+            subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-hwaccel", "none",
+                "-threads", "1", "-filter_threads", "1", "-max_alloc", "67108864",
+                "-i", str(frame), "-vf", filters, "-frames:v", "1", "-an",
+                "-c:v", "png", "-threads", "1", "-fs", str(MAX_APPEARANCE_PNG_BYTES), str(output),
+            ], check=True, capture_output=True, timeout=max(0.01, min(8, deadline - time.monotonic())))
+            if not output.is_file() or not 0 < output.stat().st_size <= MAX_APPEARANCE_PNG_BYTES:
+                raise RuntimeError("Appearance crop exceeds the size limit")
+            png = output.read_bytes()
+            if not png.startswith(b"\x89PNG\r\n\x1a\n"):
+                raise RuntimeError("Appearance crop is not a PNG")
+            return {"image_base64": base64.b64encode(png).decode("ascii")}
+    finally:
+        APPEARANCE_LOCK.release()
 
 
 class _NoRedirect(HTTPRedirectHandler):
@@ -326,7 +467,87 @@ def purge_source_cache(stream_id: str) -> tuple[int, int]:
     return removed_files, removed_bytes
 
 
-def build_clip(stream_id: str, start_time: str, end_time: str) -> tuple[str, str]:
+def cache_identity(path: Path) -> tuple | None:
+    """Identity under PREPARE_LOCK; cache writers use that same lock."""
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return None
+    if not stat.S_ISREG(info.st_mode):
+        raise ValueError("Evidence cache contains a nonregular file")
+    return (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns, info.st_ctime_ns)
+
+
+def preview_cache_history(cutoff: str) -> dict:
+    """Freeze old immutable cache pairs; retain every subsequently touched pair."""
+    boundary = parse_timestamp(cutoff).timestamp()
+    if not math.isfinite(boundary) or boundary > time.time() + 1:
+        raise ValueError("History cutoff must be a past timestamp")
+    with PREPARE_LOCK:
+        now = time.monotonic()
+        for token, plan in list(HISTORY_PLANS.items()):
+            if plan["expires"] < now:
+                del HISTORY_PLANS[token]
+        if len(HISTORY_PLANS) >= 8:
+            raise ValueError("Too many evidence history previews")
+        keys = {
+            path.stem for suffix in ("*.mp4", "*.json") for path in CACHE_ROOT.glob(suffix)
+            if KEY_PATTERN.fullmatch(path.stem)
+        }
+        snapshot = {}
+        retained = 0
+        for key in keys:
+            try:
+                identities = tuple(cache_identity(CACHE_ROOT / f"{key}.{suffix}") for suffix in ("mp4", "json"))
+            except ValueError:
+                retained += 1
+                continue
+            if all(identity is None or identity[3] / 1e9 < boundary for identity in identities):
+                snapshot[key] = identities
+            else:
+                retained += 1
+        token = secrets.token_urlsafe(32)
+        # The public confirmation expires after five minutes. This private
+        # lease also covers the subsequent bounded backend cleanup operation.
+        HISTORY_PLANS[token] = {"expires": now + 30 * 60, "snapshot": snapshot, "result": None}
+        return {"planToken": token, "count": len(snapshot), "retained": retained}
+
+
+def clear_cache_history(token: str) -> dict:
+    """Compare and unlink frozen cache pairs while excluding concurrent prepare."""
+    with PREPARE_LOCK:
+        plan = HISTORY_PLANS.get(token)
+        if plan is None or plan["expires"] < time.monotonic():
+            raise ValueError("Evidence history preview expired or is unknown")
+        if plan["result"] is not None:
+            return plan["result"]
+        deleted = 0
+        retained = 0
+        for key, expected in plan["snapshot"].items():
+            paths = tuple(CACHE_ROOT / f"{key}.{suffix}" for suffix in ("mp4", "json"))
+            try:
+                current = tuple(cache_identity(path) for path in paths)
+            except ValueError:
+                retained += 1
+                continue
+            if current != expected:
+                retained += 1
+                continue
+            for path in paths:
+                path.unlink(missing_ok=True)
+            deleted += 1
+        plan["result"] = {"deleted": deleted, "retained": retained}
+        return plan["result"]
+
+
+def cancel_cache_history(token: str) -> dict:
+    """Release an unused preview; cached video and metadata stay untouched."""
+    with PREPARE_LOCK:
+        HISTORY_PLANS.pop(token, None)
+    return {"status": "cancelled"}
+
+
+def build_clip(stream_id: str, start_time: str, end_time: str, *, cpu_only: bool = False) -> tuple[str, str]:
     if not ID_PATTERN.fullmatch(stream_id):
         raise ValueError("Invalid sensor ID")
     start = parse_timestamp(start_time)
@@ -385,6 +606,7 @@ def build_clip(stream_id: str, start_time: str, end_time: str) -> tuple[str, str
                     output_seek = ["-ss", f"{offset:.3f}"]
                 common = [
                     "ffmpeg", "-y", "-nostdin", "-loglevel", "error",
+                    *(["-hwaccel", "none", "-threads", "1", "-filter_threads", "1"] if cpu_only else []),
                     *input_args, *output_seek, "-t", f"{duration:.3f}",
                     "-map", "0:v:0", "-an", "-fflags", "+genpts",
                     "-avoid_negative_ts", "make_zero",
@@ -397,6 +619,7 @@ def build_clip(stream_id: str, start_time: str, end_time: str) -> tuple[str, str
                     candidate.unlink(missing_ok=True)
                     transcode_command = common + [
                         "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",
+                        *(["-threads", "1"] if cpu_only else []),
                         "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(candidate),
                     ]
                     subprocess.run(transcode_command, check=True, capture_output=True, timeout=300)
@@ -454,14 +677,32 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         request_path = urlparse(self.path).path
-        if request_path not in {"/prepare", "/purge", "/v1/embeddings"}:
+        if request_path not in {"/prepare", "/purge", "/v1/embeddings", "/appearance-crop", "/history/preview", "/history/clear", "/history/cancel"}:
             self.json_response(HTTPStatus.NOT_FOUND, {"error": "not found"})
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            if length <= 0 or length > 2_000_000:
+            if length <= 0 or length > (4096 if request_path == "/appearance-crop" else 2_000_000):
                 raise ValueError("Invalid request size")
             payload = json.loads(self.rfile.read(length))
+            if request_path == "/appearance-crop":
+                self.json_response(HTTPStatus.OK, generate_appearance_crop(payload))
+                return
+            if request_path.startswith("/history/"):
+                token = os.getenv("HISTORY_METADATA_TOKEN", "")
+                if not token or not secrets.compare_digest(self.headers.get("X-History-Metadata-Token", ""), token):
+                    self.json_response(HTTPStatus.FORBIDDEN, {"error": "History maintenance is not authorized"})
+                    return
+                if not isinstance(payload, dict):
+                    raise ValueError("Invalid history request")
+                if request_path == "/history/preview":
+                    result = preview_cache_history(str(payload.get("cutoff", "")))
+                elif request_path == "/history/cancel":
+                    result = cancel_cache_history(str(payload.get("planToken", "")))
+                else:
+                    result = clear_cache_history(str(payload.get("planToken", "")))
+                self.json_response(HTTPStatus.OK, result)
+                return
             if request_path == "/v1/embeddings":
                 self.json_response(
                     HTTPStatus.OK, generate_text_embeddings(payload)
@@ -480,6 +721,8 @@ class Handler(BaseHTTPRequestHandler):
                 payload.get("endTime"),
             )
             self.json_response(HTTPStatus.OK, {"key": key, "startTime": clip_start})
+        except AppearanceBusy as error:
+            self.json_response(HTTPStatus.TOO_MANY_REQUESTS, {"error": str(error)})
         except ValueError as error:
             self.json_response(HTTPStatus.UNPROCESSABLE_ENTITY, {"error": str(error)})
         except Exception as error:
@@ -487,6 +730,8 @@ class Handler(BaseHTTPRequestHandler):
             message = (
                 "Text embeddings could not be generated"
                 if request_path == "/v1/embeddings"
+                else "Appearance crop could not be generated"
+                if request_path == "/appearance-crop"
                 else "Evidence clip could not be generated"
             )
             self.json_response(HTTPStatus.BAD_GATEWAY, {"error": message})

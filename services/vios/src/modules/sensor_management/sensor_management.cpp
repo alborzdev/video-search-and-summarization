@@ -102,6 +102,20 @@ void SensorManagement::onCameraStreaming(const string &streamId, const string &p
                 stream->live_proxy_url = proxy_url;
                 stream->replay_url = vod_url;
 
+                // A source can become available after the initial RTSP probe.
+                // Streamprocessing publishes this event once media is flowing;
+                // reconcile the parent as well as the stream so a startup
+                // CameraNotFoundError does not permanently gate sensor APIs.
+                if (stream->isMainStream)
+                {
+                    auto sensor = deviceManager->getSensorInfo(stream->sensorId);
+                    if (sensor && sensor->type == SENSOR_TYPE_RTSP)
+                    {
+                        sensor->updateHttpErrorStatus(translateVmsErrorCodeToCameraHttpErrorCode(NoError));
+                        sensor->updateSensorStatus(SensorStatusEvent::SensorStatusOnline);
+                    }
+                }
+
                 LOG(info) << "Stream status changed to STREAMING for streamId:" << streamId << " live_proxy_url:" << secureUrlForLogging(stream->live_proxy_url)
                 << " replay_url:" << secureUrlForLogging(stream->replay_url) << endl;
                 break;

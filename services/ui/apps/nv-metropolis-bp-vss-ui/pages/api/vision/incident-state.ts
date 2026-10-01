@@ -1,42 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-import type { IncidentStateRecord, IncidentWorkflowState } from '../../../components/vision-intelligence/incidentState';
+import type { IncidentWorkflowState } from '../../../components/vision-intelligence/incidentState';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import path from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { exclusiveIncidentState as exclusive, readIncidentStates as readRecords, writeIncidentStates as writeRecords } from '../../../server/vision/incidentStateStore';
 
-const STORE_DIR = process.env.VISION_RULES_DIR || '/tmp/vss-vision-intelligence-rules';
-const STORE_PATH = path.join(STORE_DIR, 'incident-state.json');
 const VALID_STATES = new Set<IncidentWorkflowState>(['new', 'acknowledged', 'resolved']);
-
-let mutationQueue: Promise<void> = Promise.resolve();
-
-function exclusive<T>(operation: () => Promise<T>): Promise<T> {
-  const previous = mutationQueue;
-  let release: () => void = () => undefined;
-  mutationQueue = new Promise<void>((resolve) => { release = resolve; });
-  return previous.then(operation).finally(release);
-}
-
-async function readRecords(): Promise<Record<string, IncidentStateRecord>> {
-  try {
-    const value = JSON.parse(await readFile(STORE_PATH, 'utf8')) as unknown;
-    return value && typeof value === 'object' && !Array.isArray(value)
-      ? value as Record<string, IncidentStateRecord>
-      : {};
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return {};
-    throw error;
-  }
-}
-
-async function writeRecords(records: Record<string, IncidentStateRecord>): Promise<void> {
-  await mkdir(STORE_DIR, { recursive: true });
-  const temporary = path.join(STORE_DIR, `.incident-state-${randomUUID()}.tmp`);
-  await writeFile(temporary, `${JSON.stringify(records, null, 2)}\n`, { mode: 0o600 });
-  await rename(temporary, STORE_PATH);
-}
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {

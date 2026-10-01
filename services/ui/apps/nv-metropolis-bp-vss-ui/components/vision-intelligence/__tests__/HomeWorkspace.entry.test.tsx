@@ -178,7 +178,7 @@ it.each(["online", "unknown", "offline"] as const)(
         visualAnalystAvailable
       />
     );
-    expect(screen.getByLabelText("Live digital twin demo")).toBeInTheDocument();
+    expect(screen.getByLabelText("Live video workspace")).toBeInTheDocument();
     expect(screen.getByTestId("featured-source")).toHaveTextContent(live.name);
     expect(
       screen.queryByRole("button", { name: "Search this video" })
@@ -196,14 +196,10 @@ it.each(["online", "unknown", "offline"] as const)(
     expect(
       screen.getByRole("button", { name: "Ask the video" })
     ).toBeDisabled();
-    if (connectionState === "offline")
-      expect(
-        screen.getByRole("button", { name: "Start live capture" })
-      ).toBeDisabled();
-    else
-      expect(
-        screen.getByRole("button", { name: "Start live capture" })
-      ).toBeEnabled();
+    // A stale offline catalog must not prevent an explicit recorder retry.
+    expect(
+      screen.getByRole("button", { name: "Start live capture" })
+    ).toBeEnabled();
     expect(
       fetchMock.mock.calls.every(
         (call) =>

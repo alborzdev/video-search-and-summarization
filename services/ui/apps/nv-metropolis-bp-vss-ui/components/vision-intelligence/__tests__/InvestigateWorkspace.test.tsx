@@ -983,7 +983,8 @@ describe("InvestigateWorkspace", () => {
         };
       }
       if (url.endsWith("/search/image")) {
-        return { ok: true, json: async () => ({ data: visualResults }) };
+        const body = JSON.parse(String(options?.body));
+        return { ok: true, json: async () => ({ data: body.source_type === "rtsp" ? [] : visualResults }) };
       }
       throw new Error(`Unexpected request: ${url} ${String(options?.method)}`);
     });
@@ -1032,8 +1033,40 @@ describe("InvestigateWorkspace", () => {
           timestamp: "2026-08-12T10:00:00.033Z",
         },
         source_type: "video_file",
+        video_sources: [recordedCamera.name],
+        timestamp_start: null,
+        timestamp_end: null,
         top_k: 24,
       });
+
+      const fusionCount = fetchMock.mock.calls.filter(([url]) => url.endsWith("/search/fusion")).length;
+      jest.spyOn(Date, "now").mockReturnValue(Date.parse("2026-10-01T18:55:00Z"));
+      fireEvent.change(screen.getByRole("combobox", { name: "Time range" }), { target: { value: "15m" } });
+      await waitFor(() => {
+        const imageRequests = fetchMock.mock.calls.filter(([url]) => url.endsWith("/search/image"));
+        expect(imageRequests).toHaveLength(2);
+        expect(JSON.parse(String(imageRequests[1][1]?.body))).toEqual(expect.objectContaining({
+          reference_object: expect.objectContaining({ object_id: "39" }),
+          video_sources: [recordedCamera.name],
+          timestamp_start: "2026-10-01T18:40:00.000Z",
+          timestamp_end: "2026-10-01T18:55:00.000Z",
+        }));
+      });
+      await waitFor(() => expect(screen.getByRole("combobox", { name: "Footage type" })).not.toBeDisabled());
+      fireEvent.change(screen.getByRole("combobox", { name: "Footage type" }), { target: { value: "rtsp" } });
+      await waitFor(() => {
+        const imageRequests = fetchMock.mock.calls.filter(([url]) => url.endsWith("/search/image"));
+        expect(imageRequests).toHaveLength(3);
+        expect(JSON.parse(String(imageRequests[2][1]?.body))).toEqual(expect.objectContaining({
+          source_type: "rtsp", video_sources: [],
+          timestamp_start: "2026-10-01T18:40:00.000Z",
+        }));
+      });
+      expect(fetchMock.mock.calls.filter(([url]) => url.endsWith("/search/fusion"))).toHaveLength(fusionCount);
+      await screen.findByText(/No visual matches in these filters/);
+      expect(screen.queryByRole("button", { name: /Play clip/i })).not.toBeInTheDocument();
+      expect(screen.queryByText("Visual search could not complete")).not.toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Retry visual search" })).not.toBeInTheDocument();
     } finally {
       globalThis.Image = OriginalImage;
     }

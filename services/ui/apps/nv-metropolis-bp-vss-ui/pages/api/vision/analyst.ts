@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { DEFAULT_LOOKBACK_SECONDS, questionFrameCount, validLookbackSeconds } from '../../../components/vision-intelligence/footageWindow';
 
 import {
   cleanAgentAnswer,
@@ -13,8 +14,9 @@ import {
   type CrossSourceEvidence,
   type CrossSourceIncident,
 } from '../../../components/vision-intelligence/crossSourceAnalysis';
-import { fetchAnalyticsIncidents } from './incidents';
+import { fetchUnifiedIncidents } from './incidents';
 import { fetchSourceIntelligence } from '../../../server/vision/sourceIntelligence';
+import { readLiveRecordingWindow } from '../../../server/vision/liveRecordingWindow';
 import {
   CosmosReservationError,
   withCosmosReservation,
@@ -52,6 +54,9 @@ function validateRequest(value: unknown): asserts value is VisionAnalystRequest 
     throw new AnalystRequestError('A valid Vision Analyst request is required.', 400);
   }
   const request = value as Partial<VisionAnalystRequest>;
+  if (request.lookbackSeconds !== undefined && !validLookbackSeconds(request.lookbackSeconds)) {
+    throw new AnalystRequestError('Choose a whole number from 1 to 60 seconds of footage.', 422);
+  }
   const queryLength = typeof request.query === 'string' ? request.query.trim().length : 0;
   if (queryLength < 1 || queryLength > 1_000) {
     throw new AnalystRequestError('Enter a question between 1 and 1,000 characters.', 400);
@@ -104,6 +109,9 @@ function validateRequest(value: unknown): asserts value is VisionAnalystRequest 
       422
     );
   }
+  if (request.lookbackSeconds !== undefined && request.sources.some(source => source.kind !== 'live')) {
+    throw new AnalystRequestError('The recent-footage duration is available for live camera questions.', 422);
+  }
 }
 
 function timeoutFor(request: VisionAnalystRequest): number {
@@ -119,6 +127,16 @@ async function inspectSelectedSource(
   signal: AbortSignal
 ): Promise<VisionAnalystResponse> {
   const source = request.sources[0];
+  const lookbackSeconds = request.lookbackSeconds ?? DEFAULT_LOOKBACK_SECONDS;
+  const recording = source.kind === 'live'
+    ? await readLiveRecordingWindow(source.sensorId, request.askedAt, lookbackSeconds)
+    : null;
+  if (recording && !recording.window) {
+    throw new AnalystRequestError(
+      recording.error || `Recording a recent ${lookbackSeconds}-second video interval. Try again in ${recording.remainingSeconds}s.`,
+      409
+    );
+  }
   const response = await fetch(directInspectionEndpoint(), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -126,6 +144,12 @@ async function inspectSelectedSource(
       asked_at: request.askedAt,
       current_time_seconds: source.playback?.currentTimeSeconds,
       duration_seconds: source.playback?.durationSeconds,
+      ...(recording?.window ? {
+        live_start_time: recording.window.startTime,
+        live_end_time: recording.window.endTime,
+        lookback_seconds: lookbackSeconds,
+        frame_count: questionFrameCount(lookbackSeconds),
+      } : {}),
       query: request.query.trim(),
       sensor_id: source.sensorId,
       source_kind: source.kind,
@@ -171,14 +195,16 @@ async function inspectSelectedSource(
 
 async function loadCrossSourceEvidence(request: VisionAnalystRequest): Promise<CrossSourceEvidence> {
   const [incidentResult, intelligenceEntries] = await Promise.all([
-    fetchAnalyticsIncidents().catch(() => []),
+    fetchUnifiedIncidents().catch(() => ({ incidents: [], unavailable: true })),
     Promise.all(request.sources.map(async (source) => [
       source.streamId,
       await fetchSourceIntelligence(source.sensorId, source.name),
     ] as const)),
   ]);
   return {
-    incidents: incidentResult as CrossSourceIncident[],
+    incidents: incidentResult.incidents as CrossSourceIncident[],
+    incidentCoverage: 'unavailable' in incidentResult ? 'unavailable'
+      : incidentResult.partial ? 'partial' : 'complete',
     intelligenceByStreamId: Object.fromEntries(
       intelligenceEntries
         .filter((entry): entry is readonly [string, NonNullable<typeof entry[1]>] => Boolean(entry[1]))
@@ -232,7 +258,7 @@ export default async function handler(
 
     if (req.body.scope === 'selected-source') {
       const result = await withCosmosReservation(() =>
-        inspectSelectedSource(req.body, controller.signal)
+        inspectSelectedSource(req.body, controller.signal), controller.signal
       );
       res.setHeader('Cache-Control', 'no-store');
       return res.status(200).json(result);
@@ -249,7 +275,7 @@ export default async function handler(
     // sources from real local evidence, then inspect exactly one source. This
     // avoids relying on a planner to complete multiple visual tool calls.
     const result = await withCosmosReservation(() =>
-      inspectHighestRankedSource(req.body, evidence, controller.signal)
+      inspectHighestRankedSource(req.body, evidence, controller.signal), controller.signal
     );
     res.setHeader('Cache-Control', 'no-store');
     return res.status(200).json(result);

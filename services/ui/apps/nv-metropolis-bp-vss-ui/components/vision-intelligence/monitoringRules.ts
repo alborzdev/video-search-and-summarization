@@ -31,6 +31,8 @@ export interface MonitoringGeometry {
 export interface MonitoringRule {
   analysisProfileId: string;
   backendRuleId?: string;
+  backendRuleIds?: string[];
+  liveStreamUrl?: string;
   backendStatus: 'active' | 'pending' | 'unavailable';
   cooldownSeconds: number;
   createdAt: string;

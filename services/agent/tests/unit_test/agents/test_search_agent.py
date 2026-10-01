@@ -327,6 +327,10 @@ class TestFetchObjectEmbedding:
 
         result = await _fetch_object_embedding("5", "test-index", es=mock_client)
         assert result == [1.0, 2.0, 3.0]
+        assert mock_client.search.await_args.kwargs["body"]["_source"] == {
+            "includes": ["embeddings.vector"],
+            "exclude_vectors": False,
+        }
 
     @pytest.mark.asyncio
     async def test_list_embedding_shape(self):
@@ -361,6 +365,171 @@ class TestFetchReferenceObjectEmbedding:
     """Test deterministic composite lookup for a selected object."""
 
     @pytest.mark.asyncio
+    async def test_uuid_aliases_are_verified_against_registered_sources(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools import attribute_search as module
+
+        catalog = AsyncMock(return_value={"SparkHospitalCorridor": "selected-uuid", "Other camera": "other-uuid"})
+        monkeypatch.setattr(module, "get_name_to_stream_id_map", catalog)
+        assert await module._reference_sensor_aliases("selected-uuid", "http://vst") == [
+            "selected-uuid",
+            "SparkHospitalCorridor",
+        ]
+        catalog.side_effect = RuntimeError("VST unavailable")
+        assert await module._reference_sensor_aliases("selected-uuid", "http://vst") == ["selected-uuid"]
+
+    @pytest.mark.asyncio
+    async def test_live_seed_index_is_independent_of_recorded_candidate_filter(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        from datetime import UTC
+        from datetime import datetime
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools import attribute_search as module
+
+        monkeypatch.setattr(module, "get_name_to_stream_id_map", AsyncMock(return_value={"Camera": "selected-uuid"}))
+        seed = AsyncMock(return_value=[0.1, 0.2])
+        candidates = AsyncMock(return_value=[])
+        monkeypatch.setattr(module, "_fetch_reference_object_embedding", seed)
+        monkeypatch.setattr(module, "search_by_attributes", candidates)
+        timestamp = datetime(2026, 10, 1, tzinfo=UTC)
+        await module.search_by_object_embedding(
+            object_id="523",
+            behavior_index="mdx-behavior-2025-01-01",
+            es=AsyncMock(),
+            source_type="video_file",
+            reference_sensor_name="Untrusted display name",
+            reference_sensor_id="selected-uuid",
+            reference_timestamp=timestamp,
+            reference_behavior_index="mdx-behavior-*",
+            vst_internal_url="http://vst",
+        )
+        assert seed.await_args.kwargs["behavior_index"] == "mdx-behavior-*"
+        assert seed.await_args.kwargs["sensor_aliases"] == ["selected-uuid", "Camera"]
+        assert seed.await_args.kwargs["timestamp"] == timestamp
+        assert candidates.await_args.kwargs["index"] == "mdx-behavior-2025-01-01"
+        assert candidates.await_args.kwargs["source_type"] == "video_file"
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("configured", [True, False])
+    async def test_missing_legacy_vector_uses_separate_appearance_space_only_when_configured(
+        self, monkeypatch: pytest.MonkeyPatch, configured: bool
+    ) -> None:
+        from datetime import UTC
+        from datetime import datetime
+        import sys
+        from types import ModuleType
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools import attribute_search as module
+
+        monkeypatch.setattr(module, "get_name_to_stream_id_map", AsyncMock(return_value={"Camera": "selected-uuid"}))
+        failure = module.ReferenceEmbeddingError("No appearance vector", "REFERENCE_VECTOR_UNAVAILABLE")
+        monkeypatch.setattr(module, "_fetch_reference_object_embedding", AsyncMock(side_effect=failure))
+        legacy_candidates = AsyncMock()
+        monkeypatch.setattr(module, "search_by_attributes", legacy_candidates)
+        appearance = ModuleType("vss_agents.tools.object_appearance_search")
+        helper = AsyncMock(return_value=[] if configured else None)
+        appearance.search_reference_appearance = helper
+        monkeypatch.setitem(sys.modules, appearance.__name__, appearance)
+        kwargs = {
+            "object_id": "523",
+            "behavior_index": "mdx-behavior-2025-01-01",
+            "es": AsyncMock(),
+            "source_type": "video_file",
+            "reference_sensor_name": "Camera",
+            "reference_sensor_id": "selected-uuid",
+            "reference_timestamp": datetime(2026, 10, 1, tzinfo=UTC),
+            "vst_internal_url": "http://vst",
+            "top_k": 24,
+        }
+        if configured:
+            assert await module.search_by_object_embedding(**kwargs) == []
+        else:
+            with pytest.raises(module.ReferenceEmbeddingError) as observed:
+                await module.search_by_object_embedding(**kwargs)
+            assert observed.value.code == "REFERENCE_VECTOR_UNAVAILABLE"
+        assert helper.await_args.kwargs["verified_sensor_aliases"] == ["selected-uuid", "Camera"]
+        assert helper.await_args.kwargs["source_type"] == "video_file"
+        assert helper.await_args.kwargs["top_k"] == 25
+        legacy_candidates.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_alias_lookup_keeps_exact_id_and_selected_interval(self) -> None:
+        from datetime import UTC
+        from datetime import datetime
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools.attribute_search import _fetch_reference_object_embedding
+
+        es = AsyncMock()
+        es.search.return_value = {"hits": {"hits": [{"_source": {"embeddings": {"vector": [0.1, 0.2]}}}]}}
+        timestamp = datetime(2026, 10, 1, tzinfo=UTC)
+        vector = await _fetch_reference_object_embedding(
+            object_id="523",
+            sensor_name="Camera",
+            timestamp=timestamp,
+            behavior_index="mdx-behavior-*",
+            es=es,
+            sensor_aliases=["selected-uuid", "Camera"],
+        )
+        assert vector == [0.1, 0.2]
+        filters = es.search.await_args.kwargs["body"]["query"]["bool"]["filter"]
+        assert {"terms": {"sensor.id.keyword": ["selected-uuid", "Camera"]}} in filters
+        assert {"term": {"object.id.keyword": "523"}} in filters
+        assert {"range": {"timestamp": {"lte": timestamp.isoformat()}}} in filters
+        assert {"range": {"end": {"gte": timestamp.isoformat()}}} in filters
+
+    @pytest.mark.asyncio
+    async def test_detection_without_vector_is_reported_as_missing_features(self) -> None:
+        from datetime import UTC
+        from datetime import datetime
+        from unittest.mock import AsyncMock
+
+        from vss_agents.tools.attribute_search import ReferenceEmbeddingError
+        from vss_agents.tools.attribute_search import _fetch_reference_object_embedding
+
+        es = AsyncMock()
+        es.search.side_effect = [
+            {"hits": {"hits": []}},
+            {"hits": {"hits": [{"_source": {"objects": [{"id": "523", "embedding": {}}]}}]}},
+        ]
+        with pytest.raises(ReferenceEmbeddingError) as failure:
+            await _fetch_reference_object_embedding(
+                object_id="523",
+                sensor_name="Camera",
+                timestamp=datetime(2026, 10, 1, tzinfo=UTC),
+                behavior_index="mdx-behavior-*",
+                es=es,
+            )
+        assert failure.value.code == "REFERENCE_VECTOR_UNAVAILABLE"
+
+    def test_seed_exclusion_preserves_same_tracker_id_at_other_times(self) -> None:
+        from datetime import UTC
+        from datetime import datetime
+
+        from vss_agents.tools.attribute_search import AttributeSearchMetadata
+        from vss_agents.tools.attribute_search import AttributeSearchResult
+        from vss_agents.tools.attribute_search import _is_reference_segment
+
+        selected = datetime(2026, 10, 1, 12, 0, tzinfo=UTC)
+        later = AttributeSearchResult(
+            metadata=AttributeSearchMetadata(
+                sensor_id="uuid",
+                object_id="523",
+                object_type="Person",
+                frame_timestamp="2026-10-01T12:05:00Z",
+                start_time="2026-10-01T12:04:59Z",
+                end_time="2026-10-01T12:05:01Z",
+                behavior_score=1,
+            )
+        )
+        assert not _is_reference_segment(later, "523", ["uuid", "Camera"], selected)
+        assert _is_reference_segment(later, "523", ["uuid", "Camera"], datetime(2026, 10, 1, 12, 5, tzinfo=UTC))
+
+    @pytest.mark.asyncio
     async def test_uses_sensor_object_and_containing_interval(self):
         from datetime import UTC
         from datetime import datetime
@@ -391,6 +560,7 @@ class TestFetchReferenceObjectEmbedding:
             {"range": {"end": {"gte": "2025-01-01T00:00:31.250000+00:00"}}},
         ]
         assert body["sort"][-1] == {"Id.keyword": {"order": "asc"}}
+        assert body["_source"] == {"includes": ["embeddings.vector"], "exclude_vectors": False}
         assert all("_id" not in sort_clause for sort_clause in body["sort"])
 
     @pytest.mark.asyncio
@@ -450,6 +620,10 @@ class TestFetchReferenceObjectEmbedding:
         assert result == [0.1, 0.2, 0.3]
         raw_call = mock_client.search.await_args_list[1]
         assert raw_call.kwargs["index"] == "mdx-raw-*,-mdx-raw-2025-01-01"
+        assert raw_call.kwargs["body"]["_source"] == {
+            "includes": ["timestamp", "objects.id", "objects.embedding.vector"],
+            "exclude_vectors": False,
+        }
         filters = raw_call.kwargs["body"]["query"]["bool"]["filter"]
         assert {"term": {"sensorId.keyword": "Preview_01_main"}} in filters
         assert {

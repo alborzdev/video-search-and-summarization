@@ -53,6 +53,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { isBeforeHistoryCutoff, useHistoryClear } from "./useHistoryClear";
 
 interface CriticResult {
   result: "confirmed" | "rejected" | "unverified";
@@ -91,6 +92,9 @@ interface InvestigationRequest {
 }
 
 interface InvestigateWorkspaceProps {
+  objectActionLabel?: string;
+  suggestedQueries?: string[];
+  initialTimeRange?: SearchTimeRange;
   isActive?: boolean;
   agentApiUrl?: string | null;
   initialRequest?: InvestigationRequest | null;
@@ -219,6 +223,25 @@ function timestampsForRange(timeRange: SearchTimeRange): {
     timestampEnd: new Date(endTime).toISOString(),
     timestampStart: new Date(endTime - TIME_RANGE_MS[timeRange]).toISOString(),
   };
+}
+
+export function visualSearchRequests(reference: VisualReference, criteria: SearchCriteria) {
+  const { timestampEnd, timestampStart } = timestampsForRange(criteria.timeRange);
+  return indexedSourceTypes(criteria).map((requestSourceType) => ({
+    agent_mode: false,
+    query: `Visually similar ${reference.objectType.toLowerCase()}`,
+    reference_object: {
+      object_id: reference.objectId,
+      sensor_id: reference.sensorId,
+      sensor_name: reference.sensorName,
+      timestamp: reference.timestamp,
+    },
+    source_type: requestSourceType,
+    video_sources: criteria.camera ? [criteria.camera.name] : [],
+    timestamp_start: timestampStart,
+    timestamp_end: timestampEnd,
+    top_k: 24,
+  }));
 }
 
 export function earliestRetainedRecordingStart(
@@ -719,6 +742,7 @@ function rankByRelevance(
 }
 
 function EvidenceViewer({
+  objectActionLabel,
   item,
   onAsk,
   mdxWebApiUrl,
@@ -729,6 +753,7 @@ function EvidenceViewer({
   visualSearchResult,
   vstApiUrl,
 }: {
+  objectActionLabel?: string;
   item: VisionSearchResult;
   onAsk: () => void;
   mdxWebApiUrl?: string | null;
@@ -938,7 +963,9 @@ function EvidenceViewer({
           </div>
           <p>
             {searchByImageEnabled && detectorFrames === "available"
-              ? "Pause on an object, then choose Find similar object to search for another appearance. Only objects detected in that frame can be selected."
+              ? objectActionLabel
+                ? "Pause the clip and inspect its detected boxes and track IDs. Finding another appearance also requires an indexed object embedding."
+                : "Pause on an object, then choose Find similar object to search for another appearance. Only objects detected in that frame can be selected."
               : searchByImageEnabled && detectorFrames === "checking"
               ? "Checking whether object search is available for this clip. You can keep watching."
               : searchByImageEnabled
@@ -983,7 +1010,7 @@ function EvidenceViewer({
                   }
                 }}
               >
-                <IconBox size={17} /> Find similar object
+                <IconBox size={17} /> {objectActionLabel ?? "Find similar object"}
               </button>
             )}
           {searchByImageEnabled &&
@@ -1001,11 +1028,14 @@ function EvidenceViewer({
 }
 
 export function InvestigateWorkspace({
+  objectActionLabel,
   isActive = true,
   agentApiUrl,
   initialRequest,
   mdxWebApiUrl,
   searchByImageEnabled = false,
+  suggestedQueries,
+  initialTimeRange = "all",
   vstApiUrl,
 }: InvestigateWorkspaceProps) {
   const [query, setQuery] = useState(initialRequest?.query ?? "");
@@ -1045,7 +1075,7 @@ export function InvestigateWorkspace({
   const [sourceType, setSourceType] = useState<SearchSourceType>(
     sourceTypeForCamera(initialRequest?.camera)
   );
-  const [timeRange, setTimeRange] = useState<SearchTimeRange>("all");
+  const [timeRange, setTimeRange] = useState<SearchTimeRange>(initialTimeRange);
   const [resultStatus, setResultStatus] = useState<ResultStatus>("usable");
   const [sortMode, setSortMode] = useState<SortMode>("relevance");
   const [mediaAvailability, setMediaAvailability] = useState<
@@ -1054,6 +1084,26 @@ export function InvestigateWorkspace({
   const [visibleCount, setVisibleCount] = useState(RESULTS_PAGE_SIZE);
   const [showSearchMethod, setShowSearchMethod] = useState(false);
   const activeRequest = useRef<AbortController | null>(null);
+  const searchStartedAt = useRef<string | null>(null);
+  const analysisGeneratedAt = useRef<string | null>(null);
+  const clearedCutoff = useHistoryClear((cutoff) => {
+    if (isBeforeHistoryCutoff(searchStartedAt.current, cutoff)) {
+      activeRequest.current?.abort();
+      activeRequest.current = null;
+      setLoading(false);
+    }
+    setResults((previous) => previous.filter((item) => !isBeforeHistoryCutoff(item.end_time, cutoff)));
+    if (isBeforeHistoryCutoff(selectedEvidence?.end_time, cutoff)) setSelectedEvidence(null);
+    setEvidenceSnapshots((previous) => Object.fromEntries(Object.entries(previous).filter(([, entry]) => !isBeforeHistoryCutoff(entry.item.end_time, cutoff))));
+    setEvidenceSelection((previous) => previous.filter((id) => !isBeforeHistoryCutoff(evidenceSnapshots[id]?.item.end_time, cutoff)));
+    if (isBeforeHistoryCutoff(analysisGeneratedAt.current, cutoff)) {
+      setEvidenceAnalysis(null);
+      setInspectionProgress([]);
+      setEvidenceAnalysisError(null);
+    }
+    if (isBeforeHistoryCutoff(visualReference?.timestamp, cutoff)) setVisualReference(null);
+    setSearchMessages((previous) => [...previous, "Previous history was cleared. Search again to see the current indexed moments."]);
+  });
   const appliedInitialRequest = useRef<{
     agentApiUrl?: string | null;
     request: InvestigationRequest;
@@ -1106,6 +1156,7 @@ export function InvestigateWorkspace({
       activeRequest.current?.abort();
       const controller = new AbortController();
       activeRequest.current = controller;
+      searchStartedAt.current = new Date().toISOString();
       const { timestampEnd, timestampStart } = timestampsForRange(
         criteria.timeRange
       );
@@ -1301,7 +1352,9 @@ export function InvestigateWorkspace({
   );
 
   const searchByReference = useCallback(
-    async (reference: VisualReference): Promise<string | null> => {
+    async (reference: VisualReference, criteria: SearchCriteria = {
+      camera: scopedCamera, reviewStatus: resultStatus, sourceType, timeRange,
+    }): Promise<string | null> => {
       const nextQuery = `Visually similar ${reference.objectType.toLowerCase()}`;
       if (!agentApiUrl) {
         return "Visual object search is not configured on this deployment.";
@@ -1310,26 +1363,14 @@ export function InvestigateWorkspace({
       activeRequest.current?.abort();
       const controller = new AbortController();
       activeRequest.current = controller;
+      searchStartedAt.current = new Date().toISOString();
       setLoading(true);
       setError(null);
       try {
-        const requestTypes: IndexedSearchSourceType[] =
-          sourceType === "all" ? ["video_file", "rtsp"] : [sourceType];
         const attempts = await Promise.allSettled(
-          requestTypes.map(async (requestSourceType) => {
+          visualSearchRequests(reference, criteria).map(async (requestBody) => {
             const response = await fetch(`${agentApiUrl}/search/image`, {
-              body: JSON.stringify({
-                agent_mode: false,
-                query: nextQuery,
-                reference_object: {
-                  object_id: reference.objectId,
-                  sensor_id: reference.sensorId,
-                  sensor_name: reference.sensorName,
-                  timestamp: reference.timestamp,
-                },
-                source_type: requestSourceType,
-                top_k: 24,
-              }),
+              body: JSON.stringify(requestBody),
               headers: { "Content-Type": "application/json" },
               method: "POST",
               signal: controller.signal,
@@ -1340,6 +1381,7 @@ export function InvestigateWorkspace({
             return (await response.json()) as {
               data?: VisionSearchResult[];
               search_messages?: string[];
+              reference_status?: string | null;
             };
           })
         );
@@ -1350,6 +1392,7 @@ export function InvestigateWorkspace({
             ): attempt is PromiseFulfilledResult<{
               data?: VisionSearchResult[];
               search_messages?: string[];
+              reference_status?: string | null;
             }> => attempt.status === "fulfilled"
           )
           .map((attempt) => attempt.value);
@@ -1376,16 +1419,29 @@ export function InvestigateWorkspace({
             24
           );
           if (!nextResults.length) {
+            const statuses = payloads.map((payload) => payload.reference_status);
+            if (statuses.includes("REFERENCE_VECTOR_UNAVAILABLE")) {
+              return "Appearance features could not be prepared for this object. Try again, or choose a nearby recorded frame.";
+            }
+            if (statuses.includes("REFERENCE_NOT_INDEXED")) {
+              return "The detector record for this object and time is unavailable. Return to playback and choose a nearby frame.";
+            }
+            if (statuses.includes("REFERENCE_INDEX_UNAVAILABLE")) {
+              return "Appearance search is temporarily unavailable. Try again.";
+            }
             const detail = payloads
               .flatMap((payload) => payload.search_messages ?? [])
               .join(" ");
             if (/not found|no embedding/i.test(detail)) {
               return "This box was detected, but it is not in the visual-similarity index. Choose another object or scrub to a later moment.";
             }
-            return (
-              detail ||
-              "No visual matches were found for this object. Choose another box or moment."
-            );
+            setVisualReference(reference);
+            setQuery(nextQuery);
+            setSubmittedQuery(nextQuery);
+            setResults([]);
+            setMediaAvailability({});
+            setSearchMessages(payloads.flatMap((payload) => payload.search_messages ?? []));
+            return null;
           }
           setVisualReference(reference);
           setQuery(nextQuery);
@@ -1420,7 +1476,7 @@ export function InvestigateWorkspace({
         }
       }
     },
-    [agentApiUrl, sourceType, vstApiUrl]
+    [agentApiUrl, resultStatus, scopedCamera, sourceType, timeRange, vstApiUrl]
   );
 
   useEffect(() => {
@@ -1437,14 +1493,14 @@ export function InvestigateWorkspace({
     setQuery(initialRequest.query);
     setScopedCamera(initialRequest.camera);
     setSourceType(nextSourceType);
-    setTimeRange("all");
+    setTimeRange(initialTimeRange);
     void search(initialRequest.query, {
       camera: initialRequest.camera,
       reviewStatus: "usable",
       sourceType: nextSourceType,
-      timeRange: "all",
+      timeRange: initialTimeRange,
     });
-  }, [agentApiUrl, initialRequest, search]);
+  }, [agentApiUrl, initialRequest, initialTimeRange, search]);
 
   useEffect(() => () => activeRequest.current?.abort(), []);
 
@@ -1540,7 +1596,10 @@ export function InvestigateWorkspace({
           setInspectionProgress((current) => [...current, inspection]);
         }
       });
-      if (revision === evidenceRevision.current) setEvidenceAnalysis(payload);
+      if (revision === evidenceRevision.current) {
+        analysisGeneratedAt.current = new Date().toISOString();
+        if (!isBeforeHistoryCutoff(analysisGeneratedAt.current, clearedCutoff.current)) setEvidenceAnalysis(payload);
+      }
     } catch (analysisError) {
       if (revision !== evidenceRevision.current) return;
       setEvidenceAnalysisError(
@@ -1612,6 +1671,12 @@ export function InvestigateWorkspace({
   );
 
   const rerunSubmittedSearch = (criteria: SearchCriteria) => {
+    if (visualReference) {
+      void searchByReference(visualReference, criteria).then((message) => {
+        if (message) setError(message);
+      });
+      return;
+    }
     if (submittedQuery) void search(submittedQuery, criteria);
   };
 
@@ -1751,11 +1816,11 @@ export function InvestigateWorkspace({
             then ask AI to explain what is visible—with a citation back to the footage.
           </p>
           <div>
-            {[
+            {(suggestedQueries ?? [
               "People moving",
               "Vehicles at an intersection",
               "Forklift activity",
-            ].map((suggestion) => (
+            ]).map((suggestion) => (
               <button
                 key={suggestion}
                 type="button"
@@ -1883,8 +1948,8 @@ export function InvestigateWorkspace({
               <div>
                 <IconSparkles size={17} />
                 <strong>Fast local search</strong>
-                <span>Cosmos semantic retrieval</span>
-                <span>Local evidence ranking</span>
+                <span>Cosmos Embed · meaning-based search</span>
+                <span>Video embeddings → query embedding → ranked clips</span>
                 {results.some((item) => item.object_ids.length > 0) && (
                   <span>Detector + track fusion</span>
                 )}
@@ -2108,6 +2173,8 @@ export function InvestigateWorkspace({
             <div className="vi-results-empty">
               {results.length && resultStatus === "usable"
                 ? "Matching embeddings were found, but their recordings have expired. Choose All statuses to review the indexed history."
+                : visualReference
+                ? "No visual matches in these filters. Expand the time range or source filters to look for another appearance."
                 : "No matching evidence was returned. Try a shorter description of the main action, or broaden the source and time filters."}
             </div>
           )}
@@ -2116,6 +2183,7 @@ export function InvestigateWorkspace({
 
       {selectedEvidence && (
         <EvidenceViewer
+          objectActionLabel={objectActionLabel}
           item={selectedEvidence}
           onAsk={() => {
             focusQuestionAfterViewer.current = true;

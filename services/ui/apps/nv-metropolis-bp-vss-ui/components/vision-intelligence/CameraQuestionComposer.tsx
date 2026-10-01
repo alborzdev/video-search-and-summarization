@@ -8,11 +8,12 @@ import {
   IconUser,
 } from "@tabler/icons-react";
 import React, { FormEvent, useState } from "react";
+import { FootageDurationControl } from "./FootageDurationControl";
 
-const hospitalPrompts = [
-  { text: "Describe the people and their activity", icon: IconMessageCircle },
-  { text: "Is anyone blocking the corridor?", icon: IconUser },
-  { text: "What changed in the scene?", icon: IconList },
+const prompts = [
+  { text: "Describe the scene.", icon: IconMessageCircle },
+  { text: "Are people wearing PPE?", icon: IconUser },
+  { text: "Is there a forklift present?", icon: IconList },
 ];
 
 export function CameraQuestionComposer({
@@ -21,8 +22,12 @@ export function CameraQuestionComposer({
   canAsk,
   isLoading,
   notice,
+  questionBlockReason,
   onAsk,
   onStartCapture,
+  lookbackSeconds,
+  onLookbackSecondsChange,
+  durationDisabled,
   children,
 }: {
   name: string;
@@ -30,18 +35,15 @@ export function CameraQuestionComposer({
   canAsk: boolean;
   isLoading: boolean;
   notice?: string;
+  questionBlockReason?: string | null;
   onAsk: (query: string) => void;
   onStartCapture?: () => void;
+  lookbackSeconds?: number | null;
+  onLookbackSecondsChange?: (seconds: number | null) => void;
+  durationDisabled?: boolean;
   children?: React.ReactNode;
 }) {
   const [query, setQuery] = useState("");
-  const prompts = /hospital|corridor|digital.twin/i.test(name)
-    ? hospitalPrompts
-    : [
-        { text: "What objects do you see?", icon: IconMessageCircle },
-        { text: "What risks are visible?", icon: IconUser },
-        { text: "Describe the current activity", icon: IconList },
-      ];
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (canAsk && !isLoading && query.trim()) onAsk(query.trim());
@@ -63,7 +65,7 @@ export function CameraQuestionComposer({
             key={text}
             type="button"
             aria-pressed={query === text}
-            disabled={isLoading}
+            disabled={isLoading || Boolean(questionBlockReason)}
             onClick={() => setQuery(text)}
           >
             <Icon size={18} />
@@ -87,6 +89,7 @@ export function CameraQuestionComposer({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
         />
+        {!recorded && onLookbackSecondsChange && <FootageDurationControl seconds={lookbackSeconds ?? null} onChange={onLookbackSecondsChange} disabled={isLoading || durationDisabled} />}
         <button
           type="submit"
           className="vi-camera-primary"

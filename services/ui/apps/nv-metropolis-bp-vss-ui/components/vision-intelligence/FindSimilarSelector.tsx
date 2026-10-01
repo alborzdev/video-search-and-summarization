@@ -453,7 +453,7 @@ export function FindSimilarSelector({
           >
             {searching ? (
               <>
-                <span className="vi-spinner" /> Checking visual index…
+                <span className="vi-spinner" /> Finding similar appearances…
               </>
             ) : (
               <>

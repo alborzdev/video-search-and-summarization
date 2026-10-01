@@ -2,6 +2,7 @@
 
 import { formatMemory, healthLabel, type SystemHealth } from "./systemHealth";
 import { streamDisplayName } from "./utils";
+import { openClearHistory } from "./ClearHistoryControl";
 import {
   IconBellCog,
   IconBolt,
@@ -12,6 +13,7 @@ import {
   IconRefresh,
   IconServer,
   IconShieldLock,
+  IconTrash,
   IconVideo,
 } from "@tabler/icons-react";
 import React, { ReactNode } from "react";
@@ -131,6 +133,8 @@ export function SystemWorkspace({
 }: SystemWorkspaceProps) {
   const runningServices = health?.services.filter((service) => service.ok).length ?? 0;
   const totalServices = health?.services.length ?? 0;
+  const spark = health?.hardwareProfile === "DGX-SPARK";
+  const capacity = health?.sparkCapacity?.state === "fresh" ? health.sparkCapacity : null;
   return (
     <section className="vi-system-workspace">
       <div className="vi-page-intro vi-system-intro">
@@ -145,11 +149,16 @@ export function SystemWorkspace({
               : "Define the live conditions that should be verified and surfaced to operators."}
           </p>
         </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <button className="vi-system-refresh" type="button" onClick={openClearHistory}>
+            <IconTrash size={17} /> Clear history
+          </button>
         {panel === "overview" && (
           <button className="vi-system-refresh" type="button" onClick={onRefreshHealth}>
             <IconRefresh size={17} /> Refresh health
           </button>
         )}
+        </div>
       </div>
 
       <nav className="vi-system-tabs" aria-label="System">
@@ -183,7 +192,7 @@ export function SystemWorkspace({
               <div className="vi-system-device">
                 <span>CT AI LABS</span>
                 <strong>NVIDIA</strong>
-                <i>THOR</i>
+                <i>{spark ? "DGX SPARK" : health?.thor ? "JETSON THOR" : "EDGE DEVICE"}</i>
               </div>
               <div className="vi-system-local-badge">
                 <IconShieldLock size={19} /> Local inference boundary
@@ -193,7 +202,7 @@ export function SystemWorkspace({
               <span className="vi-eyebrow">Local processing</span>
               <h2>Video becomes searchable intelligence without leaving the device.</h2>
               <p>
-                Video I/O, embedding, retrieval, visual reasoning, synthesis, and analytics are connected through the local Thor runtime.
+                Video I/O, embedding, retrieval, visual reasoning, synthesis, and analytics run together on this device.
               </p>
               <div className={`vi-system-health-state is-${health?.status ?? "offline"}`}>
                 <span />
@@ -206,6 +215,12 @@ export function SystemWorkspace({
           </article>
 
           <div className="vi-system-metrics-grid">
+            {spark ? <>
+              {metricValue(capacity?.availableGiB == null ? "Unavailable" : `${capacity.availableGiB.toFixed(1)} GiB`, "Available shared memory")}
+              {metricValue(capacity?.reserveGiB == null ? "Unavailable" : `${capacity.reserveGiB.toFixed(0)} GiB`, "Memory reserve")}
+              {metricValue(capacity ? capacity.guardActive ? "Active" : "Needs attention" : "Unconfirmed", "Memory guard")}
+              {metricValue(searchCoverage ? String(searchCoverage.summary.configuredSources) : "Unavailable", "Configured video sources")}
+            </> : <>
             {metricValue(
               health?.thor?.activeStreams == null
                 ? "Unavailable"
@@ -232,6 +247,7 @@ export function SystemWorkspace({
                 : "Unavailable",
               "Shared memory"
             )}
+            </>}
           </div>
 
           <article className="vi-compute-plan">
@@ -249,9 +265,9 @@ export function SystemWorkspace({
             </div>
             <p>
               Visual work shares one local Cosmos lane. These checks report
-              lane ownership and configured qualification gates. They do not
-              measure host memory headroom or qualify sustained monitoring.
-              A free lane alone does not establish live-demo readiness.
+              lane ownership and configured qualification gates.
+              {spark ? " History builds also require a fresh memory-guard check and spare memory above the reserve." : " They do not measure host memory headroom."}
+              {" "}A free lane alone does not qualify sustained monitoring.
             </p>
             <div className="vi-admission-list">
               {WORKLOAD_ROWS.map((row) => {

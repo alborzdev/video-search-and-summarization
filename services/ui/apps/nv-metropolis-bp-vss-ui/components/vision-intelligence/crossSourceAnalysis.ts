@@ -3,6 +3,7 @@ import type { VisionAnalystRequest, VisionAnalystSource, VisionAnalystResponse }
 import {
   consolidateIncidents,
   incidentVerdict,
+  isDirectModelMatch,
   isOperatorRelevantIncident,
   type AnalyticsIncident,
 } from './incidentModel';
@@ -18,6 +19,7 @@ export type CrossSourceIncident = AnalyticsIncident;
 
 export interface CrossSourceEvidence {
   incidents: CrossSourceIncident[];
+  incidentCoverage?: 'complete' | 'partial' | 'unavailable';
   intelligenceByStreamId: Record<string, CrossSourceIntelligence>;
 }
 
@@ -70,10 +72,12 @@ export function summarizeCrossSourceEvidence(
     const incidents = consolidated.filter((incident) =>
       isOperatorRelevantIncident(incident) && incidentMatchesSource(incident, source)
     );
-    const confirmed = incidents.filter((incident) => incidentVerdict(incident) === 'confirmed').length;
+    const modelMatches = incidents.filter(isDirectModelMatch).length;
+    const confirmed = incidents.filter((incident) => incidentVerdict(incident) === 'confirmed' && !isDirectModelMatch(incident)).length;
     const needsReview = incidents.filter((incident) => ['failed', 'unverified'].includes(incidentVerdict(incident))).length;
     return {
       confirmed,
+      modelMatches,
       events: intelligence?.evidenceEvents ?? 0,
       name: streamDisplayName(source.name),
       needsReview,
@@ -81,7 +85,7 @@ export function summarizeCrossSourceEvidence(
       source,
     };
   });
-  const active = summaries.filter((summary) => summary.confirmed || summary.needsReview || summary.events || summary.observations);
+  const active = summaries.filter((summary) => summary.confirmed || summary.modelMatches || summary.needsReview || summary.events || summary.observations);
   const leaders = active.slice(0, 3);
   let answer: string;
   if (!leaders.length) {
@@ -89,12 +93,13 @@ export function summarizeCrossSourceEvidence(
   } else {
     const lead = leaders[0];
     const operatorIncidentCount = leaders.reduce(
-      (total, summary) => total + summary.confirmed + summary.needsReview,
+      (total, summary) => total + summary.confirmed + summary.modelMatches + summary.needsReview,
       0
     );
     const detail = leaders.map((summary) => {
       const facts = [
         summary.confirmed ? `${summary.confirmed} confirmed ${summary.confirmed === 1 ? 'incident' : 'incidents'}` : '',
+        summary.modelMatches ? `${summary.modelMatches} visual rule ${summary.modelMatches === 1 ? 'match' : 'matches'}` : '',
         summary.needsReview ? `${summary.needsReview} awaiting review` : '',
         summary.events ? `${summary.events} indexed ${summary.events === 1 ? 'event' : 'events'}` : '',
         summary.observations ? `${summary.observations.toLocaleString()} tracked observations` : '',
@@ -102,8 +107,16 @@ export function summarizeCrossSourceEvidence(
       return `${summary.name}: ${facts}`;
     }).join('; ');
     answer = operatorIncidentCount
-      ? `${lead.name} currently has the strongest local evidence signal. ${detail}. These counts come from indexed analytics on this Thor; open a source to visually inspect the footage.`
+      ? `${lead.name} currently has the strongest local evidence signal. ${detail}. These counts come from local indexed analytics; open a source to visually inspect the footage.`
       : `No operator-ready incident currently requires attention. ${lead.name} has the strongest searchable activity signal. ${detail}. These are indexed activity counts, not alerts; open a source to visually inspect the footage.`;
+  }
+  if (evidence.incidentCoverage && evidence.incidentCoverage !== 'complete') {
+    if (!leaders.length) {
+      answer = 'Event coverage is incomplete while local analytics recover. Open a specific source to inspect the footage directly, or retry the overview when services are ready.';
+    } else {
+      answer = answer.replace('No operator-ready incident currently requires attention. ', 'From the available local evidence, ');
+      answer += ' Event coverage is incomplete; these counts include only available local evidence.';
+    }
   }
   return {
     answer,

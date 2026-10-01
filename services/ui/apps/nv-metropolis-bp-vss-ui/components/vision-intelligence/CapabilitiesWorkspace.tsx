@@ -37,7 +37,8 @@ interface Capability {
   serviceKeys: string[];
 }
 
-interface CapabilitiesWorkspaceProps {
+export interface CapabilitiesWorkspaceProps {
+  onOpenDemo?: () => void;
   admissions?: WorkloadAdmissions;
   searchCoverage?: SearchCoverageSnapshot | null;
   onExplore: (query: string) => void;

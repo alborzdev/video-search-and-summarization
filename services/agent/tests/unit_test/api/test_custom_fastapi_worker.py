@@ -25,6 +25,7 @@ per-profile capability flags:
   * ``register_video_delete_routes``        — DELETE /api/v1/videos/{video_id}
 """
 
+from collections.abc import Iterator
 from unittest.mock import AsyncMock
 from unittest.mock import MagicMock
 from unittest.mock import patch
@@ -96,10 +97,17 @@ def patched_register_fns():
         )
 
 
+@pytest.fixture(autouse=True)
+def patched_history_clear_registration() -> Iterator[MagicMock]:
+    """Keep the new maintenance registration isolated from dispatcher fixtures."""
+    with patch("vss_agents.api.custom_fastapi_worker.register_history_clear_routes") as register:
+        yield register
+
+
 class TestRegisterStreamingRoutesDispatcher:
     """``CustomFastApiFrontEndWorker._register_streaming_routes``."""
 
-    def test_universal_routes_register_unconditionally(self, patched_register_fns):
+    def test_universal_routes_register_unconditionally(self, patched_register_fns, patched_history_clear_registration):
         """All six register fns fire on every profile, with no per-profile
         flag. Each handler self-skips downstream calls when its backing
         service isn't configured."""
@@ -113,8 +121,10 @@ class TestRegisterStreamingRoutesDispatcher:
         ) = patched_register_fns
         worker = _make_worker(MagicMock())  # any non-None streaming_ingest
 
-        worker._register_streaming_routes(MagicMock())
+        app = MagicMock()
+        worker._register_streaming_routes(app)
 
+        patched_history_clear_registration.assert_called_once_with(app, worker.config)
         video_upload.assert_called_once()
         video_upload_complete.assert_called_once()
         video_search_ingest.assert_called_once()
@@ -256,9 +266,134 @@ async def test_direct_live_inspection_uses_recent_iso_evidence_window():
     assert result["evidence_tool"] == "video_understanding_iso"
     assert result["observed_range"] is None
     assert result["observed_window"] == {
-        "start_time": "2026-08-13T12:00:00Z",
+        "start_time": "2026-08-13T12:00:22Z",
         "end_time": "2026-08-13T12:00:25Z",
     }
     tool_input = tool.ainvoke.await_args.kwargs["input"]
-    assert tool_input["start_timestamp"] == "2026-08-13T12:00:00Z"
+    assert tool_input["start_timestamp"] == "2026-08-13T12:00:22Z"
     assert tool_input["end_timestamp"] == "2026-08-13T12:00:25Z"
+    prompt = tool_input["user_prompt"]
+    assert "the question is not evidence that they exist" in prompt
+    assert "only when people are clearly visible" in prompt
+    assert "including a general scene summary" in prompt
+    assert "visible human body features" in prompt
+    assert "Distant colored shapes" in prompt
+    assert "changes across frames support it" in prompt
+    assert "detector boxes as proof" in prompt
+    assert prompt.endswith("Question: What is happening now?")
+    assert request.lookback_seconds == 3
+    assert tool_input["frame_count"] == 3
+    assert result["frame_count"] == 3
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(("lookback", "frames"), [(1, 1), (2, 2), (3, 3), (15, 15), (30, 20), (60, 20)])
+async def test_live_inspection_uses_selected_duration_and_bounded_frame_count(lookback: int, frames: int) -> None:
+    from datetime import datetime
+    from datetime import timedelta
+
+    tool = MagicMock()
+    tool.ainvoke = AsyncMock(return_value="An empty corridor is visible.")
+    builder = MagicMock()
+    builder.get_tool = AsyncMock(return_value=tool)
+    request = VisionInspectionRequest(
+        source_kind="live",
+        sensor_id="camera",
+        query="What is visible?",
+        asked_at="2026-10-01T12:00:30Z",
+        lookback_seconds=lookback,
+        frame_count=frames,
+    )
+    result = await inspect_vision_source(builder, request)
+    tool_input = tool.ainvoke.await_args.kwargs["input"]
+    start = datetime.fromisoformat(tool_input["start_timestamp"].replace("Z", "+00:00"))
+    end = datetime.fromisoformat(tool_input["end_timestamp"].replace("Z", "+00:00"))
+    assert end - start == timedelta(seconds=lookback)
+    assert tool_input["frame_count"] == frames
+    assert result["frame_count"] == frames
+
+
+@pytest.mark.parametrize("lookback", [0, 61, 2.5, "2", True])
+def test_live_inspection_rejects_invalid_duration(lookback: object) -> None:
+    with pytest.raises(ValueError):
+        VisionInspectionRequest(
+            source_kind="live",
+            sensor_id="camera",
+            query="What is visible?",
+            asked_at="2026-10-01T12:00:30Z",
+            lookback_seconds=lookback,
+        )
+
+
+@pytest.mark.parametrize("frames", [0, 21, 2.5, "2", True, 3])
+def test_live_inspection_rejects_frame_budget_mismatch(frames: object) -> None:
+    with pytest.raises(ValueError):
+        VisionInspectionRequest(
+            source_kind="live",
+            sensor_id="camera",
+            query="What is visible?",
+            asked_at="2026-10-01T12:00:30Z",
+            lookback_seconds=2,
+            frame_count=frames,
+        )
+
+
+def test_live_inspection_preserves_explicit_sixty_second_interval() -> None:
+    request = VisionInspectionRequest(
+        source_kind="live",
+        sensor_id="camera",
+        query="What is visible?",
+        asked_at="2026-10-01T12:00:30Z",
+        lookback_seconds=60,
+        live_start_time="2026-10-01T11:59:25Z",
+        live_end_time="2026-10-01T12:00:25Z",
+    )
+    assert request.lookback_seconds == 60
+
+
+@pytest.mark.asyncio
+async def test_direct_live_inspection_preserves_retained_recording_boundary() -> None:
+    tool = MagicMock()
+    tool.ainvoke = AsyncMock(return_value="An empty corridor is visible.")
+    builder = MagicMock()
+    builder.get_tool = AsyncMock(return_value=tool)
+    request = VisionInspectionRequest(
+        source_kind="live",
+        sensor_id="corridor-camera",
+        query="What is in view?",
+        asked_at="2026-10-01T12:00:30Z",
+        lookback_seconds=15,
+        live_start_time="2026-10-01T12:00:07Z",
+        live_end_time="2026-10-01T12:00:22Z",
+    )
+    result = await inspect_vision_source(builder, request)
+    assert result["observed_window"] == {
+        "start_time": "2026-10-01T12:00:07Z",
+        "end_time": "2026-10-01T12:00:22Z",
+    }
+    tool_input = tool.ainvoke.await_args.kwargs["input"]
+    assert tool_input["start_timestamp"] == result["observed_window"]["start_time"]
+    assert tool_input["end_timestamp"] == result["observed_window"]["end_time"]
+
+
+@pytest.mark.parametrize(
+    ("start", "end"),
+    [
+        ("2026-10-01T12:00:00Z", None),
+        ("2026-10-01T12:00:00Z", "2026-10-01T12:00:25Z"),
+        ("2026-10-01T12:00:25Z", "2026-10-01T12:00:25Z"),
+        ("2026-10-01T12:00:14Z", "2026-10-01T12:00:29Z"),
+        ("2026-10-01T11:59:10Z", "2026-10-01T11:59:25Z"),
+        ("2026-10-01T12:00:10", "2026-10-01T12:00:25"),
+    ],
+)
+def test_live_inspection_rejects_invalid_or_unfinished_recording_windows(start: str, end: str | None) -> None:
+    with pytest.raises(ValueError):
+        VisionInspectionRequest(
+            source_kind="live",
+            sensor_id="camera",
+            query="What is visible?",
+            asked_at="2026-10-01T12:00:30Z",
+            live_start_time=start,
+            live_end_time=end,
+        )

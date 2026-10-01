@@ -18,6 +18,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import React, { FormEvent, useEffect, useMemo, useState } from "react";
+import { isBeforeHistoryCutoff, useHistoryClear } from "./useHistoryClear";
 
 interface HistoryMessage {
   content: string;
@@ -56,12 +57,16 @@ function defaultsFor(stream: VisionStream): {
 
 function displaySummary(value?: string): string {
   if (!value) return "Video history is ready for questions.";
+  let summary = value;
   try {
     const parsed = JSON.parse(value) as { video_summary?: string };
-    return parsed.video_summary?.trim() || value;
-  } catch {
-    return value.replace(/<think>[\s\S]*?<\/think>/gi, "").trim();
-  }
+    summary = parsed.video_summary?.trim() || value;
+  } catch {}
+  return summary
+    .replace(/<think>[\s\S]*?<\/think>/gi, "")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .trim();
 }
 
 function formatDate(value?: string): string {
@@ -125,6 +130,16 @@ export function VideoHistoryPanel({
   const [videoError, setVideoError] = useState<string | null>(null);
   const [isPreparingVideo, setIsPreparingVideo] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
+  const [historyRevision, setHistoryRevision] = useState(0);
+  const clearedCutoff = useHistoryClear((cutoff) => {
+    if (isBeforeHistoryCutoff(answer?.generatedAt, cutoff)) {
+      setAnswer(null);
+      setMessages([]);
+      setVideoUrl(null);
+      setVideoError(null);
+    }
+    setHistoryRevision((value) => value + 1);
+  });
 
   const dialogRef = useDialogAccessibility<HTMLDivElement>({ isOpen: true, onClose });
   const citationDialogRef = useDialogAccessibility<HTMLDivElement>({
@@ -159,13 +174,15 @@ export function VideoHistoryPanel({
         if (!controller.signal.aborted) {
           setRecord(payload);
           if (payload) {
-            setScenario(payload.scenario);
-            setEvents(payload.events.join(", "));
+            if (historyRevision === 0) {
+              setScenario(payload.scenario);
+              setEvents(payload.events.join(", "));
+            }
             if (payload.status === "building") {
               setIsBuilding(true);
               setBuildSeconds(0);
               void waitForHistoryBuild(stream.sensorId, controller.signal)
-                .then((ready) => setRecord(ready))
+                .then((ready) => { if (!controller.signal.aborted) setRecord(ready); })
                 .catch((requestError) => {
                   if (!controller.signal.aborted) {
                     setError(
@@ -195,7 +212,7 @@ export function VideoHistoryPanel({
         if (!controller.signal.aborted) setStatusLoading(false);
       });
     return () => controller.abort();
-  }, [stream.sensorId]);
+  }, [stream.sensorId, historyRevision]);
 
   useEffect(() => {
     if (!isBuilding) return;
@@ -276,6 +293,7 @@ export function VideoHistoryPanel({
     event.preventDefault();
     const nextQuestion = question.trim();
     if (!nextQuestion || isAsking || !record) return;
+    const cutoffAtStart = clearedCutoff.current;
     const nextMessages: HistoryMessage[] = [
       ...messages,
       { content: nextQuestion, role: "user" as const },
@@ -300,13 +318,15 @@ export function VideoHistoryPanel({
         throw new Error(
           payload.error || `Video history returned ${response.status}.`
         );
-      setAnswer(payload);
-      setMessages(
-        [
-          ...nextMessages,
-          { content: payload.answer, role: "assistant" as const },
-        ].slice(-8)
-      );
+      if (!isBeforeHistoryCutoff(payload.generatedAt, clearedCutoff.current)) {
+        setAnswer(payload);
+        setMessages(
+          [
+            ...(cutoffAtStart === clearedCutoff.current ? nextMessages : [{ content: nextQuestion, role: "user" as const }]),
+            { content: payload.answer, role: "assistant" as const },
+          ].slice(-8)
+        );
+      }
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -501,17 +521,18 @@ export function VideoHistoryPanel({
               <>
                 <section className="vi-history-summary">
                   <span>
-                    <IconClock size={16} /> Indexed history
+                    <IconClock size={16} /> History summary
                   </span>
                   <p>{displaySummary(record.summary)}</p>
                   <small>
                     {record.timelineStart && record.timelineEnd
-                      ? `${formatDate(record.timelineStart)} – ${formatDate(
+                      ? `Query window: ${formatDate(record.timelineStart)} – ${formatDate(
                           record.timelineEnd
                         )}`
                       : "Retained source history"}{" "}
                     · {record.scenario}
                   </small>
+                  <small>Based on sampled video captions. Gaps in observed activity are possible.</small>
                 </section>
                 <form className="vi-history-question" onSubmit={ask}>
                   <IconSparkles size={19} />

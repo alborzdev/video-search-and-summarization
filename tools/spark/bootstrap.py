@@ -5,6 +5,7 @@ No Thor generated environment, caches, image IDs or external volumes are used.
 Target qualification is recorded separately; rendering is not deployment proof.
 """
 import argparse
+import hashlib
 import ipaddress
 import json
 import math
@@ -16,12 +17,19 @@ import secrets
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.parse
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
 STATE = ROOT / '.spark'
+# Same pinned aarch64 wheel as services/agent/uv.lock. Desktop startup never
+# downloads it: technical setup stages it before taking the machine offline.
+CODEC_WHEEL_NAME = 'opencv_python_headless-4.13.0.92-cp37-abi3-manylinux_2_28_aarch64.whl'
+CODEC_WHEEL_SHA256 = 'eb60e36b237b1ebd40a912da5384b348df8ed534f6f644d8e0b4f103e272ba7d'
+CODEC_WHEEL_TARGET = '/offline-tools/' + CODEC_WHEEL_NAME
+CODEC_WHEEL_URL = 'https://files.pythonhosted.org/packages/8f/b4/b7bcbf7c874665825a8c8e1097e93ea25d1f1d210a3e20d4451d01da30aa/' + CODEC_WHEEL_NAME
 # API identity exposed by the pinned Spark NIM, distinct from its image name.
 LLM = 'nvidia/nemotron-nano-9b-v2'
 VLM = 'nim_nvidia_cosmos3-nano-reasoner_bf16-final'
@@ -94,13 +102,76 @@ def model_admission_gib(service):
 
 def private_write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
-    with os.fdopen(os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), 'w') as f:
-        f.write(value)
-    path.chmod(0o600)
+    fd, temporary = tempfile.mkstemp(prefix='.' + path.name + '-', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w') as f:
+            f.write(value)
+            f.flush()
+            os.fsync(f.fileno())
+        # Readers see either complete version. Failed writes keep the last
+        # usable settings/operation/status instead of truncating it.
+        os.replace(temporary, path)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
 
 
 def compose(*args):
     return ['docker', 'compose', '--project-name', 'vss-spark', '-f', STATE / 'compose.json', *args]
+
+
+def booth_runtime_safety(graph):
+    """Upgrade a cached graph without rerendering models or addresses."""
+    agent = graph['services'].get('vss-agent')
+    if agent is not None:
+        # The image's installer otherwise contacts PyPI on every recreation,
+        # even when all model weights and container images are cached.
+        agent.setdefault('environment', {}).update(
+            INSTALL_PROPRIETARY_CODECS='true',
+            VSS_PROPRIETARY_CODECS_WHEEL=CODEC_WHEEL_TARGET,
+            VSS_PROPRIETARY_CODECS_MAX_RETRY_SECONDS='0')
+        mounts = agent.setdefault('volumes', [])
+        mounts[:] = [mount for mount in mounts if not isinstance(mount, dict) or mount.get('target') != CODEC_WHEEL_TARGET]
+        mounts.append({'type': 'bind', 'source': str(STATE / 'offline-tools' / CODEC_WHEEL_NAME),
+                       'target': CODEC_WHEEL_TARGET, 'read_only': True,
+                       'bind': {'create_host_path': False}})
+    kafka_target = '/usr/local/lib/python3.13/site-packages/mdx/analytics/core/stream/source/source_kafka.py'
+    kafka_source = str(ROOT / 'services/analytics/behavior-analytics/src/mdx/analytics/core/stream/source/source_kafka.py')
+    for name, service in graph['services'].items():
+        logging = service.setdefault('logging', {'driver': 'json-file'})
+        driver = logging.get('driver', 'json-file')
+        if driver in ('json-file', 'local'):
+            options = logging.setdefault('options', {})
+            options.setdefault('max-size', '20m')
+            options.setdefault('max-file', '3')
+            if str(options['max-size']).strip() in ('0', '-1'):
+                options['max-size'] = '20m'
+        # Remote/journal/disabled logging drivers have their own retention
+        # controls; Docker's file-driver options are invalid for those drivers.
+        if 'behavior-analytics' in name or 'behavior-analytics' in service.get('container_name', ''):
+            mounts = service.setdefault('volumes', [])
+            replacement = {'type': 'bind', 'source': kafka_source, 'target': kafka_target,
+                           'read_only': True, 'bind': {'create_host_path': False}}
+            mounts[:] = [mount for mount in mounts if not isinstance(mount, dict) or mount.get('target') != kafka_target]
+            mounts.append(replacement)
+    lvs_service = graph['services'].get('lvs-server')
+    if lvs_service:
+        # Keep the current caption prompt available on cached/offline starts
+        # without rebuilding the packaged dependency runtime or GPU models.
+        target = '/opt/nvidia/via/via-engine/via_stream_handler.py'
+        mounts = lvs_service.setdefault('volumes', [])
+        mounts[:] = [mount for mount in mounts if not isinstance(mount, dict) or mount.get('target') != target]
+        mounts.append({'type': 'bind', 'source': str(ROOT / 'services/video-summarization/src/via_stream_handler.py'),
+                       'target': target, 'read_only': True, 'bind': {'create_host_path': False}})
+        target = '/usr/local/lib/python3.13/site-packages/vss_ctx_rag/tools/llm/llm_handler.py'
+        mounts[:] = [mount for mount in mounts if not isinstance(mount, dict) or mount.get('target') != target]
+        mounts.append({'type': 'bind', 'source': str(ROOT / 'services/video-summarization/src/llm_handler.py'),
+                       'target': target, 'read_only': True, 'bind': {'create_host_path': False}})
+    ui_service = graph['services'].get('vss-ui')
+    token = graph['services'].get('evidence-clip', {}).get('environment', {}).get('HISTORY_METADATA_TOKEN')
+    if ui_service and token:
+        ui_service.setdefault('environment', {}).update(HARDWARE_PROFILE='DGX-SPARK',
+            SPARK_CAPACITY_URL='http://127.0.0.1:8102/capacity', HISTORY_METADATA_TOKEN=token)
+    return graph
 
 
 def doctor():
@@ -186,6 +257,9 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     graph = json.loads(result.stdout)
     services = graph['services']
     services.pop('tegrastats-exporter', None)
+    services['logstash'].setdefault('volumes', []).append({
+        'type': 'bind', 'source': str(ROOT / 'deploy/docker/spark/logstash-bootstrap.rb'),
+        'target': '/usr/share/logstash/lib/bootstrap/environment.rb', 'read_only': True})
     # Carry over shared application integration, replacing the Tegra codec layer.
     stream = services['streamprocessing-ms']
     stream.pop('build', None)
@@ -232,12 +306,18 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
                         'interval': '15s', 'timeout': '5s', 'retries': 120, 'start_period': '120s'},
     }
     if cached_models:
+        # The pinned VIOS image already contains the codecs used by the Sim.
+        # Its additional-install script runs apt update/reinstall even when
+        # they are present. Never invoke that online installer in cache mode.
+        stream['entrypoint'] = ['/bin/bash', '-ec', 'exec /home/vst/vst_release/launch_vst']
+        stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'false'
         for environment in (embed, vlm):
             environment.update(RTVI_OFFLINE='true', HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', NGC_API_KEY='')
         services['spark-llm']['environment'].update(
             NGC_API_KEY='', NIM_DISABLE_MODEL_DOWNLOAD='1',
             NIM_MODEL_PATH='/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1',
             HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1')
+        configure_offline_topic_tools(services['kafka-topic-init-container'])
     graph.setdefault('volumes', {})['spark-nim-cache'] = {'name': 'vss-spark-nim-cache'}
     va_config = '/vss-agent/deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml'
     services['vss-va-mcp']['command'] = ['mcp', 'serve', '--config_file', va_config, '--host', '127.0.0.1', '--port', '9901']
@@ -247,6 +327,8 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
         VSS_AGENT_CONFIG_FILE='/vss-agent/deploy/docker/spark/config.yml',
         VSS_WAREHOUSE_RTVI_CV_URL='http://127.0.0.1:9000' if detector_enabled else '',
         VSS_TRAFFIC_RTVI_CV_URL='',
+        VSS_OBJECT_APPEARANCE_ENABLED='true' if detector_enabled else 'false',
+        VSS_OBJECT_APPEARANCE_EMBED_URL='http://127.0.0.1:8017',
         VST_CLIP_FALLBACK_URL='http://127.0.0.1:8098',
         VST_CLIP_FALLBACK_MEDIA_URL=f'http://{host_ip}:7777/api/vision/evidence-media',
         EVIDENCE_ALLOW_FRESH_INSPECTION_WHILE_BUSY='true')
@@ -309,6 +391,20 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     # Source config mounts are inherited from the agent's repository deployment mount.
     agent.setdefault('volumes', []).append({'type': 'bind', 'source': str(ROOT / 'deploy/docker/spark'),
                                           'target': '/vss-agent/deploy/docker/spark', 'read_only': True})
+    # A small CPU-only sidecar adopts maintenance source changes without
+    # restarting the live agent. Reuse cached images and explicit startup.
+    import history_metadata
+    history_token = history_metadata.token_value(STATE)
+    services['vss-ui']['environment'].update(HARDWARE_PROFILE='DGX-SPARK',
+        SPARK_CAPACITY_URL='http://127.0.0.1:8102/capacity', HISTORY_METADATA_TOKEN=history_token)
+    services['history-maintenance'] = history_metadata.compose_service(graph, ROOT, token=history_token)
+    services['evidence-clip']['environment']['HISTORY_METADATA_TOKEN'] = history_token
+    services['evidence-clip'].setdefault('volumes', []).append({
+        'type': 'bind', 'source': str(ROOT / 'deploy/docker/thor-local/evidence-clip/server.py'),
+        'target': '/app/server.py', 'read_only': True})
+    # Continuous video/model logs need a bound for long booth sessions. This
+    # applies on the next explicit recreation, without deleting recordings.
+    booth_runtime_safety(graph)
     # Compose config already escapes shell dollars as $$; preserve those pairs.
     # Escape only new singleton dollars, except the deferred download credential.
     encoded = re.sub(r'(?<!\$)\$(?!\$)', lambda _: '$$', json.dumps(graph, indent=2))
@@ -319,6 +415,41 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     print(f'Rendered {len(services)} services to {STATE}/compose.json (unqualified Spark candidate).')
 
 
+def configure_offline_topic_tools(service):
+    """Use the cached parser even when the one-shot Kafka container is recreated."""
+    service.setdefault('environment', {})['KAFKA_INIT_OFFLINE'] = 'true'
+    mounts = service.setdefault('volumes', [])
+    mounts[:] = [mount for mount in mounts if mount.get('target') != '/usr/local/bin/jq']
+    mounts.append({'type': 'bind', 'source': str(STATE / 'offline-tools/jq'),
+                   'target': '/usr/local/bin/jq', 'read_only': True,
+                   'bind': {'create_host_path': False}})
+
+
+def stage_codec_wheel():
+    """Explicit online setup only; desktop startup never calls this downloader."""
+    path = STATE / 'offline-tools' / CODEC_WHEEL_NAME
+    if path.is_file():
+        with path.open('rb') as wheel:
+            if hashlib.file_digest(wheel, 'sha256').hexdigest() == CODEC_WHEEL_SHA256:
+                return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix='.opencv-', dir=path.parent)
+    try:
+        digest = hashlib.sha256()
+        with os.fdopen(fd, 'wb') as wheel, urllib.request.urlopen(CODEC_WHEEL_URL, timeout=60) as response:
+            while chunk := response.read(1048576):
+                wheel.write(chunk)
+                digest.update(chunk)
+            wheel.flush()
+            os.fsync(wheel.fileno())
+        if digest.hexdigest() != CODEC_WHEEL_SHA256:
+            raise RuntimeError('Downloaded video decoder differs from the pinned uv.lock hash.')
+        os.chmod(temporary, 0o644)
+        os.replace(temporary, path)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
+
+
 def stage():
     doctor()
     if shutil.disk_usage(STATE).free < 200 * 1024**3:
@@ -327,6 +458,7 @@ def stage():
     active = run(compose('ps', '--status', 'running', '-q'), capture_output=True, text=True).stdout
     if active.strip():
         raise RuntimeError('Stop this candidate stack before staging/building.')
+    stage_codec_wheel()
     run(['bash', ROOT / 'deploy/docker/thor-local/vios-mcp/stage-wheelhouse.sh'])
     pack = ROOT / 'deploy/docker/services/infra/elk/logstash/offline-packs/logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip'
     run([sys.executable, pack.parent.parent / 'verify-protobuf-offline-pack.py', pack, str(pack) + '.sha256', str(pack) + '.expected.sha256'])
@@ -367,12 +499,15 @@ def up():
     doctor()
     provision()
     run(['systemctl', '--user', 'is-active', '--quiet', 'vss-spark-guard.service'])
+    import history_metadata
+    history_metadata.ensure_bridge()
     graph = json.loads((STATE / 'compose.json').read_text())
     models = ['spark-llm', 'rtvi-embed', 'rtvi-vlm']
     detectors = ['spark-perception'] if 'spark-perception' in graph['services'] else []
     late = ['vss-agent', 'vss-ui', 'vss-haproxy-ingress', 'lvs-server', 'alert-bridge', 'vss-va-mcp']
     early = [s for s in graph['services'] if s not in models + detectors + late]
     order = startup_order(graph['services'], early, models + detectors, late)
+    one_shots = completed_services(graph)
     for service in order:
         if service in models:
             required = model_admission_gib(service)
@@ -383,7 +518,7 @@ def up():
             if available() < required:
                 raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} ({memory_reserve():g} reserve + {DETECTOR_STARTUP_HEADROOM_GIB:g} startup headroom).')
         run(compose('up', '-d', '--no-deps', '--no-build', '--pull', 'never', service))
-        await_service(service, graph['services'][service].get('restart') == 'no' and service in ('broker-health-check', 'elasticsearch-init-container', 'kafka-topic-init-container', 'kibana-init-container-thor-full', 'sdr-streamprocessing-init', 'spark-llm-cache-init'))
+        await_service(service, service in one_shots)
         if service in models:
             reclaim_model_file_cache(service)
     verify()
@@ -412,20 +547,43 @@ def startup_order(services, early, models, late):
     return ordered
 
 
+def completed_services(graph):
+    return {name for service in graph['services'].values()
+            for name, dependency in service.get('depends_on', {}).items()
+            if dependency.get('condition') == 'service_completed_successfully'} | {
+                'broker-health-check', 'elasticsearch-init-container', 'kafka-topic-init-container',
+                'kibana-init-container-thor-full', 'sdr-streamprocessing-init', 'spark-llm-cache-init'}
+
+
 def await_service(service, one_shot=False):
     deadline = time.monotonic() + 3600
     while time.monotonic() < deadline:
         reserve = memory_reserve()
         if available() < reserve:
-            run(compose('stop'), stdout=subprocess.DEVNULL)
+            run(compose('stop'), stdout=subprocess.DEVNULL, timeout=120)
             raise RuntimeError(f'{reserve:g} GiB reserve crossed; candidate stack stopped.')
-        cid = run(compose('ps', '-a', '-q', service), capture_output=True, text=True).stdout.strip()
+        cid = run(compose('ps', '-a', '-q', service), capture_output=True, text=True, timeout=15).stdout.strip()
         if cid:
-            state = json.loads(run(['docker', 'inspect', '--format', '{{json .State}}', cid], capture_output=True, text=True).stdout)
+            state = json.loads(run(['docker', 'inspect', '--format', '{{json .State}}', cid], capture_output=True, text=True, timeout=15).stdout)
             if state['Status'] == 'exited':
                 if one_shot and state['ExitCode'] == 0:
                     return
+                try:
+                    diagnostic = run(['docker', 'logs', '--tail', '35', cid],
+                                     capture_output=True, text=True, timeout=10)
+                    print((diagnostic.stdout + diagnostic.stderr)[-6000:], flush=True)
+                except (subprocess.SubprocessError, OSError):
+                    pass
                 raise RuntimeError(f'{service} exited; inspect its Docker logs.')
+            if state['Status'] in ('dead', 'removing'):
+                raise RuntimeError(f'{service} is {state["Status"]}; Docker could not start it.')
+            health = state.get('Health', {})
+            if health.get('Status') == 'unhealthy':
+                # Docker exhausted the configured start period and retries.
+                # Surface its actual failure instead of waiting another hour.
+                checks = health.get('Log', [])
+                detail = checks[-1].get('Output', '').strip()[-600:] if checks else ''
+                raise RuntimeError(f'{service} failed its startup health checks. ' + detail)
             if not one_shot and state['Status'] == 'running' and state.get('Health', {}).get('Status', 'healthy') == 'healthy':
                 return
         time.sleep(5)
@@ -455,7 +613,8 @@ def verify():
     failures = []
     probes = {'llm': 'http://127.0.0.1:30081/v1/models', 'vlm': 'http://127.0.0.1:8018/v1/health/ready',
               'embed': 'http://127.0.0.1:8017/v1/ready', 'agent': 'http://127.0.0.1:8100/health',
-              'vios': 'http://127.0.0.1:30888/vst/api/v1/sensor/list'}
+              'vios': 'http://127.0.0.1:30888/vst/api/v1/sensor/list',
+              'history': 'http://127.0.0.1:8101/health', 'history-metadata': 'http://127.0.0.1:8102/health'}
     graph_path = STATE / 'compose.json'
     if graph_path.exists() and 'spark-perception' in json.loads(graph_path.read_text()).get('services', {}):
         probes['detector'] = 'http://127.0.0.1:9000/api/v1/health/get-dsready-state'
@@ -494,6 +653,8 @@ def main():
         parser.error('--reserve-gib, --cached-models and --detector/--no-detector apply to render; restart the guard after changing its reserve')
     elif args.command == 'stop':
         run(compose('stop'))
+        import history_metadata
+        history_metadata.stop_bridge()
     else:
         globals()[args.command.replace('-', '_')]()
 

@@ -42,6 +42,41 @@ async function requestJson(url: string, init: RequestInit, timeoutMs = 90_000) {
   return { payload, response };
 }
 
+async function pauseCaptioning(sourceId: string): Promise<void> {
+  const { payload, response } = await requestJson(
+    `${RTVI_VLM_URL}/v1/generate_captions/${encodeURIComponent(sourceId)}`,
+    { method: 'DELETE' }
+  );
+  if (response.ok || response.status === 404) return;
+
+  // A fresh RTVI process has no asset for saved history. Its delete contract
+  // reports that absence as 400, rather than 404. Confirm against the current
+  // live asset inventory; unrelated errors must still trigger rollback.
+  if (
+    response.status === 400 &&
+    payload.code === 'BadParameter' &&
+    payload.message === `No such resource ${sourceId}`
+  ) {
+    const inventory = await fetch(`${RTVI_VLM_URL}/v1/streams/get-stream-info`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (inventory.ok) {
+      const streams: unknown = await inventory.json();
+      if (
+        Array.isArray(streams) &&
+        streams.every(stream => stream && typeof stream.id === 'string') &&
+        !streams.some(stream => stream.id === sourceId)
+      ) return;
+    }
+  }
+  throw new Error(
+    typeof payload.message === 'string' && payload.message
+      ? `Cosmos captioning could not be paused: ${payload.message}`
+      : 'Cosmos captioning could not be paused.'
+  );
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -159,19 +194,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let captioning: 'active' | 'not-configured' | 'paused' = 'not-configured';
     if (history?.sourceKind === 'live') {
       if (body.action === 'pause') {
-        const response = await fetch(
-          `${RTVI_VLM_URL}/v1/generate_captions/${encodeURIComponent(sourceId)}`,
-          { method: 'DELETE', signal: AbortSignal.timeout(90_000) }
-        );
-        if (!response.ok && response.status !== 404) {
+        try {
+          await pauseCaptioning(sourceId);
+        } catch (error) {
           // Restore real-time paths when captioning could not reach the same
           // desired state, preventing a deceptively partial pause.
-          await fetch(`${AGENT_URL}/rtsp-streams/${encodeURIComponent(sourceId)}/analysis`, {
+          await requestJson(`${AGENT_URL}/rtsp-streams/${encodeURIComponent(sourceId)}/analysis`, {
             body: JSON.stringify({ action: 'resume', name }),
             headers: { 'Content-Type': 'application/json' },
             method: 'POST',
           }).catch(() => undefined);
-          return res.status(502).json({ error: 'Cosmos captioning could not be paused.' });
+          return res.status(502).json({
+            error: error instanceof Error ? error.message : 'Cosmos captioning could not be paused.',
+          });
         }
         captioning = 'paused';
       } else {

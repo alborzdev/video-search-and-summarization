@@ -11,6 +11,7 @@ import type { SourceAnalysisProfile } from "./analysisProfiles";
 import type { VisionAnalystPlaybackContext } from "./analyst";
 import type { VisionStream } from "./types";
 import { useLiveCapture } from "./useLiveCapture";
+import { DEFAULT_LOOKBACK_SECONDS, validLookbackSeconds } from "./footageWindow";
 import { sourceKind, streamDisplayName } from "./utils";
 import {
   IconArrowRight,
@@ -52,7 +53,7 @@ export function LiveCameraView({
   controlError: string | null;
   isAsking: boolean;
   isUpdatingAnalysis: boolean;
-  onAsk: (query: string) => void;
+  onAsk: (query: string, lookbackSeconds?: number) => void;
   onPlaybackContext: (context: VisionAnalystPlaybackContext) => void;
   onOpenHistory: () => void;
   onInvestigateSource: () => void;
@@ -71,18 +72,22 @@ export function LiveCameraView({
   answer?: React.ReactNode;
 }) {
   const [playback, setPlayback] = useState<PlaybackStatus>("connecting");
+  const [lookbackSeconds, setLookbackSeconds] = useState<number | null>(DEFAULT_LOOKBACK_SECONDS);
+  const validDuration = validLookbackSeconds(lookbackSeconds);
   const capture = useLiveCapture(camera, {
     visualAnalystAvailable,
     busy: isAsking,
+    lookbackSeconds: validDuration ? lookbackSeconds : DEFAULT_LOOKBACK_SECONDS,
   });
   const live = sourceKind(camera) === "Live";
   const disconnected =
-    live && ["offline", "removed"].includes(camera.connectionState ?? "");
+    live && (camera.connectionState === "removed" ||
+      (camera.connectionState === "offline" && playback !== "playing"));
   const connectionLabel = !live
     ? "Recorded video"
     : disconnected
     ? "Disconnected · RTSP feed"
-    : camera.connectionState === "online"
+    : playback === "playing"
     ? "Connected · RTSP feed"
     : "Checking connection · RTSP feed";
   const videoLabel =
@@ -100,18 +105,22 @@ export function LiveCameraView({
       ? "Connecting live preview"
       : "Preparing recorded playback";
   const notice =
-    visualAnalystAvailable !== true
+    capture.questionBlockReason
+      ? capture.questionBlockReason
+      : visualAnalystAvailable !== true
       ? visualAnalystAvailable === false
         ? "Visual AI is unavailable. Check System readiness."
         : "Checking visual AI readiness."
-      : disconnected
+      : disconnected && !capture.canAsk
       ? "Connect this camera before asking about live activity."
       : live && capture.capture === "off"
       ? "Start live capture to ask about recent footage."
       : live && capture.capture === "unknown"
       ? "Checking live recording before enabling questions."
       : capture.warming
-      ? `Preparing footage · ready in ${capture.remainingSeconds}s`
+      ? capture.readinessError || (capture.remainingSeconds === null
+        ? `Waiting for ${validDuration ? lookbackSeconds : DEFAULT_LOOKBACK_SECONDS} seconds of recent recorded footage.`
+        : `Preparing footage · about ${capture.remainingSeconds}s more footage needed`)
       : undefined;
   return (
     <section
@@ -123,7 +132,7 @@ export function LiveCameraView({
           <h1>{streamDisplayName(camera.name)}</h1>
           <p
             className={
-              camera.connectionState === "online" ? "is-connected" : ""
+              !disconnected && playback === "playing" ? "is-connected" : ""
             }
           >
             <i />
@@ -175,14 +184,21 @@ export function LiveCameraView({
           <CameraQuestionComposer
             name={camera.name}
             recorded={!live}
-            canAsk={capture.canAsk}
+            canAsk={capture.canAsk && (!live || validDuration)}
             isLoading={isAsking}
             notice={notice}
-            onAsk={onAsk}
+            questionBlockReason={capture.questionBlockReason}
+            onAsk={(query) => {
+              if (!live) onAsk(query);
+              else if (validLookbackSeconds(lookbackSeconds)) onAsk(query, lookbackSeconds);
+            }}
+            lookbackSeconds={lookbackSeconds}
+            onLookbackSecondsChange={setLookbackSeconds}
+            durationDisabled={capture.changing}
             onStartCapture={
               live &&
               capture.capture === "off" &&
-              !disconnected &&
+              camera.connectionState !== "removed" &&
               visualAnalystAvailable === true &&
               !capture.changing
                 ? () => void capture.toggle()
@@ -203,6 +219,7 @@ export function LiveCameraView({
           isAsking={isAsking}
           controlError={controlError}
           capture={capture}
+          livePreviewAvailable={playback === "playing"}
           visualAnalystAvailable={visualAnalystAvailable}
           onToggleAnalysis={onToggleAnalysis}
           onSetAnalysisProfile={onSetAnalysisProfile}
