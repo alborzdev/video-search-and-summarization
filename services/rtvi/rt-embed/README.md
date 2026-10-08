@@ -216,6 +216,12 @@ python3 rtvi_client_cli.py generate-video-embeddings \
   --url=$URL
 ```
 
+For media used as a search query, call `POST /v1/generate_video_embeddings`
+with a unique `id`, the `url` (including inline `data:` images), `media_type`,
+`model`, `chunk_duration: 0`, and `publish_results: false`. The response uses
+`chunk_responses[].embeddings`. This keeps query media out of the ingestion
+index; normal ingestion still publishes results by default.
+
 ### Use python client to generate embeddings for text input
 
 ```bash

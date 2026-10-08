@@ -687,6 +687,19 @@ function answerCitations(
     ? Date.parse(record.timelineStart)
     : NaN;
   const retainedEnd = record.timelineEnd ? Date.parse(record.timelineEnd) : NaN;
+  // Local graph answers can quote the document's Unix seconds verbatim.
+  // Accept only ranges wholly inside this source's retained timeline, so
+  // unrelated numeric identifiers cannot become playable evidence links.
+  const unixRange =
+    /\b(\d{10}(?:\.\d+)?)\s*(?:-|–|to|and)\s*(\d{10}(?:\.\d+)?)\b/g;
+  if (Number.isFinite(retainedStart) && Number.isFinite(retainedEnd)) {
+    for (const match of answer.matchAll(unixRange)) {
+      const start = Number(match[1]) * 1_000;
+      const end = Number(match[2]) * 1_000;
+      if (start >= retainedStart && end <= retainedEnd)
+        add(start, end, match[0]);
+    }
+  }
   for (const match of answer.matchAll(isoPoint)) {
     const index = match.index ?? -1;
     if (rangeSpans.some(([start, end]) => index >= start && index < end))

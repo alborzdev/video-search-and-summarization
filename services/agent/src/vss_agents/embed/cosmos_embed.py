@@ -14,6 +14,8 @@
 # limitations under the License.
 import logging
 import os
+from typing import Literal
+from uuid import uuid4
 
 import httpx
 from typing_extensions import override  # noqa: UP035  # mypy targets 3.11
@@ -32,7 +34,7 @@ class CosmosEmbedClient(EmbedClient):
         self.endpoint = endpoint
         self.model = _EMBED_MODEL
         self.text_embeddings_url = f"{endpoint}/v1/generate_text_embeddings"
-        self.image_embeddings_url = f"{endpoint}/v1/generate_image_embeddings"
+        self.image_embeddings_url = f"{endpoint}/v1/generate_video_embeddings"
         self.video_embeddings_url = f"{endpoint}/v1/generate_video_embeddings"
         # Connection pooling: lazily created, reused across requests
         self._client: httpx.AsyncClient | None = None
@@ -57,29 +59,25 @@ class CosmosEmbedClient(EmbedClient):
     @override
     async def get_image_embedding(self, image_url: str) -> list[float]:
         """Generate embedding for image input"""
-        # Handles base64 data URI and presigned_url format
-        if image_url.startswith("data:image/"):
-            # base64 URI ("data:image/jpeg;base64,...")
-            formatted_input = image_url
-        else:
-            # presigned_url format
-            formatted_input = f"data:image/jpeg;presigned_url,{image_url}"
+        return await self._get_media_embedding(image_url, "image")
 
+    async def _get_media_embedding(self, url: str, media_type: Literal["image", "video"]) -> list[float]:
+        """Use RT-Embed's unified media API without indexing the search query."""
         payload = {
-            "input": [formatted_input],
-            "request_type": "query",
-            "encoding_format": "float",
+            "id": str(uuid4()),
+            "url": url,
+            "media_type": media_type,
             "model": self.model,
+            "chunk_duration": 0,
+            "publish_results": False,
         }
-        try:
-            response = await self._get_client().post(self.image_embeddings_url, json=payload)
-            response.raise_for_status()
-            result = response.json()
-            embedding: list[float] = result["data"][0]["embedding"]
-            return embedding
-        except httpx.HTTPError as e:
-            logger.error(f"Failed to get image embedding: {e}")
-            raise
+        response = await self._get_client().post(self.video_embeddings_url, json=payload)
+        response.raise_for_status()
+        chunks = response.json()["chunk_responses"]
+        if len(chunks) != 1:
+            raise ValueError(f"Expected one embedding for unchunked {media_type} query, received {len(chunks)}")
+        embedding: list[float] = chunks[0]["embeddings"]
+        return embedding
 
     @override
     async def get_text_embedding(self, text: str) -> list[float]:
@@ -130,24 +128,5 @@ class CosmosEmbedClient(EmbedClient):
 
     async def get_video_embeddings_from_urls(self, urls: list[str]) -> list[list[float]]:
         """Generate embeddings for videos from URLs (public or presigned)"""
-        logger.info(f"Generating embeddings for {len(urls)} video chunks via URLs")
-
-        # Format URLs according to the required format
-        formatted_urls = [f"data:video/mp4;presigned_url,{url}" for url in urls]
-
-        payload = {
-            "input": formatted_urls,
-            "model": self.model,
-            "encoding_format": "float",
-            "request_type": "bulk_video",
-        }
-        logger.info(f"Payload: {payload}")
-
-        response = await self._get_client().post(self.video_embeddings_url, json=payload)
-        response.raise_for_status()
-        result = response.json()
-
-        # Extract embeddings from response
-        embeddings = [item["embedding"] for item in result["data"]]
-        logger.info(f"Successfully generated {len(embeddings)} embeddings")
-        return embeddings
+        # Keep requests sequential so query media does not multiply runtime memory.
+        return [await self._get_media_embedding(url, "video") for url in urls]

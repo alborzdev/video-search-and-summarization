@@ -347,6 +347,43 @@ describe("video history API", () => {
     expect(status.state.body).toBeNull();
   });
 
+  it.each([
+    ["1735689600.00 to 1735689610.00", true],
+    ["1735689600.25 – 1735689610.50", true],
+    ["1735689599.00 to 1735689610.00", false],
+    ["1735689600.00 to 1735689625.00", false],
+    ["1735689610.00 to 1735689600.00", false],
+    ["1234567890 to 1234567900", false],
+  ])("bounds Unix citations to the retained recording: %s", async (range, accepted) => {
+    // GET initializes the isolated store before writing this source's record.
+    await handler(request("GET", undefined, { sourceId }), responseHarness().response);
+    await writeFile(`${storeDirectory}/${sourceId}.json`, JSON.stringify({
+      events: ["package movement"], knowledgeId, scenario: "conveyor",
+      sourceId, sourceKind: "replay", sourceName: "Conveyor",
+      startedAt: "2025-01-01T00:00:00.000Z", status: "ready",
+      timelineStart: "2025-01-01T00:00:00.000Z",
+      timelineEnd: "2025-01-01T00:00:24.000Z",
+    }));
+    fetchMock.mockImplementationOnce(async () => jsonResponse({
+      choices: [{ message: { content: `Blue supports, curved conveyor, from ${range}.` } }],
+    }));
+    const ask = responseHarness();
+    await handler(request("POST", {
+      action: "ask", sourceId, messages: [{ role: "user", content: "Describe the supports." }],
+    }), ask.response);
+    expect(ask.state.statusCode).toBe(200);
+    const body = ask.state.body as { citations: Array<{ startTime: string; endTime: string; label: string }> };
+    expect(body.citations).toHaveLength(accepted ? 1 : 0);
+    if (accepted) {
+      const [start, end] = range.split(/\s*(?:to|–)\s*/).map(Number);
+      expect(body.citations[0]).toEqual({
+        startTime: new Date(start * 1_000).toISOString(),
+        endTime: new Date(end * 1_000).toISOString(), label: range,
+      });
+    }
+    await unlink(`${storeDirectory}/${sourceId}.json`);
+  });
+
   it("waits for a fresh live caption and rebuilds graph knowledge before reporting ready", async () => {
     const build = responseHarness();
     await handler(

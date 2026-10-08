@@ -1,0 +1,9 @@
+**
+!services/
+!services/alert/
+!services/alert/**/
+!services/alert/**/*.py
+!services/alert/**/*.json
+.thor/
+.spark/
+.git/

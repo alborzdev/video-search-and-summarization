@@ -2163,7 +2163,9 @@ class RTVIStreamHandler:
     def _on_vlm_chunk_response(self, chunk_result: PipelineChunkResult, req_info: RequestInfo):
         """Gather chunks processed by the pipeline and run any further post-processing"""
         try:
-            if self._kafka_enabled:
+            if self._kafka_enabled and (
+                req_info.query is None or req_info.query.publish_results
+            ):
                 vision_llm_message, incident_message = self._chunk_result_to_vision_llm(
                     chunk_result, req_info
                 )

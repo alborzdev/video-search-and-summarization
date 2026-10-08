@@ -23,6 +23,7 @@ retry that re-runs aggregation before such a sample reaches the caller.
 """
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
@@ -249,6 +250,66 @@ class TestCallAggregationWithEmptyGuard:
                 event_time_bounds=(0.0, 10.0),
             )
         assert len(ctx_mgr.calls) == 3
+
+
+class TestFullFileAggregationTimeBounds:
+    @staticmethod
+    def _bounds(creation_time=None, start=1735689600, end=1735689624, **request):
+        req = SimpleNamespace(
+            is_live=False, start_timestamp=None, end_timestamp=None,
+            creation_time=creation_time,
+        )
+        for name, value in request.items():
+            setattr(req, name, value)
+        chunks = [SimpleNamespace(chunk=SimpleNamespace(
+            start_pts=start * 1e9, end_pts=end * 1e9,
+        ))]
+        bounds = _make_handler()._full_file_aggregation_time_bounds(req, chunks)
+        # Computing validation bounds must not alter persisted recording clocks.
+        assert chunks[0].chunk.start_pts == start * 1e9
+        assert chunks[0].chunk.end_pts == end * 1e9
+        return bounds
+
+    @pytest.mark.parametrize("origin", ["2025-01-01T00:00:00Z", "2024-12-31T19:00:00-05:00"])
+    def test_absolute_recording_origin_yields_file_seconds(self, origin):
+        bounds = self._bounds(origin)
+        assert bounds == (0.0, 24.0)
+        handler = _make_handler()
+        assert not handler._aggregation_has_out_of_range_event_timestamps(
+            _summary(events=[{"start_time": 0, "end_time": 20}]), bounds
+        )
+        assert handler._aggregation_has_out_of_range_event_timestamps(
+            _summary(events=[{"start_time": 0, "end_time": 25}]), bounds
+        )
+
+    def test_already_relative_chunks_are_unchanged(self):
+        assert self._bounds("2025-01-01T00:00:00Z", start=0, end=24) == (0.0, 24.0)
+
+    def test_fractional_origin_rounding_cannot_disable_the_range_guard(self):
+        bounds = self._bounds(
+            "2025-01-01T00:00:00.123456Z",
+            start=1735689600.1234558, end=1735689624.123456,
+        )
+        assert bounds[0] == 0.0
+        assert bounds[1] == pytest.approx(24.0)
+        assert _make_handler()._aggregation_has_out_of_range_event_timestamps(
+            _summary(events=[{"start_time": 0, "end_time": 25}]), bounds
+        )
+
+    @pytest.mark.parametrize("origin", [None, "invalid", "2025-01-01T00:00:00", "2025-01-02T00:00:00Z"])
+    def test_absent_ambiguous_or_mismatched_origin_is_not_rebased(self, origin):
+        assert self._bounds(origin) == (1735689600.0, 1735689624.0)
+
+    @pytest.mark.parametrize("overrides", [
+        {"is_live": True}, {"start_timestamp": "00:00:05"},
+        {"end_timestamp": "00:00:20"},
+    ])
+    def test_live_and_partial_requests_keep_existing_contract(self, overrides):
+        assert self._bounds("2025-01-01T00:00:00Z", **overrides) is None
+
+    def test_empty_chunks_have_no_bounds(self):
+        req = SimpleNamespace(is_live=False, start_timestamp=None, end_timestamp=None)
+        assert _make_handler()._full_file_aggregation_time_bounds(req, []) is None
 
 
 class TestAggregationTimestampBounds:

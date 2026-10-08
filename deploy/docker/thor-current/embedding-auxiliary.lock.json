@@ -1,0 +1,27 @@
+{
+  "repository": "google-bert/bert-base-uncased",
+  "revision": "86b5e0934494bd15c9632b12f734a8a67f723594",
+  "requested_alias": "bert-base-uncased",
+  "license": "apache-2.0",
+  "scope": "BERT configuration used to initialize Cosmos Embed QFormer; no separate BERT weights",
+  "files": [
+    {
+      "path": "config.json",
+      "size": 570,
+      "sha256": "7160e1553ad2ca51d8c1cb066be533db31826e12d173824c1bb0cb1a4f187d20",
+      "git_blob_sha1": "45a2321a7ecfdaaf60a6c1fd7f5463994cc8907d"
+    },
+    {
+      "path": "LICENSE",
+      "size": 11356,
+      "sha256": "43070e2d4e532684de521b885f385d0841030efa2b1a20bafb76133a5e1379c1",
+      "git_blob_sha1": "f49a4e16e68b128803cc2dcea614603632b04eac"
+    },
+    {
+      "path": "refs-main",
+      "size": 40,
+      "sha256": "2cddf5a9b63cbf6d5c80c1f9c5ceee322cd0a5d614774e6daf7e37e99ad94d94",
+      "derived_from": "revision"
+    }
+  ]
+}

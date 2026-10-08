@@ -244,6 +244,7 @@ def render_metrics(state: ExporterState) -> tuple[bytes, bool]:
         "swap_total_bytes": "gauge",
         "swap_cached_bytes": "gauge",
         "gpu_utilization_ratio": "gauge",
+        "gpu_utilization_from_nvml": "gauge",
         "gpu_frequency_hertz": "gauge",
         "emc_utilization_ratio": "gauge",
         "emc_frequency_hertz": "gauge",
@@ -333,7 +334,8 @@ def collector_command(
 
 
 def collect_stream(
-    stream: BinaryIO, state: ExporterState, stop_event: threading.Event
+    stream: BinaryIO, state: ExporterState, stop_event: threading.Event,
+    nvidia_smi: str | None = None,
 ) -> None:
     """Read newline-delimited samples while bounding every allocation."""
 
@@ -347,11 +349,28 @@ def collect_stream(
             state.record_line_too_long()
             continue
         try:
-            state.record_sample(
-                parse_tegrastats_line(raw.decode("utf-8", errors="replace"))
-            )
+            sample = parse_tegrastats_line(raw.decode("utf-8", errors="replace"))
+            if "gpu_utilization_ratio" not in sample and nvidia_smi:
+                utilization = read_nvml_utilization(nvidia_smi)
+                if utilization is not None:
+                    sample["gpu_utilization_ratio"] = utilization
+                    sample["gpu_utilization_from_nvml"] = 1
+            state.record_sample(sample)
         except ValueError:
             state.record_parse_error()
+
+
+def read_nvml_utilization(executable: str) -> float | None:
+    """Read a bounded GPU-zero NVML sample; failures never become idle zeros."""
+    try:
+        result = subprocess.run(
+            [executable, "--query-gpu=utilization.gpu", "--format=csv,noheader,nounits", "--id=0"],
+            check=True, capture_output=True, text=True, timeout=2,
+        )
+        value = float(result.stdout.strip())
+        return value / 100 if math.isfinite(value) and 0 <= value <= 100 else None
+    except (OSError, ValueError, subprocess.SubprocessError):
+        return None
 
 
 class MetricsHandler(BaseHTTPRequestHandler):
@@ -408,6 +427,7 @@ def collector_supervisor(
     state: ExporterState,
     stop_event: threading.Event,
     process_holder: list[subprocess.Popen[bytes] | None],
+    nvidia_smi: str | None = None,
 ) -> None:
     while not stop_event.is_set():
         state.record_restart()
@@ -426,7 +446,7 @@ def collector_supervisor(
         process_holder[0] = process
         state.set_child_running(True)
         assert process.stdout is not None
-        collect_stream(process.stdout, state, stop_event)
+        collect_stream(process.stdout, state, stop_event, nvidia_smi)
         state.set_child_running(False)
         if process.poll() is None:
             process.terminate()
@@ -447,6 +467,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--tegrastats", default=DEFAULT_TEGRSTATS_PATH)
     parser.add_argument("--loader", default=DEFAULT_LOADER_PATH)
     parser.add_argument("--library-path", default=DEFAULT_LIBRARY_PATH)
+    parser.add_argument("--nvidia-smi", help="Optional absolute path for GPU-utilization fallback")
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error("--port must be between 1 and 65535")
@@ -465,6 +486,8 @@ def parse_args() -> argparse.Namespace:
     for name in ("tegrastats", "loader", "library_path"):
         if not getattr(args, name).startswith("/"):
             parser.error(f"--{name.replace('_', '-')} must be an absolute path")
+    if args.nvidia_smi is not None and not args.nvidia_smi.startswith("/"):
+        parser.error("--nvidia-smi must be an absolute path")
     return args
 
 
@@ -494,6 +517,7 @@ def main() -> int:
             state,
             stop_event,
             process_holder,
+            args.nvidia_smi,
         ),
         name="tegrastats-collector",
         daemon=True,

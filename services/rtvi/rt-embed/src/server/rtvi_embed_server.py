@@ -1849,6 +1849,7 @@ class RTVIServer:
                 chunk_duration=query.chunk_duration,
                 chunk_overlap_duration=query.chunk_overlap_duration,
                 media_info=query.media_info,
+                publish_results=query.publish_results,
                 prompt="dummy",
             )
 

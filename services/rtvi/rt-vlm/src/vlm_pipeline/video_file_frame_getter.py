@@ -532,6 +532,14 @@ def _can_play_through_after_seek_failure(
     return True
 
 
+def _gpu_resize_interpolation_method() -> int:
+    """Select the validated GPU resize kernel without changing frame budgets."""
+    mode = os.environ.get("RTVI_GPU_RESIZE_INTERPOLATION", "bilinear")
+    if mode not in ("nearest", "bilinear"):
+        raise ValueError("RTVI_GPU_RESIZE_INTERPOLATION must be nearest or bilinear")
+    return 0 if mode == "nearest" else 1
+
+
 class VideoFileFrameGetter:
     """Get frames from a video file as a list of tensors."""
 
@@ -1020,7 +1028,7 @@ class VideoFileFrameGetter:
         self._preview_valve.set_property("drop-mode", 2)
         preview_convert = Gst.ElementFactory.make("nvvideoconvert")
         preview_convert.set_property("compute-hw", 1)
-        preview_convert.set_property("interpolation-method", 1)  # bilinear
+        preview_convert.set_property("interpolation-method", _gpu_resize_interpolation_method())
         pipeline.add(self._preview_valve)
         pipeline.add(preview_convert)
         preview_queue.link(self._preview_valve)
@@ -1558,7 +1566,7 @@ class VideoFileFrameGetter:
         self._videoconvert = videoconvert
         videoconvert.set_property("nvbuf-memory-type", 2)
         videoconvert.set_property("compute-hw", 1)
-        videoconvert.set_property("interpolation-method", 1)  # bilinear for better scaling quality
+        videoconvert.set_property("interpolation-method", _gpu_resize_interpolation_method())
 
         videoconvert.set_property("gpu-id", self._gpu_id)
         pipeline.add(videoconvert)
@@ -2138,7 +2146,7 @@ class VideoFileFrameGetter:
                         f"{int(out_width-2*out_pad_width)}:{int(out_height-2*out_pad_height)}"
                     ),
                 )
-                self._videoconvert.set_property("interpolation-method", 1)
+                self._videoconvert.set_property("interpolation-method", _gpu_resize_interpolation_method())
 
             return Gst.PadProbeReturn.OK
 
