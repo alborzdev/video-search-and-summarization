@@ -17,6 +17,7 @@ import sys
 import tempfile
 import threading
 import time
+from collections import OrderedDict
 from datetime import datetime, timedelta, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -54,10 +55,75 @@ APPEARANCE_LOCK = threading.Lock()
 MAX_APPEARANCE_FRAME_BYTES = 4 * 1024 * 1024
 MAX_APPEARANCE_PNG_BYTES = 1024 * 1024
 APPEARANCE_TIMEOUT_SECONDS = 50
+PICTURE_LOCK = threading.Lock()
+PICTURE_CACHE: OrderedDict[tuple, tuple[float, bytes]] = OrderedDict()
+MAX_PICTURE_CACHE_BYTES = 8 * 1024 * 1024
 
 
 class AppearanceBusy(RuntimeError):
     pass
+
+
+def recorded_picture(payload: object) -> bytes:
+    """Read retained media on CPU; galleries must not fan out GPU decoders."""
+    if not isinstance(payload, dict):
+        raise ValueError("A picture request is required")
+    sensor = payload.get("sensorId")
+    if not isinstance(sensor, str) or not ID_PATTERN.fullmatch(sensor):
+        raise ValueError("Invalid sensor ID")
+    instant = parse_timestamp(payload.get("timestamp")).astimezone(timezone.utc)
+    timestamp = instant.isoformat().replace("+00:00", "Z")
+    width, height = payload.get("width", 1280), payload.get("height", 720)
+    if any(type(v) is not int or v < 1 or v > limit
+           for v, limit in ((width, 1920), (height, 1080))):
+        raise ValueError("Invalid picture dimensions")
+    key = (sensor, timestamp, width, height)
+    if not PICTURE_LOCK.acquire(timeout=45):
+        raise AppearanceBusy("Recorded picture service is busy")
+    try:
+        for cached_key, (expires, _) in list(PICTURE_CACHE.items()):
+            if expires < time.monotonic():
+                del PICTURE_CACHE[cached_key]
+        if key in PICTURE_CACHE:
+            PICTURE_CACHE.move_to_end(key)
+            return PICTURE_CACHE[key][1]
+        end = instant + timedelta(seconds=0.2)
+        paths = get_media_paths(sensor, timestamp, end.isoformat().replace("+00:00", "Z"))
+        origin = (recording_start(sensor, instant, end)
+                  if RECORDING_ROOT in paths[0].parents else probe_start_time(paths[0]))
+        if not math.isfinite(origin) or instant.timestamp() < origin - 0.25:
+            raise ValueError("Recording does not cover the requested picture")
+        offset = max(0.0, instant.timestamp() - origin)
+        with tempfile.TemporaryDirectory(prefix="picture-") as directory:
+            if len(paths) == 1:
+                # VIOS epoch-PTS MKVs can have broken seek indexes that jump
+                # past the requested instant. Decode to the instant instead of
+                # trusting an input seek and silently returning a later frame.
+                inputs = ["-i", str(paths[0])]
+                seek = ["-ss", f"{offset:.6f}"]
+            else:
+                concat = Path(directory) / "inputs.txt"
+                concat.write_text("".join(
+                    f"file '{str(path).replace(chr(39), chr(39) + chr(92) + chr(39) + chr(39))}'\n"
+                    for path in paths), encoding="utf-8")
+                inputs = ["-f", "concat", "-safe", "0", "-i", str(concat)]
+                seek = ["-ss", f"{offset:.6f}"]
+            result = subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-hwaccel", "none",
+                "-threads", "1", "-filter_threads", "1", *inputs, *seek,
+                "-map", "0:v:0", "-an", "-frames:v", "1", "-vf",
+                f"scale={width}:{height}", "-c:v", "mjpeg", "-threads", "1",
+                "-f", "image2pipe", "pipe:1",
+            ], check=True, capture_output=True, timeout=15)
+        image = result.stdout
+        if not image.startswith(b"\xff\xd8") or not image.endswith(b"\xff\xd9") or len(image) > MAX_APPEARANCE_FRAME_BYTES:
+            raise RuntimeError("Recorded picture is unavailable")
+        PICTURE_CACHE[key] = (time.monotonic() + 60, image)
+        while sum(len(v[1]) for v in PICTURE_CACHE.values()) > MAX_PICTURE_CACHE_BYTES or len(PICTURE_CACHE) > 32:
+            PICTURE_CACHE.popitem(last=False)
+        return image
+    finally:
+        PICTURE_LOCK.release()
 
 
 def appearance_request(payload: object) -> tuple[str, str, tuple[int, int, int, int]]:
@@ -677,14 +743,23 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         request_path = urlparse(self.path).path
-        if request_path not in {"/prepare", "/purge", "/v1/embeddings", "/appearance-crop", "/history/preview", "/history/clear", "/history/cancel"}:
+        if request_path not in {"/prepare", "/picture", "/purge", "/v1/embeddings", "/appearance-crop", "/history/preview", "/history/clear", "/history/cancel"}:
             self.json_response(HTTPStatus.NOT_FOUND, {"error": "not found"})
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))
-            if length <= 0 or length > (4096 if request_path == "/appearance-crop" else 2_000_000):
+            if length <= 0 or length > (4096 if request_path in {"/appearance-crop", "/picture"} else 2_000_000):
                 raise ValueError("Invalid request size")
             payload = json.loads(self.rfile.read(length))
+            if request_path == "/picture":
+                image = recorded_picture(payload)
+                self.send_response(HTTPStatus.OK)
+                self.send_header("Content-Type", "image/jpeg")
+                self.send_header("Content-Length", str(len(image)))
+                self.send_header("Cache-Control", "private, max-age=60")
+                self.end_headers()
+                self.wfile.write(image)
+                return
             if request_path == "/appearance-crop":
                 self.json_response(HTTPStatus.OK, generate_appearance_crop(payload))
                 return

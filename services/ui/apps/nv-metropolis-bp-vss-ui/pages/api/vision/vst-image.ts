@@ -25,14 +25,16 @@ function sendUnavailable(
   res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
   res.setHeader("Cache-Control", "private, max-age=30");
   res.setHeader("X-Vision-Image-Fallback", reason);
-  return res.status(200).send(
-    temporary
-      ? unavailablePicture(
-          "Preview temporarily unavailable",
-          "Check the source connection or try again shortly."
-        )
-      : unavailablePicture()
-  );
+  return res
+    .status(200)
+    .send(
+      temporary
+        ? unavailablePicture(
+            "Preview temporarily unavailable",
+            "Check the source connection or try again shortly."
+          )
+        : unavailablePicture()
+    );
 }
 
 export default async function handler(
@@ -57,7 +59,13 @@ export default async function handler(
       process.env.NEXT_PUBLIC_VST_API_URL ||
       "http://127.0.0.1:7777/vst/api";
     const configuredUrl = new URL(configuredVst);
-    const requestedUrl = new URL(requestedPath, configuredUrl.origin);
+    // Some upstream appearance results append an ISO offset without encoding
+    // its '+'. URLSearchParams otherwise reads it as a space, losing the time.
+    const picturePath = requestedPath.replace(
+      /([?&]startTime=[^&]*?)\+(\d{2}(?::|%3A)?\d{2})(?=&|$)/i,
+      "$1%2B$2"
+    );
+    const requestedUrl = new URL(picturePath, configuredUrl.origin);
     if (
       requestedUrl.origin !== configuredUrl.origin ||
       !ALLOWED_PICTURE_PATH.test(requestedUrl.pathname)
@@ -70,18 +78,45 @@ export default async function handler(
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10_000);
+  const recorded =
+    !target.pathname.includes("/v1/live/stream/") &&
+    target.searchParams.has("startTime") &&
+    process.env.EVIDENCE_CLIP_API_URL;
+  const timeout = setTimeout(
+    () => controller.abort(),
+    recorded ? 60_000 : 10_000
+  );
   try {
-    let upstream = await fetch(target, {
-      cache: "no-store",
-      signal: controller.signal,
-    });
+    // Recorded galleries share host memory with inference. Use the bounded CPU
+    // reader instead of opening one native GPU snapshot pipeline per card.
+    // Never retry the native decoder when this reader is unavailable.
+    let upstream = recorded
+      ? await fetch(
+          `${process.env.EVIDENCE_CLIP_API_URL!.replace(/\/$/, "")}/picture`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sensorId: target.pathname.split("/").at(-2),
+              timestamp: target.searchParams.get("startTime"),
+              width: Number(target.searchParams.get("width") || 1280),
+              height: Number(target.searchParams.get("height") || 720),
+            }),
+            cache: "no-store",
+            signal: controller.signal,
+          }
+        )
+      : await fetch(target, { cache: "no-store", signal: controller.signal });
 
     // VST's replay picture endpoint can reject parallel snapshot requests even
     // when the same recording is available through storage. Reports render
     // several citations at once, so transparently fall back to the equivalent
     // storage snapshot instead of leaving broken evidence images in the page.
-    if (!upstream.ok && target.pathname.includes("/v1/replay/stream/")) {
+    if (
+      !recorded &&
+      !upstream.ok &&
+      target.pathname.includes("/v1/replay/stream/")
+    ) {
       const storageTarget = new URL(target);
       storageTarget.pathname = storageTarget.pathname.replace(
         "/v1/replay/stream/",
@@ -103,7 +138,9 @@ export default async function handler(
       return sendUnavailable(
         res,
         String(upstream.status),
-        target.pathname.includes("/v1/live/stream/")
+        target.pathname.includes("/v1/live/stream/") ||
+          upstream.status === 429 ||
+          upstream.status >= 500
       );
     }
     const contentType = upstream.headers.get("content-type") ?? "";

@@ -85,6 +85,13 @@ works while the backend gateway on 7777 is still being staged. See
 [fresh Thor setup](../tools/thor/README.md). The historical workflow below
 applies when that independent candidate has not been rendered.
 
+The October renderer also mounts the CPU evidence service's `server.py` read
+only, matching Spark's development workflow. After Python edits, restart only
+the `evidence-clip` service. Recorded gallery thumbnails use its bounded CPU
+reader when `EVIDENCE_CLIP_API_URL` is configured; a failed thumbnail does not
+fall back to another GPU decoder. Existing model budgets and the diagnostic
+reserve remain unchanged.
+
 The default workflow is source-mounted Next.js Turbopack development at http://10.88.9.12:7777 (current Thor LAN address). Run from the repository root:
 
 ```sh

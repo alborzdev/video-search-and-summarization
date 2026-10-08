@@ -7,6 +7,13 @@ set -euo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 COMPOSE_FILE="$SCRIPT_DIR/compose.yml"
 BASE_URL="http://127.0.0.1:31000/vst/api/v1"
+REPO_ROOT=$(cd -- "$SCRIPT_DIR/../../../.." && pwd)
+
+# The current candidate's optional sidecar must share the guard's project.
+# Never use the historical standalone project's `down` against that stack.
+if [[ -f "$REPO_ROOT/.thor/settings.json" && ${1:-} != logs ]]; then
+  exec python3 "$REPO_ROOT/tools/thor/nvstreamer.py" "$@"
+fi
 
 usage() {
   echo "Usage: $0 {start|stop|status|list|logs}"
@@ -44,4 +51,3 @@ case "${1:-}" in
     exit 2
     ;;
 esac
-

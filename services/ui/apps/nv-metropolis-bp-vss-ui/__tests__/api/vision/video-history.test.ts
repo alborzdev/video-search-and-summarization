@@ -3,6 +3,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { rm, unlink, writeFile } from "node:fs/promises";
 
+jest.mock("../../../server/vision/historyRequest", () => ({
+  historyRequest: (url: string, init: RequestInit) => global.fetch(url, init),
+}));
+
 const sourceId = "11111111-1111-4111-8111-111111111111";
 const liveSourceId = "33333333-3333-4333-8333-333333333333";
 const pausedSourceId = "44444444-4444-4444-8444-444444444444";
@@ -306,6 +310,17 @@ describe("video history API", () => {
       "Cite exact supporting ISO time ranges"
     );
 
+    fetchMock.mockImplementationOnce(async () => jsonResponse({
+      choices: [{ message: { content: "Observed between 2026-08-12T10:00:05.000Z and 2026-08-12T10:00:10.000Z." } }],
+    }));
+    const andRangeAsk = responseHarness();
+    await handler(request("POST", { action: "ask", sourceId,
+      messages: [{ role: "user", content: "Describe the observed interval." }] }), andRangeAsk.response);
+    expect((andRangeAsk.state.body as { citations: unknown[] }).citations).toEqual([
+      expect.objectContaining({ startTime: "2026-08-12T10:00:05.000Z",
+        endTime: "2026-08-12T10:00:10.000Z" }),
+    ]);
+
     const pointAsk = responseHarness();
     await handler(
       request("POST", {
@@ -428,7 +443,7 @@ describe("video history API", () => {
         enable_qa: true,
         end_time: "2026-08-12T10:04:00.000Z",
         id: liveSourceId,
-        start_time: "2026-08-12T09:34:00.000Z",
+        start_time: "2026-08-12T09:59:00.000Z",
       })
     );
 
@@ -568,6 +583,50 @@ describe("video history API", () => {
     } finally {
       delete process.env.HARDWARE_PROFILE;
       delete process.env.HISTORY_METADATA_TOKEN;
+    }
+  });
+
+  it("keeps an active graph build owned across a route module reload", async () => {
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const original = fetchMock.getMockImplementation()!;
+    let summaries = 0;
+    fetchMock.mockImplementation(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input) === "http://lvs.test/v1/summarize") {
+          summaries++;
+          await held;
+        }
+        return original(input, init);
+      }
+    );
+    try {
+      const build = responseHarness();
+      await handler(
+        request("POST", {
+          action: "start",
+          events: ["movement"],
+          scenario: "warehouse",
+          source: { id: sourceId, kind: "replay", name: "Warehouse" },
+        }),
+        build.response
+      );
+      for (let i = 0; i < 100 && !summaries; i++)
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      expect(summaries).toBe(1);
+      jest.resetModules();
+      handler = (await import("../../../pages/api/vision/video-history"))
+        .default;
+      const status = responseHarness();
+      await handler(request("GET", undefined, { sourceId }), status.response);
+      expect((status.state.body as { status: string }).status).toBe("building");
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      expect(summaries).toBe(1);
+    } finally {
+      release();
+      await waitForReady(handler, sourceId);
     }
   });
 });

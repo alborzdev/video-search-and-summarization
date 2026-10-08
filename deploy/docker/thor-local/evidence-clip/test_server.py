@@ -8,11 +8,101 @@ import os
 import time
 import unittest
 import struct
+import threading
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
 
 import server
+
+
+class RecordedPictureTests(unittest.TestCase):
+    def setUp(self):
+        server.PICTURE_CACHE.clear()
+
+    @patch("server.subprocess.run")
+    @patch("server.probe_start_time", return_value=1735689600)
+    @patch("server.get_media_paths", return_value=[Path("/media/camera.mkv")])
+    def test_cpu_picture_normalizes_time_seeks_and_coalesces(self, paths, probe, run):
+        run.return_value.stdout = b"\xff\xd8test\xff\xd9"
+        payload = {"sensorId": "camera", "timestamp": "2025-01-01T00:00:03+00:00"}
+        self.assertEqual(server.recorded_picture(payload), run.return_value.stdout)
+        payload["timestamp"] = "2025-01-01T00:00:03Z"
+        self.assertEqual(server.recorded_picture(payload), run.return_value.stdout)
+        self.assertEqual(run.call_count, 1)
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("-hwaccel") + 1], "none")
+        self.assertEqual(command[command.index("-ss") + 1], "3.000000")
+        self.assertGreater(command.index("-ss"), command.index("-i"))
+        self.assertEqual(paths.call_args.args[1], "2025-01-01T00:00:03Z")
+
+    def test_invalid_source_time_and_dimensions_never_read_media(self):
+        base = {"sensorId": "camera", "timestamp": "2025-01-01T00:00:03Z"}
+        with patch("server.get_media_paths") as paths:
+            for override in ({"sensorId": "../private"}, {"timestamp": "2025-01-01"},
+                             {"width": True}, {"width": 1921}, {"height": 0}):
+                with self.subTest(override=override), self.assertRaises(ValueError):
+                    server.recorded_picture({**base, **override})
+            paths.assert_not_called()
+
+    @patch("server.probe_start_time", return_value=1735689600)
+    @patch("server.get_media_paths", return_value=[Path("/media/camera.mkv")])
+    def test_gallery_requests_never_overlap_decoders(self, paths, probe):
+        entered = threading.Event()
+        release = threading.Event()
+        errors = []
+        active = peak = 0
+        def decode(*args, **kwargs):
+            nonlocal active, peak
+            active += 1
+            peak = max(peak, active)
+            entered.set()
+            release.wait(2)
+            active -= 1
+            return Mock(stdout=b"\xff\xd8test\xff\xd9")
+        def request(second):
+            try:
+                server.recorded_picture({"sensorId": "camera", "timestamp": f"2025-01-01T00:00:0{second}Z"})
+            except Exception as error:
+                errors.append(error)
+        with patch("server.subprocess.run", side_effect=decode):
+            threads = [threading.Thread(target=request, args=(i,)) for i in range(1, 7)]
+            for thread in threads:
+                thread.start()
+            self.assertTrue(entered.wait(2))
+            release.set()
+            for thread in threads:
+                thread.join(3)
+                self.assertFalse(thread.is_alive())
+        self.assertFalse(errors)
+        self.assertEqual(peak, 1)
+
+    @patch("server.subprocess.run")
+    @patch("server.probe_start_time", return_value=1735689600)
+    @patch("server.get_media_paths", return_value=[Path("/media/camera.mkv")])
+    def test_empty_or_non_image_output_is_never_cached(self, paths, probe, run):
+        for output in (b"", b"not an image"):
+            run.return_value.stdout = output
+            with self.assertRaises(RuntimeError):
+                server.recorded_picture({"sensorId": "camera", "timestamp": "2025-01-01T00:00:03Z"})
+            self.assertFalse(server.PICTURE_CACHE)
+
+    @unittest.skipUnless(shutil.which("ffmpeg"), "CPU FFmpeg required")
+    def test_real_reader_returns_distinct_recorded_frames_without_native_export(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "fixture.mp4"
+            subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "error", "-f", "lavfi", "-i",
+                "testsrc2=size=64x64:rate=10", "-t", "2", "-c:v", "libx264",
+                "-threads", "1", "-g", "20", str(path),
+            ], check=True, capture_output=True, timeout=10)
+            with patch.object(server, "get_media_paths", return_value=[path]), \
+                    patch.object(server, "probe_start_time", return_value=1735689600), \
+                    patch.object(server, "retain_native_clip", side_effect=AssertionError("GPU export must not run")):
+                pictures = [server.recorded_picture({"sensorId": "camera", "width": 64, "height": 64,
+                    "timestamp": f"2025-01-01T00:00:0{second}Z"}) for second in (0, 1)]
+            self.assertTrue(all(p.startswith(b"\xff\xd8") and p.endswith(b"\xff\xd9") for p in pictures))
+            self.assertNotEqual(*pictures)
 
 
 class CacheHistoryTests(unittest.TestCase):

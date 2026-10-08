@@ -1,10 +1,14 @@
 // SPDX-License-Identifier: MIT
 
-import type { NextApiRequest, NextApiResponse } from 'next';
-import handler from '../../../pages/api/vision/vst-image';
+import handler from "../../../pages/api/vision/vst-image";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 function responseHarness() {
-  const state: { body?: unknown; headers: Record<string, string>; statusCode: number } = {
+  const state: {
+    body?: unknown;
+    headers: Record<string, string>;
+    statusCode: number;
+  } = {
     headers: {},
     statusCode: 200,
   };
@@ -29,17 +33,77 @@ function responseHarness() {
   return { response, state };
 }
 
-describe('VST image proxy', () => {
+describe("VST image proxy", () => {
   beforeEach(() => {
     jest.restoreAllMocks();
+    delete process.env.EVIDENCE_CLIP_API_URL;
+    process.env.VST_IMAGE_PROXY_BASE_URL = "http://127.0.0.1:7777/vst/api";
   });
 
-  it('proxies only an image from an allowed VST picture route', async () => {
+  it("preserves the unescaped ISO offset returned by appearance search", async () => {
+    process.env.EVIDENCE_CLIP_API_URL = "http://127.0.0.1:8098";
+    global.fetch = jest.fn(async () => ({
+      arrayBuffer: async () => Uint8Array.from([1, 2, 3]).buffer,
+      headers: { get: () => "image/jpeg" },
+      ok: true,
+      status: 200,
+    })) as jest.Mock;
+    const harness = responseHarness();
+    await handler(
+      {
+        method: "GET",
+        query: {
+          path: "/vst/api/v1/replay/stream/camera-1/picture?startTime=2026-10-08T22:27:08.282000+00:00",
+        },
+      } as unknown as NextApiRequest,
+      harness.response
+    );
+    const body = JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body);
+    expect(body.timestamp).toBe("2026-10-08T22:27:08.282000+00:00");
+    expect(harness.state.headers["Content-Type"]).toBe("image/jpeg");
+  });
+
+  it("uses the CPU reader for a recorded gallery without native retry", async () => {
+    process.env.EVIDENCE_CLIP_API_URL = "http://127.0.0.1:8098/";
+    global.fetch = jest.fn(async () => ({
+      ok: false,
+      status: 422,
+      headers: { get: () => "application/json" },
+    })) as jest.Mock;
+    const harness = responseHarness();
+    await handler(
+      {
+        method: "GET",
+        query: {
+          path: "/vst/api/v1/replay/stream/camera-1/picture?startTime=2026-10-08T22%3A00%3A00%2B00%3A00",
+        },
+      } as unknown as NextApiRequest,
+      harness.response
+    );
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    expect(global.fetch).toHaveBeenCalledWith(
+      "http://127.0.0.1:8098/picture",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          sensorId: "camera-1",
+          timestamp: "2026-10-08T22:00:00+00:00",
+          width: 1280,
+          height: 720,
+        }),
+      })
+    );
+    expect(harness.state.headers["X-Vision-Image-Fallback"]).toBe("422");
+  });
+
+  it("proxies only an image from an allowed VST picture route", async () => {
     global.fetch = jest.fn(async (input) => {
-      expect(String(input)).toBe('http://127.0.0.1:7777/vst/api/v1/live/stream/camera-1/picture');
+      expect(String(input)).toBe(
+        "http://127.0.0.1:7777/vst/api/v1/live/stream/camera-1/picture"
+      );
       return {
         arrayBuffer: async () => Uint8Array.from([1, 2, 3]).buffer,
-        headers: { get: () => 'image/jpeg' },
+        headers: { get: () => "image/jpeg" },
         ok: true,
         status: 200,
       } as unknown as Response;
@@ -48,26 +112,26 @@ describe('VST image proxy', () => {
 
     await handler(
       {
-        method: 'GET',
-        query: { path: '/vst/api/v1/live/stream/camera-1/picture' },
+        method: "GET",
+        query: { path: "/vst/api/v1/live/stream/camera-1/picture" },
       } as unknown as NextApiRequest,
       harness.response
     );
 
     expect(harness.state.statusCode).toBe(200);
-    expect(harness.state.headers['Content-Type']).toBe('image/jpeg');
+    expect(harness.state.headers["Content-Type"]).toBe("image/jpeg");
     expect(Buffer.isBuffer(harness.state.body)).toBe(true);
   });
 
-  it('blocks cross-origin and non-picture proxy targets', async () => {
+  it("blocks cross-origin and non-picture proxy targets", async () => {
     global.fetch = jest.fn();
     for (const path of [
-      'http://attacker.test/v1/live/stream/camera-1/picture',
-      '/vst/api/v1/live/streams',
+      "http://attacker.test/v1/live/stream/camera-1/picture",
+      "/vst/api/v1/live/streams",
     ]) {
       const harness = responseHarness();
       await handler(
-        { method: 'GET', query: { path } } as unknown as NextApiRequest,
+        { method: "GET", query: { path } } as unknown as NextApiRequest,
         harness.response
       );
       expect(harness.state.statusCode).toBe(400);
@@ -75,9 +139,9 @@ describe('VST image proxy', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  it('renders a stable placeholder for a successful non-image upstream response', async () => {
+  it("renders a stable placeholder for a successful non-image upstream response", async () => {
     global.fetch = jest.fn(async () => ({
-      headers: { get: () => 'text/html' },
+      headers: { get: () => "text/html" },
       ok: true,
       status: 200,
     })) as jest.Mock;
@@ -85,54 +149,56 @@ describe('VST image proxy', () => {
 
     await handler(
       {
-        method: 'GET',
-        query: { path: '/vst/api/v1/live/stream/camera-1/picture' },
+        method: "GET",
+        query: { path: "/vst/api/v1/live/stream/camera-1/picture" },
       } as unknown as NextApiRequest,
       harness.response
     );
 
     expect(harness.state.statusCode).toBe(200);
-    expect(harness.state.headers['Content-Type']).toContain('image/svg+xml');
-    expect(harness.state.headers['X-Vision-Image-Fallback']).toBe(
-      'unexpected-content'
+    expect(harness.state.headers["Content-Type"]).toContain("image/svg+xml");
+    expect(harness.state.headers["X-Vision-Image-Fallback"]).toBe(
+      "unexpected-content"
     );
     expect(String(harness.state.body)).toContain(
-      'Preview temporarily unavailable'
+      "Preview temporarily unavailable"
     );
   });
 
-  it('renders a temporary placeholder when a trusted live preview cannot be reached', async () => {
+  it("renders a temporary placeholder when a trusted live preview cannot be reached", async () => {
     global.fetch = jest.fn(async () => {
-      throw new Error('connection reset');
+      throw new Error("connection reset");
     }) as jest.Mock;
     const harness = responseHarness();
 
     await handler(
       {
-        method: 'GET',
-        query: { path: '/vst/api/v1/live/stream/camera-1/picture' },
+        method: "GET",
+        query: { path: "/vst/api/v1/live/stream/camera-1/picture" },
       } as unknown as NextApiRequest,
       harness.response
     );
 
     expect(harness.state.statusCode).toBe(200);
-    expect(harness.state.headers['X-Vision-Image-Fallback']).toBe('unavailable');
+    expect(harness.state.headers["X-Vision-Image-Fallback"]).toBe(
+      "unavailable"
+    );
     expect(String(harness.state.body)).toContain(
-      'Preview temporarily unavailable'
+      "Preview temporarily unavailable"
     );
   });
 
-  it('falls back to the storage snapshot when VST rejects a replay picture', async () => {
+  it("falls back to the storage snapshot when VST rejects a replay picture", async () => {
     global.fetch = jest
       .fn()
       .mockResolvedValueOnce({
-        headers: { get: () => 'application/json' },
+        headers: { get: () => "application/json" },
         ok: false,
         status: 500,
       } as unknown as Response)
       .mockResolvedValueOnce({
         arrayBuffer: async () => Uint8Array.from([4, 5, 6]).buffer,
-        headers: { get: () => 'image/jpeg' },
+        headers: { get: () => "image/jpeg" },
         ok: true,
         status: 200,
       } as unknown as Response);
@@ -140,10 +206,9 @@ describe('VST image proxy', () => {
 
     await handler(
       {
-        method: 'GET',
+        method: "GET",
         query: {
-          path:
-            '/vst/api/v1/replay/stream/camera-1/picture?startTime=2026-08-19T22%3A37%3A14Z',
+          path: "/vst/api/v1/replay/stream/camera-1/picture?startTime=2026-08-19T22%3A37%3A14Z",
         },
       } as unknown as NextApiRequest,
       harness.response
@@ -152,24 +217,24 @@ describe('VST image proxy', () => {
     expect(global.fetch).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
-        pathname: '/vst/api/v1/storage/stream/camera-1/picture',
+        pathname: "/vst/api/v1/storage/stream/camera-1/picture",
         searchParams: expect.objectContaining({}),
       }),
-      expect.objectContaining({ cache: 'no-store' })
+      expect.objectContaining({ cache: "no-store" })
     );
     const fallbackTarget = (global.fetch as jest.Mock).mock.calls[1][0] as URL;
-    expect(fallbackTarget.searchParams.get('startTime')).toBe(
-      '2026-08-19T22:37:14Z'
+    expect(fallbackTarget.searchParams.get("startTime")).toBe(
+      "2026-08-19T22:37:14Z"
     );
-    expect(fallbackTarget.searchParams.get('width')).toBe('1280');
-    expect(fallbackTarget.searchParams.get('height')).toBe('720');
+    expect(fallbackTarget.searchParams.get("width")).toBe("1280");
+    expect(fallbackTarget.searchParams.get("height")).toBe("720");
     expect(harness.state.statusCode).toBe(200);
     expect(Buffer.isBuffer(harness.state.body)).toBe(true);
   });
 
-  it('returns a stable visual placeholder when a valid snapshot is no longer retained', async () => {
+  it("returns a stable visual placeholder when a valid snapshot is no longer retained", async () => {
     global.fetch = jest.fn(async () => ({
-      headers: { get: () => 'application/json' },
+      headers: { get: () => "application/json" },
       ok: false,
       status: 410,
     })) as jest.Mock;
@@ -177,15 +242,15 @@ describe('VST image proxy', () => {
 
     await handler(
       {
-        method: 'GET',
-        query: { path: '/vst/api/v1/storage/stream/camera-1/picture' },
+        method: "GET",
+        query: { path: "/vst/api/v1/storage/stream/camera-1/picture" },
       } as unknown as NextApiRequest,
       harness.response
     );
 
     expect(harness.state.statusCode).toBe(200);
-    expect(harness.state.headers['Content-Type']).toContain('image/svg+xml');
-    expect(harness.state.headers['X-Vision-Image-Fallback']).toBe('410');
-    expect(String(harness.state.body)).toContain('Preview no longer retained');
+    expect(harness.state.headers["Content-Type"]).toContain("image/svg+xml");
+    expect(harness.state.headers["X-Vision-Image-Fallback"]).toBe("410");
+    expect(String(harness.state.body)).toContain("Preview no longer retained");
   });
 });

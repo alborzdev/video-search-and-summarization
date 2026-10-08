@@ -1,0 +1,5444 @@
+{
+  "start": 1791498267.3892598,
+  "source_id": "17e03964-ba65-4eb0-9207-d6abfa951242",
+  "source_name": "thor-nvstreamer-mock",
+  "scope": "NVStreamer real single-slice H264 720p10 loop through VIOS, recording, native CUDA detection, semantic embedding, and captions; ten minutes with active browser workflows",
+  "samples": [
+    {
+      "time": 1791498268.2115011,
+      "available_gib": 52.122,
+      "thermal_age": 0.96,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 0,
+      "detector_frames": 0,
+      "caption_chunks": 0
+    },
+    {
+      "time": 1791498273.2413847,
+      "available_gib": 51.922,
+      "thermal_age": 0.98,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 0,
+      "detector_frames": 24,
+      "caption_chunks": 0
+    },
+    {
+      "time": 1791498278.2701683,
+      "available_gib": 51.84,
+      "thermal_age": 0.99,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 1,
+      "detector_frames": 73,
+      "caption_chunks": 0
+    },
+    {
+      "time": 1791498283.297677,
+      "available_gib": 52.006,
+      "thermal_age": 0.0,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 2,
+      "detector_frames": 97,
+      "caption_chunks": 0
+    },
+    {
+      "time": 1791498288.32586,
+      "available_gib": 51.974,
+      "thermal_age": 0.02,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 3,
+      "detector_frames": 144,
+      "caption_chunks": 0
+    },
+    {
+      "time": 1791498293.3565512,
+      "available_gib": 52.006,
+      "thermal_age": 0.03,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 4,
+      "detector_frames": 166,
+      "caption_chunks": 0
+    },
+    {
+      "time": 1791498298.4007463,
+      "available_gib": 52.025,
+      "thermal_age": 0.06,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 5,
+      "detector_frames": 212,
+      "caption_chunks": 0
+    },
+    {
+      "time": 1791498303.431475,
+      "available_gib": 52.008,
+      "thermal_age": 0.07,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 5,
+      "detector_frames": 241,
+      "caption_chunks": 1
+    },
+    {
+      "time": 1791498308.4622393,
+      "available_gib": 52.157,
+      "thermal_age": 0.09,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 7,
+      "detector_frames": 283,
+      "caption_chunks": 1
+    },
+    {
+      "time": 1791498313.4903111,
+      "available_gib": 52.157,
+      "thermal_age": 0.1,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 7,
+      "detector_frames": 302,
+      "caption_chunks": 1
+    },
+    {
+      "time": 1791498318.5191622,
+      "available_gib": 52.173,
+      "thermal_age": 0.12,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 9,
+      "detector_frames": 355,
+      "caption_chunks": 1
+    },
+    {
+      "time": 1791498323.5574906,
+      "available_gib": 52.06,
+      "thermal_age": 0.14,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 10,
+      "detector_frames": 383,
+      "caption_chunks": 1
+    },
+    {
+      "time": 1791498328.6068954,
+      "available_gib": 52.142,
+      "thermal_age": 0.18,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 11,
+      "detector_frames": 422,
+      "caption_chunks": 1
+    },
+    {
+      "time": 1791498333.6393247,
+      "available_gib": 52.139,
+      "thermal_age": 0.19,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 12,
+      "detector_frames": 454,
+      "caption_chunks": 2
+    },
+    {
+      "time": 1791498338.6669753,
+      "available_gib": 52.059,
+      "thermal_age": 0.2,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 13,
+      "detector_frames": 489,
+      "caption_chunks": 2
+    },
+    {
+      "time": 1791498343.6995437,
+      "available_gib": 52.078,
+      "thermal_age": 0.22,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 14,
+      "detector_frames": 519,
+      "caption_chunks": 2
+    },
+    {
+      "time": 1791498348.728678,
+      "available_gib": 52.082,
+      "thermal_age": 0.23,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 15,
+      "detector_frames": 556,
+      "caption_chunks": 2
+    },
+    {
+      "time": 1791498353.7590134,
+      "available_gib": 52.088,
+      "thermal_age": 0.25,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 16,
+      "detector_frames": 596,
+      "caption_chunks": 2
+    },
+    {
+      "time": 1791498358.7916133,
+      "available_gib": 52.08,
+      "thermal_age": 0.27,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 17,
+      "detector_frames": 624,
+      "caption_chunks": 2
+    },
+    {
+      "time": 1791498363.8238914,
+      "available_gib": 52.095,
+      "thermal_age": 0.28,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 18,
+      "detector_frames": 668,
+      "caption_chunks": 3
+    },
+    {
+      "time": 1791498368.8520257,
+      "available_gib": 52.042,
+      "thermal_age": 0.29,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 19,
+      "detector_frames": 694,
+      "caption_chunks": 3
+    },
+    {
+      "time": 1791498373.8849118,
+      "available_gib": 52.139,
+      "thermal_age": 0.31,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 20,
+      "detector_frames": 737,
+      "caption_chunks": 3
+    },
+    {
+      "time": 1791498378.911902,
+      "available_gib": 52.193,
+      "thermal_age": 0.32,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 21,
+      "detector_frames": 764,
+      "caption_chunks": 3
+    },
+    {
+      "time": 1791498383.9520128,
+      "available_gib": 52.198,
+      "thermal_age": 0.34,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 22,
+      "detector_frames": 808,
+      "caption_chunks": 3
+    },
+    {
+      "time": 1791498388.9833977,
+      "available_gib": 52.184,
+      "thermal_age": 0.36,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 23,
+      "detector_frames": 834,
+      "caption_chunks": 3
+    },
+    {
+      "time": 1791498394.019418,
+      "available_gib": 52.192,
+      "thermal_age": 0.38,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 24,
+      "detector_frames": 882,
+      "caption_chunks": 4
+    },
+    {
+      "time": 1791498399.051806,
+      "available_gib": 52.16,
+      "thermal_age": 0.4,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 25,
+      "detector_frames": 902,
+      "caption_chunks": 4
+    },
+    {
+      "time": 1791498404.0849388,
+      "available_gib": 52.116,
+      "thermal_age": 0.41,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 26,
+      "detector_frames": 953,
+      "caption_chunks": 4
+    },
+    {
+      "time": 1791498409.1237826,
+      "available_gib": 52.088,
+      "thermal_age": 0.43,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 27,
+      "detector_frames": 972,
+      "caption_chunks": 4
+    },
+    {
+      "time": 1791498414.1587882,
+      "available_gib": 52.061,
+      "thermal_age": 0.45,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 28,
+      "detector_frames": 1025,
+      "caption_chunks": 4
+    },
+    {
+      "time": 1791498419.193539,
+      "available_gib": 52.098,
+      "thermal_age": 0.47,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 29,
+      "detector_frames": 1051,
+      "caption_chunks": 4
+    },
+    {
+      "time": 1791498424.2363703,
+      "available_gib": 52.048,
+      "thermal_age": 0.49,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 30,
+      "detector_frames": 1092,
+      "caption_chunks": 5
+    },
+    {
+      "time": 1791498429.2730348,
+      "available_gib": 52.097,
+      "thermal_age": 0.51,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 31,
+      "detector_frames": 1120,
+      "caption_chunks": 5
+    },
+    {
+      "time": 1791498434.313766,
+      "available_gib": 52.037,
+      "thermal_age": 0.54,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 32,
+      "detector_frames": 1159,
+      "caption_chunks": 5
+    },
+    {
+      "time": 1791498439.3496668,
+      "available_gib": 51.997,
+      "thermal_age": 0.56,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 33,
+      "detector_frames": 1195,
+      "caption_chunks": 5
+    },
+    {
+      "time": 1791498444.3847115,
+      "available_gib": 52.011,
+      "thermal_age": 0.58,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 34,
+      "detector_frames": 1226,
+      "caption_chunks": 5
+    },
+    {
+      "time": 1791498449.4260204,
+      "available_gib": 51.97,
+      "thermal_age": 0.61,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 35,
+      "detector_frames": 1265,
+      "caption_chunks": 5
+    },
+    {
+      "time": 1791498454.4567475,
+      "available_gib": 51.975,
+      "thermal_age": 0.62,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 36,
+      "detector_frames": 1293,
+      "caption_chunks": 6
+    },
+    {
+      "time": 1791498459.486263,
+      "available_gib": 51.915,
+      "thermal_age": 0.64,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 37,
+      "detector_frames": 1333,
+      "caption_chunks": 6
+    },
+    {
+      "time": 1791498464.5147667,
+      "available_gib": 51.997,
+      "thermal_age": 0.65,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 38,
+      "detector_frames": 1362,
+      "caption_chunks": 6
+    },
+    {
+      "time": 1791498469.542655,
+      "available_gib": 52.027,
+      "thermal_age": 0.66,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 39,
+      "detector_frames": 1405,
+      "caption_chunks": 6
+    },
+    {
+      "time": 1791498474.5815265,
+      "available_gib": 52.016,
+      "thermal_age": 0.69,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 40,
+      "detector_frames": 1431,
+      "caption_chunks": 6
+    },
+    {
+      "time": 1791498479.619626,
+      "available_gib": 52.011,
+      "thermal_age": 0.71,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 41,
+      "detector_frames": 1472,
+      "caption_chunks": 6
+    },
+    {
+      "time": 1791498484.6487646,
+      "available_gib": 52.02,
+      "thermal_age": 0.72,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 42,
+      "detector_frames": 1504,
+      "caption_chunks": 7
+    },
+    {
+      "time": 1791498488.6889205,
+      "available_gib": 52.016,
+      "thermal_age": 0.75,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 43,
+      "detector_frames": 1550,
+      "caption_chunks": 7
+    },
+    {
+      "time": 1791498493.7148602,
+      "available_gib": 51.88,
+      "thermal_age": 0.76,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 44,
+      "detector_frames": 1571,
+      "caption_chunks": 7
+    },
+    {
+      "time": 1791498498.7423928,
+      "available_gib": 52.003,
+      "thermal_age": 0.77,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 45,
+      "detector_frames": 1617,
+      "caption_chunks": 7
+    },
+    {
+      "time": 1791498503.7914095,
+      "available_gib": 51.851,
+      "thermal_age": 0.8,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 46,
+      "detector_frames": 1644,
+      "caption_chunks": 7
+    },
+    {
+      "time": 1791498508.833772,
+      "available_gib": 51.952,
+      "thermal_age": 0.82,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 47,
+      "detector_frames": 1683,
+      "caption_chunks": 7
+    },
+    {
+      "time": 1791498513.8755267,
+      "available_gib": 51.8,
+      "thermal_age": 0.85,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 48,
+      "detector_frames": 1707,
+      "caption_chunks": 8
+    },
+    {
+      "time": 1791498518.9036973,
+      "available_gib": 51.836,
+      "thermal_age": 0.86,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 49,
+      "detector_frames": 1751,
+      "caption_chunks": 8
+    },
+    {
+      "time": 1791498523.9309359,
+      "available_gib": 51.824,
+      "thermal_age": 0.87,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 50,
+      "detector_frames": 1780,
+      "caption_chunks": 8
+    },
+    {
+      "time": 1791498528.9667416,
+      "available_gib": 51.874,
+      "thermal_age": 0.9,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 51,
+      "detector_frames": 1821,
+      "caption_chunks": 8
+    },
+    {
+      "time": 1791498533.9995666,
+      "available_gib": 51.84,
+      "thermal_age": 0.91,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 52,
+      "detector_frames": 1849,
+      "caption_chunks": 8
+    },
+    {
+      "time": 1791498539.0339108,
+      "available_gib": 51.758,
+      "thermal_age": 0.93,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 53,
+      "detector_frames": 1896,
+      "caption_chunks": 8
+    },
+    {
+      "time": 1791498544.0642102,
+      "available_gib": 51.861,
+      "thermal_age": 0.94,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 54,
+      "detector_frames": 1920,
+      "caption_chunks": 9
+    },
+    {
+      "time": 1791498549.093341,
+      "available_gib": 51.888,
+      "thermal_age": 0.96,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 55,
+      "detector_frames": 1963,
+      "caption_chunks": 9
+    },
+    {
+      "time": 1791498554.120593,
+      "available_gib": 51.881,
+      "thermal_age": 0.97,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 56,
+      "detector_frames": 1988,
+      "caption_chunks": 9
+    },
+    {
+      "time": 1791498559.1505284,
+      "available_gib": 51.875,
+      "thermal_age": 0.98,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 57,
+      "detector_frames": 2030,
+      "caption_chunks": 9
+    },
+    {
+      "time": 1791498564.1837757,
+      "available_gib": 51.886,
+      "thermal_age": 1.0,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 58,
+      "detector_frames": 2066,
+      "caption_chunks": 9
+    },
+    {
+      "time": 1791498569.2363963,
+      "available_gib": 51.863,
+      "thermal_age": 0.04,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 59,
+      "detector_frames": 2097,
+      "caption_chunks": 9
+    },
+    {
+      "time": 1791498574.2643423,
+      "available_gib": 51.882,
+      "thermal_age": 0.05,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 60,
+      "detector_frames": 2137,
+      "caption_chunks": 10
+    },
+    {
+      "time": 1791498579.291484,
+      "available_gib": 51.877,
+      "thermal_age": 0.06,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 61,
+      "detector_frames": 2164,
+      "caption_chunks": 10
+    },
+    {
+      "time": 1791498584.3197377,
+      "available_gib": 51.762,
+      "thermal_age": 0.08,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 62,
+      "detector_frames": 2207,
+      "caption_chunks": 10
+    },
+    {
+      "time": 1791498589.3467467,
+      "available_gib": 51.865,
+      "thermal_age": 0.09,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 63,
+      "detector_frames": 2233,
+      "caption_chunks": 10
+    },
+    {
+      "time": 1791498594.3856962,
+      "available_gib": 51.853,
+      "thermal_age": 0.11,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 64,
+      "detector_frames": 2277,
+      "caption_chunks": 10
+    },
+    {
+      "time": 1791498599.4197018,
+      "available_gib": 51.79,
+      "thermal_age": 0.13,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 65,
+      "detector_frames": 2302,
+      "caption_chunks": 10
+    },
+    {
+      "time": 1791498604.4488661,
+      "available_gib": 51.796,
+      "thermal_age": 0.14,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 66,
+      "detector_frames": 2343,
+      "caption_chunks": 11
+    },
+    {
+      "time": 1791498609.4793303,
+      "available_gib": 51.809,
+      "thermal_age": 0.15,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 67,
+      "detector_frames": 2375,
+      "caption_chunks": 11
+    },
+    {
+      "time": 1791498614.5078523,
+      "available_gib": 51.814,
+      "thermal_age": 0.17,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 68,
+      "detector_frames": 2421,
+      "caption_chunks": 11
+    },
+    {
+      "time": 1791498619.536334,
+      "available_gib": 51.685,
+      "thermal_age": 0.19,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 69,
+      "detector_frames": 2442,
+      "caption_chunks": 11
+    },
+    {
+      "time": 1791498624.5731485,
+      "available_gib": 51.543,
+      "thermal_age": 0.21,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 70,
+      "detector_frames": 2492,
+      "caption_chunks": 11
+    },
+    {
+      "time": 1791498629.6051738,
+      "available_gib": 51.593,
+      "thermal_age": 0.22,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 71,
+      "detector_frames": 2508,
+      "caption_chunks": 11
+    },
+    {
+      "time": 1791498634.6345809,
+      "available_gib": 51.665,
+      "thermal_age": 0.23,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 72,
+      "detector_frames": 2562,
+      "caption_chunks": 12
+    },
+    {
+      "time": 1791498639.665313,
+      "available_gib": 51.779,
+      "thermal_age": 0.25,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 73,
+      "detector_frames": 2588,
+      "caption_chunks": 12
+    },
+    {
+      "time": 1791498644.6937823,
+      "available_gib": 51.749,
+      "thermal_age": 0.26,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 74,
+      "detector_frames": 2633,
+      "caption_chunks": 12
+    },
+    {
+      "time": 1791498649.7205136,
+      "available_gib": 51.796,
+      "thermal_age": 0.27,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 75,
+      "detector_frames": 2658,
+      "caption_chunks": 12
+    },
+    {
+      "time": 1791498654.7530456,
+      "available_gib": 51.794,
+      "thermal_age": 0.29,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 76,
+      "detector_frames": 2700,
+      "caption_chunks": 12
+    },
+    {
+      "time": 1791498659.7874115,
+      "available_gib": 51.789,
+      "thermal_age": 0.31,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 77,
+      "detector_frames": 2730,
+      "caption_chunks": 12
+    },
+    {
+      "time": 1791498664.8177829,
+      "available_gib": 51.782,
+      "thermal_age": 0.33,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 78,
+      "detector_frames": 2767,
+      "caption_chunks": 13
+    },
+    {
+      "time": 1791498669.844003,
+      "available_gib": 51.779,
+      "thermal_age": 0.34,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 79,
+      "detector_frames": 2799,
+      "caption_chunks": 13
+    },
+    {
+      "time": 1791498674.8713472,
+      "available_gib": 51.752,
+      "thermal_age": 0.35,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 80,
+      "detector_frames": 2834,
+      "caption_chunks": 13
+    },
+    {
+      "time": 1791498679.8995764,
+      "available_gib": 51.804,
+      "thermal_age": 0.36,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 81,
+      "detector_frames": 2874,
+      "caption_chunks": 13
+    },
+    {
+      "time": 1791498684.944504,
+      "available_gib": 51.848,
+      "thermal_age": 0.39,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 82,
+      "detector_frames": 2901,
+      "caption_chunks": 13
+    },
+    {
+      "time": 1791498689.9878228,
+      "available_gib": 51.825,
+      "thermal_age": 0.42,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 83,
+      "detector_frames": 2944,
+      "caption_chunks": 13
+    },
+    {
+      "time": 1791498695.0315542,
+      "available_gib": 51.716,
+      "thermal_age": 0.44,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 84,
+      "detector_frames": 2971,
+      "caption_chunks": 14
+    },
+    {
+      "time": 1791498700.063613,
+      "available_gib": 51.722,
+      "thermal_age": 0.46,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 85,
+      "detector_frames": 3016,
+      "caption_chunks": 14
+    },
+    {
+      "time": 1791498705.090921,
+      "available_gib": 51.725,
+      "thermal_age": 0.47,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 86,
+      "detector_frames": 3041,
+      "caption_chunks": 14
+    },
+    {
+      "time": 1791498710.1226087,
+      "available_gib": 51.77,
+      "thermal_age": 0.49,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 87,
+      "detector_frames": 3084,
+      "caption_chunks": 14
+    },
+    {
+      "time": 1791498715.1553717,
+      "available_gib": 51.794,
+      "thermal_age": 0.51,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 88,
+      "detector_frames": 3112,
+      "caption_chunks": 14
+    },
+    {
+      "time": 1791498720.1920896,
+      "available_gib": 51.774,
+      "thermal_age": 0.53,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 89,
+      "detector_frames": 3158,
+      "caption_chunks": 14
+    },
+    {
+      "time": 1791498725.2222092,
+      "available_gib": 51.798,
+      "thermal_age": 0.54,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 90,
+      "detector_frames": 3183,
+      "caption_chunks": 15
+    },
+    {
+      "time": 1791498730.2484891,
+      "available_gib": 51.8,
+      "thermal_age": 0.55,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 91,
+      "detector_frames": 3227,
+      "caption_chunks": 15
+    },
+    {
+      "time": 1791498735.2791908,
+      "available_gib": 51.76,
+      "thermal_age": 0.57,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 92,
+      "detector_frames": 3252,
+      "caption_chunks": 15
+    },
+    {
+      "time": 1791498740.3072991,
+      "available_gib": 51.79,
+      "thermal_age": 0.58,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 93,
+      "detector_frames": 3299,
+      "caption_chunks": 15
+    },
+    {
+      "time": 1791498745.3422241,
+      "available_gib": 51.778,
+      "thermal_age": 0.6,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 94,
+      "detector_frames": 3327,
+      "caption_chunks": 15
+    },
+    {
+      "time": 1791498750.3743193,
+      "available_gib": 51.757,
+      "thermal_age": 0.62,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 95,
+      "detector_frames": 3370,
+      "caption_chunks": 15
+    },
+    {
+      "time": 1791498755.4090412,
+      "available_gib": 51.685,
+      "thermal_age": 0.63,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 96,
+      "detector_frames": 3398,
+      "caption_chunks": 16
+    },
+    {
+      "time": 1791498760.4359417,
+      "available_gib": 51.8,
+      "thermal_age": 0.65,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 97,
+      "detector_frames": 3437,
+      "caption_chunks": 16
+    },
+    {
+      "time": 1791498765.4778903,
+      "available_gib": 51.727,
+      "thermal_age": 0.67,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 98,
+      "detector_frames": 3469,
+      "caption_chunks": 16
+    },
+    {
+      "time": 1791498770.506494,
+      "available_gib": 51.734,
+      "thermal_age": 0.68,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 99,
+      "detector_frames": 3504,
+      "caption_chunks": 16
+    },
+    {
+      "time": 1791498775.5429704,
+      "available_gib": 51.729,
+      "thermal_age": 0.71,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 100,
+      "detector_frames": 3540,
+      "caption_chunks": 16
+    },
+    {
+      "time": 1791498780.5794704,
+      "available_gib": 51.688,
+      "thermal_age": 0.72,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 101,
+      "detector_frames": 3571,
+      "caption_chunks": 16
+    },
+    {
+      "time": 1791498785.610816,
+      "available_gib": 51.691,
+      "thermal_age": 0.74,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 102,
+      "detector_frames": 3611,
+      "caption_chunks": 17
+    },
+    {
+      "time": 1791498790.6405468,
+      "available_gib": 51.695,
+      "thermal_age": 0.76,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 103,
+      "detector_frames": 3639,
+      "caption_chunks": 17
+    },
+    {
+      "time": 1791498795.6714122,
+      "available_gib": 51.734,
+      "thermal_age": 0.77,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 104,
+      "detector_frames": 3683,
+      "caption_chunks": 17
+    },
+    {
+      "time": 1791498800.7033458,
+      "available_gib": 51.621,
+      "thermal_age": 0.79,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 105,
+      "detector_frames": 3708,
+      "caption_chunks": 17
+    },
+    {
+      "time": 1791498805.7461717,
+      "available_gib": 51.716,
+      "thermal_age": 0.82,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 106,
+      "detector_frames": 3754,
+      "caption_chunks": 17
+    },
+    {
+      "time": 1791498810.7799883,
+      "available_gib": 51.715,
+      "thermal_age": 0.83,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 107,
+      "detector_frames": 3779,
+      "caption_chunks": 17
+    },
+    {
+      "time": 1791498815.8073454,
+      "available_gib": 51.696,
+      "thermal_age": 0.85,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 108,
+      "detector_frames": 3825,
+      "caption_chunks": 18
+    },
+    {
+      "time": 1791498820.8356972,
+      "available_gib": 51.736,
+      "thermal_age": 0.86,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 109,
+      "detector_frames": 3851,
+      "caption_chunks": 18
+    },
+    {
+      "time": 1791498825.8673747,
+      "available_gib": 51.612,
+      "thermal_age": 0.88,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 110,
+      "detector_frames": 3895,
+      "caption_chunks": 18
+    },
+    {
+      "time": 1791498830.8967,
+      "available_gib": 51.658,
+      "thermal_age": 0.89,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 111,
+      "detector_frames": 3916,
+      "caption_chunks": 18
+    },
+    {
+      "time": 1791498835.9380538,
+      "available_gib": 51.699,
+      "thermal_age": 0.92,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 112,
+      "detector_frames": 3964,
+      "caption_chunks": 18
+    },
+    {
+      "time": 1791498840.9738772,
+      "available_gib": 51.754,
+      "thermal_age": 0.93,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 113,
+      "detector_frames": 3993,
+      "caption_chunks": 18
+    },
+    {
+      "time": 1791498846.0019813,
+      "available_gib": 51.837,
+      "thermal_age": 0.94,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 114,
+      "detector_frames": 4040,
+      "caption_chunks": 19
+    },
+    {
+      "time": 1791498851.039775,
+      "available_gib": 51.711,
+      "thermal_age": 0.96,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 115,
+      "detector_frames": 4064,
+      "caption_chunks": 19
+    },
+    {
+      "time": 1791498856.0745,
+      "available_gib": 51.718,
+      "thermal_age": 0.98,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 116,
+      "detector_frames": 4107,
+      "caption_chunks": 19
+    },
+    {
+      "time": 1791498861.1034915,
+      "available_gib": 51.713,
+      "thermal_age": 1.0,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 117,
+      "detector_frames": 4127,
+      "caption_chunks": 19
+    },
+    {
+      "time": 1791498866.1438544,
+      "available_gib": 51.743,
+      "thermal_age": 0.01,
+      "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+      "embedding_chunks": 118,
+      "detector_frames": 4174,
+      "caption_chunks": 19
+    }
+  ],
+  "passed": true,
+  "window_start": "2026-10-08T22:24:27.804833+00:00",
+  "rule_create": {
+    "http": 201,
+    "body": {
+      "rule": {
+        "sourceId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+        "sourceName": "thor-nvstreamer-mock",
+        "sourceRuntimeName": "thor-nvstreamer-mock",
+        "sourceKind": "live",
+        "engine": "deepstream",
+        "analysisProfileId": "warehouse-safety",
+        "kind": "area-entry",
+        "status": "active",
+        "severity": "info",
+        "name": "NVStreamer mock person ROI test",
+        "cooldownSeconds": 30,
+        "description": "Owned diagnostic fixture",
+        "objectTypes": [
+          "Person"
+        ],
+        "threshold": {},
+        "geometry": {
+          "kind": "polygon",
+          "frameWidth": 1280,
+          "frameHeight": 720,
+          "points": [
+            {
+              "x": 0.01,
+              "y": 0.01
+            },
+            {
+              "x": 0.99,
+              "y": 0.01
+            },
+            {
+              "x": 0.99,
+              "y": 0.99
+            },
+            {
+              "x": 0.01,
+              "y": 0.99
+            }
+          ]
+        },
+        "backendStatus": "active",
+        "createdAt": "2026-10-08T22:24:27.883Z",
+        "id": "cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+        "updatedAt": "2026-10-08T22:24:27.883Z"
+      }
+    }
+  },
+  "caption_start": {
+    "http": 200,
+    "body": {
+      "id": "17e03964-ba65-4eb0-9207-d6abfa951242",
+      "status": "accepted",
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+    }
+  },
+  "detector_example": {
+    "timestamp": "2026-10-08T22:24:32.595Z",
+    "info": {},
+    "objects": [
+      {
+        "info": {
+          "visibility": "1.000000"
+        },
+        "dir": [],
+        "confidence": 0.945600688457489,
+        "bbox": {
+          "leftX": 100.78125,
+          "info": {},
+          "rightX": 235.46875,
+          "bottomY": 493.41796875,
+          "topY": 229.39451599121094,
+          "embeddings": [],
+          "confidence": 0.945600688457489
+        },
+        "type": "Person",
+        "id": "13",
+        "speed": 0.0
+      }
+    ],
+    "version": "4.0",
+    "interactions": [],
+    "sensorId": "thor-nvstreamer-mock",
+    "type": "mdx-raw",
+    "congestions": [],
+    "id": "1270",
+    "fov": [],
+    "rois": []
+  },
+  "embedding_example": {
+    "timestamp": "2026-10-08T22:24:32.369Z",
+    "sensor": {
+      "type": "Camera",
+      "info": {
+        "path": "rtsp://10.88.9.76:30556/live/17e03964-ba65-4eb0-9207-d6abfa951242"
+      },
+      "id": "thor-nvstreamer-mock",
+      "description": "VST live stream"
+    },
+    "info": {
+      "decodeLatencyMs": "4403.055",
+      "streamId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+      "vlmLatencyMs": "283.062",
+      "chunkIdx": "25",
+      "chunkLatencyMs": "4693.244",
+      "sensorId": "thor-nvstreamer-mock",
+      "processingLatencyS": "4.693",
+      "frameCount": "8",
+      "requestId": "ac5d0ac2-31b7-4ea6-9691-51c3c5460e22"
+    },
+    "version": "cosmos-embed1-448p-anomaly-detection",
+    "endFrameId": "25:7",
+    "llm": {
+      "visionEmbeddings": [
+        {
+          "info": {},
+          "vector": [
+            -0.0022029876708984375,
+            -0.03118896484375,
+            -0.009918212890625,
+            0.0004551410675048828,
+            -0.01316070556640625,
+            0.05841064453125,
+            -0.081298828125,
+            0.0146026611328125,
+            -0.02252197265625,
+            0.036224365234375,
+            -0.06036376953125,
+            -0.0426025390625,
+            0.033111572265625,
+            0.0836181640625,
+            -0.01175689697265625,
+            -0.0056304931640625,
+            -0.042022705078125,
+            0.0095977783203125,
+            0.035491943359375,
+            -0.002788543701171875,
+            0.03411865234375,
+            0.0295257568359375,
+            0.0178680419921875,
+            -0.0309600830078125,
+            0.039306640625,
+            0.002323150634765625,
+            0.01183319091796875,
+            0.056365966796875,
+            0.00925445556640625,
+            0.00565338134765625,
+            -0.01116943359375,
+            -0.038543701171875,
+            -0.01806640625,
+            -0.0018911361694335938,
+            0.06646728515625,
+            -0.0221710205078125,
+            -0.02197265625,
+            -0.02923583984375,
+            -0.035858154296875,
+            0.013763427734375,
+            -0.0230255126953125,
+            0.0180206298828125,
+            -0.0207672119140625,
+            -0.02459716796875,
+            0.0025920867919921875,
+            0.00200653076171875,
+            -0.06121826171875,
+            0.0341796875,
+            -0.0213775634765625,
+            -0.03814697265625,
+            0.05078125,
+            0.030517578125,
+            0.0182037353515625,
+            0.03985595703125,
+            -0.044647216796875,
+            0.0205078125,
+            -0.00928497314453125,
+            0.006591796875,
+            0.021759033203125,
+            -0.0335693359375,
+            0.0396728515625,
+            0.06597900390625,
+            -0.0272369384765625,
+            0.03204345703125,
+            0.003932952880859375,
+            -0.0190277099609375,
+            0.01006317138671875,
+            -0.0038852691650390625,
+            -0.002552032470703125,
+            -0.021575927734375,
+            0.0465087890625,
+            0.0458984375,
+            0.0007147789001464844,
+            -0.0164337158203125,
+            0.031341552734375,
+            0.01255035400390625,
+            -0.0037784576416015625,
+            0.0309295654296875,
+            -0.041473388671875,
+            -0.0011072158813476562,
+            -0.049774169921875,
+            0.057708740234375,
+            0.007167816162109375,
+            -0.0140228271484375,
+            0.09552001953125,
+            0.00433349609375,
+            0.03973388671875,
+            -0.03240966796875,
+            -0.0467529296875,
+            -0.01497650146484375,
+            -0.0780029296875,
+            -0.006195068359375,
+            -0.03253173828125,
+            0.0095367431640625,
+            -0.009674072265625,
+            -0.066162109375,
+            -0.032135009765625,
+            -0.02685546875,
+            -0.0002467632293701172,
+            -0.0150604248046875,
+            0.0985107421875,
+            0.00897979736328125,
+            -0.0103912353515625,
+            0.03790283203125,
+            0.035675048828125,
+            -0.054229736328125,
+            0.0193023681640625,
+            -0.11651611328125,
+            0.006137847900390625,
+            0.043212890625,
+            0.0484619140625,
+            -0.02618408203125,
+            -0.05462646484375,
+            -0.05609130859375,
+            -0.05108642578125,
+            0.0202178955078125,
+            0.033203125,
+            0.06378173828125,
+            0.047576904296875,
+            -0.090087890625,
+            -0.027496337890625,
+            -0.054229736328125,
+            0.0010404586791992188,
+            0.00814056396484375,
+            -0.037811279296875,
+            0.01275634765625,
+            -0.0031681060791015625,
+            -0.014495849609375,
+            0.0194091796875,
+            0.0556640625,
+            0.0272369384765625,
+            0.005352020263671875,
+            0.0110626220703125,
+            0.0263519287109375,
+            0.03265380859375,
+            -0.00484466552734375,
+            -0.0243682861328125,
+            0.049560546875,
+            -0.004913330078125,
+            0.0009183883666992188,
+            -0.00829315185546875,
+            0.018035888671875,
+            -0.0224609375,
+            -0.075927734375,
+            -0.037384033203125,
+            -0.046875,
+            -0.0035400390625,
+            0.01432037353515625,
+            0.021942138671875,
+            0.07867431640625,
+            0.0452880859375,
+            0.0203399658203125,
+            0.0100555419921875,
+            -0.0066680908203125,
+            -0.00630950927734375,
+            -0.03729248046875,
+            -0.01047515869140625,
+            -0.034149169921875,
+            0.044952392578125,
+            0.020721435546875,
+            -0.0028171539306640625,
+            -0.006229400634765625,
+            -0.0251922607421875,
+            0.0199127197265625,
+            0.029449462890625,
+            -0.0217437744140625,
+            0.053558349609375,
+            0.057342529296875,
+            0.0167999267578125,
+            -0.01387786865234375,
+            -0.04473876953125,
+            -0.0018558502197265625,
+            0.0113525390625,
+            0.0181884765625,
+            0.044708251953125,
+            0.0226593017578125,
+            0.0249481201171875,
+            -0.0270538330078125,
+            -0.07427978515625,
+            0.0277557373046875,
+            0.032928466796875,
+            -0.067138671875,
+            0.0655517578125,
+            -0.06268310546875,
+            -0.007152557373046875,
+            0.00042557716369628906,
+            -0.01467132568359375,
+            0.0196990966796875,
+            -0.0003113746643066406,
+            0.002231597900390625,
+            0.0017948150634765625,
+            0.002277374267578125,
+            0.0408935546875,
+            0.0400390625,
+            0.0010013580322265625,
+            -0.0858154296875,
+            -0.04876708984375,
+            0.031829833984375,
+            -0.0478515625,
+            -0.0484619140625,
+            0.0019855499267578125,
+            -0.04833984375,
+            -0.017333984375,
+            0.0012617111206054688,
+            -0.0465087890625,
+            -0.0235748291015625,
+            -0.0253753662109375,
+            0.003082275390625,
+            0.016143798828125,
+            0.053009033203125,
+            0.03564453125,
+            -0.033660888671875,
+            -0.0188751220703125,
+            0.01287841796875,
+            0.03338623046875,
+            -0.0134429931640625,
+            -0.003681182861328125,
+            -0.0287017822265625,
+            0.0295562744140625,
+            0.0139007568359375,
+            -0.016632080078125,
+            -0.05267333984375,
+            0.04833984375,
+            -0.04559326171875,
+            -0.0556640625,
+            0.023834228515625,
+            0.0023479461669921875,
+            -0.0513916015625,
+            0.005401611328125,
+            0.0018253326416015625,
+            -0.01922607421875,
+            -0.002414703369140625,
+            0.03076171875,
+            -0.007488250732421875,
+            -0.028106689453125,
+            -0.038665771484375,
+            0.00540924072265625,
+            -0.0007252693176269531,
+            -0.03375244140625,
+            -0.06842041015625,
+            0.058135986328125,
+            0.0177154541015625,
+            -8.940696716308594e-07,
+            -0.004001617431640625,
+            -0.02947998046875,
+            0.01338958740234375,
+            -0.006885528564453125,
+            -0.03118896484375,
+            -0.0287017822265625,
+            -0.0089111328125,
+            -0.08526611328125,
+            0.01116180419921875,
+            0.0880126953125,
+            0.019256591796875,
+            -0.01454925537109375,
+            0.03546142578125,
+            -0.002231597900390625,
+            -0.031280517578125,
+            -0.0098876953125,
+            0.0005135536193847656,
+            -0.0131988525390625,
+            0.05841064453125,
+            -0.081298828125,
+            0.01458740234375,
+            -0.022552490234375,
+            0.036163330078125,
+            -0.06036376953125,
+            -0.04266357421875,
+            0.03302001953125,
+            0.0836181640625,
+            -0.01183319091796875,
+            -0.005649566650390625,
+            -0.0419921875,
+            0.0095977783203125,
+            0.03558349609375,
+            -0.0027675628662109375,
+            0.034088134765625,
+            0.0295867919921875,
+            0.0178680419921875,
+            -0.0309295654296875,
+            0.03924560546875,
+            0.00235748291015625,
+            0.01169586181640625,
+            0.056427001953125,
+            0.00926971435546875,
+            0.005695343017578125,
+            -0.01111602783203125,
+            -0.038360595703125,
+            -0.0180816650390625,
+            -0.0019512176513671875,
+            0.0665283203125,
+            -0.02215576171875,
+            -0.0219573974609375,
+            -0.0292816162109375,
+            -0.035888671875,
+            0.01372528076171875,
+            -0.0229034423828125,
+            0.0179290771484375,
+            -0.0208282470703125,
+            -0.0245819091796875,
+            0.0026798248291015625,
+            0.00189971923828125,
+            -0.06121826171875,
+            0.0341796875,
+            -0.0214080810546875,
+            -0.03814697265625,
+            0.050750732421875,
+            0.030548095703125,
+            0.0182037353515625,
+            0.039886474609375,
+            -0.04473876953125,
+            0.0204315185546875,
+            -0.00921630859375,
+            0.006534576416015625,
+            0.0217437744140625,
+            -0.03350830078125,
+            0.039825439453125,
+            0.06591796875,
+            -0.0271759033203125,
+            0.032012939453125,
+            0.003856658935546875,
+            -0.0189971923828125,
+            0.01016998291015625,
+            -0.0039215087890625,
+            -0.00246429443359375,
+            -0.0216827392578125,
+            0.0465087890625,
+            0.0460205078125,
+            0.0007696151733398438,
+            -0.0162506103515625,
+            0.031341552734375,
+            0.01247406005859375,
+            -0.0037384033203125,
+            0.030792236328125,
+            -0.04150390625,
+            -0.0010995864868164062,
+            -0.049713134765625,
+            0.0576171875,
+            0.00701141357421875,
+            -0.01401519775390625,
+            0.095458984375,
+            0.00432586669921875,
+            0.039703369140625,
+            -0.0323486328125,
+            -0.04681396484375,
+            -0.0148162841796875,
+            -0.07806396484375,
+            -0.006103515625,
+            -0.032470703125,
+            0.00946044921875,
+            -0.00966644287109375,
+            -0.066162109375,
+            -0.032257080078125,
+            -0.0267486572265625,
+            -0.00019848346710205078,
+            -0.01500701904296875,
+            0.098388671875,
+            0.00893402099609375,
+            -0.01035308837890625,
+            0.037750244140625,
+            0.0357666015625,
+            -0.05419921875,
+            0.0193023681640625,
+            -0.11639404296875,
+            0.006069183349609375,
+            0.043212890625,
+            0.048431396484375,
+            -0.02618408203125,
+            -0.0546875,
+            -0.05621337890625,
+            -0.051055908203125,
+            0.0202789306640625,
+            0.033203125,
+            0.06365966796875,
+            0.04742431640625,
+            -0.090087890625,
+            -0.0274658203125,
+            -0.054290771484375,
+            0.0010366439819335938,
+            0.0081634521484375,
+            -0.03790283203125,
+            0.0127105712890625,
+            -0.0032558441162109375,
+            -0.01453399658203125,
+            0.0194244384765625,
+            0.05560302734375,
+            0.02728271484375,
+            0.005374908447265625,
+            0.01105499267578125,
+            0.026275634765625,
+            0.03271484375,
+            -0.004825592041015625,
+            -0.0243682861328125,
+            0.049468994140625,
+            -0.00494384765625,
+            0.000835418701171875,
+            -0.00827789306640625,
+            0.0180511474609375,
+            -0.0225830078125,
+            -0.0760498046875,
+            -0.0374755859375,
+            -0.046875,
+            -0.003505706787109375,
+            0.01422882080078125,
+            0.0220489501953125,
+            0.07861328125,
+            0.04541015625,
+            0.0203399658203125,
+            0.0099639892578125,
+            -0.006580352783203125,
+            -0.0062103271484375,
+            -0.03729248046875,
+            -0.01047515869140625,
+            -0.03411865234375,
+            0.044769287109375,
+            0.02069091796875,
+            -0.0028476715087890625,
+            -0.006298065185546875,
+            -0.025177001953125,
+            0.0198974609375,
+            0.0294189453125,
+            -0.021820068359375,
+            0.053619384765625,
+            0.05743408203125,
+            0.016815185546875,
+            -0.01395416259765625,
+            -0.044769287109375,
+            -0.0018777847290039062,
+            0.01142120361328125,
+            0.0181121826171875,
+            0.044647216796875,
+            0.0226287841796875,
+            0.02496337890625,
+            -0.027008056640625,
+            -0.07427978515625,
+            0.02752685546875,
+            0.033050537109375,
+            -0.067138671875,
+            0.0655517578125,
+            -0.06268310546875,
+            -0.00708770751953125,
+            0.00039386749267578125,
+            -0.0147247314453125,
+            0.0196075439453125,
+            -0.00034236907958984375,
+            0.0022563934326171875,
+            0.0019245147705078125,
+            0.0022335052490234375,
+            0.040924072265625,
+            0.0399169921875,
+            0.0009708404541015625,
+            -0.08575439453125,
+            -0.048675537109375,
+            0.031951904296875,
+            -0.04779052734375,
+            -0.048370361328125,
+            0.0019378662109375,
+            -0.0484619140625,
+            -0.0173797607421875,
+            0.001316070556640625,
+            -0.046539306640625,
+            -0.0236053466796875,
+            -0.0255279541015625,
+            0.0031337738037109375,
+            0.01617431640625,
+            0.0531005859375,
+            0.035614013671875,
+            -0.033721923828125,
+            -0.0188446044921875,
+            0.01276397705078125,
+            0.033477783203125,
+            -0.01343536376953125,
+            -0.0036773681640625,
+            -0.0286407470703125,
+            0.0295867919921875,
+            0.01378631591796875,
+            -0.0167694091796875,
+            -0.05267333984375,
+            0.04840087890625,
+            -0.04559326171875,
+            -0.0556640625,
+            0.023834228515625,
+            0.0023746490478515625,
+            -0.05145263671875,
+            0.00534820556640625,
+            0.0018339157104492188,
+            -0.0191650390625,
+            -0.00235748291015625,
+            0.03082275390625,
+            -0.00751495361328125,
+            -0.02813720703125,
+            -0.03851318359375,
+            0.0054168701171875,
+            -0.0006871223449707031,
+            -0.0338134765625,
+            -0.0684814453125,
+            0.058135986328125,
+            0.0177154541015625,
+            0.00017464160919189453,
+            -0.004001617431640625,
+            -0.0294952392578125,
+            0.013275146484375,
+            -0.00701141357421875,
+            -0.031219482421875,
+            -0.0288238525390625,
+            -0.00884246826171875,
+            -0.085205078125,
+            0.01123809814453125,
+            0.0880126953125,
+            0.0192108154296875,
+            -0.01458740234375,
+            0.035430908203125,
+            -0.002166748046875,
+            -0.03131103515625,
+            -0.009796142578125,
+            0.0005459785461425781,
+            -0.0131378173828125,
+            0.058349609375,
+            -0.081298828125,
+            0.01451873779296875,
+            -0.0225830078125,
+            0.0361328125,
+            -0.060302734375,
+            -0.0426025390625,
+            0.033111572265625,
+            0.08355712890625,
+            -0.01180267333984375,
+            -0.005634307861328125,
+            -0.042144775390625,
+            0.0095367431640625,
+            0.035614013671875,
+            -0.0027904510498046875,
+            0.034271240234375,
+            0.0294952392578125,
+            0.017822265625,
+            -0.031036376953125,
+            0.039398193359375,
+            0.002227783203125,
+            0.0117950439453125,
+            0.056365966796875,
+            0.009246826171875,
+            0.0056304931640625,
+            -0.011138916015625,
+            -0.0384521484375,
+            -0.0179901123046875,
+            -0.0018253326416015625,
+            0.06634521484375,
+            -0.0221405029296875,
+            -0.021942138671875,
+            -0.029266357421875,
+            -0.0360107421875,
+            0.01377105712890625,
+            -0.022796630859375,
+            0.01800537109375,
+            -0.0208892822265625,
+            -0.0247039794921875,
+            0.0026702880859375,
+            0.0020885467529296875,
+            -0.0611572265625,
+            0.034088134765625,
+            -0.0214080810546875,
+            -0.03814697265625,
+            0.05078125,
+            0.0304107666015625,
+            0.0182647705078125,
+            0.039886474609375,
+            -0.044769287109375,
+            0.020599365234375,
+            -0.00928497314453125,
+            0.0065765380859375,
+            0.02178955078125,
+            -0.03363037109375,
+            0.039703369140625,
+            0.06597900390625,
+            -0.0272369384765625,
+            0.03204345703125,
+            0.00396728515625,
+            -0.0189666748046875,
+            0.01007080078125,
+            -0.0039215087890625,
+            -0.0025691986083984375,
+            -0.0216827392578125,
+            0.046539306640625,
+            0.04595947265625,
+            0.0006976127624511719,
+            -0.016326904296875,
+            0.03131103515625,
+            0.0124969482421875,
+            -0.0036907196044921875,
+            0.0308990478515625,
+            -0.04150390625,
+            -0.0010232925415039062,
+            -0.04974365234375,
+            0.0574951171875,
+            0.0070343017578125,
+            -0.01399993896484375,
+            0.09552001953125,
+            0.00440216064453125,
+            0.0396728515625,
+            -0.032379150390625,
+            -0.04681396484375,
+            -0.01488494873046875,
+            -0.07806396484375,
+            -0.00612640380859375,
+            -0.032440185546875,
+            0.00954437255859375,
+            -0.00959014892578125,
+            -0.066162109375,
+            -0.0321044921875,
+            -0.026885986328125,
+            -0.000244140625,
+            -0.0150299072265625,
+            0.09844970703125,
+            0.00899505615234375,
+            -0.01042938232421875,
+            0.037872314453125,
+            0.03564453125,
+            -0.05426025390625,
+            0.0192413330078125,
+            -0.11639404296875,
+            0.00614166259765625,
+            0.04327392578125,
+            0.0484619140625,
+            -0.0261383056640625,
+            -0.054534912109375,
+            -0.05615234375,
+            -0.051055908203125,
+            0.020355224609375,
+            0.03326416015625,
+            0.0638427734375,
+            0.047607421875,
+            -0.0899658203125,
+            -0.027374267578125,
+            -0.054229736328125,
+            0.0009655952453613281,
+            0.00818634033203125,
+            -0.03790283203125,
+            0.012725830078125,
+            -0.0032711029052734375,
+            -0.0144805908203125,
+            0.0194244384765625,
+            0.05560302734375,
+            0.0273284912109375,
+            0.00550079345703125,
+            0.01097869873046875,
+            0.026214599609375,
+            0.032684326171875,
+            -0.0048065185546875,
+            -0.0244140625,
+            0.049530029296875,
+            -0.0049896240234375,
+            0.0007452964782714844,
+            -0.00823974609375,
+            0.0179443359375,
+            -0.022491455078125,
+            -0.0760498046875,
+            -0.037353515625,
+            -0.04681396484375,
+            -0.0034999847412109375,
+            0.01433563232421875,
+            0.0220489501953125,
+            0.07855224609375,
+            0.04534912109375,
+            0.020233154296875,
+            0.01004791259765625,
+            -0.00652313232421875,
+            -0.0062103271484375,
+            -0.0372314453125,
+            -0.01043701171875,
+            -0.034088134765625,
+            0.045013427734375,
+            0.0206451416015625,
+            -0.0028057098388671875,
+            -0.0062255859375,
+            -0.0251617431640625,
+            0.0198974609375,
+            0.029388427734375,
+            -0.0218353271484375,
+            0.05352783203125,
+            0.057342529296875,
+            0.016815185546875,
+            -0.01389312744140625,
+            -0.044708251953125,
+            -0.0018253326416015625,
+            0.01132965087890625,
+            0.018096923828125,
+            0.044677734375,
+            0.0225830078125,
+            0.02490234375,
+            -0.0270843505859375,
+            -0.07421875,
+            0.02764892578125,
+            0.03289794921875,
+            -0.06719970703125,
+            0.0655517578125,
+            -0.062744140625,
+            -0.0071258544921875,
+            0.00035643577575683594,
+            -0.014801025390625,
+            0.019622802734375,
+            -0.00033664703369140625,
+            0.002201080322265625,
+            0.0018100738525390625,
+            0.002315521240234375,
+            0.0411376953125,
+            0.03997802734375,
+            0.0009889602661132812,
+            -0.08575439453125,
+            -0.048797607421875,
+            0.03192138671875,
+            -0.048004150390625,
+            -0.04833984375,
+            0.0018825531005859375,
+            -0.048614501953125,
+            -0.017364501953125,
+            0.0012760162353515625,
+            -0.046539306640625,
+            -0.0235595703125,
+            -0.025360107421875,
+            0.0031375885009765625,
+            0.0162506103515625,
+            0.053070068359375,
+            0.035675048828125,
+            -0.03363037109375,
+            -0.01885986328125,
+            0.0127410888671875,
+            0.03338623046875,
+            -0.013458251953125,
+            -0.003742218017578125,
+            -0.0287017822265625,
+            0.0295867919921875,
+            0.0138397216796875,
+            -0.0167236328125,
+            -0.052764892578125,
+            0.04840087890625,
+            -0.045562744140625,
+            -0.0556640625,
+            0.0238494873046875,
+            0.0023288726806640625,
+            -0.051361083984375,
+            0.005390167236328125,
+            0.0018758773803710938,
+            -0.019195556640625,
+            -0.0022869110107421875,
+            0.03082275390625,
+            -0.0074615478515625,
+            -0.028106689453125,
+            -0.038604736328125,
+            0.005420684814453125,
+            -0.0007338523864746094,
+            -0.03375244140625,
+            -0.0684814453125,
+            0.058074951171875,
+            0.017730712890625,
+            3.916025161743164e-05,
+            -0.003997802734375,
+            -0.0296630859375,
+            0.0133209228515625,
+            -0.006946563720703125,
+            -0.0311737060546875,
+            -0.028717041015625,
+            -0.00885772705078125,
+            -0.08514404296875,
+            0.01129913330078125,
+            0.0880126953125,
+            0.019195556640625,
+            -0.01456451416015625,
+            0.035430908203125
+          ]
+        }
+      ],
+      "info": {
+        "requestedModel": "cosmos-embed1-448p-anomaly-detection",
+        "modelId": "cosmos-embed1-448p-anomaly-detection",
+        "modelOwnedBy": "nvidia",
+        "enableReasoning": "False",
+        "modelApiType": "custom"
+      },
+      "queries": [
+        {
+          "embeddings": [],
+          "id": "ac5d0ac2-31b7-4ea6-9691-51c3c5460e22:25",
+          "params": {
+            "streamId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+            "chunkIdx": "25",
+            "endNtp": "2026-10-08T22:24:36.793Z",
+            "sensorId": "thor-nvstreamer-mock",
+            "startNtp": "2026-10-08T22:24:32.370Z",
+            "requestId": "ac5d0ac2-31b7-4ea6-9691-51c3c5460e22"
+          },
+          "prompts": {
+            "user": "dummy"
+          },
+          "response": ""
+        }
+      ]
+    },
+    "startFrameId": "25:0",
+    "end": "2026-10-08T22:24:36.792Z",
+    "type": "mdx-embed-filtered",
+    "Id": "006507629aae2c542d1d69103bb7e3f1b1a92a67"
+  },
+  "caption_example": {
+    "timestamp": {
+      "seconds": 1791498268,
+      "nanos": 592000008
+    },
+    "sensor": {
+      "type": "Camera",
+      "info": {
+        "cameraId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+        "path": "rtsp://10.88.9.76:30556/live/17e03964-ba65-4eb0-9207-d6abfa951242"
+      },
+      "id": "17e03964-ba65-4eb0-9207-d6abfa951242",
+      "description": "thor-nvstreamer-mock"
+    },
+    "version": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "metadata": {
+      "source": "N/A",
+      "content_metadata": {
+        "decodeLatencyMs": "22611.039",
+        "chunkIdx": 0,
+        "vlmLatencyMs": "10418.652",
+        "incidentDetected": "true",
+        "doc_type": "raw_events",
+        "doc_i": 0,
+        "processingLatencyS": "33.060",
+        "requestId": "dda05415-b3f8-4929-b426-ec552e8689e0",
+        "start_ntp_float": 1791498268.592,
+        "streamId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+        "outputTokens": "107",
+        "end_ntp_float": 1791498291.191,
+        "chunkLatencyMs": "33059.622",
+        "sensorId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+        "cameraId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+        "frameCount": "4",
+        "inputTokens": "838",
+        "uuid": "17e03964-ba65-4eb0-9207-d6abfa951242",
+        "caption_timestamps": "decoded_chunk"
+      }
+    },
+    "endFrameId": "0:3",
+    "startFrameId": "0:0",
+    "text": "[{\"start_time\":\"2026-10-08T22:24:28.592Z\",\"end_time\":\"2026-10-08T22:24:51.191Z\",\"type\":\"scene observation\",\"description\":\"A person wearing a red shirt and dark shorts walks along a paved path bordered by a brick wall and lush green trees under bright daylight.\"}]",
+    "end": {
+      "seconds": 1791498291,
+      "nanos": 190999985
+    },
+    "@timestamp": "2026-10-08T22:25:01.865667370Z"
+  },
+  "incidents": {
+    "http": 200,
+    "body": {
+      "incidents": [
+        {
+          "timestamp": "2026-10-08T22:34:27.349Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "75"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "75"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:34:31.445Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "0b528cbddd9e2384e8521a4ffea121fa9e617785"
+        },
+        {
+          "timestamp": "2026-10-08T22:34:17.745Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "74"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "74"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:34:25.148Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "c5f5ab8b5a43b12a5ff77706e34fe4df722a809f"
+        },
+        {
+          "timestamp": "2026-10-08T22:34:08.178Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "73"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "73"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:34:15.582Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "2f45bbc3a064dce9e4ee0c0a0cb19eb01bccda23"
+        },
+        {
+          "timestamp": "2026-10-08T22:33:58.537Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "72"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "72"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:34:05.937Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "712e8a697c90499ac8009a42dc07ace51123d57a"
+        },
+        {
+          "timestamp": "2026-10-08T22:33:48.934Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "71"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "71"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:33:56.382Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "abe05f90e797d719cd4bdbdef50d895b5eef30c2"
+        },
+        {
+          "timestamp": "2026-10-08T22:33:39.331Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "70"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "70"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:33:46.736Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "cc5e1b2a0dd0cb26a63d66b36b7af1ed43866e92"
+        },
+        {
+          "timestamp": "2026-10-08T22:33:29.729Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "69"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "69"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:33:37.181Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "e1955fc70916668dced430d360545cb890cf4f43"
+        },
+        {
+          "timestamp": "2026-10-08T22:33:20.127Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "68"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "68"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:33:27.531Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "12427e8bfd90e407e43747d33c5b6b2096842ae5"
+        },
+        {
+          "timestamp": "2026-10-08T22:33:10.566Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "67"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "67"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:33:17.926Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "e8b6e3fba97da60d5c5db14cc3708e631d2b1479"
+        },
+        {
+          "timestamp": "2026-10-08T22:33:00.962Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "66"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "66"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:33:08.323Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "0d8576fbd22b506ea5347b2d1b9cb2549e90cbe9"
+        },
+        {
+          "timestamp": "2026-10-08T22:32:51.367Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "65"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "65"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:32:58.721Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "f8895f807dd90fd2bc958f1f7946791133b19609"
+        },
+        {
+          "timestamp": "2026-10-08T22:32:41.719Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "64"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "64"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:32:49.157Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "23b11036ee08b1de4ef0d620ee73dbfe00052435"
+        },
+        {
+          "timestamp": "2026-10-08T22:32:32.119Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "63"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "63"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:32:39.558Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "0e244a2c9089d19a93f2f9a39fdaa5781e49036e"
+        },
+        {
+          "timestamp": "2026-10-08T22:32:22.562Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "62"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "62"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:32:29.960Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "429db3cc7c29135a507040d560e8d1c826e442de"
+        },
+        {
+          "timestamp": "2026-10-08T22:32:12.913Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "61"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "61"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:32:20.311Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "52fc152b900f1047153dbac87ea48322a14b6581"
+        },
+        {
+          "timestamp": "2026-10-08T22:32:03.311Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "60"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "60"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:32:10.750Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "e883185c6d9d3213af529a8d00a25a1ade11c7b5"
+        },
+        {
+          "timestamp": "2026-10-08T22:31:53.709Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "59"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "59"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:32:01.110Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "f052ec844ba2c5146eb9b048a0e5bb8d03d27d1e"
+        },
+        {
+          "timestamp": "2026-10-08T22:31:44.105Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "58"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "58"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:31:51.506Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "f78f69ec506674c582331471f167df6438088c8c"
+        },
+        {
+          "timestamp": "2026-10-08T22:31:34.503Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "57"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "57"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:31:41.950Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "8e77a0cb12b743324fba302f095f9f93de1e5c1e"
+        },
+        {
+          "timestamp": "2026-10-08T22:31:24.950Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "56"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "56"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:31:32.342Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "32406cdef0862456bb3e9868a3fdc88e26a895e5"
+        },
+        {
+          "timestamp": "2026-10-08T22:31:15.338Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "55"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "55"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:31:22.700Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "c5f5a01db54628a37cbbc9b4b62a4ee1348496f7"
+        },
+        {
+          "timestamp": "2026-10-08T22:31:05.737Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "54"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "54"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:31:13.137Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "923315173d72de3cda29c5032b9d0233067e1593"
+        },
+        {
+          "timestamp": "2026-10-08T22:30:56.141Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "53"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "53"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:31:03.494Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "8ca6b164a93a421064ad7e89cbb5b82681720145"
+        },
+        {
+          "timestamp": "2026-10-08T22:30:46.490Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "52"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "52"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:30:53.895Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "0f121acf3f2e4278776013d2567a7d0415c59ae8"
+        },
+        {
+          "timestamp": "2026-10-08T22:30:36.888Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "51"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "51"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:30:44.291Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "ac3f0b5c99cf60f66ec3ea8fe93b38064cb20047"
+        },
+        {
+          "timestamp": "2026-10-08T22:30:27.294Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "50"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "50"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:30:34.686Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "7bd81e9059a25eaed49358b833818b72a5f5e1ff"
+        },
+        {
+          "timestamp": "2026-10-08T22:30:17.684Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "49"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "49"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:30:25.085Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "ca5b857a235b994413a25454dc2265c2ac75ffbe"
+        },
+        {
+          "timestamp": "2026-10-08T22:30:08.126Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "48"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "48"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:30:15.493Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "2a42aa57dc052fdae6f7461424deaebe01cf05cf"
+        },
+        {
+          "timestamp": "2026-10-08T22:29:58.479Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "47"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "47"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:30:05.926Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "25485c76fc65c5e4a4cc958a0d68f4a3bbcb7b9b"
+        },
+        {
+          "timestamp": "2026-10-08T22:29:48.921Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "46"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "46"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:29:56.320Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "fee4ccde953432d93abf6772ca5f15dbf82c7404"
+        },
+        {
+          "timestamp": "2026-10-08T22:29:39.318Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "45"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "45"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:29:46.672Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "f254c8d92dc06e5bdc35cde18ec37e42b011c4f7"
+        },
+        {
+          "timestamp": "2026-10-08T22:29:29.673Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "44"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "44"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:29:37.072Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "d87d0996f78a6bce2430d0babccb7adc42fe8322"
+        },
+        {
+          "timestamp": "2026-10-08T22:29:20.106Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "43"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "43"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:29:27.513Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "fd108aefd0c6eee64e99e18893ee35c472253232"
+        },
+        {
+          "timestamp": "2026-10-08T22:29:10.506Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "42"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "42"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:29:17.865Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "4f8e697da7b723562c4d0318f4511f1105d49a4a"
+        },
+        {
+          "timestamp": "2026-10-08T22:29:00.865Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "41"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "41"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:29:08.264Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "68fee57fb5844c34e59baa20a3777904ccaadfac"
+        },
+        {
+          "timestamp": "2026-10-08T22:28:51.306Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "40"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "40"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:28:58.703Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "9975ddf4f71675c42029cf765a88df7253fa8aab"
+        },
+        {
+          "timestamp": "2026-10-08T22:28:41.706Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "39"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "39"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:28:49.060Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "0a6d88f39d53ec6d69cf4ca364e49d335efe54c7"
+        },
+        {
+          "timestamp": "2026-10-08T22:28:32.059Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "38"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "38"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:28:39.458Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "fa765108e50ec6b1b573d90dfce8a0e7e428060c"
+        },
+        {
+          "timestamp": "2026-10-08T22:28:22.501Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "37"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "37"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:28:29.902Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "eee6e7aa5d67558dfcfae33127ff40f1505f5d2e"
+        },
+        {
+          "timestamp": "2026-10-08T22:28:12.851Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "36"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "36"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:28:20.251Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "0c07992181732e47316415bf857793118c355bc1"
+        },
+        {
+          "timestamp": "2026-10-08T22:28:03.294Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "35"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "35"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:28:10.650Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "4fd813f142fd8c95433de4c0431f11231b08af59"
+        },
+        {
+          "timestamp": "2026-10-08T22:27:53.652Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "34"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "34"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:28:01.052Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "151b0752f41a475ebb443a9083beb5a514c0da6e"
+        },
+        {
+          "timestamp": "2026-10-08T22:27:44.093Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "33"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "33"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:27:51.535Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "1f906b487c7977830049347a329ebbb2db27aa05"
+        },
+        {
+          "timestamp": "2026-10-08T22:27:34.490Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "32"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "32"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:27:41.843Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "bea4d4a0de46f1c527f750ebe01f95a8a8757ff3"
+        },
+        {
+          "timestamp": "2026-10-08T22:27:24.845Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "31"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "31"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:27:32.244Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "7ca70104feab92c810fb15af14ec37e43e3bdb2a"
+        },
+        {
+          "timestamp": "2026-10-08T22:27:15.282Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "30"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "30"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:27:22.691Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "646acaad86b02178638719694f66d723714abcd4"
+        },
+        {
+          "timestamp": "2026-10-08T22:27:05.638Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "29"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "29"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:27:13.082Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "ed23a0b905fdc55d43700ca8abd4c18a314ece9c"
+        },
+        {
+          "timestamp": "2026-10-08T22:26:56.122Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "28"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "28"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:27:03.436Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "23214a57e793664ca5e39304586db6ce0035f7d5"
+        },
+        {
+          "timestamp": "2026-10-08T22:26:46.431Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "27"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "27"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:26:53.835Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "fe53506bc8df819b244eea20bb25c386d96bd6ff"
+        },
+        {
+          "timestamp": "2026-10-08T22:26:36.829Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "26"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "26"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:26:44.229Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "75749eb34ad0c0cdfe972fed16c2ed2ce0a7fc90"
+        },
+        {
+          "timestamp": "2026-10-08T22:26:27.231Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "25"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "25"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:26:34.627Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "8b54f4fa9599a7c63aa0d5292a4ed3222579cfd3"
+        },
+        {
+          "timestamp": "2026-10-08T22:26:17.665Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "24"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "24"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:26:25.026Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "63a1d5f21108d29e693c337f24bbb96283575916"
+        },
+        {
+          "timestamp": "2026-10-08T22:26:08.021Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "23"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "23"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:26:15.421Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "30d249dedd7e22b82607b198468ec10f78a5bb7b"
+        },
+        {
+          "timestamp": "2026-10-08T22:25:58.420Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "22"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "22"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:26:05.862Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "c4baf3b3f561880ffdcf12e6d1431841b1c26669"
+        },
+        {
+          "timestamp": "2026-10-08T22:25:48.861Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "21"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "21"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:25:56.219Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "3653e2dcf240cfb936100350a2df9ff61cbd9204"
+        },
+        {
+          "timestamp": "2026-10-08T22:25:39.215Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "20"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "20"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:25:46.617Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "30b73ba55bafafd4f654dcc4cec99d570885360d"
+        },
+        {
+          "timestamp": "2026-10-08T22:25:29.614Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "19"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "19"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:25:37.012Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "eff632869ecbe45517b121da01433b0e65a8d918"
+        },
+        {
+          "timestamp": "2026-10-08T22:25:20.058Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "18"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "18"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:25:27.460Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "1eba281a1d5f2520c9bbbd9c5579708446344201"
+        },
+        {
+          "timestamp": "2026-10-08T22:25:10.403Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "17"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "17"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:25:17.846Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "43a47a51d66c968ff0a35038e6e34af2b94e0051"
+        },
+        {
+          "timestamp": "2026-10-08T22:25:00.847Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "16"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "16"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:25:08.203Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "32f90a1be10c81941b647fcffb7785fe0a222a23"
+        },
+        {
+          "timestamp": "2026-10-08T22:24:51.200Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "15"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "15"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:24:58.642Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "606c755ede6e90c54d13140f1024454652bcc350"
+        },
+        {
+          "timestamp": "2026-10-08T22:24:41.644Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "14"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "14"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:24:49.001Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "3a789824d09bbc93a2d02a3963d54788e44ff4d1"
+        },
+        {
+          "timestamp": "2026-10-08T22:24:32.038Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "13"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "13"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:24:39.442Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "89058f28788a695189ff1f24b057f2231085d09f"
+        },
+        {
+          "timestamp": "2026-10-08T22:24:28.335Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "isComplete": "true",
+            "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+            "primaryObjectId": "12"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "12"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:24:29.838Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "14b98f87788325419acdf7fb9e3e429d54ed01d8"
+        },
+        {
+          "timestamp": "2026-10-08T22:22:27.171Z",
+          "category": "FOV Count Violation",
+          "info": {
+            "objectTimeline": "{\"0\": [{\"start\": \"2026-10-08T22:22:27.171Z\", \"end\": \"2026-10-08T22:22:29.172Z\"}]}"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "0"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:22:29.172Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "6e4f6280846b32e6da077db1090902002891ff81"
+        },
+        {
+          "timestamp": "2026-10-08T22:02:26.793Z",
+          "category": "Restricted Area Violation",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "26"
+          },
+          "analyticsModule": {
+            "info": {},
+            "id": "",
+            "source": "",
+            "description": "",
+            "version": ""
+          },
+          "embeddings": [],
+          "objectIds": [
+            "26"
+          ],
+          "place": {
+            "type": "",
+            "info": {},
+            "id": "",
+            "name": ""
+          },
+          "sensorId": "thor-nvstreamer-mock",
+          "end": "2026-10-08T22:02:33.497Z",
+          "frameIds": [],
+          "isAnomaly": false,
+          "type": "mdx-incidents",
+          "Id": "df3fc2728c6f3ea98978a25fdc33d2d4c1380a6b"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:02:17.190Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "25",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:02:24.632Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "25"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "fd0a27f6be28a1b360aec8f56784f7c38e2f134e"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:02:07.630Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "24",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:02:14.986Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "24"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "05f804f9e7038d55a66cacd9e9c5015471c6f967"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:01:57.985Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "23",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:02:05.426Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "23"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "7a029ba9aefa09e4669218bb8bc29c9813a6c202"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:01:48.384Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "22",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:01:55.830Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "22"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "3d104fb43462116b0b7fd403648feb44441e7a70"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:01:38.778Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "21",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:01:46.180Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "21"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "2f02ee89add6dc7dba0af8bd7877a346dc5a6ca6"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:01:29.176Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "20",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:01:36.618Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "20"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "cfe221d88b733ca8c54e40b5011e29a2a72e7a7a"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:01:19.579Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "19",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:01:26.976Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "19"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "135acfa5661c0923196a90a5c376abed2e7e1174"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:01:10.058Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "18",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:01:17.376Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "18"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "6e7d0751e17a40b774997c13acfa233dd94cfb73"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:01:00.369Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "17",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:01:07.814Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "17"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "b5dd0c3147ca6341ac51848c2b82e095bef5cd50"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:00:50.771Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "16",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:00:58.170Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "16"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "60c6ac6d2cc79761e2a41bdf123fc0dfbb785fdd"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:00:41.211Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "15",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:00:48.611Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "15"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "f6006d9724ea87711a94be6c68284ac90cdd537d"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:00:31.609Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "14",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:00:39.012Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "14"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "dd02e5f1f2987d923b5e06047496f3c4f0e398cb"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:00:22.003Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "13",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:00:29.361Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "13"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "98433786bae316d6a0f336099dc338a841d9315c"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:00:12.441Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "12",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:00:19.761Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "12"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "f9ee2b812785bf75cdcfbbe0fb602b5914fae898"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T22:00:02.753Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "11",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:00:10.158Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "11"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "de6afdd79c17e45eab864fd0df269510a9344d8e"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T21:59:53.152Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "10",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T22:00:00.551Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "10"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "3a2bf1550384c8a76285593308a521fd8890ca7b"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T21:59:43.590Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "9",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T21:59:50.951Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "9"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "18dd8300d273e89e07b6e373964298fb8c5220ee"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T21:59:33.987Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "8",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T21:59:41.387Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "8"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "44133bfdc04b2599cbf94a5ed4c2aaa2c83a99b6"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T21:59:25.186Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "7",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T21:59:31.742Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "7"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "bbd207e39a27b784fe2191cda52b38557c4fc946"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T21:59:24.344Z",
+          "info": {
+            "roiId": "ctai-rule-b23b5aa4-4751-49b7-b37b-72a36508d2b5",
+            "primaryObjectId": "6",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T21:59:26.652Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "6"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "673e09266cb61bd66a6b4df79ea024ee0c6b44d5"
+        },
+        {
+          "category": "FOV Count Violation",
+          "sensorId": "thor-nvstreamer-mock",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T21:58:36.327Z",
+          "info": {
+            "objectTimeline": "{\"0\": [{\"start\": \"2026-10-08T21:58:36.327Z\", \"end\": \"2026-10-08T21:58:38.370Z\"}]}"
+          },
+          "end": "2026-10-08T21:58:38.370Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "0"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "481e3394954f90031e2cbe82700f666739b72abd"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:34:24.454Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "32",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:34:26.912Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "32"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "894c7eb1ac3dcfcbb59ead5cbd31f0fd44561184"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:34:14.807Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "31",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:34:22.258Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "31"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "42ea907ef15eacaf43acb2ea5830ae2e63155158"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:34:05.209Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "30",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:34:12.698Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "30"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "bf36b1acfb9919af5c4cb4f7e983f0037fe3a4f0"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:33:55.617Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "29",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:34:03.051Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "29"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "7cdc6eff922938a72ada737fb11fe9f1f236b298"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:33:46.054Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "28",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:33:53.498Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "28"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "0236b9a4caa7e64672b0826ac3606d35ec63e28d"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:33:36.406Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "27",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:33:43.805Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "27"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "27299431058e43d7f3591ac5552f4f522602417f"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:33:26.810Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "26",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:33:34.215Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "26"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "408935a6a70b8d4122d0ce29d0ac7202e6f91516"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:33:17.207Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "25",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:33:24.661Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "25"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "d7765593e1b2171753bb610718d884a1c3625d89"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:33:07.612Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "24",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:33:15.059Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "24"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "12a5963a48be8d5c9f7545ec33c7cae2e8731d8e"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:32:58.015Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "23",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:33:05.455Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "23"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "1e9fcb5ec63f65a887e9f419be08d7301e71b3a8"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:32:48.458Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "22",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:32:55.856Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "22"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "b4219eaef44a608b18b9670839d73e2b044da84e"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:32:38.854Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "21",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:32:46.298Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "21"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "8b4d6b3374a1b576485960be435e41fb132e65e1"
+        },
+        {
+          "category": "Restricted Area Violation",
+          "sensorId": "thor-oct7-live-replay",
+          "analyticsModule": {
+            "version": "",
+            "info": {},
+            "description": "",
+            "id": "",
+            "source": ""
+          },
+          "timestamp": "2026-10-08T05:32:29.217Z",
+          "info": {
+            "roiId": "ctai-rule-ecb5c2ab-e0b6-4272-b624-4f2d1b5a9d97",
+            "primaryObjectId": "20",
+            "isComplete": "true"
+          },
+          "end": "2026-10-08T05:32:36.696Z",
+          "type": "mdx-incidents",
+          "embeddings": [],
+          "place": {
+            "info": {},
+            "name": "",
+            "type": "",
+            "id": ""
+          },
+          "objectIds": [
+            "20"
+          ],
+          "frameIds": [],
+          "isAnomaly": false,
+          "Id": "0654bec0da31e20d9eec8e67d6636b0caf124845"
+        }
+      ]
+    }
+  },
+  "owned_incidents": [
+    {
+      "timestamp": "2026-10-08T22:34:27.349Z",
+      "category": "Restricted Area Violation",
+      "info": {
+        "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+        "primaryObjectId": "75"
+      },
+      "analyticsModule": {
+        "info": {},
+        "id": "",
+        "source": "",
+        "description": "",
+        "version": ""
+      },
+      "embeddings": [],
+      "objectIds": [
+        "75"
+      ],
+      "place": {
+        "type": "",
+        "info": {},
+        "id": "",
+        "name": ""
+      },
+      "sensorId": "thor-nvstreamer-mock",
+      "end": "2026-10-08T22:34:31.445Z",
+      "frameIds": [],
+      "isAnomaly": false,
+      "type": "mdx-incidents",
+      "Id": "0b528cbddd9e2384e8521a4ffea121fa9e617785"
+    },
+    {
+      "timestamp": "2026-10-08T22:34:17.745Z",
+      "category": "Restricted Area Violation",
+      "info": {
+        "isComplete": "true",
+        "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+        "primaryObjectId": "74"
+      },
+      "analyticsModule": {
+        "info": {},
+        "id": "",
+        "source": "",
+        "description": "",
+        "version": ""
+      },
+      "embeddings": [],
+      "objectIds": [
+        "74"
+      ],
+      "place": {
+        "type": "",
+        "info": {},
+        "id": "",
+        "name": ""
+      },
+      "sensorId": "thor-nvstreamer-mock",
+      "end": "2026-10-08T22:34:25.148Z",
+      "frameIds": [],
+      "isAnomaly": false,
+      "type": "mdx-incidents",
+      "Id": "c5f5ab8b5a43b12a5ff77706e34fe4df722a809f"
+    },
+    {
+      "timestamp": "2026-10-08T22:34:08.178Z",
+      "category": "Restricted Area Violation",
+      "info": {
+        "isComplete": "true",
+        "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+        "primaryObjectId": "73"
+      },
+      "analyticsModule": {
+        "info": {},
+        "id": "",
+        "source": "",
+        "description": "",
+        "version": ""
+      },
+      "embeddings": [],
+      "objectIds": [
+        "73"
+      ],
+      "place": {
+        "type": "",
+        "info": {},
+        "id": "",
+        "name": ""
+      },
+      "sensorId": "thor-nvstreamer-mock",
+      "end": "2026-10-08T22:34:15.582Z",
+      "frameIds": [],
+      "isAnomaly": false,
+      "type": "mdx-incidents",
+      "Id": "2f45bbc3a064dce9e4ee0c0a0cb19eb01bccda23"
+    },
+    {
+      "timestamp": "2026-10-08T22:33:58.537Z",
+      "category": "Restricted Area Violation",
+      "info": {
+        "isComplete": "true",
+        "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+        "primaryObjectId": "72"
+      },
+      "analyticsModule": {
+        "info": {},
+        "id": "",
+        "source": "",
+        "description": "",
+        "version": ""
+      },
+      "embeddings": [],
+      "objectIds": [
+        "72"
+      ],
+      "place": {
+        "type": "",
+        "info": {},
+        "id": "",
+        "name": ""
+      },
+      "sensorId": "thor-nvstreamer-mock",
+      "end": "2026-10-08T22:34:05.937Z",
+      "frameIds": [],
+      "isAnomaly": false,
+      "type": "mdx-incidents",
+      "Id": "712e8a697c90499ac8009a42dc07ace51123d57a"
+    },
+    {
+      "timestamp": "2026-10-08T22:33:48.934Z",
+      "category": "Restricted Area Violation",
+      "info": {
+        "isComplete": "true",
+        "roiId": "ctai-rule-cf0bdc3e-4405-4f06-a3c3-720da2b13351",
+        "primaryObjectId": "71"
+      },
+      "analyticsModule": {
+        "info": {},
+        "id": "",
+        "source": "",
+        "description": "",
+        "version": ""
+      },
+      "embeddings": [],
+      "objectIds": [
+        "71"
+      ],
+      "place": {
+        "type": "",
+        "info": {},
+        "id": "",
+        "name": ""
+      },
+      "sensorId": "thor-nvstreamer-mock",
+      "end": "2026-10-08T22:33:56.382Z",
+      "frameIds": [],
+      "isAnomaly": false,
+      "type": "mdx-incidents",
+      "Id": "abe05f90e797d719cd4bdbdef50d895b5eef30c2"
+    }
+  ],
+  "capture_ready": {
+    "http": 200,
+    "body": {
+      "streamId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+      "sensorId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+      "recordingStatus": "on",
+      "vstRecordingMode": "user",
+      "questionReady": true,
+      "remainingSeconds": 0
+    }
+  },
+  "rule_delete": {
+    "http": 200,
+    "body": {
+      "deleted": "cf0bdc3e-4405-4f06-a3c3-720da2b13351"
+    }
+  },
+  "caption_stop": {
+    "http": 200,
+    "body": null
+  },
+  "end": 1791498874.665411,
+  "minimum_available_gib": 51.543
+}

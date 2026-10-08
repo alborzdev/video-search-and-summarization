@@ -1,5 +1,44 @@
 # NVStreamer on Thor
 
+## Current October candidate
+
+When `.thor/settings.json` exists, use the guarded sidecar helper:
+
+```bash
+python3 tools/thor/nvstreamer.py start
+python3 tools/thor/nvstreamer.py upload /absolute/path/to/video.mp4
+python3 tools/thor/nvstreamer.py list
+python3 tools/thor/nvstreamer.py status
+python3 tools/thor/nvstreamer.py stop
+```
+
+The native ARM64 image is staged once with `python3 tools/thor/nvstreamer.py stage`.
+Stop AI services before staging; it requires the active 48 GiB guard, 90 GiB
+available memory, and 200 GiB free disk. It pins the NVIDIA 3.2.1 ARM64 base,
+uses the reviewed October codec lock in a networkless build, and fixes the
+vendor CUDA driver lookup for JetPack. Restore the models in the documented
+[Thor startup order](../../../../tools/thor/README.md).
+
+For a cold recovery with an existing mock source, start NVStreamer before the
+VIOS support stage. VIOS can retain an offline sensor status when the upstream
+is absent at startup. Keep analysis paused during model restoration, then check
+the camera's connection and enable capture explicitly.
+
+The optional sidecar joins project `vss-thor` so the existing guard covers it.
+Start requires its full 4 GiB ceiling above the 48 GiB diagnostic reserve.
+Its private media and state are under `.thor/data/nvstreamer/`; it does not
+reuse VIOS recordings. Stop affects only this service. It does not restart
+automatically after reboot. WebRTC uses its own `32001-32100` port pool and
+external STUN is disabled for this local mock-camera server.
+
+Open `http://<Thor-LAN-IP>:31000` to upload media or copy the generated RTSP
+URL. Add that exact URL in VSS **Live cameras**, then explicitly enable capture
+and the desired analysis profile. Uploading into NVStreamer alone does not
+start VSS recording or AI. The tested fixture is single-slice H.264, 720p,
+10 FPS; other encodings require their own runtime checks.
+
+## Historical standalone wrapper
+
 This wrapper runs NVIDIA NVStreamer as a persistent, local MP4/MKV-to-RTSP
 service alongside the Thor VSS deployment. It uses the already-built
 Thor-compatible image and NVIDIA's VSS 3.2.1 NvStreamer configuration.

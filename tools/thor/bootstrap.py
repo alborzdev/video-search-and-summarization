@@ -339,6 +339,9 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
         'interval': '15s', 'timeout': '5s', 'retries': 6, 'start_period': '30s'}
     token = history_metadata.token_value(STATE)
     services['evidence-clip']['environment']['HISTORY_METADATA_TOKEN'] = token
+    services['evidence-clip'].setdefault('volumes', []).append({
+        'type': 'bind', 'source': str(ROOT / 'deploy/docker/thor-local/evidence-clip/server.py'),
+        'target': '/app/server.py', 'read_only': True})
     services['history-maintenance'] = history_metadata.compose_service(graph, ROOT, token=token)
     services['vss-ui']['environment'].update(HARDWARE_PROFILE='AGX-THOR', HISTORY_METADATA_TOKEN=token,
         TEGRASTATS_METRICS_URL=f'http://{gateway}:19101/metrics')

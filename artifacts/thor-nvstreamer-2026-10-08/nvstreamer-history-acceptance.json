@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "record": {
+    "events": [
+      "person walking",
+      "clothing color",
+      "path and trees"
+    ],
+    "scenario": "outdoor sidewalk activity",
+    "sourceId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+    "sourceKind": "live",
+    "sourceName": "thor-nvstreamer-mock",
+    "startedAt": "2026-10-08T22:38:48.561Z",
+    "knowledgeId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+    "lastSynchronizedAt": "2026-10-08T22:53:28.751Z",
+    "status": "ready",
+    "summary": "A pedestrian traverses a tree-lined sidewalk bordered by a low brick wall under bright daylight. The individual is consistently observed walking, wearing dark shorts and varying upper garments including a shirtless appearance, a brown shirt, a light-colored short-sleeved shirt, and an orange shirt. The subject maintains a steady pace, moving along the paved path with a consistent orientation relative to the surrounding environment. The scene remains unchanged in composition, with the brick wall and lush green trees providing a stable backdrop throughout the duration of observation.",
+    "timelineEnd": "2026-10-08T22:47:11.347Z",
+    "timelineStart": "2026-10-08T22:42:11.347Z"
+  },
+  "observed_browser_answer": "The person is walking along a paved sidewalk. The path is bordered by a low brick wall and lush green trees. This is observed between 2026-10-08T22:46:18.805Z and 2026-10-08T22:47:11.347Z.",
+  "observed_browser_citation": {
+    "start": "2026-10-08T22:46:18.805Z",
+    "end": "2026-10-08T22:47:11.347Z"
+  },
+  "playback": [
+    {
+      "currentTime": 48.793388,
+      "duration": 52.512,
+      "height": 720,
+      "paused": false,
+      "readyState": 4,
+      "width": 1280
+    }
+  ],
+  "telemetry": {
+    "samples": 1122,
+    "minimum_available_gib": 49.773,
+    "maximum_thermal_age": 1.0,
+    "boot_ids": [
+      "652c4102-7adf-4a68-98dd-4cdf6cb8bde5"
+    ]
+  },
+  "time": 1791500258.5061872,
+  "model_limit": "The summary inferred clothing variations that did not occur in the fixed loop; the tested scene answer was correct."
+}

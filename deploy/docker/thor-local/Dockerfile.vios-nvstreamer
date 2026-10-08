@@ -3,16 +3,21 @@
 
 ARG VST_NVSTREAMER_BASE_IMAGE=nvcr.io/nvidia/vss-core/vss-vios-nvstreamer:3.2.1
 FROM ${VST_NVSTREAMER_BASE_IMAGE}
+ARG CODEC_LOCK_PATH=deploy/docker/thor-local/audio/codec-bundle.lock.json
+ARG CODEC_BUNDLE_PATH=deploy/docker/thor-local/vios-codecs/bundle
 
 # Share the same checksum-locked ARM64 codec contract as streamprocessing.
 # The build consumes only local bytes and runtime package repair is disabled.
 COPY deploy/docker/thor-local/vios-codecs/install-codec-bundle.sh /usr/local/libexec/vss-thor/install-vios-codecs
 COPY deploy/docker/thor-local/vios-codecs/vios-offline-entrypoint.sh /usr/local/bin/vios-offline-entrypoint
-COPY deploy/docker/thor-local/audio/codec-bundle.lock.json /tmp/vios-codec-lock.json
-COPY deploy/docker/thor-local/vios-codecs/bundle/ /tmp/vios-codec-bundle/
+COPY deploy/docker/thor-local/vios-codecs/resolve-cuda-soname.py /tmp/resolve-cuda-soname.py
+COPY ${CODEC_LOCK_PATH} /tmp/vios-codec-lock.json
+COPY ${CODEC_BUNDLE_PATH}/ /tmp/vios-codec-bundle/
 
 USER root
-RUN /usr/local/libexec/vss-thor/install-vios-codecs \
+RUN python3 /tmp/resolve-cuda-soname.py /home/vst/vst_release/launch_vst \
+    && rm /tmp/resolve-cuda-soname.py \
+    && /usr/local/libexec/vss-thor/install-vios-codecs \
       /tmp/vios-codec-bundle / install /tmp/vios-codec-lock.json \
     && rm -rf /tmp/vios-codec-bundle /tmp/vios-codec-lock.json \
     && chmod 0555 /usr/local/bin/vios-offline-entrypoint \

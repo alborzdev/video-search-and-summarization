@@ -1,0 +1,15 @@
+{
+  "events": [
+    "person walking",
+    "clothing color",
+    "path and trees"
+  ],
+  "knowledgeId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+  "scenario": "outdoor sidewalk activity",
+  "sourceId": "17e03964-ba65-4eb0-9207-d6abfa951242",
+  "sourceKind": "live",
+  "sourceName": "thor-nvstreamer-mock",
+  "startedAt": "2026-10-08T22:38:48.561Z",
+  "status": "error",
+  "error": "fetch failed"
+}

@@ -445,6 +445,8 @@ class ThorBootstrapTest(unittest.TestCase):
             self.assertNotIn('spark-llm', services)
             self.assertEqual(services['thor-llm']['image'], b.LLM_IMAGE)
             self.assertIn('@sha256:', services['evidence-clip']['build']['args']['PYTHON_BASE_IMAGE'])
+            self.assertTrue(any(m['target'] == '/app/server.py' and m.get('read_only')
+                                for m in services['evidence-clip']['volumes']))
             self.assertEqual(services['vss-agent']['environment']['LLM_NAME'], b.LLM)
             self.assertEqual(services['rtvi-vlm']['build']['args']['BASE_IMAGE'], b.VLM_IMAGE)
             self.assertEqual(services['rtvi-embed']['build']['args']['BASE_IMAGE'], b.EMBED_IMAGE)
