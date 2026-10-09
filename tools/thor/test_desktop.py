@@ -19,58 +19,38 @@ class DesktopTests(unittest.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
 
-    def test_fresh_start_enables_recording_and_analysis_then_waits_for_real_footage(self):
-        config = {'auto_primary_ingestion': True, 'primary_stream_id': 'camera'}
-        camera = {'state': 'online', 'name': 'Main camera'}
-        replies = [{'recordingStatus': 'off'}, {}, {'analysisActive': False},
-                   {'analysisActive': True, 'state': 'active'},
-                   {'recordingStatus': 'on', 'questionReady': False}, {'semanticFresh': False},
-                   {'recordingStatus': 'on', 'questionReady': True}, {'semanticFresh': True}]
-        with patch.object(d, 'local_json', side_effect=replies) as request, \
-                patch.object(d.b, 'require_guard'), patch.object(d.time, 'sleep'):
-            self.assertTrue(d.start_primary_ingestion(Mock(), config, camera))
-        writes = [call for call in request.call_args_list if len(call.args) > 1]
-        self.assertEqual([call.args[1]['action'] for call in writes], ['start', 'resume'])
-        self.assertEqual(writes[0].args[1]['streamId'], 'camera')
-        self.assertIn('/camera/analysis', writes[1].args[0])
+    def test_camera_helper_failure_never_rolls_back_healthy_services(self):
+        (d.b.STATE / 'desktop-config.json').write_text(json.dumps({
+            'local_connection': 'local', 'camera_connection': 'camera',
+            'primary_stream_id': 'camera', 'auto_primary_ingestion': True}))
+        progress = Mock()
+        def execute(command, *_args, **_kwargs):
+            if any(str(part).endswith('primary_ingestion.py') for part in command):
+                raise RuntimeError('helper unavailable')
+        progress.execute.side_effect = execute
+        response = Mock(status=200)
+        response.read.return_value = b'{"streamId":"camera"}'
+        context = Mock()
+        context.__enter__ = Mock(return_value=response)
+        context.__exit__ = Mock(return_value=False)
+        with patch.object(d, 'preflight', return_value=({'host_ip': '127.0.0.1'}, self.graph())), \
+                patch.object(d, 'connect'), patch.object(d.b, 'require_guard'), \
+                patch.object(d.b, 'memory_reserve', return_value=10), \
+                patch.object(d, 'ready_services', return_value=set()), \
+                patch.object(d.urllib.request, 'urlopen', return_value=context), \
+                patch.object(d.subprocess, 'run') as run:
+            message, url = d.start(progress)
+        self.assertIn('VSS is ready', message)
+        self.assertIn('setup failed', message)
+        self.assertTrue(url.endswith('?workspace=live'))
+        run.assert_not_called()
+        receipt = json.loads((d.b.STATE / 'desktop-ready.json').read_text())
+        self.assertEqual(receipt['primary_ingestion'], 'setup-failed')
 
-    def test_running_ingestion_is_preserved_without_restarting_capture(self):
-        with patch.object(d, 'local_json', side_effect=[{'recordingStatus': 'user'},
-                {'analysisActive': True}, {'recordingStatus': 'on', 'questionReady': True},
-                {'semanticFresh': True}]) as request, patch.object(d.b, 'require_guard'):
-            self.assertTrue(d.start_primary_ingestion(Mock(),
-                {'auto_primary_ingestion': True, 'primary_stream_id': 'camera'},
-                {'state': 'online', 'name': 'Main camera'}))
-        self.assertTrue(all(len(call.args) == 1 for call in request.call_args_list))
-
-    def test_failed_recorder_is_reset_only_for_the_primary_camera(self):
-        replies = [{'recordingStatus': 'error'}, {}, {}, {'analysisActive': True},
-                   {'recordingStatus': 'on', 'questionReady': True}, {'semanticFresh': True}]
-        with patch.object(d, 'local_json', side_effect=replies) as request, \
-                patch.object(d.b, 'require_guard'):
-            self.assertTrue(d.start_primary_ingestion(Mock(),
-                {'auto_primary_ingestion': True, 'primary_stream_id': 'camera'},
-                {'state': 'online', 'name': 'Main camera'}))
-        self.assertEqual(request.call_args_list[1].args, ('/vst/api/v1/record/camera/stop', {}))
-        self.assertEqual(request.call_args_list[2].args[1], {'streamId': 'camera', 'action': 'start'})
-
-    def test_ingestion_never_reports_ready_from_stale_index_or_missing_footage(self):
-        with patch.object(d, 'local_json', side_effect=[{'recordingStatus': 'user'},
-                {'analysisActive': True}, {'recordingStatus': 'on', 'questionReady': True},
-                {'semanticFresh': False}]), patch.object(d.b, 'require_guard'):
-            with self.assertRaisesRegex(RuntimeError, 'has not produced fresh footage'):
-                d.start_primary_ingestion(Mock(),
-                    {'auto_primary_ingestion': True, 'primary_stream_id': 'camera'},
-                    {'state': 'online', 'name': 'Main camera'}, wait_seconds=0)
-
-    def test_ingestion_opt_out_and_disconnected_camera_do_not_issue_mutations(self):
-        with patch.object(d, 'local_json') as request:
-            self.assertFalse(d.start_primary_ingestion(Mock(), {}, {}))
-            with self.assertRaisesRegex(RuntimeError, 'Connect and power on'):
-                d.start_primary_ingestion(Mock(),
-                    {'auto_primary_ingestion': True, 'primary_stream_id': 'camera'},
-                    {'state': 'offline', 'name': 'Main camera'})
-        request.assert_not_called()
+    def test_ingestion_opt_out_does_not_start_helper(self):
+        progress = Mock()
+        self.assertEqual(d.schedule_primary_ingestion(progress, {}), 'disabled')
+        progress.execute.assert_not_called()
 
     def test_host_prerequisite_failure_precedes_any_startup_command(self):
         progress = Mock()

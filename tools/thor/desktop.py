@@ -174,44 +174,18 @@ def local_json(path, body=None, timeout=20, port=3001):
         raise RuntimeError(message or f'Local ingestion request failed (HTTP {error.code}).') from error
 
 
-def start_primary_ingestion(progress, config, camera, wait_seconds=180):
+def schedule_primary_ingestion(progress, config):
     if not config.get('auto_primary_ingestion', False):
-        return False
-    primary = config['primary_stream_id']
-    name = camera.get('name')
-    if camera.get('state') != 'online' or not name:
-        raise RuntimeError('Connect and power on the main camera, then start VSS again to enable ingestion.')
-    b.require_guard()
-    progress.say('Starting main-camera recording and search indexing…')
-    record_path = f'/vst/api/v1/record/{urllib.parse.quote(primary, safe="")}'
-    mode = local_json(record_path + '/status', port=30888).get('recordingStatus')
-    if mode == 'error':
-        # VIOS cannot start a recorder left in Error after camera disconnection.
-        # Reset only this camera's recorder; retained video is not removed.
-        local_json(record_path + '/stop', {}, port=30888)
-    if mode not in ('user', 'schedule', 'alwaysOn', 'on'):
-        local_json('/api/vision/live-capture', {'streamId': primary, 'action': 'start'})
-    analysis_path = f'/api/v1/rtsp-streams/{urllib.parse.quote(primary, safe="")}/analysis'
-    analysis = local_json(analysis_path, port=8100)
-    if not analysis.get('analysisActive'):
-        resumed = local_json(analysis_path, {'action': 'resume', 'name': name}, timeout=110, port=8100)
-        if not resumed.get('analysisActive') or resumed.get('state') != 'active':
-            raise RuntimeError('Main-camera analysis did not resume. Check its connection and retry.')
-    progress.say('Waiting for fresh recorded footage and searchable camera segments…')
-    deadline = time.monotonic() + wait_seconds
-    query = urllib.parse.urlencode({'sensorId': primary, 'name': name})
-    while True:
-        b.require_guard()
-        capture = local_json('/api/vision/live-capture?' + urllib.parse.urlencode({'streamId': primary}))
-        intelligence = local_json('/api/vision/source-intelligence?' + query)
-        if (capture.get('recordingStatus') == 'on' and capture.get('questionReady') is True
-                and intelligence.get('semanticFresh') is True):
-            progress.say('Main-camera ingestion is active: recent footage and search indexing verified.')
-            return True
-        if time.monotonic() >= deadline:
-            raise RuntimeError('Main-camera ingestion has not produced fresh footage and search segments. '
-                               'Check camera power/Ethernet and start VSS again.')
-        time.sleep(2)
+        return 'disabled'
+    try:
+        progress.execute([sys.executable, b.ROOT / 'tools/thor/primary_ingestion.py', 'start'],
+                         'Scheduling automatic main-camera recording and indexing…', timeout=30)
+        return 'scheduled'
+    except Exception:
+        # Camera setup is independent of model/service readiness. Never tear
+        # down healthy VSS services because a source could not be started.
+        progress.say('VSS is ready, but automatic camera setup failed. See the startup log.')
+        return 'setup-failed'
 
 
 def start(progress):
@@ -266,24 +240,25 @@ def start(progress):
             primary = json.load(response).get('streamId')
         if primary != config['primary_stream_id']:
             raise RuntimeError('The saved main-camera selection has changed. Review it in VSS.')
-        with urllib.request.urlopen('http://127.0.0.1:30888/vst/api/v1/sensor/status', timeout=10) as response:
-            camera = json.load(response).get(primary, {})
-        ingesting = start_primary_ingestion(progress, config, camera)
-        message = 'VSS is ready. Main camera is ' + ('online.' if camera.get('state') == 'online' else 'waiting for its connection.')
-        if ingesting:
-            message = 'VSS is ready. Main-camera capture and search indexing are active.'
-        b.shared.private_write(b.STATE / 'desktop-ready.json', json.dumps({
-            'time': time.time(), 'url': url, 'reserve_gib': b.memory_reserve(),
-            'primary_stream_id': primary, 'camera_state': camera.get('state'),
-            'primary_ingestion_active': ingesting,
-            'available_gib': b.shared.available(), 'boot_id': Path('/proc/sys/kernel/random/boot_id').read_text().strip()}))
-        return message, url
     except Exception:
         if touched:
             progress.say('Startup did not finish. Stopping partial services; saved data is preserved.')
             subprocess.run([str(item) for item in b.compose('stop', '-t', '10')],
                 env=environment(), stdout=progress.log, stderr=subprocess.STDOUT, timeout=180, check=False)
         raise
+
+    ingestion = schedule_primary_ingestion(progress, config)
+    message = 'VSS is ready.'
+    if ingestion == 'scheduled':
+        message += ' Main-camera recording and indexing will start automatically in the background.'
+    elif ingestion == 'setup-failed':
+        message += ' Automatic camera setup failed; see the startup log.'
+    b.shared.private_write(b.STATE / 'desktop-ready.json', json.dumps({
+        'time': time.time(), 'url': url, 'reserve_gib': b.memory_reserve(),
+        'primary_stream_id': primary, 'primary_ingestion': ingestion,
+        'available_gib': b.shared.available(),
+        'boot_id': Path('/proc/sys/kernel/random/boot_id').read_text().strip()}))
+    return message, url
 
 
 def install_shortcut():

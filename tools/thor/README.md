@@ -201,10 +201,18 @@ and camera connection, applies the saved memory guard, starts missing service
 stages serially, restores the optional NVStreamer server, verifies local readiness
 and opens the live view. Already healthy services remain running.
 With `auto_primary_ingestion: true` in private `.thor/desktop-config.json`,
-startup also starts main-camera recording and resumes its saved analysis profile,
-including after a reboot. It waits for recent retained footage and fresh semantic
-indexing before reporting ingestion ready. A running recorder/indexer is reused;
-other sources are not activated. Camera power and Ethernet must be connected.
+startup schedules main-camera recording and resumes its saved analysis profile,
+including after a reboot. VSS opens when its services are ready; camera readiness
+cannot fail startup or stop healthy services. The background user unit
+`vss-thor-primary-ingestion.service` retries camera/API availability every ten
+seconds, then exits after observing both recording timelines and semantic indexing
+advance. It measures arrivals during this launch rather than comparing camera
+NTP timestamps with the host clock. Static retained footage cannot pass the check.
+A running recorder/indexer is reused, the agent handles subsequent embedding
+reconnections, and other sources are not activated. An operator pause after the
+initial resume ends the helper. Camera power and Ethernet are required to produce
+new footage; the helper never changes network connections or starts containers.
+It requires the configured memory guard before enabling ingestion.
 The Anvil T5 demo uses this mode. Other deployments without this setting preserve
 their recording and analysis selections.
 
@@ -217,6 +225,12 @@ python3 tools/thor/desktop.py install
 The Desktop and Applications entry is `vss-thor-start.desktop`; its progress
 window reports startup stages and failures. Private logs are in
 `.thor/desktop-logs/`, and the last ready receipt is `.thor/desktop-ready.json`.
+The camera startup result is `.thor/primary-ingestion.json` (check its time and
+boot ID); transitions are logged in `journalctl --user -u vss-thor-primary-ingestion`.
+The October 9 failed startup at 14:26 had continuous five-second embedding output,
+but incoming timestamps lagged host time by about a minute. The former 45-second
+freshness gate incorrectly timed out and stopped the stack. The launcher no longer
+uses UI question/freshness flags as a service startup gate.
 Missing images or offline model configuration fail before startup; the launcher
 uses the existing `--pull never --no-build` startup path. Cold model stages verify
 the pinned cache hashes. It never installs packages or downloads models.
