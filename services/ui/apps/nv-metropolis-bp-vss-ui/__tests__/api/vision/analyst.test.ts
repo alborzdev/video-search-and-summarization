@@ -128,8 +128,8 @@ describe("Vision Analyst API", () => {
     ]);
     const inspectorCall = (global.fetch as jest.Mock).mock.calls.find(([input]) => String(input).includes('vision-inspection'));
     expect(JSON.parse(inspectorCall[1].body)).toEqual(expect.objectContaining({
-      live_start_time: '2026-08-18T07:44:52.000Z', live_end_time: '2026-08-18T07:44:55.000Z',
-      lookback_seconds: 3, frame_count: 3,
+      live_start_time: '2026-08-18T07:44:54.000Z', live_end_time: '2026-08-18T07:44:55.000Z',
+      lookback_seconds: 1, frame_count: 1,
     }));
   });
 

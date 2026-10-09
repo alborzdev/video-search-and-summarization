@@ -256,6 +256,36 @@ online. Wi-Fi was restored after the test. The browser then decoded the camera's
 remained paused/off. This is startup and preview validation, not qualification
 of AI ingestion at the camera's full resolution.
 
+## Camera questions and delayed timestamps
+
+The live question default is one second / one frame. With the Thor retained-media
+service configured, a one-frame question reads a 960×720 JPEG directly from the
+original retained recording on CPU and sends one image to Cosmos with a 256-token
+answer budget. This bypasses VIOS MP4 muxing. Longer selected windows keep their
+existing frame counts; plain, audio-free clips pass through the retained-media
+service, which probes the native export and repairs it when necessary. A failed
+repair returns an error instead of sending corrupt MP4s into repeated model calls.
+
+An October 9 camera export returned HTTP 200 but contained invalid MP4 track
+headers (`Invalid mdhd time scale 0`, `invalid STSD entries 0`). Retrying that file
+caused repeated Cosmos 500 responses. After the correction, historical questions
+against the actual camera recording passed through `/api/vision/analyst` in
+4.92 seconds (one frame) and 4.25 seconds (two frames). These are warm, disconnected
+camera tests; they do not establish concurrent live-ingestion latency.
+
+The index and recording readiness checks also observe timestamp advancement on
+host time, so a moving source with delayed NTP timestamps can become ready. Static
+old data does not establish progress, and readiness expires when arrivals stop.
+Question windows retain the camera's actual timestamps; the UI never silently
+substitutes stale footage for live questions. The first observation after service
+restart establishes a baseline, so delayed sources may need a second poll.
+
+The visual tool call has a 55-second deadline; the live UI API aborts after 65
+seconds, and the browser ends a stalled live question at 90 seconds even if an API
+connection never responds. Existing Cosmos caption reservations still apply.
+Embedding ingestion is not paused by questions. The 10 GiB memory reserve and
+model/container budgets are unchanged.
+
 ## UI iteration
 
 ```sh

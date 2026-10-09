@@ -9,10 +9,10 @@ const timeline = (start: string, end: string) => ({
 describe('live question recording window', () => {
   afterEach(() => jest.restoreAllMocks());
 
-  it('uses an existing recording immediately and defaults to three seconds', () => {
+  it('uses an existing recording immediately and defaults to one second', () => {
     expect(chooseLiveRecordingWindow([timeline('00', '30')], askedAt)).toEqual({
       ready: true, remainingSeconds: 0,
-      window: { startTime: '2026-10-01T12:00:22.000Z', endTime: '2026-10-01T12:00:25.000Z' },
+      window: { startTime: '2026-10-01T12:00:24.000Z', endTime: '2026-10-01T12:00:25.000Z' },
     });
   });
 
@@ -60,6 +60,14 @@ describe('live question recording window', () => {
     { startTime: '2026-10-01T11:58:00Z', endTime: '2026-10-01T11:59:00Z' },
   ]])('does not fabricate a live window from absent, invalid, or stale timelines: %p', (raw) => {
     expect(chooseLiveRecordingWindow(raw, askedAt)).toEqual(expect.objectContaining({ ready: false, window: null }));
+  });
+
+  it('uses delayed camera timestamps only after observing recording advancement', () => {
+    const old = [{ startTime: '2026-10-01T11:58:00Z', endTime: '2026-10-01T11:59:30Z' }];
+    expect(chooseLiveRecordingWindow(old, askedAt, 1).ready).toBe(false);
+    expect(chooseLiveRecordingWindow(old, askedAt, 1, true).window).toEqual({
+      startTime: '2026-10-01T11:59:24.000Z', endTime: '2026-10-01T11:59:25.000Z',
+    });
   });
 
   it('reports unknown readiness without throwing when metadata lookup fails', async () => {

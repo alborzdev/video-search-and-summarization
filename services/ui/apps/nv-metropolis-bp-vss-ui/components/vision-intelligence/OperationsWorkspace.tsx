@@ -793,6 +793,13 @@ export function OperationsWorkspace({
     setAnalystRequest(request);
     setAnalystError(null);
     setIsAsking(true);
+    const deadline = window.setTimeout(() => {
+      if (current()) {
+        setAnalystError("The visual question timed out. Try one frame or ask again.");
+        setIsAsking(false);
+      }
+      controller.abort();
+    }, request.scope === "selected-source" && request.sources[0]?.kind === "live" ? 90_000 : 300_000);
     try {
       const response = await fetch("/api/vision/analyst", {
         method: "POST",
@@ -827,6 +834,7 @@ export function OperationsWorkspace({
         setConversationId(createPeerId());
       }
     } finally {
+      window.clearTimeout(deadline);
       if (current()) setIsAsking(false);
     }
   };

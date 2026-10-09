@@ -313,3 +313,20 @@ class TestVSTVideoClipOffsetInputEdgeCases:
         assert input_data.end_time is not None
         assert abs(input_data.start_time - 1.123456789) < 1e-9
         assert abs(input_data.end_time - 2.987654321) < 1e-9
+
+
+@pytest.mark.asyncio
+async def test_configured_clip_validation_never_returns_unprobed_native_media(monkeypatch):
+    from unittest.mock import AsyncMock
+    from vss_agents.tools.vst.video_clip import get_video_url
+    from vss_agents.tools.vst.utils import VSTError
+
+    monkeypatch.setenv("VST_CLIP_FALLBACK_URL", "http://retained.test")
+    prepare = AsyncMock(return_value="http://retained.test/media/validated.mp4")
+    monkeypatch.setattr("vss_agents.tools.vst.video_clip._prepare_fallback_clip", prepare)
+    assert await get_video_url("camera", "2026-10-09T12:00:00Z", "2026-10-09T12:00:02Z") == (
+        "http://retained.test/media/validated.mp4"
+    )
+    prepare.return_value = None
+    with pytest.raises(VSTError, match="playable clip"):
+        await get_video_url("camera", "2026-10-09T12:00:00Z", "2026-10-09T12:00:02Z")

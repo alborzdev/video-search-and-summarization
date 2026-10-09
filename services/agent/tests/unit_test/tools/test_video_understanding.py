@@ -553,3 +553,29 @@ class TestVideoUnderstandingConfig:
         assert VideoUnderstandingConfig(vlm_name="nim_vlm").max_frames_per_request == 30
         with pytest.raises(ValueError):
             VideoUnderstandingConfig(vlm_name="nim_vlm", max_frames_per_request=0)
+
+
+@pytest.mark.asyncio
+async def test_retained_picture_sends_one_image_and_rejects_invalid_media(monkeypatch: pytest.MonkeyPatch) -> None:
+    from unittest.mock import AsyncMock
+    from unittest.mock import MagicMock
+
+    from vss_agents.tools.video_understanding import _retained_picture_messages
+
+    monkeypatch.setenv("VST_CLIP_FALLBACK_URL", "http://retained.test")
+    response = MagicMock()
+    response.read = AsyncMock(return_value=b"\xff\xd8frame\xff\xd9")
+    response.__aenter__ = AsyncMock(return_value=response)
+    response.__aexit__ = AsyncMock(return_value=None)
+    session = MagicMock()
+    session.__aenter__ = AsyncMock(return_value=session)
+    session.__aexit__ = AsyncMock(return_value=None)
+    session.post.return_value = response
+    monkeypatch.setattr("vss_agents.tools.video_understanding.aiohttp.ClientSession", lambda **_kw: session)
+    messages = await _retained_picture_messages("camera", "2026-10-09T12:00:00Z", "What is visible?")
+    assert len(messages[0].content) == 2
+    assert messages[0].content[1]["type"] == "image_url"
+    assert "Do not infer motion" in messages[0].content[0]["text"]
+    response.read.return_value = b"<html>not media</html>"
+    with pytest.raises(ValueError, match="valid JPEG"):
+        await _retained_picture_messages("camera", "2026-10-09T12:00:00Z", "What is visible?")
