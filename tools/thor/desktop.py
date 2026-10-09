@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -308,7 +309,12 @@ def main():
             else:
                 message, url = start(progress)
                 if not args.no_open:
-                    subprocess.Popen(['xdg-open', url], env=environment(),
+                    browser = shutil.which('chromium') or shutil.which('chromium-browser')
+                    if not browser and Path('/snap/bin/chromium').is_file():
+                        browser = '/snap/bin/chromium'
+                    if not browser:
+                        raise RuntimeError(f'VSS is ready at {url}, but Chromium is not installed.')
+                    subprocess.Popen([browser, '--new-window', url], env=environment(),
                         stdout=progress.log, stderr=subprocess.STDOUT, start_new_session=True)
             progress.finish(message)
             return 0

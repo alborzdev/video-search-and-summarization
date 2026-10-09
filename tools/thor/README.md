@@ -199,7 +199,7 @@ The installed **Start VSS · Anvil T5** shortcut starts the prepared demo from
 local caches, applies `sudo -n /usr/bin/jetson_clocks`, restores the local address
 and camera connection, applies the saved memory guard, starts missing service
 stages serially, restores the optional NVStreamer server, verifies local readiness
-and opens the live view. Already healthy services remain running.
+and opens the live view in a Chromium window. Already healthy services remain running.
 With `auto_primary_ingestion: true` in private `.thor/desktop-config.json`,
 startup schedules main-camera recording and resumes its saved analysis profile,
 including after a reboot. VSS opens when its services are ready; camera readiness
