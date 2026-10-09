@@ -109,7 +109,7 @@ describe("live capture API", () => {
     await handler(request(), h.response);
     expect(h.status).toHaveBeenCalledWith(200);
     expect(h.json).toHaveBeenCalledWith(expect.objectContaining({ recordingStatus: "on", questionReady: false, remainingSeconds: 7 }));
-    expect(readWindow).toHaveBeenCalledWith(sensorId, undefined, 3);
+    expect(readWindow).toHaveBeenCalledWith(sensorId, undefined, 1);
     expect((global.fetch as jest.Mock).mock.calls.every(([, init]) => !init.method)).toBe(true);
   });
 

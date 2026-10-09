@@ -83,9 +83,18 @@ export async function readLiveRecordingWindow(
 ): Promise<LiveRecordingWindowStatus> {
   const base = (process.env.VST_INTERNAL_API_URL || "http://127.0.0.1:30888/vst/api").replace(/\/$/, "");
   try {
-    const response = await fetch(`${base}/v1/storage/${encodeURIComponent(sensorId)}/timelines`, {
-      cache: "no-store", redirect: "error", signal: AbortSignal.timeout(4_000),
-    });
+    const mediaBase = process.env.EVIDENCE_CLIP_API_URL?.replace(/\/$/, "");
+    // A live VIOS timeline can extrapolate past the last saved packet. On the
+    // local stack, derive readiness and progress from actual retained media.
+    const response = mediaBase
+      ? await fetch(`${mediaBase}/recording-window`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sensorId, askedAt }),
+          cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15_000),
+        })
+      : await fetch(`${base}/v1/storage/${encodeURIComponent(sensorId)}/timelines`, {
+          cache: "no-store", redirect: "error", signal: AbortSignal.timeout(4_000),
+        });
     if (!response.ok) throw new Error("Recording timeline unavailable");
     const timelines = await response.json();
     const latestEnd = Array.isArray(timelines)

@@ -19,12 +19,14 @@ import server
 class RecordedPictureTests(unittest.TestCase):
     def setUp(self):
         server.PICTURE_CACHE.clear()
+        server.RECORDED_FILES.clear()
 
     @patch("server.subprocess.run")
     @patch("server.probe_start_time", return_value=1735689600)
     @patch("server.get_media_paths", return_value=[Path("/media/camera.mkv")])
     def test_cpu_picture_normalizes_time_seeks_and_coalesces(self, paths, probe, run):
         run.return_value.stdout = b"\xff\xd8test\xff\xd9"
+        run.return_value.stderr = b"n: 0 pts:1735689603000000"
         payload = {"sensorId": "camera", "timestamp": "2025-01-01T00:00:03+00:00"}
         self.assertEqual(server.recorded_picture(payload), run.return_value.stdout)
         payload["timestamp"] = "2025-01-01T00:00:03Z"
@@ -33,7 +35,7 @@ class RecordedPictureTests(unittest.TestCase):
         command = run.call_args.args[0]
         self.assertEqual(command[command.index("-hwaccel") + 1], "none")
         self.assertEqual(command[command.index("-ss") + 1], "3.000000")
-        self.assertGreater(command.index("-ss"), command.index("-i"))
+        self.assertLess(command.index("-ss"), command.index("-i"))
         self.assertEqual(paths.call_args.args[1], "2025-01-01T00:00:03Z")
 
     def test_invalid_source_time_and_dimensions_never_read_media(self):
@@ -59,13 +61,13 @@ class RecordedPictureTests(unittest.TestCase):
             entered.set()
             release.wait(2)
             active -= 1
-            return Mock(stdout=b"\xff\xd8test\xff\xd9")
+            return b"\xff\xd8test\xff\xd9"
         def request(second):
             try:
                 server.recorded_picture({"sensorId": "camera", "timestamp": f"2025-01-01T00:00:0{second}Z"})
             except Exception as error:
                 errors.append(error)
-        with patch("server.subprocess.run", side_effect=decode):
+        with patch("server.decode_picture", side_effect=decode):
             threads = [threading.Thread(target=request, args=(i,)) for i in range(1, 7)]
             for thread in threads:
                 thread.start()
@@ -83,6 +85,7 @@ class RecordedPictureTests(unittest.TestCase):
     def test_empty_or_non_image_output_is_never_cached(self, paths, probe, run):
         for output in (b"", b"not an image"):
             run.return_value.stdout = output
+            run.return_value.stderr = b"n: 0 pts:1735689603000000"
             with self.assertRaises(RuntimeError):
                 server.recorded_picture({"sensorId": "camera", "timestamp": "2025-01-01T00:00:03Z"})
             self.assertFalse(server.PICTURE_CACHE)
@@ -97,12 +100,115 @@ class RecordedPictureTests(unittest.TestCase):
                 "-threads", "1", "-g", "20", str(path),
             ], check=True, capture_output=True, timeout=10)
             with patch.object(server, "get_media_paths", return_value=[path]), \
-                    patch.object(server, "probe_start_time", return_value=1735689600), \
+                    patch.object(server, "probe_start_time", side_effect=[1735689600, 0, 1735689600, 0]), \
                     patch.object(server, "retain_native_clip", side_effect=AssertionError("GPU export must not run")):
                 pictures = [server.recorded_picture({"sensorId": "camera", "width": 64, "height": 64,
                     "timestamp": f"2025-01-01T00:00:0{second}Z"}) for second in (0, 1)]
             self.assertTrue(all(p.startswith(b"\xff\xd8") and p.endswith(b"\xff\xd9") for p in pictures))
             self.assertNotEqual(*pictures)
+
+
+class VerifiedRecordingTests(unittest.TestCase):
+    def setUp(self):
+        server.RECORDED_FILES.clear()
+
+    @patch("server.get_media_paths", return_value=[Path("/media/camera.mkv")])
+    @patch("server.subprocess.run")
+    def test_window_uses_packets_not_extrapolated_live_timeline(self, run, paths):
+        run.return_value.stdout = json.dumps({"packets": [
+            {"pts_time": str(1791575340 + n / 10), "flags": "K_" if n % 20 == 0 else "__"}
+            for n in range(342)
+        ]})
+        result = server.recorded_intervals({"sensorId": "camera", "askedAt": "2026-10-09T19:50:18Z"})
+        self.assertEqual(result, [{"startTime": "2026-10-09T19:49:00+00:00",
+                                   "endTime": "2026-10-09T19:49:34.100000+00:00"}])
+
+    @patch("server.get_media_paths", return_value=[Path("/media/camera.mkv")])
+    @patch("server.subprocess.run")
+    def test_packet_gap_requires_new_keyframe(self, run, paths):
+        run.return_value.stdout = json.dumps({"packets": [
+            {"pts_time": 1735689600, "flags": "K_"}, {"pts_time": 1735689600.1},
+            {"pts_time": 1735689605}, {"pts_time": 1735689606, "flags": "K_"},
+            {"pts_time": 1735689606.1},
+        ]})
+        result = server.recorded_intervals({"sensorId": "camera", "askedAt": "2025-01-01T00:00:20Z"})
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[1]["startTime"], "2025-01-01T00:00:06+00:00")
+
+    @patch("server.get_media_paths", side_effect=ValueError("No recorded media covers the requested time range"))
+    def test_no_media_never_fabricates_window(self, paths):
+        self.assertEqual(server.recorded_intervals({"sensorId": "camera", "askedAt": "2025-01-01T00:00:20Z"}), [])
+
+    @unittest.skipUnless(shutil.which("ffmpeg"), "CPU FFmpeg required")
+    def test_growing_epoch_recording_is_readable_before_writer_closes(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "live.mkv"
+            writer = subprocess.Popen([
+                "ffmpeg", "-nostdin", "-v", "error", "-re", "-f", "lavfi", "-i",
+                "testsrc2=size=64x64:rate=10", "-t", "8", "-c:v", "libx264",
+                "-threads", "1", "-preset", "ultrafast", "-g", "10",
+                "-output_ts_offset", "1735689600", "-cluster_time_limit", "500",
+                "-flush_packets", "1", str(path),
+            ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            try:
+                with patch.object(server, "get_media_paths", return_value=[path]):
+                    payload = {"sensorId": "camera", "askedAt": "2025-01-01T00:00:10Z"}
+                    ends = []
+                    deadline = time.monotonic() + 6
+                    while time.monotonic() < deadline:
+                        try:
+                            intervals = server.recorded_intervals(payload)
+                            if intervals:
+                                end = server.parse_timestamp(intervals[-1]["endTime"]).timestamp()
+                                if not ends or end > ends[-1]:
+                                    ends.append(end)
+                                if len(ends) >= 2 and end >= 1735689601.5:
+                                    break
+                        except subprocess.CalledProcessError:
+                            pass  # The writer may not have emitted its header yet.
+                        time.sleep(0.15)
+                    self.assertGreaterEqual(len(ends), 2)
+                    self.assertIsNone(writer.poll())
+                    server.PICTURE_CACHE.clear()
+                    # Reproduce VIOS while the MKV is open: broad lookup found
+                    # this file, but a narrow timestamp lookup returns no media.
+                    with patch.object(server, "get_media_paths", side_effect=ValueError(
+                        "No recorded media covers the requested time range")) as narrow:
+                        image = server.recorded_picture({"sensorId": "camera", "timestamp": "2025-01-01T00:00:01Z"})
+                        narrow.assert_not_called()
+                    self.assertTrue(image.startswith(b"\xff\xd8"))
+                    self.assertIsNone(writer.poll())
+            finally:
+                writer.terminate()
+                writer.wait(timeout=5)
+
+    def test_verified_file_cache_is_source_time_and_lifetime_bound(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "camera.mkv"
+            path.touch()
+            server.remember_recorded_files("camera", [(10, 20, path)])
+            self.assertEqual(server.verified_picture_path("camera", 15), path)
+            self.assertIsNone(server.verified_picture_path("other-camera", 15))
+            self.assertIsNone(server.verified_picture_path("camera", 21))
+            with patch("server.time.monotonic", return_value=time.monotonic() + 181):
+                self.assertIsNone(server.verified_picture_path("camera", 15))
+            server.remember_recorded_files("camera", [(10, 20, path)])
+            path.unlink()
+            self.assertIsNone(server.verified_picture_path("camera", 15))
+
+    @patch("server.probe_start_time", return_value=1735689600)
+    @patch("server.subprocess.run")
+    def test_bad_seek_index_falls_back_and_checks_exact_frame_time(self, run, probe):
+        run.side_effect = [Mock(stderr=b"n: 0 pts:1735689615000000", stdout=b"wrong"),
+                           Mock(stderr=b"n: 0 pts:1735689603033000", stdout=b"correct")]
+        self.assertEqual(server.decode_picture([Path("/media/camera.mkv")], 3, 960, 720), b"correct")
+        command = run.call_args.args[0]
+        self.assertNotIn("-ss", command)
+        self.assertIn("trim=start=1735689603.000000", command[command.index("-vf") + 1])
+        run.side_effect = None
+        run.return_value = Mock(stderr=b"n: 0 pts:1735689615000000", stdout=b"wrong")
+        with self.assertRaisesRegex(RuntimeError, "does not match"):
+            server.decode_picture([Path("/media/camera.mkv")], 3, 960, 720)
 
 
 class CacheHistoryTests(unittest.TestCase):

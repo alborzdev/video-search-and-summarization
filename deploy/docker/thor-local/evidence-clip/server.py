@@ -58,10 +58,128 @@ APPEARANCE_TIMEOUT_SECONDS = 50
 PICTURE_LOCK = threading.Lock()
 PICTURE_CACHE: OrderedDict[tuple, tuple[float, bytes]] = OrderedDict()
 MAX_PICTURE_CACHE_BYTES = 8 * 1024 * 1024
+RECORDED_FILES_LOCK = threading.Lock()
+RECORDED_FILES: OrderedDict[str, tuple[float, list[tuple[float, float, Path]]]] = OrderedDict()
+
+
+def remember_recorded_files(sensor: str, intervals: list[tuple[float, float, Path]]) -> None:
+    with RECORDED_FILES_LOCK:
+        RECORDED_FILES[sensor] = (time.monotonic() + 180, intervals)
+        RECORDED_FILES.move_to_end(sensor)
+        while len(RECORDED_FILES) > 64:
+            RECORDED_FILES.popitem(last=False)
+
+
+def verified_picture_path(sensor: str, instant: float) -> Path | None:
+    with RECORDED_FILES_LOCK:
+        expires, intervals = RECORDED_FILES.get(sensor, (0, []))
+        if expires < time.monotonic():
+            RECORDED_FILES.pop(sensor, None)
+            return None
+        for start, end, path in reversed(intervals):
+            if start <= instant <= end and path.is_file():
+                return path
+    return None
 
 
 class AppearanceBusy(RuntimeError):
     pass
+
+
+def recorded_intervals(payload: object) -> list[dict[str, str]]:
+    """Probe saved packets, since VIOS's live timeline can advance without media."""
+    if not isinstance(payload, dict):
+        raise ValueError("A recording window request is required")
+    sensor = payload.get("sensorId")
+    if not isinstance(sensor, str) or not ID_PATTERN.fullmatch(sensor):
+        raise ValueError("Invalid sensor ID")
+    end = parse_timestamp(payload.get("askedAt")).astimezone(timezone.utc)
+    start = end - timedelta(seconds=180)
+    try:
+        paths = get_media_paths(sensor, start.isoformat(), end.isoformat())
+    except ValueError as error:
+        if str(error) == "No recorded media covers the requested time range":
+            return []
+        raise
+    intervals = []
+    files = []
+    # Camera storage rotates every minute. Bound both work and response size.
+    for path in paths[-4:]:
+        result = subprocess.run([
+            "ffprobe", "-v", "error", "-select_streams", "v:0",
+            "-show_entries", "packet=pts_time,flags", "-of", "json", str(path),
+        ], check=True, capture_output=True, text=True, timeout=3)
+        packets = json.loads(result.stdout).get("packets", [])
+        if RECORDING_ROOT in path.parents:
+            continue  # Imported replay files have no live epoch packet clock.
+        origin = 0.0  # VIOS MKVs preserve epoch presentation timestamps.
+        first = previous = None
+        for packet in packets:
+            try:
+                instant = float(packet["pts_time"]) + origin
+            except (KeyError, TypeError, ValueError):
+                continue
+            if not math.isfinite(instant) or not start.timestamp() <= instant <= end.timestamp():
+                continue
+            if previous is not None and instant <= previous:
+                continue
+            if previous is not None and instant - previous > 1:
+                if first is not None and previous > first:
+                    intervals.append((first, previous))
+                    files.append((first, previous, path))
+                first = previous = None
+            # An independent interval must begin on a decodable key frame.
+            if first is None and "K" not in packet.get("flags", ""):
+                continue
+            if first is None:
+                first = instant
+            previous = instant
+        if first is not None and previous is not None and previous > first:
+            intervals.append((first, previous))
+            files.append((first, previous, path))
+    remember_recorded_files(sensor, files)
+    merged = []
+    for a, b in sorted(intervals):
+        if merged and a - merged[-1][1] <= 0.25:
+            merged[-1] = (merged[-1][0], max(b, merged[-1][1]))
+        else:
+            merged.append((a, b))
+    return [{"startTime": datetime.fromtimestamp(a, timezone.utc).isoformat(),
+             "endTime": datetime.fromtimestamp(b, timezone.utc).isoformat()}
+            for a, b in merged]
+
+
+def decode_picture(paths: list[Path], offset: float, width: int, height: int) -> bytes:
+    """Seek on CPU and verify the returned PTS before accepting a frame."""
+    with tempfile.TemporaryDirectory(prefix="picture-") as directory:
+        if len(paths) == 1:
+            inputs = ["-i", str(paths[0])]
+            media_origin = probe_start_time(paths[0])
+        else:
+            concat = Path(directory) / "inputs.txt"
+            concat.write_text("".join(
+                f"file '{str(path).replace(chr(39), chr(39) + chr(92) + chr(39) + chr(39))}'\n"
+                for path in paths), encoding="utf-8")
+            inputs = ["-f", "concat", "-safe", "0", "-i", str(concat)]
+            media_origin = 0.0
+        target = media_origin + offset
+        # Some VIOS seek indexes jump forward. Verify exact microsecond PTS,
+        # then use bounded sequential decoding only if the index was wrong.
+        for fast in (True, False):
+            seek = ["-ss", f"{offset:.6f}"]
+            result = subprocess.run([
+                "ffmpeg", "-nostdin", "-v", "info", "-hwaccel", "none",
+                "-threads", "1", "-filter_threads", "1", "-copyts",
+                *(seek + inputs if fast else inputs),
+                "-map", "0:v:0", "-an", "-frames:v", "1", "-vf",
+                f"trim=start={target:.6f},settb=AVTB,showinfo,scale={width}:{height}",
+                "-fps_mode", "vfr", "-c:v", "mjpeg", "-threads", "1",
+                "-f", "image2pipe", "pipe:1",
+            ], check=True, capture_output=True, timeout=15)
+            match = re.search(rb"n:\s*0\s+pts:\s*(-?\d+)", result.stderr)
+            if match and -0.01 <= int(match[1]) / 1_000_000 - target <= 0.25:
+                return result.stdout
+        raise RuntimeError("The decoded frame does not match the requested recording time")
 
 
 def recorded_picture(payload: object) -> bytes:
@@ -88,34 +206,18 @@ def recorded_picture(payload: object) -> bytes:
             PICTURE_CACHE.move_to_end(key)
             return PICTURE_CACHE[key][1]
         end = instant + timedelta(seconds=0.2)
-        paths = get_media_paths(sensor, timestamp, end.isoformat().replace("+00:00", "Z"))
+        # The precise VIOS lookup can return [] until an active MKV closes,
+        # even though /recording-window just read its packets. Keep the verified
+        # source-to-file association instead of re-resolving that same instant.
+        verified = verified_picture_path(sensor, instant.timestamp())
+        paths = [verified] if verified else get_media_paths(
+            sensor, timestamp, end.isoformat().replace("+00:00", "Z"))
         origin = (recording_start(sensor, instant, end)
                   if RECORDING_ROOT in paths[0].parents else probe_start_time(paths[0]))
         if not math.isfinite(origin) or instant.timestamp() < origin - 0.25:
             raise ValueError("Recording does not cover the requested picture")
         offset = max(0.0, instant.timestamp() - origin)
-        with tempfile.TemporaryDirectory(prefix="picture-") as directory:
-            if len(paths) == 1:
-                # VIOS epoch-PTS MKVs can have broken seek indexes that jump
-                # past the requested instant. Decode to the instant instead of
-                # trusting an input seek and silently returning a later frame.
-                inputs = ["-i", str(paths[0])]
-                seek = ["-ss", f"{offset:.6f}"]
-            else:
-                concat = Path(directory) / "inputs.txt"
-                concat.write_text("".join(
-                    f"file '{str(path).replace(chr(39), chr(39) + chr(92) + chr(39) + chr(39))}'\n"
-                    for path in paths), encoding="utf-8")
-                inputs = ["-f", "concat", "-safe", "0", "-i", str(concat)]
-                seek = ["-ss", f"{offset:.6f}"]
-            result = subprocess.run([
-                "ffmpeg", "-nostdin", "-v", "error", "-hwaccel", "none",
-                "-threads", "1", "-filter_threads", "1", *inputs, *seek,
-                "-map", "0:v:0", "-an", "-frames:v", "1", "-vf",
-                f"scale={width}:{height}", "-c:v", "mjpeg", "-threads", "1",
-                "-f", "image2pipe", "pipe:1",
-            ], check=True, capture_output=True, timeout=15)
-        image = result.stdout
+        image = decode_picture(paths, offset, width, height)
         if not image.startswith(b"\xff\xd8") or not image.endswith(b"\xff\xd9") or len(image) > MAX_APPEARANCE_FRAME_BYTES:
             raise RuntimeError("Recorded picture is unavailable")
         PICTURE_CACHE[key] = (time.monotonic() + 60, image)
@@ -743,7 +845,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         request_path = urlparse(self.path).path
-        if request_path not in {"/prepare", "/picture", "/purge", "/v1/embeddings", "/appearance-crop", "/history/preview", "/history/clear", "/history/cancel"}:
+        if request_path not in {"/prepare", "/recording-window", "/picture", "/purge", "/v1/embeddings", "/appearance-crop", "/history/preview", "/history/clear", "/history/cancel"}:
             self.json_response(HTTPStatus.NOT_FOUND, {"error": "not found"})
             return
         try:
@@ -751,6 +853,9 @@ class Handler(BaseHTTPRequestHandler):
             if length <= 0 or length > (4096 if request_path in {"/appearance-crop", "/picture"} else 2_000_000):
                 raise ValueError("Invalid request size")
             payload = json.loads(self.rfile.read(length))
+            if request_path == "/recording-window":
+                self.json_response(HTTPStatus.OK, recorded_intervals(payload))
+                return
             if request_path == "/picture":
                 image = recorded_picture(payload)
                 self.send_response(HTTPStatus.OK)
@@ -799,6 +904,7 @@ class Handler(BaseHTTPRequestHandler):
         except AppearanceBusy as error:
             self.json_response(HTTPStatus.TOO_MANY_REQUESTS, {"error": str(error)})
         except ValueError as error:
+            print(f"{request_path} rejected: {error}", flush=True)
             self.json_response(HTTPStatus.UNPROCESSABLE_ENTITY, {"error": str(error)})
         except Exception as error:
             print(f"local support service failed: {type(error).__name__}: {error}", flush=True)
