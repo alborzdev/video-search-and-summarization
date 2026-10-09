@@ -19,6 +19,16 @@ class DesktopTests(unittest.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
 
+    def test_host_prerequisite_failure_precedes_any_startup_command(self):
+        progress = Mock()
+        with patch.object(d.b, 'doctor', side_effect=RuntimeError('net/core/rmem_max too small')) as doctor, \
+                patch.object(d.b, 'settings') as settings:
+            with self.assertRaisesRegex(RuntimeError, 'rmem_max'):
+                d.preflight(progress)
+        doctor.assert_called_once_with()
+        settings.assert_not_called()
+        progress.execute.assert_not_called()
+
     def graph(self):
         names = {'thor-llm', 'rtvi-embed', 'rtvi-vlm', 'thor-perception', 'centralizedb',
                  'lvs-server', 'alert-bridge', 'vss-agent', 'vss-va-mcp', 'history-maintenance',

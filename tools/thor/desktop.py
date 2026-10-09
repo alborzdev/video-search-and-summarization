@@ -102,7 +102,8 @@ def validate_offline(settings, graph):
 
 
 def preflight(progress):
-    b.require_thor()
+    # Check reboot-sensitive host prerequisites before clocks or service changes.
+    b.doctor()
     settings = b.settings()
     graph = json.loads((b.STATE / 'compose.json').read_text())
     images = validate_offline(settings, graph)

@@ -38,6 +38,18 @@ The host must have the NVIDIA runtime, cgroupfs and required kernel settings.
 Use the reviewed host remediation tooling when `doctor` reports a blocker.
 Do not change Docker's runtime configuration with an unrelated replacement file.
 
+Persist the Video I/O socket buffer ceilings before the first launch. Setting
+them only with `sysctl -w` loses them at reboot:
+
+```sh
+sudo install -o root -g root -m 0644 deploy/docker/thor-local/90-cti-vss-network.conf /etc/sysctl.d/90-cti-vss-network.conf
+sudo sysctl -p /etc/sysctl.d/90-cti-vss-network.conf
+python3 tools/thor/bootstrap.py doctor
+```
+
+This applies only the two network buffer ceilings; it does not start VSS.
+The desktop preflight checks host prerequisites before changing clocks or services.
+
 The Nemotron download is pinned by revision and every file hash; interrupted
 downloads resume outside the final model directory. Image staging uses the
 exact Nemotron, embedding and Cosmos runtime image digests and locked codecs.
