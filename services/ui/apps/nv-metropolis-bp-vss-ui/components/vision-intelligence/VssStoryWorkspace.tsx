@@ -130,7 +130,14 @@ function Fingerprint({ query = false }: { query?: boolean }) {
     </div>
   );
 }
-export function VssStoryWorkspace({ onOpenDemo }: CapabilitiesWorkspaceProps) {
+export function VssStoryWorkspace({ onOpenDemo, systemHealth }: CapabilitiesWorkspaceProps) {
+  const processingHardware = systemHealth?.hardwareProfile === "DGX-SPARK"
+    ? "DGX Spark"
+    : systemHealth?.hardwareProfile === "IGX-THOR"
+    ? "IGX Thor"
+    : ["JETSON-THOR", "AGX-THOR", "THOR"].includes(systemHealth?.hardwareProfile || "")
+    ? "Jetson Thor"
+    : "configured local hardware";
   const root = useRef<HTMLDivElement>(null),
     track = useRef<HTMLDivElement>(null),
     stage = useRef<HTMLDivElement>(null);
@@ -572,7 +579,7 @@ export function VssStoryWorkspace({ onOpenDemo }: CapabilitiesWorkspaceProps) {
             {active >= 14
               ? "Illustrative industry workflows · site-specific configuration and validation required"
               : active === 0
-              ? "Anvil illustrated · processing on DGX Spark · capacity depends on workload"
+              ? `Anvil illustrated · processing on ${processingHardware} · capacity depends on workload`
               : active === 8
               ? "Related-object search requires object embeddings."
               : active === 10

@@ -5,8 +5,11 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 
 ROOT = Path(__file__).resolve().parents[2]
+if (ROOT / '.thor/settings.json').is_file():
+    os.execv(sys.executable, [sys.executable, str(ROOT / 'tools/thor/ui.py'), *sys.argv[1:]])
 STATE = ROOT / 'artifacts/thor-memory-2026-09-09'
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('mode', choices=['dev', 'built'])

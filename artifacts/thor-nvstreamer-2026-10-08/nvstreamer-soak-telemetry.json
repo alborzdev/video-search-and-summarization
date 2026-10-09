@@ -1,0 +1,10 @@
+{
+  "samples": 603,
+  "minimum_available_gib": 51.372,
+  "maximum_thermal_age": 1.0,
+  "boot_ids": [
+    "652c4102-7adf-4a68-98dd-4cdf6cb8bde5"
+  ],
+  "start": 1791498267.3892598,
+  "end": 1791498874.665411
+}

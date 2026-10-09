@@ -847,7 +847,7 @@ export const VideoManagementComponent: React.FC<
         <div role="alert" className="vm-source-error">
           <h2>Sources are temporarily unavailable</h2>
           <p>The local video service could not return the source catalog. Your saved sources have not been removed.</p>
-          <button type="button" onClick={() => void refetch()}>Retry loading sources</button>
+          <button type="button" onClick={() => void handleRefresh()}>Retry loading sources</button>
         </div>
       );
     }

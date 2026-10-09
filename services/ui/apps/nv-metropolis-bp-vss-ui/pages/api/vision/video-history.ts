@@ -7,18 +7,18 @@ import type {
   VideoHistoryRecord,
   VideoHistoryStartRequest,
 } from "../../../components/vision-intelligence/videoHistory";
-import type { NextApiRequest, NextApiResponse } from "next";
-import { mkdir, readFile, unlink } from "node:fs/promises";
-import path from "node:path";
 import { writeVideoHistoryRecord as writeRecord } from "../../../server/vision/historyFiles";
-
-import { THOR_LIVE_CAPTION_PROFILE } from "../../../server/vision/liveCaptionProfile";
+import { historyRequest } from "../../../server/vision/historyRequest";
 import { isSourceLiveAlertFocused } from "../../../server/vision/liveAlertReservation";
+import { THOR_LIVE_CAPTION_PROFILE } from "../../../server/vision/liveCaptionProfile";
 import {
   admitWorkload,
   WorkloadAdmissionError,
   workloadAdmissionFailure,
 } from "../../../server/vision/workloadAdmissionAdapter";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { mkdir, readFile, unlink } from "node:fs/promises";
+import path from "node:path";
 
 const STORE_DIR =
   process.env.VISION_HISTORY_DIR || "/tmp/vss-vision-intelligence-history";
@@ -37,7 +37,15 @@ const AGENT_URL = (
 const DEFAULT_MODEL =
   process.env.LVS_VLM_MODEL || "nim_nvidia_cosmos3-nano-reasoner_bf16-final";
 const ID_PATTERN = /^[A-Za-z0-9._:-]{1,160}$/;
-const historyBuildJobs = new Map<string, Promise<void>>();
+// Source hot reload must not mistake a still-running graph build for recovery
+// after a process restart and launch the same expensive workload again.
+const historyRuntime = globalThis as typeof globalThis & {
+  __vssVideoHistoryBuildJobs?: Map<string, Promise<void>>;
+};
+const historyBuildJobs = (historyRuntime.__vssVideoHistoryBuildJobs ??= new Map<
+  string,
+  Promise<void>
+>());
 const liveCaptionRepairJobs = new Map<string, Promise<void>>();
 const liveCaptionRepairAttemptedAt = new Map<string, number>();
 const LIVE_CAPTION_REPAIR_COOLDOWN_MS = 30_000;
@@ -46,7 +54,12 @@ const LIVE_HISTORY_WINDOW_MS =
     process.env.HARDWARE_PROFILE === "DGX-SPARK" ? 30 : 24 * 60,
     Math.max(
       5,
-      Number(process.env.VISION_HISTORY_LIVE_WINDOW_MINUTES || 30)
+      Number(
+        process.env.VISION_HISTORY_LIVE_WINDOW_MINUTES ||
+          (["AGX-THOR", "THOR"].includes(process.env.HARDWARE_PROFILE || "")
+            ? 5
+            : 30)
+      )
     )
   ) *
   60 *
@@ -82,10 +95,10 @@ async function jsonRequest<T>(
   init: RequestInit,
   timeoutMs: number
 ): Promise<T> {
-  const response = await fetch(url, {
-    ...init,
-    signal: AbortSignal.timeout(timeoutMs),
-  });
+  const response =
+    timeoutMs > 300_000
+      ? await historyRequest(url, init, timeoutMs)
+      : await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) });
   const raw = await response.text();
   let payload: (T & { detail?: unknown; error?: string }) | null = null;
   try {
@@ -498,9 +511,14 @@ async function buildReplayHistory(
   previous?: VideoHistoryRecord
 ): Promise<VideoHistoryRecord> {
   const timeline = await sourceTimeline(request.source.id);
-  if (process.env.HARDWARE_PROFILE === "DGX-SPARK" &&
-      Date.parse(timeline.endTime) - Date.parse(timeline.startTime) > 30 * 60_000) {
-    throw new HistoryError("Spark replay history supports at most 30 minutes per build. Select a shorter recording to build searchable history.", 422);
+  if (
+    process.env.HARDWARE_PROFILE === "DGX-SPARK" &&
+    Date.parse(timeline.endTime) - Date.parse(timeline.startTime) > 30 * 60_000
+  ) {
+    throw new HistoryError(
+      "Spark replay history supports at most 30 minutes per build. Select a shorter recording to build searchable history.",
+      422
+    );
   }
   const params = new URLSearchParams({
     container: "mp4",
@@ -670,7 +688,7 @@ function answerCitations(
     });
   };
   const isoRange =
-    /(20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z)\s*(?:-|–|to)\s*(20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z)/g;
+    /(20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z)\s*(?:-|–|to|and)\s*(20\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?Z)/g;
   const rangeSpans: Array<[number, number]> = [];
   for (const match of answer.matchAll(isoRange)) {
     if (match.index !== undefined)
@@ -687,6 +705,19 @@ function answerCitations(
     ? Date.parse(record.timelineStart)
     : NaN;
   const retainedEnd = record.timelineEnd ? Date.parse(record.timelineEnd) : NaN;
+  // Local graph answers can quote the document's Unix seconds verbatim.
+  // Accept only ranges wholly inside this source's retained timeline, so
+  // unrelated numeric identifiers cannot become playable evidence links.
+  const unixRange =
+    /\b(\d{10}(?:\.\d+)?)\s*(?:-|–|to|and)\s*(\d{10}(?:\.\d+)?)\b/g;
+  if (Number.isFinite(retainedStart) && Number.isFinite(retainedEnd)) {
+    for (const match of answer.matchAll(unixRange)) {
+      const start = Number(match[1]) * 1_000;
+      const end = Number(match[2]) * 1_000;
+      if (start >= retainedStart && end <= retainedEnd)
+        add(start, end, match[0]);
+    }
+  }
   for (const match of answer.matchAll(isoPoint)) {
     const index = match.index ?? -1;
     if (rangeSpans.some(([start, end]) => index >= start && index < end))
@@ -870,7 +901,9 @@ export default async function handler(
       return res.status(202).json(building);
     } catch (error) {
       if (error instanceof WorkloadAdmissionError) {
-        return res.status(error.statusCode).json(workloadAdmissionFailure(error));
+        return res
+          .status(error.statusCode)
+          .json(workloadAdmissionFailure(error));
       }
       const historyError =
         error instanceof HistoryError

@@ -117,7 +117,7 @@ function validateRequest(value: unknown): asserts value is VisionAnalystRequest 
 function timeoutFor(request: VisionAnalystRequest): number {
   const defaultMs = request.scope === 'all-sources'
     ? 240_000
-    : request.sources[0].kind === 'live' ? 150_000 : 180_000;
+    : request.sources[0].kind === 'live' ? 65_000 : 180_000;
   const configured = Number(process.env.VISION_ANALYST_TIMEOUT_MS || defaultMs);
   return Number.isFinite(configured) ? Math.min(600_000, Math.max(30_000, configured)) : defaultMs;
 }

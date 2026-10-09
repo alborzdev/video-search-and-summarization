@@ -12,6 +12,9 @@ lock=${4:-/tmp/vios-codec-lock.json}
 expected_source=20f1c024c11405ed88192ed9e26a2841348249b8c4238bccd5cce355f7051238
 expected_set=ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4
 expected_lock=e15b1ec7a68ca4087669a395148a1dea1e9d18288dcd072a259a43bcfe67f197
+# Separate reviewed October 7 lock for fresh installations. The historical
+# lock remains accepted and unchanged; no caller can supply another digest.
+expected_current_lock=13b24d65e754e33381ec19b60608a6be0c11fa56bbcc061e1115722598d171f3
 expected_count=63
 
 [[ "${target}" == / ]] || { echo "VIOS codecs may only be installed into an image root" >&2; exit 2; }
@@ -23,7 +26,8 @@ expected_count=63
 command -v dpkg-deb >/dev/null || { echo "dpkg-deb is required" >&2; exit 2; }
 command -v sha256sum >/dev/null || { echo "sha256sum is required" >&2; exit 2; }
 
-[[ $(sha256sum "${lock}" | awk '{print $1}') == "${expected_lock}" ]] || {
+lock_digest=$(sha256sum "${lock}" | awk '{print $1}')
+[[ ${lock_digest} == "${expected_lock}" || ${lock_digest} == "${expected_current_lock}" ]] || {
   echo "canonical VIOS codec lock digest is not trusted" >&2; exit 2;
 }
 cmp -s "${manifest}" "${lock}" || {

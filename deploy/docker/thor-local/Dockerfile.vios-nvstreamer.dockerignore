@@ -5,7 +5,13 @@
 !deploy/docker/thor-local/vios-codecs/
 !deploy/docker/thor-local/vios-codecs/install-codec-bundle.sh
 !deploy/docker/thor-local/vios-codecs/vios-offline-entrypoint.sh
+!deploy/docker/thor-local/vios-codecs/resolve-cuda-soname.py
 !deploy/docker/thor-local/vios-codecs/bundle/
 !deploy/docker/thor-local/vios-codecs/bundle/**
 !deploy/docker/thor-local/audio/
 !deploy/docker/thor-local/audio/codec-bundle.lock.json
+!deploy/docker/thor-current/
+!deploy/docker/thor-current/codecs.lock.json
+!deploy/docker/thor-current/vios-codecs/
+!deploy/docker/thor-current/vios-codecs/bundle/
+!deploy/docker/thor-current/vios-codecs/bundle/**

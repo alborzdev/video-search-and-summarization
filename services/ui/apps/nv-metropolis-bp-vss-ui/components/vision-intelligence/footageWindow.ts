@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-export const DEFAULT_LOOKBACK_SECONDS = 3;
+export const DEFAULT_LOOKBACK_SECONDS = 1;
 export const MIN_LOOKBACK_SECONDS = 1;
 export const MAX_LOOKBACK_SECONDS = 60;
 export const MAX_QUESTION_FRAMES = 20;

@@ -250,6 +250,8 @@ class VlmCaptionsCompletionResponse(CommonBaseModel):
 class VlmQuery(CommonBaseModel):
     """VLM Captions Query Request Fields."""
 
+    publish_results: bool = True
+
     id: UUID | List[UUID] = Field(
         description="Unique ID or list of IDs of the file(s)/live-stream(s) to generate VLM captions for",
         examples=[

@@ -1,0 +1,23 @@
+[
+  {
+    "package": "gstreamer1.0-plugins-good",
+    "before": "1.24.2-1ubuntu1.5",
+    "after": "1.24.2-1ubuntu1.8",
+    "before_sha256": "f8344a72dc9138c27e45d17d79902a90276ac3db06c64615759941d6112fc965",
+    "after_sha256": "c1dba2da2de061f8df51eaedf3ee22ac4aefaae6356d79b0fd9918cb64b8beae"
+  },
+  {
+    "package": "librabbitmq4",
+    "before": "0.11.0-1ubuntu0.1",
+    "after": "0.11.0-1ubuntu0.2",
+    "before_sha256": "9bf8682027d5d680cc6b0b8dda616edd5d4e5c69f4f1641dc2d02e7d0f5f3e40",
+    "after_sha256": "09fcf24f5d06b5c33e774ee5f620c733f9a2a62eb4aab23ab3aa3492e6256bef"
+  },
+  {
+    "package": "libssh-gcrypt-4",
+    "before": "0.10.6-2ubuntu0.4",
+    "after": "0.10.6-2ubuntu0.5",
+    "before_sha256": "81d8c892a575ac89ff3a64dd3dfbb4fcd4b146fd83a1ae30f18ccf2a54df995b",
+    "after_sha256": "bcc6340756c1cf8f1d297422f4c9018435844e1ee9613cc21f7624d772b8173b"
+  }
+]

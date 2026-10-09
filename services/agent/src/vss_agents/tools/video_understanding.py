@@ -17,6 +17,7 @@ from collections.abc import AsyncGenerator
 from datetime import datetime
 from datetime import timedelta
 import logging
+import os
 import tempfile
 from typing import Any
 from typing import Literal
@@ -416,6 +417,34 @@ def extend_timestamp(start_time: str, end_time: str) -> str:
     return end_time_dt.isoformat().replace("+00:00", "Z")
 
 
+async def _retained_picture_messages(sensor_id: str, timestamp: str, prompt: str) -> list[HumanMessage]:
+    """Read one verified retained frame without VIOS's unreliable MP4 muxer."""
+    base = os.environ["VST_CLIP_FALLBACK_URL"].rstrip("/")
+    async with (
+        aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=20)) as session,
+        session.post(
+            f"{base}/picture",
+            json={"sensorId": sensor_id, "timestamp": timestamp, "width": 960, "height": 720},
+        ) as response,
+    ):
+        response.raise_for_status()
+        image = await response.read()
+    if len(image) > 4 * 1024 * 1024 or not image.startswith(b"\xff\xd8") or not image.endswith(b"\xff\xd9"):
+        raise ValueError("The retained camera frame is not a valid JPEG")
+    encoded = base64.b64encode(image).decode("ascii")
+    return [
+        HumanMessage(
+            content=[
+                {
+                    "type": "text",
+                    "text": "This is one recorded frame. Do not infer motion or events between frames. " + prompt,
+                },
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{encoded}"}},
+            ]
+        )
+    ]
+
+
 async def _build_vlm_messages(
     video_url: str,
     user_prompt: str,
@@ -702,11 +731,22 @@ async def video_understanding(config: VideoUnderstandingConfig, builder: Builder
 
         prompt_template = reasoning_prompt_template if use_reasoning else non_reasoning_prompt_template
 
+        use_retained_picture = bool(
+            requested_frame_count == 1
+            and config.use_vst
+            and config.time_format == "iso"
+            and not config.enable_audio
+            and os.getenv("VST_CLIP_FALLBACK_URL")
+        )
+        if use_retained_picture:
+            vlm = vlm.bind(max_tokens=256)
         vlm_chain = prompt_template | vlm
         logger.info(f"VLM reasoning mode: {use_reasoning}")
 
         # Step 1: Get the video URL (different paths for S3 vs VST)
-        if not config.use_vst:
+        if use_retained_picture:
+            video_url = ""  # Single-frame questions do not export or download an MP4.
+        elif not config.use_vst:
             # get the video URL from S3
             if not s3_client:
                 raise ValueError("S3 client is not configured correctly")
@@ -780,15 +820,20 @@ async def video_understanding(config: VideoUnderstandingConfig, builder: Builder
                 "Write your final answer immediately after the </think> tag."
             )
 
-        messages = await _build_vlm_messages(
-            video_url,
-            user_prompt,
-            use_base64=use_video_base64,
-            use_video_file_base64=use_video_file_base64,
-            video_length_seconds=video_length_seconds,
-            num_frames=num_frames,
-            max_fps=config.max_fps,
-        )
+        if use_retained_picture:
+            messages = await _retained_picture_messages(
+                video_understanding_input.sensor_id, start_dt.isoformat(), user_prompt
+            )
+        else:
+            messages = await _build_vlm_messages(
+                video_url,
+                user_prompt,
+                use_base64=use_video_base64,
+                use_video_file_base64=use_video_file_base64,
+                video_length_seconds=video_length_seconds,
+                num_frames=num_frames,
+                max_fps=config.max_fps,
+            )
 
         message_batches = _split_vlm_image_messages(messages, config.max_frames_per_request)
         if len(message_batches) > 1:

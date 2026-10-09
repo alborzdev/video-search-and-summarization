@@ -77,6 +77,21 @@ No steady-state HMR benchmark is claimed. Thor's reserve and tooling remain sepa
 
 ## Thor
 
+For a fresh October candidate with `.thor/settings.json`, use
+`python3 tools/thor/ui.py deps` followed by `python3 tools/thor/ui.py dev`.
+`tools/dev/ui.py` automatically routes to that helper. It mounts source in a
+bounded CPU Node container and preserves the 48 GiB guard. Direct port 3001
+works while the backend gateway on 7777 is still being staged. See
+[fresh Thor setup](../tools/thor/README.md). The historical workflow below
+applies when that independent candidate has not been rendered.
+
+The October renderer also mounts the CPU evidence service's `server.py` read
+only, matching Spark's development workflow. After Python edits, restart only
+the `evidence-clip` service. Recorded gallery thumbnails use its bounded CPU
+reader when `EVIDENCE_CLIP_API_URL` is configured; a failed thumbnail does not
+fall back to another GPU decoder. Existing model budgets and the diagnostic
+reserve remain unchanged.
+
 The default workflow is source-mounted Next.js Turbopack development at http://10.88.9.12:7777 (current Thor LAN address). Run from the repository root:
 
 ```sh

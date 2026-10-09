@@ -8,6 +8,7 @@ from __future__ import annotations
 from datetime import UTC
 from datetime import datetime
 import logging
+import time
 from typing import Any
 from typing import Literal
 
@@ -44,6 +45,21 @@ from vss_agents.tools.vst.utils import get_streams_info as vst_get_streams_info
 from vss_agents.utils.sanitize import scrub_log
 
 logger = logging.getLogger(__name__)
+_index_progress: dict[tuple[str, str], tuple[float, float | None]] = {}
+
+
+def _index_is_advancing(endpoint: str, source: str, timestamp: float, max_age: float) -> bool:
+    """A newly arriving document is live evidence even when camera NTP lags."""
+    key = (endpoint, source)
+    now = time.monotonic()
+    previous = _index_progress.get(key)
+    advanced_at = previous[1] if previous else None
+    if previous and timestamp > previous[0]:
+        advanced_at = now
+    if key not in _index_progress and len(_index_progress) >= 512:
+        del _index_progress[next(iter(_index_progress))]
+    _index_progress[key] = (timestamp, advanced_at)
+    return advanced_at is not None and now - advanced_at <= max_age
 
 
 async def _semantic_index_is_fresh(config: ServiceConfig, stream_id: str, *, max_age_seconds: float = 60.0) -> bool:
@@ -88,7 +104,8 @@ async def _semantic_index_is_fresh(config: ServiceConfig, stream_id: str, *, max
             if parsed.tzinfo is None:
                 parsed = parsed.replace(tzinfo=UTC)
             age = (datetime.now(UTC) - parsed.astimezone(UTC)).total_seconds()
-            return -5.0 <= age <= max_age_seconds
+            advancing = _index_is_advancing(config.elasticsearch_url, stream_id, parsed.timestamp(), max_age_seconds)
+            return -5.0 <= age <= max_age_seconds or advancing
     except Exception:
         logger.warning(
             "Could not prove fresh semantic indexing for %s",

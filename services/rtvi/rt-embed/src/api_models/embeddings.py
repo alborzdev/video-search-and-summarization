@@ -418,6 +418,10 @@ class VideoEmbeddingsQuery(CommonBaseModel):
         le=3600,
         json_schema_extra={"format": "int32"},
     )
+    publish_results: bool = Field(
+        default=True,
+        description="Publish embedding results to Kafka. Disable for search-query media so it is not indexed.",
+    )
     chunk_overlap_duration: int = Field(
         default=0,
         examples=[10],

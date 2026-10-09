@@ -71,6 +71,7 @@ function ruleSourceState(rule: MonitoringRule, streams: VisionStream[], loading:
 
 export function preferredMonitoringSource(streams: VisionStream[], requested?: string | null): VisionStream | undefined {
   return streams.find(stream => stream.streamId === requested || stream.sensorId === requested)
+    ?? streams.find(stream => stream.isPrimary)
     ?? streams.find(stream => isLiveStream(stream) && stream.connectionState === 'online')
     ?? streams.find(stream => !isLiveStream(stream))
     ?? streams.find(stream => stream.connectionState !== 'offline' && stream.connectionState !== 'removed')

@@ -555,7 +555,7 @@ export function OperationsWorkspace({
           (intelligence?.semanticSegments ?? 0)
         );
       };
-      return score(right) - score(left);
+      return Number(Boolean(right.isPrimary)) - Number(Boolean(left.isPrimary)) || score(right) - score(left);
     });
   }, [sourceIntelligenceById, streams]);
 
@@ -714,7 +714,7 @@ export function OperationsWorkspace({
               (next[stream.streamId]?.evidenceEvents ?? 0) * 1_000_000 +
               (next[stream.streamId]?.trackedObservations ?? 0) * 100 +
               (next[stream.streamId]?.semanticSegments ?? 0);
-            return score(right) - score(left);
+            return Number(Boolean(right.isPrimary)) - Number(Boolean(left.isPrimary)) || score(right) - score(left);
           });
           if (ranked[0]) setSelectedId(ranked[0].streamId);
         }
@@ -793,6 +793,13 @@ export function OperationsWorkspace({
     setAnalystRequest(request);
     setAnalystError(null);
     setIsAsking(true);
+    const deadline = window.setTimeout(() => {
+      if (current()) {
+        setAnalystError("The visual question timed out. Try one frame or ask again.");
+        setIsAsking(false);
+      }
+      controller.abort();
+    }, request.scope === "selected-source" && request.sources[0]?.kind === "live" ? 90_000 : 300_000);
     try {
       const response = await fetch("/api/vision/analyst", {
         method: "POST",
@@ -827,6 +834,7 @@ export function OperationsWorkspace({
         setConversationId(createPeerId());
       }
     } finally {
+      window.clearTimeout(deadline);
       if (current()) setIsAsking(false);
     }
   };

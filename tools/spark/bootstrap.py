@@ -119,8 +119,9 @@ def compose(*args):
     return ['docker', 'compose', '--project-name', 'vss-spark', '-f', STATE / 'compose.json', *args]
 
 
-def booth_runtime_safety(graph):
+def booth_runtime_safety(graph, state=None, hardware='DGX-SPARK'):
     """Upgrade a cached graph without rerendering models or addresses."""
+    state = STATE if state is None else Path(state)
     agent = graph['services'].get('vss-agent')
     if agent is not None:
         # The image's installer otherwise contacts PyPI on every recreation,
@@ -131,7 +132,7 @@ def booth_runtime_safety(graph):
             VSS_PROPRIETARY_CODECS_MAX_RETRY_SECONDS='0')
         mounts = agent.setdefault('volumes', [])
         mounts[:] = [mount for mount in mounts if not isinstance(mount, dict) or mount.get('target') != CODEC_WHEEL_TARGET]
-        mounts.append({'type': 'bind', 'source': str(STATE / 'offline-tools' / CODEC_WHEEL_NAME),
+        mounts.append({'type': 'bind', 'source': str(state / 'offline-tools' / CODEC_WHEEL_NAME),
                        'target': CODEC_WHEEL_TARGET, 'read_only': True,
                        'bind': {'create_host_path': False}})
     kafka_target = '/usr/local/lib/python3.13/site-packages/mdx/analytics/core/stream/source/source_kafka.py'
@@ -169,8 +170,10 @@ def booth_runtime_safety(graph):
     ui_service = graph['services'].get('vss-ui')
     token = graph['services'].get('evidence-clip', {}).get('environment', {}).get('HISTORY_METADATA_TOKEN')
     if ui_service and token:
-        ui_service.setdefault('environment', {}).update(HARDWARE_PROFILE='DGX-SPARK',
-            SPARK_CAPACITY_URL='http://127.0.0.1:8102/capacity', HISTORY_METADATA_TOKEN=token)
+        ui_service.setdefault('environment', {}).update(HARDWARE_PROFILE=hardware,
+            HISTORY_METADATA_TOKEN=token)
+        if hardware == 'DGX-SPARK':
+            ui_service['environment']['SPARK_CAPACITY_URL'] = 'http://127.0.0.1:8102/capacity'
     return graph
 
 
@@ -425,9 +428,9 @@ def configure_offline_topic_tools(service):
                    'bind': {'create_host_path': False}})
 
 
-def stage_codec_wheel():
+def stage_codec_wheel(state=None):
     """Explicit online setup only; desktop startup never calls this downloader."""
-    path = STATE / 'offline-tools' / CODEC_WHEEL_NAME
+    path = (STATE if state is None else Path(state)) / 'offline-tools' / CODEC_WHEEL_NAME
     if path.is_file():
         with path.open('rb') as wheel:
             if hashlib.file_digest(wheel, 'sha256').hexdigest() == CODEC_WHEEL_SHA256:

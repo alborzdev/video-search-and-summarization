@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 import { DEFAULT_LOOKBACK_SECONDS, validLookbackSeconds } from "../../components/vision-intelligence/footageWindow";
+import { observedProgress } from "./observedProgress";
 export const LIVE_QUESTION_WINDOW_SECONDS = DEFAULT_LOOKBACK_SECONDS;
 const RECORDING_EDGE_DELAY_SECONDS = 5;
 const MAX_RECORDING_AGE_SECONDS = 30;
@@ -16,7 +17,8 @@ export interface LiveRecordingWindowStatus {
 export function chooseLiveRecordingWindow(
   timelines: unknown,
   askedAt: string,
-  lookbackSeconds = DEFAULT_LOOKBACK_SECONDS
+  lookbackSeconds = DEFAULT_LOOKBACK_SECONDS,
+  advancing = false
 ): LiveRecordingWindowStatus {
   const askedMs = Date.parse(askedAt);
   const unavailable: LiveRecordingWindowStatus = {
@@ -43,10 +45,14 @@ export function chooseLiveRecordingWindow(
     if (previous && interval.start <= previous.end) previous.end = Math.max(previous.end, interval.end);
     else continuous.push({ ...interval });
   }
-  const safeEdge = askedMs - RECORDING_EDGE_DELAY_SECONDS * 1_000;
+  const latestEnd = Math.max(...continuous.map(({ end }) => end));
+  // On a lagging camera, use its observed advancing storage edge and preserve
+  // those exact source timestamps. Static old footage never enables this path.
+  const referenceMs = advancing ? Math.min(askedMs, latestEnd) : askedMs;
+  const safeEdge = referenceMs - RECORDING_EDGE_DELAY_SECONDS * 1_000;
   const recent = continuous
     .map(({ start, end }) => ({ start, end: Math.min(end, safeEdge) }))
-    .filter(({ start, end }) => end > start && end >= askedMs - MAX_RECORDING_AGE_SECONDS * 1_000)
+    .filter(({ start, end }) => end > start && end >= referenceMs - MAX_RECORDING_AGE_SECONDS * 1_000)
     .sort((left, right) => right.end - left.end);
   const durationMs = lookbackSeconds * 1_000;
   const retained = recent[0];
@@ -77,11 +83,24 @@ export async function readLiveRecordingWindow(
 ): Promise<LiveRecordingWindowStatus> {
   const base = (process.env.VST_INTERNAL_API_URL || "http://127.0.0.1:30888/vst/api").replace(/\/$/, "");
   try {
-    const response = await fetch(`${base}/v1/storage/${encodeURIComponent(sensorId)}/timelines`, {
-      cache: "no-store", redirect: "error", signal: AbortSignal.timeout(4_000),
-    });
+    const mediaBase = process.env.EVIDENCE_CLIP_API_URL?.replace(/\/$/, "");
+    // A live VIOS timeline can extrapolate past the last saved packet. On the
+    // local stack, derive readiness and progress from actual retained media.
+    const response = mediaBase
+      ? await fetch(`${mediaBase}/recording-window`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sensorId, askedAt }),
+          cache: "no-store", redirect: "error", signal: AbortSignal.timeout(15_000),
+        })
+      : await fetch(`${base}/v1/storage/${encodeURIComponent(sensorId)}/timelines`, {
+          cache: "no-store", redirect: "error", signal: AbortSignal.timeout(4_000),
+        });
     if (!response.ok) throw new Error("Recording timeline unavailable");
-    return chooseLiveRecordingWindow(await response.json(), askedAt, lookbackSeconds);
+    const timelines = await response.json();
+    const latestEnd = Array.isArray(timelines)
+      ? Math.max(...timelines.map(row => Date.parse(row?.endTime))) : Number.NaN;
+    const advancing = observedProgress(`recording:${base}:${sensorId}`, latestEnd, 30_000);
+    return chooseLiveRecordingWindow(timelines, askedAt, lookbackSeconds, advancing);
   } catch {
     return {
       ready: false, window: null, remainingSeconds: null,

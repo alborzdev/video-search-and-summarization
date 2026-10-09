@@ -1,0 +1,17 @@
+**
+!deploy/
+!deploy/docker/
+!deploy/docker/thor-local/
+!deploy/docker/thor-local/patches/
+!deploy/docker/thor-local/patches/*.py
+!services/
+!services/video-summarization/
+!services/video-summarization/src/
+!services/video-summarization/src/*.py
+!services/video-summarization/src/protos/
+!services/video-summarization/src/protos/*.py
+!services/video-summarization/src/vlm_pipeline/
+!services/video-summarization/src/vlm_pipeline/*.py
+.thor/
+.spark/
+.git/

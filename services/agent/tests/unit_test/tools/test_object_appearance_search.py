@@ -16,6 +16,20 @@ spec.loader.exec_module(appearance)
 
 
 class AppearanceTests(unittest.IsolatedAsyncioTestCase):
+    async def test_reference_crop_encoding_does_not_publish_ingestion_records(self):
+        session = AsyncMock()
+        with patch.object(appearance, "_json", AsyncMock(side_effect=[
+            {"image_base64": "eA=="},
+            {"chunk_responses": [{"embeddings": [0.1] * 768}]},
+        ])) as request:
+            vector = await appearance._encode(session, {
+                "timestamp": "2026-10-08T00:00:00Z", "bbox": {},
+            }, "source-a")
+        self.assertEqual(len(vector), 768)
+        embedding_call = request.call_args_list[1]
+        self.assertTrue(embedding_call.args[1].endswith("/v1/generate_video_embeddings"))
+        self.assertIs(embedding_call.args[2]["publish_results"], False)
+
     async def test_visual_search_respects_window_source_and_footage_in_preparation_and_cached_results(self):
         start = datetime(2026, 10, 1, 18, 40, tzinfo=UTC)
         end = datetime(2026, 10, 1, 18, 55, tzinfo=UTC)

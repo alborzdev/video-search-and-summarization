@@ -74,6 +74,7 @@ async def _encode(session: aiohttp.ClientSession, detection: dict[str, Any], sen
             "media_type": "image",
             "model": PROVIDER.split("/")[0],
             "stream": False,
+            "publish_results": False,
         },
     )
     chunks = result.get("chunk_responses", [])

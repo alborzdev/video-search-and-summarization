@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "repository": "nvidia/Cosmos-Embed1-448p-anomaly-detection",
+  "revision": "3b1455ed97c7b1d5419c0c3129b7199ca4cd9382",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "size": 1519,
+      "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+    },
+    {
+      "path": "README.md",
+      "size": 28082,
+      "sha256": "271984086ae1226b94e8ef1308bf93087799f92db9a2bd918252b380a870aab4"
+    },
+    {
+      "path": "config.json",
+      "size": 526,
+      "sha256": "42c3ec446b66c9fb2f3bdced508a1e4b8ae126106495f13d3519379c04de917e"
+    },
+    {
+      "path": "configuration_embed1.py",
+      "size": 2885,
+      "sha256": "0b08a3a36d37752be8d5e29263dfc30fff081a2297287c60d3e37f2a4eae7325"
+    },
+    {
+      "path": "export_config.yaml",
+      "size": 5375,
+      "sha256": "b9156cbb594687c58f2e62d80bf3fb3f8a9e952e8b64acaf71013cfbb573cc5e"
+    },
+    {
+      "path": "model-00001-of-00010.safetensors",
+      "size": 517488448,
+      "sha256": "fea3de5d5625b8e729eda58e5cd32289955cf0dff448c8fb0195d7466633fea1"
+    },
+    {
+      "path": "model-00002-of-00010.safetensors",
+      "size": 493842736,
+      "sha256": "ee78b9fa3abcbdb6a481a00a708ac33d9d7539a3dd6f592d3a454fdd2607ad89"
+    },
+    {
+      "path": "model-00003-of-00010.safetensors",
+      "size": 505010128,
+      "sha256": "3bed2818905e39a6ec71ebbbea9448d4f880e54645d98ccd4e7065a19dd12fcd"
+    },
+    {
+      "path": "model-00004-of-00010.safetensors",
+      "size": 505010136,
+      "sha256": "e4b18aafc406e637b98711dd7cb2ba08ee495e12a3edc4193bd23417e45ecccf"
+    },
+    {
+      "path": "model-00005-of-00010.safetensors",
+      "size": 505010120,
+      "sha256": "1f5dbf38683fb3817862a46169f69b201a65c6347156b73876631ecc4c7583ba"
+    },
+    {
+      "path": "model-00006-of-00010.safetensors",
+      "size": 505010136,
+      "sha256": "2c8513ab357cea6e912dc6ac4362d966cce2cc1d7141f954689e2a1c8a160527"
+    },
+    {
+      "path": "model-00007-of-00010.safetensors",
+      "size": 505010120,
+      "sha256": "d147a76e22cee63211afe47d1c57f8f86efc725f8166c3337583372590ae2f92"
+    },
+    {
+      "path": "model-00008-of-00010.safetensors",
+      "size": 505010136,
+      "sha256": "6ef8272be1e43ace55c82984146f565109155bc851d8babe19e50d236f69e0c1"
+    },
+    {
+      "path": "model-00009-of-00010.safetensors",
+      "size": 505010088,
+      "sha256": "aca7e54bbb969f81f462184048fd0acfab6ac2c25b2ec78c5fecef3aa5f56950"
+    },
+    {
+      "path": "model-00010-of-00010.safetensors",
+      "size": 245726200,
+      "sha256": "9f7d209bb3ece2bb5ceb7c3e709d3221b043d4189f0f06262a77eb3ed8022e7d"
+    },
+    {
+      "path": "model.safetensors.index.json",
+      "size": 72704,
+      "sha256": "cb9ac32a15534ba39cfbc875e5f0efa905b63972dc4fafcd8f1724bfdd547573"
+    },
+    {
+      "path": "modeling_embed1.py",
+      "size": 10408,
+      "sha256": "6da9cca3b8b3432e9137440985f94f8b66fce005cffbc2c78e202b677f540644"
+    },
+    {
+      "path": "modeling_outputs.py",
+      "size": 3173,
+      "sha256": "aa0517eded364e26a0272285ac856074872990cbc322659ad5158e805605556f"
+    },
+    {
+      "path": "modeling_qformer.py",
+      "size": 45579,
+      "sha256": "4c2751f8b541fda6ba4d72e2f1488b08a3796b50353ef7485b896c00aa07cad6"
+    },
+    {
+      "path": "modeling_utils.py",
+      "size": 5763,
+      "sha256": "d56f3857ab66943276eeb5c1253e04300958bba87b084be4309e16e10b599a6b"
+    },
+    {
+      "path": "modeling_vit.py",
+      "size": 26868,
+      "sha256": "8225681e7946066eae08e6cafa695bd76bdcad1724edc2828134e077bcecba1b"
+    },
+    {
+      "path": "preprocessing_embed1.py",
+      "size": 4974,
+      "sha256": "9c99569509b6a265da0fdee80724ecf8210f8df10288ddacd36746c52209d5a5"
+    },
+    {
+      "path": "tokenizer.json",
+      "size": 466062,
+      "sha256": "ce64fce797c24f68df90b40a3f74f579b336a493db14bd583fd520ea0d8c9a98"
+    },
+    {
+      "path": "tokenizer_config.json",
+      "size": 48,
+      "sha256": "a025160ef0431f1a392f6f050c1310f4c5d9fb6f275932dbccba73c4d214bf10"
+    },
+    {
+      "path": "vocab.txt",
+      "size": 231508,
+      "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  ]
+}

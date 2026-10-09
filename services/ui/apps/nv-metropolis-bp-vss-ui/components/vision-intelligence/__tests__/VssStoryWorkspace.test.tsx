@@ -25,12 +25,14 @@ const flush = () =>
     pending = [];
     frames.forEach((fn) => fn(0));
   });
-function setup(openDemo?: jest.Mock) {
+function setup(openDemo?: jest.Mock, hardwareProfile?: string) {
   const leave = jest.fn();
   render(
     <VssStoryWorkspace
       onOpenDemo={openDemo}
-      systemHealth={null}
+      systemHealth={hardwareProfile ? {
+        hardwareProfile, checkedAt: "2026-10-08T00:00:00Z", services: [], status: "online",
+      } : null}
       onExplore={leave}
       onOpenEvents={leave}
       onOpenLive={leave}
@@ -45,6 +47,16 @@ function setup(openDemo?: jest.Mock) {
   root.scrollTo = jest.fn();
   return { root, leave };
 }
+it.each([
+  ["DGX-SPARK", "DGX Spark"],
+  ["AGX-THOR", "Jetson Thor"],
+  ["JETSON-THOR", "Jetson Thor"],
+  ["IGX-THOR", "IGX Thor"],
+  [undefined, "configured local hardware"],
+])("identifies the configured processing platform: %s", (profile, label) => {
+  setup(undefined, profile);
+  expect(screen.getByText(`Anvil illustrated · processing on ${label} · capacity depends on workload`)).toBeInTheDocument();
+});
 function scroll(root: HTMLElement, step: number) {
   root.scrollTop = step * 800;
   fireEvent.scroll(root);

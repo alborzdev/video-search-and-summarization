@@ -140,6 +140,7 @@ export function GuidedDemoWorkspace(props: Props) {
   const cameras = streams.filter((stream) => sourceKind(stream) === "Live");
   const source =
     cameras.find((stream) => stream.streamId === selectedId) ??
+    cameras.find((stream) => stream.isPrimary) ??
     cameras.find((stream) => /digital-twin/i.test(stream.url)) ??
     cameras.find((stream) => stream.connectionState === "online") ??
     cameras[0];

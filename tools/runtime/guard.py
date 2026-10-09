@@ -15,12 +15,37 @@ def halt(name):
 def trip_reason(available_gib, thermal_age, floor=FLOOR):
  return 'reserve' if available_gib < floor else 'thermal_stall' if thermal_age > 10 else None
 
+def guard_targets():
+ project=os.environ.get('VSS_GUARD_PROJECT')
+ if not project:return TARGETS
+ result=subprocess.run(['docker','ps','--filter',f'label=com.docker.compose.project={project}','--format','{{.ID}}'],capture_output=True,text=True,timeout=5,check=True)
+ return result.stdout.splitlines()
+
+def persist(path, row, append=False):
+ try:
+  with path.open('a' if append else 'w') as stream:
+   stream.write(json.dumps(row)+'\n');stream.flush();os.fsync(stream.fileno())
+ except OSError as error:
+  # Disk exhaustion must never prevent the guard from stopping workloads.
+  print(json.dumps({'telemetry_error':type(error).__name__,'path':str(path)}),flush=True)
+
+def trip(row, reason):
+ event={**row,'reason':reason,'floor_gib':FLOOR}
+ persist(OUT/'trip.json',event)
+ print(json.dumps(event),flush=True)
+ try:
+  targets=guard_targets()
+  with concurrent.futures.ThreadPoolExecutor(max_workers=max(1,len(targets))) as pool:results=list(pool.map(halt,targets))
+ except (OSError,subprocess.SubprocessError) as error:results=[{'error':type(error).__name__}]
+ persist(OUT/'stop-results.json',results)
+ return results
+
 def main():
  thermal=subprocess.Popen(['tegrastats','--interval','1000'],stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,text=True)
  def receive():
   for line in thermal.stdout:latest.update(at=time.monotonic(),line=line.strip())
  threading.Thread(target=receive,daemon=True).start()
- log=OUT/'samples.jsonl';tripped=False;tick=0
+ log=OUT/'samples.jsonl';tripped=False;tick=0;next_retry=0
  try:
   while not stop.wait(1):
    m={l.split(':')[0]:int(l.split()[1]) for l in pathlib.Path('/proc/meminfo').read_text().splitlines() if len(l.split())>1}
@@ -32,15 +57,14 @@ def main():
       fields=(p/'stat').read_text().rsplit(')',1)[1].split();rss=int(fields[21])*os.sysconf('SC_PAGE_SIZE')
       if rss>256*1024**2 or fields[0]=='D':row['processes'].append({'pid':p.name,'name':(p/'comm').read_text().strip(),'state':fields[0],'rss_mib':round(rss/1024**2),'wchan':(p/'wchan').read_text().strip()})
      except (OSError,IndexError):pass
-   if log.exists() and log.stat().st_size>32*1024**2:log.replace(OUT/'samples.previous.jsonl')
-   with log.open('a') as f:f.write(json.dumps(row)+'\n');f.flush();os.fsync(f.fileno())
+   try:
+    if log.exists() and log.stat().st_size>32*1024**2:log.replace(OUT/'samples.previous.jsonl')
+   except OSError as error:print(json.dumps({'rotation_error':type(error).__name__}),flush=True)
+   persist(log,row,append=True)
    reason=trip_reason(row['available_gib'], row['thermal_age'])
-   if reason and not tripped:
-    tripped=True;event={**row,'reason':reason,'floor_gib':FLOOR}
-    with (OUT/'trip.json').open('w') as f:json.dump(event,f,indent=2);f.flush();os.fsync(f.fileno())
-    print(json.dumps(event),flush=True)
-    with concurrent.futures.ThreadPoolExecutor(max_workers=len(TARGETS)) as pool:results=list(pool.map(halt,TARGETS))
-    (OUT/'stop-results.json').write_text(json.dumps(results,indent=2))
+   if reason and (not tripped or time.monotonic()>=next_retry):
+    tripped=True;trip(row,reason)
+    next_retry=time.monotonic()+10
    if not reason:tripped=False
    tick+=1
  finally:

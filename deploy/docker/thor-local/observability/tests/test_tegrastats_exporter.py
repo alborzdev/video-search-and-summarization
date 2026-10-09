@@ -7,11 +7,13 @@ import importlib.util
 import io
 import sys
 import threading
+import subprocess
 import time
 import unittest
 import urllib.error
 import urllib.request
 from pathlib import Path
+from unittest.mock import patch
 
 MODULE_PATH = Path(__file__).parents[1] / "tegrastats_exporter.py"
 SPEC = importlib.util.spec_from_file_location("tegrastats_exporter", MODULE_PATH)
@@ -30,6 +32,27 @@ THOR_SAMPLE = (
 
 
 class ParseTests(unittest.TestCase):
+    def test_nvml_fallback_validates_range_and_bounds_the_query(self) -> None:
+        for raw, expected in (("0\n", 0), ("57\n", 0.57), ("100\n", 1),
+                              ("N/A", None), ("nan", None), ("101", None), ("-1", None)):
+            with self.subTest(raw=raw), patch.object(EXPORTER.subprocess, "run",
+                    return_value=subprocess.CompletedProcess([], 0, raw)) as run:
+                self.assertEqual(EXPORTER.read_nvml_utilization("/usr/sbin/nvidia-smi"), expected)
+                self.assertEqual(run.call_args.kwargs["timeout"], 2)
+
+    def test_failed_nvml_probe_does_not_claim_idle(self) -> None:
+        with patch.object(EXPORTER.subprocess, "run",
+                          side_effect=subprocess.TimeoutExpired("nvidia-smi", 2)):
+            self.assertIsNone(EXPORTER.read_nvml_utilization("/usr/sbin/nvidia-smi"))
+
+    def test_current_thor_sample_gets_measured_fallback(self) -> None:
+        state = EXPORTER.ExporterState(5)
+        with patch.object(EXPORTER, "read_nvml_utilization", return_value=0.37):
+            EXPORTER.collect_stream(io.BytesIO((THOR_SAMPLE + "\n").encode()), state,
+                                    threading.Event(), "/usr/sbin/nvidia-smi")
+        self.assertEqual(state.snapshot()[0]["gpu_utilization_ratio"], 0.37)
+        self.assertEqual(state.snapshot()[0]["gpu_utilization_from_nvml"], 1)
+
     def test_collector_uses_matching_host_loader_without_shell(self) -> None:
         self.assertEqual(
             EXPORTER.collector_command(

@@ -1,0 +1,151 @@
+{
+  "passed": true,
+  "count": 18,
+  "seconds": 55.6590142250061,
+  "images": [
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A28%3A15.497000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 20.091060161590576
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A28%3A05.951000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 14.807815790176392
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A27%3A56.294000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 10.261679887771606
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A27%3A46.744000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 6.598016977310181
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A27%3A37.044000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 2.4258363246917725
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A27%3A27.487000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 3.7018351554870605
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A27%3A08.282000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 24.942402601242065
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A26%3A58.679000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 28.92696499824524
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A26%3A49.074000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 32.1286780834198
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A26%3A39.529000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 34.54720449447632
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A26%3A29.929000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 36.19565939903259
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A26%3A20.230000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 36.98021483421326
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A26%3A08.066000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 118253,
+      "jpeg": true,
+      "seconds": 41.924644470214844
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A26%3A01.120000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 46.292434215545654
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A25%3A51.517000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 49.807979345321655
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A25%3A41.814000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116359,
+      "jpeg": true,
+      "seconds": 52.56312537193298
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A25%3A32.311000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 54.47575283050537
+    },
+    {
+      "url": "http://10.88.9.76:3001/api/vision/vst-image?path=%2Fvst%2Fapi%2Fv1%2Freplay%2Fstream%2F17e03964-ba65-4eb0-9207-d6abfa951242%2Fpicture%3FstartTime%3D2026-10-08T22%3A25%3A22.752000%2B00%3A00",
+      "http": 200,
+      "type": "image/jpeg",
+      "bytes": 116362,
+      "jpeg": true,
+      "seconds": 55.65851354598999
+    }
+  ]
+}

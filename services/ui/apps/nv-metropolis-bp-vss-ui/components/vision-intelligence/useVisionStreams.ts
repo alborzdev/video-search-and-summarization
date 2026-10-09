@@ -56,7 +56,19 @@ export function useVisionStreams(vstApiUrl?: string | null, active = true): Visi
         throw new Error(`Video I/O returned ${response.status}.`);
       }
       const data = (await response.json()) as VisionStreamsApiResponse;
-      const catalog = parseVisionStreams(data);
+      let catalog = parseVisionStreams(data);
+      if (catalog.length) {
+        // Primary selection is appliance-local and persists across browser
+        // sessions, including when the camera is temporarily disconnected.
+        try {
+          const preference = await fetch('/api/vision/primary-source', { signal: AbortSignal.timeout(5000) });
+          if (preference.ok) {
+            const { streamId } = await preference.json();
+            if (typeof streamId === 'string')
+              catalog = catalog.map(stream => ({ ...stream, isPrimary: stream.streamId === streamId }));
+          }
+        } catch { /* An unavailable optional preference must not hide cameras. */ }
+      }
       if (!current()) return;
       // VST can briefly return an empty successful list while restoring its
       // sensors. Background polling must not unmount an operator's live desk.

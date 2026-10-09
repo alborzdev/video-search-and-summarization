@@ -17,12 +17,14 @@ MODEL_NAME = 'rtdetr_warehouse_v1.0.2.fp16.onnx'
 MODEL_SHA256 = '0a22264542514149bead6e8582499d9758d51e3fde2892d9d2cc378a60426267'
 
 
-def configure(templates, storage):
+def configure(templates, storage, hardware='spark'):
+    if hardware not in ('spark', 'thor'):
+        raise RuntimeError('Unsupported detector hardware')
     model = storage / MODEL_NAME
     with model.open('rb') as handle:
         digest = hashlib.file_digest(handle, 'sha256').hexdigest()
     if digest != MODEL_SHA256:
-        raise RuntimeError('The Spark detector model does not match its published checksum.')
+        raise RuntimeError('The detector model does not match its published checksum.')
     configs = storage / 'configs'
     configs.mkdir(parents=True, exist_ok=True)
     for name in ('ds-detector-labels.txt', 'ds-kafka-config.txt'):
@@ -52,6 +54,12 @@ def configure(templates, storage):
             main.add_section(section)
         for key, value in values.items():
             main.set(section, key, value)
+    if hardware == 'thor':
+        main.set('tracker', 'compute-hw', '2')
+        main.set('tiled-display', 'compute-hw', '2')
+        # Real camera/file inputs do not provide the simulator's SEI clock.
+        main.set('streammux', 'extract-sei-sim-time', '0')
+        main.set('streammux', 'drop-backward-sei', '0')
     pgie = yaml.safe_load((templates / 'ds-pgie-config.yml').read_text())
     pgie['property'].update({
         'batch-size': 1,
@@ -60,10 +68,15 @@ def configure(templates, storage):
         'labelfile-path': str(configs / 'ds-detector-labels.txt'),
     })
     tracker = yaml.safe_load((templates / 'ds-nvdcf-accuracy-tracker-config.yml').read_text())
-    # Legacy NvDCF uses CUDA directly. VPI backend options apply only to the
-    # separate VPI tracker implementation and are unsupported by this image.
-    tracker['VisualTracker']['visualTrackerType'] = 1
-    tracker['VisualTracker'].pop('vpiBackend4DcfTracker', None)
+    # Spark's legacy NvDCF uses CUDA directly. Thor uses the reviewed VPI
+    # implementation with an explicit CUDA backend.
+    if hardware == 'thor':
+        # The reviewed Thor path uses VPI CUDA; PVA backend 2 is prohibited.
+        tracker['VisualTracker']['visualTrackerType'] = 2
+        tracker['VisualTracker']['vpiBackend4DcfTracker'] = 1
+    else:
+        tracker['VisualTracker']['visualTrackerType'] = 1
+        tracker['VisualTracker'].pop('vpiBackend4DcfTracker', None)
     tracker['TargetManagement']['maxTargetsPerStream'] = 50
     tracker['ReID'].update({'reidType': 0, 'outputReidTensor': 0})
     for name, value in [('ds-pgie-config.yml', pgie), ('ds-nvdcf-accuracy-tracker-config.yml', tracker)]:
@@ -78,7 +91,8 @@ def configure(templates, storage):
         target.with_suffix('.txt.bak').chmod(0o600)
     with target.open('w') as handle:
         main.write(handle, space_around_delimiters=False)
-    print(json.dumps({'model_sha256': digest, 'source_capacity': 1, 'tracker': 'NvDCF CUDA',
+    print(json.dumps({'model_sha256': digest, 'source_capacity': 1,
+                      'tracker': 'VPI CUDA' if hardware == 'thor' else 'NvDCF CUDA',
                       'reid': False, 'recording_started': False, 'config': str(target)}))
     return target
 
@@ -87,5 +101,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--templates', type=Path, default=Path('/opt/spark-detector-templates'))
     parser.add_argument('--storage', type=Path, default=Path('/opt/storage'))
+    parser.add_argument('--hardware', choices=['spark', 'thor'], default='spark')
     args = parser.parse_args()
-    configure(args.templates, args.storage)
+    configure(args.templates, args.storage, args.hardware)

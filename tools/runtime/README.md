@@ -1,5 +1,23 @@
 # Thor runtime qualification
 
+**October 9 operator setting:** the user explicitly selected a **10 GiB**
+memory reserve for this Anvil T5 demo. The active systemd guard and
+`.thor/settings.json` use that floor; current Thor startup, UI and NVStreamer
+tools preserve it. See [configuration](../thor/README.md#staged-startup).
+The 36/48 GiB instructions and measurements below describe historical
+qualification conditions; they do not override the saved operator setting.
+Model/container budgets remain unchanged, and this setting does not qualify
+additional ingestion workloads.
+
+**October 8 bounded NVStreamer result:** one single-slice H.264 720p/10 FPS
+mock camera passed a ten-minute run with recording, CUDA detection, embeddings,
+captions and browser workflows. Minimum one-second telemetry was 51.372 GiB
+available with the 48 GiB guard active and no reboot. A prior gallery-triggered
+reserve trip was corrected by moving recorded thumbnails to a serial CPU reader.
+See [acceptance receipt](../../docs/qa/2026-10-08-thor-nvstreamer.md) for the
+failure, fixes, exact scope and AI accuracy limitations. This does not qualify
+unlimited ingestion or additional concurrent sources; retain the 48 GiB floor.
+
 The full VSS stack is **not qualified for sustained live ingestion**. A live traffic run was followed by a host hang/reboot on September 9, 2026. See `artifacts/reboot-2026-09-09/README.md` before starting the full stack or changing live-ingestion capacity.
 
 `guard.py` logs host memory, thermal/power readings, and large/D-state processes into `artifacts/runtime-telemetry/`. Samples are fsynced each second and rotated at 32 MiB, retaining one prior file. A trip writes `trip.json` and attempts concurrent, bounded Docker stops of the agent, streamer, models, detectors and LVS. This cannot guarantee recovery from a kernel/GPU hang.

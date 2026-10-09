@@ -289,6 +289,15 @@ async def get_video_url(
             .replace("+00:00", "Z")
         )
 
+    if disable_audio and not overlay_enabled and os.getenv("VST_CLIP_FALLBACK_URL", "").strip():
+        # HTTP 200 is not proof of playable media: VIOS can return an MP4 with
+        # an empty/invalid track header. The retained-media service probes the
+        # export and remuxes/transcodes the original recording when necessary.
+        validated_url = await _prepare_fallback_clip(stream_id, start_time_iso, end_time_iso)
+        if not validated_url:
+            raise VSTError("A playable clip could not be prepared from the retained recording")
+        return validated_url
+
     # Build the VST API URL
     query_params = urllib.parse.urlencode(
         {

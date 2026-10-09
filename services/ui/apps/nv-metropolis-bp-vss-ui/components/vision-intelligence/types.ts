@@ -21,6 +21,7 @@ export interface VisionStreamMetadata {
 }
 
 export interface VisionStream {
+  isPrimary?: boolean;
   connectionState?: "online" | "offline" | "removed" | "unknown";
   isMain: boolean;
   metadata: VisionStreamMetadata;

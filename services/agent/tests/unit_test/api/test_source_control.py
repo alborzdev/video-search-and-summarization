@@ -354,3 +354,15 @@ async def test_status_is_partial_when_embeddings_are_not_reaching_search():
     assert status.state == "partial"
     assert status.analysis_active is False
     assert status.steps["indexing"] is False
+
+
+def test_index_progress_accepts_clock_skew_but_expires_without_arrivals() -> None:
+    from vss_agents.api.source_control import _index_is_advancing
+    from vss_agents.api.source_control import _index_progress
+
+    _index_progress.clear()
+    with patch("vss_agents.api.source_control.time.monotonic", side_effect=[100, 110, 171]):
+        assert not _index_is_advancing("test", "camera", 1_000, 60)
+        assert _index_is_advancing("test", "camera", 1_005, 60)
+        assert not _index_is_advancing("test", "camera", 1_005, 60)
+    _index_progress.clear()

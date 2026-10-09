@@ -7,12 +7,17 @@ const timeline = (start: string, end: string) => ({
 });
 
 describe('live question recording window', () => {
-  afterEach(() => jest.restoreAllMocks());
+  const previousMediaUrl = process.env.EVIDENCE_CLIP_API_URL;
+  afterEach(() => {
+    jest.restoreAllMocks();
+    if (previousMediaUrl === undefined) delete process.env.EVIDENCE_CLIP_API_URL;
+    else process.env.EVIDENCE_CLIP_API_URL = previousMediaUrl;
+  });
 
-  it('uses an existing recording immediately and defaults to three seconds', () => {
+  it('uses an existing recording immediately and defaults to one second', () => {
     expect(chooseLiveRecordingWindow([timeline('00', '30')], askedAt)).toEqual({
       ready: true, remainingSeconds: 0,
-      window: { startTime: '2026-10-01T12:00:22.000Z', endTime: '2026-10-01T12:00:25.000Z' },
+      window: { startTime: '2026-10-01T12:00:24.000Z', endTime: '2026-10-01T12:00:25.000Z' },
     });
   });
 
@@ -62,10 +67,44 @@ describe('live question recording window', () => {
     expect(chooseLiveRecordingWindow(raw, askedAt)).toEqual(expect.objectContaining({ ready: false, window: null }));
   });
 
+  it('uses delayed camera timestamps only after observing recording advancement', () => {
+    const old = [{ startTime: '2026-10-01T11:58:00Z', endTime: '2026-10-01T11:59:30Z' }];
+    expect(chooseLiveRecordingWindow(old, askedAt, 1).ready).toBe(false);
+    expect(chooseLiveRecordingWindow(old, askedAt, 1, true).window).toEqual({
+      startTime: '2026-10-01T11:59:24.000Z', endTime: '2026-10-01T11:59:25.000Z',
+    });
+  });
+
   it('reports unknown readiness without throwing when metadata lookup fails', async () => {
     global.fetch = jest.fn().mockRejectedValue(new Error('offline'));
     expect(await readLiveRecordingWindow('camera')).toEqual(expect.objectContaining({
       ready: false, window: null, remainingSeconds: null, error: expect.any(String),
     }));
   });
+
+  it('uses saved packet intervals and their advancement instead of the extrapolated VIOS edge', async () => {
+    process.env.EVIDENCE_CLIP_API_URL = 'http://media-test';
+    global.fetch = jest.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => [
+        { startTime: '2026-10-09T19:49:00Z', endTime: '2026-10-09T19:49:30Z' },
+      ] })
+      .mockResolvedValueOnce({ ok: true, json: async () => [
+        { startTime: '2026-10-09T19:49:00Z', endTime: '2026-10-09T19:49:34Z' },
+      ] });
+    expect((await readLiveRecordingWindow('reconnected-camera', '2026-10-09T19:50:14Z')).ready).toBe(false);
+    expect((await readLiveRecordingWindow('reconnected-camera', '2026-10-09T19:50:18Z')).window).toEqual({
+      startTime: '2026-10-09T19:49:28.000Z', endTime: '2026-10-09T19:49:29.000Z',
+    });
+    expect(fetch).toHaveBeenLastCalledWith('http://media-test/recording-window', expect.objectContaining({
+      method: 'POST', body: JSON.stringify({ sensorId: 'reconnected-camera', askedAt: '2026-10-09T19:50:18Z' }),
+    }));
+  });
+
+  it('does not fall back to optimistic metadata when the saved-media probe fails', async () => {
+    process.env.EVIDENCE_CLIP_API_URL = 'http://media-test';
+    global.fetch = jest.fn().mockResolvedValue({ ok: false });
+    expect((await readLiveRecordingWindow('camera', askedAt)).ready).toBe(false);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
 });

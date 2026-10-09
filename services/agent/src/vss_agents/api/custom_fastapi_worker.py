@@ -18,6 +18,7 @@ Custom FastAPI front-end worker that extends NAT's default worker
 to support additional streaming endpoints and a lightweight health check.
 """
 
+import asyncio
 from datetime import UTC
 from datetime import datetime
 from datetime import timedelta
@@ -100,8 +101,9 @@ class VisionInspectionRequest(BaseModel):
                 raise ValueError("Live recording interval must match the selected recent-footage duration")
             if self.live_end_time > self.asked_at - timedelta(seconds=5):
                 raise ValueError("Live recording windows must allow five seconds for storage")
-            if self.live_end_time < self.asked_at - timedelta(seconds=30):
-                raise ValueError("Live recording windows must include recent footage")
+            # The UI verifies timeline advancement before selecting a delayed
+            # camera window. Preserve its actual timestamps instead of rejecting
+            # camera clock skew here; explicit retained intervals may be older.
         return self
 
 
@@ -279,11 +281,18 @@ class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
         async def vision_inspection(request: VisionInspectionRequest):
             """Inspect one selected source through a real visual tool call."""
 
+            timeout_seconds = 55 if request.source_kind == "live" else 180
             try:
                 async with visual_admission.reserve("current_visual_question"):
-                    result = await inspect_vision_source(builder, request)
+                    async with asyncio.timeout(timeout_seconds):
+                        result = await inspect_vision_source(builder, request)
             except ThorWorkloadAdmissionError as exc:
                 return JSONResponse(status_code=exc.status_code, content=exc.response_body())
+            except TimeoutError:
+                return JSONResponse(
+                    status_code=504,
+                    content={"error": f"Visual inspection exceeded {timeout_seconds} seconds. Try a shorter question."},
+                )
             except Exception as exc:
                 logger.warning("Direct visual inspection failed", exc_info=True)
                 return JSONResponse(

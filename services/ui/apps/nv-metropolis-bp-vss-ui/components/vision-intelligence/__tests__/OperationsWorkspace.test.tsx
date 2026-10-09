@@ -1506,6 +1506,32 @@ describe("Operations selected-source safety", () => {
     report.mockRestore();
   });
 
+  it("ends a stalled question with a retryable error and cancels its request", async () => {
+    const { fetchMock, base, state } = sourceApi([liveReviewSource]);
+    state.capture = "on";
+    state.questionReady = true;
+    let requestSignal: AbortSignal | undefined;
+    fetchMock.mockImplementation((input, init) => {
+      if (String(input) === "/api/vision/analyst") {
+        requestSignal = init?.signal as AbortSignal;
+        return new Promise(() => {});
+      }
+      return base(input, init);
+    });
+    render(<OperationsTestWorkspace agentApiUrl="/agent" />);
+    await screen.findByRole("button", { name: "Stop capture" });
+    jest.useFakeTimers();
+    try {
+      submitQuestion();
+      await act(async () => { await jest.advanceTimersByTimeAsync(90_000); });
+      expect(requestSignal?.aborted).toBe(true);
+      expect(screen.getByText("The visual question timed out. Try one frame or ask again.")).toBeVisible();
+      expect(screen.getByRole("button", { name: "Try again" })).toBeEnabled();
+    } finally {
+      jest.useRealTimers();
+    }
+  });
+
   it("passes the chosen live duration and preserves it when retrying a failed question", async () => {
     const { fetchMock, base, state } = sourceApi([liveReviewSource]);
     state.capture = "on";

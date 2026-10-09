@@ -23,6 +23,28 @@ SPEC.loader.exec_module(CONFIG)
 
 
 class DetectorConfigTest(unittest.TestCase):
+    def test_thor_uses_vpi_cuda_and_separate_conversion_setting(self):
+        before = {path.name: path.read_bytes() for path in TEMPLATES.iterdir() if path.is_file()}
+        with tempfile.TemporaryDirectory() as directory:
+            storage = Path(directory)
+            model_bytes = b'validated fixture model'
+            (storage / CONFIG.MODEL_NAME).write_bytes(model_bytes)
+            with patch.object(CONFIG, 'MODEL_SHA256', hashlib.sha256(model_bytes).hexdigest()):
+                with contextlib.redirect_stdout(io.StringIO()):
+                    main_path = CONFIG.configure(TEMPLATES, storage, hardware='thor')
+            main = configparser.ConfigParser(interpolation=None)
+            main.read(main_path)
+            self.assertEqual(main['tracker']['compute-hw'], '2')
+            self.assertEqual(main['tiled-display']['compute-hw'], '2')
+            self.assertEqual(main['streammux']['extract-sei-sim-time'], '0')
+            self.assertEqual(main['streammux']['drop-backward-sei'], '0')
+            self.assertEqual(main['streammux']['attach-sys-ts-as-ntp'], '1')
+            tracker = yaml.safe_load((storage / 'configs/ds-nvdcf-accuracy-tracker-config.yml').read_text())
+            self.assertEqual(tracker['VisualTracker']['visualTrackerType'], 2)
+            self.assertEqual(tracker['VisualTracker']['vpiBackend4DcfTracker'], 1)
+            self.assertEqual(tracker['ReID']['reidType'], 0)
+        self.assertEqual(before, {path.name: path.read_bytes() for path in TEMPLATES.iterdir() if path.is_file()})
+
     def test_corrupt_model_refused_before_any_configuration_write(self):
         with tempfile.TemporaryDirectory() as directory:
             storage = Path(directory)
@@ -54,6 +76,7 @@ class DetectorConfigTest(unittest.TestCase):
             self.assertEqual(main['source-list']['http-ip'], '127.0.0.1')
             self.assertEqual(main['source-attr-all']['select-rtp-protocol'], '4')
             self.assertEqual(main['streammux']['batch-size'], '1')
+            self.assertEqual(main['streammux']['extract-sei-sim-time'], '1')
             self.assertEqual(main['primary-gie']['batch-size'], '1')
             self.assertEqual(main['tracker']['enable'], '1')
             self.assertEqual(main['tracker']['compute-hw'], '1')

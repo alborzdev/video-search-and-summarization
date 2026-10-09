@@ -3,6 +3,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { rm, unlink, writeFile } from "node:fs/promises";
 
+jest.mock("../../../server/vision/historyRequest", () => ({
+  historyRequest: (url: string, init: RequestInit) => global.fetch(url, init),
+}));
+
 const sourceId = "11111111-1111-4111-8111-111111111111";
 const liveSourceId = "33333333-3333-4333-8333-333333333333";
 const pausedSourceId = "44444444-4444-4444-8444-444444444444";
@@ -306,6 +310,17 @@ describe("video history API", () => {
       "Cite exact supporting ISO time ranges"
     );
 
+    fetchMock.mockImplementationOnce(async () => jsonResponse({
+      choices: [{ message: { content: "Observed between 2026-08-12T10:00:05.000Z and 2026-08-12T10:00:10.000Z." } }],
+    }));
+    const andRangeAsk = responseHarness();
+    await handler(request("POST", { action: "ask", sourceId,
+      messages: [{ role: "user", content: "Describe the observed interval." }] }), andRangeAsk.response);
+    expect((andRangeAsk.state.body as { citations: unknown[] }).citations).toEqual([
+      expect.objectContaining({ startTime: "2026-08-12T10:00:05.000Z",
+        endTime: "2026-08-12T10:00:10.000Z" }),
+    ]);
+
     const pointAsk = responseHarness();
     await handler(
       request("POST", {
@@ -345,6 +360,43 @@ describe("video history API", () => {
     await handler(request("GET", undefined, { sourceId }), status.response);
     expect(status.state.statusCode).toBe(200);
     expect(status.state.body).toBeNull();
+  });
+
+  it.each([
+    ["1735689600.00 to 1735689610.00", true],
+    ["1735689600.25 – 1735689610.50", true],
+    ["1735689599.00 to 1735689610.00", false],
+    ["1735689600.00 to 1735689625.00", false],
+    ["1735689610.00 to 1735689600.00", false],
+    ["1234567890 to 1234567900", false],
+  ])("bounds Unix citations to the retained recording: %s", async (range, accepted) => {
+    // GET initializes the isolated store before writing this source's record.
+    await handler(request("GET", undefined, { sourceId }), responseHarness().response);
+    await writeFile(`${storeDirectory}/${sourceId}.json`, JSON.stringify({
+      events: ["package movement"], knowledgeId, scenario: "conveyor",
+      sourceId, sourceKind: "replay", sourceName: "Conveyor",
+      startedAt: "2025-01-01T00:00:00.000Z", status: "ready",
+      timelineStart: "2025-01-01T00:00:00.000Z",
+      timelineEnd: "2025-01-01T00:00:24.000Z",
+    }));
+    fetchMock.mockImplementationOnce(async () => jsonResponse({
+      choices: [{ message: { content: `Blue supports, curved conveyor, from ${range}.` } }],
+    }));
+    const ask = responseHarness();
+    await handler(request("POST", {
+      action: "ask", sourceId, messages: [{ role: "user", content: "Describe the supports." }],
+    }), ask.response);
+    expect(ask.state.statusCode).toBe(200);
+    const body = ask.state.body as { citations: Array<{ startTime: string; endTime: string; label: string }> };
+    expect(body.citations).toHaveLength(accepted ? 1 : 0);
+    if (accepted) {
+      const [start, end] = range.split(/\s*(?:to|–)\s*/).map(Number);
+      expect(body.citations[0]).toEqual({
+        startTime: new Date(start * 1_000).toISOString(),
+        endTime: new Date(end * 1_000).toISOString(), label: range,
+      });
+    }
+    await unlink(`${storeDirectory}/${sourceId}.json`);
   });
 
   it("waits for a fresh live caption and rebuilds graph knowledge before reporting ready", async () => {
@@ -391,7 +443,7 @@ describe("video history API", () => {
         enable_qa: true,
         end_time: "2026-08-12T10:04:00.000Z",
         id: liveSourceId,
-        start_time: "2026-08-12T09:34:00.000Z",
+        start_time: "2026-08-12T09:59:00.000Z",
       })
     );
 
@@ -531,6 +583,50 @@ describe("video history API", () => {
     } finally {
       delete process.env.HARDWARE_PROFILE;
       delete process.env.HISTORY_METADATA_TOKEN;
+    }
+  });
+
+  it("keeps an active graph build owned across a route module reload", async () => {
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const original = fetchMock.getMockImplementation()!;
+    let summaries = 0;
+    fetchMock.mockImplementation(
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        if (String(input) === "http://lvs.test/v1/summarize") {
+          summaries++;
+          await held;
+        }
+        return original(input, init);
+      }
+    );
+    try {
+      const build = responseHarness();
+      await handler(
+        request("POST", {
+          action: "start",
+          events: ["movement"],
+          scenario: "warehouse",
+          source: { id: sourceId, kind: "replay", name: "Warehouse" },
+        }),
+        build.response
+      );
+      for (let i = 0; i < 100 && !summaries; i++)
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      expect(summaries).toBe(1);
+      jest.resetModules();
+      handler = (await import("../../../pages/api/vision/video-history"))
+        .default;
+      const status = responseHarness();
+      await handler(request("GET", undefined, { sourceId }), status.response);
+      expect((status.state.body as { status: string }).status).toBe("building");
+      await new Promise((resolve) => setTimeout(resolve, 30));
+      expect(summaries).toBe(1);
+    } finally {
+      release();
+      await waitForReady(handler, sourceId);
     }
   });
 });

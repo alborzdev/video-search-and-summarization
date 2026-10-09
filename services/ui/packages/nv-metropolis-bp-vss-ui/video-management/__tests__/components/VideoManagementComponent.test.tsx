@@ -6,6 +6,7 @@ import { videoStream, rtspStream } from '../helpers/streamFixtures';
 
 let mockCatalogError: string | null = null;
 const mockCatalogRetry = jest.fn();
+const mockTimelineRetry = jest.fn();
 let mockCatalogStreams = [videoStream, rtspStream];
 
 const mockOpenVideoModal = jest.fn(() => Promise.resolve());
@@ -61,7 +62,7 @@ jest.mock('../../lib-src/hooks', () => ({
     timelines: mockTimelines,
     isLoading: false,
     error: null,
-    refetch: jest.fn(),
+    refetch: mockTimelineRetry,
     getEndTimeForStream: jest.fn(() => '2025-01-01T01:03:25Z'),
     getTimelineRangeForStream: jest.fn((streamId: string) => {
       if (streamId === 'vid-1') return { startTime: '2025-01-01T00:00:00Z', endTime: '2025-01-01T01:03:30Z' };
@@ -215,14 +216,17 @@ describe('VideoManagementComponent — video playback', () => {
   });
 });
 
-it('distinguishes an unavailable catalog from an empty source inventory and retries', () => {
+it('distinguishes an unavailable catalog from an empty source inventory and retries catalog and timelines', async () => {
   mockCatalogError = 'Failed to fetch streams: 502';
   try {
     renderComponent();
     expect(screen.getByRole('alert')).toHaveTextContent('Your saved sources have not been removed');
     expect(screen.queryByText('Drop files here')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Retry loading sources' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Retry loading sources' }));
+    });
     expect(mockCatalogRetry).toHaveBeenCalled();
+    expect(mockTimelineRetry).toHaveBeenCalled();
   } finally { mockCatalogError = null; }
 });
 

@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+import { observedProgress } from "./observedProgress";
 
 interface CountResponse {
   count?: number;
@@ -200,6 +201,7 @@ export async function fetchSourceIntelligence(
   const indexingDelaySeconds = Number.isFinite(lastSemanticTimestamp)
     ? Math.max(0, Math.round((Date.now() - lastSemanticTimestamp) / 1_000))
     : null;
+  const advancing = observedProgress(`index:${elasticsearchUrl}:${sensorId}`, lastSemanticTimestamp, 45_000);
   return {
     captionSegments: captions.count,
     evidenceEvents,
@@ -208,7 +210,7 @@ export async function fetchSourceIntelligence(
     lastCaptionAt: captions.latest,
     lastSemanticAt,
     semanticFresh:
-      indexingDelaySeconds !== null ? indexingDelaySeconds <= 45 : null,
+      indexingDelaySeconds !== null ? (indexingDelaySeconds <= 45 || advancing) : null,
     semanticSegments,
     source: { name, sensorId },
     trackedObservations,

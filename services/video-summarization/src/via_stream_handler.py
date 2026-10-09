@@ -4248,6 +4248,38 @@ This is very important and you must follow this strictly.
         return not events and not str(video_summary).strip()
 
     @staticmethod
+    def _full_file_aggregation_time_bounds(req_info, chunk_responses):
+        """Compare replay event seconds with replay bounds, preserving NTP.
+
+        RTVI labels chunks with absolute timestamps when creation_time is set.
+        CA-RAG's structured replay events still use file-relative seconds. Only
+        rebase an explicit, timezone-aware origin matching the first full-file
+        chunk; partial and live requests retain their existing contracts.
+        """
+        if (
+            req_info.is_live
+            or req_info.start_timestamp is not None
+            or req_info.end_timestamp is not None
+            or not chunk_responses
+        ):
+            return None
+        lower = float(chunk_responses[0].chunk.start_pts) / 1e9
+        upper = float(chunk_responses[-1].chunk.end_pts) / 1e9
+        creation_time = getattr(req_info, "creation_time", None)
+        if creation_time:
+            try:
+                origin = datetime.fromisoformat(str(creation_time).replace("Z", "+00:00"))
+                if origin.tzinfo is not None:
+                    epoch = origin.timestamp()
+                    if epoch > 0 and abs(lower - epoch) <= 1e-3 and upper > lower:
+                        # Nanosecond-to-float conversion can put the matching
+                        # origin slightly below zero and disable range checks.
+                        return 0.0, upper - epoch
+            except (TypeError, ValueError, OverflowError):
+                pass
+        return lower, upper
+
+    @staticmethod
     def _aggregation_has_out_of_range_event_timestamps(
         result, event_time_bounds: tuple[float, float] | None
     ) -> bool:
@@ -4548,17 +4580,9 @@ This is very important and you must follow this strictly.
                                     else chunk_responses[-1].chunk.chunkIdx
                                 ),
                             }
-                        aggregation_event_bounds = None
-                        if (
-                            not req_info.is_live
-                            and req_info.start_timestamp is None
-                            and req_info.end_timestamp is None
-                            and chunk_responses
-                        ):
-                            aggregation_event_bounds = (
-                                float(chunk_responses[0].chunk.start_pts) / 1e9,
-                                float(chunk_responses[-1].chunk.end_pts) / 1e9,
-                            )
+                        aggregation_event_bounds = self._full_file_aggregation_time_bounds(
+                            req_info, chunk_responses
+                        )
                         with TimeMeasure("Context Manager Summarize/call - summarize"):
                             with trace_operation(
                                 "CTX-RAG Call - Summarize",
