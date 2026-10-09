@@ -30,7 +30,7 @@ import urllib.parse
 ROOT = Path(__file__).resolve().parents[2]
 STATE = ROOT / '.thor'
 PROJECT = 'vss-thor'
-RESERVE = 48
+DEFAULT_RESERVE_GIB = 48
 LLM = 'nvidia/NVIDIA-Nemotron-3-Nano-4B-FP8'
 REVISION = '3fe6dab75665a93884214ad4b1b95cf02717d081'
 VLM = 'nim_nvidia_cosmos3-nano-reasoner_bf16-final'
@@ -69,6 +69,11 @@ def compose(*args):
 
 def settings():
     return json.loads((STATE / 'settings.json').read_text())
+
+
+def memory_reserve():
+    saved = settings() if (STATE / 'settings.json').exists() else {}
+    return shared.validate_reserve(saved.get('reserve_gib', DEFAULT_RESERVE_GIB))
 
 
 def prepare_build_contexts(services):
@@ -138,16 +143,17 @@ def doctor():
                            'net/core/wmem_max': 5242880}.items():
         if int((Path('/proc/sys') / name).read_text()) < required:
             blockers.append(f'{name} must be at least {required}')
-    if shared.available() < RESERVE:
-        blockers.append('Less than the required 48 GiB diagnostic reserve is available')
+    if shared.available() < memory_reserve():
+        blockers.append(f'Less than the configured {memory_reserve():g} GiB reserve is available')
     if blockers:
         raise RuntimeError('; '.join(blockers))
     print(f'Thor host prerequisites pass; {shared.available():.2f} GiB available. '
           'Application and driver compatibility still require runtime tests.')
 
 
-def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detector_enabled=None):
+def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detector_enabled=None, reserve_gib=None):
     saved = settings() if (STATE / 'settings.json').exists() else {}
+    reserve = memory_reserve() if reserve_gib is None else shared.validate_reserve(reserve_gib)
     host_ip = host_ip or saved.get('host_ip', '127.0.0.1')
     gateway = gateway or saved.get('gateway', '172.17.0.1')
     if cached_models is None:
@@ -388,7 +394,7 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
     encoded = encoded.replace('$${NGC_API_KEY:-}', '${NGC_API_KEY:-}')
     shared.private_write(STATE / 'compose.json', encoded + '\n')
     shared.private_write(STATE / 'settings.json', json.dumps(dict(host_ip=host_ip, gateway=gateway,
-        data_dir=str(data), reserve_gib=RESERVE, cached_models=cached_models, detector_enabled=detector_enabled), indent=2))
+        data_dir=str(data), reserve_gib=reserve, cached_models=cached_models, detector_enabled=detector_enabled), indent=2))
     run(compose('config', '--quiet'), env=clean_env())
     print(f'Rendered {len(services)} Thor services. No models or services have been started.')
 
@@ -403,7 +409,7 @@ def install_guard():
 Description=Thor VSS diagnostic memory and thermal guard
 [Service]
 ExecStart=/usr/bin/python3 "{ROOT / 'tools/runtime/guard.py'}"
-Environment=VSS_MEMORY_FLOOR_GIB=48
+Environment=VSS_MEMORY_FLOOR_GIB={memory_reserve():g}
 Environment=VSS_GUARD_PROJECT={PROJECT}
 Restart=on-failure
 RestartSec=2
@@ -412,6 +418,7 @@ WantedBy=default.target
 ''')
     run(['systemctl', '--user', 'daemon-reload'])
     run(['systemctl', '--user', 'enable', '--now', unit.name])
+    run(['systemctl', '--user', 'restart', unit.name])
 
 
 def model_entries():
@@ -951,8 +958,8 @@ def require_guard():
     environment = run(['systemctl', '--user', 'show', 'vss-memory-budget.service',
                        '--property=Environment', '--value'], capture_output=True, text=True, timeout=10).stdout
     values = dict(item.split('=', 1) for item in shlex.split(environment) if '=' in item)
-    if values.get('VSS_MEMORY_FLOOR_GIB') != str(RESERVE) or values.get('VSS_GUARD_PROJECT') != PROJECT:
-        raise RuntimeError('Install the Thor candidate guard with the 48 GiB floor and correct project')
+    if values.get('VSS_MEMORY_FLOOR_GIB') != f'{memory_reserve():g}' or values.get('VSS_GUARD_PROJECT') != PROJECT:
+        raise RuntimeError(f'Install the Thor candidate guard with the configured {memory_reserve():g} GiB floor and correct project')
     sample_path = ROOT / 'artifacts/runtime-telemetry/samples.jsonl'
     if not sample_path.is_file():
         raise RuntimeError('Thor guard has not yet produced live telemetry')
@@ -969,9 +976,9 @@ def await_service(service, one_shot=False):
     deadline = time.monotonic() + (1800 if service in ('thor-llm', 'rtvi-embed', 'rtvi-vlm', 'thor-perception') else 300)
     while time.monotonic() < deadline:
         require_guard()
-        if shared.available() < RESERVE:
+        if shared.available() < memory_reserve():
             run(compose('stop'), timeout=120)
-            raise RuntimeError('48 GiB diagnostic reserve crossed; the candidate was stopped')
+            raise RuntimeError(f'{memory_reserve():g} GiB configured reserve crossed; the candidate was stopped')
         cid = run(compose('ps', '-a', '-q', service), capture_output=True, text=True, timeout=15).stdout.strip()
         if cid:
             state = json.loads(run(['docker', 'inspect', '--format', '{{json .State}}', cid],
@@ -1053,7 +1060,7 @@ def startup(stage_name):
         engine = model.with_name(model.name + '_b1_gpu0_fp16.engine')
         if not engine.is_file() or not engine.stat().st_size:
             raise RuntimeError('Build the native engine in isolation with build-detector-engine first')
-        if shared.available() < RESERVE + 15:
+        if shared.available() < memory_reserve() + 15:
             raise RuntimeError('Detector engine startup needs the reserve plus 15 GiB of headroom')
     else:
         selected = [stage_name]
@@ -1074,7 +1081,7 @@ def startup(stage_name):
         if stage_name == 'rtvi-embed':
             verify_embed()
             provision_model_caches(graph)
-        if shared.available() < RESERVE + 15:
+        if shared.available() < memory_reserve() + 15:
             raise RuntimeError('Model startup needs the reserve plus 15 GiB of allocation headroom')
     order = shared.startup_order(services, selected, [], [])
     excluded = set(model_names + detector_names + app_names) - set(selected)
@@ -1134,7 +1141,7 @@ def verify():
     except (OSError, ValueError):
         failures.append('Elasticsearch primary-shard health')
     receipt = {'time': time.time(), 'boot_id': Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
-               'available_gib': shared.available(), 'reserve_gib': RESERVE, 'failed_probes': failures,
+               'available_gib': shared.available(), 'reserve_gib': memory_reserve(), 'failed_probes': failures,
                'qualification': 'Health only; real clip inference and browser acceptance remain required'}
     shared.private_write(STATE / 'health-receipt.json', json.dumps(receipt, indent=2))
     if failures:
@@ -1150,12 +1157,15 @@ def main():
     parser.add_argument('--host-ip')
     parser.add_argument('--gateway')
     parser.add_argument('--data-dir')
+    parser.add_argument('--reserve-gib', type=float)
     parser.add_argument('--cached-models', action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument('--detector', action=argparse.BooleanOptionalAction, dest='detector_enabled', default=None)
     parser.add_argument('--stage', choices=['support', 'thor-llm', 'rtvi-embed', 'rtvi-vlm', 'thor-perception', 'app'], default='support')
     args = parser.parse_args()
     if args.action == 'render':
-        render(args.host_ip, args.data_dir, args.gateway, args.cached_models, args.detector_enabled)
+        render(args.host_ip, args.data_dir, args.gateway, args.cached_models, args.detector_enabled, args.reserve_gib)
+    elif args.reserve_gib is not None:
+        parser.error('--reserve-gib is only supported with render')
     elif args.action == 'start':
         startup(args.stage)
     else:

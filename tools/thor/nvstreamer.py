@@ -93,8 +93,8 @@ def start():
     thor.require_guard()
     # Its full 4 GiB limit must fit above the diagnostic reserve, even though
     # a single pass-through source normally consumes much less.
-    if thor.shared.available() < thor.RESERVE + 4:
-        raise RuntimeError('NVStreamer startup requires the 48 GiB reserve plus 4 GiB')
+    if thor.shared.available() < thor.memory_reserve() + 4:
+        raise RuntimeError(f'NVStreamer startup requires the {thor.memory_reserve():g} GiB reserve plus 4 GiB')
     render()
     thor.run(compose('up', '-d', '--no-deps', '--no-build', '--pull', 'never', 'nvstreamer'))
     for _ in range(60):

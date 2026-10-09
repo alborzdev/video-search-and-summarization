@@ -1,5 +1,14 @@
 # Thor runtime qualification
 
+**October 9 operator setting:** the user explicitly selected a **10 GiB**
+memory reserve for this Anvil T5 demo. The active systemd guard and
+`.thor/settings.json` use that floor; current Thor startup, UI and NVStreamer
+tools preserve it. See [configuration](../thor/README.md#staged-startup).
+The 36/48 GiB instructions and measurements below describe historical
+qualification conditions; they do not override the saved operator setting.
+Model/container budgets remain unchanged, and this setting does not qualify
+additional ingestion workloads.
+
 **October 8 bounded NVStreamer result:** one single-slice H.264 720p/10 FPS
 mock camera passed a ten-minute run with recording, CUDA detection, embeddings,
 captions and browser workflows. Minimum one-second telemetry was 51.372 GiB

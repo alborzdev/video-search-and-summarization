@@ -19,6 +19,7 @@ class NVStreamerTests(unittest.TestCase):
 
     def test_full_sidecar_budget_must_fit_above_floor(self):
         with patch.object(n.thor, 'require_guard'), patch.object(n.thor.shared, 'available', return_value=51.99), \
+                patch.object(n.thor, 'memory_reserve', return_value=48), \
                 patch.object(n, 'render') as render:
             with self.assertRaisesRegex(RuntimeError, 'plus 4 GiB'):
                 n.start()

@@ -112,8 +112,20 @@ python3 tools/thor/bootstrap.py start --stage app
 python3 tools/thor/bootstrap.py verify
 ```
 
-Keep the installed guard active. The diagnostic floor is 48 GiB available;
+Keep the installed guard active. The default diagnostic floor is 48 GiB available;
 each model startup additionally requires 15 GiB of allocation headroom.
+Thor reads its configured floor from `.thor/settings.json`, like Spark. To apply
+an explicitly selected reserve and persist it across renders and guard installs:
+
+```sh
+python3 tools/thor/bootstrap.py render --reserve-gib 10
+python3 tools/thor/bootstrap.py install-guard
+```
+
+On October 9 the operator selected 10 GiB for the Anvil T5 demo. This changes the
+guard and startup admission floor; model, KV-cache and container budgets remain
+unchanged. Historical qualification receipts describe their original 48 GiB floor.
+
 New live sources default to manual recording. Select capture explicitly in the
 System workspace; registering a source alone does not start recording or AI
 ingestion in this candidate.

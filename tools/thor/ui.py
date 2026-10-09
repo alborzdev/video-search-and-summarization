@@ -17,7 +17,7 @@ IMAGE = 'node:22.22.3-bookworm-slim'
 def preflight():
     bootstrap.doctor()
     bootstrap.require_guard()
-    if bootstrap.shared.available() < bootstrap.RESERVE + 4:
+    if bootstrap.shared.available() < bootstrap.memory_reserve() + 4:
         raise RuntimeError('Thor UI requires the diagnostic reserve plus 4 GiB')
 
 

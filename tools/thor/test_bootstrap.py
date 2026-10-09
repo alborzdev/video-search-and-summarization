@@ -431,6 +431,27 @@ class ThorBootstrapTest(unittest.TestCase):
             self.assertEqual(b.settings()['data_dir'], data)
             self.assertEqual(b.settings()['gateway'], '192.0.2.1')
 
+    def test_explicit_reserve_survives_render_and_guard_reinstall(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
+            b.render('192.0.2.40', reserve_gib=10)
+            b.render(cached_models=True)
+            self.assertEqual(b.memory_reserve(), 10)
+            with patch.object(Path, 'home', return_value=Path(temporary)), \
+                    patch.object(b, 'require_thor'), patch.object(b, 'run') as run:
+                b.install_guard()
+                unit = (Path(temporary) / '.config/systemd/user/vss-memory-budget.service').read_text()
+                self.assertIn('VSS_MEMORY_FLOOR_GIB=10\n', unit)
+                self.assertEqual(run.call_args.args[0],
+                                 ['systemctl', '--user', 'restart', 'vss-memory-budget.service'])
+
+    def test_invalid_reserve_does_not_replace_saved_configuration(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
+            b.render('192.0.2.40', reserve_gib=10)
+            for reserve in (0, -1, float('nan'), float('inf'), True):
+                with self.subTest(reserve=reserve), self.assertRaises(RuntimeError):
+                    b.render(reserve_gib=reserve)
+                self.assertEqual(b.memory_reserve(), 10)
+
     def test_render_isolated_exact_models_and_safe_startup(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
             with patch.dict(os.environ, {'NGC_API_KEY': 'credential-must-never-be-rendered',
@@ -501,11 +522,11 @@ class ThorBootstrapTest(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'non-Thor'):
                 b.require_thor()
 
-    def test_guard_for_wrong_project_or_lower_reserve_is_rejected(self):
+    def test_guard_for_wrong_project_or_mismatched_reserve_is_rejected(self):
         for environment in ('VSS_MEMORY_FLOOR_GIB=36 VSS_GUARD_PROJECT=vss-thor',
                             'VSS_MEMORY_FLOOR_GIB=48 VSS_GUARD_PROJECT=historical'):
-            with self.subTest(environment=environment), patch.object(b, 'run',
-                    return_value=subprocess.CompletedProcess([], 0, environment)):
+            with self.subTest(environment=environment), patch.object(b, 'memory_reserve', return_value=48), \
+                    patch.object(b, 'run', return_value=subprocess.CompletedProcess([], 0, environment)):
                 with self.assertRaisesRegex(RuntimeError, 'correct project'):
                     b.require_guard()
 
