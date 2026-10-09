@@ -1,0 +1,18 @@
+{
+  "started": 1791563823.2675803,
+  "wifi_restore_timer": "vss-offline-test-wifi-restore-1791563823",
+  "passed": true,
+  "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+  "offline_started": 1791563823.55878,
+  "wifi_stayed_off": true,
+  "ready": {
+    "time": 1791564414.5496702,
+    "url": "http://10.88.9.76:3001/?workspace=live",
+    "reserve_gib": 10.0,
+    "primary_stream_id": "dd61590d-ad69-4d16-8fba-0159f86e86a0",
+    "camera_state": "online",
+    "available_gib": 53.75383758544922,
+    "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5"
+  },
+  "finished": 1791564416.5685709
+}

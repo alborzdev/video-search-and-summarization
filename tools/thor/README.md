@@ -30,6 +30,7 @@ python3 tools/thor/bootstrap.py install-guard
 python3 tools/thor/bootstrap.py stage-model
 python3 tools/thor/bootstrap.py stage-embed
 python3 tools/thor/bootstrap.py stage-cosmos
+python3 tools/thor/bootstrap.py stage-agent-cache
 python3 tools/thor/bootstrap.py stage
 ```
 
@@ -63,6 +64,13 @@ Its four independent weight shards download with bounded parallelism and
 separate resumable partial files. An exclusive cache lease prevents concurrent
 staging commands from writing the same snapshot.
 Both RTVI services share the explicit `.thor/data/models/rtvi-ngc` cache.
+
+`stage-agent-cache` prepares the small `all-MiniLM-L6-v2` text model used by
+video analytics, pinned by revision, file sizes and SHA-256 hashes in
+`agent-hf.lock.json`. Cached mode mounts this HF cache read-only in the agent
+and video analytics MCP service and sets both HF and Transformers offline flags.
+An existing container's writable-layer cache alone is insufficient for a fresh
+offline container. The desktop preflight verifies this pinned cache as well.
 
 For model staging, store the NGC key privately at
 `~/.config/cti-vss/ngc-api-key` with mode 600 and authenticate Docker to `nvcr.io`.
@@ -172,6 +180,50 @@ olive, teal and purple after resizing. The Thor candidate selects
 checks preserve the four original primaries at the model input size. The
 existing service default stays bilinear. This trades interpolated edges for
 correct colors on the tested host and does not change frame/model budgets.
+
+## Desktop start on this Anvil T5
+
+The installed **Start VSS · Anvil T5** shortcut starts the prepared demo from
+local caches, applies `sudo -n /usr/bin/jetson_clocks`, restores the local address
+and camera connection, applies the saved memory guard, starts missing service
+stages serially, restores the optional NVStreamer server, verifies local readiness
+and opens the live view. Already healthy services remain running. Source analysis
+and recording selections are preserved; launching does not automatically resume
+paused ingestion.
+
+```sh
+python3 tools/thor/desktop.py check
+python3 tools/thor/desktop.py start
+python3 tools/thor/desktop.py install
+```
+
+The Desktop and Applications entry is `vss-thor-start.desktop`; its progress
+window reports startup stages and failures. Private logs are in
+`.thor/desktop-logs/`, and the last ready receipt is `.thor/desktop-ready.json`.
+Missing images or offline model configuration fail before startup; the launcher
+uses the existing `--pull never --no-build` startup path. Cold model stages verify
+the pinned cache hashes. It never installs packages or downloads models.
+
+This machine's private `.thor/desktop-config.json` records the NetworkManager
+connection UUIDs and primary stream ID. The `vss-local` dummy connection provides
+the stable local VSS address independently of Wi-Fi or camera carrier. Camera-only
+Ethernet supplies the host route to the camera. See the
+[camera setup receipt](../../docs/qa/2026-10-09-thor-main-camera.md).
+
+One-time privileged setup installed `/etc/sudoers.d/cti-vss-jetson-clocks`, allowing
+only the root-owned `/usr/bin/jetson_clocks` with no arguments and its read-only
+`--show` option without a password prompt. No sudo password is stored in the
+launcher, desktop entry or repository. Docker is enabled at boot. A new machine
+needs its own prepared caches, network UUIDs and clock permission before the
+shortcut can start the demo.
+
+An actual Wi-Fi-off cold start on October 9 passed in 9 minutes 51 seconds,
+including all service probes, the optional mock server and the main camera
+online. Wi-Fi was restored after the test. The browser then decoded the camera's
+2560×1920 live frames and selected it in the video workflow. The receipt records
+53.75 GiB available and the saved 10 GiB guard; camera analysis and recording
+remained paused/off. This is startup and preview validation, not qualification
+of AI ingestion at the camera's full resolution.
 
 ## UI iteration
 

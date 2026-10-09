@@ -1,0 +1,9 @@
+{
+  "started": 1791561337.637443,
+  "wifi_restore_timer": "vss-offline-test-wifi-restore-1791561337",
+  "passed": false,
+  "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+  "offline_started": 1791561363.5100675,
+  "error_type": "TimeoutExpired",
+  "finished": 1791562085.1274004
+}

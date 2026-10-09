@@ -1,0 +1,9 @@
+{
+  "started": 1791562570.2832189,
+  "wifi_restore_timer": "vss-offline-test-wifi-restore-1791562570",
+  "passed": false,
+  "boot_id": "652c4102-7adf-4a68-98dd-4cdf6cb8bde5",
+  "offline_started": 1791562586.984608,
+  "error_type": "CalledProcessError",
+  "finished": 1791563228.0563152
+}

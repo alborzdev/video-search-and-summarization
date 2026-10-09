@@ -60,6 +60,9 @@ describe('AlertRulesWorkspace', () => {
     const recorded = { ...offline, sensorId: 'file', streamId: 'file', url: '', vodUrl: '' };
     expect(preferredMonitoringSource([offline, recorded, online])).toBe(online);
     expect(preferredMonitoringSource([offline, recorded, online], 'offline')).toBe(offline);
+    const primary = { ...offline, isPrimary: true };
+    expect(preferredMonitoringSource([primary, recorded, online])).toBe(primary);
+    expect(preferredMonitoringSource([primary, recorded, online], 'online')).toBe(online);
     expect(preferredMonitoringSource([offline, recorded])).toBe(recorded);
     expect(preferredMonitoringSource([])).toBeUndefined();
   });

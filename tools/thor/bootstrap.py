@@ -333,6 +333,14 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
     services['vss-va-mcp']['command'] = ['mcp', 'serve', '--config_file',
         '/vss-agent/deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml',
         '--host', '127.0.0.1', '--port', '9901']
+    for name in ('vss-agent', 'vss-va-mcp'):
+        services[name]['environment'].update(HF_HUB_OFFLINE='1' if cached_models else '0',
+            TRANSFORMERS_OFFLINE='1' if cached_models else '0')
+        if cached_models:
+            services[name]['environment']['HF_HOME'] = '/models/agent-hf'
+            services[name].setdefault('volumes', []).append({'type': 'bind',
+                'source': str(data / 'models/agent-hf'), 'target': '/models/agent-hf',
+                'read_only': True, 'bind': {'create_host_path': False}})
     services['lvs-server']['environment'].update(LVS_LLM_BASE_URL='http://127.0.0.1:30081/v1',
         LVS_LLM_MODEL_NAME=LLM, VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME=VLM,
         VIA_VLM_ENDPOINT='http://127.0.0.1:8018/v1/', LVS_EMB_DIMENSIONS='768')
@@ -1028,7 +1036,63 @@ def build_detector_engine():
     print('Native detector engine ready; builder stopped. Start the normal 6 GiB detector stage next.')
 
 
-def startup(stage_name):
+def service_ready(service, one_shot=False):
+    cid = run(compose('ps', '-a', '-q', service), capture_output=True, text=True, timeout=15).stdout.strip()
+    if not cid:
+        return False
+    state = json.loads(run(['docker', 'inspect', '--format', '{{json .State}}', cid],
+                          capture_output=True, text=True, timeout=15).stdout)
+    if one_shot:
+        return state['Status'] == 'exited' and state['ExitCode'] == 0
+    return state['Status'] == 'running' and state.get('Health', {}).get('Status', 'healthy') == 'healthy'
+
+
+def verify_agent_cache():
+    lock = json.loads((ROOT / 'deploy/docker/thor-current/agent-hf.lock.json').read_text())
+    root = Path(settings()['data_dir']) / 'models/agent-hf'
+    model = root / 'hub' / ('models--' + lock['repository'].replace('/', '--'))
+    snapshot = model / 'snapshots' / lock['revision']
+    if (model / 'refs/main').read_text().strip() != lock['revision']:
+        raise RuntimeError('Auxiliary text model cache revision does not match the pinned lock')
+    for entry in lock['files']:
+        path = snapshot / entry['path']
+        if not path.resolve().is_relative_to(root.resolve()) or path.stat().st_size != entry['size']:
+            raise RuntimeError('Auxiliary text model cache is incomplete')
+        with path.open('rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != entry['sha256']:
+                raise RuntimeError('Auxiliary text model cache hash does not match the pinned lock')
+    print('Pinned auxiliary text model cache verified; no network request was made.')
+
+
+def stage_agent_cache():
+    require_thor()
+    require_guard()
+    active = run(compose('ps', '--status', 'running', '-q', 'thor-llm', 'rtvi-embed',
+                        'rtvi-vlm', 'thor-perception'), capture_output=True, text=True).stdout.strip()
+    if active:
+        raise RuntimeError('Stop AI workloads before staging the auxiliary text cache')
+    lock = json.loads((ROOT / 'deploy/docker/thor-current/agent-hf.lock.json').read_text())
+    root = Path(settings()['data_dir']) / 'models/agent-hf/hub' / ('models--' + lock['repository'].replace('/', '--'))
+    snapshot = root / 'snapshots' / lock['revision']
+    for entry in lock['files']:
+        path = snapshot / entry['path']
+        path.parent.mkdir(parents=True, exist_ok=True)
+        partial = path.with_name(path.name + '.partial')
+        if path.is_file() and path.stat().st_size == entry['size']:
+            with path.open('rb') as stream:
+                if hashlib.file_digest(stream, 'sha256').hexdigest() == entry['sha256']:
+                    continue
+        url = f'https://huggingface.co/{lock["repository"]}/resolve/{lock["revision"]}/{entry["path"]}'
+        print('Staging pinned auxiliary file: ' + entry['path'], flush=True)
+        with urllib.request.urlopen(url, timeout=60) as response, partial.open('wb') as stream:
+            shutil.copyfileobj(response, stream, length=1024 * 1024)
+        if not publish_complete_partial(partial, path, entry['size'], entry['sha256']):
+            raise RuntimeError('Auxiliary text cache download was incomplete')
+    shared.private_write(root / 'refs/main', lock['revision'] + '\n')
+    verify_agent_cache()
+
+
+def startup(stage_name, reuse_ready=False):
     doctor()
     require_guard()
     graph = json.loads((STATE / 'compose.json').read_text())
@@ -1042,6 +1106,8 @@ def startup(stage_name):
         selected = [name for name in services if name not in model_names + detector_names + app_names]
         # The bounded telemetry observer does not start any AI model.
     elif stage_name == 'app':
+        if settings().get('cached_models'):
+            verify_agent_cache()
         selected = app_names
         for peer in model_names:
             cid = run(compose('ps', '-q', peer), capture_output=True, text=True, timeout=15).stdout.strip()
@@ -1100,6 +1166,9 @@ def startup(stage_name):
             raise RuntimeError(f'Stage {stage_name} unexpectedly depends on gated workload {name}')
         print(f'Starting {name}; {shared.available():.2f} GiB available', flush=True)
         require_guard()
+        if reuse_ready and name not in selected and service_ready(name, name in one_shots):
+            print(f'{name}: dependency already ready; preserving it.', flush=True)
+            continue
         run(compose('up', '-d', '--no-deps', '--no-build', '--pull', 'never', name), env=environment)
         await_service(name, name in one_shots)
     print(f'{stage_name} stage passed Docker readiness; functional acceptance remains pending.')
@@ -1153,11 +1222,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', choices=['doctor', 'render', 'install-guard', 'stage-model', 'verify-model',
                                          'stage-cosmos', 'verify-cosmos', 'stage-embed', 'verify-embed',
-                                         'stage-detector', 'build-detector-engine', 'stage', 'start', 'verify'])
+                                         'stage-detector', 'build-detector-engine', 'stage-agent-cache', 'stage', 'start', 'verify'])
     parser.add_argument('--host-ip')
     parser.add_argument('--gateway')
     parser.add_argument('--data-dir')
     parser.add_argument('--reserve-gib', type=float)
+    parser.add_argument('--reuse-ready', action='store_true', help='Preserve already-ready dependencies during staged startup')
     parser.add_argument('--cached-models', action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument('--detector', action=argparse.BooleanOptionalAction, dest='detector_enabled', default=None)
     parser.add_argument('--stage', choices=['support', 'thor-llm', 'rtvi-embed', 'rtvi-vlm', 'thor-perception', 'app'], default='support')
@@ -1167,12 +1237,13 @@ def main():
     elif args.reserve_gib is not None:
         parser.error('--reserve-gib is only supported with render')
     elif args.action == 'start':
-        startup(args.stage)
+        startup(args.stage, reuse_ready=args.reuse_ready)
     else:
         {'doctor': doctor, 'install-guard': install_guard, 'stage-model': stage_model,
          'verify-model': verify_model, 'stage-cosmos': stage_cosmos,
          'stage-embed': stage_embed, 'verify-embed': verify_embed,
          'verify-cosmos': verify_cosmos, 'stage-detector': stage_detector,
+         'stage-agent-cache': stage_agent_cache,
          'build-detector-engine': build_detector_engine,
          'stage': stage, 'verify': verify}[args.action]()
 

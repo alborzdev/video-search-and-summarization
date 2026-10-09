@@ -17,6 +17,57 @@ spec.loader.exec_module(b)
 
 
 class ThorBootstrapTest(unittest.TestCase):
+    def test_auxiliary_cache_verification_rejects_missing_or_changed_weights(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            lock_dir = root / 'deploy/docker/thor-current'
+            lock_dir.mkdir(parents=True)
+            model = root / 'data/models/agent-hf/hub/models--test--model'
+            (model / 'refs').mkdir(parents=True)
+            (model / 'refs/main').write_text('revision\n')
+            snapshot = model / 'snapshots/revision'
+            snapshot.mkdir(parents=True)
+            weight = snapshot / 'model.safetensors'
+            weight.write_bytes(b'good')
+            (lock_dir / 'agent-hf.lock.json').write_text(json.dumps({
+                'repository': 'test/model', 'revision': 'revision', 'files': [{
+                    'path': weight.name, 'size': 4, 'sha256': hashlib.sha256(b'good').hexdigest()}]}))
+            with patch.object(b, 'ROOT', root), patch.object(b, 'settings', return_value={'data_dir': str(root / 'data')}):
+                b.verify_agent_cache()
+                weight.write_bytes(b'evil')
+                with self.assertRaisesRegex(RuntimeError, 'hash'):
+                    b.verify_agent_cache()
+                weight.unlink()
+                with self.assertRaises(OSError):
+                    b.verify_agent_cache()
+
+    def test_reuse_ready_skips_successful_dependencies_and_starts_requested_service(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
+            (b.STATE / 'compose.json').write_text(json.dumps({'services': {
+                'kafka-topic-init-container': {}, 'vss-ui': {}}}))
+            with patch.object(b, 'doctor'), patch.object(b, 'require_guard'), \
+                    patch.object(b, 'await_service'), patch.object(b, 'settings', return_value={'cached_models': False}), \
+                    patch.object(b.shared, 'available', return_value=100), \
+                    patch.object(b.shared, 'startup_order', return_value=['kafka-topic-init-container', 'vss-ui']), \
+                    patch.object(b.shared, 'completed_services', return_value={'kafka-topic-init-container'}), \
+                    patch.object(b, 'service_ready', return_value=True) as ready, \
+                    patch.object(b, 'run', return_value=Mock(stdout='model-id')) as run:
+                b.startup('app', reuse_ready=True)
+            ready.assert_called_once_with('kafka-topic-init-container', True)
+            starts = [call.args[0][-1] for call in run.call_args_list if 'up' in call.args[0]]
+            self.assertEqual(starts, ['vss-ui'])
+
+    def test_dependency_readiness_rejects_failed_init_and_unready_running_service(self):
+        for state, one_shot, expected in [
+            ({'Status': 'exited', 'ExitCode': 0}, True, True),
+            ({'Status': 'exited', 'ExitCode': 1}, True, False),
+            ({'Status': 'running', 'Health': {'Status': 'starting'}}, False, False),
+            ({'Status': 'running', 'Health': {'Status': 'healthy'}}, False, True),
+        ]:
+            with self.subTest(state=state), patch.object(b, 'run',
+                    side_effect=[Mock(stdout='cid'), Mock(stdout=json.dumps(state))]):
+                self.assertEqual(b.service_ready('service', one_shot), expected)
+
     def test_detector_builder_refuses_low_headroom_or_active_models(self):
         with patch.object(b, 'doctor'), patch.object(b, 'require_guard'), \
                 patch.object(b, 'settings', return_value={'detector_enabled': True}), \
@@ -134,6 +185,7 @@ class ThorBootstrapTest(unittest.TestCase):
             models = ['thor-llm', 'rtvi-embed', 'rtvi-vlm']
             graph = {'services': {name: {} for name in models + ['lvs-server']}}
             (state / 'compose.json').write_text(json.dumps(graph))
+            (state / 'settings.json').write_text(json.dumps({'cached_models': False}))
             with patch.object(b, 'STATE', state), patch.object(b, 'doctor'), patch.object(b, 'require_guard'), \
                     patch.object(b.shared, 'available', return_value=100), \
                     patch.object(b.shared, 'startup_order', return_value=['rtvi-vlm', 'rtvi-embed', 'lvs-server']), \

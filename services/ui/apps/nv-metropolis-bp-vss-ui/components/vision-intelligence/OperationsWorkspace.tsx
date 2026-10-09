@@ -555,7 +555,7 @@ export function OperationsWorkspace({
           (intelligence?.semanticSegments ?? 0)
         );
       };
-      return score(right) - score(left);
+      return Number(Boolean(right.isPrimary)) - Number(Boolean(left.isPrimary)) || score(right) - score(left);
     });
   }, [sourceIntelligenceById, streams]);
 
@@ -714,7 +714,7 @@ export function OperationsWorkspace({
               (next[stream.streamId]?.evidenceEvents ?? 0) * 1_000_000 +
               (next[stream.streamId]?.trackedObservations ?? 0) * 100 +
               (next[stream.streamId]?.semanticSegments ?? 0);
-            return score(right) - score(left);
+            return Number(Boolean(right.isPrimary)) - Number(Boolean(left.isPrimary)) || score(right) - score(left);
           });
           if (ranked[0]) setSelectedId(ranked[0].streamId);
         }

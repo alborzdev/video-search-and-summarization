@@ -151,6 +151,15 @@ beforeEach(() => {
   }) as jest.Mock;
 });
 
+it("defaults to the appliance's offline primary camera while preserving an explicit choice", async () => {
+  (useVisionStreams as jest.Mock).mockReturnValue({ streams: [source, { ...other, isPrimary: true, connectionState: 'offline' }], isLoading: false, error: null, refresh: jest.fn() });
+  render(<GuidedDemoWorkspace {...props} />);
+  const camera = await screen.findByRole('combobox', { name: 'Workflow camera' });
+  expect(camera).toHaveValue(other.streamId);
+  fireEvent.change(camera, { target: { value: source.streamId } });
+  expect(camera).toHaveValue(source.streamId);
+});
+
 it("loads selected-camera status read-only without starting analysis or a rule wizard", async () => {
   render(<GuidedDemoWorkspace {...props} />);
   expect(
