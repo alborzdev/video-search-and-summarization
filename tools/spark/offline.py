@@ -214,7 +214,7 @@ def literal(value):
     return "'" + value.replace("'", "''") + "'"
 
 
-def migrate_sim_urls(original_host, gateway):
+def migrate_sim_urls(original_host, gateway, allow_missing=False):
     """Only the same-host Sim URL changes; identities and recording tables stay intact."""
     rows = json.loads(sql("SELECT COALESCE(json_agg(row_to_json(r)), '[]') FROM "
                           "(SELECT sensor_id,stream_id,stream_live_url,stream_proxy_url,stream_replay_url "
@@ -225,6 +225,8 @@ def migrate_sim_urls(original_host, gateway):
         if (url.scheme == 'rtsp' and url.hostname in (original_host, '127.0.0.1')
                 and url.port == 8554 and url.path == '/digital-twin' and not url.username):
             selected.append(row)
+    if not selected and allow_missing:
+        return None
     if len(selected) != 1:
         raise RuntimeError('Expected one registered local digital-twin source. Source setup needs a technical review; no recordings were changed.')
     row = selected[0]
@@ -302,7 +304,7 @@ def prepare(settings, progress, execute):
             time.sleep(1)
     else:
         raise RuntimeError('Video database did not become ready for local setup.')
-    sid = migrate_sim_urls(original['host_ip'], gateway)
+    sid = migrate_sim_urls(original['host_ip'], gateway, allow_missing=True)
     prepared = {'gateway': gateway, 'sensor_id': sid, 'app_url': 'http://127.0.0.1:7777/?workspace=guided'}
     b.private_write(marker, json.dumps(prepared, indent=2))
     progress('Local addressing prepared. Saved recordings and source identity preserved.')

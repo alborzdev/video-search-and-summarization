@@ -75,6 +75,10 @@ python3 tools/runtime/bootstrap.py stop
 launcher and guard. Omit `--no-open` to open the app in the device's configured
 browser. UI `deps` is an explicit online setup step; reuse installed dependencies
 for ordinary source edits. Keep the saved reserve and model budgets intact.
+On a fresh Spark without a registered local simulator, startup opens the app for
+recorded clips. Add the RTSP source later; no simulator is required for file use.
+Existing local Sim installations retain their recording/indexing startup path,
+and unrelated cameras are never migrated or activated as a simulator.
 For Spark's full recording/analysis shutdown, use
 `python3 tools/runtime/desktop.py stop --no-open`; Thor currently exposes its
 service stop through the common bootstrap. See the device guides for details.

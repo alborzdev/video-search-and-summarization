@@ -356,7 +356,11 @@ def recover_sensor_connection(sid, status, progress):
 
 
 def ready_sim(prepared, progress, fresh_start):
-    sid = prepared['sensor_id']
+    sid = prepared.get('sensor_id')
+    if not sid:
+        if fresh_start:
+            pause_rules()
+        return 'VSS is ready for recorded video. Upload a clip in the app; add an RTSP camera when available.'
     # Cold startup reserves visual reasoning for questions even if the Sim is
     # published later. Persisted active flags must not outlive lost CPU state.
     if fresh_start:

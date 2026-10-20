@@ -508,6 +508,23 @@ class DesktopTests(unittest.TestCase):
                 offline.migrate_sim_urls('10.88.9.91', '172.17.0.1')
             self.assertEqual(sql.call_count, 1)
 
+    def test_clip_only_setup_leaves_unrelated_cameras_untouched(self):
+        row = {'stream_live_url': 'rtsp://192.0.2.8:8554/digital-twin'}
+        for rows in ([], [row]):
+            with self.subTest(rows=rows), patch.object(offline, 'sql', return_value=json.dumps(rows)) as sql:
+                self.assertIsNone(offline.migrate_sim_urls('10.88.9.91', '172.17.0.1', allow_missing=True))
+                self.assertEqual(sql.call_count, 1)
+
+    def test_clip_only_start_skips_sim_probes_and_capture(self):
+        for cold in (True, False):
+            with self.subTest(cold=cold), patch.object(d, 'pause_rules') as pause, \
+                 patch.object(d, 'api') as api, patch.object(d, 'local_sim_published') as probe:
+                result = d.ready_sim({'sensor_id': None}, Mock(), cold)
+                self.assertIn('ready for recorded video', result)
+                self.assertEqual(pause.call_count, int(cold))
+                api.assert_not_called()
+                probe.assert_not_called()
+
 
 if __name__ == '__main__':
     unittest.main()
