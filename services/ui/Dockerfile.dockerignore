@@ -6,3 +6,5 @@
 **/coverage
 **/*.log
 deploy/docker/data-dir
+.spark/
+.thor/

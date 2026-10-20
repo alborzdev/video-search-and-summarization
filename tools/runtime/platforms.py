@@ -10,6 +10,8 @@ def identify(gpu_names, architecture):
     if architecture != 'aarch64':
         return 'unsupported'
     names = gpu_names.upper()
+    if 'THOR' in names and 'GB10' in names:
+        return 'unsupported'
     if 'THOR' in names:
         return 'thor'
     if 'GB10' in names:

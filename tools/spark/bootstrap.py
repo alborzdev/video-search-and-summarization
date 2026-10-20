@@ -28,6 +28,7 @@ STATE = ROOT / '.spark'
 # downloads it: technical setup stages it before taking the machine offline.
 CODEC_WHEEL_NAME = 'opencv_python_headless-4.13.0.92-cp37-abi3-manylinux_2_28_aarch64.whl'
 CODEC_WHEEL_SHA256 = 'eb60e36b237b1ebd40a912da5384b348df8ed534f6f644d8e0b4f103e272ba7d'
+JQ_SHA256 = '4dd2d8a0661df0b22f1bb9a1f9830f06b6f3b8f7d91211a1ef5d7c4f06a8b4a5'
 CODEC_WHEEL_TARGET = '/offline-tools/' + CODEC_WHEEL_NAME
 CODEC_WHEEL_URL = 'https://files.pythonhosted.org/packages/8f/b4/b7bcbf7c874665825a8c8e1097e93ea25d1f1d210a3e20d4451d01da30aa/' + CODEC_WHEEL_NAME
 # API identity exposed by the pinned Spark NIM, distinct from its image name.
@@ -428,29 +429,40 @@ def configure_offline_topic_tools(service):
                    'bind': {'create_host_path': False}})
 
 
-def stage_codec_wheel(state=None):
-    """Explicit online setup only; desktop startup never calls this downloader."""
-    path = (STATE if state is None else Path(state)) / 'offline-tools' / CODEC_WHEEL_NAME
+def stage_pinned_file(path, url, expected_hash, mode=0o644):
     if path.is_file():
-        with path.open('rb') as wheel:
-            if hashlib.file_digest(wheel, 'sha256').hexdigest() == CODEC_WHEEL_SHA256:
+        with path.open('rb') as cached:
+            if hashlib.file_digest(cached, 'sha256').hexdigest() == expected_hash:
+                path.chmod(mode)
                 return
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd, temporary = tempfile.mkstemp(prefix='.opencv-', dir=path.parent)
+    fd, temporary = tempfile.mkstemp(prefix='.download-', dir=path.parent)
     try:
         digest = hashlib.sha256()
-        with os.fdopen(fd, 'wb') as wheel, urllib.request.urlopen(CODEC_WHEEL_URL, timeout=60) as response:
+        with os.fdopen(fd, 'wb') as output, urllib.request.urlopen(url, timeout=60) as response:
             while chunk := response.read(1048576):
-                wheel.write(chunk)
+                output.write(chunk)
                 digest.update(chunk)
-            wheel.flush()
-            os.fsync(wheel.fileno())
-        if digest.hexdigest() != CODEC_WHEEL_SHA256:
-            raise RuntimeError('Downloaded video decoder differs from the pinned uv.lock hash.')
-        os.chmod(temporary, 0o644)
+            output.flush()
+            os.fsync(output.fileno())
+        if digest.hexdigest() != expected_hash:
+            raise RuntimeError('Downloaded asset differs from its pinned uv.lock/offline hash.')
+        os.chmod(temporary, mode)
         os.replace(temporary, path)
     finally:
         Path(temporary).unlink(missing_ok=True)
+
+
+def stage_codec_wheel(state=None):
+    """Explicit online setup only; desktop startup never calls this downloader."""
+    path = (STATE if state is None else Path(state)) / 'offline-tools' / CODEC_WHEEL_NAME
+    stage_pinned_file(path, CODEC_WHEEL_URL, CODEC_WHEEL_SHA256)
+
+
+def stage_kafka_parser(state=None):
+    path = (STATE if state is None else Path(state)) / 'offline-tools/jq'
+    stage_pinned_file(path, 'https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux-arm64',
+                      JQ_SHA256, mode=0o755)
 
 
 def stage():
@@ -462,6 +474,7 @@ def stage():
     if active.strip():
         raise RuntimeError('Stop this candidate stack before staging/building.')
     stage_codec_wheel()
+    stage_kafka_parser()
     run(['bash', ROOT / 'deploy/docker/thor-local/vios-mcp/stage-wheelhouse.sh'])
     pack = ROOT / 'deploy/docker/services/infra/elk/logstash/offline-packs/logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip'
     run([sys.executable, pack.parent.parent / 'verify-protobuf-offline-pack.py', pack, str(pack) + '.sha256', str(pack) + '.expected.sha256'])
@@ -477,11 +490,29 @@ def stage():
 def provision():
     graph = json.loads((STATE / 'compose.json').read_text())
     data = Path(json.loads((STATE / 'settings.json').read_text())['data_dir'])
+    if data.resolve() != data:
+        raise RuntimeError('Data-directory paths cannot redirect through symlinks')
+    data.mkdir(parents=True, exist_ok=True)
     paths = data_roots(graph, data)
+    records = []
     for path in sorted(paths):
+        if path.resolve() != path:
+            raise RuntimeError('Data-directory paths cannot redirect through symlinks')
         if not path.exists():
-            uid = '65532' if path.name in ('vision-history', 'vision-rules', 'vision-investigations') else '1000'
-            run(['sudo', '-n', 'install', '-d', '-m', '2770', '-o', uid, '-g', '1000', path])
+            uid = 65532 if path.name in ('vision-history', 'vision-rules', 'vision-investigations', 'agent-reports') else 1000
+            records.append([str(path.relative_to(data)), uid, os.getgid()])
+    if not records:
+        return
+    # Docker access is already required. As on Thor, use a bounded CPU helper
+    # instead of requiring passwordless sudo. Only create missing data roots;
+    # never chown an existing database or recursively change its contents.
+    run(['docker', 'run', '--rm', '--pull', 'never', '--network', 'none', '--runtime', 'runc', '--user', '0:0',
+         '--memory', '256m', '--memory-swap', '256m', '--cpus', '1',
+         '-v', f'{data}:/data', '--entrypoint', 'node', 'node:22.22.3-bookworm-slim', '-e',
+         "const fs=require('fs'); for(const [rel,uid,gid] of JSON.parse(process.argv[1])){"
+         "const p='/data/'+rel; if(fs.existsSync(p))continue;"
+         "fs.mkdirSync(p,{recursive:true,mode:0o2770});"
+         "fs.chownSync(p,uid,gid);fs.chmodSync(p,0o2770);}", json.dumps(records)])
 
 
 def data_roots(graph, data):

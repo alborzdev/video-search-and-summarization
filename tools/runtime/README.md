@@ -1,4 +1,11 @@
-# Thor runtime qualification
+# Runtime tools for Spark and Thor
+
+Use the same `codex/unified-spark-thor` application branch on both devices.
+[Shared setup and maintenance](../../docs/device-setup.md) describes installation
+and updates. `bootstrap.py`, `desktop.py` and `ui.py` in this directory inspect
+the host hardware and route to its profile; saved device state stays local.
+
+## Thor runtime qualification
 
 **October 9 operator setting:** the user explicitly selected a **10 GiB**
 memory reserve for this Anvil T5 demo. The active systemd guard and

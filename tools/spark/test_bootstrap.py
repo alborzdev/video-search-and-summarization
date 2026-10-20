@@ -28,6 +28,39 @@ class BootstrapTests(unittest.TestCase):
             patcher.start()
             self.addCleanup(patcher.stop)
 
+    def test_provision_only_creates_missing_roots_without_sudo(self):
+        data = b.STATE / 'data'
+        existing = data / 'existing-database'
+        existing.mkdir(parents=True)
+        graph = {'services': {'app': {'volumes': [
+            {'type': 'bind', 'source': str(existing)},
+            {'type': 'bind', 'source': str(data / 'vision-history')},
+            {'type': 'bind', 'source': str(data / 'models')}]}}}
+        b.private_write(b.STATE / 'compose.json', json.dumps(graph))
+        b.private_write(b.STATE / 'settings.json', json.dumps({'data_dir': str(data)}))
+        with patch.object(b, 'run') as run:
+            b.provision()
+        command = run.call_args.args[0]
+        self.assertEqual(command[:3], ['docker', 'run', '--rm'])
+        self.assertIn('never', command)
+        self.assertIn('none', command)
+        self.assertEqual(json.loads(command[-1]), [['models', 1000, os.getgid()],
+                                                 ['vision-history', 65532, os.getgid()]])
+        self.assertTrue(existing.is_dir())
+
+    def test_provision_rejects_a_symlink_in_the_data_path(self):
+        data = b.STATE / 'data'
+        data.mkdir()
+        (data / 'redirect').symlink_to(b.STATE, target_is_directory=True)
+        graph = {'services': {'app': {'volumes': [
+            {'type': 'bind', 'source': str(data / 'redirect' / 'new')}]}}}
+        b.private_write(b.STATE / 'compose.json', json.dumps(graph))
+        b.private_write(b.STATE / 'settings.json', json.dumps({'data_dir': str(data)}))
+        with patch.object(b, 'run') as run:
+            with self.assertRaisesRegex(RuntimeError, 'symlinks'):
+                b.provision()
+        run.assert_not_called()
+
     def test_private_write_failure_preserves_previous_complete_settings(self):
         path = b.STATE / 'settings.json'
         b.private_write(path, '{"reserve_gib":24}')

@@ -1,5 +1,12 @@
 # Continue the demo on DGX Spark
 
+**October 20 shared-branch update:** use `codex/unified-spark-thor` for both
+devices; see [shared setup and maintenance](device-setup.md). It includes all
+subsequent Thor application fixes. The platform-specific startup notes below
+remain applicable. Missing Spark data roots are now provisioned by a bounded,
+network-isolated Docker helper, as on Thor; passwordless sudo is not required.
+Existing data roots and database contents are left intact.
+
 ## Status and purpose
 
 **October 1 pre-rehearsal audit:** The launcher now recovers late RTSP
@@ -123,7 +130,7 @@ this VSS Compose project; it cannot prevent every driver/GPU hang.
 ## Get the exact working branch
 
 ```sh
-git clone --branch agent/vss-3.2.1-thor-parity https://github.com/alborzdev/video-search-and-summarization.git
+git clone --branch codex/unified-spark-thor https://github.com/alborzdev/video-search-and-summarization.git
 cd video-search-and-summarization
 git lfs install
 git lfs pull
@@ -166,10 +173,9 @@ on another filesystem. Initial downloads and engine compilation can take a long
 time; the demo's answer latency target applies after warm-up.
 
 Elasticsearch requires `vm.max_map_count >= 262144`. If needed, configure this
-persistently using the host's sysctl configuration. The provisioning step uses
-`sudo -n install` only for missing data directories; it never recursively changes
-existing service-owned data. If sudo needs a password, perform that host setup
-interactively. Do not weaken directory permissions to work around it.
+persistently using the host's sysctl configuration. The provisioning step uses a
+bounded Docker helper only for missing data directories; it never recursively
+changes existing service-owned data.
 
 NGC access/license acceptance is required for NVIDIA registry images/models.
 Enter the key locally, never in chat or Git:

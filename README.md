@@ -1,4 +1,4 @@
-> **Custom demo → DGX Spark:** [Deployment and Codex handoff](docs/spark-handoff.md). Use the custom branch and Spark bootstrap; historical Thor launchers are hardware-specific.
+> **Custom demo on Spark and Thor:** [Shared branch and device setup](docs/device-setup.md). Pull the same application source on both devices; common commands select the hardware profile automatically.
 
 <h2>NVIDIA AI Blueprint: Video Search and Summarization (VSS)</h2>
 

@@ -1,5 +1,9 @@
 # Latest Spark application on Thor
 
+Use the shared `codex/unified-spark-thor` branch on both devices. See
+[shared setup and maintenance](../../docs/device-setup.md) for common commands
+and the branch policy. The Thor staging and qualification steps below still apply.
+
 This independent candidate keeps the October Spark application source and the
 reviewed September Thor model identities and bounded-memory configuration.
 It uses `.thor/` for private generated configuration and fresh runtime data;
