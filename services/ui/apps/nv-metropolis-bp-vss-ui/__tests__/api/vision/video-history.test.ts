@@ -80,6 +80,8 @@ describe("video history API", () => {
   const pausedAnalysisSources = new Set<string>();
 
   beforeAll(async () => {
+    // The route selects its history window at import time, before beforeEach.
+    process.env.HARDWARE_PROFILE = "THOR";
     process.env.VISION_HISTORY_DIR = storeDirectory;
     process.env.LVS_BACKEND_URL = "http://lvs.test";
     process.env.VST_INTERNAL_API_URL = "http://vst.test";
