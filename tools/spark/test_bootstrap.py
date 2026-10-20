@@ -397,7 +397,10 @@ class BootstrapTests(unittest.TestCase):
                                  cached['vss-agent']['environment']['LLM_NAME'])
                 self.assertEqual(cached['streamprocessing-ms']['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'], 'false')
                 self.assertNotIn('user_additional_install.sh', ' '.join(cached['streamprocessing-ms']['entrypoint']))
-                self.assertIn('launch_vst', ' '.join(cached['streamprocessing-ms']['entrypoint']))
+                self.assertEqual(cached['streamprocessing-ms']['entrypoint'], ['/usr/local/bin/vios-offline-entrypoint'])
+                self.assertEqual(cached['streamprocessing-ms']['build']['network'], 'none')
+                self.assertEqual(cached['streamprocessing-ms']['build']['args']['CODEC_LOCK_PATH'],
+                                 'deploy/docker/thor-current/codecs.lock.json')
                 self.assertFalse(cached['rtvi-vlm']['environment']['MODEL_PATH'].startswith('ngc:'))
                 self.assertTrue(json.loads((state / 'settings.json').read_text())['cached_models'])
                 topics = cached['kafka-topic-init-container']

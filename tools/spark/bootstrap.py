@@ -276,16 +276,19 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     services['logstash'].setdefault('volumes', []).append({
         'type': 'bind', 'source': str(ROOT / 'deploy/docker/spark/logstash-bootstrap.rb'),
         'target': '/usr/share/logstash/lib/bootstrap/environment.rb', 'read_only': True})
-    # Carry over shared application integration, replacing the Tegra codec layer.
+    # Both ARM64 profiles need the released image's stripped codec bytes.
+    # Share the reviewed Ubuntu bundle; never install into an ephemeral runtime.
     stream = services['streamprocessing-ms']
-    stream.pop('build', None)
-    stream['image'] = 'nvcr.io/nvidia/vss-core/vss-vios-streamprocessing:3.2.1'
-    stream['entrypoint'] = ['/bin/bash', '-ec', '/home/vst/vst_release/tools/user_additional_install.sh; exec /home/vst/vst_release/launch_vst']
-    stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'true'
+    stream['build']['args'].update(
+        CODEC_LOCK_PATH='deploy/docker/thor-current/codecs.lock.json',
+        CODEC_BUNDLE_PATH='deploy/docker/thor-current/vios-codecs/bundle')
+    stream['entrypoint'] = ['/usr/local/bin/vios-offline-entrypoint']
+    stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'false'
     # Sim's MediaMTX publisher accepts TCP only. Keep the inherited Thor
     # configuration intact and bind a generated Spark copy to each VST role.
     vst_config = json.loads((ROOT / 'deploy/docker/thor-local/vios/vst_config.json').read_text())
     vst_config['network']['rtsp_streaming_over_tcp'] = True
+    vst_config['network']['server_domain_name'] = host_ip
     vst_config_path = STATE / 'vst-config.json'
     private_write(vst_config_path, json.dumps(vst_config, indent=2) + '\n')
     for service in services.values():
@@ -323,11 +326,7 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
                         'interval': '15s', 'timeout': '5s', 'retries': 120, 'start_period': '120s'},
     }
     if cached_models:
-        # The pinned VIOS image already contains the codecs used by the Sim.
-        # Its additional-install script runs apt update/reinstall even when
-        # they are present. Never invoke that online installer in cache mode.
-        stream['entrypoint'] = ['/bin/bash', '-ec', 'exec /home/vst/vst_release/launch_vst']
-        stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'false'
+        # Codec bytes are part of the cached image in both modes.
         for environment in (embed, vlm):
             environment.update(RTVI_OFFLINE='true', HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', NGC_API_KEY='')
         services['spark-llm']['environment'].update(
@@ -506,6 +505,7 @@ def stage():
         raise RuntimeError('Stop this candidate stack before staging/building.')
     stage_codec_wheel()
     stage_kafka_parser()
+    run([sys.executable, ROOT / 'tools/thor/restore_codecs.py'])
     run(['bash', ROOT / 'deploy/docker/thor-local/vios-mcp/stage-wheelhouse.sh'])
     pack = ROOT / 'deploy/docker/services/infra/elk/logstash/offline-packs/logstash-codec-protobuf-1.3.0-logstash-9.3.3.zip'
     run([sys.executable, pack.parent.parent / 'verify-protobuf-offline-pack.py', pack, str(pack) + '.sha256', str(pack) + '.expected.sha256'])

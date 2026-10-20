@@ -89,6 +89,17 @@ for name in ['rtdetr_warehouse_v1.0.2.fp16.onnx', 'rtdetr_warehouse_v1.0.2.fp16.
 print('All pinned model files and GB10 engines are cached.')
 '''
 
+VST_CODEC_CHECK = r'''
+import ctypes, json
+from pathlib import Path
+manifest = json.loads(Path('/usr/share/vss-thor/vios-codecs/manifest.json').read_text())
+if manifest.get('package_set_sha256') != 'ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4':
+    raise RuntimeError('Unexpected VST codec package set.')
+for name in ('libavcodec.so.60', 'libavformat.so.60', 'libavutil.so.58'):
+    ctypes.CDLL(name)
+print('Cached VST codec manifest and libav loading passed without networking.')
+'''
+
 
 def load():
     return json.loads((b.STATE / 'settings.json').read_text()), json.loads((b.STATE / 'compose.json').read_text())
@@ -173,6 +184,11 @@ def preflight(progress):
     images = sorted({service['image'] for service in graph['services'].values()})
     b.run(['docker', 'image', 'inspect', *images], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=30)
     ui.validate_dependencies()  # Never run npm install from a desktop shortcut.
+    progress('Checking cached video-storage codecs with networking disabled…')
+    b.run(['docker', 'run', '--rm', '--pull', 'never', '--network', 'none', '--runtime', 'runc',
+           '--memory', '256m', '--memory-swap', '256m', '--cpus', '1',
+           '--entrypoint', 'python3', graph['services']['streamprocessing-ms']['image'],
+           '-c', VST_CODEC_CHECK], timeout=45)
     missing = [str(path) for path in b.data_roots(graph, Path(settings['data_dir'])) if not path.is_dir()]
     if missing:
         raise RuntimeError('Required data folders are missing. Technical setup is required; no sudo prompts are used by this launcher.')

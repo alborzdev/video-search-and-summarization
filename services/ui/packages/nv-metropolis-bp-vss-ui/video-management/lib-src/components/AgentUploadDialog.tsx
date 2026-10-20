@@ -74,7 +74,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
         const fallback =
           profiles.find((profile) => profile.id === SEMANTIC_ANALYSIS_PROFILE_ID && profile.ready) ??
           profiles.find((profile) => profile.ready);
-        if (!fallback) throw new Error('No analysis profile is currently ready on this Thor.');
+        if (!fallback) throw new Error('No analysis profile is currently ready on this device.');
         files.forEach((item) => {
           const selected = profiles.find(
             (profile) => profile.id === item.formData.analysisProfileId && profile.ready,
@@ -113,7 +113,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
         (candidate) => candidate.id === recommendation.profileId,
       );
       if (!profile?.ready) {
-        throw new Error(`${profile?.name ?? 'The recommended profile'} is not ready on this Thor.`);
+        throw new Error(`${profile?.name ?? 'The recommended profile'} is not ready on this device.`);
       }
       onFieldChange(item.id, 'analysisProfileId', profile.id);
       setRecommendationByFile((current) => ({
@@ -124,7 +124,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
       setProfileError(
         requestError instanceof Error
           ? requestError.message
-          : 'Thor could not recommend a profile.',
+          : 'The local model could not recommend a profile.',
       );
     } finally {
       setRecommendingFileId(null);
@@ -244,7 +244,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
           Make a video searchable
         </h3>
 
-        <p className="mb-5 shrink-0 text-sm leading-6 text-gray-500">Upload a recording, then build searchable moments on this Jetson. Processing must finish before search is ready.</p>
+        <p className="mb-5 shrink-0 text-sm leading-6 text-gray-500">Upload a recording, then build searchable moments on this device. Processing must finish before search is ready.</p>
         {/* One scrolling content region; actions remain visible below it. */}
         <div className="min-h-0 flex-1 overflow-y-auto pr-2">
           <div className="mb-2 flex items-center justify-between">
@@ -318,7 +318,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                       <div className="space-y-4 border-t border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-neutral-950">
                         <div>
                           <div className="mb-3">
-                            <strong className="text-sm text-gray-900 dark:text-gray-100">Choose how Thor analyzes this video</strong>
+                            <strong className="text-sm text-gray-900 dark:text-gray-100">Choose how to analyze this video</strong>
                             <p className="mt-1 text-xs leading-5 text-gray-500">
                               Choose an available option below. Tracking adds supported object overlays and compatible alert rules.
                             </p>
@@ -365,7 +365,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
 
                         <div className="rounded-md border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-white/[0.03]">
                           <label className="text-xs font-medium text-gray-700 dark:text-gray-300" htmlFor={`analysis-intent-${item.id}`}>
-                            Let Thor recommend a profile
+                            Recommend an analysis profile
                           </label>
                           <textarea
                             className="mt-2 min-h-[64px] w-full resize-y rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 outline-none focus:border-cyan-500 dark:border-gray-700 dark:bg-black dark:text-gray-100"
@@ -381,7 +381,7 @@ export const AgentUploadDialog: React.FC<AgentUploadDialogProps> = ({
                               kind="secondary"
                               onClick={() => void recommendForFile(item)}
                             >
-                              {recommendingFileId === item.id ? 'Checking…' : 'Recommend with Thor'}
+                              {recommendingFileId === item.id ? 'Checking…' : 'Recommend a profile'}
                             </Button>
                           </div>
                           {recommendationByFile[item.id] && (
