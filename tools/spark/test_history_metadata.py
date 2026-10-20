@@ -18,11 +18,11 @@ spec.loader.exec_module(h)
 class HistoryMetadataTests(unittest.TestCase):
     def test_capacity_requires_fresh_matching_active_guard_and_reads_current_memory(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(h, 'STATE', Path(folder)):
-            (Path(folder) / 'settings.json').write_text(json.dumps({'reserve_gib': 24}))
-            for status, allowed in [({'floor_gib': 24, 'time': 99}, True),
-                                    ({'floor_gib': 24, 'time': 90}, False),
+            (Path(folder) / 'settings.json').write_text(json.dumps({'reserve_gib': 20}))
+            for status, allowed in [({'floor_gib': 20, 'time': 99}, True),
+                                    ({'floor_gib': 20, 'time': 90}, False),
                                     ({'floor_gib': 36, 'time': 99}, False),
-                                    ({'floor_gib': 24, 'time': 101}, False)]:
+                                    ({'floor_gib': 20, 'time': 101}, False)]:
                 (Path(folder) / 'guard-status.json').write_text(json.dumps(status))
                 with self.subTest(status=status), patch.object(h.time, 'time', return_value=100), \
                      patch.object(h.subprocess, 'run') as run, \
@@ -33,7 +33,7 @@ class HistoryMetadataTests(unittest.TestCase):
                     else:
                         with self.assertRaises(RuntimeError): h.capacity_snapshot()
                         run.assert_not_called()
-            (Path(folder) / 'guard-status.json').write_text(json.dumps({'floor_gib': 24, 'time': 99}))
+            (Path(folder) / 'guard-status.json').write_text(json.dumps({'floor_gib': 20, 'time': 99}))
             with patch.object(h.time, 'time', return_value=100), patch.object(h.subprocess, 'run',
                     side_effect=subprocess.CalledProcessError(3, ['systemctl'])):
                 with self.assertRaises(subprocess.CalledProcessError): h.capacity_snapshot()

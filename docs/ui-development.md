@@ -53,7 +53,7 @@ app's strictness or build all packages to hide those errors.
 
 Both dependency installation and dev switching require a GB10 host, the active
 Spark guard, and at least the saved reserve plus 4 GiB available. The current
-user-authorized reserve is 24 GiB. The dev process has a 2 GiB JavaScript heap
+user-authorized reserve on the October 20 Spark setup is 20 GiB. The dev process has a 2 GiB JavaScript heap
 and a 4 GiB container ceiling with no additional swap; it uses the CPU runtime.
 Keep Sim and model budgets unchanged. First-visit compilation can take longer
 than a normal API request; watch `docker logs --tail 40 vss-agent-ui` and then

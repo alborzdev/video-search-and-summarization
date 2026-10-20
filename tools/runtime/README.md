@@ -5,6 +5,13 @@ Use the same `codex/unified-spark-thor` application branch on both devices.
 and updates. `bootstrap.py`, `desktop.py` and `ui.py` in this directory inspect
 the host hardware and route to its profile; saved device state stays local.
 
+## Spark operator setting
+
+On October 20 the operator selected a **20 GiB** reserve for the GB10 setup.
+The guard and bounded workload admission accept that saved floor; the extra
+startup and history-inference headroom checks remain active. Rendering without
+`--reserve-gib` preserves the local selection. Model budgets remain unchanged.
+
 ## Thor runtime qualification
 
 **October 9 operator setting:** the user explicitly selected a **10 GiB**

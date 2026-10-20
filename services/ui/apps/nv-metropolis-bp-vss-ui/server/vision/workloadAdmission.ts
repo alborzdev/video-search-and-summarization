@@ -183,7 +183,7 @@ export function evaluateWorkloadAdmission(
   if (isVeryHeavy && facts.runtime === "spark") {
     const capacity = facts.sparkCapacity;
     if (!capacity || capacity.state !== "fresh" || !capacity.guardActive ||
-        capacity.reserveGiB === null || !Number.isFinite(capacity.reserveGiB) || capacity.reserveGiB < 24 ||
+        capacity.reserveGiB === null || !Number.isFinite(capacity.reserveGiB) || capacity.reserveGiB < 20 ||
         capacity.availableGiB === null || !Number.isFinite(capacity.availableGiB)) {
       return result(workload, facts, "block", "SPARK_CAPACITY_REQUIRED",
         "Fresh Spark memory capacity and an active reserve guard are required for this history workload.",
