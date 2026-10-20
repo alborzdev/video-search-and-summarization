@@ -92,7 +92,10 @@ export async function readSparkCapacity(): Promise<NonNullable<WorkloadAdmission
     });
     if (!response.ok) return unknown;
     const payload = await response.json();
-    const age = Date.now() / 1000 - payload.sampledAt;
+    // Python samples carry sub-millisecond precision; Date.now() does not.
+    // Compare at the client's resolution so a fast loopback response cannot
+    // look fractionally future-dated and hide an otherwise fresh guard.
+    const age = (Date.now() - Math.floor(payload.sampledAt * 1000)) / 1000;
     if (payload.hardwareProfile !== "DGX-SPARK" || payload.guardActive !== true ||
         !Number.isFinite(age) || age < 0 || age > 5 ||
         !Number.isFinite(payload.availableGiB) || !Number.isFinite(payload.reserveGiB) || payload.reserveGiB < 20) return unknown;

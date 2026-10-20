@@ -6,11 +6,12 @@ jest.mock("../../../server/vision/cosmosReservation", () => ({ readCosmosReserva
 describe("Spark workload capacity adapter", () => {
   const original = { ...process.env };
   const originalFetch = global.fetch;
-  afterEach(() => { process.env = { ...original }; global.fetch = originalFetch; });
-  it.each(["fresh", "stale", "missing", "malformed"])("fails closed on %s capacity while avoiding Thor probes", async (sample) => {
+  afterEach(() => { process.env = { ...original }; global.fetch = originalFetch; jest.restoreAllMocks(); });
+  it.each(["fresh", "submillisecond", "future", "stale", "missing", "malformed"])("validates %s capacity while avoiding Thor probes", async (sample) => {
     process.env.HARDWARE_PROFILE = "DGX-SPARK";
     process.env.HISTORY_METADATA_TOKEN = "test-local-token";
     process.env.SPARK_CAPACITY_URL = "http://capacity.test/capacity";
+    if (sample === "submillisecond") jest.spyOn(Date, "now").mockReturnValue(1792517000000);
     const fetchMock = jest.fn(async (input: RequestInfo | URL) => {
       const url = String(input);
       if (url.endsWith("/v1/health/ready")) return { ok: true } as Response;
@@ -18,14 +19,14 @@ describe("Spark workload capacity adapter", () => {
       if (url === "http://capacity.test/capacity") return { ok: sample !== "missing", json: async () => ({
         hardwareProfile: "DGX-SPARK", guardActive: true, reserveGiB: 20,
         availableGiB: sample === "malformed" ? "36" : 36,
-        sampledAt: Date.now() / 1000 - (sample === "stale" ? 20 : 0),
+        sampledAt: Date.now() / 1000 + (sample === "submillisecond" ? 0.0005 : sample === "future" ? 1 : sample === "stale" ? -20 : 0),
       }) } as Response;
       throw new Error("Unexpected probe");
     });
     global.fetch = fetchMock;
     const facts = await readWorkloadAdmissionFacts();
     expect(facts.runtime).toBe("spark");
-    expect(facts.sparkCapacity?.state).toBe(sample === "fresh" ? "fresh" : "unknown");
+    expect(facts.sparkCapacity?.state).toBe(["fresh", "submillisecond"].includes(sample) ? "fresh" : "unknown");
     expect(facts.telemetry).toEqual({ state: "unknown", gpuUtilizationPercent: null });
     const call = fetchMock.mock.calls.find(([url]) => String(url) === "http://capacity.test/capacity");
     expect(call).toBeDefined();
