@@ -303,6 +303,8 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(settings['host_ip'], '172.17.0.1')
         self.assertEqual(services['rtvi-embed']['environment']['KAFKA_BOOTSTRAP_SERVERS'], '172.17.0.1:9092')
         self.assertIn('127.0.0.1:30081:8000', services['spark-llm']['ports'])
+        self.assertEqual(services['vss-haproxy-ingress']['environment']['HAPROXY_BIND_ADDR'],
+                         '127.0.0.1:7777,172.17.0.1')
 
     def test_actual_compose_render_and_secret_isolation(self):
         with tempfile.TemporaryDirectory() as temp:

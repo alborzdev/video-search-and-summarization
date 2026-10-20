@@ -338,6 +338,9 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     va_config = '/vss-agent/deploy/docker/developer-profiles/dev-profile-thor-full/vss-agent/configs/va_mcp_server_config.yml'
     services['vss-va-mcp']['command'] = ['mcp', 'serve', '--config_file', va_config, '--host', '127.0.0.1', '--port', '9901']
     agent = services['vss-agent']
+    if host_ip == gateway:
+        ingress = services['vss-haproxy-ingress']['environment']
+        ingress['HAPROXY_BIND_ADDR'] = f"127.0.0.1:{ingress['HAPROXY_PORT']},{gateway}"
     agent['command'] = ['serve', '--config_file', '/vss-agent/deploy/docker/spark/config.yml', '--host', '127.0.0.1', '--port', '8100']
     agent['environment'].update(
         VSS_AGENT_CONFIG_FILE='/vss-agent/deploy/docker/spark/config.yml',
