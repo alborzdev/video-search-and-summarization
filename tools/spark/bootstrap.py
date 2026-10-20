@@ -224,6 +224,8 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
         private_write(password_path, secrets.token_hex(24))
     values = dict(
         HARDWARE_PROFILE='DGX-SPARK', COMPOSE_PROFILES=PROFILE, COMPOSE_PROJECT_NAME='vss-spark',
+        # Keep monitoring local and below Linux's usual ephemeral port range.
+        MONITORING_BIND_ADDRESS='127.0.0.1', GRAFANA_PORT='14000',
         VSS_APPS_DIR=str(ROOT / 'deploy/docker'), VSS_REPO_ROOT=str(ROOT), VSS_DATA_DIR=str(data),
         HOST_IP=host_ip, EXTERNAL_IP=host_ip, THOR_LOCAL_MODEL_BIND_HOST=gateway,
         LLM_NAME=LLM, LLM_BASE_URL='http://127.0.0.1:30081', LLM_MODEL_TYPE='openai',

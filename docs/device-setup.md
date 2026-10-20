@@ -49,6 +49,8 @@ Spark can use `127.0.0.1` for an on-device session. Use the actual Docker bridge
 with `--gateway` when it differs from `172.17.0.1`. Preserve the saved data path
 and memory reserve when rendering an existing installation. On Spark,
 `--detector` enables the single-source detection/tracking worker.
+Spark monitoring binds to loopback, with Grafana on `http://127.0.0.1:14000`;
+its port stays below the usual Linux ephemeral range used by outbound downloads.
 
 Initial staging is device-specific. Spark uses `bootstrap.py stage`, then `up`;
 Thor separately stages its pinned models and starts the support, model and app
@@ -90,6 +92,7 @@ branch. Stop VSS before changing deployment scripts or packaged backend source.
 Application source, not recordings or model caches, is synchronized by Git.
 
 ```sh
+git fetch origin
 git switch codex/unified-spark-thor
 git pull --ff-only
 git lfs pull
