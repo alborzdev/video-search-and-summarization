@@ -5,6 +5,11 @@ Both are also available in the Applications menu. They use the images, models,
 engines and app dependencies already stored on this Spark; startup does not
 download or install anything and does not ask for credentials or sudo.
 
+The October 20 fresh Spark installation uses the operator-selected **20 GiB**
+reserve. No camera is registered yet: Start VSS opens the app for uploaded
+recorded clips. The simulator-specific steps below apply to installations with
+the existing local simulator camera. An RTSP camera can be added later.
+
 ## Open the session
 
 1. Start the simulator with its existing **Start CTaiLABS Demo** shortcut. Wait
@@ -55,7 +60,7 @@ The simulator stays under its own shortcut's control.
 
 Stop VSS can also interrupt a startup. Multiple simultaneous starts are refused
 with a clear message. Nothing starts VSS or Moondream automatically on login.
-The existing 24 GiB memory reserve and memory guard remain active.
+The saved memory reserve and memory guard remain active.
 
 ## If startup reports a problem
 

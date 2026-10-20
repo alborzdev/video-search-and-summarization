@@ -234,7 +234,9 @@ def model_health():
             with urllib.request.urlopen(url, timeout=3) as response:
                 if response.status != 200:
                     return False
-        except (OSError, urllib.error.URLError):
+                if url.endswith('get-dsready-state') and json.load(response).get('health-info', {}).get('ds-ready') != 'YES':
+                    return False
+        except (OSError, ValueError, urllib.error.URLError):
             return False
     return True
 

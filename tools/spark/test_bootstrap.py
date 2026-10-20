@@ -119,6 +119,14 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(path.read_bytes(), b'old-cache')
         self.assertEqual(list(path.parent.iterdir()), [path])
 
+    def test_detector_health_waits_for_pipeline_readiness_even_with_http_200(self):
+        for ready, code in [('NO', 1), ('YES', 0)]:
+            response = io.StringIO(json.dumps({'health-info': {'ds-ready': ready}}))
+            with self.subTest(ready=ready), patch.object(b.urllib.request, 'urlopen', return_value=response):
+                with self.assertRaises(SystemExit) as result:
+                    exec(b.DETECTOR_HEALTH_PROBE, {})
+                self.assertEqual(result.exception.code, code)
+
     def test_lvs_source_override_replaces_only_exact_target_and_is_idempotent(self):
         target = '/opt/nvidia/via/via-engine/via_stream_handler.py'
         llm_target = '/usr/local/lib/python3.13/site-packages/vss_ctx_rag/tools/llm/llm_handler.py'

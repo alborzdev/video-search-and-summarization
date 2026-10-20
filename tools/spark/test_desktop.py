@@ -12,6 +12,14 @@ import offline
 
 
 class DesktopTests(unittest.TestCase):
+    def test_warm_start_requires_detector_pipeline_readiness(self):
+        for ready, allowed in [('NO', False), ('YES', True)]:
+            response = Mock(status=200, read=Mock(return_value=json.dumps({'health-info': {'ds-ready': ready}})))
+            response.__enter__ = Mock(return_value=response)
+            response.__exit__ = Mock(return_value=False)
+            with self.subTest(ready=ready), patch.object(d.urllib.request, 'urlopen', return_value=response):
+                self.assertEqual(d.model_health(), allowed)
+
     def setUp(self):
         # Real launcher state carries the live source UUID. Isolate every test
         # so even a best-effort stop cannot reach the real recording API.

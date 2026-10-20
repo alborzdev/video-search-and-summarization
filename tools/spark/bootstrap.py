@@ -41,6 +41,12 @@ MODEL_STARTUP_HEADROOM_GIB = {'spark-llm': 24, 'rtvi-embed': 20, 'rtvi-vlm': 24}
 # The first GB10 engine build lowered MemAvailable by about 5.6 GiB. Allow
 # 6 GiB before startup; the user's runtime reserve itself remains unchanged.
 DETECTOR_STARTUP_HEADROOM_GIB = 6
+DETECTOR_HEALTH_PROBE = (
+    "import json,urllib.request; "
+    "response=urllib.request.urlopen('http://127.0.0.1:9000/api/v1/health/get-dsready-state',timeout=3); "
+    "payload=json.load(response); "
+    "raise SystemExit(0 if payload.get('health-info',{}).get('ds-ready')=='YES' else 1)"
+)
 MODEL_CACHE_ROOTS = {
     'spark-llm': ['/opt/nim/.cache/ngc'],
     'rtvi-embed': ['/opt/nvidia/rtvi/.rtvi/ngc_model_cache', '/tmp/triton_model_repo'],
@@ -368,8 +374,7 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
                 {'type': 'bind', 'source': str(data / 'models/spark-detector'), 'target': '/opt/storage'},
             ],
             'healthcheck': {
-                'test': ['CMD', 'curl', '--fail', '--silent', '--connect-timeout', '2', '--max-time', '4',
-                         'http://127.0.0.1:9000/api/v1/health/get-dsready-state'],
+                'test': ['CMD', 'python3', '-c', DETECTOR_HEALTH_PROBE],
                 'interval': '15s', 'timeout': '5s', 'retries': 40, 'start_period': '120s',
             },
         }
@@ -686,6 +691,8 @@ def verify():
             with urllib.request.urlopen(url, timeout=15) as response:
                 if response.status != 200:
                     failures.append(name)
+                elif name == 'detector' and json.load(response).get('health-info', {}).get('ds-ready') != 'YES':
+                    failures.append('detector pipeline readiness')
         except Exception:
             failures.append(name)
     receipt = {'time': time.time(), 'commit': run(['git', '-C', ROOT, 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip(),
