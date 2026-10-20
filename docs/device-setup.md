@@ -1,6 +1,6 @@
 # One application branch for Spark and Thor
 
-Use `codex/unified-spark-thor` on both devices. It contains the entire
+Use `codex/unified-spark-thor` on both devices. It is the fork's default branch. It contains the entire
 `codex/spark-tradeshow-offline` branch and all ten subsequent commits from
 `codex/thor-tradeshow-port`, including the recording, recent-video question,
 thumbnail, embedding publication and camera-discovery repairs. No cherry-picks

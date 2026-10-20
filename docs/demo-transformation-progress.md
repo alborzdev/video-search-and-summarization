@@ -2516,3 +2516,26 @@ Twelve Spark configuration/bootstrap tests and 27 focused agent tests pass.
 The full agent suite cannot collect in the available QA environment because
 `langchain_core` is absent. See the
 [runtime receipt](qa/2026-09-30-spark-detection-tracking.md).
+
+## October 20 — Shared branch and fresh Spark installation
+
+Consolidated Spark and the subsequent Thor application fixes into the fork's
+default `codex/unified-spark-thor` branch. Shared commands inspect the GPU and
+dispatch to the device profile while preserving local state and model budgets.
+The new GB10 installation has 32 running containers and six successful init
+jobs; the UI reports all seven runtime services ready. The operator selected
+a 20 GiB reserve, enforced by the active guard and displayed by the source UI.
+
+Fresh-install repairs cover data permissions, pinned tools and codecs, local
+networking, production CSS, recorded-only startup, detector staging/readiness
+and precise capacity polling. Spark reuses the reviewed ARM64 VST codec image
+so codecs survive container recreation. A cached cold start without an NGC key,
+a final warm desktop start and the complete recorded-video workflow passed.
+The conveyor clip produces two searchable chunks, plays for 7.534 seconds,
+receives the correct curved-shape/blue-support answer in 5.5 seconds and plays
+from its retained report. Desktop and narrow browser checks pass.
+
+Across 1,928.6 seconds after the reserve choice, minimum available memory was
+41.433 GiB, with no guard trip or reboot. RTSP remains deferred until the user
+provides a URL; live ingestion and a new Thor hardware run are unqualified.
+See the [acceptance receipt](qa/2026-10-20-unified-spark-thor.md).
