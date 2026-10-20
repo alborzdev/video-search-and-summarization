@@ -314,6 +314,7 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
         'image': nim_image,
         'runtime': 'nvidia', 'ports': ['127.0.0.1:30081:8000'], 'shm_size': '16gb', 'restart': 'no',
         'environment': {'NGC_API_KEY': '${NGC_API_KEY:-}', 'NVIDIA_VISIBLE_DEVICES': '0',
+                        'NIM_SERVED_MODEL_NAME': LLM,
                         'NIM_GPU_MEM_FRACTION': '0.11', 'NIM_MAX_BATCH_SIZE': '1', 'NIM_MAX_MODEL_LEN': '32768',
                         'HF_HOME': '/opt/nim/.cache/huggingface', 'VLLM_CACHE_ROOT': '/opt/nim/.cache/vllm'},
         'volumes': [llm_cache],
@@ -694,6 +695,8 @@ def verify():
             with urllib.request.urlopen(url, timeout=15) as response:
                 if response.status != 200:
                     failures.append(name)
+                elif name == 'llm' and LLM not in {row['id'] for row in json.load(response)['data']}:
+                    failures.append('llm model identity')
                 elif name == 'detector' and json.load(response).get('health-info', {}).get('ds-ready') != 'YES':
                     failures.append('detector pipeline readiness')
         except Exception:

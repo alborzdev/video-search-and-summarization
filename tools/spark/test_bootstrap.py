@@ -393,6 +393,8 @@ class BootstrapTests(unittest.TestCase):
                     self.assertEqual(cached[name]['environment']['NGC_API_KEY'], '')
                     self.assertEqual(cached[name]['environment']['HF_HUB_OFFLINE'], '1')
                 self.assertEqual(cached['spark-llm']['environment']['NIM_DISABLE_MODEL_DOWNLOAD'], '1')
+                self.assertEqual(cached['spark-llm']['environment']['NIM_SERVED_MODEL_NAME'],
+                                 cached['vss-agent']['environment']['LLM_NAME'])
                 self.assertEqual(cached['streamprocessing-ms']['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'], 'false')
                 self.assertNotIn('user_additional_install.sh', ' '.join(cached['streamprocessing-ms']['entrypoint']))
                 self.assertIn('launch_vst', ' '.join(cached['streamprocessing-ms']['entrypoint']))
