@@ -55,6 +55,9 @@ Spark monitoring binds to loopback, with Grafana on `http://127.0.0.1:14000`;
 its port stays below the usual Linux ephemeral range used by outbound downloads.
 
 Initial staging is device-specific. Spark uses `bootstrap.py stage`, then `up`;
+when detection is enabled, staging also verifies the published RT-DETR ONNX.
+GB10 creates its own TensorRT engine during first detector startup. An older
+checkout missing only that model can use `bootstrap.py stage-detector`.
 Thor separately stages its pinned models and starts the support, model and app
 stages described in its setup guide. The common bootstrap forwards arguments to
 the selected profile; it does not equate these different staging sequences.

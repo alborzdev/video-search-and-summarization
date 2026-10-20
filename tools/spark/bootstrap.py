@@ -471,6 +471,22 @@ def stage_kafka_parser(state=None):
                       JQ_SHA256, mode=0o755)
 
 
+def stage_detector():
+    """Download only the published ONNX; GB10 builds its own engine at startup."""
+    settings = json.loads((STATE / 'settings.json').read_text())
+    if not settings.get('detector_enabled'):
+        return
+    name = 'rtdetr_warehouse_v1.0.2.fp16.onnx'
+    path = Path(settings['data_dir']) / 'models/spark-detector' / name
+    if path.is_symlink() or path.parent.resolve() != path.parent:
+        raise RuntimeError('Detector staging paths cannot redirect through symlinks.')
+    stage_pinned_file(path,
+        'https://api.ngc.nvidia.com/v2/models/nvidia/tao/rtdetr_2d_warehouse/'
+        'versions/deployable_rn50_v1.0.2/files/' + name,
+        '0a22264542514149bead6e8582499d9758d51e3fde2892d9d2cc378a60426267')
+    print('Published RT-DETR ONNX checksum verified; no detector started.', flush=True)
+
+
 def stage():
     doctor()
     if shutil.disk_usage(STATE).free < 200 * 1024**3:
@@ -492,6 +508,7 @@ def stage():
     # BuildKit can build independent targets concurrently despite Compose's
     # parallel limit. One target per invocation bounds unified-memory pressure.
     graph = json.loads((STATE / 'compose.json').read_text())
+    stage_detector()
     for name, service in graph['services'].items():
         if service.get('build'):
             run(compose('build', '--pull', name), env={**os.environ, 'COMPOSE_PARALLEL_LIMIT': '1'})
@@ -682,7 +699,7 @@ def verify():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=['doctor', 'render', 'stage', 'up', 'verify', 'stop', 'install-guard'])
+    parser.add_argument('command', choices=['doctor', 'render', 'stage', 'stage-detector', 'up', 'verify', 'stop', 'install-guard'])
     parser.add_argument('--host-ip')
     parser.add_argument('--gateway', default='172.17.0.1')
     parser.add_argument('--data-dir', default=str(STATE / 'data'))
