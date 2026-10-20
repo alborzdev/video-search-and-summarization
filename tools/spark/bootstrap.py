@@ -509,10 +509,11 @@ def provision():
     run(['docker', 'run', '--rm', '--pull', 'never', '--network', 'none', '--runtime', 'runc', '--user', '0:0',
          '--memory', '256m', '--memory-swap', '256m', '--cpus', '1',
          '-v', f'{data}:/data', '--entrypoint', 'node', 'node:22.22.3-bookworm-slim', '-e',
-         "const fs=require('fs'); for(const [rel,uid,gid] of JSON.parse(process.argv[1])){"
-         "const p='/data/'+rel; if(fs.existsSync(p))continue;"
-         "fs.mkdirSync(p,{recursive:true,mode:0o2770});"
-         "fs.chownSync(p,uid,gid);fs.chmodSync(p,0o2770);}", json.dumps(records)])
+         "const fs=require('fs'); function create(p,uid,gid){if(fs.existsSync(p))return;"
+         "fs.mkdirSync(p,{mode:0o2770});fs.chownSync(p,uid,gid);fs.chmodSync(p,0o2770);}"
+         "for(const [rel,uid,gid] of JSON.parse(process.argv[1])){let p='/data';"
+         f"for(const part of rel.split('/').slice(0,-1)){{p+='/'+part;create(p,{os.getuid()},gid);}}"
+         "create('/data/'+rel,uid,gid);}", json.dumps(records)])
 
 
 def data_roots(graph, data):
