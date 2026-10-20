@@ -28,13 +28,6 @@
   outline: 2px solid var(--vi-accent);
   outline-offset: 4px;
 }
-:global(.vi-brand-v2.vi-guided-mode) {
-  height: 100dvh;
-  min-height: 0;
-}
-:global(.vi-guided-mode .vi-main) {
-  padding-bottom: 0;
-}
 .rail {
   position: sticky;
   top: 0;

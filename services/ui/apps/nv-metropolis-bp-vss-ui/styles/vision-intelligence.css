@@ -10160,3 +10160,19 @@ body:has(.vi-app [role="dialog"][aria-modal="true"]) { overflow: hidden; }
 .vi-live-report textarea { min-height: 80px; resize: vertical; }
 .vi-live-report p { margin: 0; font-size: 12px; line-height: 1.5; color: var(--vi-muted-strong); }
 .vi-live-report > div { display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* Shell-wide workspace sizing belongs in global CSS, outside CSS modules. */
+.vi-brand-v2.vi-guided-mode,
+.vi-brand-v2.vi-story-mode {
+  height: 100dvh;
+  min-height: 0;
+}
+.vi-guided-mode .vi-main,
+.vi-brand-v2.vi-story-mode .vi-main {
+  padding-bottom: 0;
+}
+@media (max-width: 900px) {
+  .vi-brand-v2.vi-story-mode {
+    grid-template-rows: 58px minmax(0, 1fr);
+  }
+}

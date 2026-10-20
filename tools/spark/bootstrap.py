@@ -483,7 +483,12 @@ def stage():
         raise RuntimeError('Set NGC_API_KEY privately for registry/model downloads; see handoff.')
     run(['docker', 'login', 'nvcr.io', '--username', '$oauthtoken', '--password-stdin'], input=key, text=True)
     run(compose('pull', '--ignore-buildable'))
-    run(compose('build', '--pull'), env={**os.environ, 'COMPOSE_PARALLEL_LIMIT': '1'})
+    # BuildKit can build independent targets concurrently despite Compose's
+    # parallel limit. One target per invocation bounds unified-memory pressure.
+    graph = json.loads((STATE / 'compose.json').read_text())
+    for name, service in graph['services'].items():
+        if service.get('build'):
+            run(compose('build', '--pull', name), env={**os.environ, 'COMPOSE_PARALLEL_LIMIT': '1'})
     print('Images built. Model weights download on first staged startup. No runtime qualification yet.')
 
 

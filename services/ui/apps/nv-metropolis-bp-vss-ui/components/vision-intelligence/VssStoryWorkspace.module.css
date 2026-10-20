@@ -20,13 +20,6 @@
   outline: 2px solid var(--mint);
   outline-offset: 5px;
 }
-:global(.vi-brand-v2.vi-story-mode) {
-  height: 100dvh;
-  min-height: 0;
-}
-:global(.vi-brand-v2.vi-story-mode .vi-main) {
-  padding-bottom: 0;
-}
 .nav {
   position: sticky;
   top: 0;
@@ -752,9 +745,6 @@
   }
 }
 @media (max-width: 900px) {
-  :global(.vi-brand-v2.vi-story-mode) {
-    grid-template-rows: 58px minmax(0, 1fr);
-  }
   .scroll {
     height: calc(100dvh - 58px - var(--bottom-nav, 76px));
     --step-height: calc(100dvh - 190px);
