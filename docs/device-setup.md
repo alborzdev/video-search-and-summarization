@@ -45,7 +45,9 @@ python3 tools/runtime/bootstrap.py render --host-ip <device-IPv4>
 python3 tools/runtime/bootstrap.py install-guard
 ```
 
-Spark can use `127.0.0.1` for an on-device session. Use the actual Docker bridge
+Spark accepts `127.0.0.1` for an on-device session and uses the Docker bridge for
+container-accessible service URLs. Open the browser at `http://127.0.0.1:7777`.
+Use the actual Docker bridge
 with `--gateway` when it differs from `172.17.0.1`. Preserve the saved data path
 and memory reserve when rendering an existing installation. On Spark,
 `--detector` enables the single-source detection/tracking worker.

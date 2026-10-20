@@ -209,8 +209,12 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
         detector_enabled = json.loads(settings_path.read_text()).get('detector_enabled', False) if settings_path.exists() else False
     if not isinstance(detector_enabled, bool):
         raise RuntimeError('detector_enabled must be a boolean.')
-    ipaddress.IPv4Address(host_ip)
+    address = ipaddress.IPv4Address(host_ip)
     ipaddress.IPv4Address(gateway)
+    if address.is_loopback:
+        # RTVI and other bridge-networked services cannot use the host's
+        # loopback address. The browser still opens the app on localhost.
+        host_ip = gateway
     registry = urllib.parse.urlsplit(npm_registry)
     if registry.scheme != 'https' or not registry.hostname or registry.username or registry.password or registry.query or registry.fragment:
         raise RuntimeError('Use an HTTPS npm registry URL without credentials, query, or fragment.')

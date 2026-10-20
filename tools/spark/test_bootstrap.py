@@ -288,6 +288,14 @@ class BootstrapTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'not a DGX Spark'):
                 b.doctor()
 
+    def test_loopback_session_uses_container_reachable_service_addresses(self):
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1')
+        settings = json.loads((b.STATE / 'settings.json').read_text())
+        services = json.loads((b.STATE / 'compose.json').read_text())['services']
+        self.assertEqual(settings['host_ip'], '172.17.0.1')
+        self.assertEqual(services['rtvi-embed']['environment']['KAFKA_BOOTSTRAP_SERVERS'], '172.17.0.1:9092')
+        self.assertIn('127.0.0.1:30081:8000', services['spark-llm']['ports'])
+
     def test_actual_compose_render_and_secret_isolation(self):
         with tempfile.TemporaryDirectory() as temp:
             state = Path(temp)
