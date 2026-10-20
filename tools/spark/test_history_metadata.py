@@ -1,4 +1,5 @@
 import importlib.util
+from concurrent.futures import ThreadPoolExecutor
 from http.server import ThreadingHTTPServer
 import json
 from pathlib import Path
@@ -16,6 +17,36 @@ spec.loader.exec_module(h)
 
 
 class HistoryMetadataTests(unittest.TestCase):
+    def test_capacity_polling_is_not_blocked_by_a_recording_snapshot(self):
+        started, release = threading.Event(), threading.Event()
+        def snapshot():
+            started.set()
+            release.wait(5)
+            return {'recordings': []}
+        capacity = {'guardActive': True, 'reserveGiB': 20, 'availableGiB': 40}
+        server = ThreadingHTTPServer(('127.0.0.1', 0), h.handler_type('token', snapshot, lambda: capacity))
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        def read(route):
+            request = Request(f'http://127.0.0.1:{server.server_port}' + route,
+                              headers={'X-History-Metadata-Token': 'token'})
+            with urlopen(request, timeout=5) as response:
+                return json.load(response)
+        try:
+            with ThreadPoolExecutor(max_workers=1) as pool:
+                pending = pool.submit(read, '/recordings')
+                try:
+                    self.assertTrue(started.wait(2))
+                    self.assertEqual(read('/capacity'), capacity)
+                finally:
+                    release.set()
+                self.assertEqual(pending.result(timeout=3), {'recordings': []})
+        finally:
+            release.set()
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=3)
+
     def test_capacity_requires_fresh_matching_active_guard_and_reads_current_memory(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(h, 'STATE', Path(folder)):
             (Path(folder) / 'settings.json').write_text(json.dumps({'reserve_gib': 20}))

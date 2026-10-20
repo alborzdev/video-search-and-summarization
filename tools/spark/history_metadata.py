@@ -62,6 +62,7 @@ def capacity_snapshot():
 
 def handler_type(token, snapshot=recording_snapshot, capacity=capacity_snapshot):
     gate = threading.BoundedSemaphore(1)
+    capacity_gate = threading.BoundedSemaphore(4)
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_):
@@ -85,14 +86,17 @@ def handler_type(token, snapshot=recording_snapshot, capacity=capacity_snapshot)
             supplied = self.headers.get('X-History-Metadata-Token', '')
             if len(supplied) > 256 or not secrets.compare_digest(supplied, token):
                 return self.reply(403, {'error': 'Forbidden'})
-            if not gate.acquire(blocking=False):
+            # Health and workload polling request capacity concurrently. Keep
+            # those cheap reads independent of the serialized recording query.
+            selected_gate = capacity_gate if route.path == '/capacity' else gate
+            if not selected_gate.acquire(blocking=False):
                 return self.reply(429, {'error': 'Recording snapshot is busy'})
             try:
                 self.reply(200, capacity() if route.path == '/capacity' else snapshot())
             except (OSError, ValueError, RuntimeError, subprocess.SubprocessError):
                 self.reply(503, {'error': 'Recording metadata is unavailable'})
             finally:
-                gate.release()
+                selected_gate.release()
 
         def do_POST(self):
             self.reply(405, {'error': 'Read-only service'})
