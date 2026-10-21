@@ -3388,11 +3388,10 @@ class VllmCompatible(BaseVlmModel):
 
         ooo_chunk_id = getattr(chunk, "chunkIdx", None) if chunk is not None else None
 
-        if len(images) < 3 and not is_last:
-            logger.info("EVS skipping single-frame clip")
-            done = concurrent.futures.Future()
-            done.set_result(placeholder)
-            return done
+        # Padding above makes short clips valid for the video processor. Image
+        # requests are not necessarily marked is_last, so skipping fewer than
+        # three frames here silently returned an empty successful completion.
+        # Let the session handler apply its configured generation/event policy.
 
         # Move to CPU once on the dispatcher thread before handing off.
         # cosmos-reason1 keeps its torch (half) tensor path; all other models
