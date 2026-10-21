@@ -9,9 +9,9 @@
 #            in single-spec mode (foreground agent, one synchronous harbor
 #            run), posts its own PR comment per AGENTS.md.
 # workflow_dispatch:
-#   plan + eval -> manual full sweep, fanned per (spec, platform) just like
-#                  a push; each leg writes its result to its job summary
-#                  (no PR to comment on). Scoped by the `skills` input.
+#   plan -> computes the same (skill, spec, platform) rows
+#   eval -> dispatches one matrix job per row with independent coding and
+#           operational harness/model selections
 
 name: Skills Eval
 
@@ -26,19 +26,67 @@ on:
     branches:
       - "pull-request/[0-9]+"
   # Manual full-sweep trigger. The `plan` job enumerates the picked skill's
-  # specs (or all skills) instead of diffing, and the `eval` matrix fans them
-  # per (spec, platform) like a push. No PR to comment on, so each leg writes
-  # its result to its own job summary.
+  # specs (or all skills) instead of diffing, then both configured harnesses
+  # use the same per-(spec, platform) matrix dispatch.
   workflow_dispatch:
     inputs:
       skills:
         # `type: string` rather than `type: choice` because the skills/
         # tree has more than 10 entries — GitHub caps `choice` at 10.
         # plan_matrix.py validates the value (skill-dir name or `*`).
-        description: "Which skill to eval. `*` sweeps all. Otherwise a bare skill-dir name (e.g. `vss-deploy-profile`)."
+        description: "Which skills to eval: `operations`, `*`, or a bare skill-directory name."
         required: false
         default: "*"
         type: string
+      coding_harness:
+        description: "CODING · Harness for Build Vision AI deployment/setup."
+        required: false
+        default: "codex"
+        type: choice
+        options:
+          - claude-code
+          - codex
+      coding_deployment:
+        description: "CODING · Hosted NVIDIA Inference or a local NIM deployment."
+        type: choice
+        default: hosted-nvidia-inference
+        options: [hosted-nvidia-inference, local-nim]
+      coding_model:
+        description: >-
+          CODING · Hosted: Inference Hub model ID (e.g. nvidia/nvidia/nemotron-3.5-lightning).
+          Local NIM: self-hosted NIM image ID from build.nvidia.com (e.g. nvidia/nemotron-3.5-lightning-30b-a3b).
+          Leave empty to use the selected harness's configured model (Codex fallback: Sol 6.1).
+          Override the model ID when selecting local NIM.
+        required: false
+        default: ""
+        type: string
+      operational_harness:
+        description: "OPERATIONAL · Harness for operational skill queries after setup."
+        required: false
+        default: "nemoclaw"
+        type: choice
+        options:
+          - claude-code
+          - codex
+          - nemoclaw
+      operational_deployment:
+        description: "OPERATIONAL · Hosted NVIDIA Inference or a local NIM deployment."
+        type: choice
+        default: hosted-nvidia-inference
+        options: [hosted-nvidia-inference, local-nim]
+      operational_model:
+        description: >-
+          OPERATIONAL · Hosted: Inference Hub model ID (e.g. nvidia/nvidia/nemotron-3.5-lightning).
+          Local NIM: self-hosted NIM image ID from build.nvidia.com (e.g. nvidia/nemotron-3.5-lightning-30b-a3b).
+          Leave empty to use the selected harness's configured model (NemoClaw fallback: Opus 5.5).
+          Override the model ID when selecting local NIM.
+        required: false
+        default: ""
+        type: string
+      spark_runner:
+        description: "Run on the registered Brev Spark-ba-WiFi worker."
+        type: boolean
+        default: false
 
 # Authenticate as github-actions[bot] for all GitHub operations (gh pr
 # comment + git push of the adapter commit to the contributor's branch).
@@ -68,14 +116,25 @@ defaults:
   run:
     shell: bash
 
+env:
+  # One interpreter contract for the coordinator wrapper, adapter generators,
+  # run_leg.py, and Harbor's isolated uvx environment. Do not fall back to the
+  # self-hosted runner's system python3 (currently 3.10).
+  SKILL_EVAL_PYTHON_VERSION: "3.12"
+  # Prebaked VIOS runtime-media packages (#1798). A repository variable so it
+  # toggles from Settings; unset is not forwarded, so the default stands.
+  VSS_VIOS_PREBAKE_PACKAGES: ${{ vars.VSS_VIOS_PREBAKE_PACKAGES }}
+
 jobs:
   # ---------------------------------------------------------------------
-  # plan — compute the dispatch matrix from the PR diff (push only).
+  # plan — compute the shared dispatch matrix from the PR diff or manual input.
   # Lightweight: gh + python3, no GPU, no brev, no flock.
   # ---------------------------------------------------------------------
   plan:
     name: Plan eval matrix
-    if: startsWith(github.ref, 'refs/heads/pull-request/') || github.event_name == 'workflow_dispatch'
+    if: >-
+      startsWith(github.ref, 'refs/heads/pull-request/') ||
+      github.event_name == 'workflow_dispatch'
     runs-on: [self-hosted, vss-skill-eval-runner]
     timeout-minutes: 15
     outputs:
@@ -88,6 +147,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0   # plan diffs the cumulative head...base range
+
+      - name: Set up skill-eval Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: ${{ env.SKILL_EVAL_PYTHON_VERSION }}
 
       - name: Extract PR number + base
         id: pr
@@ -125,6 +189,7 @@ jobs:
           # the old behavior — never blank, which would fall through to the
           # diff path and silently produce an empty matrix.
           MANUAL_SKILLS_FILTER: ${{ github.event_name == 'workflow_dispatch' && (inputs.skills || '*') || '' }}
+          SKILLS_EVAL_SPARK_RUNNER: ${{ inputs.spark_runner && 'true' || 'false' }}
         run: python3 .github/skill-eval/plan_matrix.py
 
   # ---------------------------------------------------------------------
@@ -138,25 +203,42 @@ jobs:
     strategy:
       # One slow/failed spec must not cancel its siblings.
       fail-fast: false
-      # Cap concurrent legs near the vss-eval-* box count so legs don't
-      # all grab a runner slot only to wait inside run_leg.py. Excess legs queue.
-      max-parallel: 4
+      # Queue Spark legs one at a time; they share one registered worker.
+      # Allow up to eight other matrix legs. Unavailable runner slots queue in
+      # Actions; run_leg.py still caps execution at one leg per GPU box.
+      max-parallel: ${{ inputs.spark_runner && 1 || 2 }}
       matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
     # Per-leg cap. One spec, but a multi-step spec runs step-1..N as
-    # sequential harbor invocations, each up to the 1 h agent ceiling
-    # (AGENTS.md `--agent-timeout-multiplier 6.0`). 360m covers a ~4-step
-    # cold-box spec plus deploy/dataset/comment overhead without the
-    # whole-sweep 12 h cap the single-job design needed. AGENTS.md's
-    # box-lock wait (run_leg.py --lock-timeout-sec 21000 ≈ 5.8 h) is kept strictly under this
-    # 360 m ceiling so a lock-starved leg emits `BLOCKED: lock timeout`
+    # sequential harbor invocations, each up to the 1.5 h agent ceiling
+    # (AGENTS.md `--agent-timeout-multiplier 9.0`). A timeout stops the
+    # remaining chain; successful steps normally finish well below their
+    # 230-minute emergency backstop. AGENTS.md's box-lock wait
+    # (run_leg.py --lock-timeout-sec
+    # 21000 ≈ 5.8 h) is kept strictly under this 840 m ceiling so a
+    # lock-starved leg emits `BLOCKED: lock timeout`
     # before the job-killer fires (a 43200 s / 12 h wait would be
     # silently killed while waiting on a box with no verdict — the exit-4 trap).
-    timeout-minutes: 360
+    timeout-minutes: 840
     steps:
       - name: Checkout mirror head
         uses: actions/checkout@v4
         with:
           fetch-depth: 0   # agent needs full history to fetch + commit to the contributor's branch (§ 3c)
+
+      - name: Set up skill-eval Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: ${{ env.SKILL_EVAL_PYTHON_VERSION }}
+
+      - name: Prepare isolated agent runtime
+        env:
+          SKILL_EVAL_VENV: ${{ runner.temp }}/skill-eval-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.slug }}
+        run: |
+          python3 -m venv "$SKILL_EVAL_VENV"
+          "$SKILL_EVAL_VENV/bin/python" -m pip install --quiet "claude-agent-sdk==0.2.128"
+          "$SKILL_EVAL_VENV/bin/python" -c 'import os, sys; expected = tuple(map(int, os.environ["SKILL_EVAL_PYTHON_VERSION"].split("."))); assert sys.version_info[:2] == expected, sys.version'
+          echo "SKILL_EVAL_VENV=$SKILL_EVAL_VENV" >> "$GITHUB_ENV"
+          echo "$SKILL_EVAL_VENV/bin" >> "$GITHUB_PATH"
 
       - name: Load coordinator env (Anthropic, NGC, Brev, remote endpoints)
         run: |
@@ -173,6 +255,20 @@ jobs:
         env:
           # github-actions[bot] token; scoped by the permissions: block.
           GH_TOKEN: ${{ github.token }}
+          # Prefer the rotatable repository secret for Anthropic auth. The
+          # coordinator .env remains the source for NGC/Brev and is loaded
+          # below, then this value is restored so it cannot overwrite the
+          # GitHub Actions secret.
+          CI_ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CODEX_MODEL: ${{ vars.CODEX_MODEL }}
+          EVAL_AGENT: ${{ github.event_name == 'workflow_dispatch' && inputs.operational_harness || 'nemoclaw' }}
+          CODING_HARNESS_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.coding_harness || 'codex' }}
+          CODING_DEPLOYMENT_INPUT: ${{ inputs.coding_deployment || 'hosted-nvidia-inference' }}
+          OPERATIONAL_DEPLOYMENT_INPUT: ${{ inputs.operational_deployment || 'hosted-nvidia-inference' }}
+          SPARK_RUNNER_INPUT: ${{ inputs.spark_runner && 'true' || 'false' }}
+          CODING_MODEL_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.coding_model || '' }}
+          OPERATIONAL_HARNESS_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.operational_harness || 'nemoclaw' }}
+          OPERATIONAL_MODEL_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.operational_model || '' }}
           # gh checks ~/.config/gh/hosts.yml BEFORE GH_TOKEN; point it at a
           # per-leg scratch dir with no hosts.yml so a stored OAuth on the
           # host can't reauthor bot comments. Same fix helm-sync.yml uses.
@@ -185,14 +281,80 @@ jobs:
           # output — silently defeating the "block on Harbor" wait contract
           # (the PreToolUse hook can't catch a
           # runtime-initiated background; it only inspects call input). Both
-          # stay under the job's timeout-minutes so the call can't outlive it.
-          BASH_DEFAULT_TIMEOUT_MS: "21600000"
-          BASH_MAX_TIMEOUT_MS: "21600000"
+          # Match the job window. Because this call starts after the job, the
+          # Actions watchdog always owns final cancellation instead of Claude
+          # backgrounding a still-running run_leg.py process first.
+          BASH_DEFAULT_TIMEOUT_MS: "50400000"
+          BASH_MAX_TIMEOUT_MS: "50400000"
         run: |
           mkdir -p "$GH_CONFIG_DIR"
+          skill_eval_venv_dir="$SKILL_EVAL_VENV"
+          skill_eval_python_version="$SKILL_EVAL_PYTHON_VERSION"
+          coding_deployment="$CODING_DEPLOYMENT_INPUT"
+          operational_deployment="$OPERATIONAL_DEPLOYMENT_INPUT"
+          spark_runner="$SPARK_RUNNER_INPUT"
+          coding_harness="$CODING_HARNESS_INPUT"
+          coding_model="$CODING_MODEL_INPUT"
+          operational_harness="$OPERATIONAL_HARNESS_INPUT"
+          operational_model="$OPERATIONAL_MODEL_INPUT"
           set -a
           source /home/ubuntu/eval-coordinator/.env   # Anthropic / NGC / Brev
           set +a
+          # The coordinator .env is operator-managed and may define PATH.
+          # Reassert the per-leg runtime afterwards so Claude's Bash children
+          # use the same Python for adapters and run_leg.py.
+          export SKILL_EVAL_VENV="$skill_eval_venv_dir"
+          export SKILL_EVAL_PYTHON_VERSION="$skill_eval_python_version"
+          export VIRTUAL_ENV="$skill_eval_venv_dir"
+          export PATH="$skill_eval_venv_dir/bin:$PATH"
+          export SKILLS_EVAL_CODING_DEPLOYMENT="$coding_deployment"
+          export SKILLS_EVAL_OPERATIONAL_DEPLOYMENT="$operational_deployment"
+          export SKILLS_EVAL_SPARK_RUNNER="$spark_runner"
+          export EVAL_AGENT="$operational_harness"
+          export SKILLS_EVAL_CODING_HARNESS="$coding_harness"
+          if [ -n "$coding_model" ]; then
+            export SKILLS_EVAL_CODING_MODEL="$coding_model"
+          else
+            unset SKILLS_EVAL_CODING_MODEL
+          fi
+          unset SKILLS_EVAL_CODING_ENDPOINT_URL
+          export SKILLS_EVAL_OPERATIONAL_HARNESS="$operational_harness"
+          if [ -n "$operational_model" ]; then
+            export SKILLS_EVAL_OPERATIONAL_MODEL="$operational_model"
+          else
+            unset SKILLS_EVAL_OPERATIONAL_MODEL
+          fi
+          unset SKILLS_EVAL_OPERATIONAL_ENDPOINT_URL
+          unset SKILLS_EVAL_CODING_PROVIDER SKILLS_EVAL_OPERATIONAL_PROVIDER
+          hash -r
+          python3 -c 'import os, sys; expected = tuple(map(int, os.environ["SKILL_EVAL_PYTHON_VERSION"].split("."))); assert sys.version_info[:2] == expected, sys.version'
+          # The eval workers cannot resolve NVIDIA-internal Wowza DNS. Use
+          # the public relay for RTSP-dependent skill checks.
+          export RTSP_SAMPLE_URL="rtsp://global.stg.ga.launchpad.nvidia.com:11333/camera03"
+          if [ -n "${CI_ANTHROPIC_API_KEY:-}" ]; then
+            export ANTHROPIC_API_KEY="$CI_ANTHROPIC_API_KEY"
+          fi
+          # Fail before run_leg waits for or acquires a Brev worker. This logs
+          # the resolved route but never its credential. Run after restoring
+          # the repository-secret fallback so every valid route is visible.
+          python3 .github/skill-eval/model_config.py
+          # ssh-agent leak guard: brev-cli spawns orphaned `ssh-agent -s`
+          # processes (reparented to PID 1, never killed) on every
+          # `brev exec` when SSH_AUTH_SOCK is unset — at eval cadence that
+          # accumulated 23k agents on the coordinator host and OOM-killed
+          # every runner service (2026-07-08). With SSH_AUTH_SOCK pointing
+          # at a live agent brev reuses it and spawns none, so give the
+          # whole leg one agent and kill it when the step ends. Runs after
+          # the .env source so nothing can overwrite SSH_AUTH_SOCK /
+          # SSH_AGENT_PID behind the trap's back.
+          eval "$(ssh-agent -s)" > /dev/null
+          trap 'ssh-agent -k > /dev/null 2>&1 || true' EXIT
+          # Reap strays a SIGKILLed leg (or pre-fix history) left behind.
+          # Orphaned agents older than the job's timeout-minutes (840m;
+          # 54000s = 15h) cannot belong to any live leg on this host.
+          ps -eo pid=,ppid=,etimes=,args= \
+            | awk '$2==1 && $4=="ssh-agent" && $5=="-s" && $3>54000 {print $1}' \
+            | xargs -r kill 2>/dev/null || true
           export PR_NUMBER="${{ needs.plan.outputs.pr_number }}"
           export PR_BASE="${{ needs.plan.outputs.pr_base }}"
           export PR_HEAD_SHA="${{ github.sha }}"
@@ -243,7 +405,24 @@ jobs:
           # overwrite each other's archive before upload — each leg then
           # uploads whichever sibling wrote last. The slug makes the path
           # unique per (skill,spec,platform).
+          # Redact secrets from the tree before packing: TruffleHog
+          # (--no-verification --fail-on-scan-errors, scan -> replace ->
+          # quarantine -> verify) plus builtin nvapi-/env-value layers
+          # (redact_secrets.py). The verifier files stay in the tarball
+          # because the report consumes them, and a judge explaining "the
+          # agent printed the key" by quoting it would otherwise ship the
+          # credential (PR #1647 run 32535909071), exactly as agent/
+          # trajectories once did (PR #516). leg_report.py runs the same
+          # gate before the PR comment renders; this one covers the artifact
+          # for legs that never reached a report. Fail closed: a scanner
+          # failure exits nonzero and the step stops before tar. The tarball
+          # is removed FIRST — reruns reuse GITHUB_RUN_ID on the same
+          # self-hosted runner, and `if: always()` upload would otherwise
+          # ship a stale, unredacted archive from a previous attempt when
+          # this attempt's scan fails.
           LEG_TARBALL="/tmp/skills-eval-results-${EVAL_SLUG}-${GITHUB_RUN_ID}.tar.gz"
+          rm -f "$LEG_TARBALL"
+          python3 .github/skill-eval/redact_secrets.py --tree "$LEG_RESULTS"
           RESULTS=$(find "$LEG_RESULTS" -maxdepth 3 -name "result.json" 2>/dev/null | head -50 || true)
           if [ -n "$RESULTS" ]; then
             tar czf "$LEG_TARBALL" \

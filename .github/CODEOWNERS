@@ -16,6 +16,13 @@
 /skills/                @NVIDIA-AI-Blueprints/VSS-Skill-Developers
 /services/agent/        @NVIDIA-AI-Blueprints/VSS-Agent-Developers
 
+# CI, workflows, and repository automation.
+# A workflow edit can silently disable a gate for every PR in the repo
+# without failing anything, so these need maintainer review rather than the
+# default `*` owner. Last-match-wins means this REPLACES VSS-developers for
+# .github rather than adding to it.
+/.github/               @NVIDIA-AI-Blueprints/vss-maintainers
+
 # Lockfiles and 3rd-party license inventory.
 # Resolved-dependency state is the authoritative record of which packages
 # (and which licenses) ship in VSS, so OSRB must approve any change.
@@ -26,6 +33,7 @@ package-lock.json       @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 yarn.lock               @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 pnpm-lock.yaml          @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 poetry.lock             @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
+pdm.lock                @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 Pipfile.lock            @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 Cargo.lock              @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 go.sum                  @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
@@ -47,6 +55,15 @@ package.json            @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 go.mod                  @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 Cargo.toml              @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 Gemfile                 @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
+
+# The OSRB approved baseline and its module mapping.
+# These are the trust anchor of the state comparison: `approved.csv` is what the
+# repo's dependency inventory is judged against, and `module_map.py` decides
+# which repo paths each OSRB module covers. Weakening either silently weakens
+# every verdict the comparison produces, and no automated check can catch that
+# -- a scan cannot validate its own baseline. Route both to OSRB.
+/.github/osrb/approved.csv   @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
+/.github/osrb/module_map.py  @NVIDIA-AI-Blueprints/VSS_OSRB_Approvers
 
 # Dockerfiles.
 # A Dockerfile pins the base image, installs system packages (apt/yum), and

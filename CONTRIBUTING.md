@@ -20,12 +20,9 @@ If you are interested in contributing to Video Search and Summarization (VSS), y
 
 ## Licensing
 
-This project uses a dual-license model:
+This project is licensed under **Apache-2.0**. Elasticsearch, Kibana, and Redis configuration files are separately dual-licensed under SSPLv1 or AGPLv3 as described in [LICENSE](LICENSE).
 
-- **Apache-2.0** — applies to all code in the repository except the `services/ui/` directory.
-- **MIT** — applies to the original code under the `services/ui/` directory, which is derived from [NVIDIA NeMo Agent Toolkit UI](https://github.com/NVIDIA/NeMo-Agent-Toolkit-UI/).
-
-**All contributions to this repository, regardless of which directory they target, are accepted under the Apache-2.0 license.** Even if you are contributing changes to the `services/ui/` directory, your contribution will be licensed under Apache-2.0. The original `services/ui/` code retains its MIT license, but any additions or modifications contributed through this repository are Apache-2.0.
+**All contributions to this repository are accepted under the Apache-2.0 license.**
 
 See the [LICENSE](LICENSE) file for the full license texts.
 
@@ -150,8 +147,9 @@ The repository ships with a `.pre-commit-config.yaml` at the root that runs the 
 
 - `ruff check` — mirrors the CI `Lint (Python)` job
 - `ruff format --check` — mirrors the CI `Lint (Python)` job
-- `mypy src/vss_agents/` — mirrors the CI `Type Check (mypy)` job
+- `mypy src/agent/` — mirrors the CI `Type Check (mypy)` job
 - TruffleHog secret scan
+- Files >5 MiB under `services/`, `libs/`, or `tools/` must be Git LFS 
 
 Install the hooks once after cloning the repo:
 

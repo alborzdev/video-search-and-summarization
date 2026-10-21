@@ -45,6 +45,7 @@ from prometheus_client import (
     REGISTRY,
     generate_latest,
 )
+from otel_helper import extract_context_from_headers
 from rtvi_vlm_client import RtviError
 from sse_starlette.sse import EventSourceResponse
 from via_exception import ViaException
@@ -63,6 +64,7 @@ from vss_api_models import (
     CompletionUsage,
     DeleteFileResponse,
     FileInfo,
+    DeleteIndexResponse,
     GenerateCaptionsRequest,
     GenerateCaptionsResponse,
     ListFilesResponse,
@@ -302,7 +304,7 @@ class ViaServer:
                 {
                     "name": "Recommended Config",
                     "description": "Operations related to querying recommended"
-                    " LVS request parameters.",
+                    " Video Summarization MS request parameters.",
                 },
                 {
                     "name": "Summarization",
@@ -314,7 +316,11 @@ class ViaServer:
                 },
             ],
             servers=[
-                {"url": "/", "description": "LVS microservice local endpoint.", "x-internal": False}
+                {
+                    "url": "/",
+                    "description": "Video Summarization MS local endpoint.",
+                    "x-internal": False,
+                }
             ],
             version="v1",
         )
@@ -514,13 +520,14 @@ class ViaServer:
             )
             raise
 
-    async def _run_reserved_summarize(self, source, query, request_id: str) -> str:
+    async def _run_reserved_summarize(
+        self, source, query, request_id: str, trace_context=None
+    ) -> str:
+        operation_args = (source, query, request_id)
+        if trace_context is not None:
+            operation_args += (trace_context,)
         return await self._run_reserved_operation(
-            request_id,
-            self._stream_handler.summarize,
-            source,
-            query,
-            request_id,
+            request_id, self._stream_handler.summarize, *operation_args
         )
 
     async def _run_reserved_vlm_captions(self, source, query, request_id: str) -> str:
@@ -1290,8 +1297,8 @@ class ViaServer:
         # Mount the ASGI app exposed by prometheus client as a FastAPI endpoint.
         @self._app.get(
             f"{API_PREFIX}/metrics",
-            summary="Get LVS metrics",
-            description="Get LVS metrics in prometheus format.",
+            summary="Get Video Summarization MS metrics",
+            description="Get Video Summarization MS metrics in prometheus format.",
             responses={
                 200: {"description": "Successful Response."},
                 **add_common_error_responses([500]),
@@ -1304,8 +1311,8 @@ class ViaServer:
         # ======================= Health check API
         @self._app.get(
             "/v1/live",
-            summary="Get LVS liveness status",
-            description="Get LVS liveness status (v1 endpoint).",
+            summary="Get Video Summarization MS liveness status",
+            description="Get Video Summarization MS liveness status (v1 endpoint).",
             responses={
                 200: {"model": None, "description": "Successful Response."},
                 **add_common_error_responses([500]),
@@ -1317,8 +1324,8 @@ class ViaServer:
 
         @self._app.get(
             "/v1/ready",
-            summary="Get LVS readiness status",
-            description="Get LVS readiness status (v1 endpoint).",
+            summary="Get Video Summarization MS readiness status",
+            description="Get Video Summarization MS readiness status (v1 endpoint).",
             responses={
                 200: {"model": None, "description": "Successful Response."},
                 503: {
@@ -1354,8 +1361,8 @@ class ViaServer:
 
         @self._app.get(
             "/v1/startup",
-            summary="Get LVS startup status",
-            description="Get LVS startup status (v1 endpoint).",
+            summary="Get Video Summarization MS startup status",
+            description="Get Video Summarization MS startup status (v1 endpoint).",
             responses={
                 200: {"model": None, "description": "Successful Response."},
                 **add_common_error_responses([500]),
@@ -1380,8 +1387,8 @@ class ViaServer:
 
         @self._app.get(
             "/v1/metadata",
-            summary="Get LVS service metadata",
-            description="Get LVS service metadata information.",
+            summary="Get Video Summarization MS service metadata",
+            description="Get Video Summarization MS service metadata information.",
             responses={
                 200: {"description": "Successful Response."},
                 **add_common_error_responses([500]),
@@ -1526,6 +1533,10 @@ class ViaServer:
             responses={
                 200: {"description": "Successful Response."},
                 **add_common_error_responses(),
+                502: {
+                    "model": LvsError,
+                    "description": "A summarization stage returned an unusable result.",
+                },
                 503: {
                     "model": LvsError,
                     "description": "Server is busy. Client may try again later.",
@@ -1535,6 +1546,7 @@ class ViaServer:
         )
         async def stream_summarize(
             request_body: StreamSummarizeRequest,
+            request: Request,
         ) -> CompletionResponse:
             if not self._stream_handler._kafka_enabled:
                 raise ViaException(
@@ -1565,11 +1577,14 @@ class ViaServer:
                 request_body.end_time,
             )
 
+            trace_context = extract_context_from_headers(request.headers)
+
             loop = asyncio.get_event_loop()
             request_id = await loop.run_in_executor(
                 self._async_executor,
                 self._stream_handler.summarize_stream,
                 request_body,
+                trace_context,
             )
 
             logger.info(
@@ -1589,11 +1604,15 @@ class ViaServer:
             if req_info.status == RequestInfo.Status.FAILED:
                 rtvi_status = getattr(req_info, "rtvi_status_code", None)
                 rtvi_code = getattr(req_info, "rtvi_error_code", None)
+                error_status = getattr(req_info, "error_status_code", None)
+                error_code = getattr(req_info, "error_code", None)
                 error_msg = req_info.error_message or "Unknown error"
                 raise ViaException(
                     error_msg,
-                    rtvi_code or "InternalServerError",
-                    rtvi_status or 500,
+                    rtvi_code or error_code or "InternalServerError",
+                    rtvi_status or error_status or 500,
+                    job_id=request_id,
+                    failed_stage=getattr(req_info, "failed_stage", None),
                 )
 
             return CompletionResponse(
@@ -1755,6 +1774,10 @@ class ViaServer:
             responses={
                 200: {"description": "Successful Response."},
                 **add_common_error_responses(),
+                502: {
+                    "model": LvsError,
+                    "description": "A summarization stage returned an unusable result.",
+                },
                 503: {
                     "model": LvsError,
                     "description": (
@@ -1772,6 +1795,10 @@ class ViaServer:
             responses={
                 200: {"description": "Successful Response."},
                 **add_common_error_responses(),
+                502: {
+                    "model": LvsError,
+                    "description": "A summarization stage returned an unusable result.",
+                },
                 503: {
                     "model": LvsError,
                     "description": (
@@ -1919,10 +1946,15 @@ class ViaServer:
                         409,
                     )
 
+            # Capture the caller's trace context here, on the event loop thread.
+            # run_in_executor hands work to a ThreadPoolExecutor and contextvars
+            # do not cross that boundary, so the context must travel explicitly.
+            trace_context = extract_context_from_headers(request.headers)
+
             # File-based summarization
             try:
                 submitted_request_id = await self._run_reserved_summarize(
-                    source, query, request_id
+                    source, query, request_id, trace_context
                 )
             except BaseException:
                 if sse_claimed:
@@ -2142,10 +2174,14 @@ class ViaServer:
                     rtvi_code = getattr(req_info, "rtvi_error_code", None)
                     dep_status = getattr(req_info, "dependency_http_status", None)
                     dep_code = getattr(req_info, "dependency_error_code", None)
+                    error_status = getattr(req_info, "error_status_code", None)
+                    error_code = getattr(req_info, "error_code", None)
                     raise ViaException(
                         req_info.error_message or "Failed to generate summary",
-                        rtvi_code or dep_code or "InternalServerError",
-                        rtvi_status or dep_status or 500,
+                        rtvi_code or dep_code or error_code or "InternalServerError",
+                        rtvi_status or dep_status or error_status or 500,
+                        job_id=request_id,
+                        failed_stage=getattr(req_info, "failed_stage", None),
                     )
 
                 # Create response json and return it
@@ -2215,6 +2251,46 @@ class ViaServer:
         # POST /v1/stream/add when metadata.prompt is set (auto-inference);
         # LVS no longer triggers RTVI captioning. See
         # docs/streaming_rtvi_kafka_logstash.md for the operator workflow.
+
+        # ======================= Asset Index Cleanup API
+
+        @self._app.delete(
+            f"{API_PREFIX}/assets/{{asset_id}}/index",
+            summary="Delete Elasticsearch index for an asset",
+            description=(
+                "Drop the per-asset Elasticsearch index (`default_<asset_id>`) created "
+                "during summarization. Prevents shard-cap exhaustion when many assets are "
+                "summarized without being explicitly cleaned up. Idempotent on a missing "
+                "index. Returns `deleted=false` when CA-RAG is disabled."
+            ),
+            responses={
+                200: {"description": "Successful Response."},
+                **add_common_error_responses([500]),
+            },
+            tags=["Summarization"],
+        )
+        async def delete_asset_index(
+            asset_id: Annotated[
+                UUID,
+                Path(description="Asset ID whose Elasticsearch index should be deleted."),
+            ],
+        ) -> DeleteIndexResponse:
+            asset_id_str = str(asset_id)
+            logger.info("delete_asset_index: asset_id=%s", asset_id_str)
+            try:
+                result = self._stream_handler.drop_collection_for_asset(
+                    asset_id_str, force_legacy=True
+                )
+            except Exception as e:
+                logger.warning("drop_collection_for_asset failed for %s: %s", asset_id_str, e)
+                raise ViaException(
+                    f"Failed to delete index for asset {asset_id_str}: {e}",
+                    "InternalServerError",
+                    500,
+                )
+            deleted = "error" not in result and not result.get("skipped", False)
+            detail = result.get("reason") or result.get("error") or None
+            return DeleteIndexResponse(asset_id=asset_id_str, deleted=deleted, detail=detail)
 
         # ======================= Recommended Config API
 
@@ -2309,8 +2385,14 @@ class ViaServer:
         # Handle exceptions and return error details in format specified in the API schema.
         @self._app.exception_handler(ViaException)
         async def handle_via_exception(request, ex: ViaException) -> LvsError:
+            content = {"code": ex.code, "message": ex.message}
+            if ex.job_id:
+                content["job_id"] = ex.job_id
+            if ex.failed_stage:
+                content["failed_stage"] = ex.failed_stage
             return JSONResponse(
-                status_code=ex.status_code, content={"code": ex.code, "message": ex.message}
+                status_code=ex.status_code,
+                content=content,
             )
 
         # Handle exceptions and return error details in format specified in the API schema.

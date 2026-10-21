@@ -22,6 +22,9 @@
 #include "ReplayPeerConnection.h"
 #include "sensor_management.h"
 
+using namespace std;
+using namespace nv_vms;
+
 // Define missing sensor API constants
 constexpr const char* SENSOR_API = "/api/v1/sensor/*";
 constexpr const char* SENSOR_DATA_API = "/api/v1/sensor/data/*";
@@ -388,6 +391,7 @@ namespace vst_recorder
             Json::Value in;
             Json::Value out;
             struct mg_connection *conn = nullptr;
+            req_info["method"] = "post";
             in["id"] = id;
             in["url"] = url;
             if (recorder != nullptr && recorder->m_func.find(api_key) != recorder->m_func.end() &&
@@ -801,6 +805,7 @@ namespace vst_replaystream
             Json::Value in;
             Json::Value out;
             struct mg_connection *conn = nullptr;
+            req_info["method"] = "post";
             in["id"] = id;
             in["url"] = url;
             auto func_map = replay_mngt->getHttpApi();

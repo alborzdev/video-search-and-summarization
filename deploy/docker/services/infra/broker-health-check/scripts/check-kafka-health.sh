@@ -22,8 +22,8 @@ echo " Kafka health check service started..."
 # Configuration with defaults
 MAX_RETRIES=${MAX_RETRIES:-60}                        # Max retries for broker and topics
 RETRY_INTERVAL=${RETRY_INTERVAL:-2}                   # Seconds between retries
-KAFKA_HOST=${BOOTSTRAP_HOST:-localhost}
-KAFKA_PORT=${KAFKA_PORT:-9092}
+KAFKA_HOST=${BOOTSTRAP_HOST:-kafka}
+KAFKA_PORT=${KAFKA_PORT:-29092}
 
 echo "Configuration:"
 echo "  MAX_RETRIES: $MAX_RETRIES ($(($MAX_RETRIES * $RETRY_INTERVAL))s timeout)"
@@ -84,21 +84,31 @@ if [ ${#REQUIRED_KAFKA_TOPICS[@]} -gt 0 ]; then
     
     while [ $topic_retry_count -lt $MAX_RETRIES ]; do
         missing_topics=()
-        
-        for topic in "${REQUIRED_KAFKA_TOPICS[@]}"; do
-            if ! kafka-topics --bootstrap-server $KAFKA_HOST:$KAFKA_PORT --list 2>/dev/null | grep -q "^${topic}$"; then
-                missing_topics+=("$topic")
-            fi
-        done
+
+        # One JVM/query per poll, regardless of the number of required topics.
+        # A failed command can emit partial output; never accept that as health.
+        if topic_list=$(kafka-topics --bootstrap-server "$KAFKA_HOST:$KAFKA_PORT" --list 2>/dev/null); then
+            topic_query_succeeded=true
+            for topic in "${REQUIRED_KAFKA_TOPICS[@]}"; do
+                if ! grep -Fxq -- "$topic" <<< "$topic_list"; then
+                    missing_topics+=("$topic")
+                fi
+            done
+        else
+            topic_query_succeeded=false
+            topic_list=""
+            missing_topics=("${REQUIRED_KAFKA_TOPICS[@]}")
+            echo "Kafka topic query failed; retrying without accepting partial results"
+        fi
         
         if [ ${#missing_topics[@]} -eq 0 ]; then
             echo "✓ All required Kafka topics are present after $topic_retry_count retries"
             
             # List all topics for verification
             echo "Current Kafka topics:"
-            kafka-topics --bootstrap-server $KAFKA_HOST:$KAFKA_PORT --list 2>/dev/null | while read topic; do
+            while IFS= read -r topic; do
                 echo "  - $topic"
-            done
+            done <<< "$topic_list"
             break
         else
             topic_retry_count=$((topic_retry_count + 1))
@@ -112,9 +122,13 @@ if [ ${#REQUIRED_KAFKA_TOPICS[@]} -gt 0 ]; then
         echo "Missing topics: ${missing_topics[*]}"
         echo ""
         echo "Existing topics:"
-        kafka-topics --bootstrap-server $KAFKA_HOST:$KAFKA_PORT --list 2>/dev/null | while read topic; do
-            echo "  - $topic"
-        done
+        if $topic_query_succeeded; then
+            while IFS= read -r topic; do
+                echo "  - $topic"
+            done <<< "$topic_list"
+        else
+            echo "  Topic list unavailable: last broker query failed"
+        fi
         exit 1
     fi
 else
@@ -126,4 +140,3 @@ fi
 
 echo "✅ Kafka health check completed successfully"
 exit 0
-

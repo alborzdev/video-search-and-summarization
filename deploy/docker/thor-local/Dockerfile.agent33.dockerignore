@@ -1,0 +1,19 @@
+# Narrow public source context; never traverse private runtime databases.
+**
+!libs
+!libs/vss
+!libs/vss/cli
+!libs/vss/cli/src
+!libs/vss/cli/src/**
+!libs/vss/core
+!libs/vss/core/src
+!libs/vss/core/src/**
+!services
+!services/agent
+!services/agent/docker
+!services/agent/docker/entrypoint.py
+!services/agent/docker/install_proprietary_codecs.py
+!services/agent/packages
+!services/agent/packages/vss_agents
+!services/agent/packages/vss_agents/src
+!services/agent/packages/vss_agents/src/**

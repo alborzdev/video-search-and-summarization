@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,6 @@
 #include "CivetServer.h"
 #include "error_code.h"
 
-using namespace nv_vms;
 
 // Function to get CivetCallbacks for debugging
 const struct CivetCallbacks* getCivetCallbacks();
@@ -39,9 +38,9 @@ class HttpServerRequestHandler
     std::shared_ptr<CivetServer> m_civet;
     std::vector<std::unique_ptr<CivetHandler>> m_handlers;  // Store handlers to manage lifetime
     public:
-        typedef std::function<VmsErrorCode(const Json::Value &, const Json::Value &, Json::Value &, struct mg_connection *conn)> httpFunction;
+        typedef std::function<nv_vms::VmsErrorCode(const Json::Value &, const Json::Value &, Json::Value &, struct mg_connection *conn)> httpFunction;
 
-        HttpServerRequestHandler(std::shared_ptr<CivetServer> m_civetServer);
+        explicit HttpServerRequestHandler(std::shared_ptr<CivetServer> m_civetServer);
 
         void addRequestHandler(std::map<std::string,httpFunction, std::less<>>& func);
         
@@ -73,7 +72,7 @@ struct FileData
     
     // Error handling fields
     bool m_hasError = false;
-    VmsErrorCode m_errorCode = VmsErrorCode::NoError;
+    nv_vms::VmsErrorCode m_errorCode = nv_vms::VmsErrorCode::NoError;
     std::string m_errorMessage = EMPTY_STRING;
 
     // True iff this upload created a new sensor in addFile(); false on the

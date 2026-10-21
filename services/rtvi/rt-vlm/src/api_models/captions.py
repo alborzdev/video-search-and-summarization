@@ -20,13 +20,14 @@ from enum import Enum
 from typing import Annotated, List, Optional
 from uuid import UUID
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, PrivateAttr, field_validator, model_validator
 
 from .common import (
     ANY_CHAR_PATTERN,
     DEFAULT_MAX_GENERATION_TOKENS,
     MAX_GENERATION_TOKENS,
     MAX_GENERATION_TOKENS_ENV,
+    STREAM_ID_PATTERN,
     CommonBaseModel,
     CompletionUsage,
     MediaInfoOffset,
@@ -72,6 +73,10 @@ def get_vlm_prompt_max_length() -> int:
 
 
 VLM_PROMPT_MAX_LENGTH = get_vlm_prompt_max_length()
+VlmAssetId = (
+    UUID
+    | Annotated[str, Field(min_length=1, max_length=256, pattern=STREAM_ID_PATTERN)]
+)
 
 
 # Absolute upper bound for `prompt` / `system_prompt` length, used as the
@@ -100,16 +105,51 @@ OptionalCaptionMetricInt32 = (
 class ResponseType(str, Enum):
     """Query Response Type."""
 
+    CHOICE = "choice"
+    JSON_SCHEMA = "json_schema"
     JSON_OBJECT = "json_object"
     TEXT = "text"
+
+
+class JsonSchemaDefinition(CommonBaseModel):
+    """Named JSON schema used to constrain model output."""
+
+    name: str = Field(max_length=64, pattern=r"^[A-Za-z0-9_-]+$")
+    description: Optional[str] = Field(default=None, max_length=1024)
+    schema_: dict = Field(alias="schema")
+    strict: bool = True
 
 
 class ResponseFormat(CommonBaseModel):
     """Query Response Format Object."""
 
     type: ResponseType = Field(
-        description="Response format type", examples=[ResponseType.JSON_OBJECT, ResponseType.TEXT]
+        description="Response format type",
+        examples=[ResponseType.CHOICE, ResponseType.JSON_OBJECT, ResponseType.TEXT],
     )
+    json_schema: Optional[JsonSchemaDefinition] = None
+    choices: Optional[List[Annotated[str, Field(min_length=1, max_length=2048)]]] = Field(
+        default=None,
+        min_length=1,
+        max_length=256,
+    )
+
+    @model_validator(mode="after")
+    def validate_constraint(self):
+        if self.type == ResponseType.JSON_SCHEMA and self.json_schema is None:
+            raise ValueError("json_schema is required when response format type is json_schema")
+        if self.type != ResponseType.JSON_SCHEMA and self.json_schema is not None:
+            raise ValueError("json_schema is only valid when response format type is json_schema")
+        if self.type == ResponseType.CHOICE:
+            if self.choices is None:
+                raise ValueError("choices is required when response format type is choice")
+            if any(not choice.strip() for choice in self.choices):
+                raise ValueError("choices must not contain blank values")
+            if len(set(self.choices)) != len(self.choices):
+                raise ValueError("choices must be unique")
+        elif self.choices is not None:
+            raise ValueError("choices is only valid when response format type is choice")
+        return self
 
 
 class VlmCaptionResponse(CommonBaseModel):
@@ -250,7 +290,9 @@ class VlmCaptionsCompletionResponse(CommonBaseModel):
 class VlmQuery(CommonBaseModel):
     """VLM Captions Query Request Fields."""
 
-    id: UUID | List[UUID] = Field(
+    _prompt_driven_reasoning: bool = PrivateAttr(default=False)
+
+    id: VlmAssetId | List[VlmAssetId] = Field(
         description="Unique ID or list of IDs of the file(s)/live-stream(s) to generate VLM captions for",
         examples=[
             "123e4567-e89b-12d3-a456-426614174000",
@@ -258,8 +300,22 @@ class VlmQuery(CommonBaseModel):
         ],
         json_schema_extra={
             "anyOf": [
-                {"type": "string", "format": "uuid"},
-                {"type": "array", "items": {"type": "string", "format": "uuid"}, "maxItems": 50},
+                {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": STREAM_ID_PATTERN,
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 256,
+                        "pattern": STREAM_ID_PATTERN,
+                    },
+                    "maxItems": 50,
+                },
             ]
         },
     )
@@ -271,8 +327,8 @@ class VlmQuery(CommonBaseModel):
         return v
 
     @property
-    def id_list(self) -> List[UUID]:
-        return [self.id] if isinstance(self.id, UUID) else self.id
+    def id_list(self) -> List[VlmAssetId]:
+        return self.id if isinstance(self.id, list) else [self.id]
 
     @property
     def get_query_json(self: CommonBaseModel) -> dict:
@@ -284,7 +340,7 @@ class VlmQuery(CommonBaseModel):
         description=(
             "URL of the video/image to process. Supported schemes: "
             "http://, https://, s3://, file://. "
-            "When provided, 'id' must also be specified as a single UUID."
+            "When provided, 'id' must also be specified as a single identifier."
         ),
         pattern=r"^(https?://|s3://|file://).*",
         examples=[
@@ -540,7 +596,7 @@ class VlmQuery(CommonBaseModel):
             "chunking to select all decoded frames in the chunk."
         ),
         ge=-1,
-        le=256,
+        le=512,
         json_schema_extra={"format": "float32"},
     )
 
@@ -637,6 +693,11 @@ class VlmQuery(CommonBaseModel):
                 "num_frames_per_second_or_fixed_frames_chunk=-1 is only valid "
                 "when use_fps_for_chunking is false"
             )
+        if self.response_format.type != ResponseType.TEXT:
+            if self.ignore_eos:
+                raise ValueError("ignore_eos=true is incompatible with structured output")
+            if self.min_tokens is not None:
+                raise ValueError("min_tokens is incompatible with structured output")
         return self
 
     alert_category: Optional[str] = Field(

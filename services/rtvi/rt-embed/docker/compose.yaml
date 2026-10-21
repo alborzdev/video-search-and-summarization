@@ -15,7 +15,7 @@
 
 services:
   rtvi-server:
-    image: ${RTVI_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1}
+    image: ${RTVI_IMAGE:-ghcr.io/nvidia-ai-blueprints/vss/vss-rt-embed:develop-latest}
     shm_size: '16gb'
     runtime: nvidia
     user: "1001:1001"
@@ -30,6 +30,7 @@ services:
       - "${NGC_MODEL_CACHE:-rtvi-ngc-model-cache}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache"
       - "${RTVI_SRC_DIR:-/dummy}${RTVI_SRC_DIR:+:/opt/nvidia/rtvi:ro}"
       - "${RTVI_LOG_DIR:-/dummy}${RTVI_LOG_DIR:+:/opt/nvidia/rtvi/log/rtvi/}"
+      - "${RTVI_IPC_SOCKET_HOST_DIR:-/dummy}${RTVI_IPC_SOCKET_HOST_DIR:+:/run/rtvi-ipc}"
       - rtvi-hf-cache:/tmp/huggingface
       - rtvi-triton-model-repo:/tmp/triton_model_repo
 
@@ -37,6 +38,11 @@ services:
       MODEL_PATH: "${MODEL_PATH:-git:https://huggingface.co/nvidia/Cosmos-Embed1-448p}"
       MODEL_IMPLEMENTATION_PATH: "${MODEL_IMPLEMENTATION_PATH:-/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1}"
       MODEL_REPOSITORY_SCRIPT_PATH: "${MODEL_REPOSITORY_SCRIPT_PATH:-/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1/create_triton_model_repo.py}"
+      REMOTE_EMBED_ENDPOINT: "${REMOTE_EMBED_ENDPOINT:-}"
+      REMOTE_EMBED_ENDPOINT_MODEL_NAME: "${REMOTE_EMBED_ENDPOINT_MODEL_NAME:-nvidia/cosmos-embed1}"
+      REMOTE_EMBED_ENDPOINT_API_KEY: "${REMOTE_EMBED_ENDPOINT_API_KEY:-}"
+      REMOTE_EMBED_ENDPOINT_TIMEOUT_SEC: "${REMOTE_EMBED_ENDPOINT_TIMEOUT_SEC:-300}"
+      REMOTE_EMBED_ENDPOINT_BATCH_SIZE: "${REMOTE_EMBED_ENDPOINT_BATCH_SIZE:-64}"
       COSMOS_EMBED1_TRT_PRECISION: "${COSMOS_EMBED1_TRT_PRECISION:-fp16}"
       COSMOS_EMBED1_TRT_EXTRA_ARGS: "${COSMOS_EMBED1_TRT_EXTRA_ARGS:-}"
       NGC_API_KEY: ${NGC_API_KEY:-}
@@ -58,17 +64,20 @@ services:
       RTVI_RTSP_RECONNECTION_WINDOW: "${RTVI_RTSP_RECONNECTION_WINDOW:-60}"
       RTVI_RTSP_RECONNECTION_MAX_ATTEMPTS: "${RTVI_RTSP_RECONNECTION_MAX_ATTEMPTS:-10}"
       RTVI_ENABLE_GOP_DECODE_OPT: "${RTVI_ENABLE_GOP_DECODE_OPT:-true}"
+      RTVI_IPC_FRAME_COPY: "${RTVI_IPC_FRAME_COPY:-false}"
       # Standard OTEL environment variables (see https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/)
       ENABLE_OTEL_MONITORING: "${ENABLE_OTEL_MONITORING:-false}"  # Set to 'true' to enable OpenTelemetry
       OTEL_RESOURCE_ATTRIBUTES: "${OTEL_RESOURCE_ATTRIBUTES:-}"
       OTEL_TRACES_EXPORTER: "${OTEL_TRACES_EXPORTER:-otlp}"
       OTEL_EXPORTER_OTLP_ENDPOINT: "${OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}"
       OTEL_METRIC_EXPORT_INTERVAL: "${OTEL_METRIC_EXPORT_INTERVAL:-60000}"  # Metrics export interval in milliseconds
-      KAFKA_ENABLED: "${KAFKA_ENABLED:-true}"
       ENABLE_KAFKA_MESSAGES_FOR_TEXT_INPUT: "${ENABLE_KAFKA_MESSAGES_FOR_TEXT_INPUT:-false}"
-      KAFKA_TOPIC: "${KAFKA_TOPIC:-vision-embed-messages}"
       ERROR_MESSAGE_TOPIC: "${ERROR_MESSAGE_TOPIC:-vision-embed-errors}"
       KAFKA_BOOTSTRAP_SERVERS: "${KAFKA_BOOTSTRAP_SERVERS:-kafka:9092}"
+      # Generated-output and error buses (empty MESSAGE_BUS/ERROR_BUS disables that bus).
+      MESSAGE_BUS: "${MESSAGE_BUS-kafka}"
+      MESSAGE_BUS_TOPIC: "${MESSAGE_BUS_TOPIC:-mdx-embed}"
+      ERROR_BUS: "${ERROR_BUS-kafka}"
       KAFKA_ASYNC_SEND_QUEUE_MAXSIZE: "${KAFKA_ASYNC_SEND_QUEUE_MAXSIZE:-1024}"
       ENABLE_REDIS_ERROR_MESSAGES: "${ENABLE_REDIS_ERROR_MESSAGES:-false}"
       REDIS_HOST: "${REDIS_HOST:-redis}"
@@ -140,7 +149,7 @@ services:
       start_period: 30s
 
   redis:
-    image: redis:7-alpine
+    image: redis:8.10.0-alpine
     ports:
       - "${REDIS_HOST_PORT:-6379}:6379"
     volumes:
@@ -220,7 +229,7 @@ services:
 
   # DCGM Exporter - GPU metrics collection
   dcgm-exporter:
-    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.2.0-4.1.0-ubuntu22.04
+    image: nvcr.io/nvidia/k8s/dcgm-exporter:4.2.3-4.1.3-ubuntu22.04
     runtime: nvidia
     ports:
       - "${DCGM_EXPORTER_PORT:-9400}:9400"

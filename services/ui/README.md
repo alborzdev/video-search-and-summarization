@@ -94,6 +94,14 @@ Note: Root `npm run build` runs `turbo run build` only (no `bundle`). Use the co
 
 This monorepo uses Jest for testing. You can run tests for all packages/apps or target specific ones.
 
+### Browser rehearsal
+
+Run `npm run test:e2e` against a running UI. `VSS_UI_BASE_URL` selects its URL.
+For a UI-only rehearsal while inference and storage are deliberately stopped,
+set `VSS_UI_BACKEND_MODE=offline`. That mode allows failed backend requests while
+keeping JavaScript exceptions, missing assets, framework overlays and layout
+checks strict. It does not validate inference or ingestion.
+
 ### Run tests for all packages and apps
 
 ```bash

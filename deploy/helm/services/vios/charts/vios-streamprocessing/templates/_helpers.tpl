@@ -40,7 +40,16 @@
 {{- define "vss-vios-streamprocessing.sharedVstClaimStreamerVideos" -}}
 {{- printf "%s-vst-streamer-videos" (.Release.Name | trunc 63 | trimSuffix "-") }}
 {{- end }}
-{{- define "vss-vios-streamprocessing.image" -}}{{ printf "%s:%s" .Values.image.repository .Values.image.tag }}{{- end -}}
+{{- define "vss-vios-streamprocessing.image" -}}
+{{- $global := .Values.global | default dict -}}
+{{- $prefix := index $global "container_prefix" | default "" -}}
+{{- $repository := .Values.image.repository -}}
+{{- if $prefix -}}
+{{- $repository = printf "%s/vss-vios-streamprocessing" (trimSuffix "/" $prefix) -}}
+{{- end -}}
+{{- $tag := index $global "container_tag" | default .Values.image.tag -}}
+{{- printf "%s:%s" $repository $tag -}}
+{{- end -}}
 {{/* Matches charts/vios/charts/vios-postgres vss-vios-postgres.fullname (sibling subchart). */}}
 {{- define "vss-vios-streamprocessing.postgresFullname" -}}
 {{- $g := .Values.global | default dict }}
@@ -65,6 +74,26 @@
 {{- printf "%s-headless" (include "vss-vios-streamprocessing.fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
 {{- end }}
+{{/*
+Parent overlay ConfigMap for notification_config.json. global.vios.notificationConfigMapName
+(or the streamprocessing-specific
+global.vios.streamprocessingNotificationConfigMapName, or
+.Values.notificationConfigMapName) is the unprefixed logical name; prefixed
+the same way as peer services when useReleaseNamePrefix is true. Empty when
+this subchart sets notificationConfig so that inline override is not replaced
+by the parent overlay.
+*/}}
+{{- define "vss-vios-streamprocessing.notificationConfigMapName" -}}
+{{- if not .Values.notificationConfig -}}
+{{- $g := .Values.global | default dict -}}
+{{- $viosGlobal := index $g "vios" | default dict -}}
+{{- $cm := .Values.notificationConfigMapName | default (index $viosGlobal "streamprocessingNotificationConfigMapName" | default (index $viosGlobal "notificationConfigMapName" | default "")) -}}
+{{- if $cm -}}
+{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix (index $g "useReleaseNamePrefix")) -}}
+{{- if $pfx -}}{{ printf "%s-%s" .Release.Name $cm | trunc 63 | trimSuffix "-" }}{{- else -}}{{ $cm }}{{- end -}}
+{{- end -}}
+{{- end -}}
+{{- end }}
 {{/* In-cluster DNS short name for sibling charts when global.useReleaseNamePrefix is set. */}}
 {{- define "vss-vios-streamprocessing.peerHost" -}}
 {{- $root := index . "root" -}}
@@ -74,20 +103,19 @@
 {{- if $pfx }}{{ printf "%s-%s" $root.Release.Name $short }}{{- else -}}{{ $short }}{{- end }}
 {{- end }}
 {{/*
-  VST_INGRESS_ENDPOINT: host[:port]/vst (no scheme; app prepends http://). Incident/video URLs must be reachable from remote VLM when global.vlmBaseUrl is set — use global.externalHost like vss-alert-bridge vst_config.
+  VST_INGRESS_ENDPOINT: host[:port]/vst (no scheme; app prepends http://).
 */}}
 {{- define "vss-vios-streamprocessing.vstIngressEndpoint" -}}
 {{- $g := .Values.global | default dict }}
 {{- $pfx := default false (coalesce .Values.useReleaseNamePrefix (index $g "useReleaseNamePrefix")) }}
 {{- $eh := index $g "externalHost" | default "" | trim }}
-{{- $ep := index $g "externalPort" | default "" | trim }}
-{{- $globVlm := trim (default "" (index $g "vlmBaseUrl")) }}
+{{- $ep := index $g "vstExternalPort" | default (index $g "externalPort") | default "" | toString | trim }}
 {{- $explicit := trim (default "" .Values.vstIngressEndpoint) }}
 {{- if ne $explicit "" }}
 {{- $explicit }}
 {{- else }}
 {{- $internal := ternary (printf "%s-vss-vios-ingress:30888/vst" .Release.Name) "vss-vios-ingress:30888/vst" $pfx }}
-{{- if and (ne $globVlm "") (ne $eh "") }}
+{{- if ne $eh "" }}
 {{- if ne $ep "" }}
 {{- printf "%s:%s/vst" $eh $ep }}
 {{- else }}

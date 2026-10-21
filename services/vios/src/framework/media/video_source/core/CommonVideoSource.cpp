@@ -41,8 +41,20 @@ void CommonVideoSource::getDecodeStats(LatencyStats& stats)
 
 // Implementation of CommonVideoSource constructor and destructor
 CommonVideoSource::CommonVideoSource(const std::string &uri, const std::map<std::string, std::string, std::less<>> &opts)
+    : CommonVideoSource(uri, opts, nullptr)
+{
+}
+
+CommonVideoSource::CommonVideoSource(const std::string &uri, const std::map<std::string, std::string, std::less<>> &opts,
+                                     std::shared_ptr<IMediaDataConsumer> dashConsumer)
     : m_pipelineManager(std::make_shared<PipelineManager>()), m_config(uri, opts)
 {
+    // Registered before createPipeline below, which is what wires the terminal
+    // consumer for every branch of the pipeline.
+    if (dashConsumer != nullptr)
+    {
+        m_pipelineManager->setDashConsumer(std::move(dashConsumer));
+    }
     // Initialize core state from configuration
     m_uri = uri;
     m_recordedPlayback = m_config.isRecordedPlayback();
@@ -240,8 +252,8 @@ VmsErrorCode CommonVideoSource::controlStreamFileVideoSource(const std::string& 
             }
         }
     }
-#ifdef JETSON_PLATFORM
-    else if(m_nvIPCProducer)
+#ifdef AARCH64_PLATFORM
+    else if(isJetsonPlatform() && m_nvIPCProducer)
     {
         if (action == "pause")
         {
@@ -347,11 +359,11 @@ void CommonVideoSource::startStream()
     }
     else
     {
-#ifdef JETSON_PLATFORM
         auto overlay = getOverlay();
         bool is_bbox = overlay && !GET_OSD_INSTANCE()->isError() && overlay->isBboxEnabled();
-        if (is_bbox == false || GET_CONFIG().enable_ipc_path == false)
-#endif
+        // On Jetson/Orin with bbox overlay + IPC path, drive the IPC producer instead
+        // of the decoder. Every other case (all non-Jetson) uses the decoder path.
+        if (!isJetsonPlatform() || is_bbox == false || GET_CONFIG().enable_ipc_path == false)
         {
             if(m_gstdecoder)
             {
@@ -367,7 +379,7 @@ void CommonVideoSource::startStream()
                 LOG(warning) << "Decoder Instance is NULL" << endl;
             }
         }
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
         else
         {
             if (m_nvIPCProducer)
@@ -406,7 +418,7 @@ void CommonVideoSource::setDecoderConsumerPipeline()
         {
             if (encoder && webrtcConsumer) {
                 overlay->setConsumer(encoder);
-                encoder->setConsumer(webrtcConsumer);
+                encoder->setConsumer(resolveSinkConsumer(webrtcConsumer));
                 LOG(info) << "Add consumer gstdecoder->LLTransform->LLOverlay->nvEncoder" << endl;
             }
         }
@@ -414,7 +426,7 @@ void CommonVideoSource::setDecoderConsumerPipeline()
         {
             if (transformSink && webrtcConsumer) {
                 overlay->setConsumer(transformSink);
-                transformSink->setConsumer(webrtcConsumer);
+                transformSink->setConsumer(resolveSinkConsumer(webrtcConsumer));
                 LOG(info) << "Add consumer gstdecoder->LLTransform->LLOverlay->LLTransformSink" << endl;
             }
         }
@@ -428,7 +440,7 @@ void CommonVideoSource::setDecoderConsumerPipeline()
             if (transform && encoder && webrtcConsumer) {
                 m_gstdecoder->setConsumer(m_peerid, transform);
                 transform->setConsumer(encoder);
-                encoder->setConsumer(webrtcConsumer);
+                encoder->setConsumer(resolveSinkConsumer(webrtcConsumer));
                 LOG(info) << "Add consumer gstdecoder->LLTransform->nvEncoder" << endl;
             }
         }
@@ -436,7 +448,7 @@ void CommonVideoSource::setDecoderConsumerPipeline()
         {
             if (transformSink && webrtcConsumer) {
                 m_gstdecoder->setConsumer(m_peerid, transformSink);
-                transformSink->setConsumer(webrtcConsumer);
+                transformSink->setConsumer(resolveSinkConsumer(webrtcConsumer));
                 LOG(info) << "Add consumer gstdecoder->LLTransformSink" << endl;
             }
         }
@@ -446,6 +458,29 @@ void CommonVideoSource::setDecoderConsumerPipeline()
 
 void CommonVideoSource::createConsumerPipeline()
 {
+    // DASH passthrough has no chain to build: the decoder parses the recording
+    // and hands it to the packager.  Rebuilding the standard chain here would
+    // put the transform back in front of the packager and feed it compressed
+    // frames it cannot use.
+    // A video wall is never a passthrough, whether or not it draws an overlay:
+    // its picture does not exist in any single camera's bitstream and has to be
+    // decoded, composed and re-encoded.  Without this the wall silently
+    // degrades to one camera wired straight to the packager, and the compositor
+    // runs at full rate into nothing.
+    /* A session that exists to re-encode is not a passthrough either: wiring
+     * the decoder straight to the packager here would publish the camera's own
+     * codec and skip the encoder that was built to replace it. */
+    if (m_config.isDashPlayback() && !m_config.getOverlay().enabled && !m_compositePlayback
+        && !m_config.isDashTranscode()
+        && m_gstdecoder != nullptr
+        && m_pipelineManager != nullptr && m_pipelineManager->getDashConsumer() != nullptr)
+    {
+        m_gstdecoder->setConsumer(m_peerid, m_pipelineManager->getDashConsumer());
+        m_gstdecoder->setConsumerReady(m_peerid);
+        LOG(info) << "DASH passthrough: decoder feeds the packager directly" << endl;
+        return;
+    }
+
     if (m_compositePlayback)
     {
         auto compositor = m_pipelineManager->getCompositor();
@@ -516,7 +551,7 @@ void CommonVideoSource::createConsumerPipeline()
                 if (transform && encoder && webrtcConsumer) {
                     m_gstdecoder->setConsumer(m_peerid, transform);
                     transform->setConsumer(encoder);
-                    encoder->setConsumer(webrtcConsumer);
+                    encoder->setConsumer(resolveSinkConsumer(webrtcConsumer));
                     LOG(info) << "Add consumer gstdecoder->LLTransform->nvEncoder" << endl;
                 } else {
                     LOG(error) << "Pipeline components not properly initialized for NV V4L2 encoding" << endl;
@@ -526,7 +561,7 @@ void CommonVideoSource::createConsumerPipeline()
             {
                 if (transformSink && webrtcConsumer) {
                     m_gstdecoder->setConsumer(m_peerid, transformSink);
-                    transformSink->setConsumer(webrtcConsumer);
+                    transformSink->setConsumer(resolveSinkConsumer(webrtcConsumer));
                     LOG(info) << "Add consumer gstdecoder->LLTransformSink" << endl;
                 } else {
                     LOG(error) << "Pipeline components not properly initialized for standard encoding" << endl;
@@ -580,12 +615,14 @@ void CommonVideoSource::createConsumerPipeline()
         }
     }
 
-#ifdef JETSON_PLATFORM
+    // IPC producer path (aarch64-only): getIPCProducer() is non-null only on Jetson/Orin
+    // (the IPC build path is Jetson-only), so this branch is inert on other platforms.
+#ifdef AARCH64_PLATFORM
     else if (auto ipcProducer = m_pipelineManager->getIPCProducer())
     {
         auto overlay = m_pipelineManager->getOverlay();
         auto transform = m_pipelineManager->getTransform();
-        
+
         if (overlay && !GET_OSD_INSTANCE()->isError() && overlay->isBboxEnabled())
         {
             if (transform) {
@@ -642,7 +679,7 @@ void CommonVideoSource::setConsumerReady()
         m_nativeStreamProducer->setConsumerReady(m_peerid);
     }
 
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
     else if (auto ipcProducer = m_pipelineManager->getIPCProducer())
     {
         auto overlay = m_pipelineManager->getOverlay();
@@ -718,7 +755,7 @@ void CommonVideoSource::stopAndRemoveConsumers()
     {
         m_nativeStreamProducer->removeConsumer(m_peerid);
     }
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
     else if (auto ipcProducer = m_pipelineManager->getIPCProducer())
     {
         ipcProducer->removeConsumer(m_peerid);
@@ -822,8 +859,8 @@ string CommonVideoSource::getStreamState()
         return nativeProducer->getstate();
     }
     
-#ifdef JETSON_PLATFORM
-    // Check IPC producer
+#ifdef AARCH64_PLATFORM
+    // Check IPC producer (non-null only on Jetson/Orin)
     auto ipcProducer = m_pipelineManager->getIPCProducer();
     if (ipcProducer)
     {
@@ -843,15 +880,15 @@ bool CommonVideoSource::isStreamError()
         return decoder->getError();
     }
     
-#ifdef JETSON_PLATFORM
-    // Check IPC producer on Jetson platform
+#ifdef AARCH64_PLATFORM
+    // Check IPC producer (non-null only on Jetson/Orin)
     auto ipcProducer = m_pipelineManager->getIPCProducer();
     if (ipcProducer)
     {
         return ipcProducer->getError();
     }
 #endif
-    
+
     return false;
 }
 
@@ -870,6 +907,27 @@ std::string CommonVideoSource::getBuffer()
 {
     auto imageEncoder = m_pipelineManager->getImageEncoder();
     return imageEncoder ? imageEncoder->getImageBuffer() : std::string{};
+}
+
+std::shared_ptr<IMediaDataConsumer> CommonVideoSource::resolveSinkConsumer(
+    const std::shared_ptr<IMediaDataConsumer>& webrtcConsumer) const
+{
+    if (m_config.isDashPlayback() && m_pipelineManager != nullptr)
+    {
+        if (std::shared_ptr<IMediaDataConsumer> dashConsumer = m_pipelineManager->getDashConsumer())
+        {
+            return dashConsumer;
+        }
+    }
+    return webrtcConsumer;
+}
+
+void CommonVideoSource::setDashConsumer(std::shared_ptr<IMediaDataConsumer> dashConsumer)
+{
+    if (m_pipelineManager != nullptr)
+    {
+        m_pipelineManager->setDashConsumer(std::move(dashConsumer));
+    }
 }
 
 void CommonVideoSource::setBitstreamConsumer(std::shared_ptr<IMediaDataConsumer> bitstreamConsumer)
@@ -939,7 +997,7 @@ std::shared_ptr<NativeStreamProducer> CommonVideoSource::getNativeStreamProducer
     return m_pipelineManager->getNativeStreamProducer();
 }
 
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
 std::shared_ptr<NvIPCProducer> CommonVideoSource::getIPCProducer() const
 {
     return m_pipelineManager->getIPCProducer();

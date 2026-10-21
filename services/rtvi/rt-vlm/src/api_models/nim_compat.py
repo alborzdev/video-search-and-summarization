@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright (c) 2024-2025, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-FileCopyrightText: Copyright (c) 2024-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ class VideoUrl(CommonBaseModel):
 
     url: str = Field(
         description="URL of the video",
-        max_length=10000000,
+        max_length=100000000,  # Supports CRF-0 base64 video payloads up to ~75 MB raw.
         pattern=ANY_CHAR_PATTERN,
     )
 
@@ -419,7 +419,7 @@ class ChatCompletionRequest(CommonBaseModel):
             "fixed-frame chunking to select all decoded frames in each chunk."
         ),
         ge=-1,
-        le=256,
+        le=512,
     )
     use_fps_for_chunking: Optional[bool] = Field(
         default=False,

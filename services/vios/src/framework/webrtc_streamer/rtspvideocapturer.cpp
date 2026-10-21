@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,15 +30,15 @@
 #include "logger.h"
 #include "stats.h"
 
+using namespace nv_vms;
+
 RTSPVideoCapturer::RTSPVideoCapturer(const std::string & uri, const std::map<std::string,std::string, std::less<>> & opts)
 	: LiveVideoSource(uri, opts)
 {
 	LOG(verbose) << "RTSPVideoCapturer " << uri ;
 }
 
-RTSPVideoCapturer::~RTSPVideoCapturer()
-{
-}
+RTSPVideoCapturer::~RTSPVideoCapturer() = default;
 
 void RTSPVideoCapturer::getDecoderStats(LatencyStats& stats)
 {
@@ -95,7 +95,7 @@ void RTSPVideoCapturer::setEOS()
 }
 
 void RTSPVideoCapturer::onError(RTSPConnection& connection, const char* error) {
-	LOG(error) << "RTSPVideoCapturer:onError url:" << secureUrlForLogging(m_liveclient.getUrl()) <<  " error:" << error;
+	LOG(error) << "RTSPVideoCapturer:onError url:" << secureUrlForLogging(getLiveClient().getUrl()) <<  " error:" << error;
 	connection.start(1);
 }
 

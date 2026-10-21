@@ -21,7 +21,7 @@
 #include <iostream>
 #include <bits/stdc++.h>
 
-#define PROFILER_OUT_FILE "vms_function_profiler_result.csv"
+constexpr const char* PROFILER_OUT_FILE = "vms_function_profiler_result.csv";
 #ifdef FUNCTION_PROFILER
 #ifndef MEASURE_FUNCTION_EXECUTION_TIME
 #define MEASURE_FUNCTION_EXECUTION_TIME \
@@ -90,6 +90,11 @@ public:
             funcProfileResult << caller <<"(" << line_number << ")"<<"(" << tag << ")" << "," <<std::chrono::duration_cast<std::chrono::microseconds>(duration).count() << "\n";
         }
     }
+
+    MeasureExecutionTime(const MeasureExecutionTime&) = delete;
+    MeasureExecutionTime& operator=(const MeasureExecutionTime&) = delete;
+    MeasureExecutionTime(MeasureExecutionTime&&) = delete;
+    MeasureExecutionTime& operator=(MeasureExecutionTime&&) = delete;
 
     static void writeToFile()
     {

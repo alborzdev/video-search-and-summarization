@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -102,6 +102,10 @@ public:
     // IMediaDataProducer Interface Implementation
     // ========================================================================
     
+    // Keep the base class registerConsumer overloads visible (e.g. the
+    // time-range variant) so they are not hidden by the overloads below.
+    using IMediaDataProducer::registerConsumer;
+
     /**
      * @brief Register a consumer to receive data from this producer
      * @param consumer The consumer to register
@@ -186,7 +190,7 @@ public:
      * - sync: Enable framerate-controlled delivery (true) or fast as possible (false)
      * - enableAudio: Enable audio (true) or disable (false)
      */
-    void setConfig(const std::vector<VideoFileInfo>& fileList,
+    void setConfig(const std::vector<nv_vms::VideoFileInfo>& fileList,
         const std::string& startTime, const std::string& endTime,
         const std::string& codec, const std::string& container,
         bool syncMode, bool enableAudio);
@@ -380,7 +384,7 @@ private:
     bool m_useLocalFiles{false};
 
     // Store file list for cloud download
-    std::vector<VideoFileInfo> m_fileList;
+    std::vector<nv_vms::VideoFileInfo> m_fileList;
 
     // Track first frame PTS for relative time calculation with epoch timestamps
     std::atomic<GstClockTime> m_firstFramePtsNs{GST_CLOCK_TIME_NONE};
@@ -407,8 +411,8 @@ private:
         bool pausedStateReached;
     };
 
-    StreamInfo* m_streamInfo;
-    SeekData* m_seekData;
+    std::unique_ptr<StreamInfo> m_streamInfo;
+    std::unique_ptr<SeekData> m_seekData;
     
     // Completion and error callbacks
     std::function<void()> m_finishedCallback;
@@ -428,7 +432,7 @@ private:
     bool createSingleSegmentPipeline();
     bool createMultiSegmentPipeline();
     bool createLocalFilePipeline();  // New: filesrc-based pipeline with cloud download
-    void parseConfigForLocalFiles(const std::vector<VideoFileInfo>& fileList,
+    void parseConfigForLocalFiles(const std::vector<nv_vms::VideoFileInfo>& fileList,
                                    const std::string& startTime, const std::string& endTime,
                                    const std::string& codec, const std::string& container,
                                    bool syncMode, bool enableAudio);

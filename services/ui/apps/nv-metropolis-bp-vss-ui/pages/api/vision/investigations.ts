@@ -333,8 +333,23 @@ export default async function handler(
     try {
       const request = validateRequest(req.body);
       const retainedEvidence: InvestigationEvidence[] = [];
+      const prepared = new Map<string, InvestigationEvidence>();
       for (const item of request.evidence) {
-        retainedEvidence.push(await retainEvidence(item));
+        // Multiple findings can cite the same physical clip. Prepare that media
+        // once while retaining each finding's own identity, title and notes.
+        const identity = JSON.stringify([item.sensor_id, item.start_time, item.end_time]);
+        const existing = prepared.get(identity);
+        if (existing) {
+          retainedEvidence.push({
+            ...item,
+            media_status: existing.media_status,
+            ...(existing.video_url ? { video_url: existing.video_url } : {}),
+          });
+        } else {
+          const retained = await retainEvidence(item);
+          prepared.set(identity, retained);
+          retainedEvidence.push(retained);
+        }
       }
       const id = randomUUID();
       const record: InvestigationRecord = {
@@ -398,10 +413,15 @@ export default async function handler(
       }
       const files = (await readdir(STORE_DIR))
         .filter((file) => ID_PATTERN.test(file.replace(/\.json$/, "")));
-      const records = await Promise.all(
+      const results = await Promise.allSettled(
         files.map((file) => readRecord(file.replace(/\.json$/, "")))
       );
+      const records = results.flatMap((result) => result.status === "fulfilled" ? [result.value] : []);
+      // A damaged or concurrently removed file must not hide every other saved
+      // briefing. An entirely unreadable collection still reports an error.
+      if (files.length && !records.length) throw new Error("Saved investigations could not be read.");
       return res.status(200).json({
+        partial: records.length !== files.length,
         investigations: records.sort((left, right) =>
           right.created_at.localeCompare(left.created_at)
         ),

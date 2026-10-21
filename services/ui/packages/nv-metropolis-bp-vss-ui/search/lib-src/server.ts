@@ -25,9 +25,6 @@ const MDX_WEB_API_URL = env('NEXT_PUBLIC_MDX_WEB_API_URL') || process?.env?.NEXT
 const SEARCH_TAB_MEDIA_WITH_OBJECTS_BBOX = env('NEXT_PUBLIC_SEARCH_TAB_MEDIA_WITH_OBJECTS_BBOX') || process?.env?.NEXT_PUBLIC_SEARCH_TAB_MEDIA_WITH_OBJECTS_BBOX;
 
 export async function fetchSearchData() {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 100));
-  
   return {
     systemStatus: 'operational',
     agentApiUrl: AGENT_API_URL_BASE || null,

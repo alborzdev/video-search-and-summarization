@@ -1,0 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0
+ARG BEHAVIOR33_BASE_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-behavior-analytics@sha256:634db213fd10f80d687ee8e80d415716cbfafdd3b0c7cc19b63a345e4b2d4c46
+FROM ${BEHAVIOR33_BASE_IMAGE}
+COPY services/analytics/behavior-analytics/src/ /usr/local/lib/python3.13/site-packages/
+COPY services/analytics/behavior-analytics/apps/ /behavior-analytics/apps/

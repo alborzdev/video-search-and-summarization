@@ -1,8 +1,28 @@
 import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
-const workspaces = ['Home', 'Live', 'Monitoring', 'Explore', 'Events', 'Capabilities', 'System'] as const;
+const workspaceRoutes = {
+  'Live view': 'home',
+  'Video workflow': 'guided',
+  'Search video': 'explore',
+  'Live cameras': 'live',
+  'Events & reports': 'events',
+  'Alert rules': 'monitoring',
+  'What it can do': 'capabilities',
+  'System': 'system',
+} as const;
+const workspaces = Object.keys(workspaceRoutes) as Array<keyof typeof workspaceRoutes>;
 const faultsByPage = new WeakMap<Page, string[]>();
+
+// UI-only rehearsal deliberately leaves inference and storage stopped. Keep
+// asset, JavaScript and framework failures strict in both modes.
+const offlineBackends = process.env.VSS_UI_BACKEND_MODE === 'offline';
+function expectedOfflineBackend(url: string): boolean {
+  if (!offlineBackends) return false;
+  try {
+    return /^\/(?:api\/|vst\/|video-analytics-api(?:\/|$)|alert-bridge\/)/.test(new URL(url).pathname);
+  } catch { return false; }
+}
 
 function pageFaults(page: Page): string[] {
   const faults: string[] = [];
@@ -15,16 +35,18 @@ function recordRuntimeFaults(page: Page): void {
 
   page.on('pageerror', (error) => faults.push(`pageerror: ${error.message}`));
   page.on('console', (message) => {
-    if (message.type() === 'error') faults.push(`console: ${message.text()}`);
+    if (message.type() === 'error' && !(message.text().startsWith('Failed to load resource:') && expectedOfflineBackend(message.location().url))) {
+      faults.push(`console: ${message.text()}`);
+    }
   });
   page.on('response', (response) => {
-    if (response.status() >= 400) {
+    if (response.status() >= 400 && !expectedOfflineBackend(response.url())) {
       faults.push(`response ${response.status()}: ${response.url()}`);
     }
   });
   page.on('requestfailed', (request) => {
     const failure = request.failure()?.errorText;
-    if (failure && failure !== 'net::ERR_ABORTED') {
+    if (failure && failure !== 'net::ERR_ABORTED' && !expectedOfflineBackend(request.url())) {
       faults.push(`request failed: ${request.url()} (${failure})`);
     }
   });
@@ -41,7 +63,7 @@ async function expectWorkspace(page: Page, workspace: (typeof workspaces)[number
   const item = navigation.getByRole('button', { name: workspace, exact: true });
   await item.click();
   await expect(item).toHaveAttribute('aria-current', 'page');
-  await expect(page).toHaveURL(new RegExp(`[?&]workspace=${workspace.toLowerCase()}(?:&|$)`));
+  await expect(page).toHaveURL(new RegExp(`[?&]workspace=${workspaceRoutes[workspace]}(?:&|$)`));
 }
 
 async function expectNoHorizontalOverflow(page: Page): Promise<void> {
@@ -64,8 +86,8 @@ test('renders a meaningful VSS UI without a framework error overlay', async ({ p
 
   await expect(page).toHaveTitle(/\S/);
   await expect(page.locator('body')).not.toHaveText(/^\s*$/);
-  await expect(page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('button')).toHaveCount(7);
-  await expect(page.locator('nextjs-portal, [data-nextjs-dialog-overlay], [data-nextjs-dialog]')).toHaveCount(0);
+  await expect(page.getByRole('navigation', { name: 'Primary navigation' }).getByRole('button')).toHaveCount(8);
+  await expect(page.locator('[data-nextjs-dialog-overlay], [data-nextjs-dialog], nextjs-portal [role="dialog"]')).toHaveCount(0);
 });
 
 test('desktop navigation opens every primary workspace', async ({ page }) => {
@@ -80,16 +102,16 @@ test('workspace deep links remain stable through browser history', async ({ page
   await openApp(page, '/?workspace=events&source=playwright');
   const navigation = page.getByRole('navigation', { name: 'Primary navigation' });
 
-  await expect(navigation.getByRole('button', { name: 'Events', exact: true })).toHaveAttribute('aria-current', 'page');
-  await expectWorkspace(page, 'Explore');
+  await expect(navigation.getByRole('button', { name: 'Events & reports', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expectWorkspace(page, 'Search video');
   await expect(page).toHaveURL(/source=playwright/);
 
   await page.goBack();
-  await expect(navigation.getByRole('button', { name: 'Events', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(navigation.getByRole('button', { name: 'Events & reports', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(page).toHaveURL(/workspace=events/);
 
   await page.goForward();
-  await expect(navigation.getByRole('button', { name: 'Explore', exact: true })).toHaveAttribute('aria-current', 'page');
+  await expect(navigation.getByRole('button', { name: 'Search video', exact: true })).toHaveAttribute('aria-current', 'page');
   await expect(page).toHaveURL(/workspace=explore/);
 });
 
@@ -102,6 +124,12 @@ test('mobile bottom navigation exposes every workspace without horizontal body o
   expect(navBox, 'mobile bottom navigation bounding box').not.toBeNull();
   expect((navBox?.y ?? 0) + (navBox?.height ?? 0)).toBeGreaterThan(760);
 
+  // Every destination stays on one readable row; the nav itself scrolls.
+  const rows = await navigation.getByRole('button').evaluateAll(buttons =>
+    buttons.map(button => Math.round(button.getBoundingClientRect().top)),
+  );
+  expect(new Set(rows).size).toBe(1);
+
   for (const workspace of workspaces) {
     const item = navigation.getByRole('button', { name: workspace, exact: true });
     await item.scrollIntoViewIfNeeded();
@@ -113,6 +141,7 @@ test('mobile bottom navigation exposes every workspace without horizontal body o
 
 test('readiness popover and appearance menu open without changing app data', async ({ page }) => {
   await openApp(page);
+  await expectWorkspace(page, 'System');
 
   const readiness = page.getByRole('button', { name: 'System readiness', exact: true });
   await readiness.click();

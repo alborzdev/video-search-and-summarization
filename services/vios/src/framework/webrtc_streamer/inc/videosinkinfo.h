@@ -25,8 +25,8 @@
 
 struct DecoderStats : public LatencyStats
 {
-    DecoderStats() {}
-    ~DecoderStats() {}
+    DecoderStats() = default;
+    ~DecoderStats() = default;
     std::queue<int64_t> qTimestamp;
     std::mutex   m_queueLock;
     std::condition_variable  m_qTsCond;
@@ -36,11 +36,14 @@ struct VideoSinkInfo
 {
     VideoSinkInfo(): m_broadcaster(nullptr), m_quality(""), m_isSinkReady{false}
     {}
-    rtc::VideoBroadcaster* m_broadcaster;
+    webrtc::VideoBroadcaster* m_broadcaster;
     DecoderStats m_decoderStats;
     CodecStats m_decoderLatencyStats;
     FrameSize m_frameSize;
     std::string m_quality;
     std::shared_ptr<IMediaDataConsumer>     m_consumer;
     std::atomic<bool>                       m_isSinkReady;
+    /* Set for sinks whose reader is not interactive (DASH), so a frame that is
+    ** late for a live viewer is still delivered instead of being discarded. */
+    std::atomic<bool>                       m_latencyDropExempt{false};
 };

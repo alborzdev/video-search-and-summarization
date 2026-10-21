@@ -16,6 +16,49 @@ Run Compose from **`deploy/docker`** so relative paths resolve correctly.
 
 ---
 
+## Environment files and precedence
+
+The deployment files use a layered environment model. Later `--env-file`
+arguments override earlier ones, so order matters.
+
+| File | Role |
+|------|------|
+| **`containers.env`** | Shared first-party container registry and tag defaults. Pass this before profile env files when running Compose directly. |
+| **`developer-profiles/dev-profile-*/.env`** / **`industry-profiles/*/.env`** | Stable profile defaults. These files should not carry machine-specific paths, host ports, credentials, or generated runtime values. |
+| **`developer-profiles/dev-profile-*/overrides.env`** | Checked-in developer-profile template. Copy it to `user-overrides.env` before direct Compose deployment; do not edit the template. |
+| **`developer-profiles/dev-profile-*/user-overrides.env`** | Ignored user-managed direct-Compose overlay for hardware, model placement, endpoint URLs, host paths, credentials, public ingress, host-published ports, and `COMPOSE_PROFILES`. |
+| **`industry-profiles/*/overrides.env`** | Mutable deployment-specific defaults for industry profiles. |
+| **`generated.env`** | Developer-profile runtime overlay created by `dev-profile.sh` from `overrides.env`. It also receives derived values such as `VSS_APPS_DIR`, `VSS_DATA_DIR`, `HOST_IP`, API keys, model slugs, and compose-wide defaults. Do not edit or commit this file. |
+
+`dev-profile.sh` starts developer stacks with env files in this order:
+
+```bash
+--env-file containers.env \
+--env-file developer-profiles/dev-profile-<profile>/.env \
+--env-file developer-profiles/dev-profile-<profile>/generated.env
+```
+
+When running Compose directly, first create the ignored user-managed overlay from the
+checked-in template (repeat the copy to discard prior layout choices):
+
+```bash
+cp <profile>/overrides.env <profile>/user-overrides.env
+```
+
+Then pass `containers.env`, the profile `.env`, and the user overlay:
+
+```bash
+--env-file containers.env \
+--env-file <profile>/.env \
+--env-file <profile>/user-overrides.env
+```
+
+Before direct Compose bring-up, update the deployment-specific placeholders in
+`user-overrides.env`, especially `VSS_APPS_DIR`, `VSS_DATA_DIR`, `HOST_IP`,
+`EXTERNAL_IP`, credentials, and the active `COMPOSE_PROFILES`.
+
+---
+
 ## Developer profiles (recommended path)
 
 Use the **`dev-profile`** helper instead of hand-editing Compose for day-to-day developer stacks (**base**, **lvs**, **search**, **alerts**).
@@ -51,7 +94,7 @@ export NGC_CLI_API_KEY="<your-key>"
   --profile search \
   --hardware-profile H100
 
-# Tear down (no profile flags — brings down the Compose project `mdx`)
+# Full reset (no profile flags — removes named volumes and `$VSS_DATA_DIR`)
 ./deploy/docker/scripts/dev-profile.sh down
 ```
 
@@ -61,257 +104,71 @@ export NGC_CLI_API_KEY="<your-key>"
 ./deploy/docker/scripts/dev-profile.sh --help
 ```
 
-Each profile may also ship a **`.env`** under **`developer-profiles/<profile>/`** for defaults; the script generates or merges runtime env (e.g. **`generated.env`**) as documented in the script help.
+### LVS GPU hardware metrics
 
-### AGX Thor: fully local base profile
-
-`scripts/thor-local.sh` is the supported operator entry point for an AGX Thor
-running both models on the device. Its defaults are:
-
-| Component | Local endpoint / value |
-|-----------|------------------------|
-| LLM | `datasheet-chat` at `http://127.0.0.1:8000` |
-| VLM | `datasheet-vision` at `http://127.0.0.1:8001` |
-| VLM images per request | `4` (longer frame sets are split temporally) |
-| Cosmos embedding batch | `8` (single-stream Thor default; override with `RTVI_EMBED_BATCH_SIZE`) |
-| RTVI-VLM batch / proxy processes | `1 / 1` (matches the single-stream local Qwen endpoint) |
-| LVS aggregation | vLLM thinking disabled, `1024` output-token cap |
-| Operator UI | `http://127.0.0.1:3001` |
-| Public ingress | `http://127.0.0.1:7777` |
-| Agent API | `http://127.0.0.1:8100` |
-
-Model families are replaceable, but the local API contract is not: the LLM
-must provide OpenAI-compatible discovery and chat completions, and the VLM
-must accept four ordered image items per request by default. Qualify the exact
-replacement server and model locally with:
+The LVS developer profile starts NVIDIA DCGM Exporter alongside the application.
+It uses NVIDIA Data Center GPU Manager to expose host GPU telemetry in Prometheus
+format at `http://localhost:9400/metrics`, including GPU and decoder utilization,
+frame-buffer usage, power draw, and temperature when supported by the GPU and
+driver.
 
 ```bash
-./deploy/docker/scripts/thor-local.sh model-check
+# Verify the exporter is ready and inspect its GPU metrics.
+curl --fail http://localhost:9400/metrics |
+  grep -E 'DCGM_FI_DEV_(GPU_UTIL|DEC_UTIL|FB_USED|POWER_USAGE|GPU_TEMP)'
 ```
 
-A native Moondream `caption`/`query` endpoint handles one image and does not
-satisfy the full live-video contract without an adapter. Provider and frame
-details are in [`thor-local/README.md`](thor-local/README.md).
+Set `DCGM_EXPORTER_HOST_PORT` in
+`developer-profiles/dev-profile-lvs/user-overrides.env` if port 9400 is already in
+use. The exporter requires the NVIDIA driver, NVIDIA Container Toolkit, and a
+GPU supported by DCGM. Its `/metrics` endpoint can be scraped directly by
+Prometheus, Dynatrace, or another Prometheus-compatible monitoring system.
 
-Store the NGC API key once without placing it in the repository or shell
-history:
+Each developer profile ships a stable **`.env`** and a mutable
+**`overrides.env`** under **`developer-profiles/dev-profile-<profile>/`**. On
+`up`, the helper reads both, copies `overrides.env` to **`generated.env`**, adds
+derived runtime values, and starts Compose with `containers.env`, the profile
+`.env`, and `generated.env` in that order.
+
+The helper resets its managed state before every `up`: it stops each managed
+Compose project (default: **`vss`**), removes Compose volumes, deletes old `generated.env` files,
+cleans generated SDRC artifacts, and deletes the developer data directory
+(default: **`deploy/docker/data-dir`**) before recreating it. Use `--dry-run` to
+preview the commands and generated environment without starting containers.
+
+### RTVI CV startup policy
+
+- Docker uses one canonical RTVI CV startup entrypoint: `services/rtvi/rtvi-cv/ds-start.sh`.
+- Developer profiles (**alerts**, **search**) and warehouse **2D/3D** use the shared startup path selected by env/config data.
+- Per-profile startup wrapper scripts are not used.
+- **MV3DT is the documented exception** and keeps its dedicated `ds-start-mv3dt.sh` command override, invoked with `--tracker-reid` since this mode runs appearance-based ReID.
+- Model acquisition for **developer profiles** (alerts, search) and **warehouse RT-CV profiles** (2D, 3D, MV3DT) runs as phase 0 of the perception startup script (`ds-start.sh` / MV3DT `ds-start-mv3dt.sh`) when a per-profile `models-download.json` is mounted. There is no separate download init service for detection/pose models. Warehouse still uses the pre-extracted `VSS_DATA_DIR` bundle for videos, playback, and calibration (see the warehouse section below).
+- **ReID/embedding assets are the exception to that rule.** MV3DT runs a one-shot `vss-reid-embed-init-mv3dt` container that populates `$VSS_DATA_DIR/models/reid` (CLIP-ReID tracker ONNX + SigLIP2) before the ReID service and perception start. See the warehouse MV3DT reference for the full pipeline.
+
+### Direct Compose usage and data directories
+
+`dev-profile.sh` creates and permissions developer-profile data directories automatically. If you run
+`docker compose` directly, you are responsible for both the env-file order and the
+host directories.
+
+For a developer profile started by `dev-profile.sh`, use its helper-created `generated.env`:
 
 ```bash
-install -d -m 700 ~/.config/cti-vss
-umask 077
-read -rsp 'NGC API key: ' KEY; echo
-printf '%s\n' "$KEY" > ~/.config/cti-vss/ngc-api-key
-chmod 600 ~/.config/cti-vss/ngc-api-key
-unset KEY
+cd /path/to/video-search-and-summarization/deploy/docker
+
+docker compose -f compose.yml \
+  --env-file containers.env \
+  --env-file developer-profiles/dev-profile-base/.env \
+  --env-file developer-profiles/dev-profile-base/generated.env \
+  config
 ```
 
-The key is used only for the connected image and asset staging pass. The
-protected runtime contract blanks `NGC_CLI_API_KEY`, `NGC_API_KEY`, and the
-RTVI-VLM provider key; the loopback Qwen endpoint uses the non-secret local
-OpenAI-compatible credential instead. `RTVI_VLM_BATCH_SIZE=1` and
-`RTVI_VLM_NUM_VLM_PROCS=1` are intentional: the Thor profile processes one
-stream and the local Qwen server accepts one sequence at a time. This also
-avoids the released RTVI launcher's total-memory-based batch-128 default and
-keeps its text-only routing index consistent with the single proxy process.
-The host-network agent calls the loopback VLM URL directly. RTVI-VLM runs on a
-Compose bridge, so `thor-local.sh` writes a separate bridge-to-host upstream
-using `HOST_IP`; this is required for summaries and live VLM processing and is
-validated independently from the proxy's own health endpoint.
+For direct Compose, copy `overrides.env` to `user-overrides.env` first, then
+replace the user file's placeholder values for `VSS_APPS_DIR`, `VSS_DATA_DIR`, `HOST_IP`,
+credentials, ports, and model settings.
 
-Apply the upstream VIOS networking requirements once. The command checks the
-active values first and only invokes `sudo` when a change is required:
-
-```bash
-./deploy/docker/scripts/thor-local.sh kernel-settings
-```
-
-Thor shares system RAM with the GPU. Install NVIDIA's edge cache cleaner once
-so long-running video and inference workloads do not lose usable GPU memory to
-the filesystem page cache:
-
-```bash
-sudo tee /usr/local/bin/sys-cache-cleaner.sh >/dev/null <<'EOF'
-#!/bin/bash
-set -e
-echo 0 | tee /proc/sys/vm/nr_hugepages
-echo "Starting cache cleaner"
-while true; do
-  sync
-  echo 3 | tee /proc/sys/vm/drop_caches >/dev/null
-  sleep 3
-done
-EOF
-sudo chmod +x /usr/local/bin/sys-cache-cleaner.sh
-sudo -b /usr/local/bin/sys-cache-cleaner.sh
-```
-
-The background process does not survive a reboot. Start it before every later
-deployment with `sudo -b /usr/local/bin/sys-cache-cleaner.sh`; Thor preflight
-fails closed when it is absent.
-
-The first connected bootstrap validates Thor/Jetson Linux, both model IDs,
-ports, disk space, kernel settings, images, model checksums, persistent
-embedding caches, and the full Compose graph:
-
-```bash
-./deploy/docker/scripts/thor-local.sh up
-```
-
-`up` is idempotent once that complete offline stage exists: it uses the staged
-images and caches and does not log in, download, or build again. To deliberately
-refresh connected artifacts after a source/image update, opt in explicitly:
-
-```bash
-THOR_LOCAL_FORCE_BOOTSTRAP=true ./deploy/docker/scripts/thor-local.sh up
-```
-
-The connected path uses a temporary `DOCKER_CONFIG`, then deletes it. It also
-recreates the selected containers from the blank-credential runtime contract
-after all NGC-backed downloads finish. Thus neither `~/.docker/config.json` nor
-Docker's persistent container configuration receives the NGC token. If an
-older launcher already logged in globally, remove that legacy entry after the
-active E2E workload is stopped:
-
-```bash
-docker logout nvcr.io
-```
-
-The Thor overlay deliberately caps Cosmos-Embed at batch 8. The upstream
-automatic batch of 64 reserves roughly 20 GiB of activation memory and leaves
-too little unified-memory headroom beside the local LLM and VLM. Increase this
-only after measuring a multi-stream workload and preserving a safe memory
-reserve.
-
-The validated tradeshow operating point is **one continuous live stream plus
-uploaded archives**. A bounded two-stream test on the full local stack also
-completed, but reached only 3.71 GiB of available unified memory; treat two
-live streams as a measured ceiling for short demos, not an unattended default.
-Re-run the guarded check after changing a model, input resolution, embedding
-batch, or background workload:
-
-```bash
-./deploy/docker/scripts/thor-capacity-check.sh
-```
-
-It drives the real agent ingest path, DeepStream, VIOS recording, and Cosmos
-Embed; aborts below 3 GiB or on service degradation; and removes its unique
-test sources. The measured FPS, chunk rate, resource envelope, and limitations
-are documented in [`thor-local/README.md`](thor-local/README.md#measured-live-stream-envelope).
-The customer-facing walkthrough is in
-[`thor-local/DEMO.md`](thor-local/DEMO.md).
-
-After images are staged, later starts are offline-safe: they neither pull nor
-build images and they do not pass the NGC credential to Compose. Verify that
-contract before disconnecting the device:
-
-```bash
-./deploy/docker/scripts/thor-local.sh verify-offline
-./deploy/docker/scripts/thor-local.sh restart
-./deploy/docker/scripts/thor-local.sh ready
-./deploy/docker/scripts/thor-local.sh status
-```
-
-`verify-offline` fails closed unless all selected image references exist, the
-pinned RT-DETR/Grounding-DINO/SigLIP files match their expected SHA-256 digests,
-and the persistent Cosmos-Embed volume contains all ten weight shards plus the
-Thor TensorRT engines for the configured embedding batch. It also compares
-every selected Docker image with the content-addressed image ID recorded in the
-mode-`0600` runtime environment, so a mutable tag cannot silently change the
-offline deployment. Its cache inspection runs with `--network none`.
-
-`restart` force-recreates all 27 selected application containers from the
-protected blank-credential environment, but preserves named volumes and
-`VSS_DATA_DIR`. This is intentional: it also scrubs credentials from container
-metadata left by an interrupted or older connected bootstrap.
-
-After the fresh RTVI-VLM endpoint is ready, `restart` replays persisted active
-alert rules from Elasticsearch and fails if any rule cannot be restored. The
-Thor profile uses 10-second live chunks with two seconds of overlap, four fixed
-512-pixel frames, reasoning disabled, and a 64-token response bound. These are
-environment-selectable and stay within the local VLM's four-image request
-contract; NVIDIA's generic profile defaults remain unchanged when the Thor
-variables are absent. The alert bridge's NIM-specific warmup is disabled here
-because both the direct vLLM endpoint and the RTVI proxy are independently
-checked by the readiness gate.
-
-After a host reboot, start the cache cleaner and run the normal restart. The
-launcher starts the configured LLM container, waits for the exact model ID at
-its endpoint, then starts and waits for the VLM before touching the VSS stack.
-This sequencing matters: starting both vLLM processes at once can make each
-process overestimate available unified memory.
-
-```bash
-sudo -b /usr/local/bin/sys-cache-cleaner.sh
-./deploy/docker/scripts/thor-local.sh restart
-```
-
-The defaults are `THOR_LOCAL_LLM_CONTAINER=datasheet-vllm-30` and
-`THOR_LOCAL_VLM_CONTAINER=datasheet-qwen3-vl`. If the operator replaces either
-model server, set the corresponding container, endpoint, and model-ID override.
-Set a container override to `none` when that loopback endpoint is managed by
-another supervisor; the launcher then validates it without trying to start it.
-No model image is pulled by this path.
-
-Before joining a tradeshow or customer LAN, run the read-only security audit.
-The supported ingress is loopback-only, while some NVIDIA host-network
-services intentionally bind broadly for single-node communication:
-
-```bash
-./deploy/docker/scripts/thor-local.sh security audit
-./deploy/docker/scripts/thor-local.sh security firewall-plan enP2p1s0
-```
-
-The optional, confirmation-gated `security firewall-apply` rule blocks known
-VSS internal ports only on named physical interfaces and preserves loopback,
-Docker bridges, SSH, and outbound RTSP. It is volatile across reboot. Prefer an
-SSH tunnel to `127.0.0.1:7777` for a remote operator; use an authenticated TLS
-reverse proxy if direct LAN access is required. Exact commands and tradeoffs
-are documented in
-[`thor-local/README.md`](thor-local/README.md#single-device-network-security).
-
-`restart` waits for the readiness gate automatically. The explicit `ready`
-command is useful after inspecting or manually restarting a service. It only
-passes when every selected container is running (or a one-shot job exited 0),
-all Docker health checks are healthy, and the agent, UI, MCP, summarization,
-embedding, VLM, and DeepStream endpoints answer successfully.
-
-The protected runtime contract is stored in the gitignored file
-`deploy/docker/thor-local/generated.env`, owned by the current user with mode
-`0600`. Registry credential fields are forced blank. If launcher defaults are
-updated after an earlier bootstrap, normalize that existing file without a
-registry login:
-
-```bash
-./deploy/docker/scripts/thor-local.sh refresh-runtime
-./deploy/docker/scripts/thor-local.sh contract
-```
-
-Stop services without deleting persisted data, or remove containers and
-networks while preserving volumes:
-
-```bash
-./deploy/docker/scripts/thor-local.sh stop
-./deploy/docker/scripts/thor-local.sh down
-```
-
-To place persistent data outside the checkout, set the same absolute path for
-every lifecycle command. Model staging, checksum verification, and Compose
-mounts all follow this value:
-
-```bash
-export VSS_DATA_DIR=/srv/cti-vss
-./deploy/docker/scripts/thor-local.sh up
-```
-
-### Direct Compose data directories
-
-The helper scripts provision missing data directories automatically with a
-shared service group and never recursively change existing persisted data. The
-default **`VSS_DATA_GID=1000`** matches the NVIDIA, Elasticsearch, Kafka, and
-Redis images; override it only when those container identities are remapped.
-If you run
-`docker compose -f compose.yml ...` directly, set **`VSS_DATA_DIR`** and create writable
-host directories for the bind-mounted infrastructure volumes before starting the stack:
+Create writable host directories for the bind-mounted infrastructure volumes
+before starting a direct Compose stack:
 
 ```bash
 export VSS_DATA_DIR=/path/to/vss-apps-data
@@ -331,6 +188,123 @@ The root compose maps Elasticsearch data/log volumes to
 `$VSS_DATA_DIR/data_log/redis`. Missing or non-writable host directories can cause
 startup failures such as Kafka being unable to write `/tmp/kafka-data/cluster_id` or
 Elasticsearch being unable to open `gc.log`.
+
+### TURN / WebRTC relay
+
+The warehouse VST UI uses WebRTC for live playback. When VST containers run on the Compose bridge network, browsers cannot reach Docker-only media candidates directly, so `services/infra/compose.yml` includes a coturn-based `turnserver` service for warehouse profiles. It exposes the TURN listener and relay range on the host. Developer profiles do not start this TURN service.
+
+Default ports:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `TURN_HOST_PORT` / `TURN_PORT` | `3478` | TURN UDP/TCP listener |
+| `TURN_MIN_RELAY_HOST_PORT` / `TURN_MAX_RELAY_HOST_PORT` | `20000` / `20040` | Host relay port range |
+| `TURN_MIN_RELAY_PORT` / `TURN_MAX_RELAY_PORT` | `20000` / `20040` | Container relay port range |
+
+Docker binds every published relay port before the container starts, so keep the host relay range outside the kernel ephemeral port range (`sysctl net.ipv4.ip_local_port_range`, `32768-60999` by default). Inside that range, any short-lived outbound socket can take a relay port and fail `docker compose up` with `address already in use`. Also avoid the Kubernetes NodePort range (`30000-32767`) on hosts that run Kubernetes.
+
+Set `TURN_PUBLIC_HOST` to the DNS name or IP address that browser clients use to reach the deployment, and set `TURN_EXTERNAL_IP` to the host IP coturn should advertise. The warehouse profile uses a non-secret default `TURN_USERNAME` and starts a `turnserver-init` job that generates a random password once in the `vss-turn-password` Docker volume. Coturn and VST mount that same generated file; the VST startup helper derives the static TURN URL in the format `user:password@host:port` from `TURN_USERNAME`, the generated password file, `TURN_PUBLIC_HOST`, and `TURN_HOST_PORT`.
+
+For the bundled turnserver, leave `VST_STATIC_TURNURL_LIST` empty:
+
+```env
+TURN_HOST_PORT=3478
+TURN_PORT=3478
+TURN_USERNAME=vss
+TURN_PASSWORD_BYTES=32
+VST_STATIC_TURNURL_LIST=
+```
+
+Remove the Compose-created `vss-turn-password` Docker volume and restart the warehouse profile to rotate the generated password. Only set `VST_STATIC_TURNURL_LIST` for external or multiple TURN endpoints; treat it as sensitive because it embeds TURN credentials.
+
+The warehouse VST streamprocessing startup helper also forces `network.use_coturn_auth_secret=false` and `network.coturn_turnurl_list_with_secret=[]`, matching the static username/password mode. Developer VST streamprocessing and NvStreamer services do not apply this WebRTC/TURN patch.
+
+### Check deployment status
+
+List running and completed containers for the configured Compose project (the
+developer-profile default is `vss`):
+
+```bash
+project="${COMPOSE_PROJECT_NAME:-vss}"
+docker ps -a \
+  --filter "label=com.docker.compose.project=${project}" \
+  --format 'table {{.Names}}\t{{.Status}}'
+```
+
+Do not treat every exited container as a deployment failure. One-time initialization
+and dependency-check containers normally finish with status `Exited (0)` after they
+complete successfully. Investigate containers that exit with a nonzero status, are
+`unhealthy`, or repeatedly restart.
+
+The expected one-time containers below are derived from the active profiles in
+`deploy/docker/services/` and `deploy/docker/developer-profiles/`. Model overrides
+can add, remove, or rename model-specific initialization containers.
+
+| DevX page / profile | Containers that may normally show `Exited (0)` |
+|---|---|
+| Base (`base`) | `llm-nim-init` for the default local LLM. |
+| Video Summarization (`lvs`) | `llm-nim-init`, `vss-elasticsearch-init`, `vss-kafka-topics`, `vss-kibana-init`, `vss-broker-health-check`, `sdrc-init-dirs`, `sdrc-render-config`, `sdrc-wdm-env-from-config`, and `sdrc-wait-for-redis`. |
+| Search (`search`) | `llm-nim-init`, `vss-elasticsearch-init`, `vss-kafka-topics`, `vss-kibana-init`, and `vss-broker-health-check`. Perception models are downloaded by the perception startup script, not a separate init container. |
+| Alert Verification (`alerts --mode verification`) | The same one-time containers as Search. Perception models are downloaded by the perception startup script. |
+| Real-Time Alerts (`alerts --mode real-time`) | The same one-time containers as Search. This mode does not start the CV perception service. |
+
+### Stop or reset a developer profile
+
+Run these commands from `deploy/docker`. Both remove project containers, orphans,
+and the Compose network. The project defaults to `vss`, but respects an explicit
+`COMPOSE_PROJECT_NAME`:
+
+```bash
+project="${COMPOSE_PROJECT_NAME:-vss}"
+
+# Stop the deployment and preserve named volumes.
+docker compose -p "${project}" down --remove-orphans
+
+# Reset the deployment and remove named and anonymous volumes.
+docker compose -p "${project}" down -v --remove-orphans
+```
+
+The `-v` option removes Docker-managed volumes, including VIOS PostgreSQL data,
+Phoenix telemetry, Logstash libraries, and local NIM/RTVI model caches. It also
+removes the Docker volume objects for bind-backed local volumes, but it does not
+erase their host directories. Direct bind mounts likewise survive Compose teardown.
+
+The default local deployments use the following Compose volume keys. At runtime,
+Compose prefixes each key with the project name; for example, `kafka-data` becomes
+`vss_kafka-data` under the default project. Model and local/remote mode selections
+can change the model-cache set.
+
+| DevX page / profile | Compose volume keys used by the default local deployment |
+|---|---|
+| All profiles | `agent-eval` (bind-backed by `${VSS_DATA_DIR}/agent_eval`), `phoenix-data`, `vios_pg_data`, `nemotron_3_5_lightning_cache`, `rtvi-hf-cache`, and `rtvi-ngc-model-cache`. |
+| Base (`base`) | The shared volumes above. |
+| Video Summarization (`lvs`) | Shared volumes plus bind-backed `elastic-data`, `elastic-logs`, and `kafka-data`, and Docker-managed `logstash-libs`. RT-VLM can also create anonymous `/dummy` volumes when optional host paths are unset. |
+| Search (`search`) | LVS volumes plus `rtvi-triton-model-repo`; RT-Embed shares the RTVI cache volumes. |
+| Alert Verification and Real-Time Alerts (`alerts`) | The LVS volume set. |
+
+The deployment also uses host-backed local volumes and direct bind mounts. Their
+host data survives both Compose commands above, including `down -v`:
+
+| DevX page / profile | Mutable host-mounted data |
+|---|---|
+| All profiles | `${VSS_DATA_DIR}/agent_eval`, `${VSS_DATA_DIR}/data_log/redis/{data,log}`, and the VST paths below `${VSS_DATA_DIR}/data_log/vst` (`clip_storage`, `temp_files`, `vst_data`, and `vst_video`). |
+| Video Summarization, Search, and both Alerts modes | `${VSS_DATA_DIR}/data_log/elastic/{data,logs}` and `${VSS_DATA_DIR}/data_log/kafka`, through bind-backed local volumes, in addition to the shared paths. |
+| Video Summarization (`lvs`) | `${VSS_DATA_DIR}/data_log/nvstreamer/vst_data` and `${VSS_DATA_DIR}/videos/dev-profile-lvs`. |
+| Search (`search`) | `${VSS_DATA_DIR}/data_log/nvstreamer/{streamer_videos,vst_data}`, `${VSS_DATA_DIR}/data_log/vss_video_analytics_api`, and `${VSS_DATA_DIR}/models`. |
+| Alert Verification | `${VSS_DATA_DIR}/data_log/nvstreamer/vst_data`, `${VSS_DATA_DIR}/data_log/vss_video_analytics_api`, `${VSS_DATA_DIR}/models`, and `${VSS_DATA_DIR}/videos/dev-profile-alerts`. |
+| Real-Time Alerts | `${VSS_DATA_DIR}/data_log/nvstreamer/vst_data`, `${VSS_DATA_DIR}/data_log/vss_video_analytics_api`, and `${VSS_DATA_DIR}/videos/dev-profile-alerts`. |
+
+Compose files and generated SDRC runtime files are also bind-mounted from this source
+tree. The LVS profile uses `services/infra/sdrc/log`,
+`services/infra/sdrc/.wdm-env`, and rendered profile configuration files. A normal
+Compose `down`, with or without `-v`, does not delete them.
+
+`./deploy/docker/scripts/dev-profile.sh down` is a **full reset**, not merely a
+container stop. It runs the `-v` teardown for every discovered project name, removes
+dangling volumes, deletes generated environment and SDRC runtime files, and
+recursively deletes the configured `VSS_DATA_DIR`. Use the first Compose command
+when model caches, recordings, indexes, or other deployment data must survive.
+
 ### LVS Compose notes
 
 Docker Compose does not use Kubernetes secrets or the NIM Operator. For the LVS profile, local model bring-up uses the **`NGC_CLI_API_KEY`** environment variable directly for image pulls and NIM/RT-VLM model access.
@@ -339,7 +313,7 @@ Default LVS model wiring:
 
 | Component | Local Compose behavior | Default model name |
 |-----------|------------------------|--------------------|
-| LLM | Starts the **`nvidia-nemotron-nano-9b-v2`** NIM container on **`LLM_PORT=30081`** when `LLM_MODE` is `local` or `local_shared`. | `nvidia/nvidia-nemotron-nano-9b-v2` |
+| LLM | Starts the **`nemotron-3.5-lightning-30b-a3b`** NIM container on **`LLM_PORT=30081`** when `LLM_MODE` is `local` or `local_shared`. | `nvidia/nemotron-3.5-lightning-30b-a3b` |
 | VLM / RT-VLM | Starts **`rtvi-vlm`** on **`RTVI_VLM_PORT=8018`**. The LVS profile sets **`VLM_NAME_SLUG=none`**, so Compose does not start a separate Cosmos VLM NIM by default; RT-VLM loads the integrated checkpoint. | `nim_nvidia_cosmos3-nano-reasoner_bf16-final` |
 
 For external endpoints, including operator-hosted vLLM services running on the same
@@ -354,7 +328,7 @@ export VLM_ENDPOINT_URL='<REMOTE VLM SERVICE ROOT, no trailing /v1>'
   --hardware-profile H100 \
   --use-remote-llm \
   --use-remote-vlm \
-  --llm nvidia/nvidia-nemotron-nano-9b-v2 \
+  --llm nvidia/nemotron-3.5-lightning-30b-a3b \
   --vlm nim_nvidia_cosmos3-nano-reasoner_bf16-final
 ```
 
@@ -398,79 +372,107 @@ Those numeric values are only an example shape for reducing cache pressure; vali
 
 ## Warehouse industry profile
 
-The **warehouse** blueprint is driven by **`industry-profiles/warehouse-operations/`**
+The **warehouse** blueprint is driven by
+**`industry-profiles/warehouse-operations/`** and is started with direct Docker
+Compose from **`deploy/docker`**.
 
-1. **Download warehouse app data**
+1. **Model and app-data inputs**
+
+Warehouse uses two acquisition paths:
+
+- The `vss-warehouse-app-data` NGC resource remains the source for videos, playback, and calibration data.
+- Each RT-CV profile mounts its `models-download.json` on perception and downloads versioned NGC model packages into the flattened `$VSS_DATA_DIR/models/` tree during `ds-start` phase 0.
+
+Download and extract the warehouse app data:
 
 ```bash
 ngc \
    registry \
    resource \
    download-version \
-   nvidia/vss-warehouse/vss-warehouse-app-data:3.2.0
+   nvstaging/vss-warehouse/vss-warehouse-app-data:v3.3.0-09152026
 
-# OR Manually download the tar file from NGC
-# URL https://catalog.ngc.nvidia.com/orgs/nvidia/teams/vss-warehouse/resources/vss-warehouse-app-data?version=3.2.0
+# OR manually download the tar file from NGC:
+# https://catalog.ngc.nvidia.com/orgs/nvstaging/teams/vss-warehouse/resources/vss-warehouse-app-data?version=v3.3.0-09152026
 
-# Extract the package
-
-cd vss-warehouse-app-data_v3.2.0
+cd vss-warehouse-app-data_vv3.3.0-09152026
 tar -xvf vss-warehouse-app-data.tar.gz
 
-# Set permissions
+# Prepare the writable model destination used by ds-start phase-0 download
 
-sudo chmod -R 777 /path/to/vss-warehouse-app-data
+sudo mkdir -p /path/to/vss-warehouse-app-data/models
+sudo chmod 0777 /path/to/vss-warehouse-app-data/models
 
 # This is the path to the data directory. It is set in the industry-profiles/warehouse-operations/.env file for VSS_DATA_DIR.
 #VSS_DATA_DIR="/path/to/vss-warehouse-app-data"
 ```
 
-2. **Edit environment**  
-   Update **`deploy/docker/industry-profiles/warehouse-operations/.env`** for your deployment:
+2. **Edit deployment overrides**
 
-   - **`MODE`**: `2d`, `3d`, or `mv3dt`
-   - **`BP_PROFILE`**: `bp_wh`, `bp_wh_kafka`, `bp_wh_redis`, `bp_wh_auto_calib` (see comments in that file for 2d, 3d, and mv3dt combinations)
-   - **`MINIMAL_PROFILE`**, GPU hosts, API keys, and any other variables described in the file header
+Keep stable profile defaults in
+**`industry-profiles/warehouse-operations/.env`**. Update
+**`industry-profiles/warehouse-operations/overrides.env`** for the target
+machine and selected warehouse scenario:
+
+- **`VSS_APPS_DIR`**: absolute path to this repository's `deploy/docker` directory
+- **`VSS_DATA_DIR`**: extracted warehouse app data directory
+- **`HOST_IP`** / **`EXTERNAL_IP`**: host address and externally reachable address
+- **`NGC_CLI_API_KEY`**: an NGC key with access to the RT-DETR warehouse, Sparse4D, and BodyPose3DNet model packages required by the selected mode; also **`NVIDIA_API_KEY`**, **`OPENAI_API_KEY`** as needed
+- **`MODE`**: `2d`, `3d`, or `mv3dt`
+- **`BP_PROFILE`**: `bp_wh`, `bp_wh_kafka`, `bp_wh_redis`, or `bp_wh_auto_calib`
+- **`HARDWARE_PROFILE`**, model settings, public ingress settings, and host-published ports
+- **`COMPOSE_PROFILES`**: one of the warehouse or playback profile lists defined in `overrides.env`
+
+`bp_wh` is valid only with `MODE=2d`. For `MODE=3d` or `MODE=mv3dt`, use
+`bp_wh_kafka`, `bp_wh_redis`, or `bp_wh_auto_calib`. Keep `MODE`,
+`BP_PROFILE`, `STREAM_TYPE`, sample dataset settings, and `COMPOSE_PROFILES`
+aligned with the comments in `overrides.env`.
+
+   Model destinations are shared across profiles: RT-DETR is stored at `models/rtdetr_warehouse_v1.0.2.fp16.onnx`, Sparse4D at `models/sparse4d/sparse4d_warehouse_v2.2.onnx`, and BodyPose3DNet at `models/BodyPose3DNet/bodypose3dnet_accuracy.onnx`.
 
 3. **Start the stack**
 
 ```bash
 cd /path/to/video-search-and-summarization/deploy/docker
-docker compose -f compose.yml --env-file industry-profiles/warehouse-operations/.env up --detach \
---pull always \
---force-recreate \
---build
+
+docker compose -f compose.yml \
+  --env-file containers.env \
+  --env-file industry-profiles/warehouse-operations/.env \
+  --env-file industry-profiles/warehouse-operations/overrides.env \
+  up --detach --pull always --force-recreate --build
 ```
 
 4. **Stop the stack**
 
 ```bash
-# Stop the running deployment
-docker compose -f compose.yml --env-file industry-profiles/warehouse-operations/.env down
-
-# Alternatively to remove all the containers, images and volume
-docker compose --env-file industry-profiles/warehouse-operations/.env down -v --rmi all
-
-# Tear down all dangling volumes
-docker volume ls -q -f "dangling=true" | xargs docker volume rm
+docker compose -f compose.yml \
+  --env-file containers.env \
+  --env-file industry-profiles/warehouse-operations/.env \
+  --env-file industry-profiles/warehouse-operations/overrides.env \
+  down -v --remove-orphans
 ```
 
-5. **Data / backup cleanup**  
-   To reset **`data_log`** volumes, calibration/VST data, and blueprint-configurator backups in a way that matches how you deployed, use **`deploy/docker/scripts/cleanup_all_datalog.sh`**.  
-   Pass **`-e`** / **`--env-file`** with the **same env file** you used for **`docker compose --env-file …`**.
+5. **Data / backup cleanup**
+
+To reset **`data_log`** volumes, calibration/VST data, and
+blueprint-configurator backups in a way that matches how you deployed, use
+**`deploy/docker/scripts/cleanup_all_datalog.sh`**. Pass the same final env
+overlay used for direct Compose:
 
 ```bash
-bash scripts/cleanup_all_datalog.sh -e industry-profiles/warehouse-operations/.env
+bash scripts/cleanup_all_datalog.sh -e industry-profiles/warehouse-operations/overrides.env
 ```
 
-Compose profiles for warehouse slices are defined under **`warehouse-operations/compose.yml`** and related **`warehouse-2d-app`** / **`warehouse-3d-app`** includes; the **`.env`** file selects **MODE** / **BP_PROFILE** behavior as documented there.
+Compose profiles for warehouse slices are defined in
+**`industry-profiles/warehouse-operations/overrides.env`** and selected by
+`COMPOSE_PROFILES`.
 
 ---
 
 ## Requirements
 
 - **Docker** and **Docker Compose** (Compose v2: `docker compose`)
-- **bash** (for **`dev-profile.sh`**)
+- **bash** (for **`dev-profile.sh`** and cleanup scripts)
 - **NVIDIA GPU driver** on the host, at a version supported by your hardware and by the GPU containers you run (see NVIDIA release notes for CUDA / NIM images). Check with **`nvidia-smi`** before starting stacks that use GPUs.
 - **NVIDIA Container Toolkit** (nvidia-docker) so containers can access the GPU; required alongside the driver for GPU-backed Compose services.
 - Valid **NGC** credentials where images or NIMs require **`NGC_CLI_API_KEY`**

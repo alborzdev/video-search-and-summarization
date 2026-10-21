@@ -16,7 +16,7 @@
 services:
   centralizedb:
     image: ${POSTGRES_IMAGE}
-    profiles: ["bp_wh_kafka_2d","bp_wh_redis_2d","bp_wh_2d","bp_wh_kafka_3d","bp_wh_redis_3d","bp_wh_kafka_mv3dt","bp_wh_redis_mv3dt","bp_wh_auto_calib_2d","bp_wh_auto_calib_3d","bp_wh_auto_calib_mv3dt","bp_developer_base_2d","bp_developer_search_2d","bp_developer_lvs_2d","bp_developer_alerts_2d_cv","bp_developer_alerts_2d_vlm","bp_developer_thor_full_2d"]
+    profiles: ["centralizedb"]
     user: "0:0"
     environment:
       - POSTGRES_USER=${CENTRALIZE_DB_USERNAME}
@@ -26,7 +26,6 @@ services:
       - vios_pg_data:/var/lib/postgresql/data
       - ${VST_CONFIG_PATH:-${VSS_APPS_DIR}/services/vios/configs}/postgresql.conf:/etc/postgresql/postgresql.conf
       - ${VST_DATA_PATH}:/var/run/postgresql
-    network_mode: host
     container_name: vss-vios-postgres
     restart: always
     command:
@@ -43,16 +42,17 @@ services:
       start_period: 2s
 
   vst-ingress:
-    image: ${NGINX_IMAGE}
-    profiles: ["bp_wh_kafka_2d","bp_wh_redis_2d","bp_wh_2d","bp_wh_kafka_3d","bp_wh_redis_3d","bp_wh_kafka_mv3dt","bp_wh_redis_mv3dt","bp_wh_auto_calib_2d","bp_wh_auto_calib_3d","bp_wh_auto_calib_mv3dt","bp_developer_base_2d","bp_developer_search_2d","bp_developer_lvs_2d","bp_developer_alerts_2d_cv","bp_developer_alerts_2d_vlm","bp_developer_thor_full_2d"]
+    image: ${VSS_VIOS_INGRESS_IMAGE:-${VSS_CONTAINER_REGISTRY:-ghcr.io/nvidia-ai-blueprints/vss}/vss-vios-ingress}:${VSS_VIOS_INGRESS_TAG:-${VSS_CONTAINER_TAG:-develop-latest}}
+    profiles: ["vst-ingress"]
     user: "0:0"
     environment:
       - VST_INGRESS_HTTP_PORT=${VST_INGRESS_HTTP_PORT}
     volumes:
       - ${VST_CONFIG_PATH:-${VSS_APPS_DIR}/services/vios/configs}/nginx-${VST_NGINX_MODE:-vst}.conf:/etc/nginx/nginx.conf:ro
       - ${VST_LOGS}/nginx_logs:/var/log/nginx
-    network_mode: host
     container_name: vss-vios-ingress
+    ports:
+      - ${VST_INGRESS_HOST_PORT:-30888}:${VST_INGRESS_HTTP_PORT:-30888}
     restart: always    # Nginx should always restart as it's critical for routing
     command: ["nginx", "-c", "/etc/nginx/nginx.conf", "-g", "daemon off;"]
     healthcheck:
@@ -61,6 +61,13 @@ services:
       timeout: 3s
       retries: 30
       start_period: 2s
+    # Nginx resolves every proxy_pass host at config-parse time and exits with
+    # [emerg] "host not found in upstream" if one is missing, so every host named
+    # by nginx-${VST_NGINX_MODE}.conf must exist first: vss-vios-sensor and
+    # vss-vios-streamprocessing (vst), sdr-controller (vst-sdrc, mms).
+    # service_started suffices -- nginx needs the DNS alias, not a serving
+    # upstream -- and streamprocessing's healthcheck is widened to ~25min to
+    # outlast slow apt mirrors, which service_healthy would hold this edge down for.
     depends_on:
       sensor-ms:
         condition: service_healthy
@@ -70,6 +77,24 @@ services:
         required: false
       sensor-ms-3d:
         condition: service_healthy
+        required: false
+      sensor-ms-mv3dt:
+        condition: service_healthy
+        required: false
+      streamprocessing-ms:
+        condition: service_started
+        required: false
+      streamprocessing-ms-2d:
+        condition: service_started
+        required: false
+      streamprocessing-ms-3d:
+        condition: service_started
+        required: false
+      streamprocessing-ms-mv3dt:
+        condition: service_started
+        required: false
+      sdr-controller:
+        condition: service_started
         required: false
 
 volumes:

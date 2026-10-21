@@ -1,7 +1,22 @@
 #!/bin/bash
 
-# blueprint-deploy.sh - Deploy Warehouse blueprint
-# Similar to dev-profile.sh but for warehouse deployment
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+
+# blueprint-deploy.sh - Deploy the Warehouse blueprint
 
 script_dir="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 deploy_docker_dir="$( cd -- "${script_dir}/.." &> /dev/null && pwd )"
@@ -11,7 +26,10 @@ desired_state=""
 deployment=""
 mode=""
 bp_profile=""
+compose_profiles_selector=""
+compose_variant=""
 sample_video_dataset=""
+dataset_type=""
 elasticsearch_mode="cpu"
 deployment_directory="${deploy_docker_dir}"
 data_directory="${deploy_docker_dir}/data-dir"
@@ -30,6 +48,8 @@ llm=""
 vlm=""
 llm_device_id=""
 vlm_device_id=""
+gpu_device_id=""
+hardware_device_id=""
 llm_base_url=""
 vlm_base_url=""
 llm_model_type=""
@@ -50,16 +70,19 @@ function deployment_rel_path() {
   esac
 }
 
-# MODE × BP_PROFILE matrix (industry-profiles/warehouse-operations/.env header).
+# MODE × BP_PROFILE matrix. Auto-calibration is a single MODE, not a 2d/3d/mv3dt suffix.
 function warehouse_bp_profile_valid_for_mode() {
   local _mode="${1}"
   local _profile="${2}"
   case "${_mode}" in
     2d)
-      contains_element "${_profile}" "bp_wh" "bp_wh_kafka" "bp_wh_redis" "bp_wh_auto_calib"
+      contains_element "${_profile}" "bp_wh" "bp_wh_kafka" "bp_wh_redis"
       ;;
     3d | mv3dt)
-      contains_element "${_profile}" "bp_wh_kafka" "bp_wh_redis" "bp_wh_auto_calib"
+      contains_element "${_profile}" "bp_wh_kafka" "bp_wh_redis"
+      ;;
+    auto-calibration)
+      [[ "${_profile}" == "bp_wh_auto_calib" ]]
       ;;
     *)
       return 1
@@ -69,9 +92,9 @@ function warehouse_bp_profile_valid_for_mode() {
 
 function warehouse_default_bp_profile() {
   local _mode="${1}"
-  local _deploy_env="${2}"
+  shift
   local _from_env
-  _from_env="$(get_env_value "${_deploy_env}" "BP_PROFILE")"
+  _from_env="$(get_env_value_from_files "BP_PROFILE" "$@")"
   if [[ -n "${_from_env}" ]] && warehouse_bp_profile_valid_for_mode "${_mode}" "${_from_env}"; then
     echo "${_from_env}"
     return 0
@@ -79,43 +102,219 @@ function warehouse_default_bp_profile() {
   case "${_mode}" in
     2d) echo "bp_wh" ;;
     3d | mv3dt) echo "bp_wh_kafka" ;;
+    auto-calibration) echo "bp_wh_auto_calib" ;;
     *) echo "bp_wh" ;;
   esac
 }
 
 function warehouse_sample_video_dataset() {
-  local _mode="${1}"
   local _profile="${2}"
-  if [[ "${_mode}" == "3d" ]] || [[ "${_mode}" == "mv3dt" ]]; then
-    echo "warehouse-4cams-20mx20m-synthetic"
-  elif [[ "${_profile}" == "bp_wh" ]]; then
+  if [[ "${_profile}" == "bp_wh" ]]; then
     echo "nv-warehouse-4cams"
   else
-    echo "warehouse-loading-dock-3cams-synthetic"
+    echo "warehouse-4cams-20mx20m-synthetic"
   fi
 }
 
 function warehouse_num_streams() {
-  local _mode="${1}"
-  local _profile="${2}"
-  if [[ "${_mode}" == "3d" ]] || [[ "${_mode}" == "mv3dt" ]]; then
-    echo "4"
-  elif [[ "${_profile}" == "bp_wh" ]]; then
-    echo "4"
-  else
-    echo "3"
+  # All supported warehouse fixtures now use four cameras. Keep this helper
+  # separate from dataset selection so the generated configuration remains
+  # explicit about its batch and synchronized-playback size.
+  echo "4"
+}
+
+# Built-in dataset names own their media-domain contract. --dataset-type is
+# only for unknown custom datasets; it must not override a built-in mapping
+# (wrong Sparse4D model, anchors, labels, and thresholds).
+function warehouse_dataset_type() {
+  local _dataset="${1}"
+  local _explicit_type="${2:-}"
+  local _inferred=""
+
+  case "${_dataset}" in
+    nv-warehouse-4cams)
+      _inferred="real"
+      ;;
+    warehouse-loading-dock-3cams-synthetic | warehouse-4cams-20mx20m-synthetic)
+      _inferred="synthetic"
+      ;;
+  esac
+
+  if [[ -n "${_inferred}" ]]; then
+    if [[ -n "${_explicit_type}" ]] && [[ "${_explicit_type}" != "${_inferred}" ]]; then
+      echo "[ERROR] --dataset-type ${_explicit_type} conflicts with built-in SAMPLE_VIDEO_DATASET=${_dataset} (DATASET_TYPE=${_inferred})" >&2
+      return 1
+    fi
+    echo "${_inferred}"
+    return 0
   fi
+
+  if [[ -n "${_explicit_type}" ]]; then
+    echo "${_explicit_type}"
+    return 0
+  fi
+
+  echo "[ERROR] Cannot infer DATASET_TYPE for SAMPLE_VIDEO_DATASET=${_dataset}; pass --dataset-type real|synthetic" >&2
+  return 1
+}
+
+# COMPOSE_PROFILES selector: -p/-m (or --minimal/--playback) override generated.env;
+# otherwise the assignment in overrides.env is used, e.g.
+# COMPOSE_PROFILES=${COMPOSE_PROFILES_WH_KAFKA_3D} or COMPOSE_PROFILES_WH_AUTO_CALIB.
+function warehouse_compose_profiles_selector() {
+  local _raw
+  _raw="$(get_env_value_from_files "COMPOSE_PROFILES" "$@")"
+  _raw="${_raw#\$\{}"
+  _raw="${_raw%\}}"
+  echo "${_raw}"
+}
+
+# Accept COMPOSE_PROFILES_WH_AUTO_CALIB, WH_AUTO_CALIB, or ${COMPOSE_PROFILES_WH_AUTO_CALIB}.
+function warehouse_normalize_compose_selector() {
+  local _in="${1}"
+  _in="${_in#\$\{}"
+  _in="${_in%\}}"
+  case "${_in}" in
+    COMPOSE_PROFILES_WH_* | COMPOSE_PROFILES_PLAYBACK_*)
+      echo "${_in}"
+      ;;
+    WH_* | PLAYBACK_*)
+      echo "COMPOSE_PROFILES_${_in}"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
+# Map BP_PROFILE + MODE (+ optional minimal/playback) to a COMPOSE_PROFILES_* name.
+function warehouse_compose_selector_from_profile_mode() {
+  local _profile="${1}"
+  local _mode="${2}"
+  local _kind="${3:-}"
+  if [[ "${_profile}" == "bp_wh_auto_calib" ]] || [[ "${_mode}" == "auto-calibration" ]]; then
+    if [[ -n "${_kind}" ]]; then
+      return 1
+    fi
+    echo "COMPOSE_PROFILES_WH_AUTO_CALIB"
+    return 0
+  fi
+  if [[ "${_profile}" == "bp_wh" ]]; then
+    if [[ "${_mode}" != "2d" ]] || [[ -n "${_kind}" ]]; then
+      return 1
+    fi
+    echo "COMPOSE_PROFILES_WH_2D"
+    return 0
+  fi
+  local _broker=""
+  case "${_profile}" in
+    bp_wh_kafka) _broker="KAFKA" ;;
+    bp_wh_redis) _broker="REDIS" ;;
+    *) return 1 ;;
+  esac
+  local _mode_u=""
+  case "${_mode}" in
+    2d) _mode_u="2D" ;;
+    3d) _mode_u="3D" ;;
+    mv3dt) _mode_u="MV3DT" ;;
+    *) return 1 ;;
+  esac
+  case "${_kind}" in
+    playback) echo "COMPOSE_PROFILES_PLAYBACK_${_broker}_${_mode_u}" ;;
+    minimal) echo "COMPOSE_PROFILES_WH_${_broker}_${_mode_u}_MINIMAL" ;;
+    "") echo "COMPOSE_PROFILES_WH_${_broker}_${_mode_u}" ;;
+    *) return 1 ;;
+  esac
+}
+
+function warehouse_print_accepted_p_values() {
+  echo "[ERROR] Accepted -p compose lists (industry-profiles/warehouse-operations/overrides.env):"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_2D"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_KAFKA_2D  COMPOSE_PROFILES_WH_REDIS_2D"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_KAFKA_3D  COMPOSE_PROFILES_WH_REDIS_3D"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_KAFKA_MV3DT  COMPOSE_PROFILES_WH_REDIS_MV3DT"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_KAFKA_2D_MINIMAL  COMPOSE_PROFILES_WH_REDIS_2D_MINIMAL"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_KAFKA_3D_MINIMAL  COMPOSE_PROFILES_WH_REDIS_3D_MINIMAL"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_KAFKA_MV3DT_MINIMAL  COMPOSE_PROFILES_WH_REDIS_MV3DT_MINIMAL"
+  echo "[ERROR]   COMPOSE_PROFILES_WH_AUTO_CALIB"
+  echo "[ERROR]   COMPOSE_PROFILES_PLAYBACK_KAFKA_2D  COMPOSE_PROFILES_PLAYBACK_REDIS_2D"
+  echo "[ERROR]   COMPOSE_PROFILES_PLAYBACK_KAFKA_3D  COMPOSE_PROFILES_PLAYBACK_REDIS_3D"
+  echo "[ERROR]   COMPOSE_PROFILES_PLAYBACK_KAFKA_MV3DT  COMPOSE_PROFILES_PLAYBACK_REDIS_MV3DT"
+  echo "[ERROR] Shorthand: WH_2D, WH_KAFKA_2D, WH_AUTO_CALIB, PLAYBACK_REDIS_2D, ..."
+  echo "[ERROR] Blueprint aliases: bp_wh | bp_wh_kafka | bp_wh_redis | bp_wh_auto_calib"
+  echo "[ERROR]   kafka/redis need -m 2d|3d|mv3dt; optional --minimal or --playback"
+}
+
+function warehouse_infer_from_compose_profiles_selector() {
+  local _selector="${1}"
+  case "${_selector}" in
+    COMPOSE_PROFILES_WH_2D)
+      echo "bp_wh 2d"
+      ;;
+    COMPOSE_PROFILES_WH_KAFKA_2D | COMPOSE_PROFILES_WH_KAFKA_2D_MINIMAL)
+      echo "bp_wh_kafka 2d"
+      ;;
+    COMPOSE_PROFILES_WH_REDIS_2D | COMPOSE_PROFILES_WH_REDIS_2D_MINIMAL)
+      echo "bp_wh_redis 2d"
+      ;;
+    COMPOSE_PROFILES_WH_KAFKA_3D | COMPOSE_PROFILES_WH_KAFKA_3D_MINIMAL)
+      echo "bp_wh_kafka 3d"
+      ;;
+    COMPOSE_PROFILES_WH_REDIS_3D | COMPOSE_PROFILES_WH_REDIS_3D_MINIMAL)
+      echo "bp_wh_redis 3d"
+      ;;
+    COMPOSE_PROFILES_WH_KAFKA_MV3DT | COMPOSE_PROFILES_WH_KAFKA_MV3DT_MINIMAL)
+      echo "bp_wh_kafka mv3dt"
+      ;;
+    COMPOSE_PROFILES_WH_REDIS_MV3DT | COMPOSE_PROFILES_WH_REDIS_MV3DT_MINIMAL)
+      echo "bp_wh_redis mv3dt"
+      ;;
+    COMPOSE_PROFILES_WH_AUTO_CALIB)
+      echo "bp_wh_auto_calib auto-calibration"
+      ;;
+    COMPOSE_PROFILES_PLAYBACK_KAFKA_2D)
+      echo "bp_wh_kafka 2d"
+      ;;
+    COMPOSE_PROFILES_PLAYBACK_REDIS_2D)
+      echo "bp_wh_redis 2d"
+      ;;
+    COMPOSE_PROFILES_PLAYBACK_KAFKA_3D)
+      echo "bp_wh_kafka 3d"
+      ;;
+    COMPOSE_PROFILES_PLAYBACK_REDIS_3D)
+      echo "bp_wh_redis 3d"
+      ;;
+    COMPOSE_PROFILES_PLAYBACK_KAFKA_MV3DT)
+      echo "bp_wh_kafka mv3dt"
+      ;;
+    COMPOSE_PROFILES_PLAYBACK_REDIS_MV3DT)
+      echo "bp_wh_redis mv3dt"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 # LLM/VLM model name to slug mapping (for paths and config lookup)
 function get_llm_slug() {
   local _name="${1}"
   case "${_name}" in
-    nvidia/nvidia-nemotron-nano-9b-v2) echo "nvidia-nemotron-nano-9b-v2" ;;
+    nvidia/nemotron-3.5-lightning-30b-a3b) echo "nemotron-3.5-lightning-30b-a3b" ;;
     nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8) echo "nvidia-nemotron-nano-9b-v2-fp8" ;;
-    nvidia/nemotron-3-nano) echo "nemotron-3-nano" ;;
-    nvidia/llama-3.3-nemotron-super-49b-v1.5) echo "llama-3.3-nemotron-super-49b-v1.5" ;;
-    openai/gpt-oss-20b) echo "gpt-oss-20b" ;;
+    *) echo "" ;;
+  esac
+}
+
+# Models that used to ship with the blueprint. Returns a migration message for a
+# removed model name, or an empty string for a name that was never bundled. Kept
+# so a stale --llm fails loudly instead of resolving to an empty slug, which
+# Compose renders as zero LLM services with exit 0 (a silent no-LLM deploy).
+function get_removed_llm_message() {
+  local _name="${1}"
+  case "${_name}" in
+    nvidia/nvidia-nemotron-nano-9b-v2|nvidia/nemotron-3-nano|nvidia/llama-3.3-nemotron-super-49b-v1.5|openai/gpt-oss-20b)
+      echo "'${_name}' was removed from the blueprint. Use nvidia/nemotron-3.5-lightning-30b-a3b, the default on every hardware profile." ;;
     *) echo "" ;;
   esac
 }
@@ -123,13 +322,33 @@ function get_llm_slug() {
 function get_vlm_slug() {
   local _name="${1}"
   case "${_name}" in
-    nvidia/cosmos-reason1-7b) echo "cosmos-reason1-7b" ;;
-    nvidia/cosmos-reason2-8b) echo "cosmos-reason2-8b" ;;
     nvidia/cosmos3-reasoner) echo "cosmos3-reasoner" ;;
-    Qwen/Qwen3-VL-8B-Instruct) echo "qwen3-vl-8b-instruct" ;;
     *) echo "" ;;
   esac
 }
+
+# Hardware-specific RTVI local VLM GPU memory utilization (empty = keep compose/env default).
+# Warehouse overrides.env ships 0.8; high-memory boards must lower that so vLLM
+# does not reserve most of the card before RT-CV (and, on bp_wh 2d, the LLM) start.
+function get_rtvi_vllm_gpu_memory_utilization() {
+  local _hardware_profile="${1}"
+  case "${_hardware_profile}" in
+    GB300) echo "0.2" ;;
+    DGX-SPARK|IGX-THOR|AGX-THOR) echo "0.35" ;;
+    RTXPRO4500BW) echo "0.8" ;;
+    *) echo "" ;;
+  esac
+}
+
+# Hardware-specific RTVI local VLM max model length (empty = keep compose/env default).
+function get_rtvi_vlm_max_model_len() {
+  local _hardware_profile="${1}"
+  case "${_hardware_profile}" in
+    RTXPRO4500BW) echo "18000" ;;
+    *) echo "" ;;
+  esac
+}
+
 
 # Gets model name from remote API endpoint (works for both LLM and VLM)
 function get_remote_model_name() {
@@ -152,10 +371,43 @@ function get_env_value() {
   local _val
   if [[ -f "${_env_file}" ]]; then
     _val="$(grep "^${_var_name}=" "${_env_file}" 2>/dev/null | cut -d'=' -f2- | head -1)"
-    _val="${_val#[\'\"]}"
-    _val="${_val%[\'\"]}"
+    _val="${_val#\"}"; _val="${_val%\"}"
+    _val="${_val#\'}"; _val="${_val%\'}"
     echo "${_val}"
   fi
+}
+
+function env_file_has_var() {
+  local _env_file="${1}"
+  local _var_name="${2}"
+  [[ -f "${_env_file}" ]] && grep -q "^${_var_name}=" "${_env_file}" 2>/dev/null
+}
+
+function get_env_value_from_files() {
+  local _var_name="${1}"
+  shift
+  local _env_file _val="" _found="false"
+  for _env_file in "$@"; do
+    if env_file_has_var "${_env_file}" "${_var_name}"; then
+      _val="$(get_env_value "${_env_file}" "${_var_name}")"
+      _found="true"
+    fi
+  done
+  if [[ "${_found}" == "true" ]]; then
+    echo "${_val}"
+  fi
+}
+
+function env_var_defined_in_files() {
+  local _var_name="${1}"
+  shift
+  local _env_file
+  for _env_file in "$@"; do
+    if env_file_has_var "${_env_file}" "${_var_name}"; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 function mask_secret() {
@@ -220,11 +472,22 @@ function usage() {
   echo "Options for 'up':"
   echo "  -d, --deployment                 [REQUIRED] Deployment type."
   echo "                                   • warehouse — .env under industry-profiles/warehouse-operations/"
-  echo "  -m, --mode                       Deployment mode: 2d (default), 3d, or mv3dt"
-  echo "  -p, --bp-profile                Blueprint profile (must match MODE; see .env header):"
-  echo "                                   • MODE=2d:  bp_wh (default), bp_wh_kafka, bp_wh_redis, bp_wh_auto_calib"
-  echo "                                   • MODE=3d:  bp_wh_kafka, bp_wh_redis, bp_wh_auto_calib (bp_wh not valid)"
-  echo "                                   • MODE=mv3dt: bp_wh_kafka, bp_wh_redis, bp_wh_auto_calib (bp_wh not valid)"
+  echo "  -m, --mode                       Deployment mode. Used with -p. Default: MODE from overrides.env, else 2d."
+  echo "                                   • 2d, 3d, or mv3dt for perception variants"
+  echo "                                   • auto-calibration for the single warehouse auto-calib stack"
+  echo "  -p, --bp-profile                Warehouse stack to deploy. Writes COMPOSE_PROFILES in generated.env."
+  echo "                                   • Compose lists from warehouse-operations/overrides.env:"
+  echo "                                     COMPOSE_PROFILES_WH_2D"
+  echo "                                     COMPOSE_PROFILES_WH_{KAFKA,REDIS}_{2D,3D,MV3DT}"
+  echo "                                     COMPOSE_PROFILES_WH_{KAFKA,REDIS}_{2D,3D,MV3DT}_MINIMAL"
+  echo "                                     COMPOSE_PROFILES_WH_AUTO_CALIB"
+  echo "                                     COMPOSE_PROFILES_PLAYBACK_{KAFKA,REDIS}_{2D,3D,MV3DT}"
+  echo "                                   • Shorthand: WH_2D, WH_KAFKA_3D, WH_AUTO_CALIB, PLAYBACK_REDIS_2D, ..."
+  echo "                                   • Blueprint aliases: bp_wh, bp_wh_kafka, bp_wh_redis, bp_wh_auto_calib"
+  echo "                                     (kafka/redis need -m 2d|3d|mv3dt; optional --minimal/--playback)"
+  echo "                                   • If omitted, COMPOSE_PROFILES in overrides.env is used."
+  echo "  --minimal                        With -p bp_wh_kafka or bp_wh_redis: use the *_MINIMAL compose list."
+  echo "  --playback                       With -p bp_wh_kafka or bp_wh_redis: use COMPOSE_PROFILES_PLAYBACK_*."
   echo "  -i, --host-ip                    Host IP."
   echo "                                   • Default: primary IP from ip route"
   echo "  -e, --external-ip                Externally accessible IP."
@@ -235,15 +498,20 @@ function usage() {
   echo "  -E, --es, --elasticsearch-mode  Elasticsearch mode: gpu (GPU-accelerated) or cpu (CPU-only)."
   echo "                                   • Default: cpu"
   echo "  -s, --sample-video-dataset      [Warehouse only] Override sample video dataset."
-  echo "                                   • Default by mode+profile:"
-  echo "                                     2d+bp_wh: nv-warehouse-4cams (4 streams)"
-  echo "                                     2d+bp_wh_kafka/bp_wh_redis/bp_wh_auto_calib: warehouse-loading-dock-3cams-synthetic (3 streams)"
-  echo "                                     3d/mv3dt+bp_wh_kafka/bp_wh_redis/bp_wh_auto_calib: warehouse-4cams-20mx20m-synthetic (4 streams)"
+  echo "                                   • Default by MODE/BP_PROFILE (or COMPOSE_PROFILES in overrides.env):"
+  echo "                                     2d+bp_wh: nv-warehouse-4cams (4 streams, real)"
+  echo "                                     2d+bp_wh_kafka/bp_wh_redis: warehouse-4cams-20mx20m-synthetic (4 streams, synthetic)"
+  echo "                                     3d/mv3dt+bp_wh_kafka/bp_wh_redis: warehouse-4cams-20mx20m-synthetic (4 streams)"
+  echo "                                     auto-calibration/bp_wh_auto_calib: warehouse-4cams-20mx20m-synthetic (4 streams, synthetic)"
+  echo "  --dataset-type real|synthetic   Required with an unknown custom --sample-video-dataset."
+  echo "                                   • Built-in datasets infer their type automatically; --dataset-type cannot override them."
   echo ""
   echo "  [LLM/VLM - for 2d only: warehouse bp_wh (NIM + agents)]"
   echo "  -H, --hardware-profile          H100, L40S, RTXPRO6000BW, DGX-SPARK, etc."
-  echo "  --llm                           LLM model (e.g. nvidia/nvidia-nemotron-nano-9b-v2)"
-  echo "  --vlm                           VLM model (e.g. nvidia/cosmos-reason2-8b)"
+  echo "  --gpu-device-id                 GPU device ID for all GB300-consuming services."
+  echo "                                   Required when GB300 auto-detection cannot access nvidia-smi."
+  echo "  --llm                           LLM model (e.g. nvidia/nemotron-3.5-lightning-30b-a3b)"
+  echo "  --vlm                           VLM model (e.g. nvidia/cosmos3-reasoner)"
   echo "  --llm-device-id                 GPU device ID for LLM"
   echo "  --vlm-device-id                 GPU device ID for VLM"
   echo "  --use-remote-llm                Use remote LLM (LLM_ENDPOINT_URL)"
@@ -275,25 +543,27 @@ function contains_element() {
   return 1
 }
 
-# Swap non-SBSA image tag lines for commented *sbsa* variants in generated.env (DGX-SPARK or --use-sbsa-images).
-function apply_sbsa_image_tags_to_env() {
+# Auto-calibration's compose profile list has no sdr-controller, so the warehouse SDRC
+# routing overrides must fall back to the direct VST defaults in services/vios/vst.env.
+# Commented here rather than in overrides.env so other warehouse profiles keep SDRC.
+function disable_sdrc_routing_in_env() {
   local _generated_env="${1}"
-  local _reason="${2}"
   local _key
-  while IFS= read -r _key; do
-    [[ -z "${_key}" ]] && continue
-    sed -i -E "/sbsa/! s/^(${_key})=(.*)/# \1=\2/" "${_generated_env}"
-    sed -i -E "/sbsa/ s/^#[[:space:]]*(${_key})=(.*)/\1=\2/" "${_generated_env}"
-    echo "[INFO] Swapped to SBSA (${_reason}): ${_key}"
-  done < <(grep -E '^#[[:space:]]*[A-Za-z0-9_]+=.*sbsa' "${_generated_env}" 2>/dev/null | sed -nE 's/^#[[:space:]]*([A-Za-z0-9_]+)=.*/\1/p' | sort -u)
+  for _key in VST_USE_SDRC STREAM_PROCESSOR_MODULE_ENDPOINT VST_NGINX_MODE; do
+    if grep -qE "^${_key}=" "${_generated_env}"; then
+      sed -i -E "s/^(${_key}=.*)/# \1/" "${_generated_env}"
+      echo "[INFO] Commented ${_key} for auto-calibration (direct VST mode from services/vios/vst.env)"
+    fi
+  done
 }
+
 
 function validate_args() {
   local _args _valid_args _all_good
   _args=("${@}")
   _all_good=0
 
-  _valid_args=$(getopt -q -o d:m:p:H:i:e:s:D:E: --long deployment:,mode:,bp-profile:,hardware-profile:,host-ip:,external-ip:,sample-video-dataset:,elasticsearch-mode:,es:,llm:,vlm:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,use-sbsa-images,data-dir:,data-directory:,dry-run,skip-revert-from-oldest-backup,help -- "${_args[@]}")
+  _valid_args=$(getopt -q -o d:m:p:H:i:e:s:D:E: --long deployment:,mode:,bp-profile:,hardware-profile:,gpu-device-id:,host-ip:,external-ip:,sample-video-dataset:,dataset-type:,elasticsearch-mode:,es:,llm:,vlm:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,use-sbsa-images,minimal,playback,data-dir:,data-directory:,dry-run,skip-revert-from-oldest-backup,help -- "${_args[@]}")
   if [[ $? -ne 0 ]]; then
     echo "[ERROR] Invalid usage: $(mask_external_ip_args "${_args[@]}")"
     ((_all_good++))
@@ -327,12 +597,115 @@ function validate_args() {
   fi
 }
 
+# Run an nvidia-smi query against the host GPU inventory and echo the result.
+#
+# The driver binary is not always present next to this script: CI drives the
+# deployment from inside a plain container image (docker:27), where nvidia-smi
+# lives on the host and is only reachable through a sidecar started with the
+# NVIDIA runtime. Probe the local binary first, then that sidecar, so hardware
+# resolution behaves the same on a bare host and in a containerized runner.
+# Override the sidecar with NVIDIA_SMI_PROBE_CONTAINER; unset it to disable.
+function nvidia_smi_query() {
+  local _output _probe_container="${NVIDIA_SMI_PROBE_CONTAINER-gpu-monitor}"
+  if command -v nvidia-smi >/dev/null 2>&1 \
+    && _output="$(nvidia-smi "$@" 2>/dev/null)" && [[ -n "${_output}" ]]; then
+    printf '%s\n' "${_output}"
+    return 0
+  fi
+  if [[ -n "${_probe_container}" ]] && command -v docker >/dev/null 2>&1 \
+    && _output="$(docker exec "${_probe_container}" nvidia-smi "$@" 2>/dev/null)" \
+    && [[ -n "${_output}" ]]; then
+    printf '%s\n' "${_output}"
+    return 0
+  fi
+  return 1
+}
+
+# Return whether the host GPU inventory can be inspected at all. An unavailable
+# inventory is distinct from an invalid individual device ID.
+function nvidia_smi_is_available() {
+  nvidia_smi_query --query-gpu=index --format=csv,noheader >/dev/null 2>&1
+}
+
+# Return the selected GB300 index. An explicit GPU/LLM/VLM device ID selects
+# the deployment GPU; otherwise exactly one detected GB300 is required.
+function resolve_gb300_device_id() {
+  local _gpu_selector="${gpu_device_id}" _llm_selector="" _vlm_selector="" _device_id _gpu_name _is_explicit=0
+  # Remote models do not consume a local GPU, so their device IDs
+  # must not participate in choosing or conflicting with the shared GB300.
+  if contains_element "llm-device-id" "${options_provided[@]}" && ! contains_element "use-remote-llm" "${options_provided[@]}"; then
+    _llm_selector="${llm_device_id}"
+  fi
+  if contains_element "vlm-device-id" "${options_provided[@]}" && ! contains_element "use-remote-vlm" "${options_provided[@]}"; then
+    _vlm_selector="${vlm_device_id}"
+  fi
+  if [[ -n "${_gpu_selector}" ]]; then
+    _is_explicit=1
+    if [[ -n "${_llm_selector}" ]] && [[ "${_llm_selector}" != "${_gpu_selector}" ]] || [[ -n "${_vlm_selector}" ]] && [[ "${_vlm_selector}" != "${_gpu_selector}" ]]; then
+      echo "[ERROR] --gpu-device-id must match any supplied --llm-device-id or --vlm-device-id for GB300" >&2
+      return 1
+    fi
+  elif [[ -n "${_llm_selector}" ]] && [[ -n "${_vlm_selector}" ]] && [[ "${_llm_selector}" != "${_vlm_selector}" ]]; then
+    echo "[ERROR] GB300 requires --llm-device-id and --vlm-device-id to select the same GPU" >&2
+    return 1
+  elif [[ -n "${_llm_selector}" || -n "${_vlm_selector}" ]]; then
+    _is_explicit=1
+  fi
+  _device_id="${_gpu_selector:-${_llm_selector:-${_vlm_selector}}}"
+
+  if [[ -z "${_device_id}" ]]; then
+    local _gb300_matches=()
+    local _index _name _lower
+    while IFS=, read -r _index _name; do
+      _index="${_index#"${_index%%[![:space:]]*}"}"
+      _index="${_index%"${_index##*[![:space:]]}"}"
+      [[ -n "${_index}" && -n "${_name}" ]] || continue
+      _lower="${_name,,}"
+      if [[ "${_lower}" == *gb300* || "${_lower}" == *b300* ]]; then
+        _gb300_matches+=("${_index}")
+      fi
+    done < <(nvidia_smi_query --query-gpu=index,name --format=csv,noheader || true)
+    if [[ "${#_gb300_matches[@]}" -eq 1 ]]; then
+      _device_id="${_gb300_matches[0]}"
+    elif [[ "${#_gb300_matches[@]}" -eq 0 ]]; then
+      if nvidia_smi_is_available; then
+        echo "[ERROR] Hardware profile 'GB300' was selected, but no GB300 GPU was detected" >&2
+      else
+        echo "[ERROR] Hardware profile 'GB300' was selected, but the GPU inventory could not be read." >&2
+        echo "[ERROR] nvidia-smi is not on PATH and container '${NVIDIA_SMI_PROBE_CONTAINER-gpu-monitor}' could not run it." >&2
+        echo "[ERROR] Start that sidecar, or pass --gpu-device-id <id> to name the GB300 directly." >&2
+      fi
+      return 1
+    else
+      echo "[ERROR] Multiple GB300 GPUs were detected; select the deployment GPU with --llm-device-id or --vlm-device-id" >&2
+      return 1
+    fi
+  fi
+
+  _gpu_name="$(nvidia_smi_query --id="${_device_id}" --query-gpu=name --format=csv,noheader | head -n1)"
+  _gpu_name="${_gpu_name,,}"
+  if [[ -z "${_gpu_name}" ]] && [[ "${_is_explicit}" -eq 1 ]]; then
+    if nvidia_smi_is_available; then
+      echo "[ERROR] Selected GPU device ID '${_device_id}' does not exist or cannot be queried" >&2
+      return 1
+    fi
+    echo "[WARN] nvidia-smi is unavailable; using explicit GB300 device ID ${_device_id}" >&2
+    echo "${_device_id}"
+    return 0
+  fi
+  if [[ "${_gpu_name}" != *gb300* && "${_gpu_name}" != *b300* ]]; then
+    echo "[ERROR] Selected GPU device ID '${_device_id}' is not a GB300" >&2
+    return 1
+  fi
+  echo "${_device_id}"
+}
+
 function process_args() {
   local _args _valid_args _all_good
   _args=("${@}")
   _all_good=0
 
-  _valid_args=$(getopt -q -o d:m:p:H:i:e:s:D:E: --long deployment:,mode:,bp-profile:,hardware-profile:,host-ip:,external-ip:,sample-video-dataset:,elasticsearch-mode:,es:,llm:,vlm:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,use-sbsa-images,data-dir:,data-directory:,dry-run,skip-revert-from-oldest-backup,help -- "${_args[@]}")
+  _valid_args=$(getopt -q -o d:m:p:H:i:e:s:D:E: --long deployment:,mode:,bp-profile:,hardware-profile:,gpu-device-id:,host-ip:,external-ip:,sample-video-dataset:,dataset-type:,elasticsearch-mode:,es:,llm:,vlm:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,use-sbsa-images,minimal,playback,data-dir:,data-directory:,dry-run,skip-revert-from-oldest-backup,help -- "${_args[@]}")
   eval set -- "${_valid_args}"
 
   while true; do
@@ -355,10 +728,26 @@ function process_args() {
         options_provided+=("bp-profile")
         shift
         ;;
+      --minimal)
+        compose_variant="minimal"
+        options_provided+=("minimal")
+        shift
+        ;;
+      --playback)
+        compose_variant="playback"
+        options_provided+=("playback")
+        shift
+        ;;
       -H | --hardware-profile)
         shift
         hardware_profile="${1}"
         options_provided+=("hardware-profile")
+        shift
+        ;;
+      --gpu-device-id)
+        shift
+        gpu_device_id="${1}"
+        options_provided+=("gpu-device-id")
         shift
         ;;
       --llm)
@@ -442,6 +831,12 @@ function process_args() {
         options_provided+=("sample-video-dataset")
         shift
         ;;
+      --dataset-type)
+        shift
+        dataset_type="${1}"
+        options_provided+=("dataset-type")
+        shift
+        ;;
       -E | --elasticsearch-mode | --es)
         shift
         elasticsearch_mode="${1}"
@@ -513,49 +908,142 @@ function process_args() {
 
     if [[ -n "${deployment}" ]] && contains_element "${deployment}" "${_valid_deployments[@]}"; then
       local _deploy_env="${deployment_directory}/$(deployment_rel_path "${deployment}")/.env"
+      local _deploy_overrides_env="${deployment_directory}/$(deployment_rel_path "${deployment}")/overrides.env"
       if [[ ! -f "${_deploy_env}" ]]; then
         echo "[ERROR] Deployment .env file not found: ${_deploy_env}"
         ((_all_good++))
       fi
+      if [[ ! -f "${_deploy_overrides_env}" ]]; then
+        echo "[ERROR] Deployment overrides env file not found: ${_deploy_overrides_env}"
+        ((_all_good++))
+      fi
     fi
 
-    if [[ -n "${deployment}" ]] && [[ -f "${deployment_directory}/$(deployment_rel_path "${deployment}")/.env" ]]; then
+    if [[ -n "${deployment}" ]] && [[ -f "${deployment_directory}/$(deployment_rel_path "${deployment}")/.env" ]] && [[ -f "${deployment_directory}/$(deployment_rel_path "${deployment}")/overrides.env" ]]; then
       local _deploy_env="${deployment_directory}/$(deployment_rel_path "${deployment}")/.env"
+      local _deploy_overrides_env="${deployment_directory}/$(deployment_rel_path "${deployment}")/overrides.env"
 
-      # Mode: default 2d
-      if ! contains_element "mode" "${options_provided[@]}"; then
-        mode="2d"
+      # Compose list: -p/-m (--minimal/--playback) win over COMPOSE_PROFILES in overrides.env.
+      if contains_element "minimal" "${options_provided[@]}" && contains_element "playback" "${options_provided[@]}"; then
+        echo "[ERROR] --minimal and --playback cannot be used together"
+        ((_all_good++))
       fi
-      # Profile: default from .env when valid for MODE, else mode-specific default
-      if ! contains_element "bp-profile" "${options_provided[@]}"; then
-        bp_profile="$(warehouse_default_bp_profile "${mode}" "${_deploy_env}")"
+      if ! contains_element "mode" "${options_provided[@]}"; then
+        mode="$(get_env_value_from_files "MODE" "${_deploy_env}" "${_deploy_overrides_env}")"
+        mode="${mode:-2d}"
+      fi
+      local _compose_selector="" _inferred="" _p_arg="${bp_profile}"
+      if contains_element "bp-profile" "${options_provided[@]}"; then
+        if _compose_selector="$(warehouse_normalize_compose_selector "${_p_arg}")" \
+          && _inferred="$(warehouse_infer_from_compose_profiles_selector "${_compose_selector}")"; then
+          if [[ -n "${compose_variant}" ]]; then
+            echo "[ERROR] --minimal/--playback cannot be combined with a compose-list -p (${_p_arg})"
+            ((_all_good++))
+          else
+            local _inferred_profile _inferred_mode
+            _inferred_profile="${_inferred%% *}"
+            _inferred_mode="${_inferred#* }"
+            if contains_element "mode" "${options_provided[@]}" && [[ "${mode}" != "${_inferred_mode}" ]]; then
+              echo "[ERROR] -m ${mode} conflicts with -p ${_p_arg} (MODE=${_inferred_mode})"
+              ((_all_good++))
+            fi
+            bp_profile="${_inferred_profile}"
+            mode="${_inferred_mode}"
+            compose_profiles_selector="${_compose_selector}"
+          fi
+        elif contains_element "${_p_arg}" "bp_wh" "bp_wh_kafka" "bp_wh_redis" "bp_wh_auto_calib"; then
+          bp_profile="${_p_arg}"
+          if [[ "${bp_profile}" == "bp_wh_auto_calib" ]]; then
+            if contains_element "mode" "${options_provided[@]}" && [[ "${mode}" != "auto-calibration" ]]; then
+              echo "[ERROR] -m ${mode} conflicts with -p bp_wh_auto_calib (MODE=auto-calibration)"
+              ((_all_good++))
+            fi
+            mode="auto-calibration"
+          fi
+          if ! _compose_selector="$(warehouse_compose_selector_from_profile_mode "${bp_profile}" "${mode}" "${compose_variant}")"; then
+            echo "[ERROR] Cannot map -p ${bp_profile} -m ${mode} ${compose_variant:+--${compose_variant}} to a COMPOSE_PROFILES list."
+            warehouse_print_accepted_p_values
+            ((_all_good++))
+          elif ! _inferred="$(warehouse_infer_from_compose_profiles_selector "${_compose_selector}")"; then
+            echo "[ERROR] Unknown COMPOSE_PROFILES selector: ${_compose_selector}"
+            warehouse_print_accepted_p_values
+            ((_all_good++))
+          else
+            compose_profiles_selector="${_compose_selector}"
+          fi
+        else
+          echo "[ERROR] Invalid -p ${_p_arg}."
+          warehouse_print_accepted_p_values
+          bp_profile=""
+          ((_all_good++))
+        fi
+      else
+        if [[ -n "${compose_variant}" ]]; then
+          echo "[ERROR] --minimal/--playback requires -p bp_wh_kafka or -p bp_wh_redis"
+          ((_all_good++))
+        fi
+        _compose_selector="$(warehouse_compose_profiles_selector "${_deploy_env}" "${_deploy_overrides_env}")"
+        if [[ -z "${_compose_selector}" ]]; then
+          echo "[ERROR] COMPOSE_PROFILES is not set in ${_deploy_overrides_env}."
+          echo "[ERROR] Pass -p (e.g. -p bp_wh_auto_calib) or set COMPOSE_PROFILES=\${COMPOSE_PROFILES_WH_*} in overrides.env."
+          ((_all_good++))
+        elif ! _inferred="$(warehouse_infer_from_compose_profiles_selector "${_compose_selector}")"; then
+          echo "[ERROR] Unknown COMPOSE_PROFILES selector: ${_compose_selector}"
+          warehouse_print_accepted_p_values
+          ((_all_good++))
+        else
+          local _inferred_profile _inferred_mode
+          _inferred_profile="${_inferred%% *}"
+          _inferred_mode="${_inferred#* }"
+          if contains_element "mode" "${options_provided[@]}" && [[ "${mode}" != "${_inferred_mode}" ]]; then
+            echo "[WARN] -m ${mode} ignored; COMPOSE_PROFILES=\${${_compose_selector}} selects ${_inferred_mode}. Pass -p to choose the stack."
+          fi
+          bp_profile="${_inferred_profile}"
+          mode="${_inferred_mode}"
+          compose_profiles_selector="${_compose_selector}"
+        fi
+      fi
+      if [[ -z "${bp_profile}" ]] && ! contains_element "bp-profile" "${options_provided[@]}"; then
+        bp_profile="$(warehouse_default_bp_profile "${mode}" "${_deploy_env}" "${_deploy_overrides_env}")"
       fi
       # HARDWARE_PROFILE: default from .env for any warehouse mode/profile when -H not passed
       if [[ "${deployment}" == "warehouse" ]]; then
         if ! contains_element "hardware-profile" "${options_provided[@]}"; then
-          hardware_profile="$(get_env_value "${_deploy_env}" "HARDWARE_PROFILE")"
+          hardware_profile="$(get_env_value_from_files "HARDWARE_PROFILE" "${_deploy_env}" "${_deploy_overrides_env}")"
         fi
       fi
       # LLM/VLM: populate from .env when not provided (2d only: warehouse bp_wh)
       if [[ "${mode}" == "2d" ]] && [[ "${deployment}" == "warehouse" ]] && [[ "${bp_profile}" == "bp_wh" ]]; then
         if ! contains_element "llm-device-id" "${options_provided[@]}"; then
-          llm_device_id="$(get_env_value "${_deploy_env}" "LLM_DEVICE_ID")"
+          llm_device_id="$(get_env_value_from_files "LLM_DEVICE_ID" "${_deploy_env}" "${_deploy_overrides_env}")"
         fi
         if ! contains_element "vlm-device-id" "${options_provided[@]}"; then
-          vlm_device_id="$(get_env_value "${_deploy_env}" "VLM_DEVICE_ID")"
+          vlm_device_id="$(get_env_value_from_files "VLM_DEVICE_ID" "${_deploy_env}" "${_deploy_overrides_env}")"
         fi
         if ! contains_element "llm-model-type" "${options_provided[@]}"; then
-          llm_model_type="$(get_env_value "${_deploy_env}" "LLM_MODEL_TYPE")"
+          llm_model_type="$(get_env_value_from_files "LLM_MODEL_TYPE" "${_deploy_env}" "${_deploy_overrides_env}")"
         fi
         if ! contains_element "vlm-model-type" "${options_provided[@]}"; then
-          vlm_model_type="$(get_env_value "${_deploy_env}" "VLM_MODEL_TYPE")"
+          vlm_model_type="$(get_env_value_from_files "VLM_MODEL_TYPE" "${_deploy_env}" "${_deploy_overrides_env}")"
+        fi
+      fi
+
+      # Resolve the single GB300 that every GPU-consuming warehouse service
+      # shares. Profile defaults describe multi-GPU systems and must not choose
+      # a different physical GPU on GB300.
+      if [[ "${hardware_profile}" == "GB300" ]]; then
+        if ! hardware_device_id="$(resolve_gb300_device_id)"; then
+          ((_all_good++))
+        else
+          llm_device_id="${hardware_device_id}"
+          vlm_device_id="${hardware_device_id}"
         fi
       fi
 
       if [[ "${deployment}" == "warehouse" ]]; then
-        _valid_modes=('2d' '3d' 'mv3dt')
+        _valid_modes=('2d' '3d' 'mv3dt' 'auto-calibration')
         if [[ -n "${mode}" ]] && ! contains_element "${mode}" "${_valid_modes[@]}"; then
-          echo "[ERROR] Invalid mode: ${mode}. Must be one of: 2d, 3d, mv3dt"
+          echo "[ERROR] Invalid mode: ${mode}. Must be one of: 2d, 3d, mv3dt, auto-calibration"
           ((_all_good++))
         fi
         _valid_wh_profiles=('bp_wh' 'bp_wh_kafka' 'bp_wh_redis' 'bp_wh_auto_calib')
@@ -567,10 +1055,13 @@ function process_args() {
           echo "[ERROR] Invalid MODE=${mode} with BP_PROFILE=${bp_profile}."
           case "${mode}" in
             2d)
-              echo "[ERROR]   MODE=2d supports: bp_wh, bp_wh_kafka, bp_wh_redis, bp_wh_auto_calib"
+              echo "[ERROR]   MODE=2d supports: bp_wh, bp_wh_kafka, bp_wh_redis"
               ;;
             3d | mv3dt)
-              echo "[ERROR]   MODE=${mode} supports: bp_wh_kafka, bp_wh_redis, bp_wh_auto_calib (not bp_wh)"
+              echo "[ERROR]   MODE=${mode} supports: bp_wh_kafka, bp_wh_redis (not bp_wh)"
+              ;;
+            auto-calibration)
+              echo "[ERROR]   MODE=auto-calibration supports: bp_wh_auto_calib"
               ;;
           esac
           ((_all_good++))
@@ -587,7 +1078,7 @@ function process_args() {
       fi
       # Elasticsearch mode: default cpu; populate from .env when not provided
       if ! contains_element "elasticsearch-mode" "${options_provided[@]}"; then
-        elasticsearch_mode="$(get_env_value "${_deploy_env}" "ELASTICSEARCH_MODE")"
+        elasticsearch_mode="$(get_env_value_from_files "ELASTICSEARCH_MODE" "${_deploy_env}" "${_deploy_overrides_env}")"
         elasticsearch_mode="${elasticsearch_mode:-cpu}"
       fi
     fi
@@ -601,6 +1092,16 @@ function process_args() {
       fi
     fi
 
+    if [[ -n "${dataset_type}" ]] && ! contains_element "${dataset_type}" "real" "synthetic"; then
+      echo "[ERROR] Invalid --dataset-type: ${dataset_type}. Must be real or synthetic"
+      ((_all_good++))
+    fi
+    if [[ "${desired_state}" == "up" ]] && [[ "${deployment}" == "warehouse" ]] && [[ -n "${sample_video_dataset}" ]]; then
+      if ! warehouse_dataset_type "${sample_video_dataset}" "${dataset_type}" >/dev/null; then
+        ((_all_good++))
+      fi
+    fi
+
     if [[ "${mode}" == "2d" ]] && [[ "${deployment}" == "warehouse" ]] && [[ "${bp_profile}" == "bp_wh" ]]; then
       if contains_element "use-remote-llm" "${options_provided[@]}" && [[ -z "${LLM_ENDPOINT_URL:-}" ]]; then
         echo "[ERROR] LLM_ENDPOINT_URL must be set when --use-remote-llm is passed"
@@ -610,25 +1111,31 @@ function process_args() {
         echo "[ERROR] VLM_ENDPOINT_URL must be set when --use-remote-vlm is passed"
         ((_all_good++))
       fi
-    fi
-
-    if [[ "${mode}" == "2d" ]] && [[ "${deployment}" == "warehouse" ]] && [[ "${bp_profile}" == "bp_wh" ]]; then
-      if [[ -z "${ngc_cli_api_key}" ]]; then
-        local _llm_mode _vlm_mode
-        if contains_element "use-remote-llm" "${options_provided[@]}"; then
-          _llm_mode="remote"
-        else
-          _llm_mode="$(get_env_value "${deployment_directory}/$(deployment_rel_path "${deployment}")/.env" "LLM_MODE")"
-        fi
-        if contains_element "use-remote-vlm" "${options_provided[@]}"; then
-          _vlm_mode="remote"
-        else
-          _vlm_mode="$(get_env_value "${deployment_directory}/$(deployment_rel_path "${deployment}")/.env" "VLM_MODE")"
-        fi
-        if [[ "${_llm_mode}" =~ ^(local|local_shared)$ ]] || [[ "${_vlm_mode}" =~ ^(local|local_shared)$ ]]; then
-          echo "[ERROR] NGC_CLI_API_KEY is required for 'up' when LLM_MODE or VLM_MODE is local or local_shared (warehouse bp_wh)"
+      # Validate a locally-served --llm here rather than in state_up: the main
+      # path runs state_down first, so a bad name would otherwise destroy a
+      # healthy deployment before reporting the error. Remote endpoints serve
+      # arbitrary ids, so skip the allowlist when LLM_MODE resolves to remote.
+      if [[ -n "${llm}" ]] && ! contains_element "use-remote-llm" "${options_provided[@]}"; then
+        local _pa_dir _pa_llm_mode
+        _pa_dir="${deployment_directory}/$(deployment_rel_path "${deployment}")"
+        _pa_llm_mode="$(get_env_value_from_files "LLM_MODE" "${_pa_dir}/.env" "${_pa_dir}/overrides.env")"
+        if [[ "${_pa_llm_mode:-local}" != "remote" ]] && [[ -z "$(get_llm_slug "${llm}")" ]]; then
+          local _pa_removed
+          _pa_removed="$(get_removed_llm_message "${llm}")"
+          if [[ -n "${_pa_removed}" ]]; then
+            echo "[ERROR] ${_pa_removed}"
+          else
+            echo "[ERROR] Invalid LLM model name: ${llm}. Must be one of: nvidia/nemotron-3.5-lightning-30b-a3b, nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8"
+          fi
           ((_all_good++))
         fi
+      fi
+    fi
+
+    if [[ "${deployment}" == "warehouse" ]] && [[ "${bp_profile}" != "bp_wh_auto_calib" ]] && [[ "${mode}" != "auto-calibration" ]]; then
+      if [[ -z "${ngc_cli_api_key}" ]]; then
+        echo "[ERROR] NGC_CLI_API_KEY is required for 'up' (warehouse RT-CV model downloads via compose init; also required for local NIM when BP_PROFILE=bp_wh)"
+        ((_all_good++))
       fi
     fi
   fi
@@ -651,9 +1158,15 @@ function print_args() {
     echo "deployment:                 ${deployment}"
     echo "mode:                     ${mode}"
     echo "bp-profile:               ${bp_profile}"
+    if [[ "${deployment}" == "warehouse" ]] && [[ -n "${compose_profiles_selector}" ]]; then
+      echo "compose-profiles:         \${${compose_profiles_selector}}"
+    fi
     echo "elasticsearch-mode:       ${elasticsearch_mode}"
     if [[ "${deployment}" == "warehouse" ]] && [[ -n "${sample_video_dataset}" ]]; then
       echo "sample-video-dataset:      ${sample_video_dataset}"
+    fi
+    if [[ "${deployment}" == "warehouse" ]] && [[ -n "${dataset_type}" ]]; then
+      echo "dataset-type:              ${dataset_type}"
     fi
     if [[ "${deployment}" == "warehouse" ]] && [[ -n "${hardware_profile}" ]]; then
       echo "hardware-profile:          ${hardware_profile}"
@@ -683,10 +1196,11 @@ function print_args() {
 }
 
 function state_up() {
-  local _deploy_rel _deploy_dir _source_env _generated_env
+  local _deploy_rel _deploy_dir _source_env _overrides_env _generated_env
   _deploy_rel="$(deployment_rel_path "${deployment}")"
   _deploy_dir="${deployment_directory}/${_deploy_rel}"
   _source_env="${_deploy_dir}/.env"
+  _overrides_env="${_deploy_dir}/overrides.env"
   _generated_env="${_deploy_dir}/generated.env"
 
   echo "[INFO] Generating environment file for deployment '${deployment}'..."
@@ -695,18 +1209,34 @@ function state_up() {
     echo "[ERROR] Source .env file not found: ${_source_env}"
     exit 1
   fi
+  if [[ ! -f "${_overrides_env}" ]]; then
+    echo "[ERROR] Overrides env file not found: ${_overrides_env}"
+    exit 1
+  fi
 
-  cp "${_source_env}" "${_generated_env}"
-  echo "[INFO] Copied ${_source_env} to ${_generated_env}"
+  cp "${_overrides_env}" "${_generated_env}"
+  echo "[INFO] Copied ${_overrides_env} to ${_generated_env}"
+
+  ensure_generated_env_trailing_newline() {
+    if [[ -s "${_generated_env}" ]] && [[ "$(tail -c 1 "${_generated_env}" | wc -l)" -eq 0 ]]; then
+      printf '\n' >> "${_generated_env}"
+    fi
+  }
+  ensure_generated_env_trailing_newline
+
+  if [[ "${deployment}" == "warehouse" ]] \
+    && { [[ "${bp_profile}" == "bp_wh_auto_calib" ]] || [[ "${mode}" == "auto-calibration" ]]; }; then
+    disable_sdrc_routing_in_env "${_generated_env}"
+  fi
 
   # Append compose-wide defaults for variables not already defined in the profile
-  local _compose_defaults="${deployment_directory}/vst/compose-defaults.env"
+  local _compose_defaults="${deployment_directory}/services/vios/compose-defaults.env"
   if [[ -f "${_compose_defaults}" ]]; then
     while IFS= read -r line || [[ -n "${line}" ]]; do
       [[ "${line}" =~ ^[[:space:]]*# ]] && continue
       [[ -z "${line// }" ]] && continue
       local _var_name="${line%%=*}"
-      if ! grep -q "^${_var_name}=" "${_generated_env}"; then
+      if ! env_var_defined_in_files "${_var_name}" "${_source_env}" "${_generated_env}"; then
         echo "${line}" >> "${_generated_env}"
       fi
     done < "${_compose_defaults}"
@@ -752,8 +1282,8 @@ function state_up() {
     set_env_var "HARDWARE_PROFILE" "${hardware_profile}"
   fi
 
-  # Warehouse 3d/mv3dt and non-agent profiles (kafka, redis, auto_calib): no local NIM LLM/VLM
-  if [[ "${deployment}" == "warehouse" ]] && { [[ "${mode}" == "3d" ]] || [[ "${mode}" == "mv3dt" ]] || [[ "${bp_profile}" == "bp_wh_kafka" ]] || [[ "${bp_profile}" == "bp_wh_redis" ]] || [[ "${bp_profile}" == "bp_wh_auto_calib" ]]; }; then
+  # Warehouse 3d/mv3dt, kafka/redis, and auto-calibration: no local NIM LLM/VLM
+  if [[ "${deployment}" == "warehouse" ]] && { [[ "${mode}" == "3d" ]] || [[ "${mode}" == "mv3dt" ]] || [[ "${mode}" == "auto-calibration" ]] || [[ "${bp_profile}" == "bp_wh_kafka" ]] || [[ "${bp_profile}" == "bp_wh_redis" ]] || [[ "${bp_profile}" == "bp_wh_auto_calib" ]]; }; then
     set_env_var "LLM_MODE" "none"
     set_env_var "VLM_MODE" "none"
     set_env_var "LLM_NAME_SLUG" "none"
@@ -766,13 +1296,13 @@ function state_up() {
     if [[ -n "${llm_base_url}" ]] || contains_element "use-remote-llm" "${options_provided[@]}"; then
       _llm_mode="remote"
     else
-      _llm_mode="$(get_env_value "${_source_env}" "LLM_MODE")"
+      _llm_mode="$(get_env_value_from_files "LLM_MODE" "${_source_env}" "${_overrides_env}")"
       _llm_mode="${_llm_mode:-local}"
     fi
     if [[ -n "${vlm_base_url}" ]] || contains_element "use-remote-vlm" "${options_provided[@]}"; then
       _vlm_mode="remote"
     else
-      _vlm_mode="$(get_env_value "${_source_env}" "VLM_MODE")"
+      _vlm_mode="$(get_env_value_from_files "VLM_MODE" "${_source_env}" "${_overrides_env}")"
       _vlm_mode="${_vlm_mode:-local}"
     fi
     set_env_var "LLM_MODE" "${_llm_mode}"
@@ -791,8 +1321,19 @@ function state_up() {
       set_env_var "LLM_NAME" "${_llm_name}"
       set_env_var "LLM_NAME_SLUG" "none"
     elif [[ -n "${llm}" ]]; then
-      set_env_var "LLM_NAME" "${llm}"
-      set_env_var "LLM_NAME_SLUG" "$(get_llm_slug "${llm}")"
+      if [[ "${_llm_mode}" == "remote" ]]; then
+        # A remote endpoint serves whatever model id it likes, so the local
+        # allowlist must not apply. LLM_MODE=remote can come from the profile env
+        # files rather than --use-remote-llm, in which case llm_base_url is empty
+        # and this branch, not the one above, is the one taken.
+        set_env_var "LLM_NAME" "${llm}"
+        set_env_var "LLM_NAME_SLUG" "none"
+      else
+        # Already validated in process_args, which runs before state_down so an
+        # invalid name cannot tear down a healthy deployment first.
+        set_env_var "LLM_NAME" "${llm}"
+        set_env_var "LLM_NAME_SLUG" "$(get_llm_slug "${llm}")"
+      fi
     fi
     if [[ "${_vlm_mode}" == "remote" ]] && [[ -n "${vlm_base_url}" ]]; then
       local _vlm_name
@@ -816,6 +1357,23 @@ function state_up() {
     fi
     if [[ "${_vlm_mode}" != "remote" ]] && [[ -n "${vlm_device_id}" ]]; then
       set_env_var "VLM_DEVICE_ID" "${vlm_device_id}"
+    fi
+    # Apply hardware-specific RTVI local VLM sizing.
+    # Warehouse VLM_MODE=none still hosts the model in rtvi-vlm; only remote
+    # VLM skips local vLLM reservation.
+    if [[ "${_vlm_mode}" != "remote" ]]; then
+      local _rtvi_vllm_gpu_memory_utilization _rtvi_vlm_max_model_len
+      _rtvi_vllm_gpu_memory_utilization="$(get_rtvi_vllm_gpu_memory_utilization "${hardware_profile}")"
+      if [[ -n "${_rtvi_vllm_gpu_memory_utilization}" ]]; then
+        set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "${_rtvi_vllm_gpu_memory_utilization}"
+      fi
+      if [[ "${hardware_profile}" == "GB300" ]]; then
+        set_env_var "RTVI_VLLM_ATTENTION_BACKEND" "TRITON_ATTN"
+      fi
+      _rtvi_vlm_max_model_len="$(get_rtvi_vlm_max_model_len "${hardware_profile}")"
+      if [[ -n "${_rtvi_vlm_max_model_len}" ]]; then
+        set_env_var "RTVI_VLM_MAX_MODEL_LEN" "${_rtvi_vlm_max_model_len}"
+      fi
     fi
     if [[ -n "${llm_base_url}" ]]; then
       set_env_var "LLM_BASE_URL" "${llm_base_url}"
@@ -854,24 +1412,50 @@ function state_up() {
     else
       set_env_var "STREAM_TYPE" "kafka"
     fi
-    # SAMPLE_VIDEO_DATASET and NUM_STREAMS per mode+profile (see warehouse .env comments)
-    local _sample_dataset _num_streams
+    # SAMPLE_VIDEO_DATASET, NUM_STREAMS, and DATASET_TYPE per mode/profile.
+    # Custom datasets require --dataset-type; never inherit overrides.env's
+    # shipped synthetic default.
+    local _sample_dataset _num_streams _dataset_type
     if [[ -n "${sample_video_dataset}" ]]; then
       _sample_dataset="${sample_video_dataset}"
-      _num_streams="$(get_env_value "${_source_env}" "NUM_STREAMS")"
+      _num_streams="$(get_env_value_from_files "NUM_STREAMS" "${_source_env}" "${_overrides_env}")"
       _num_streams="${_num_streams:-$(warehouse_num_streams "${mode}" "${bp_profile}")}"
     else
       _sample_dataset="$(warehouse_sample_video_dataset "${mode}" "${bp_profile}")"
       _num_streams="$(warehouse_num_streams "${mode}" "${bp_profile}")"
     fi
+    _dataset_type="$(warehouse_dataset_type "${_sample_dataset}" "${dataset_type}")"
     set_env_var "SAMPLE_VIDEO_DATASET" "${_sample_dataset}"
     set_env_var "NUM_STREAMS" "${_num_streams}"
+    set_env_var "DATASET_TYPE" "${_dataset_type}"
+
+    # -p/-m select the compose list; copy of overrides.env is rewritten here.
+    if [[ -z "${compose_profiles_selector}" ]]; then
+      compose_profiles_selector="$(warehouse_compose_profiles_selector "${_source_env}" "${_overrides_env}")"
+    fi
+    set_env_var "COMPOSE_PROFILES" "\${${compose_profiles_selector}}"
+    echo "[INFO] Warehouse COMPOSE_PROFILES=\${${compose_profiles_selector}}"
   fi
 
-  if [[ "${hardware_profile}" == "DGX-SPARK" ]]; then
-    apply_sbsa_image_tags_to_env "${_generated_env}" "DGX-SPARK"
-  elif [[ "${use_sbsa_images}" == "true" ]]; then
-    apply_sbsa_image_tags_to_env "${_generated_env}" "${hardware_profile:-OTHER} (--use-sbsa-images)"
+  # All GPU-consuming warehouse services share the resolved GB300 device.
+  if [[ "${hardware_profile}" == "GB300" ]]; then
+    set_env_var "LLM_DEVICE_ID" "${hardware_device_id}"
+    set_env_var "VLM_DEVICE_ID" "${hardware_device_id}"
+    set_env_var "SHARED_LLM_VLM_DEVICE_ID" "${hardware_device_id}"
+    set_env_var "FIXED_SHARED_DEVICE_IDS" "${hardware_device_id}"
+    set_env_var "RT_CV_DEVICE_ID" "${hardware_device_id}"
+    set_env_var "RT_VLM_DEVICE_ID" "${hardware_device_id}"
+    set_env_var "RT_EMBED_DEVICE_ID" "${hardware_device_id}"
+    # overrides.env ships RTVI_VLLM_GPU_MEMORY_UTILIZATION=0.8. vLLM reserves
+    # that fraction of total memory and will not start unless free >= reservation
+    # (it does not subtract co-resident LLM/RT-CV). Always pin the same 0.2 +
+    # TRITON_ATTN alerts/search use whenever RT-VLM shares this GB300.
+    local _gb300_rtvi_vllm_gpu_memory_utilization
+    _gb300_rtvi_vllm_gpu_memory_utilization="$(get_rtvi_vllm_gpu_memory_utilization "${hardware_profile}")"
+    if [[ -n "${_gb300_rtvi_vllm_gpu_memory_utilization}" ]]; then
+      set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "${_gb300_rtvi_vllm_gpu_memory_utilization}"
+    fi
+    set_env_var "RTVI_VLLM_ATTENTION_BACKEND" "TRITON_ATTN"
   fi
 
   echo "[INFO] Generated environment file: ${_generated_env}"
@@ -896,13 +1480,54 @@ function state_up() {
     fi
     mkdir -p "${data_directory}/videos/${_sample_dataset}"
     mkdir -p "${data_directory}/playback"
-    if [[ "${mode}" == "mv3dt" ]]; then
-      mkdir -p "${data_directory}/models/mv3dt/BodyPose3DNet"
+    mkdir -p "${data_directory}/models"
+    chmod -R 777 "${data_directory}/models" 2>/dev/null || true
+    if [[ "${bp_profile}" != "bp_wh_auto_calib" ]]; then
+      echo "[INFO] Warehouse RT-CV model download runs in ds-start phase 0 (perception / ds-start-mv3dt)."
     fi
   fi
 
   echo "[INFO] Setting permissions on data_log directory..."
   chmod -R 777 "${data_directory}/data_log" 2>/dev/null || true
+
+  local _compose_file_args=(-f compose.yml -f services/infra/compose-no-turn-tcp-relay.yml)
+  local _compose_file_args_text=" ${_compose_file_args[*]}"
+  echo "[INFO] TURN TCP relay host-port publishing disabled for blueprint-deploy.sh"
+
+  if [[ "${hardware_profile}" == "DGX-SPARK" || "${hardware_profile}" == "GB300" || "${use_sbsa_images}" == "true" ]]; then
+    export VSS_CONTAINER_TAG_SUFFIX="-sbsa"
+    echo "[INFO] Managed container tag suffix: ${VSS_CONTAINER_TAG_SUFFIX}"
+    # containers.env applies the suffix during compose interpolation only, so a
+    # service that reads a tag as plain configuration never sees it — the
+    # bp-configurator validates VSS_RT_CV_TAG from its env_file and rejects
+    # DGX-SPARK without 'sbsa'. Mirror the same four suffixed keys that
+    # containers.env derives, keeping shell/env-file overrides intact.
+    local _sbsa_base_tag _sbsa_key _sbsa_value
+    _sbsa_base_tag="${VSS_CONTAINER_TAG:-$(get_env_value_from_files "VSS_CONTAINER_TAG" "${_source_env}" "${_generated_env}")}"
+    _sbsa_base_tag="${_sbsa_base_tag:-develop-latest}"
+    for _sbsa_key in VSS_RT_CV_TAG VSS_RT_EMBED_TAG VSS_RT_VLM_TAG VSS_VIDEO_SUMMARIZATION_TAG; do
+      _sbsa_value="${!_sbsa_key:-$(get_env_value_from_files "${_sbsa_key}" "${_source_env}" "${_generated_env}")}"
+      set_env_var "${_sbsa_key}" "${_sbsa_value:-${_sbsa_base_tag}${VSS_CONTAINER_TAG_SUFFIX}}"
+    done
+  fi
+
+  # Resolve and display the managed container channel before deployment.
+  set -a
+  # shellcheck disable=SC1091
+  source "${deployment_directory}/containers.env"
+  set +a
+  echo "[INFO] Managed container registry: ${VSS_CONTAINER_REGISTRY}"
+  echo "[INFO] Managed container tag:      ${VSS_CONTAINER_TAG}"
+  echo "[INFO] Resolved compose images:"
+  (
+    cd "${deployment_directory}"
+    docker compose \
+      "${_compose_file_args[@]}" \
+      --env-file containers.env \
+      --env-file "${_deploy_rel}/.env" \
+      --env-file "${_deploy_rel}/generated.env" \
+      config --images | sort -u
+  )
 
   echo "[INFO] Logging into nvcr.io..."
   if [[ "${dry_run}" == "true" ]]; then
@@ -916,14 +1541,22 @@ function state_up() {
 
   echo "[INFO] Starting docker compose..."
   if [[ "${dry_run}" == "true" ]]; then
-    echo "[DRY-RUN] cd ${deployment_directory} && docker compose --env-file ${_deploy_rel}/generated.env up --detach --force-recreate --build"
+    echo "[DRY-RUN] cd ${deployment_directory} && docker compose${_compose_file_args_text} --env-file containers.env --env-file ${_deploy_rel}/.env --env-file ${_deploy_rel}/generated.env up --detach --force-recreate --build"
   else
-    cd "${deployment_directory}" && docker compose \
-      --env-file "${_deploy_rel}/generated.env" \
-      up \
-      --detach \
-      --force-recreate \
-      --build
+    if ! (
+      cd "${deployment_directory}" && docker compose \
+        "${_compose_file_args[@]}" \
+        --env-file containers.env \
+        --env-file "${_deploy_rel}/.env" \
+        --env-file "${_deploy_rel}/generated.env" \
+        up \
+        --detach \
+        --force-recreate \
+        --build
+    ); then
+      echo "[ERROR] docker compose up failed for deployment '${deployment}'"
+      return 1
+    fi
   fi
 
   echo "[INFO] State up completed"
@@ -1038,10 +1671,24 @@ function run_data_log_cleanup() {
 }
 
 function state_down() {
-  local _deploy_dir_names _deploy_dir_name _generated_env
+  local _deploy_dir_names _deploy_dir_name _deploy_dir _source_env _overrides_env _generated_env
+
+  _deploy_dir_names=('industry-profiles/warehouse-operations')
+
+  local _compose_project_name="${COMPOSE_PROJECT_NAME:-}"
+  if [[ -z "${_compose_project_name}" ]]; then
+    for _deploy_dir_name in "${_deploy_dir_names[@]}"; do
+      _deploy_dir="${deployment_directory}/${_deploy_dir_name}"
+      _source_env="${_deploy_dir}/.env"
+      _overrides_env="${_deploy_dir}/overrides.env"
+      _generated_env="${_deploy_dir}/generated.env"
+      _compose_project_name="$(get_env_value_from_files "COMPOSE_PROJECT_NAME" "${_source_env}" "${_overrides_env}" "${_generated_env}")"
+      [[ -n "${_compose_project_name}" ]] && break
+    done
+  fi
+  _compose_project_name="${_compose_project_name:-vss}"
 
   echo "[INFO] Cleaning up generated.env files from warehouse..."
-  _deploy_dir_names=('industry-profiles/warehouse-operations')
   for _deploy_dir_name in "${_deploy_dir_names[@]}"; do
     _generated_env="${deployment_directory}/${_deploy_dir_name}/generated.env"
     if [[ -f "${_generated_env}" ]]; then
@@ -1054,11 +1701,11 @@ function state_down() {
     fi
   done
 
-  echo "[INFO] Bringing down docker compose project 'mdx' (with volumes)..."
+  echo "[INFO] Bringing down docker compose project '${_compose_project_name}' (with volumes)..."
   if [[ "${dry_run}" == "true" ]]; then
-    echo "[DRY-RUN] docker compose -p mdx down -v --remove-orphans"
+    echo "[DRY-RUN] docker compose -p ${_compose_project_name} down -v --remove-orphans"
   else
-    docker compose -p mdx down -v --remove-orphans
+    docker compose -p "${_compose_project_name}" down -v --remove-orphans
   fi
 
   echo "[INFO] Removing dangling docker volumes..."

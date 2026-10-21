@@ -130,7 +130,16 @@ GENERIC_SKILL_NAMES = {
 }
 
 KEBAB_CASE_RE  = re.compile(r"^[a-z][a-z0-9]*(-[a-z0-9]+)*$")
-SEMVER_RE      = re.compile(r"^\d+\.\d+\.\d+$")
+# Strict Semantic Versioning 2.0.0, pre-release included: skill versions are
+# stamped from the repository's nearest v* tag by stamp_versions.py, and
+# on the 3.3.0 line before its release that tag is v3.3.0rc0 -> "3.3.0-rc0".
+# Same grammar as vss_core.version.SEMVER_PATTERN.
+SEMVER_RE      = re.compile(
+    r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
+    r"(?:-(?:0|[1-9]\d*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*)"
+    r"(?:\.(?:0|[1-9]\d*|[0-9A-Za-z-]*[A-Za-z-][0-9A-Za-z-]*))*)?"
+    r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
+)
 DATE_RE        = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 # ── Naming guideline (skill-naming-guideline rules 1–7) ─────────────────────
@@ -504,7 +513,7 @@ def check_naming(skill_path: Path, result: SkillResult) -> None:
         result.findings.append(Finding(
             ERROR, "NAM-002",
             f"Folder name '{name}' is too generic. "
-            "Use a descriptive <team-prefix>-<verb>-<object> pattern (e.g. vss-deploy-profile).",
+            "Use a descriptive <team-prefix>-<verb>-<object> pattern (e.g. vss-build-vision-ai).",
         ))
 
     info = analyse_name_structure(name)
@@ -517,7 +526,7 @@ def check_naming(skill_path: Path, result: SkillResult) -> None:
             f"Folder name '{name}' is a reserved single-word name that will collide "
             "with any other skill of the same name in an aggregated namespace. "
             "Use the '<team-prefix>-<verb>-<object>' pattern instead "
-            "(e.g. 'vss-deploy-profile' rather than 'deploy', "
+            "(e.g. 'vss-build-vision-ai' rather than 'deploy', "
             "'vss-generate-video-report' rather than 'report').",
         ))
 
@@ -644,7 +653,8 @@ def check_frontmatter(skill_path: Path, result: SkillResult) -> None:
         result.findings.append(Finding(
             WARNING, "FM-004",
             f"Frontmatter 'version' ('{version}') is not valid semver. "
-            "Use MAJOR.MINOR.PATCH format, e.g. 1.0.0.",
+            "It is stamped from the repository's release tag by "
+            ".github/scripts/stamp_versions.py (e.g. 3.3.0-rc0); do not hand-edit it.",
         ))
 
     # reviewed must be YYYY-MM-DD
@@ -795,7 +805,18 @@ def is_skill_dir(path: Path) -> bool:
 
 
 def discover_skills(root: Path) -> List[Path]:
-    return sorted(p for p in root.iterdir() if is_skill_dir(p))
+    """Every skill dir under root — any dir containing SKILL.md, whether flat
+    (skills/<name>/) or one category level down (skills/<category>/<name>/).
+    Category dirs (no SKILL.md of their own) are not skills and are not returned,
+    so they are never mistaken for a malformed skill."""
+    out: List[Path] = []
+    for md in sorted(root.rglob("SKILL.md")):
+        d = md.parent
+        rel = d.relative_to(root)
+        if any(part.startswith(".") or part.startswith("_") for part in rel.parts):
+            continue
+        out.append(d)
+    return sorted(set(out))
 
 
 # ── Checker orchestrator ──────────────────────────────────────────────────────
@@ -953,11 +974,18 @@ def main() -> None:
         sys.exit(1)
 
     if args.skill:
-        candidates = [skills_root / args.skill]
-        for p in candidates:
-            if not p.is_dir():
-                print(f"ERROR: skill folder not found: {p}", file=sys.stderr)
-                sys.exit(1)
+        # Accept a leaf skill-name (resolved to its dir, including a nested
+        # skills/<category>/<name>/) or an explicit relative path under skills/.
+        # A category dir (no SKILL.md) resolves to nothing and errors cleanly
+        # rather than being checked as a malformed skill.
+        direct = skills_root / args.skill
+        if is_skill_dir(direct):
+            candidates = [direct]
+        else:
+            candidates = [d for d in discover_skills(skills_root) if d.name == args.skill]
+        if not candidates:
+            print(f"ERROR: skill folder not found: {args.skill}", file=sys.stderr)
+            sys.exit(1)
     else:
         candidates = discover_skills(skills_root)
 

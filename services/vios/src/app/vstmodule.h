@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,6 @@
 #include "media_adaptor_loader.h"
 #include "vms_media_interface.h"
 
-using namespace std;
 
 class IVstModule;
 
@@ -33,15 +32,15 @@ typedef void (*deleteObject_t) (IVstModule*);
 class IVstModule
 {
     public:
-        createObject_t m_createObject;
-        deleteObject_t m_deleteObject;
-        IVstModule* m_module;
+        createObject_t m_createObject = nullptr;
+        deleteObject_t m_deleteObject = nullptr;
+        IVstModule* m_module = nullptr;
         std::map<std::string,HttpServerRequestHandler::httpFunction, std::less<>>  m_func;
         nv_vms::IMediaInterface* m_mediaInterface = nullptr;
 
         virtual const std::map<std::string,HttpServerRequestHandler::httpFunction, std::less<>> getHttpApi() { return m_func; };
-        virtual void postInit() {}
-        virtual ~IVstModule() {}
+        virtual void postInit() { /* Optional hook: modules that need no post-initialization work keep this no-op. */ }
+        virtual ~IVstModule() = default;
 };
 
 class ModuleLoader
@@ -55,17 +54,22 @@ class ModuleLoader
         ModuleLoader();
         ~ModuleLoader();
 
-        int initialize(ModuleId module_id = ModuleAll);
+        ModuleLoader(const ModuleLoader&) = delete;
+        ModuleLoader& operator=(const ModuleLoader&) = delete;
+        ModuleLoader(ModuleLoader&&) = delete;
+        ModuleLoader& operator=(ModuleLoader&&) = delete;
+
+        int initialize(nv_vms::ModuleId module_id = nv_vms::ModuleAll);
         void deInitialize();
-        string getDeviceId();
-        string getDeviceType();
-        std::shared_ptr<DeviceManager> getDeviceManagerObject();
+        std::string getDeviceId();
+        std::string getDeviceType();
+        std::shared_ptr<nv_vms::DeviceManager> getDeviceManagerObject();
 #ifdef UNIT_TEST
         /** For unit tests only: set DeviceManager so StreamMonitor/QosRtspClient get a valid instance. */
-        void setDeviceManagerForTest(std::shared_ptr<DeviceManager> dm);
+        void setDeviceManagerForTest(std::shared_ptr<nv_vms::DeviceManager> dm);
 #endif
-        ModuleId getModuleId(const std::string& moduleName);
-        string getModuleIdAsString(ModuleId module_id);
+        nv_vms::ModuleId getModuleId(const std::string& moduleName);
+        std::string getModuleIdAsString(nv_vms::ModuleId module_id);
 
         IVstModule* getRtspServerMgmtInstance()
         {
@@ -130,16 +134,16 @@ class ModuleLoader
         int loadMediaAdaptor();
         void unloadMediaAdaptor();
 
-        void* m_handleRtspServer = nullptr;
-        void* m_handleStreamRecorder = nullptr;
-        void* m_handleStorageManagement = nullptr;
-        void* m_handleSensorManagement = nullptr;
-        void* m_handlePeerConnectionManager = nullptr;
-        void* m_handlePeerConnectionLiveManager = nullptr;
-        void* m_handlePeerConnectionReplayManager = nullptr;
-        void* m_handleStreamBridge = nullptr;
-        AdaptorLoader m_loader;
-        std::shared_ptr<DeviceManager> m_deviceManager;
+        nv_vms::SharedLibrary* m_handleRtspServer = nullptr;
+        nv_vms::SharedLibrary* m_handleStreamRecorder = nullptr;
+        nv_vms::SharedLibrary* m_handleStorageManagement = nullptr;
+        nv_vms::SharedLibrary* m_handleSensorManagement = nullptr;
+        nv_vms::SharedLibrary* m_handlePeerConnectionManager = nullptr;
+        nv_vms::SharedLibrary* m_handlePeerConnectionLiveManager = nullptr;
+        nv_vms::SharedLibrary* m_handlePeerConnectionReplayManager = nullptr;
+        nv_vms::SharedLibrary* m_handleStreamBridge = nullptr;
+        nv_vms::AdaptorLoader m_loader;
+        std::shared_ptr<nv_vms::DeviceManager> m_deviceManager;
         nv_vms::MediaAdaptorLoader::MediaAdaptorHandle m_mediaAdaptorHandle{};
         std::string m_mediaAdaptorLibPath;
 };

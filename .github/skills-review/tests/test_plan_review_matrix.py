@@ -33,8 +33,10 @@ class Base(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         skills = Path(self._tmp.name) / "skills"
-        for name in ("vss-ask-video", "vss-manage-alerts", "vss-deploy-profile"):
+        for name in ("vss-ask-video", "vss-manage-alerts", "vss-build-vision-ai"):
             (skills / name).mkdir(parents=True)
+            # A skill is defined by its SKILL.md (matches discover_skills()).
+            (skills / name / "SKILL.md").write_text(f"---\nname: {name}\n---\n")
         (skills / "README.md").write_text("not a skill dir\n")  # top-level file
         self._orig = prm.SKILLS_DIR
         prm.SKILLS_DIR = skills
@@ -67,6 +69,18 @@ class ChangedSkills(Base):
         # a file under a skill dir that no longer exists is skipped (live dirs only)
         self.assertEqual(prm.changed_skills(["skills/vss-gone/SKILL.md"]), [])
 
+    def test_nested_skill_resolves_to_leaf(self):
+        # A skill one category level down (skills/<category>/<skill>/) resolves to
+        # its leaf name; a file in the bare category dir (no SKILL.md) is not a skill.
+        nested = prm.SKILLS_DIR / "benchmarking" / "vss-benchmark-video-summarization"
+        nested.mkdir(parents=True)
+        (nested / "SKILL.md").write_text("---\nname: vss-benchmark-video-summarization\n---\n")
+        self.assertEqual(
+            prm.changed_skills(
+                ["skills/benchmarking/vss-benchmark-video-summarization/scripts/x.py"]),
+            ["vss-benchmark-video-summarization"])
+        self.assertEqual(prm.changed_skills(["skills/benchmarking/README.md"]), [])
+
     def test_top_level_skills_file_ignored(self):
         # skills/README.md has no trailing-slash dir segment -> not a skill
         self.assertEqual(prm.changed_skills(["skills/README.md"]), [])
@@ -95,7 +109,7 @@ class ParseManual(Base):
     def test_star_all_dirs_only(self):
         # '*' enumerates dirs; the README.md file is excluded
         self.assertEqual(prm.parse_manual("*"),
-                         ["vss-ask-video", "vss-deploy-profile", "vss-manage-alerts"])
+                         ["vss-ask-video", "vss-build-vision-ai", "vss-manage-alerts"])
 
     def test_csv(self):
         self.assertEqual(prm.parse_manual("vss-ask-video, vss-manage-alerts"),
@@ -105,8 +119,8 @@ class ParseManual(Base):
         self.assertEqual(prm.parse_manual("vss-ask-video"), ["vss-ask-video"])
 
     def test_json_array(self):
-        self.assertEqual(prm.parse_manual('["vss-ask-video","vss-deploy-profile"]'),
-                         ["vss-ask-video", "vss-deploy-profile"])
+        self.assertEqual(prm.parse_manual('["vss-ask-video","vss-build-vision-ai"]'),
+                         ["vss-ask-video", "vss-build-vision-ai"])
 
     def test_path_escape_rejected(self):
         with self.assertRaises(ValueError):

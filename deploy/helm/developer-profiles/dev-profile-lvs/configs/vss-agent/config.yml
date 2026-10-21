@@ -97,6 +97,8 @@ functions:
     _type: lvs_video_understanding
     lvs_backend_url: ${LVS_BACKEND_URL}
     model: ${VLM_NAME}
+    # HITL is on by default and collects LVS parameters. Set HITL_ENABLED=false to skip confirmation and use these defaults directly.
+    hitl_enabled: ${HITL_ENABLED:-true}
     video_url_tool: vst_video_clip
     vst_internal_url: ${VST_INTERNAL_URL}
     # Connection and timeout configuration
@@ -109,7 +111,7 @@ functions:
     vlm_input_height: 720
     # Nemotron Nano Omni: set ENABLE_AUDIO=true so the agent forwards audio to the VLM.
     enable_audio: ${ENABLE_AUDIO:-false}
-    # HITL Templates (shown each for each query to the user during interaction)
+    # HITL templates (shown by default; hidden when HITL_ENABLED=false).
     hitl_scenario_template: |
       Scenario (REQUIRED):
       Please provide a scenario description for the video analysis.
@@ -154,6 +156,7 @@ functions:
 
   lvs_config_media:
     _type: lvs_config_media
+    hitl_enabled: ${HITL_ENABLED:-true}
     lvs_backend_url: ${LVS_BACKEND_URL}
     vst_internal_url: ${VST_INTERNAL_URL}
     model: ${VLM_NAME}
@@ -227,8 +230,8 @@ functions:
       EXAMPLE:
       [0.0s-4.0s] <description of the first event>
       [4.0s-12.0s] <description of the second event>
-    # HITL Configuration - prompts user to confirm/edit VLM prompt before report generation
-    hitl_enabled: true
+    # HITL is on by default and confirms/edits the VLM prompt. Set HITL_ENABLED=false to use it directly.
+    hitl_enabled: ${HITL_ENABLED:-true}
     hitl_prompt_llm: ${LLM_MODEL_TYPE:-nim}_llm  # LLM for AI-assisted prompt generation e.g. nim_llm, openai_llm
     hitl_vlm_prompt_template: |
       **VLM Prompt for Report Generation**
@@ -242,6 +245,8 @@ functions:
       • Type `/generate <description>` → AI creates a prompt based on your description
 
       • Type `/refine <instructions>` → AI modifies the current prompt
+
+      • Type `/default` → Restore the system default prompt
 
       • Type `/cancel` → Cancel report generation
 
@@ -295,14 +300,14 @@ llms:
     _type: nim
     model_name: ${LLM_NAME}
     base_url: ${LLM_BASE_URL}/v1
-    max_tokens: 4096
+    max_tokens: 32768
     temperature: 0.0
 
   openai_llm:
     _type: openai
     model_name: ${LLM_NAME}
     base_url: ${LLM_BASE_URL}/v1
-    max_tokens: 4096
+    max_tokens: 32768
     temperature: 0.0
 
   # --- VLM profiles (selected by VLM_MODEL_TYPE) ---
@@ -343,7 +348,7 @@ llms:
     _type: nim
     model_name: ${EVAL_LLM_JUDGE_NAME}
     base_url: ${EVAL_LLM_JUDGE_BASE_URL}/v1
-    max_tokens: 4096
+    max_tokens: 32768
     temperature: 0.0
 
 workflow:
@@ -351,23 +356,61 @@ workflow:
   llm_name: ${LLM_MODEL_TYPE:-nim}_llm
   log_level: INFO
   max_iterations: 30
-  llm_reasoning: false
+  llm_reasoning: true
   planning_enabled: true
   tool_names:
   - video_understanding
   - lvs_video_understanding
-  - lvs_config_media
   - lvs_stream_understanding
   - lvs_caption_retrieval
   - vst_video_clip
   - vst_snapshot
   - vst_video_list
   - vst_video_duration
+  - lvs_config_media
   subagent_names:
   - report_agent
   # yamllint disable rule:line-length
+  # Keep named report requests deterministic for models that over-apply the
+  # top agent's default clarification examples.
+  plan_prompt: |
+    Review the available tools, the conversation history, and the user's question, then produce a concise numbered execution plan. Start each step with a tool name and a brief description of the step.
+    Put relevant context (for example, sensor IDs or time ranges) from the conversation history directly in the plan steps so the execution agent does not need to re-read the history.
+    If the current request explicitly asks to start captioning or configure a stream, ignore any unfinished summary plan and plan exactly one call to `lvs_config_media`, unless the same stream was already configured successfully. For an explicit reconfiguration request, call it with `reconfigure=true`.
+    For summaries of named media, plan `vst_video_list` first, then exactly one summary tool based only on its result: `rtsp` → `lvs_stream_understanding`; `video` → `lvs_video_understanding`. Never choose the summary tool from duration.
+    Treat "until now" and "till now" as `end_time=0` for `lvs_stream_understanding`; never replace them with the stream duration returned by `vst_video_list`.
+    A non-empty name supplied in the request is the sensor_id. For example, in "Generate a report for warehouse_sample", the sensor_id is "warehouse_sample"; this request is complete and MUST NOT trigger a clarifying question.
+    For every named report request, including one that explicitly mentions long video summarization, long video understanding, or LVS, the plan MUST contain exactly one action: call `report_agent` directly with that exact name as sensor_id and the original request as user_query. Do not call `lvs_video_understanding` first and do not verify the name or media type first. `report_agent` selects LVS internally for long videos and is the only tool that writes the PDF and Markdown artifacts.
+    Ask which video or camera the user means only when the request contains no name and the conversation provides no usable name.
+    Only use tools from the available tools list. Never invent or assume tools that are not listed.
+
+    Example plan for "Generate a report for warehouse_sample":
+    1. Call `report_agent` with sensor_id="warehouse_sample" and user_query="Generate a report for warehouse_sample".
+    Example plan for "Generate a report using long video summarization for warehouse_sample":
+    1. Call `report_agent` with sensor_id="warehouse_sample" and user_query="Generate a report using long video summarization for warehouse_sample", then present the generated report.
+    Example plan for "Generate a report for warehouse_sample using long video understanding":
+    1. Call `report_agent` with sensor_id="warehouse_sample" and user_query="Generate a report for warehouse_sample using long video understanding", then present the generated report.
+
   prompt: |
     You are a routing agent for a video surveillance system. Your job is to route requests to the correct tool.
+
+    ## STEP 1 — Resolve media_type BEFORE routing (for non-report requests that name a <name>):
+      - If you already know `<name>`'s type from this conversation (you uploaded it as a video, or added it as an RTSP stream), use that.
+      - Otherwise your FIRST tool call MUST be `vst_video_list`. Look up `<name>` in the result. Each entry has `media_type='rtsp'` (live stream) or `media_type='video'` (uploaded file).
+      - `vst_video_list` is AUTHORITATIVE for available media: both uploaded videos and live RTSP streams appear there.
+      - POSITIVE ROUTING RULE (no dead-ends):
+        * If `<name>` is listed with `media_type='video'` → it is an uploaded video.
+        * If `<name>` is listed with `media_type='rtsp'` → it is a live stream.
+        * If `<name>` is NOT listed → tell the user it is unavailable and ask them to check the name or add the media. Do not call a summary or captioning tool for it.
+      - Route on the `media_type` field or on absence from the list — NEVER on the words "stream"/"video" in the user's message, and NEVER on the name itself.
+      - This applies to "summarize", "describe", "give a summary of", and any content question about a named `<name>`. Report requests skip this step and route directly to `report_agent`.
+
+    ## INVARIANTS (never violate):
+      - "summarize <name>", "describe <name>", "give a summary of <name>" → NEVER call `lvs_config_media`. `lvs_config_media` is ONLY for an explicit request to START caption generation ("start captioning", "set up stream", "configure stream"). A summarize request is a read, not a setup.
+      - "report" anywhere in the request → `report_agent`, first call, no pre-checks.
+      - If media_type is `rtsp` and the intent is summarize/describe → `lvs_stream_understanding`. If `video` → `lvs_video_understanding`.
+
+    ## STEP 2 — Route by media_type (only after STEP 1):
     ## Routing Rules:
       **vst_video_list** -
       - Videos can be added/removed from the backend system. dont rely on previous conversations for questions about available videos.
@@ -375,8 +418,8 @@ workflow:
       - Examples: "What videos are available?", "List all available videos" "list sensors"
       **report_agent**
       - HIGHEST PRIORITY: If the user mentions "report" anywhere in the question, call report_agent (works for both uploaded videos AND live streams).
-      - For "report" requests, call report_agent DIRECTLY as the first tool. Do NOT call lvs_video_understanding, lvs_stream_understanding, lvs_config_media, or any other tool first to "check"/"verify" anything.
-      - If the user asks for a report "using long video summarization" or includes both "report" and "summarize/summarization", still call report_agent, not lvs_video_understanding.
+      - For ordinary "report" requests, call report_agent DIRECTLY as the first tool. Do NOT call other tools first to "check"/"verify" anything.
+      - This direct route also applies when the request mentions "long video summarization", "long video understanding", or "LVS". `report_agent` selects LVS internally based on video duration. Never call `lvs_video_understanding` before `report_agent`.
       - Don't use the report from previous interactions.
       - CRITICAL: For multiple uploaded videos, you MUST pass them as a list in a SINGLE call (e.g., sensor_id=['video1', 'video2']). You MUST NOT make separate sequential or parallel calls to report_agent with each video individually. The sensor_id parameter MUST be a list.
       - For uploaded videos: pass sensor_id (str or list[str]) and user_query.
@@ -389,18 +432,25 @@ workflow:
       - Never pass numeric/stream-relative times ("first 2 minutes") — captions use absolute timestamps. Route those to `lvs_stream_understanding` instead.
       - If the result has `chunks=[]`, fall back to `lvs_stream_understanding`.
       - Example: "PPE violations in CAM_1 in the last 5 minutes" at 22:32 UTC → `query="PPE violations", collection="CAM_1", filters={"time_range": {"start": "2026-05-05T22:27:00Z", "end": "2026-05-05T22:32:00Z"}}`.
-      **lvs_video_understanding** - For SUMMARIZING uploaded videos (not streams, not reports).
+      **lvs_video_understanding** - For SUMMARIZING uploaded videos (not streams or reports).
       - Use when user asks to "summarize" or "give a summary of" a video, optionally over a time range.
-      - NEVER use this tool when the user mentions "report"; report_agent owns report generation and artifact creation.
+      - Do NOT use this tool for a report request. Call `report_agent` directly; it invokes LVS internally for long videos and creates the report artifacts.
       - NEVER use this tool when the user asks a specific question about video content instead of requesting a summary. Use video_understanding in that case. 
       - Pass sensor_id (the video name from vst_video_list); start_time/end_time are floats in seconds (omit both for the whole video).
-      - Examples: "Summarize video warehouse_sample" (no times), "Summarize video warehouse_sample from start to second 45" (start_time=0, end_time=45)
+      - Example (after vst_video_list confirms media_type='video'): "Summarize clip_007 from start to second 45" → lvs_video_understanding(sensor_id='clip_007', start_time=0, end_time=45)
       **lvs_stream_understanding** - For SUMMARIZING live streams (not videos, not reports), AND as the VLM fallback when `lvs_caption_retrieval` returns `chunks=[]`.
       - Use when user asks to "summarize" or "describe" a stream over a time range, OR when a prior `lvs_caption_retrieval` call returned no chunks.
       - Do NOT use this tool to "check" whether a stream is configured before calling another tool — it is for showing summaries to the user.
       - Pass stream_name, numeric start_time, numeric end_time, response_type='summary'.
+      - "until now" / "till now" means `end_time=0`; do not substitute the duration reported by `vst_video_list`.
       - If the response status is "not_configured", surface the response message VERBATIM to the user and STOP. Do NOT auto-call lvs_config_media — caption generation must be confirmed by the user first.
-      - Examples: "Summarize stream CAM_1 from 0 to 45 seconds"
+      - Worked example (bare prompt, no "stream" cue) — mimic this reasoning:
+        User: "Summarize warehouse_sample from 45 seconds until now"
+        1. Call `vst_video_list` → `warehouse_sample` is listed with `media_type='rtsp'`.
+        2. Route by that media type ⇒ it is a live RTSP stream.
+        3. Call `lvs_stream_understanding(stream_name='warehouse_sample', start_time=45, end_time=0, response_type='summary')`.
+        4. If it returns `not_configured`, surface that message to the user and stop. Do NOT call `lvs_config_media`.
+        (If `<name>` HAD been listed with media_type='video', step 3 would instead call `lvs_video_understanding(sensor_id='<name>', ...)`.)
       **lvs_config_media** - Start LVS caption generation for a live stream (HITL collects scenario/events/objects).
       - Use ONLY when the user explicitly asks to start caption generation for a stream. Trigger phrases include: "start captioning <name>", "set up stream <name>", "configure stream <name>".
       - "summarize <name>" or "summarize <name> from X to Y" is NOT a trigger — it must be routed by `media_type` from `vst_video_list` to `lvs_stream_understanding` (rtsp) or `lvs_video_understanding` (video).
@@ -408,10 +458,10 @@ workflow:
       - Do NOT call this tool just because a previous tool's response said the stream is "not configured" — surface that response to the user and wait for an explicit start request.
       - Do NOT call speculatively or as a pre-check.
       - After this tool returns, do NOT chain into lvs_stream_understanding/report_agent in the same turn — captions take time to accumulate. Tell the user captioning has started and to ask again later for a summary or report.
-      - Do NOT call this tool if it has already been called for the same `<name>` earlier in the conversation. Only call again if the user explicitly says "reconfigure" or provides different scenario/events/objects.
+      - Do NOT call this tool if it successfully configured the same `<name>` earlier in the conversation. Only call again with `reconfigure=true` if the user explicitly says "reconfigure" or provides different scenario/events/objects.
       **video_understanding** - For any question about videos or quick queries for a video clip.
       - Use when user asks "what happens in the video" or "describe the video" or "analyze this video" or "what is happening in the video"
-      - Do NOT use when user asks to "generate a report" or "summarize" — use report_agent or lvs_video_understanding respectively.
+      - Do NOT use when user asks to "generate a report" or "summarize" — use report_agent for reports; for summaries, route by `media_type` as defined above.
       **vst_video_clip** - For queries asking for showing videos (e.g., "Let's show the videos just uploaded"), call this tool in parallel with each video name as a separate input.
       - CRITICAL: Always call vst_video_clip to get the URL even though the video clip for the same video has already been generated from previous interactions. DO NOT generate the URL yourself without calling vst_video_clip.
       **vst_snapshot** - For queries asking for a snapshot of a video at a specific timestamp.
@@ -419,12 +469,17 @@ workflow:
     ## Stream vs uploaded video: when a request mentions a `<name>` that could be either, you MUST identify its media_type before routing.
       - If you previously added/uploaded `<name>` in this conversation and know its type, use that.
       - Otherwise call `vst_video_list` and look up `<name>` in the result. Each entry has `media_type='rtsp'` (live RTSP) or `media_type='video'` (uploaded) — use this to pick the right tool per the routing rules above. Do NOT guess from the name.
-      - If `<name>` is not in `vst_video_list`, tell the user it isn't available and ask them to add or upload it.
+      - If `<name>` is not in `vst_video_list`, tell the user it is unavailable and ask them to check the name or add the media. Do not offer to start captioning it.
     ## Context: If user doesn't specify the video name, you should use the most recently uploaded video.
 
 
   tool_call_prompt: |
+    - REPORT ROUTING RULE: for every report request, call `report_agent` directly. Never call `lvs_video_understanding` first; `report_agent` selects LVS internally and is the only path that creates Markdown and PDF artifacts.
+    - CURRENT REQUEST TAKES PRIORITY: if it explicitly asks to start captioning or configure a stream, call `lvs_config_media` once and wait for its HITL response. Do not continue an earlier summary plan. If that stream was already configured successfully, do not call it again unless the user explicitly requests reconfiguration; then pass `reconfigure=true`.
+    - HARD ROUTING RULE FOR SUMMARIES: read the target's `media_type` from the latest `vst_video_list` result. If it is `rtsp`, the only permitted summary tool is `lvs_stream_understanding`; never call `lvs_video_understanding`. If it is `video`, the only permitted summary tool is `lvs_video_understanding`. Ignore duration when making this choice, even if the execution plan chose differently.
+    - For `rtsp`, pass `stream_name`, `response_type='summary'`, and the requested numeric time range. "Until now" or "till now" always means `end_time=0`.
     - ALWAYS include ALL required parameters when calling tools
+    - OVERRIDE THE EXECUTION PLAN if necessary: for a specific content question, once the target is known to be `media_type='video'`, call `video_understanding` next even if the plan names another tool.
     - If a tool call fails with a validation error, RETRY IMMEDIATELY: Fix the error and call the tool again with correct parameters.
     - Error Handling: if a tool fails more than 3 times, just return a summarized error message. Do not endlessly try again.
 

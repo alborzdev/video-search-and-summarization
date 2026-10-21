@@ -163,7 +163,7 @@ def compose_service(graph, root=ROOT, token=None):
         'entrypoint': ['/vss-agent/.venv/bin/python'],
         'command': ['/opt/vss-history/history-service.py'],
         'environment': {
-            'PYTHONPATH': '/vss-agent/thor-local-src', 'PYTHONDONTWRITEBYTECODE': '1',
+            'PYTHONPATH': env.get('PYTHONPATH', '/vss-agent/edge-agent-src:/vss-agent/edge-core-src:/vss-agent/edge-cli-src'), 'PYTHONDONTWRITEBYTECODE': '1',
             'HISTORY_SERVICE_HOST': '127.0.0.1', 'HISTORY_SERVICE_PORT': '8101',
             'HISTORY_RECORDINGS_SNAPSHOT_URL': 'http://127.0.0.1:8102/recordings',
             'HISTORY_METADATA_TOKEN': token if token is not None else token_value(),
@@ -180,7 +180,9 @@ def compose_service(graph, root=ROOT, token=None):
             'GRAPH_DB_PASSWORD': graph_env['GRAPH_DB_PASSWORD'],
         },
         'volumes': [
-            {'type': 'bind', 'source': str(root / 'services/agent/src'), 'target': '/vss-agent/thor-local-src', 'read_only': True},
+            {'type': 'bind', 'source': str(root / 'services/agent/packages/vss_agents/src'), 'target': '/vss-agent/edge-agent-src', 'read_only': True},
+            {'type': 'bind', 'source': str(root / 'libs/vss/core/src'), 'target': '/vss-agent/edge-core-src', 'read_only': True},
+            {'type': 'bind', 'source': str(root / 'libs/vss/cli/src'), 'target': '/vss-agent/edge-cli-src', 'read_only': True},
             {'type': 'bind', 'source': str(root / 'deploy/docker/spark'), 'target': '/opt/vss-history', 'read_only': True},
             {**video_mount, 'target': '/data/vst-video', 'read_only': True},
             {**reports_mount, 'target': '/data/agent-reports'},

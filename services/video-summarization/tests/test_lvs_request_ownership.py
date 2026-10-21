@@ -1303,3 +1303,42 @@ def test_sse_client_removal_is_identity_safe() -> None:
     assert server._sse_active_clients["asset-shared"][0] == "replacement-request"
     assert server._remove_sse_client("asset-shared", "replacement-request") is True
     assert server._sse_active_clients == {}
+
+
+def test_reserved_summarize_keeps_owner_and_trace_context_together() -> None:
+    calls = []
+    context = object()
+    source = types.SimpleNamespace(source_id="asset-shared")
+    query = object()
+    handler = types.SimpleNamespace(
+        queue_request_submission=MagicMock(),
+        summarize=lambda *args: calls.append(args) or "reserved-request",
+    )
+    server = ViaServer.__new__(ViaServer)
+    server._stream_handler = handler
+    server._async_executor = concurrent.futures.ThreadPoolExecutor(max_workers=1)
+    try:
+        assert asyncio.run(server._run_reserved_summarize(
+            source, query, "reserved-request", context
+        )) == "reserved-request"
+        assert calls == [(source, query, "reserved-request", context)]
+        handler.queue_request_submission.assert_called_once_with("reserved-request")
+    finally:
+        server._async_executor.shutdown(wait=True)
+
+
+def test_trace_context_does_not_replace_the_pre_reserved_request() -> None:
+    handler = _handler()
+    request_id = handler.reserve_request("asset-shared")
+    original = handler._request_info_map[request_id]
+    context = object()
+    handler._query_reserved = MagicMock(return_value=request_id)
+    assert handler.query(
+        types.SimpleNamespace(source_id="asset-shared"), object(),
+        request_id=request_id, trace_context=context,
+    ) == request_id
+    assert handler._request_info_map[request_id] is original
+    assert original._remote_trace_context is context
+    assert original.active_operations == 0
+    handler.cancel_request(request_id, "test_done")
+    assert original.quiescent_event.is_set()

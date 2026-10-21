@@ -12,14 +12,17 @@ import {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     const { getNemoAgentToolkitSSProps } = await import('@nemo-agent-toolkit/ui/server');
-    const initialVisionData = import('@nv-metropolis-bp-vss-ui/all/server')
-      .then(({ fetchAlertsData, fetchSearchData, fetchVideoManagementData }) =>
-        getInitialVisionPageData({
-          alerts: fetchAlertsData,
-          search: fetchSearchData,
-          videoManagement: fetchVideoManagementData,
-        })
-      )
+    const initialVisionData = Promise.all([
+      import('@nv-metropolis-bp-vss-ui/alerts/server'),
+      import('@nv-metropolis-bp-vss-ui/search/server'),
+      import('@nv-metropolis-bp-vss-ui/video-management/server'),
+    ]).then(([{ fetchAlertsData }, { fetchSearchData }, { fetchVideoManagementData }]) =>
+      getInitialVisionPageData({
+        alerts: fetchAlertsData,
+        search: fetchSearchData,
+        videoManagement: fetchVideoManagementData,
+      })
+    )
       .catch((error) => {
         console.error('Error fetching Vision Intelligence data:', error);
         return emptyInitialVisionPageData();

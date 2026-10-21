@@ -19,8 +19,11 @@
 #include "nativestreamproducer.h"
 #include "native_stream_monitor.h"
 #include "mm_utils.h"
+#include "utils.h"
 
-static std::array<FrameSize, 7> g_resolutions = { FrameSize(WIDTH_2160p, HEIGHT_2160p),
+using namespace nv_vms;
+
+static const std::array<FrameSize, 7> g_resolutions = { FrameSize(WIDTH_2160p, HEIGHT_2160p),
                                                   FrameSize(WIDTH_1080p, HEIGHT_1080p),
                                                   FrameSize(WIDTH_720p, HEIGHT_720p),
                                                   FrameSize(WIDTH_480p, HEIGHT_480p),
@@ -276,10 +279,11 @@ GstFlowReturn NativeStreamProducer::onNewSampleYUV(GstElement * appsink)
             consumer_frame_data->m_index        = 0;
             consumer_frame_data->m_sourceWidth  = m_sourceWidth;
             consumer_frame_data->m_sourceHeight = m_sourceHeight;
-#ifndef JETSON_PLATFORM
+            if (!isJetsonPlatform())
+            {
             consumer_frame_data->m_sourceLayout = NVBUF_LAYOUT_BLOCK_LINEAR;
             consumer_frame_data->m_targetLayout = NVBUF_LAYOUT_PITCH;
-#endif
+            }
             consumer_frame_data->m_sample       = sample;
             sink->m_consumer->onFrame (consumer_frame_data);
         }
@@ -642,17 +646,20 @@ void NativeStreamProducer::removeConsumer(const std::string& peerid)
     {
         m_videoSinkList.erase(it);
     }
-#ifdef JETSON_PLATFORM
+    if (isJetsonPlatform())
+    {
     if (m_videoSinkList.size() == 0 && GET_CONFIG().enable_ipc_path == false)
     {
         m_stop = true;
     }
-#else
+    }
+    else
+    {
     if (m_videoSinkList.size() == 0)
     {
         m_stop = true;
     }
-#endif
+    }
 }
 
 bool NativeStreamProducer::isSinkPresent ()
@@ -712,7 +719,8 @@ FrameSize NativeStreamProducer::handleDRC(const string& peerid, int targetPixels
     {
         shared_ptr<VideoSinkInfo> sink = it->second;
         FrameSize source_frame_size;
-#ifdef JETSON_PLATFORM
+        if (isJetsonPlatform())
+        {
         // For any quality respect the webrtc out default resolution specified in config
         Resolution resolution;
         resolution = GET_CONFIG().webrtc_out_default_resolution;
@@ -739,7 +747,7 @@ FrameSize NativeStreamProducer::handleDRC(const string& peerid, int targetPixels
             }
             return sink->m_frameSize;
         }
-#endif
+        }
         if(sink->m_quality == "auto")
         {
             size_t res_index = 0;

@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: SSPL-1.0 OR AGPL-3.0-only
+
 # This file is provided under your choice of: (a) the Server Side Public License v1 (SSPLv1); or (b) the GNU Affero General Public License v3 (AGPLv3).
 
 #
@@ -9,26 +11,5 @@ server.host: "0.0.0.0"
 server.basePath: "/kibana"
 server.rewriteBasePath: true
 server.shutdownTimeout: "5s"
-elasticsearch.hosts: [ "http://localhost:9200" ]
+elasticsearch.hosts: [ "http://elasticsearch:9200" ]
 monitoring.ui.container.elasticsearch.enabled: true
-
-# This deployment uses Kibana only as an embedded, local VSS analytics surface.
-# Disable product-survey flows that otherwise emit failing background requests
-# in a deliberately unauthenticated, air-gapped deployment.
-xpack.intercepts.enabled: false
-xpack.product_intercept.enabled: false
-
-# Authentication remains a separately tracked deployment-boundary decision.
-# Do not obscure the embedded VSS dashboard with Kibana's security upsell when
-# this local appliance is intentionally protected by its host firewall policy.
-xpack.security.showInsecureClusterWarning: false
-
-# The VSS dashboards are local operational surfaces. Kibana 9.3.3 defaults
-# usage telemetry and its remote newsfeed on, so make the air-gapped contract
-# explicit rather than relying on failed outbound requests.
-telemetry.optIn: false
-telemetry.allowChangingOptInStatus: false
-telemetry.tracing.enabled: false
-telemetry.metrics.enabled: false
-newsfeed.enabled: false
-xpack.fleet.isAirGapped: true

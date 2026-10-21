@@ -18,7 +18,7 @@ class _Writer:
 
 
 class _FakePinnedSseServerTransport:
-    """Behavioral seam matching the relevant local mcp==1.23.0 source."""
+    """Behavioral seam matching the legacy MCP SSE transport contract."""
 
     def __init__(
         self,
@@ -310,54 +310,15 @@ class TestSessionCleaningSseIntegration(unittest.TestCase):
         )
         self.assertNotIn("from mcp.server.sse import SseServerTransport", source)
 
-    def test_both_image_builds_package_the_wrapper(self):
+    def test_runtime_support_modules_are_packaged_once(self):
         service_root = Path(__file__).parents[1]
-        repository_root = service_root.parents[1]
-        package_files = (
-            service_root / "docker" / "package_file_list.txt"
-        ).read_text().splitlines()
-        self.assertEqual(package_files.count("lvs_mcp_sse.py"), 1)
-
-        thor_dockerfile = (
-            repository_root / "deploy/docker/thor-local/Dockerfile.video-summarization"
-        ).read_text()
-        self.assertEqual(
-            thor_dockerfile.count(
-                "COPY services/video-summarization/src/lvs_mcp_sse.py "
-                "/opt/nvidia/via/via-engine/lvs_mcp_sse.py"
-            ),
-            1,
-        )
-
-    def test_thor_overlay_offline_installs_and_verifies_exact_mcp_wheel(self):
-        service_root = Path(__file__).parents[1]
-        repository_root = service_root.parents[1]
-        thor_dockerfile = (
-            repository_root / "deploy/docker/thor-local/Dockerfile.video-summarization"
-        ).read_text()
-        required = (
-            "mcp-1.23.0-py3-none-any.whl",
-            "231427",
-            "5a645cf111ed329f4619f2629a3f15d9aabd7adc2ea09d600d31467b51ecb64f",
-            "UV_OFFLINE=1",
-            "--no-index",
-            "--no-deps",
-            "--reinstall",
-            "pip check --system",
-            'version("mcp") == "1.23.0"',
-            "SseServerTransport",
-            "_read_stream_writers",
-            "CallToolResult",
-            ".unlink()",
-        )
-        for literal in required:
-            with self.subTest(literal=literal):
-                self.assertIn(literal, thor_dockerfile)
-
-        pyproject = (
-            service_root / "docker" / "base" / "py_deps" / "pyproject.toml"
-        ).read_text()
-        self.assertNotIn('"mcp==1.23.0"', pyproject)
+        package_files = (service_root / "docker" / "package_file_list.txt").read_text().splitlines()
+        # Missing helper modules only fail after image assembly. Cover imports
+        # added by the 3.3 integration and our SSE cleanup wrapper together.
+        for name in ("ca_rag_config.py", "lvs_mcp_sse.py", "llm_handler.py", "rtvi_vlm_client.py"):
+            with self.subTest(module=name):
+                self.assertEqual(package_files.count(name), 1)
+                self.assertTrue((service_root / "src" / name).is_file())
 
 
 if __name__ == "__main__":

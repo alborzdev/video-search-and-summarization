@@ -6,12 +6,17 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import shutil
 import unittest
 
 SOURCE = Path(__file__).parents[1] / 'src/llm_handler.py'
 TEMPLATE = '/opt/nim/.cache/ngc/hub/models--nim--nvidia--nemotron-nano-9b-v2/snapshots/hf-nvfp4-v1/tokenizer_config.json'
 
 
+@unittest.skipUnless(
+    os.environ.get("VSS_RUN_RUNTIME_TESTS") == "1" and shutil.which("docker"),
+    "Set VSS_RUN_RUNTIME_TESTS=1 on a host with the qualified LVS and NIM containers running",
+)
 class NemotronThinkingTests(unittest.TestCase):
     def test_real_client_payload_and_pinned_template(self):
         lvs = os.environ.get('LVS_TEST_CONTAINER', 'vss-lvs')

@@ -36,9 +36,6 @@ const ALERTS_TAB_MEDIA_WITH_OBJECTS_BBOX = env('NEXT_PUBLIC_ALERTS_TAB_MEDIA_WIT
 
 
 export async function fetchAlertsData() {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 100));
-  
   return {
     systemStatus: 'operational',
     // Include API URLs from environment variables

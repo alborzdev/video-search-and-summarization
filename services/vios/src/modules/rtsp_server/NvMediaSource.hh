@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2022 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,8 +27,8 @@
 
 class VodOverlayManager;
 class AvLoopSyncCoordinator;
+class NvFileServerMediaSubsession;
 
-using namespace std;
 
 typedef enum
 {
@@ -62,7 +62,7 @@ static unsigned const samplingFrequencyTable[16] = {
   7350, 0, 0, 0
 };
 
-typedef void (*cb_frameSourceEvent_t)(eFrameSourceEvent sourceEvent, void *owner);
+typedef void (*cb_frameSourceEvent_t)(eFrameSourceEvent sourceEvent, NvFileServerMediaSubsession *owner);
 
 /*
  * AAC parameter bundle returned by NvMediaSource::getAacParams().
@@ -86,7 +86,7 @@ struct AacParams
 class NvMediaSource : public IMediaDataConsumer
 {
     public:
-        NvMediaSource (const std::string& filename, eMediaType mediaType, eSourceType sourceType, string url_params, string session_id);
+        NvMediaSource (const std::string& filename, eMediaType mediaType, eSourceType sourceType, std::string url_params, std::string session_id);
         ~NvMediaSource ();
 
         int create ();
@@ -95,25 +95,26 @@ class NvMediaSource : public IMediaDataConsumer
         void pause ();
         void resume ();
         bool isError();
-        string getFilename() { return m_filename; }
+        std::string getFilename() { return m_filename; }
         eMediaType getMediaType() { return m_mediaType; }
         eSourceType getSourceType() { return m_sourceType; }
         int64_t getStartTime();
         int64_t getActualStartTime();
         double getFrameRate();
-        string getVideoCodec();
-        string getAudioCodec();
+        int getFrameCount() { return m_demux ? m_demux->getFrameCount() : 0; }
+        std::string getVideoCodec();
+        std::string getAudioCodec();
         int getSampleRate();
         int getChannels();
-        string getUrlParams() { return m_url_params; }
+        std::string getUrlParams() { return m_url_params; }
         void setClock(GstClock* global_clock, GstClockTime base_time);
         void seek (int64_t seek_pos , uint64_t end_time, float rate);
         void seekToStart ();
-        static void process_source_message(std::shared_ptr<EventLoopData> data, void* parent);
+        void process_source_message(std::shared_ptr<EventLoopData> data);
         void setBufferState(eBufferMsg buffer_msg);
-        void registerCallback(cb_frameSourceEvent_t callback, void *owner);
+        void registerCallback(cb_frameSourceEvent_t callback, NvFileServerMediaSubsession *owner);
         void sendSourceEvent(eFrameSourceEvent sourceEvent);
-        string getCodecConfigId();
+        std::string getCodecConfigId();
 
         /* Return the coherent (sample_rate, channels, configStr) triple
          * to use across rtpmap, fmtp and ADTSByteStreamSource. Prefer
@@ -136,8 +137,8 @@ class NvMediaSource : public IMediaDataConsumer
             return m_avLoopSync;
         }
 
-        void insertSeiFrame(int64_t frameId, struct timeval pts, string codec);
-        void insertMegaSimSeiFrame(int64_t frameId, struct timeval pts, string codec);
+        void insertSeiFrame(int64_t frameId, struct timeval pts, std::string codec);
+        void insertMegaSimSeiFrame(int64_t frameId, struct timeval pts, std::string codec);
         std::vector<uint8_t> getFramesForSdp();
         void setSourceState(std::string source_state) { m_sourceState = source_state; }
         void resetActualStartTime();
@@ -147,7 +148,8 @@ class NvMediaSource : public IMediaDataConsumer
         void stopOverlayPipeline_internal();
 
         //IMediaDataConsumer virtual function
-        virtual void onFrame(FrameParams& params);
+        using IMediaDataConsumer::onFrame;
+        virtual void onFrame(FrameParams& params) override;
         virtual eMediaType getConsumerMediaType() { return m_mediaType; }
         virtual void setConsumerMediaType(eMediaType media_type) { m_mediaType = media_type; }
 
@@ -156,15 +158,15 @@ class NvMediaSource : public IMediaDataConsumer
         eMediaType              m_mediaType;
         eSourceType             m_sourceType;
         std::string             m_sourceState;
-        shared_ptr<GstDeMux>    m_demux;
-        shared_ptr<VodOverlayManager> m_vodOverlayManager = nullptr;
-        std::map<void *, cb_frameSourceEvent_t> m_callback;
+        std::shared_ptr<nv_vms::GstDeMux>    m_demux;
+        std::shared_ptr<VodOverlayManager> m_vodOverlayManager = nullptr;
+        std::map<NvFileServerMediaSubsession *, cb_frameSourceEvent_t> m_callback;
         bool                    m_includeFrameId = false;
         int64_t                 m_frameId;
-        string                  m_uuid;
-        std::queue<vector<uint8_t>>    m_videoHeaderFrames;
-        string                  m_url_params;
-        string                  m_sessionId;
+        std::string                  m_uuid;
+        std::queue<std::vector<uint8_t>>    m_videoHeaderFrames;
+        std::string                  m_url_params;
+        std::string                  m_sessionId;
         uint64_t                m_simulationBaseTime;
         std::queue<std::shared_ptr<DiscreteFrame>> m_spsPpsContent;
         std::atomic<bool>       m_isFirstFrame = false;

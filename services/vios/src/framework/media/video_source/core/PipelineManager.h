@@ -32,7 +32,7 @@ class ImageEnc;
 class NvCompositor;
 class VideoWebRTCSender;
 class NativeStreamProducer;
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
 class NvIPCProducer;
 #endif
 
@@ -48,6 +48,10 @@ public:
     PipelineManager();
     ~PipelineManager() = default;
 
+    // Must be called before createPipeline: the builder reads it while wiring
+    // the terminal consumer.
+    void setDashConsumer(std::shared_ptr<IMediaDataConsumer> consumer);
+    std::shared_ptr<IMediaDataConsumer> getDashConsumer() const { return m_dashConsumer; }
     void createPipeline(const PipelineConfiguration& config);
     void destroyPipeline();
     void startPipeline();
@@ -65,7 +69,7 @@ public:
     std::shared_ptr<NvCompositor> getCompositor() const;
     std::shared_ptr<VideoWebRTCSender> getVideoSender() const;
     std::shared_ptr<NativeStreamProducer> getNativeStreamProducer() const;
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
     std::shared_ptr<NvIPCProducer> getIPCProducer() const;
 #endif
 
@@ -79,5 +83,6 @@ private:
     std::unique_ptr<PipelineBuilder> createBuilder(const PipelineConfiguration& config);
     
     std::unique_ptr<PipelineBuilder> m_builder;
+    std::shared_ptr<IMediaDataConsumer> m_dashConsumer;
     bool m_isComposite = false;
 };

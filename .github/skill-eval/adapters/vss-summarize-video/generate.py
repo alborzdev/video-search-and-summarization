@@ -7,9 +7,9 @@ The vss-summarize-video skill exercises the video summarization service on
 `http://localhost:38111` against a **full-remote-deployed VSS lvs profile**
 (deploy mode = `remote-all`; the agent's LLM and the VLM that the video
 summarization service calls are both served via remote launchpad endpoints,
-no local NIMs). It does
-NOT deploy VSS itself; the coordinator chains a deploy task in front and
-seeds the sample warehouse video via the vss-manage-video-io-storage skill before this trial.
+no local NIMs). The adapter does not deploy VSS or seed media outside the
+agent turn. The first chained task performs deployment and stages the exact NGC
+warehouse source file for the subsequent summarization task.
 
 Mirrors the vss-manage-video-io-storage adapter — single-task-per-platform, step-chained under
 the spec's prerequisite profile name. Default platform is L40S because
@@ -45,9 +45,9 @@ limit).
 Usage from the repository root:
     python3 .github/skill-eval/adapters/vss-summarize-video/generate.py \\
         --output-dir .github/skill-eval/datasets/vss-summarize-video \\
-        --skill-dir skills/vss-summarize-video \\
-        --deploy-skill-dir skills/vss-deploy-profile \\
-        --video-io-skill-dir skills/vss-manage-video-io-storage
+        --skill-dir skills/operations/vss-summarize-video \\
+        --deploy-skill-dir skills/vss-build-vision-ai \\
+        --video-io-skill-dir skills/operations/vss-manage-video-io-storage
 """
 from __future__ import annotations
 
@@ -75,8 +75,26 @@ DEFAULT_PLATFORM = "L40S"
 PREAMBLE = (
     "You are running inside a non-interactive evaluation harness. "
     "You are pre-authorized to deploy prerequisites autonomously — "
-    "do not pause to ask for confirmation on `/vss-deploy-profile` or any other "
-    "setup action the trial requires."
+    "do not pause to ask for confirmation on `/vss-build-vision-ai` or any other "
+    "setup action the trial requires. Autonomy does not relax the skill's "
+    "service contract: when a step requests summarization, invoke the "
+    "vss-summarize-video skill before constructing the request, poll "
+    "/v1/ready until the service is ready, then make exactly one "
+    "`vss summarize run` invocation with --chunk-duration 10. "
+    "Run it with the `vss` CLI (if `vss` is not on PATH, install it from the host "
+    "checkout with `uv tool install \"${VSS_REPO_ROOT:-$HOME/video-search-and-summarization}/libs/vss/cli\"`), "
+    "relying on the deployment `vss configure` recorded: pass no endpoint, index, "
+    "or model flag, and never hand-roll a POST /v1/summarize with curl or python. "
+    "Any completed run ends the operation; do not re-run it, mutate "
+    "the deployment, or call VLM/RT-VLM inference endpoints such as "
+    "/v1/chat/completions or /v1/generate_captions directly. Empty choices, "
+    "video_summary, or events are results to report, not reasons to retry. "
+    "Read the operation result from the first stdout JSON document and the "
+    "completion marker from the final stdout line: the result carries the "
+    "persist object, while the marker carries job_id and persisted. Report that "
+    "job id. Do not read the record back to prove the write landed -- those "
+    "two documents report it, and recalling memory is a different skill's job. "
+    "Render video_summary and every event description verbatim and in full."
 )
 
 
@@ -102,7 +120,7 @@ def generate_test_script(step: int, spec_name: str) -> str:
 
 def generate_solve_script(platform: str) -> str:
     """Gold solution — assumes the lvs profile is already deployed and
-    a sample warehouse video is uploaded. Verifier drives the assertions."""
+    the sample warehouse source is staged locally. Verifier drives assertions."""
     return (
         "#!/bin/bash\n"
         f"# Gold solution: vss-summarize-video on {platform}\n"
@@ -148,7 +166,7 @@ def generate_task(platform: str, profile: str, spec: dict, output_root: Path,
             "",
             f"## Query {idx} of {len(expects)}",
             "",
-            expect.get("query", ""),
+            expect.get("query", "").replace("{{platform}}", platform),
             "",
             "Run autonomously without prompting for confirmation.",
             "",
@@ -171,6 +189,9 @@ def generate_task(platform: str, profile: str, spec: dict, output_root: Path,
             f'name = "nvidia-vss/vss-summarize-video-{profile}-{platform_short}{step_suffix}"',
             f'description = "vss-summarize-video query {idx}/{len(expects)} on {platform}"',
             f'keywords = ["vss-summarize-video", "lvs", "{profile}", "{platform}"]',
+            "",
+            "[agent]",
+            "timeout_sec = 600.0",
             "",
             "[environment]",
             'skills_dir = "/skills"',
@@ -220,7 +241,7 @@ def generate_task(platform: str, profile: str, spec: dict, output_root: Path,
         # skills/ — only include skill directories that appear in the spec's
         # `skills` list.  vss-summarize-video is always included (it is the
         # primary skill under test).  vss-manage-video-io-storage and
-        # vss-deploy-profile are included only when the spec declares them —
+        # vss-build-vision-ai are included only when the spec declares them —
         # this prevents the brev-exec ARG_MAX / MAX_ARG_STRLEN overflow
         # (Linux caps a single execve argument at 131 072 bytes; the full
         # base64 tarball of all three skills exceeds that limit as of PR #520
@@ -229,7 +250,7 @@ def generate_task(platform: str, profile: str, spec: dict, output_root: Path,
         all_copies = [
             (skill_dir, "vss-summarize-video"),
             (video_io_skill_dir, "vss-manage-video-io-storage"),
-            (deploy_skill_dir, "vss-deploy-profile"),
+            (deploy_skill_dir, "vss-build-vision-ai"),
         ]
         copies = [(src, name) for src, name in all_copies
                   if name == "vss-summarize-video" or name in spec_skills]
@@ -251,11 +272,11 @@ def main() -> None:
     parser.add_argument("--output-dir", required=True,
                         help="Dataset output root (e.g. .github/skill-eval/datasets/vss-summarize-video)")
     parser.add_argument("--skill-dir", required=True,
-                        help="Path to skills/vss-summarize-video")
+                        help="Path to skills/operations/vss-summarize-video")
     parser.add_argument("--deploy-skill-dir", default=None,
-                        help="Path to skills/vss-deploy-profile (optional — included for agent debug)")
+                        help="Path to skills/vss-build-vision-ai (optional — included for agent debug)")
     parser.add_argument("--video-io-skill-dir", dest="video_io_skill_dir", default=None,
-                        help="Path to skills/vss-manage-video-io-storage (optional — referenced by the spec for video upload prerequisite)")
+                        help="Path to skills/operations/vss-manage-video-io-storage (optional — referenced by the spec for video upload prerequisite)")
     parser.add_argument("--vios-skill-dir", dest="video_io_skill_dir", help=argparse.SUPPRESS)
     if any(arg == "--vios-skill-dir" or arg.startswith("--vios-skill-dir=") for arg in sys.argv[1:]):
         print("WARNING: --vios-skill-dir is deprecated; use --video-io-skill-dir.", file=sys.stderr)

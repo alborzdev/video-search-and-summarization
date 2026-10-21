@@ -302,9 +302,92 @@ class BootstrapTests(unittest.TestCase):
         services = json.loads((b.STATE / 'compose.json').read_text())['services']
         self.assertEqual(settings['host_ip'], '172.17.0.1')
         self.assertEqual(services['rtvi-embed']['environment']['KAFKA_BOOTSTRAP_SERVERS'], '172.17.0.1:9092')
+        self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
         self.assertIn('127.0.0.1:30081:8000', services['spark-llm']['ports'])
         self.assertEqual(services['vss-haproxy-ingress']['environment']['HAPROXY_BIND_ADDR'],
                          '127.0.0.1:7777,172.17.0.1')
+
+    def test_adaptive_evs_requires_new_engine_and_preserves_selected_reserve(self):
+        b.private_write(b.STATE / 'settings.json', json.dumps({'reserve_gib': 20}))
+        for image in ('', 'nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1-sbsa'):
+            with self.subTest(image=image), self.assertRaisesRegex(RuntimeError, 'compatible 3.3'):
+                b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', adaptive_evs=True, rtvi_vlm_image=image)
+        self.assertEqual(b.memory_reserve(), 20)
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1',
+                 adaptive_evs=True, rtvi_vlm_image='vss-rtvi-vlm:3.3-sbsa-codecs', demo_profile='clips')
+        graph = json.loads((b.STATE / 'compose.json').read_text())
+        vlm = graph['services']['rtvi-vlm']
+        self.assertEqual(vlm['image'], 'vss-rtvi-vlm:3.3-sbsa-codecs')
+        self.assertNotIn('build', vlm)
+        self.assertEqual(vlm['environment']['VIA_EVS_SESSION'], 'true')
+        self.assertEqual(vlm['environment']['VLM_VIDEO_PRUNING_RATE'], '0.5')
+        self.assertEqual(vlm['environment']['VIA_EVS_TOKEN_BUDGET'], '1')
+        self.assertEqual(vlm['environment']['RTVI_VLLM_NATIVE_CONV3D'], 'true')
+        self.assertNotIn('vss-search-analytics-2d-fusion', graph['services'])
+        self.assertNotIn('vss-behavior-analytics-thor-candidates', graph['services'])
+        self.assertEqual(graph['services']['spark-llm']['environment']['NIM_GPU_MEM_FRACTION'], '0.11')
+        self.assertEqual(graph['services']['vss-ui']['environment']['VSS_ADAPTIVE_EVS_ENABLED'], 'true')
+        self.assertEqual(graph['services']['vss-ui']['environment']['VSS_DEMO_PROFILE'], 'clips')
+        self.assertEqual(graph['services']['vss-ui']['environment']['VSS_DETECTOR_ENABLED'], 'false')
+        self.assertEqual(b.memory_reserve(), 20)
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1')
+        saved = json.loads((b.STATE / 'settings.json').read_text())
+        self.assertEqual(saved['rtvi_vlm_image'], 'vss-rtvi-vlm:3.3-sbsa-codecs')
+        self.assertTrue(saved['adaptive_evs'])
+        self.assertEqual(saved['demo_profile'], 'clips')
+        self.assertEqual(saved['reserve_gib'], 20)
+
+    def test_explicit_legacy_engine_keeps_native_conv3d_flag_absent(self):
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1',
+                 rtvi_vlm_image='nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1-sbsa')
+        services = json.loads((b.STATE / 'compose.json').read_text())['services']
+        self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
+
+    def test_render_preserves_persistent_infrastructure_and_host_bound_redis(self):
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', reserve_gib=20)
+        services = json.loads((b.STATE / 'compose.json').read_text())['services']
+        redis = services['redis']
+        self.assertEqual(redis['network_mode'], 'host')
+        self.assertNotIn('ports', redis)
+        self.assertNotIn('networks', redis)
+        self.assertIn('172.17.0.1', redis['command'])
+        self.assertEqual(services['sdr-streamprocessing-init']['network_mode'], 'host')
+        self.assertEqual(services['elasticsearch']['image'], 'vss-spark-elasticsearch:source')
+        self.assertNotIn('build', services['elasticsearch'])
+        self.assertEqual(services['kibana']['image'], 'docker.elastic.co/kibana/kibana:9.3.3')
+        self.assertEqual(services['centralizedb']['image'], 'postgres:17.9-alpine')
+        self.assertEqual(services['phoenix']['image'], 'arizephoenix/phoenix:14.15.0')
+        self.assertEqual(services['vss-haproxy-ingress']['image'], 'haproxy:3.0-alpine')
+        self.assertEqual(services['vss-video-analytics-api-fusion']['image'],
+                         'vss-spark-video-analytics-api:source')
+        self.assertEqual(services['vss-video-analytics-api-fusion']['build']['dockerfile'],
+                         'deploy/docker/thor-local/Dockerfile.video-analytics-api33')
+        lvs_context = Path(services['lvs-server']['build']['context'])
+        self.assertEqual(lvs_context, b.STATE / 'build-contexts/lvs-server')
+        self.assertTrue((lvs_context / 'services/video-summarization/src/via_stream_handler.py').is_file())
+        self.assertFalse((lvs_context / '.spark').exists())
+        self.assertFalse((lvs_context / '.thor').exists())
+        for target in ('LVS_SERVICE_HOST', 'RTVI_CV_SERVICE_HOST', 'PERCEPTION_SDR_SERVICE_HOST'):
+            self.assertEqual(services['vss-haproxy-ingress']['environment'][target], '127.0.0.1')
+        self.assertEqual(services['kafka-topic-init-container']['image'], 'confluentinc/cp-kafka:8.2.0')
+        self.assertNotIn('agent-eval', json.loads((b.STATE / 'compose.json').read_text()).get('volumes', {}))
+        self.assertFalse(any(mount.get('target') == '/vss-agent/agent_eval'
+                             for mount in services['vss-agent'].get('volumes', [])))
+        init = services['elasticsearch-init-container']
+        self.assertNotIn('build', init)
+        self.assertEqual(services['broker-health-check']['entrypoint'],
+                         ['bash', '/scripts/check-kafka-health.sh'])
+        self.assertTrue(all(part.strip().startswith('bash /opt/mdx/init-scripts/')
+                            for part in init['command'][2].split('&&')))
+        self.assertTrue(any(mount.get('target') == '/opt/mdx/init-scripts' and mount.get('read_only')
+                            for mount in init['volumes']))
+        for name, published in (('prometheus', '9090'), ('grafana', '14000'),
+                                ('node-exporter', '19100'), ('cadvisor', '18080')):
+            ports = services[name]['ports']
+            self.assertEqual(len(ports), 1)
+            self.assertEqual(ports[0]['host_ip'], '127.0.0.1')
+            self.assertEqual(ports[0]['published'], published)
+        self.assertEqual(b.memory_reserve(), 20)
 
     def test_actual_compose_render_and_secret_isolation(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -347,10 +430,12 @@ class BootstrapTests(unittest.TestCase):
                     self.assertTrue(config_mount['read_only'])
                 self.assertNotIn('tegrastats-exporter', services)
                 self.assertNotIn('perception-2d-fusion', services)
-                self.assertIn('-sbsa', services['rtvi-vlm']['build']['args']['BASE_IMAGE'])
+                self.assertNotIn('build', services['rtvi-vlm'])
+                self.assertEqual(services['rtvi-vlm']['image'], 'vss-spark-rtvi-vlm:source')
                 self.assertEqual(services['rtvi-vlm']['environment']['VLM_RECLAIM_MODEL_FILE_CACHE'], 'true')
                 self.assertEqual(services['rtvi-vlm']['environment']['VLM_FILE_CACHE_RECLAIM_ROOT'], '/opt/nvidia/rtvi/.rtvi/ngc_model_cache')
-                self.assertEqual(services['rtvi-embed']['build']['args']['BASE_IMAGE'], 'nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1-sbsa')
+                self.assertNotIn('build', services['rtvi-embed'])
+                self.assertEqual(services['rtvi-embed']['image'], 'vss-spark-rtvi-embed:source')
                 self.assertIn('-sbsa', services['lvs-server']['build']['args']['LVS_BASE_IMAGE'])
                 self.assertEqual(services['rtvi-embed']['environment']['HF_HUB_OFFLINE'], '0')
                 self.assertEqual(services['rtvi-embed']['environment']['KAFKA_ENABLED'], 'true')
@@ -376,7 +461,7 @@ class BootstrapTests(unittest.TestCase):
                 self.assertEqual(services['spark-llm']['environment']['NIM_MAX_MODEL_LEN'], '32768')
                 self.assertNotIn('MAX_NUM_SEQS', services['spark-llm']['environment'])
                 self.assertEqual(services['vss-agent']['environment']['LLM_NAME'], 'nvidia/nemotron-nano-9b-v2')
-                self.assertEqual(services['vss-haproxy-ingress']['environment']['VSS_AGENT_BACKEND_HOST'], '127.0.0.1')
+                self.assertEqual(services['vss-haproxy-ingress']['environment']['VSS_AGENT_SERVICE_HOST'], '127.0.0.1')
                 self.assertEqual(services['lvs-server']['environment']['LVS_LLM_MODEL_NAME'], 'nvidia/nemotron-nano-9b-v2')
                 self.assertIn('"$${status}"', services['logstash']['healthcheck']['test'][1])
                 self.assertTrue(all(s['restart'] == 'no' for s in services.values()))

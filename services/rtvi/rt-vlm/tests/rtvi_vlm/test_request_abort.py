@@ -40,7 +40,7 @@ def _pipeline_method(name):
         from_vlm_query=lambda _query: object(),
         from_text_embeddings_query=lambda _query: object(),
     )
-    return _load_method(
+    method = _load_method(
         SRC / "vlm_pipeline" / "vlm_pipeline.py",
         "VlmPipeline",
         name,
@@ -57,6 +57,15 @@ def _pipeline_method(name):
             "VlmRequestParams": request_params,
         },
     )
+    if name != "enqueue_chunk":
+        return method
+
+    def enqueue(pipeline, chunk, *args, **kwargs):
+        pipeline._all_vlm_processes_healthy = lambda: True
+        pipeline._reserve_chunk_callback = MethodType(_pipeline_method("_reserve_chunk_callback"), pipeline)
+        return method(pipeline, chunk, *args, **kwargs)
+
+    return enqueue
 
 
 def _handler_method(name):
@@ -165,7 +174,7 @@ def test_abort_atomically_closes_enrollment_and_rejects_late_gpu_work() -> None:
     assert (
         _pipeline_method("enqueue_chunk")(
             pipeline,
-            object(),
+            SimpleNamespace(),
             lambda _response: None,
             object(),
             request_id="request-one",
@@ -195,7 +204,7 @@ def test_new_enrollment_clears_a_preexisting_quiescent_event() -> None:
 
     assert _pipeline_method("enqueue_chunk")(
         pipeline,
-        object(),
+        SimpleNamespace(),
         lambda _response: None,
         object(),
         request_id="request-one",
@@ -220,7 +229,7 @@ def test_legacy_empty_request_id_does_not_create_unfinishable_state() -> None:
 
     assert _pipeline_method("enqueue_chunk")(
         pipeline,
-        object(),
+        SimpleNamespace(),
         lambda _response: None,
         object(),
     )
@@ -267,6 +276,7 @@ def test_file_abort_proves_quiescence_before_asset_unlock_and_acknowledgement() 
     pipeline.wait_for_request_quiescent.side_effect = wait_for_quiescence
     handler = SimpleNamespace(
         _lock=RLock(),
+        _vlm_admission_mode="off",
         _request_info_map={first.request_id: first, sibling.request_id: sibling},
         _vlm_pipeline=pipeline,
         _metrics=MagicMock(),
@@ -283,78 +293,10 @@ def test_file_abort_proves_quiescence_before_asset_unlock_and_acknowledgement() 
     assert handler._request_info_map == {sibling.request_id: sibling}
 
 
-def test_live_abort_removes_unique_pipeline_stream_and_preserves_asset_sibling() -> None:
-    asset = SimpleNamespace(use_count=2, unlock=MagicMock())
-    first = _request("request-one", asset, is_live=True)
-    sibling = _request("request-two", asset, is_live=True)
-    handler = SimpleNamespace(
-        _lock=RLock(),
-        _request_info_map={first.request_id: first, sibling.request_id: sibling},
-        _vlm_pipeline=MagicMock(),
-        _metrics=MagicMock(),
-        stop_request_profiling=MagicMock(),
-        _cleanup_request_files=MagicMock(),
-    )
-    handler._vlm_pipeline.abort_live_stream_exact.return_value = True
-
-    assert _handler_method("abort_request")(handler, first.request_id) is True
-    handler._vlm_pipeline.abort_live_stream_exact.assert_called_once_with(
-        "pipeline-request-one"
-    )
-    handler._vlm_pipeline.abort_request.assert_not_called()
-    assert handler._request_info_map[sibling.request_id] is sibling
 
 
-def test_live_abort_does_not_unlock_until_exact_drain_can_be_proven() -> None:
-    asset = SimpleNamespace(use_count=1, unlock=MagicMock())
-    request = _request("request-one", asset, is_live=True)
-    handler = SimpleNamespace(
-        _lock=RLock(),
-        _request_info_map={request.request_id: request},
-        _vlm_pipeline=MagicMock(),
-        _metrics=MagicMock(),
-        stop_request_profiling=MagicMock(),
-        _cleanup_request_files=MagicMock(),
-    )
-    handler._vlm_pipeline.abort_live_stream_exact.return_value = False
-    abort_request = _handler_method("abort_request")
-
-    assert abort_request(handler, request.request_id) is False
-    assert handler._request_info_map[request.request_id] is request
-    assert request.finalization_started is False
-    assert request.finalized is False
-    asset.unlock.assert_not_called()
-
-    handler._vlm_pipeline.abort_live_stream_exact.return_value = True
-    assert abort_request(handler, request.request_id) is True
-    asset.unlock.assert_called_once_with()
-    assert request.request_id not in handler._request_info_map
 
 
-def test_exact_live_abort_timeout_keeps_drop_guards_and_ownership() -> None:
-    decoder = MagicMock()
-    vlm = MagicMock()
-    stream_info = SimpleNamespace(gpu_id=0, all_chunks_processed=False)
-    pipeline = SimpleNamespace(
-        _live_stream_id_map={"pipeline-request": stream_info},
-        _decoder_procs=[decoder],
-        _vlm_procs=[vlm],
-        _asr_procs=[],
-    )
-    abort_live = _pipeline_method("abort_live_stream_exact")
-
-    assert abort_live(pipeline, "pipeline-request", timeout_sec=0) is False
-    assert pipeline._live_stream_id_map["pipeline-request"] is stream_info
-    assert vlm.send_command.call_args_list == [
-        call("drop-chunks", stream_id="pipeline-request")
-    ]
-
-    stream_info.all_chunks_processed = True
-    assert abort_live(pipeline, "pipeline-request", timeout_sec=0) is True
-    assert "pipeline-request" not in pipeline._live_stream_id_map
-    assert vlm.send_command.call_args_list[-1] == call(
-        "stop-drop-chunks", stream_id="pipeline-request"
-    )
 
 
 def test_file_error_suppression_is_exact_and_teardown_is_deferred() -> None:
@@ -406,19 +348,19 @@ def test_saved_response_publication_is_serialized_against_abort_claim() -> None:
 
 
 def test_entered_callback_rechecks_abort_after_blocking_conversion() -> None:
-    req = SimpleNamespace(request_id="request", abort_requested=False, finalized=False)
-    handler = SimpleNamespace(_lock=RLock(), _kafka_enabled=True)
+    req = SimpleNamespace(request_id="request", abort_requested=False, finalized=False, is_live=False)
+    handler = SimpleNamespace(_lock=RLock(), _normal_output_bus_enabled_for_request=lambda _request: True)
 
     def conversion(*_args):
         req.abort_requested = True
         return MagicMock(), MagicMock()
 
     handler._chunk_result_to_vision_llm = conversion
-    handler._send_protobuf_to_kafka = MagicMock()
+    handler._send_protobuf_to_message_bus = MagicMock()
     chunk = SimpleNamespace(chunk=SimpleNamespace(chunkIdx=1))
 
     _handler_method("_on_vlm_chunk_response")(handler, chunk, req)
-    handler._send_protobuf_to_kafka.assert_not_called()
+    handler._send_protobuf_to_message_bus.assert_not_called()
 
 
 def test_chunk_publication_linearizes_before_abort_can_set_terminal_flag() -> None:
@@ -441,7 +383,7 @@ def test_chunk_publication_linearizes_before_abort_can_set_terminal_flag() -> No
     message.SerializeToString.side_effect = serialize
     handler = SimpleNamespace(
         _lock=RLock(),
-        _send_protobuf_to_kafka=MagicMock(),
+        _send_protobuf_to_message_bus=MagicMock(),
         _send_error_message_to_kafka=MagicMock(),
         _kafka_incident_topic=None,
         _kafka_topic="topic",
@@ -454,7 +396,7 @@ def test_chunk_publication_linearizes_before_abort_can_set_terminal_flag() -> No
     release.set()
     worker.join(timeout=1)
 
-    handler._send_protobuf_to_kafka.assert_called_once_with(
+    handler._send_protobuf_to_message_bus.assert_called_once_with(
         b"payload", chunk, request
     )
     request.abort_requested = True

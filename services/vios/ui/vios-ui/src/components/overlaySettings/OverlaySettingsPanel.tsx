@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,6 +42,8 @@ interface OverlaySettingsPanelProps {
     streamType?: StreamType;
     /** When true, calls onSettingsChange on every state change rather than only on explicit save */
     autoApply?: boolean;
+    /** Portal target for dropdown menus rendered inside a fullscreen player. */
+    menuContainer?: Element | null;
 }
 
 const STORAGE_KEY = 'overlaySettings';
@@ -59,9 +61,14 @@ function initColorMaps(labels: string[], colorCode: Array<{ [key: string]: RGBAC
     return { colors, enabled };
 }
 
+function applySavedMap<T>(value: unknown, setter: (map: T) => void): void {
+    if (typeof value === 'object' && value !== null && Object.keys(value).length > 0) setter(value as T);
+}
+
 const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySettingsPanelProps>(
-    ({ onSettingsChange, sensors, streamType, autoApply = false }, ref) => {
+    ({ onSettingsChange, sensors, streamType, autoApply = false, menuContainer }, ref) => {
         const [overlayBbox, setOverlayBbox] = useState(true);
+        const [filterObjects, setFilterObjects] = useState(false);
         const [framerateValue, setFramerateValue] = useState(15);
         const [includeFloorPlan, setIncludeFloorPlan] = useState(false);
         const [overlayColor, setOverlayColor] = useState('red');
@@ -111,15 +118,13 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
             }
 
             if (saved) {
-                if (saved.bboxColors && Object.keys(saved.bboxColors as object).length > 0) setBboxColors(saved.bboxColors as ColorMap);
-                if (saved.proximityColors && Object.keys(saved.proximityColors as object).length > 0)
-                    setProximityColors(saved.proximityColors as ColorMap);
-                if (saved.enabledBboxColors && Object.keys(saved.enabledBboxColors as object).length > 0)
-                    setEnabledBboxColors(saved.enabledBboxColors as EnabledMap);
-                if (saved.enabledProximityColors && Object.keys(saved.enabledProximityColors as object).length > 0)
-                    setEnabledProximityColors(saved.enabledProximityColors as EnabledMap);
+                applySavedMap<ColorMap>(saved.bboxColors, setBboxColors);
+                applySavedMap<ColorMap>(saved.proximityColors, setProximityColors);
+                applySavedMap<EnabledMap>(saved.enabledBboxColors, setEnabledBboxColors);
+                applySavedMap<EnabledMap>(saved.enabledProximityColors, setEnabledProximityColors);
 
                 setOverlayBbox((saved.bboxShowAll ?? saved.needBbox ?? false) as boolean);
+                setFilterObjects((saved.filterObjects ?? false) as boolean);
                 setIncludeFloorPlan((saved.includeFloorPlan ?? false) as boolean);
                 setOverlayColor((saved.color ?? 'red') as string);
                 setBboxThickness((saved.thickness ?? 4) as number);
@@ -166,21 +171,30 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
                 return acc;
             }, {} as ColorMap);
 
+            // The backend enables bounding boxes whenever a "bbox" object is present
+            // with either showAll or a non-empty object/class filter.  So the master
+            // switch decides whether "bbox" is sent at all, and "Filter Objects"
+            // decides between drawing every object and drawing only the selected ones.
+            const bbox = overlayBbox
+                ? {
+                      showAll: !filterObjects,
+                      objectId:
+                          filterObjects && objectIds
+                              ? objectIds
+                                    .split(',')
+                                    .map(id => parseInt(id.trim()))
+                                    .filter(id => !isNaN(id))
+                              : [],
+                      classType: filterObjects ? classType : [],
+                      showObjId,
+                      objIdPosition,
+                      objIdTextColor,
+                      objIdTextBGColor,
+                  }
+                : undefined;
+
             return {
-                bbox: {
-                    showAll: overlayBbox,
-                    objectId: objectIds
-                        ? objectIds
-                              .split(',')
-                              .map(id => parseInt(id.trim()))
-                              .filter(id => !isNaN(id))
-                        : [],
-                    classType,
-                    showObjId,
-                    objIdPosition,
-                    objIdTextColor,
-                    objIdTextBGColor,
-                },
+                ...(bbox && { bbox }),
                 color: overlayColor,
                 thickness: bboxThickness,
                 debug: overlayDebug,
@@ -202,6 +216,7 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
             };
         }, [
             overlayBbox,
+            filterObjects,
             objectIds,
             classType,
             showObjId,
@@ -256,6 +271,7 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
                 enabledProximityColors,
                 enabledBboxColors,
                 bboxShowAll: overlayBbox,
+                filterObjects,
                 includeFloorPlan,
                 color: overlayColor,
                 thickness: bboxThickness,
@@ -288,6 +304,7 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
             enabledProximityColors,
             enabledBboxColors,
             overlayBbox,
+            filterObjects,
             includeFloorPlan,
             overlayColor,
             bboxThickness,
@@ -364,6 +381,8 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
                 <BboxSettingsSection
                     overlayBbox={overlayBbox}
                     setOverlayBbox={setOverlayBbox}
+                    filterObjects={filterObjects}
+                    setFilterObjects={setFilterObjects}
                     classType={classType}
                     setClassType={setClassType}
                     objectIds={objectIds}
@@ -377,6 +396,7 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
                     objIdTextBGColor={objIdTextBGColor}
                     setObjIdTextBGColor={setObjIdTextBGColor}
                     availableClassLabels={configData?.overlayClassLabels}
+                    menuContainer={menuContainer}
                 />
 
                 <DisplaySettingsSection
@@ -396,6 +416,7 @@ const OverlaySettingsPanel = forwardRef<OverlaySettingsPanelHandle, OverlaySetti
                     proximityAnimation={proximityAnimation}
                     setProximityAnimation={setProximityAnimation}
                     availableClassLabels={configData?.overlayClassLabels}
+                    menuContainer={menuContainer}
                 />
 
                 {configData && (

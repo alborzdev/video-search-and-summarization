@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,26 +35,27 @@
 #include "syncobject.h"
 #include "media_producer.h"
 
-using namespace std;
-using namespace nv_vms;
 
 namespace nv_vms
 {
 typedef
 struct StreamEncParam
 {
-    string codec;
+    std::string codec;
     int width;
     int height;
     StreamEncParam() : width(0)
                     , height(0)
     {}
 } StreamEncParam;
+/* Opaque stand-in for a libcurl easy handle (libcurl types it as void). */
+struct CurlEasyHandle;
+
 class IStreamStatusEvent
 {
 public:
-    virtual void onStreamStatusChange(const string &url, const StreamStatus newStatus, StreamEncParam& details) = 0;
-    virtual void onDecoderPlayingStatus(const string &url) {}
+    virtual void onStreamStatusChange(const std::string &url, const StreamStatus newStatus, StreamEncParam& details) = 0;
+    virtual void onDecoderPlayingStatus(const std::string &url) { /* Optional hook: listeners that do not care about decoder start keep this no-op. */ }
 };
 
 class StreamMonitor : public IMediaDataProducer
@@ -90,43 +91,49 @@ public:
     std::string getSourceIdentifier() const override;
     size_t getConsumerCount() const override;
     bool hasConsumers() const override;
+    // Keep the base class registerConsumer overloads visible (e.g. the
+    // media-type variant) so they are not hidden by the ones declared here.
+    using IMediaDataProducer::registerConsumer;
     void registerConsumer(std::shared_ptr<IMediaDataConsumer> consumer, const std::string& identifier = "") override;
     // Overloaded registerConsumer for time-range playback
     void registerConsumer(std::shared_ptr<IMediaDataConsumer> consumer, const std::string& identifier, const std::string& startTime, const std::string& endTime) override;
     void unregisterConsumer(std::shared_ptr<IMediaDataConsumer> consumer, const std::string& identifier = "", bool doNotRemoveClient = false) override;
+    // In-session seek: re-PLAY the existing RTSP client for `identifier` at an
+    // absolute time (RTSP Range) without tearing down/recreating the source.
+    bool seekToTime(const std::string& identifier, int64_t targetEpochMs) override;
     void distributeToConsumers(std::shared_ptr<RawFrameParams> frameData) override;
     void distributeToConsumers(FrameParams& frameParams) override;
     
     // Legacy methods for backward compatibility
-    void registerDataCallback(std::string& url, shared_ptr<IMediaDataConsumer> consumer);
-    void deregisterDataCallback(shared_ptr<IMediaDataConsumer> consumer, std::string& url, bool doNotRemoveClient = false);
+    void registerDataCallback(std::string& url, std::shared_ptr<IMediaDataConsumer> consumer);
+    void deregisterDataCallback(std::shared_ptr<IMediaDataConsumer> consumer, std::string& url, bool doNotRemoveClient = false);
     bool checkIfStreamAlive(const std::string& inUrl);
     std::vector<std::string> getListofAliveStreams();
     void addUriListForLivenessMonitor(const std::vector<std::string>& inList);
     void removeUriListFromLivenessMonitor(const std::vector<std::string>& inList);
 
-    void sendStatusEvent(const string &url, StreamStatus status, StreamEncParam& details);
+    void sendStatusEvent(const std::string &url, StreamStatus status, StreamEncParam& details);
     void removeStream(std::shared_ptr<StreamInfo> stream);
-    void removeStream(const string& stream_id);
+    void removeStream(const std::string& stream_id);
     void addStream(std::shared_ptr<StreamInfo> stream);
-    void addStream(vector<std::shared_ptr<StreamInfo>> streams);
-    void enableTcpStreaming(const string& uri);
-    std::vector<shared_ptr<IMediaDataConsumer>> getConsumers(const string& url);
+    void addStream(std::vector<std::shared_ptr<StreamInfo>> streams);
+    void enableTcpStreaming(const std::string& uri);
+    std::vector<std::shared_ptr<IMediaDataConsumer>> getConsumers(const std::string& url);
     void getQosInfo(Json::Value &response);
     std::string getUriName(const std::string &url);
     std::shared_ptr<StreamInfo> getStreamInfoForUrl(const std::string &url);
-    std::map<string, media_info, std::less<>> getSupportedSubSessions(const std::string& url);
-    shared_ptr<StreamInfo> getStreamInfo(const std::string &url, bool isProxyUrl);
+    std::map<std::string, media_info, std::less<>> getSupportedSubSessions(const std::string& url);
+    std::shared_ptr<StreamInfo> getStreamInfo(const std::string &url, bool isProxyUrl);
 
     class UrlInfo
     {
         public:
-            string m_url;
-            string m_devName;
-            string m_streamId;
+            std::string m_url;
+            std::string m_devName;
+            std::string m_streamId;
             unsigned m_frameRate;
             bool m_isMainStream;
-            string m_livenessUrl;
+            std::string m_livenessUrl;
             bool m_rtspUrlReachable;
     };
 
@@ -138,7 +145,7 @@ private:
     std::thread m_streamMonitorThread;
     std::thread m_qosMeasurementThread;
     std::map<std::string, StreamStatus, std::less<>> m_livenessMonitorList;
-    std::vector<std::tuple<CURL*, std::string, bool>> m_curlList;
+    std::vector<std::tuple<CurlEasyHandle*, std::string, bool>> m_curlList;
     std::mutex m_livenessMonitorListMutex;
 
     bool m_exit;
@@ -147,7 +154,7 @@ private:
 
     bool m_enableQoS = false;
     SyncObject m_qosThreadSync = {};
-    std::map<std::string, std::vector<shared_ptr<IMediaDataConsumer>>, std::less<>> m_streamConsumers;
+    std::map<std::string, std::vector<std::shared_ptr<IMediaDataConsumer>>, std::less<>> m_streamConsumers;
     mutable std::mutex  m_streamConsumerLock;
 
     // Private member functions declarations
@@ -155,17 +162,17 @@ private:
     void livenessMonitorTask();
     void updateUriStatus(const std::string& uri, StreamStatus status, CURLcode errorCode);
     void addCurlRequest(const std::string& url);
-    void removeCurlRequest(CURL *curl);
+    void removeCurlRequest(CurlEasyHandle *curl);
     bool isCurlResponsePendingForUri(const std::string& url);
-    void setCurlResponsePendingStatus(CURL *curl, bool isResponsePending);
-    std::string getUriByUsingCurlHandle(const CURL *curl);
+    void setCurlResponsePendingStatus(const std::string& url, bool isResponsePending);
+    std::string getUriByUsingCurlHandle(const CurlEasyHandle *curl);
     void notifyStreamStatus(const StreamStatus& status, const std::string& camera_id);
     std::vector<UrlInfo> getQosMonitorStreamList();
     void qosMeasurementTask();
     void cleanupQoSThread();
     void restartQoSMonitoringTask();
-    bool isRtspSourceDestroyed(const string& url);
-    void waitForCompleteRemoval(const string& url);
+    bool isRtspSourceDestroyed(const std::string& url);
+    void waitForCompleteRemoval(const std::string& url);
 
     std::vector<StreamMonitor::UrlInfo> m_qosMonitorList;
     std::mutex  m_qosMonitorListMutex;

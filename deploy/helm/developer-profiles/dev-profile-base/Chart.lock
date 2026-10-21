@@ -1,18 +1,24 @@
 dependencies:
+- name: common
+  repository: file://../../services/common
+  version: 3.4.0
 - name: infra
   repository: file://../../services/infra
-  version: 3.2.0
+  version: 3.4.0
 - name: vios
   repository: file://../../services/vios
-  version: 3.2.0
+  version: 3.4.0
 - name: agent
   repository: file://../../services/agent
-  version: 3.2.0
+  version: 3.4.0
 - name: vss-agent-ui
   repository: file://../../services/ui
-  version: 3.2.0
+  version: 3.4.0
 - name: nims
   repository: file://../../services/nims
-  version: 3.2.0
-digest: sha256:b27b4b1ce1c07282248da13369be1b8e4ee7edaf68b20f83db6d364ff8b65a9f
-generated: "2026-06-04T16:43:52.660095+05:30"
+  version: 3.4.0
+- name: rtvi
+  repository: file://../../services/rtvi
+  version: 3.4.0
+digest: sha256:452bd0396210c78763ed30da29eda02b1d34e3822cd57410abb946c9aaa58755
+generated: "2026-10-13T09:48:56.017853+05:30"

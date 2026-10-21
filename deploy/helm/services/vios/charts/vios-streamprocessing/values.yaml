@@ -16,8 +16,8 @@
 enabled: false
 global: {}
 image:
-  repository: nvcr.io/nvidia/vss-core/vss-vios-streamprocessing
-  tag: "3.2.1"
+  repository: ghcr.io/nvidia-ai-blueprints/vss/vss-vios-streamprocessing
+  tag: "develop-latest"
   pullPolicy: IfNotPresent
 replicas: 1
 # When true: create StatefulSet named vss-vios-streamprocessing (required for SDR). When false: create Deployment (vss-alerts-vss-vios-streamprocessing).
@@ -50,14 +50,52 @@ readinessProbe:
   timeoutSeconds: 3
   failureThreshold: 30
 sensorModuleEndpoint: ""
-vstIngressEndpoint: ""   # default: <Release>-vss-vios-ingress:30888/vst (host:port/path, no scheme). When global.vlmBaseUrl and global.externalHost are set, defaults to <externalHost>[:externalPort]/vst so incident URLs work for remote VLM. Override explicitly if needed.
-# Redis: used in vst_config.json notifications.redis_server_env_var. Default "" means use Release.Name (e.g. vss-redis:6379).
+vstIngressEndpoint: ""   # Defaults to <externalHost>[:vstExternalPort or externalPort]/vst when externalHost is set; otherwise the in-cluster ingress.
+# Redis: used in notification_config.json message_broker.redis_server_env_var. Default "" means use Release.Name (e.g. vss-redis:6379).
 redisServerAddress: ""
-# Kafka / video metadata / cloud storage / MQTT: vst_config.json placeholders. Empty = release-based or Compose default.
+# Kafka and MQTT use notification_config.json placeholders; video metadata and cloud storage remain in vst_config.json. Empty = release-based or Compose default.
 kafkaServerAddress: ""
+# Search-profile webhook targets. Empty values derive the in-cluster Service
+# names and honor global.useReleaseNamePrefix.
+rtviCvServerAddress: ""
+rtviEmbedServerAddress: ""
+# RT-VLM webhook target (__RTVI_VLM_ADDRESS__). Empty = vss-rtvi-vlm:8000, or
+# <Release.Name>-vss-rtvi-vlm:8000 when global.useReleaseNamePrefix is true.
+rtviVlmServerAddress: ""
+elasticsearchServerAddress: ""
+# Optional complete notification_config.json. Empty uses the chart default;
+# global.vios.notificationConfig provides one shared inline config to sensor and streamprocessing.
+# global.vios.streamprocessingNotificationConfigMapName (falling back to
+# global.vios.notificationConfigMapName) overlays a parent-chart ConfigMap key
+# notification_config.json (Search loads configs/vios/notification_config.json this way).
+# Logical name only; when useReleaseNamePrefix is true the release is prepended.
+# Set notificationConfig on this subchart to skip the overlay and use this JSON instead.
+notificationConfig: ""
+notificationConfigMapName: ""
+# message_broker fields in notification_config.json. Empty = chart default (redis/mdx-raw).
+messageBrokerConsumer: ""
+messageBrokerTopicConsumer: ""
+messageBrokerMetadataTopic: ""
 videoMetadataServerUrl: ""
+maxDevicesSupported: ""
+videoMetadataIndexPattern: ""
+overlaySensorName: ""
 cloudStorageEndpoint: ""
 mqttBrokerAddress: ""
+# Comma-separated static TURN URLs (username:password@host:port). Empty = STUN only,
+# so WebRTC playback fails off-network/behind NAT.
+turnServerUrl: ""
+# Absolute HTTP URLs for overlay assets (video-analytics-api). Empty = skip download.
+# When either is set, configs are seeded into a writable emptyDir so downloads can
+# write calibration.json / Top.png under /home/vst/vst_release/configs/.
+calibrationFileEndpoint: ""
+floormapImageEndpoint: ""
+# Init container image used to copy ConfigMap configs into the writable emptyDir.
+configSeed:
+  image:
+    repository: docker.io/library/busybox
+    tag: "1.36"
+    pullPolicy: IfNotPresent
 # Centralized DB: host/port from template (Release-vss-vios-postgres:5432). Password from postgres-cm unless overridden.
 # Override for external DB: centralizedDbHost, centralizedDbPort, centralizedDbPassword.
 centralizedDbHost: ""
@@ -69,6 +107,9 @@ env:
   # Set to "true" to run user_additional_install.sh at startup (installs e.g. libav/ffmpeg for upload media info). Script must exist in image at /home/vst/vst_release/tools/user_additional_install.sh.
   - name: VST_INSTALL_ADDITIONAL_PACKAGES
     value: "true"
+  # Point APT at an internal/nearby mirror. Empty uses the public archive.
+  - name: VST_APT_MIRROR
+    value: ""
   - name: CONTAINER_NAME
     value: vss-vios-streamprocessing
   - name: ADAPTOR
@@ -87,11 +128,6 @@ env:
   # Compose parity: services/vios/vst.env sets VST_VIDEO_STORAGE_SIZE_MB=100000 (in MB). Caps on-disk video storage before aging policy reclaims.
   - name: VST_VIDEO_STORAGE_SIZE_MB
     value: "100000"
-  # Compose parity: services/vios/streamprocessing/docker-compose.yaml sets
-  # DEEPSTREAM_ENABLE_SENSOR_ID_EXTRACTION=1 on every streamprocessing container so
-  # DeepStream extracts a stable sensor id from RTSP source metadata.
-  - name: DEEPSTREAM_ENABLE_SENSOR_ID_EXTRACTION
-    value: "1"
   # SENSOR_MODULE_ENDPOINT and VST_INGRESS_ENDPOINT are set by the template from sensorModuleEndpoint / vstIngressEndpoint (with release-based defaults)
 
 # Persistence: compose mounts VST_DATA_PATH, VST_VIDEO_STORAGE_PATH, CLIP_STORAGE_PATH. Optional PVCs for vst-data, vst-video, streamer-videos. temp-files stays EmptyDir.
@@ -126,7 +162,29 @@ securityContext:
   runAsGroup: 0
   fsGroup: 0
 
-# Request 1 GPU for HW encode/decode (matches Docker runtime: nvidia). Set to {} to run without GPU (software mode). Requires NVIDIA device plugin on nodes.
+# Set true to use FFmpeg software encode/decode instead of GPU hardware path.
+# Pair software mode with GPU limits and requests set explicitly to 0.
+# For an override of this subchart, use the following nested YAML:
+# useSoftwarePath: true
+# resources:
+#   limits:
+#     nvidia.com/gpu: 0
+#   requests:
+#     nvidia.com/gpu: 0
+# In a Warehouse profile override, nest these settings under vios.vss-vios-streamprocessing.
+# Use explicit 0 values; null restores dependency defaults during Helm coalescing.
+# VST overlay and video wall do not work properly without GPU allocation.
+useSoftwarePath: false
+
+# Base download timeout in seconds, rendered into download_files_timeout_secs.
+# Paths that consume it directly (video_download.cpp -> waitForCompletion) time out at
+# exactly this value, so 120 still yields a 120-second timeout there. A pipeline that
+# keeps reporting progress (GstNvElements::pollBusMessages) may extend its own budget
+# incrementally, up to a ceiling of at least 600 seconds.
+# Increase for long videos when using the software encoding path.
+downloadFilesTimeoutSecs: 120
+
+# Request 1 GPU for HW encode/decode (matches Docker runtime: nvidia). Requires NVIDIA device plugin on nodes.
 resources:
   limits:
     nvidia.com/gpu: 1
@@ -134,3 +192,13 @@ resources:
     nvidia.com/gpu: 1
 nodeSelector: {}
 tolerations: []
+
+# Compose parity with the wait-for-redis service in the warehouse profiles.
+waitForRedis:
+  enabled: true
+  host: ""
+  port: 6379
+  timeoutSeconds: 120
+  image:
+    repository: busybox
+    tag: "1.37.0"

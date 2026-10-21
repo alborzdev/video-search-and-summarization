@@ -45,7 +45,9 @@ deploy/
 │   │   ├── alert/compose.yml
 │   │   ├── infra/{Dockerfiles,...}/...
 │   │   └── nim/...
-│   ├── industry-profiles/                             ← skip (out of scope for now)
+│   ├── industry-profiles/
+│   │   ├── warehouse-operations/                      ← has a helm counterpart, in scope
+│   │   └── smartcities/                                ← docker-only, no helm counterpart, skip
 │   └── scripts/                                       ← skip (tooling, not deployments)
 └── helm/
     ├── developer-profiles/
@@ -55,6 +57,10 @@ deploy/
     │   │   ├── values*.yaml
     │   │   ├── templates/...
     │   │   └── configs/...
+    ├── industry-profiles/
+    │   └── warehouse-operations/
+    │       ├── warehouse-{2d,3d,mv3dt}-app/            ← parity target, one per docker app
+    │       └── camera_configs/, scripts/               ← shared, not per-app
     └── services/
         ├── agent/{Chart.yaml, charts/, values.yaml}
         ├── alert/{Chart.yaml, configs/, ...}
@@ -62,13 +68,30 @@ deploy/
 ```
 
 The helm chart for each `deploy/docker/<path>/<name>/compose.yml`
-lives at `deploy/helm/<path>/<name>/` (mirror layout). This
-mirroring is in place for **both** `developer-profiles/*` and
-`services/*` — the two paths the agent walks. `industry-profiles/`
-and `scripts/` are out of scope: skip them entirely and don't
-generate any drift signal for paths under them. Verify the actual
-layout in this PR's checkout before applying the convention; the
-repo evolves.
+lives at `deploy/helm/<path>/<name>/` (mirror layout), in place for
+`developer-profiles/*`, `services/*`, and
+`industry-profiles/warehouse-operations/*` — the three paths the
+agent walks. Within `industry-profiles/`, `smartcities/` has no
+helm counterpart (not deployed via Helm — not a gap) and
+`scripts/` is tooling, not deployments; skip both. Verify the
+actual layout in this PR's checkout before applying the
+convention; the repo evolves.
+
+`warehouse-operations` has three docker apps
+(`warehouse-2d-app/`, `warehouse-3d-app/`, `warehouse-mv3dt-app/`)
+mapping to identically-named helm chart dirs. Its per-app config
+is mounted as files on the docker side but rendered as
+go-templated ConfigMaps on the helm side (`tpl (.Files.Get ...)`
+in `templates/vss-agent-configmap.yaml` and
+`templates/sdrc-configmap.yaml`) — compare semantic content, not
+literal text. Non-drift by design in this tree:
+- `vst/configs/notification_config.json` and `vst_config.json`
+  have no per-app helm counterpart; sourced from the shared
+  `deploy/helm/services/vios/charts/vios-sensor/configs/notification_config.json`
+  umbrella dependency instead.
+- sdrc's `WDM_CLUSTER_TYPE: docker` vs `k8s`, and Kafka/Redis
+  addressing (`kafka:29092`/`redis` vs `kafka-kafka:9092`), are
+  platform differences, not drift.
 
 ## Your job, in order
 
@@ -91,14 +114,20 @@ repo evolves.
 2. **Classify each changed `deploy/` file.** Walk the diff and bucket
    each path:
 
-   - **docker-side** — anything under `deploy/docker/developer-profiles/`
-     or `deploy/docker/services/`, including `compose*.y[a]ml`,
-     `Dockerfile*`, files under any `Dockerfiles/` dir, and any
-     `.env` / `.env.example` referenced by a compose file.
-   - **helm-side** — anything under `deploy/helm/developer-profiles/`
-     or `deploy/helm/services/`: `Chart.yaml`, `values*.yaml`,
-     `templates/**`, `configs/**`, `charts/**` (subcharts), `Chart.lock`.
-   - **skip entirely** — `deploy/docker/industry-profiles/**`,
+   - **docker-side** — anything under `deploy/docker/developer-profiles/`,
+     `deploy/docker/services/`, or
+     `deploy/docker/industry-profiles/warehouse-operations/`,
+     including `compose*.y[a]ml`, `Dockerfile*`, files under any
+     `Dockerfiles/` dir, `.env` / `.env.example` referenced by a
+     compose file, and config files mounted by a compose service
+     (e.g. `vss-agent/configs/*.yml`, `*/sdrc/configs/*.tmpl`,
+     `*/vst/configs/*.json`).
+   - **helm-side** — anything under `deploy/helm/developer-profiles/`,
+     `deploy/helm/services/`, or
+     `deploy/helm/industry-profiles/warehouse-operations/`:
+     `Chart.yaml`, `values*.yaml`, `templates/**`, `configs/**`,
+     `charts/**` (subcharts), `Chart.lock`.
+   - **skip entirely** — `deploy/docker/industry-profiles/smartcities/**`,
      `deploy/docker/scripts/**`, and any `deploy/*.md` / README /
      non-deployment file. Don't drift-flag, don't comment, don't
      bot-PR; treat them as out of scope for this workflow.
@@ -113,13 +142,23 @@ repo evolves.
    → helm   = deploy/helm/developer-profiles/dev-profile-alerts/
    ```
 
-   Both `developer-profiles/*` and `services/*` have full helm parity
-   on develop today, so the candidate helm dir always exists for paths
-   in scope. If you ever encounter a docker change in scope whose helm
-   counterpart unexpectedly doesn't exist (chart was deleted, layout
-   restructured), comment on the source PR with a one-line note and
-   exit `BLOCKED: no helm counterpart for <path>`. Don't scaffold a
-   chart from scratch — that's a deliberate, human-driven decision.
+   Most of `developer-profiles/*` and `services/*` have helm parity on
+   develop, but not all of it: some docker NIM services (for example
+   `cosmos-reason1-7b`, `nvidia-nemotron-nano-9b-v2-fp8` and
+   `qwen3-vl-8b-instruct`) have never had a helm chart. So when a
+   docker change in scope has no helm counterpart, check the **base
+   branch** before concluding anything:
+
+   - Counterpart absent on the base branch too → a pre-existing gap
+     the PR did not create. That is not drift; say so in the summary
+     and keep going (`DONE: in sync` if nothing else drifted). Do not
+     block the PR for a parity hole it merely touched.
+   - Counterpart exists on the base branch but not on the head (chart
+     deleted, layout restructured) → comment on the source PR with a
+     one-line note and exit `BLOCKED: no helm counterpart for <path>`.
+
+   Either way, don't scaffold a chart from scratch — introducing a
+   helm counterpart is a deliberate, human-driven decision.
 
 3. **For every docker-side change, look up the matching helm
    counterpart and compare semantics.** Concrete signals to check
@@ -137,6 +176,22 @@ repo evolves.
    | replicas (compose `deploy.replicas`) | `replicaCount` / autoscaling block |
    | new Dockerfile (new service) | new `templates/<svc>-deployment.yaml` + values entry |
    | NIM / GPU resource hints | `resources.limits.nvidia.com/gpu` + tolerations / nodeSelector |
+
+   **Shared managed-image channel.** Images classified with `"ghcr_build": true`
+   in `deploy/docker/container-inventory.json` use the same defaults in Docker
+   Compose and Helm:
+
+   - Both deployment paths default to
+     `ghcr.io/nvidia-ai-blueprints/vss/<image>:develop-latest`.
+   - Helm resolves the managed image prefix and tag from
+     `global.container_prefix` and `global.container_tag` when set. QA uses
+     those two values to select a promoted NGC staging drop without editing
+     individual subcharts.
+   - Treat a Helm chart that retains an immutable
+     `nvcr.io/nvstaging/vss-core/*` default, ignores either global override, or
+     hard-codes a managed image in an umbrella profile as drift.
+   - Continue to flag every other semantic difference, including container
+     env, ports, mounts, commands, probes, resources, and topology.
 
    For each docker-side change, decide one of:
    - **already synced** — the helm-side change matches semantically.

@@ -59,10 +59,16 @@ from torchvision.transforms import v2
 from common.chunk_info import ChunkInfo
 from common.logger import TimeMeasure, logger
 from utils.media_file_info import MediaFileInfo
+from vlm_pipeline.errors import format_cuda_oom_error
+from vlm_pipeline.ipc_frame_source import (
+    DEFAULT_IPC_META_DESERIALIZATION_LIB,
+    resolve_ipc_socket_path,
+)
 
 gi.require_version("Gst", "1.0")
+gi.require_version("GstVideo", "1.0")
 
-from gi.repository import GLib, Gst  # noqa: E402
+from gi.repository import GLib, Gst, GstVideo  # noqa: E402
 
 Gst.init(None)
 
@@ -75,6 +81,7 @@ Gst.init(None)
 # ref dropped while the underlying CUDA decoder context was still alive,
 # leaking VRAM permanently. Tune via env if needed in future.
 DECODER_TEARDOWN_TIMEOUT_NS = 120 * Gst.SECOND
+CUDA_OOM_RECOVERY_ENV = "RTVI_ENABLE_CUDA_OOM_RECOVERY"
 
 # Handle FORCE_SW_AV1_DECODER environment variable
 # When set to true/True/TRUE/1, forces software AV1 decoder instead of hardware decoder
@@ -97,6 +104,26 @@ if force_sw_av1:
         logger.warning("FORCE_SW_AV1_DECODER is set but av1dec element not found")
 
 UNTRACKED_OBJECT_ID = 0xFFFFFFFFFFFFFFFF
+_STANDARD_SEI_META_API_TYPE = None
+
+
+class _GstVideoSEIUserDataUnregisteredMeta(ctypes.Structure):
+    _fields_ = [
+        ("flags", ctypes.c_uint),
+        ("_padding", ctypes.c_uint),
+        ("info", ctypes.c_void_p),
+        ("uuid", ctypes.c_ubyte * 16),
+        ("data", ctypes.c_void_p),
+        ("size", ctypes.c_size_t),
+    ]
+
+
+def _set_gst_property_if_supported(element, property_name, value):
+    """Set a GStreamer property only when the selected plugin exposes it."""
+    if element.find_property(property_name) is None:
+        return False
+    element.set_property(property_name, value)
+    return True
 
 
 def _env_bool(name: str, default: bool = False) -> bool:
@@ -104,6 +131,105 @@ def _env_bool(name: str, default: bool = False) -> bool:
     if raw_value is None or raw_value == "":
         return default
     return raw_value.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _standard_sei_meta_api_type():
+    global _STANDARD_SEI_META_API_TYPE
+    if _STANDARD_SEI_META_API_TYPE is None:
+        _STANDARD_SEI_META_API_TYPE = GstVideo.video_sei_user_data_unregistered_meta_api_get_type()
+    return _STANDARD_SEI_META_API_TYPE
+
+
+def _payload_to_bytes(payload, size: Optional[int] = None) -> Optional[bytes]:
+    if payload is None:
+        return None
+    if isinstance(payload, bytes):
+        return payload[:size] if size is not None else payload
+    if isinstance(payload, bytearray):
+        return bytes(payload[:size] if size is not None else payload)
+    if isinstance(payload, str):
+        return payload.encode("utf-8")
+    if hasattr(payload, "tobytes"):
+        data = payload.tobytes()
+        return data[:size] if size is not None else data
+    if isinstance(payload, (list, tuple)):
+        data = bytes(int(value) & 0xFF for value in payload)
+        return data[:size] if size is not None else data
+    if isinstance(payload, int) and size:
+        return ctypes.string_at(payload, size)
+    try:
+        data = bytes(payload)
+        return data[:size] if size is not None else data
+    except TypeError:
+        return None
+
+
+def _parse_sei_json_payload(payload, size: Optional[int] = None):
+    payload_bytes = _payload_to_bytes(payload, size)
+    if not payload_bytes:
+        return None
+
+    payload_text = payload_bytes.rstrip(b"\x00").decode("utf-8", errors="ignore").strip()
+    if not payload_text:
+        return None
+
+    # Some producers include UUID/padding bytes around the user data payload.
+    start = payload_text.find("{")
+    end = payload_text.rfind("}")
+    if start != -1 and end >= start:
+        payload_text = payload_text[start : end + 1]
+
+    return json.loads(payload_text)
+
+
+def _standard_sei_meta_payload(standard_meta):
+    data = getattr(standard_meta, "data", None)
+    size = getattr(standard_meta, "size", None)
+    if data is not None and size is not None:
+        return data, size
+
+    meta_ptr = hash(standard_meta)
+    if not meta_ptr:
+        return None, None
+
+    sei_meta = _GstVideoSEIUserDataUnregisteredMeta.from_address(meta_ptr)
+    if not sei_meta.data or sei_meta.size <= 0 or sei_meta.size > 1024 * 1024:
+        return None, None
+    return sei_meta.data, sei_meta.size
+
+
+def _get_buffer_sei_data(buffer):
+    """Read SEI metadata from either the standard GstVideo meta (transported by
+    nvunixfdsrc on the IPC decoded-frame path) or the legacy nvds custom meta
+    (transported by the regular uridecodebin/RTSP decode path). The standard
+    meta is checked first since it's cheaper and is what the IPC path uses;
+    the legacy reader is a fallback so non-IPC live streams keep working."""
+    standard_meta = buffer.get_meta(_standard_sei_meta_api_type())
+    if standard_meta:
+        payload, size = _standard_sei_meta_payload(standard_meta)
+        return (
+            _parse_sei_json_payload(payload, size),
+            "gst_video_user_data_unregistered_meta",
+        )
+
+    if HAVE_SEI_META_LIB:
+        video_sei_meta = gst_video_sei_meta.gst_buffer_get_video_sei_meta(hash(buffer))
+        if video_sei_meta:
+            return (
+                _parse_sei_json_payload(video_sei_meta.sei_metadata_ptr),
+                "gst_video_sei_meta_legacy",
+            )
+
+    return None, ""
+
+
+def _cuda_oom_recovery_enabled() -> bool:
+    return os.environ.get(CUDA_OOM_RECOVERY_ENV, "true").strip().lower() not in (
+        "0",
+        "false",
+        "no",
+        "off",
+    )
 
 
 def get_timestamp_str(ts):
@@ -609,6 +735,7 @@ class VideoFileFrameGetter:
         self._previous_frame_height = 0
         self._last_frame_pts = 0
         self._uridecodebin = None
+        self._nvunixfdsrc = None
         self._adecodebin = None
         self._idecodebin = None
         self._vdecodebin = None
@@ -738,6 +865,49 @@ class VideoFileFrameGetter:
 
     def _decoder_reuse_enabled(self) -> bool:
         return os.environ.get("DISABLE_DECODER_REUSE", "true") == "false"
+
+    def _release_cached_cuda_frames(self, clear_live_selectors: bool = True):
+        with self._file_frame_cache_lock:
+            if self._cached_frames is not None:
+                self._cached_frames = []
+            if self._cached_frames_pts is not None:
+                self._cached_frames_pts = []
+        if clear_live_selectors:
+            with self._live_stream_frame_selectors_lock:
+                for fs_data in self._live_stream_frame_selectors.values():
+                    fs_data.cached_frames = []
+        try:
+            torch.cuda.empty_cache()
+        except RuntimeError:
+            logger.debug("Failed to empty CUDA cache after frame extraction error", exc_info=True)
+
+    def _quit_loop_after_error(self):
+        loop = getattr(self, "_loop", None)
+        if loop is not None and loop.is_running():
+            loop.quit()
+
+    def _handle_cuda_oom(
+        self,
+        exc: torch.OutOfMemoryError,
+        context: str,
+        *,
+        clear_live_selectors: bool = True,
+    ) -> str:
+        if not _cuda_oom_recovery_enabled():
+            logger.debug(
+                "%s disabled; propagating CUDA OOM while %s",
+                CUDA_OOM_RECOVERY_ENV,
+                context,
+            )
+            raise exc
+        error_message = format_cuda_oom_error(exc, context)
+        logger.error(error_message, exc_info=True)
+        with self._err_msg_lock:
+            if self._err_msg is None:
+                self._err_msg = error_message
+        self._release_cached_cuda_frames(clear_live_selectors=clear_live_selectors)
+        self._quit_loop_after_error()
+        return error_message
 
     def _decoder_cache_key(self, codec: str):
         return (
@@ -921,8 +1091,8 @@ class VideoFileFrameGetter:
                     if base_time == 0:
                         base_time = time.time() - (fs._chunk.end_pts / 1e9)
 
-                    if self._last_frame_pts >= fs._chunk.start_pts:
-                        fs._chunk.end_pts = self._last_frame_pts
+                    if flush and self._last_frame_pts >= fs._chunk.start_pts:
+                        fs._chunk.end_pts = min(self._last_frame_pts, fs._chunk.end_pts)
 
                     fs._chunk.start_ntp = get_timestamp_str(base_time + fs._chunk.start_pts / 1e9)
                     fs._chunk.end_ntp = get_timestamp_str(base_time + fs._chunk.end_pts / 1e9)
@@ -1219,13 +1389,14 @@ class VideoFileFrameGetter:
     ):
         # Construct DeepStream pipeline for decoding
         # For raw frames as tensor:
-        # uridecodebin -> probe (frame selector) -> nvvideconvert -> appsink
+        # uridecodebin/nvunixfdsrc -> probe (frame selector) -> nvvideoconvert -> appsink
         #     -> frame pre-processing -> add to cache
         # For jpeg images:
         # uridecodebin -> probe (frame selector) -> nvjpegenc -> appsink -> add to cache
         # For audio: uridecodebin -> probe -> audioconvert ->
         # resample -> asr -> appsink -> add text_to cache
         self._is_live = file_or_rtsp.startswith("rtsp://")
+        use_ipc_live_source = self._is_live and self._ipc_frame_copy_enabled
         pipeline = self._pipeline if create_source_elems_only else Gst.Pipeline()
 
         # Reset per-file GOP tracking state.
@@ -1236,9 +1407,9 @@ class VideoFileFrameGetter:
 
         def cb_elem_added(elem, username, password, selff):
             if "nvv4l2decoder" in elem.get_factory().get_name():
-                elem.set_property("gpu-id", self._gpu_id)
-                elem.set_property("extract-sei-type5-data", True)
-                elem.set_property("sei-uuid", "NVDS_CUSTOMMETA")
+                _set_gst_property_if_supported(elem, "gpu-id", self._gpu_id)
+                _set_gst_property_if_supported(elem, "extract-sei-type5-data", True)
+                _set_gst_property_if_supported(elem, "sei-uuid", "NVDS_CUSTOMMETA")
             if "mpeg4videoparse" in elem.get_factory().get_name():
                 elem.set_property("config-interval", -1)
             parser_name = elem.get_factory().get_name()
@@ -1357,7 +1528,31 @@ class VideoFileFrameGetter:
                 logger.info("Audio stream found.")
 
         uridecodebin = None
-        if self._is_live:
+        nvunixfdsrc = None
+        if use_ipc_live_source and create_source_elems_only:
+            logger.warning("IPC frame copy is ignored for source-only pipeline creation")
+            use_ipc_live_source = False
+        if use_ipc_live_source and self._enable_audio:
+            raise RuntimeError("Decoded-frame IPC does not support audio capture in this pipeline")
+        if use_ipc_live_source:
+            nvunixfdsrc = Gst.ElementFactory.make("nvunixfdsrc")
+            if nvunixfdsrc is None:
+                raise RuntimeError("Decoded-frame IPC is enabled but GStreamer element 'nvunixfdsrc' is unavailable")
+            nvunixfdsrc.set_property("socket-path", self._ipc_socket_path)
+            _set_gst_property_if_supported(nvunixfdsrc, "gpu-id", self._gpu_id)
+            _set_gst_property_if_supported(nvunixfdsrc, "buffer-timestamp-copy", True)
+            if self._ipc_meta_deserialization_lib:
+                _set_gst_property_if_supported(
+                    nvunixfdsrc, "meta-deserialization-lib", self._ipc_meta_deserialization_lib
+                )
+            pipeline.add(nvunixfdsrc)
+            self._nvunixfdsrc = nvunixfdsrc
+            logger.info(
+                "Using IPC decoded-frame source for stream %s at %s",
+                self._ipc_stream_identity or self._live_stream_request_id,
+                self._ipc_socket_path,
+            )
+        elif self._is_live:
             uridecodebin = Gst.ElementFactory.make("uridecodebin")
             uridecodebin.set_property("uri", file_or_rtsp)
             pipeline.add(uridecodebin)
@@ -1468,6 +1663,8 @@ class VideoFileFrameGetter:
 
         self._q1 = Gst.ElementFactory.make("queue")
         pipeline.add(self._q1)
+        if nvunixfdsrc:
+            nvunixfdsrc.link(self._q1)
 
         qvideoconvert = Gst.ElementFactory.make("queue")
         pipeline.add(qvideoconvert)
@@ -1667,6 +1864,77 @@ class VideoFileFrameGetter:
             )
             pipeline.add(self._audio_capsfilter2)
 
+        def update_live_buffer_from_sei(buffer):
+            # Read SEI metadata (IPC standard meta or legacy nvds meta) off the buffer,
+            # override buffer.pts from sim_time if present, and record the SEI base_time
+            # used to derive NTP timestamps for chunks. Called both from a dedicated probe
+            # attached directly to nvunixfdsrc's src pad (so the IPC decoded-frame path
+            # reads the metadata before any downstream element can drop it) and again from
+            # the general buffer_probe below, which also covers the non-IPC live path.
+            if not self._is_live:
+                return None
+
+            try:
+                sei_data, sei_source = _get_buffer_sei_data(buffer)
+            except json.JSONDecodeError as exc:
+                logger.warning("Failed to parse SEI metadata JSON: %s", exc)
+                return None
+
+            if not sei_data:
+                return None
+
+            if "sim_time" in sei_data:
+                sim_time = sei_data["sim_time"]
+                if isinstance(sim_time, (int, float)):
+                    original_pts = buffer.pts
+                    new_pts = sim_time * 1e9
+                    logger.debug(
+                        f"SEI timestamp override: source={sei_source}, "
+                        f"original_pts={original_pts} ns, "
+                        f"sim_time={sim_time} s, new_pts={new_pts} ns"
+                    )
+                    buffer.pts = new_pts
+                else:
+                    logger.warning(
+                        f"SEI sim_time is not numeric (type={type(sim_time).__name__}, "
+                        f"value={sim_time}), skipping timestamp override"
+                    )
+
+            with self._live_stream_frame_selectors_lock:
+                self._sei_data = sei_data
+
+                if self._sei_data and self._sei_base_time is None:
+                    if "timestamp" in self._sei_data:
+                        timestamp = self._sei_data["timestamp"]
+                        if isinstance(timestamp, (int, float)):
+                            self._sei_base_time = timestamp - buffer.pts
+                            logger.debug(
+                                f"SEI base_time initialized: source={sei_source}, "
+                                f"timestamp={timestamp} ns, "
+                                f"buffer.pts={buffer.pts} ns, base_time={self._sei_base_time} ns"
+                            )
+                        else:
+                            logger.warning(
+                                f"SEI timestamp is not numeric (type={type(timestamp).__name__}, "
+                                f"value={timestamp}), skipping base_time calculation"
+                            )
+                    else:
+                        logger.warning(
+                            "SEI data missing 'timestamp' key, skipping base_time calculation"
+                        )
+
+            return sei_data
+
+        def ipc_source_buffer_probe(pad, info, data):
+            # Dedicated probe on nvunixfdsrc's own src pad: reads SEI metadata the
+            # instant a decoded-frame IPC buffer arrives, before any downstream element
+            # (queue, nvvideoconvert, ...) has a chance to copy/reallocate the buffer and
+            # silently drop the attached GstMeta.
+            buffer = info.get_buffer()
+            if buffer and buffer.pts != Gst.CLOCK_TIME_NONE:
+                update_live_buffer_from_sei(buffer)
+            return Gst.PadProbeReturn.OK
+
         def buffer_probe(pad, info, data):
             # Probe callback function to pass chosen frames and drop other frames
             buffer = info.get_buffer()
@@ -1676,36 +1944,7 @@ class VideoFileFrameGetter:
             self._last_frame_pts = buffer.pts
 
             if self._is_live:
-                buffer_address = hash(buffer)
-                if HAVE_SEI_META_LIB:
-                    video_sei_meta = gst_video_sei_meta.gst_buffer_get_video_sei_meta(
-                        buffer_address
-                    )
-                else:
-                    video_sei_meta = None
-
-                if video_sei_meta:
-                    try:
-                        sei_data = json.loads(video_sei_meta.sei_metadata_ptr)
-                    except json.JSONDecodeError as e:
-                        logger.warning(f"Failed to parse SEI metadata JSON: {e}")
-                        sei_data = None
-
-                    if sei_data and "sim_time" in sei_data:
-                        sim_time = sei_data["sim_time"]
-                        if isinstance(sim_time, (int, float)):
-                            original_pts = buffer.pts
-                            new_pts = sim_time * 1e9
-                            logger.debug(
-                                f"SEI timestamp override: original_pts={original_pts} ns, "
-                                f"sim_time={sim_time} s, new_pts={new_pts} ns"
-                            )
-                            buffer.pts = new_pts
-                        else:
-                            logger.warning(
-                                f"SEI sim_time is not numeric (type={type(sim_time).__name__}, "
-                                f"value={sim_time}), skipping timestamp override"
-                            )
+                update_live_buffer_from_sei(buffer)
 
                 new_chunk = False
                 if buffer.pts >= self._live_stream_next_chunk_start_pts:
@@ -1726,32 +1965,6 @@ class VideoFileFrameGetter:
                             self._audio_end_cv.wait(1)
 
                 with self._live_stream_frame_selectors_lock:
-                    if video_sei_meta:
-                        try:
-                            self._sei_data = json.loads(video_sei_meta.sei_metadata_ptr)
-                        except json.JSONDecodeError as e:
-                            logger.warning(f"Failed to parse SEI metadata JSON: {e}")
-                            self._sei_data = None
-
-                        if self._sei_data and self._sei_base_time is None:
-                            if "timestamp" in self._sei_data:
-                                timestamp = self._sei_data["timestamp"]
-                                if isinstance(timestamp, (int, float)):
-                                    self._sei_base_time = timestamp - buffer.pts
-                                    logger.debug(
-                                        f"SEI base_time initialized: timestamp={timestamp} ns, "
-                                        f"buffer.pts={buffer.pts} ns, base_time={self._sei_base_time} ns"
-                                    )
-                                else:
-                                    logger.warning(
-                                        f"SEI timestamp is not numeric (type={type(timestamp).__name__}, "
-                                        f"value={timestamp}), skipping base_time calculation"
-                                    )
-                            else:
-                                logger.warning(
-                                    "SEI data missing 'timestamp' key, skipping base_time calculation"
-                                )
-
                     if buffer.pts >= self._live_stream_next_chunk_start_pts:
                         fs = DefaultFrameSelector(
                             num_frames_per_second_or_fixed_frames=(
@@ -1836,35 +2049,43 @@ class VideoFileFrameGetter:
                 logger.warning("Failed to map decoded frame buffer")
                 return False
             try:
-                if self._enable_jpeg_output:
-                    # Buffer contains JPEG image, add to cache as is.
-                    image_tensor = np.frombuffer(mapinfo.data, dtype=np.uint8).copy()
-                else:
-                    # Extract GPU memory pointer and create tensor from it using
-                    # DeepStream Python Bindings and cupy.
-                    _, shape, strides, dataptr, size = pyds.get_nvds_buf_surface_gpu(
-                        hash(buffer), 0
-                    )
-                    ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
-                    ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [
-                        ctypes.py_object,
-                        ctypes.c_char_p,
-                    ]
-                    owner = None
-                    c_data_ptr = ctypes.pythonapi.PyCapsule_GetPointer(dataptr, None)
-                    unownedmem = cp.cuda.UnownedMemory(c_data_ptr, size, owner)
-                    memptr = cp.cuda.MemoryPointer(unownedmem, 0)
-                    n_frame_gpu = cp.ndarray(
-                        shape=shape, dtype=np.uint8, memptr=memptr, strides=strides, order="C"
-                    )
-                    # Clone on a dedicated stream to avoid blocking the default
-                    # CUDA stream (used by vLLM inference). Sync before buffer
-                    # unmap so the DeepStream buffer can be safely reused.
-                    if self._copy_stream is None:
-                        self._copy_stream = torch.cuda.Stream()
-                    with torch.cuda.stream(self._copy_stream):
-                        image_tensor = torch.as_tensor(n_frame_gpu, device="cuda").clone()
-                    self._copy_stream.synchronize()
+                try:
+                    if self._enable_jpeg_output:
+                        # Buffer contains JPEG image, add to cache as is.
+                        image_tensor = np.frombuffer(mapinfo.data, dtype=np.uint8).copy()
+                    else:
+                        # Extract GPU memory pointer and create tensor from it using
+                        # DeepStream Python Bindings and cupy.
+                        _, shape, strides, dataptr, size = pyds.get_nvds_buf_surface_gpu(
+                            hash(buffer), 0
+                        )
+                        ctypes.pythonapi.PyCapsule_GetPointer.restype = ctypes.c_void_p
+                        ctypes.pythonapi.PyCapsule_GetPointer.argtypes = [
+                            ctypes.py_object,
+                            ctypes.c_char_p,
+                        ]
+                        owner = None
+                        c_data_ptr = ctypes.pythonapi.PyCapsule_GetPointer(dataptr, None)
+                        unownedmem = cp.cuda.UnownedMemory(c_data_ptr, size, owner)
+                        memptr = cp.cuda.MemoryPointer(unownedmem, 0)
+                        n_frame_gpu = cp.ndarray(
+                            shape=shape,
+                            dtype=np.uint8,
+                            memptr=memptr,
+                            strides=strides,
+                            order="C",
+                        )
+                        # Clone on a dedicated stream to avoid blocking the default
+                        # CUDA stream (used by vLLM inference). Sync before buffer
+                        # unmap so the DeepStream buffer can be safely reused.
+                        if self._copy_stream is None:
+                            self._copy_stream = torch.cuda.Stream()
+                        with torch.cuda.stream(self._copy_stream):
+                            image_tensor = torch.as_tensor(n_frame_gpu, device="cuda").clone()
+                        self._copy_stream.synchronize()
+                except torch.OutOfMemoryError as exc:
+                    self._handle_cuda_oom(exc, "copying decoded frame to CUDA cache")
+                    return False
 
                 # Cache the pre-processed frame / jpeg and its timestamp. Convert
                 # the timestamps from nanoseconds to seconds.
@@ -2138,6 +2359,12 @@ class VideoFileFrameGetter:
             self._is_live or self._frame_selector.selects_all_frames or not self._timestamp_filter
         )
         self._pipeline_has_file_buffer_probe = bool(not self._is_live and use_python_buffer_probe)
+        if self._is_live and nvunixfdsrc:
+            ipc_src_pad = nvunixfdsrc.get_static_pad("src")
+            if ipc_src_pad:
+                self._add_gst_pad_probe(
+                    ipc_src_pad, Gst.PadProbeType.BUFFER, ipc_source_buffer_probe, self
+                )
         if use_python_buffer_probe:
             self._add_gst_pad_probe(pad, Gst.PadProbeType.BUFFER, buffer_probe, self)
         if self._audio_convert:
@@ -2349,6 +2576,7 @@ class VideoFileFrameGetter:
         self._adecodebin = None
         self._idecodebin = None
         self._uridecodebin = None
+        self._nvunixfdsrc = None
         self._filesrc = None
         self._parsebin = None
         self._rtspsrc = None
@@ -2827,7 +3055,11 @@ class VideoFileFrameGetter:
         )
         if len(cached_frames) == 0:
             logger.warning("No frames found for chunk %s", chunk)
-        preprocessed_frames = self._preprocess(cached_frames)
+        try:
+            preprocessed_frames = self._preprocess(cached_frames)
+        except torch.OutOfMemoryError as exc:
+            self._handle_cuda_oom(exc, "preprocessing decoded chunk frames")
+            preprocessed_frames = []
         self._frame_selector = frame_selector_backup
 
         with self._err_msg_lock:
@@ -2903,6 +3135,10 @@ class VideoFileFrameGetter:
         enable_audio=False,
         use_vlm_audio=False,
         live_stream_id="",
+        live_stream_identity="",
+        ipc_frame_copy_enabled: bool | None = None,
+        ipc_socket_dir: str | None = None,
+        ipc_socket_template: str | None = None,
         on_stream_error_callback: Optional[Callable[[str, str, int], None]] = None,
     ):
         if self._pipeline:
@@ -2928,6 +3164,30 @@ class VideoFileFrameGetter:
             self._live_stream_request_id = live_stream_id
         else:
             self._live_stream_request_id = str(uuid.uuid4())
+        self._ipc_stream_identity = live_stream_identity or live_stream_id or self._live_stream_request_id
+        self._ipc_frame_copy_enabled = (
+            _env_bool("RTVI_IPC_FRAME_COPY", False)
+            if ipc_frame_copy_enabled is None
+            else ipc_frame_copy_enabled
+        )
+        self._ipc_socket_path = (
+            resolve_ipc_socket_path(
+                self._ipc_stream_identity,
+                socket_dir=ipc_socket_dir,
+                socket_template=ipc_socket_template,
+            )
+            if self._ipc_frame_copy_enabled
+            else ""
+        )
+        self._ipc_meta_deserialization_lib = (
+            DEFAULT_IPC_META_DESERIALIZATION_LIB if self._ipc_frame_copy_enabled else ""
+        )
+        if self._ipc_frame_copy_enabled:
+            logger.info(
+                "IPC frame copy enabled for live stream %s via %s",
+                self._ipc_stream_identity,
+                self._ipc_socket_path,
+            )
         # Rerun the pipeline if it runs into errors like disconnection
         # Stop if pipeline stops with EOS
         while not self._stop_stream:
@@ -3093,14 +3353,23 @@ class VideoFileFrameGetter:
             # https://discourse.gstreamer.org/t/gstreamer-1-16-3-setting-rtsp-pipeline-to-null/538/11
             # TODO: Try latest GStreamer version for any fixes
             logger.debug("pipe teardown: unlink_source : %s", self._last_stream_id)
-            if self._tee is not None:
-                self._uridecodebin.unlink(self._tee)
-            else:
-                self._uridecodebin.unlink(self._q1)
+            source_elem = self._nvunixfdsrc or self._uridecodebin
+            if source_elem is not None:
+                try:
+                    if self._tee is not None:
+                        source_elem.unlink(self._tee)
+                    else:
+                        source_elem.unlink(self._q1)
+                except Exception as ex:
+                    logger.debug("Source unlink during teardown failed: %s", ex)
 
-            if self._audio_q1 is not None:
+            if self._audio_q1 is not None and self._uridecodebin is not None:
                 self._uridecodebin.unlink(self._audio_q1)
-            self._pipeline.remove(self._uridecodebin)
+            if source_elem is not None:
+                try:
+                    self._pipeline.remove(source_elem)
+                except Exception as ex:
+                    logger.debug("Source removal during teardown failed: %s", ex)
 
             # logger.debug(f"pipe teardown: to READY : {self._last_stream_id}")
             # self._pipeline.set_state(Gst.State.READY)
@@ -3112,6 +3381,8 @@ class VideoFileFrameGetter:
             # reliably and leaves RTSP source elements alive across Phase 2 probes.
             if self._rtspsrc:
                 self._set_element_null(self._rtspsrc, "RTSP source")
+            if self._nvunixfdsrc:
+                self._set_element_null(self._nvunixfdsrc, "IPC nvunixfd source")
             if self._uridecodebin:
                 self._set_element_null(self._uridecodebin, "URI decodebin")
             logger.debug("pipe teardown: done : %s", self._last_stream_id)
@@ -3134,6 +3405,11 @@ class VideoFileFrameGetter:
         self._stop_stream = True
         logger.debug("Force quit loop")
         self._audio_stop.set()
+        if self._pipeline is not None:
+            try:
+                self._pipeline.send_event(Gst.Event.new_flush_start())
+            except Exception as ex:
+                logger.debug("Failed to flush live pipeline during stop: %s", ex)
         if self._loop is not None:
             self._loop.quit()
 

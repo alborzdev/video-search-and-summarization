@@ -13,6 +13,11 @@ function statuses(health: SystemHealth) {
 }
 
 describe("demo service availability", () => {
+  it("labels intentionally unselected detection without blocking selected video actions", () => {
+    expect(statuses({ ...healthy, services: healthy.services.map(service => ({
+      ...service, selected: service.key !== "perception", ok: service.key !== "perception",
+    })) })).toEqual(["available", "available", "available", "not-selected"]);
+  });
   it("keeps search and answers available when the detector is unavailable", () => {
     expect(statuses({ ...healthy, status: "degraded", services: healthy.services.map((service) => ({
       ...service, ok: service.key !== "perception",

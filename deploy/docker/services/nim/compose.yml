@@ -14,12 +14,12 @@
 # limitations under the License.
 
 include:
-  - path: cosmos-reason1-7b/compose.yml
-  - path: cosmos-reason2-8b/compose.yml
   - path: cosmos3-reasoner/compose.yml
-  - path: gpt-oss-20b/compose.yml
-  - path: llama-3.3-nemotron-super-49b-v1.5/compose.yml
-  - path: nemotron-3-nano/compose.yml
-  - path: nvidia-nemotron-nano-9b-v2/compose.yml
+    env_file:
+      - ${VSS_APPS_DIR}/services/nim/nim.env
+  - path: nemotron-3.5-lightning-30b-a3b/compose.yml
+    env_file:
+      - ${VSS_APPS_DIR}/services/nim/nim.env
   - path: nvidia-nemotron-nano-9b-v2-fp8/compose.yml
-  - path: qwen3-vl-8b-instruct/compose.yml
+    env_file:
+      - ${VSS_APPS_DIR}/services/nim/nim.env

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2022-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +33,11 @@ class EncoderQueue;
 class NvEncoderVideoConsumer : public IMediaDataConsumer
 {
     public:
-        NvEncoderVideoConsumer (const std::string& consumer_name);
+        explicit NvEncoderVideoConsumer (const std::string& consumer_name);
         NvEncoderVideoConsumer (const std::string& consumer_name, double frame_rate, std::string peerId_streamId, bool enable_frame_sync = false);
         ~NvEncoderVideoConsumer ();
         void stopEncoder();
+        using IMediaDataConsumer::onFrame;
         void onFrame(std::shared_ptr<RawFrameParams> frame_data) override;
         void onLastFrame()override;
         void reset() override;
@@ -80,6 +81,9 @@ class NvEncoderVideoConsumer : public IMediaDataConsumer
         std::atomic<bool>                    m_encoderTransformed{false};
         std::string                          m_peerIdStreamId{""};
         int                                  m_prevBitRate {0};
+        /* The keyframe spacing already asked of the encoder, in frames, so a
+         * DASH session sets it once rather than on every frame. */
+        uint32_t                             m_dashIdrInterval {0};
         std::shared_ptr<IMediaDataConsumer>  m_consumer = nullptr;
         std::atomic<int64_t>                 m_firstTS {0};
 };
@@ -87,7 +91,7 @@ class NvEncoderVideoConsumer : public IMediaDataConsumer
 class EncoderQueue
 {
 public:
-    EncoderQueue(NvEncoderVideoConsumer* consumer);
+    explicit EncoderQueue(NvEncoderVideoConsumer* consumer);
     ~EncoderQueue();
 
     void push(std::shared_ptr<RawFrameParams> frame_data);

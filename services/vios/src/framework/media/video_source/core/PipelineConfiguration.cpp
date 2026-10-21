@@ -23,6 +23,8 @@
 #include "utils.h"
 #include "../../overlays/overlay_internal.h"
 
+using namespace std;
+
 // Implementation of PipelineConfiguration
 PipelineConfiguration::PipelineConfiguration()
     : m_uri("")
@@ -80,6 +82,9 @@ void PipelineConfiguration::setupQualityConfig(const std::map<std::string, std::
     }
     
     m_quality.hlsPlayback = (opts.find("hls") != opts.end() && opts.at("hls") == "hls");
+    m_quality.dashPlayback = (opts.find("dash") != opts.end() && opts.at("dash") == "dash");
+    m_quality.dashTranscode = (opts.find("dash_transcode") != opts.end()
+                               && opts.at("dash_transcode") == "true");
     
     // Determine pass-through mode
     if (m_isNativeStream) {

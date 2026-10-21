@@ -2,6 +2,7 @@
 import ast
 from collections import deque
 import logging
+import os
 from pathlib import Path
 from types import SimpleNamespace
 import unittest
@@ -9,11 +10,14 @@ from utils.frame_sampling import FrameTimestamp as F, SamplingUnavailable, selec
 from utils.media_io_kwargs import get_frame_sampling_params_from_media_io_kwargs
 
 source = Path(__file__).parents[2] / 'src/vlm_pipeline/video_file_frame_getter.py'
-node = next(n for n in ast.parse(source.read_text()).body
+tree = ast.parse(source.read_text())
+node = next(n for n in tree.body
             if isinstance(n, ast.ClassDef) and n.name == 'DefaultFrameSelector')
-namespace = dict(deque=deque, ChunkInfo=object, logger=logging.getLogger('selector-test'),
+env_bool = next(n for n in tree.body
+                if isinstance(n, ast.FunctionDef) and n.name == '_env_bool')
+namespace = dict(deque=deque, os=os, ChunkInfo=object, logger=logging.getLogger('selector-test'),
                  SamplingUnavailable=SamplingUnavailable, select_frame_targets=select_frame_targets)
-exec(compile(ast.Module(body=[node], type_ignores=[]), str(source), 'exec'), namespace)
+exec(compile(ast.Module(body=[env_bool, node], type_ignores=[]), str(source), 'exec'), namespace)
 Selector = namespace['DefaultFrameSelector']
 
 

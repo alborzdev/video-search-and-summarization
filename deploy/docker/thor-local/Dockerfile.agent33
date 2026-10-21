@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: Apache-2.0
+# Reuse the matching 3.3 dependency set; keep our application libraries and
+# offline entrypoint together without recompiling the entire CPU stack.
+ARG AGENT33_BASE_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-agent@sha256:48c990fc83cd7bb186ec99fde28ec13827437e06d2d83e24d3d93da5ec98262a
+FROM ${AGENT33_BASE_IMAGE}
+COPY --chown=root:root --chmod=0555 services/agent/packages/vss_agents/src/ /vss-agent/edge-agent-src/
+COPY --chown=root:root --chmod=0555 libs/vss/core/src/ /vss-agent/edge-core-src/
+COPY --chown=root:root --chmod=0555 libs/vss/cli/src/ /vss-agent/edge-cli-src/
+COPY --chown=root:root --chmod=0555 services/agent/docker/entrypoint.py /vss-agent/entrypoint.py
+COPY --chown=root:root --chmod=0555 services/agent/docker/install_proprietary_codecs.py /vss-agent/install_proprietary_codecs.py
+ENV PYTHONPATH=/vss-agent/edge-agent-src:/vss-agent/edge-core-src:/vss-agent/edge-cli-src
+# The renderer binds the verified local OpenCV wheel read-only and requests
+# an offline-only codec installation on each fresh container.
+LABEL com.nvidia.vss.application-source="3.3-edge" com.nvidia.vss.offline-codecs="host-verified-wheel"

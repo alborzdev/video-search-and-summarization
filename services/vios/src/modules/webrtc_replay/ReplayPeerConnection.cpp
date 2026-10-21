@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +21,65 @@
 #include "config.h"
 #include "vst_common.h"
 #include "health_probes.h"
+#include "dash_session_manager.h"
 #include <filesystem>
 
-#define REPLAY_API "/api/v1/replay/stream/*"
+using namespace std;
+using namespace nv_vms;
+
+namespace {
+
+const char* replayDashStateString(DashPackagerState state)
+{
+    switch (state)
+    {
+        case DashPackagerState::Stopped: return "stopped";
+        case DashPackagerState::Starting: return "starting";
+        case DashPackagerState::Running: return "running";
+        case DashPackagerState::Failed: return "failed";
+    }
+    return "unknown";
+}
+
+VmsErrorCode replayDashStartErrorCode(const std::string& error)
+{
+    if (error == "Stream not found")
+    {
+        return VmsErrorCode::CameraNotFoundError;
+    }
+    if (error.find("H.264") != std::string::npos)
+    {
+        return VmsErrorCode::UnsupportedMediaTypeError;
+    }
+    if (error.find("recording") != std::string::npos)
+    {
+        return VmsErrorCode::VMSNoDataError;
+    }
+    if (error.find("Maximum") != std::string::npos)
+    {
+        return VmsErrorCode::TooManyRequestsError;
+    }
+    if (error.find("GStreamer") != std::string::npos || error.find("pipeline") != std::string::npos)
+    {
+        return VmsErrorCode::ServiceUnavailableError;
+    }
+    return VmsErrorCode::InvalidParameterError;
+}
+
+void fillReplayDashResponse(const DashStartResult& result, Json::Value& response)
+{
+    response["viewerId"] = result.viewerId;
+    response["streamId"] = result.streamId;
+    response["streamToken"] = result.streamToken;
+    response["manifestUrl"] = result.manifestRelativeUrl;
+    response["state"] = replayDashStateString(result.state);
+}
+
+} // namespace
+
+
+
+constexpr const char* REPLAY_API = "/api/v1/replay/stream/*";
 
 extern "C" void* createPeerConnectionReplayManagerObject()
 {
@@ -32,13 +88,13 @@ extern "C" void* createPeerConnectionReplayManagerObject()
     std::shared_ptr<DeviceManager> deviceManager = ModuleLoader::getInstance()->getDeviceManagerObject();
     std::shared_ptr<PeerConnectionManager> pcm = std::make_shared<PeerConnectionManager>("replay", audioLayer, publishFilter, deviceManager);
 
-    return static_cast<void*>(static_cast<IVstModule*>(new ReplayPeerConnection(pcm, deviceManager)));
+    auto replayPeerConnection = std::make_unique<ReplayPeerConnection>(pcm, deviceManager);
+    return static_cast<void*>(static_cast<IVstModule*>(replayPeerConnection.release()));
 }
 
 extern "C" void deletePeerConnectionReplayManagerObject(IVstModule* object)
 {
-    ReplayPeerConnection* pcm_live = static_cast<ReplayPeerConnection*>(object);
-    delete pcm_live;
+    std::unique_ptr<ReplayPeerConnection> pcm_live(static_cast<ReplayPeerConnection*>(object));
 }
 
 ReplayPeerConnection::ReplayPeerConnection(std::shared_ptr<PeerConnectionManager> peerConnectionManager,
@@ -76,6 +132,191 @@ ReplayPeerConnection::ReplayPeerConnection(std::shared_ptr<PeerConnectionManager
     {
         initUnifiedStorageReader();
     }
+
+    m_func["/api/v1/replay/dash/start"] = [](const Json::Value& req_info, const Json::Value& in,
+                                            Json::Value& response, struct mg_connection* /*conn*/) -> VmsErrorCode
+    {
+        if (!iequals(req_info.get("method", UNKNOWN_STRING).asString(), "post"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
+        const std::string streamId = in.get("streamId", EMPTY_STRING).asString();
+        const std::string startTime = in.get("startTime", EMPTY_STRING).asString();
+        const std::string endTime = in.get("endTime", EMPTY_STRING).asString();
+        const DashStartResult result = DashSessionManager::instance().startReplay(
+            streamId, startTime, endTime, in.get("overlay", Json::Value()));
+        if (!result.success)
+        {
+            const VmsErrorCode code = replayDashStartErrorCode(result.error);
+            SET_VMS_ERROR2(code, response, result.error.c_str())
+            return code;
+        }
+        fillReplayDashResponse(result, response);
+        return VmsErrorCode::NoError;
+    };
+
+    m_func["/api/v1/replay/dash/stop"] = [](const Json::Value& req_info, const Json::Value& in,
+                                           Json::Value& response, struct mg_connection* /*conn*/) -> VmsErrorCode
+    {
+        if (!iequals(req_info.get("method", UNKNOWN_STRING).asString(), "post"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
+        const std::string viewerId = in.get("viewerId", EMPTY_STRING).asString();
+        if (!DashSessionManager::instance().stopViewer(viewerId))
+        {
+            SET_VMS_ERROR2(VmsErrorCode::CameraNotFoundError, response, "Replay DASH viewer not found")
+            return VmsErrorCode::CameraNotFoundError;
+        }
+        response["viewerId"] = viewerId;
+        response["state"] = "released";
+        return VmsErrorCode::NoError;
+    };
+
+    m_func["/api/v1/replay/dash/status"] = [](const Json::Value& req_info, const Json::Value& /*in*/,
+                                             Json::Value& response, struct mg_connection* /*conn*/) -> VmsErrorCode
+    {
+        if (!iequals(req_info.get("method", UNKNOWN_STRING).asString(), "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
+        std::string viewerId;
+        CivetServer::getParam(req_info.get("query", EMPTY_STRING).asString(), "viewerId", viewerId);
+        const std::optional<DashStartResult> result = DashSessionManager::instance().status(viewerId);
+        if (!result)
+        {
+            SET_VMS_ERROR2(VmsErrorCode::CameraNotFoundError, response, "Replay DASH viewer not found")
+            return VmsErrorCode::CameraNotFoundError;
+        }
+        fillReplayDashResponse(*result, response);
+        if (!result->error.empty())
+        {
+            response["error"] = result->error;
+        }
+        return VmsErrorCode::NoError;
+    };
+
+    // pause, resume and seek all drive the same recorded pipeline, so they
+    // differ only in the action they forward and whether a value comes with it.
+    const auto dashControl = [](const std::string& action) {
+        return [action](const Json::Value& req_info, const Json::Value& in, Json::Value& response,
+                        struct mg_connection* /*conn*/) -> VmsErrorCode
+        {
+            if (!iequals(req_info.get("method", UNKNOWN_STRING).asString(), "post"))
+            {
+                SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+                return VmsErrorCode::MethodNotAllowedError;
+            }
+            const std::string viewerId = in.get("viewerId", EMPTY_STRING).asString();
+            std::string resolvedAction = action;
+            std::string value;
+            if (action == "seek")
+            {
+                value = in.get("value", EMPTY_STRING).asString();
+                const std::string requested = in.get("action", EMPTY_STRING).asString();
+                if (value.empty())
+                {
+                    SET_VMS_ERROR2(VmsErrorCode::InvalidParameterError, response,
+                                   "seek requires a value: an offset in seconds or a timestamp")
+                    return VmsErrorCode::InvalidParameterError;
+                }
+                if (requested == "seekBackward")
+                {
+                    resolvedAction = "seek_backward";
+                }
+                else if (requested == "seekForward")
+                {
+                    resolvedAction = "seek_forward";
+                }
+                else if (requested.empty())
+                {
+                    // No direction given: a negative offset seeks back, anything
+                    // else - a positive offset or an absolute timestamp - forward.
+                    if (value.front() == '-')
+                    {
+                        resolvedAction = "seek_backward";
+                        value.erase(0, 1);
+                    }
+                    else
+                    {
+                        resolvedAction = "seek_forward";
+                    }
+                }
+                else
+                {
+                    // Never hand an unrecognised action to the decoder.  It keeps
+                    // the action as pipeline state, and one it cannot act on stops
+                    // the session advancing to its next recording at end of file -
+                    // a request that reports success and silently stalls playback.
+                    SET_VMS_ERROR2(VmsErrorCode::InvalidParameterError, response,
+                                   "unsupported seek action: expected seekForward or seekBackward")
+                    return VmsErrorCode::InvalidParameterError;
+                }
+            }
+            if (!DashSessionManager::instance().controlReplay(viewerId, resolvedAction, value))
+            {
+                SET_VMS_ERROR2(VmsErrorCode::CameraNotFoundError, response,
+                               "Replay DASH viewer not found or control rejected")
+                return VmsErrorCode::CameraNotFoundError;
+            }
+            response["viewerId"] = viewerId;
+            response["action"] = resolvedAction;
+            return VmsErrorCode::NoError;
+        };
+    };
+    m_func["/api/v1/replay/dash/query"] = [](const Json::Value& req_info, const Json::Value& /*in*/,
+                                           Json::Value& response, struct mg_connection* /*conn*/) -> VmsErrorCode
+    {
+        if (!iequals(req_info.get("method", UNKNOWN_STRING).asString(), "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
+        /* An optional filter, not a required argument: with no viewerId this
+         * reports everything running, which is the question a caller asks when
+         * it does not yet know what is there. */
+        std::string viewerId;
+        CivetServer::getParam(req_info.get("query", EMPTY_STRING).asString(), "viewerId", viewerId);
+        const std::vector<DashSessionInfo> sessions =
+            DashSessionManager::instance().query(viewerId, true);
+        /* Answer with an array either way.  An empty result is not an error -
+         * nothing is running, or the named viewer is not a replay - and a caller
+         * that has to distinguish an object from an array to read a reply is a
+         * caller that will get it wrong. */
+        response = Json::Value(Json::arrayValue);
+        for (const DashSessionInfo& session : sessions)
+        {
+            response.append(dashSessionInfoToJson(session));
+        }
+        return VmsErrorCode::NoError;
+    };
+
+    m_func["/api/v1/replay/dash/pause"] = dashControl("pause");
+    m_func["/api/v1/replay/dash/resume"] = dashControl("resume");
+    m_func["/api/v1/replay/dash/seek"] = [](const Json::Value& req_info, const Json::Value& in,
+                                             Json::Value& response, struct mg_connection* /*conn*/) -> VmsErrorCode
+    {
+        if (!iequals(req_info.get("method", UNKNOWN_STRING).asString(), "post"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
+        const std::string viewerId = in.get("viewerId", EMPTY_STRING).asString();
+        const std::string startTime = in.get("startTime", EMPTY_STRING).asString();
+        const DashStartResult result = DashSessionManager::instance().seekReplay(viewerId, startTime);
+        if (!result.success)
+        {
+            const VmsErrorCode code = replayDashStartErrorCode(result.error);
+            SET_VMS_ERROR2(code, response, result.error.c_str())
+            return code;
+        }
+        fillReplayDashResponse(result, response);
+        response["previousViewerId"] = viewerId;
+        return VmsErrorCode::NoError;
+    };
 
     m_func["/api/v1/replay/stream/start"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &response, struct mg_connection *conn) -> VmsErrorCode
     {
@@ -120,6 +361,12 @@ ReplayPeerConnection::ReplayPeerConnection(std::shared_ptr<PeerConnectionManager
 
 	m_func["/api/v1/replay/stream/add"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &response, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "post"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         string url = in.get("url", EMPTY_STRING).asString();
         string id = in.get("id", EMPTY_STRING).asString();
 
@@ -381,6 +628,12 @@ ReplayPeerConnection::ReplayPeerConnection(std::shared_ptr<PeerConnectionManager
     };
     m_func["/api/v1/replay/stream/swap"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &response, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "post"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         VmsErrorCode ret;
         const string protocol = in.get("protocol", EMPTY_STRING).asString();
         const string startTime = in.get("startTime", EMPTY_STRING).asString();
@@ -401,6 +654,12 @@ ReplayPeerConnection::ReplayPeerConnection(std::shared_ptr<PeerConnectionManager
     };
     m_func["/api/v1/replay/stream/stats"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &response, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, response)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         if (GET_CONFIG().enable_perf_logging == false)
         {
             LOG(error) << "Stream stats not enabled";
@@ -436,10 +695,22 @@ ReplayPeerConnection::ReplayPeerConnection(std::shared_ptr<PeerConnectionManager
     };
     m_func["/api/v1/replay/version"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         return getVersion(req_info, in, out);
     };
     m_func["/api/v1/replay/help"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         return getReplayHelp(req_info, in, out);
     };
     m_func["/v1/live"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
@@ -633,7 +904,7 @@ VmsErrorCode ReplayPeerConnection::handleReplayConfiguration(const Json::Value &
         response["enableGstDebugProbes"] = config.enable_gst_debug_probes;
         response["enableUserCleanup"] = config.enable_user_cleanup;
         response["multiUserExtraOptions"] = vectorToString(config.multi_user_extra_options);
-        response["vstIp"] = g_hostIp;
+        response["vstIp"] = getHostIpAddress();
         response["useMultiUser"] = config.use_multi_user;
         response["enableDecLowLatencyMode"] = config.enable_dec_low_latency_mode;
         response["webrtc_video_quality_tunning"] = config.webrtc_video_quality_tunning;

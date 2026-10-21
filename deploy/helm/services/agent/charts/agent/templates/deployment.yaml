@@ -46,9 +46,12 @@ spec:
       {{- $kafkaDef := ternary (printf "%s-kafka-kafka" .Release.Name) "kafka-kafka" $pfx }}
       {{- $redisDef := ternary (printf "%s-redis" .Release.Name) "redis" $pfx }}
       {{- $esDef := ternary (printf "%s-elasticsearch" .Release.Name) "elasticsearch" $pfx }}
+      {{- $mcpDef := ternary (printf "%s-vss-va-mcp" .Release.Name) "vss-va-mcp" $pfx }}
       {{- $kafkaH := .Values.waitForDependencies.kafkaHost | default $kafkaDef }}
       {{- $redisH := .Values.waitForDependencies.redisHost | default $redisDef }}
       {{- $esH := .Values.waitForDependencies.elasticsearchHost | default $esDef }}
+      {{- $mcpH := .Values.waitForDependencies.mcpHost | default $mcpDef }}
+      {{- $waitMcp := .Values.waitForDependencies.waitForMcp | default false }}
       initContainers:
         - name: wait-for-kafka-redis-elasticsearch
           image: {{ .Values.waitForDependencies.image.repository }}:{{ .Values.waitForDependencies.image.tag }}
@@ -57,18 +60,19 @@ spec:
             - sh
             - -c
             - |
-              echo "Waiting for Kafka {{ $kafkaH }}:{{ .Values.waitForDependencies.kafkaPort }}, Redis {{ $redisH }}:{{ .Values.waitForDependencies.redisPort }}, Elasticsearch {{ $esH }}:{{ .Values.waitForDependencies.elasticsearchPort }}"
+              echo "Waiting for Kafka {{ $kafkaH }}:{{ .Values.waitForDependencies.kafkaPort }}, Redis {{ $redisH }}:{{ .Values.waitForDependencies.redisPort }}, Elasticsearch {{ $esH }}:{{ .Values.waitForDependencies.elasticsearchPort }}{{ if $waitMcp }}, MCP {{ $mcpH }}:{{ .Values.waitForDependencies.mcpPort }}{{ end }}"
               for i in $(seq 1 {{ .Values.waitForDependencies.maxRetries }}); do
                 if nc -z {{ $kafkaH }} {{ .Values.waitForDependencies.kafkaPort }} 2>/dev/null \
                    && nc -z {{ $redisH }} {{ .Values.waitForDependencies.redisPort }} 2>/dev/null \
-                   && nc -z {{ $esH }} {{ .Values.waitForDependencies.elasticsearchPort }} 2>/dev/null; then
-                  echo "Kafka, Redis, and Elasticsearch are accepting connections"
+                   && nc -z {{ $esH }} {{ .Values.waitForDependencies.elasticsearchPort }} 2>/dev/null{{- if $waitMcp }} \
+                   && nc -z {{ $mcpH }} {{ .Values.waitForDependencies.mcpPort }} 2>/dev/null{{- end }}; then
+                  echo "All dependencies are accepting connections"
                   exit 0
                 fi
                 echo "Attempt $i: waiting..."
                 sleep {{ .Values.waitForDependencies.retryInterval }}
               done
-              echo "Timeout waiting for Kafka, Redis, or Elasticsearch"
+              echo "Timeout waiting for dependencies"
               exit 1
       {{- end }}
       containers:
@@ -91,6 +95,12 @@ spec:
               mountPath: /etc/vss-agent/config.yml
               subPath: config.yml
               readOnly: true
+            {{- if .Values.searchPromptPolicy | default false }}
+            - name: config
+              mountPath: /etc/vss-agent/search_prompt_policy.py
+              subPath: search_prompt_policy.py
+              readOnly: true
+            {{- end }}
             {{- if .Values.mountConfigEdge }}
             - name: config
               mountPath: /etc/vss-agent/config_edge.yml
@@ -107,34 +117,64 @@ spec:
               mountPath: /vss-agent/eval-output
             {{- end }}
           env:
+            - name: HITL_ENABLED
+              value: {{ .Values.hitlEnabled | quote }}
             {{- /*
               Option B: container env is the explicit list `env` (each value may use Helm `tpl` with .Values / .Release).
-              `extraEnv` is appended last (duplicate names: last wins). No envOverrides layer.
+              `extraEnv` entries override same-named entries from `env` and from the generated
+              VIDEO_INGEST_* block below (a Kubernetes env list must not repeat a name, and
+              server-side apply rejects duplicates), and may use `valueFrom` (e.g. secretKeyRef)
+              so credentials never have to be written into values files. Within `extraEnv`
+              itself a repeated name keeps the last entry, matching Helm's own last-wins merge.
             */}}
+            {{- $extra := .Values.extraEnv | default list }}
+            {{- $overridden := dict }}
+            {{- range $extra }}{{- $_ := set $overridden .name true }}{{- end }}
             {{- range .Values.env }}
+            {{- if not (hasKey $overridden .name) }}
             - name: {{ .name }}
               value: {{ tpl (.value | default "" | toString) $ | quote }}
             {{- end }}
+            {{- end }}
             {{- $videoIngestTimeouts := .Values.videoIngestTimeouts | default dict }}
+            {{- if not (hasKey $overridden "VIDEO_INGEST_VST_UPLOAD_TIMEOUT_SECONDS") }}
             {{- with get $videoIngestTimeouts "vstUploadTimeoutSeconds" }}
             - name: VIDEO_INGEST_VST_UPLOAD_TIMEOUT_SECONDS
               value: {{ tpl (. | toString) $ | quote }}
             {{- end }}
+            {{- end }}
+            {{- if not (hasKey $overridden "VIDEO_INGEST_VST_STORAGE_TIMEOUT_SECONDS") }}
             {{- with get $videoIngestTimeouts "vstStorageTimeoutSeconds" }}
             - name: VIDEO_INGEST_VST_STORAGE_TIMEOUT_SECONDS
               value: {{ tpl (. | toString) $ | quote }}
             {{- end }}
+            {{- end }}
+            {{- if not (hasKey $overridden "VIDEO_INGEST_RTVI_CV_TIMEOUT_SECONDS") }}
             {{- with get $videoIngestTimeouts "rtviCvTimeoutSeconds" }}
             - name: VIDEO_INGEST_RTVI_CV_TIMEOUT_SECONDS
               value: {{ tpl (. | toString) $ | quote }}
             {{- end }}
+            {{- end }}
+            {{- if not (hasKey $overridden "VIDEO_INGEST_RTVI_EMBED_TIMEOUT_SECONDS") }}
             {{- with get $videoIngestTimeouts "rtviEmbedTimeoutSeconds" }}
             - name: VIDEO_INGEST_RTVI_EMBED_TIMEOUT_SECONDS
               value: {{ tpl (. | toString) $ | quote }}
             {{- end }}
-            {{- range (.Values.extraEnv | default list) }}
-            - name: {{ .name }}
-              value: {{ tpl (.value | default "" | toString) $ | quote }}
+            {{- end }}
+            {{- range $i, $e := $extra }}
+            {{- $superseded := false }}
+            {{- range $j, $f := $extra }}
+            {{- if and (gt $j $i) (eq $f.name $e.name) }}{{- $superseded = true }}{{- end }}
+            {{- end }}
+            {{- if not $superseded }}
+            - name: {{ $e.name }}
+              {{- if $e.valueFrom }}
+              valueFrom:
+                {{- toYaml $e.valueFrom | nindent 16 }}
+              {{- else }}
+              value: {{ tpl ($e.value | default "" | toString) $ | quote }}
+              {{- end }}
+            {{- end }}
             {{- end }}
           {{- with .Values.startupProbe }}
           startupProbe:

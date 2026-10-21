@@ -504,6 +504,12 @@ class ThorBootstrapTest(unittest.TestCase):
                     b.render(reserve_gib=reserve)
                 self.assertEqual(b.memory_reserve(), 10)
 
+    def test_spark_adaptive_engine_is_not_accepted_on_thor(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
+            with self.assertRaisesRegex(RuntimeError, 'Spark image cannot be reused on Thor'):
+                b.render('192.0.2.40', adaptive_evs=True,
+                         rtvi_vlm_image=b.shared.vss33.VLM33_SBSA_IMAGE)
+
     def test_render_isolated_exact_models_and_safe_startup(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
             with patch.dict(os.environ, {'NGC_API_KEY': 'credential-must-never-be-rendered',
@@ -521,8 +527,11 @@ class ThorBootstrapTest(unittest.TestCase):
             self.assertTrue(any(m['target'] == '/app/server.py' and m.get('read_only')
                                 for m in services['evidence-clip']['volumes']))
             self.assertEqual(services['vss-agent']['environment']['LLM_NAME'], b.LLM)
-            self.assertEqual(services['rtvi-vlm']['build']['args']['BASE_IMAGE'], b.VLM_IMAGE)
-            self.assertEqual(services['rtvi-embed']['build']['args']['BASE_IMAGE'], b.EMBED_IMAGE)
+            self.assertNotIn('build', services['rtvi-vlm'])
+            self.assertNotIn('build', services['rtvi-embed'])
+            self.assertEqual(services['rtvi-vlm']['image'], 'vss-thor-rtvi-vlm:source')
+            self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
+            self.assertEqual(services['rtvi-embed']['image'], 'vss-thor-rtvi-embed:source')
             self.assertEqual(services['rtvi-vlm']['environment']['VLLM_KV_CACHE_MEMORY_BYTES'], '3221225472')
             self.assertEqual(services['rtvi-vlm']['command'], ['python3', '/opt/thor/cosmos-launcher.py'])
             self.assertTrue(any(m['target'] == '/opt/thor/cosmos-launcher.py'

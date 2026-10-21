@@ -153,13 +153,13 @@ static gchar **cfg_files = NULL;
 static gchar **input_files = NULL;
 static gchar **override_cfg_file = NULL;
 static gboolean playback_utc = FALSE;
-static gboolean print_version = FALSE;
 static gboolean show_bbox_text = FALSE;
 static gboolean force_tcp = TRUE;
-static gboolean print_dependencies_version = FALSE;
 static gboolean quit = FALSE;
 static gboolean use_tracker_reid = FALSE;
 static gboolean show_sensor_id = FALSE;
+#define MAX_SENSOR_CACHE 1024
+static gchar *g_last_sensor_str[MAX_SENSOR_CACHE] = { NULL };
 static guint tracker_reid_store_age = 0;
 static gint return_value = 0;
 static guint num_instances;
@@ -198,12 +198,8 @@ static gint target_class = 0;
 
 /** @} imported from deepstream-app as is */
 GOptionEntry entries[] = {
-    {"version", 'v', 0, G_OPTION_ARG_NONE, &print_version,
-     "Print DeepStreamSDK version", NULL},
     {"tiledtext", 0, 0, G_OPTION_ARG_NONE, &show_bbox_text,
      "Display Bounding box labels in tiled mode", NULL},
-    {"version-all", 0, 0, G_OPTION_ARG_NONE, &print_dependencies_version,
-     "Print DeepStreamSDK and dependencies version", NULL},
     {"cfg-file", 'c', 0, G_OPTION_ARG_FILENAME_ARRAY, &cfg_files,
      "Set the config file", NULL},
     {"override-cfg-file", 'o', 0, G_OPTION_ARG_FILENAME_ARRAY,
@@ -296,6 +292,140 @@ static void generate_ts_rfc3339(char *buf, int buf_size) {
   }
 }
 
+/**
+ * IDR-start logging (IDR_START_DEBUG_TS=1): log the first IDR/key frame
+ * seen on each source's h264parse/h265parse output, with a wall-clock
+ * timestamp and a lightweight fingerprint of its NAL bytes, so multi-stream
+ * start-of-decode alignment can be checked across all configured sources.
+ *
+ * Hooked via "deep-element-added" on the whole pipeline rather than on
+ * per-source NvDsSrcBin elements, because with use-nvmultiurisrcbin=1 the
+ * per-source decodebin/parser is created *inside* nvmultiurisrcbin and is
+ * not exposed on NvDsSrcParentBin.sub_bins[]. This makes the hook agnostic
+ * to classic multi-source vs. nvmultiurisrcbin, and to model/schema (2D,
+ * mega/3D, or otherwise) since it sits upstream of PGIE/tracker/msgconv.
+ * The owning source's id is recovered by walking up the element's ancestor
+ * bins to the nearest one exposing a "source-id" property (nvurisrcbin /
+ * nvmultiurisrcbin's per-source child bins, and the classic per-source
+ * NvDsSrcBin's own "bin" element, both expose this).
+ */
+static GHashTable *idr_start_logged = NULL; /* (source_id+1) -> logged */
+
+static gboolean idr_start_debug_enabled(void) {
+  const char *v = g_getenv("IDR_START_DEBUG_TS");
+  return v != NULL && atoi(v) == 1;
+}
+
+static guint32 idr_signature_from_buffer(GstBuffer *buf) {
+  GstMapInfo map;
+  guint32 hash = 2166136261u; /* FNV-1a offset basis */
+
+  if (!gst_buffer_map(buf, &map, GST_MAP_READ)) {
+    return 0;
+  }
+  gsize n = map.size < 64 ? map.size : 64;
+  for (gsize i = 0; i < n; i++) {
+    hash ^= map.data[i];
+    hash *= 16777619u; /* FNV-1a prime */
+  }
+  gst_buffer_unmap(buf, &map);
+  return hash;
+}
+
+static gboolean idr_lookup_source_id(GstElement *elem, guint *source_id_out) {
+  GstObject *obj = GST_OBJECT(elem);
+
+  gst_object_ref(obj);
+  while (obj) {
+    if (GST_IS_ELEMENT(obj) &&
+        g_object_class_find_property(G_OBJECT_GET_CLASS(obj), "source-id")) {
+      gint sid = -1;
+      g_object_get(obj, "source-id", &sid, NULL);
+      if (sid >= 0) {
+        *source_id_out = (guint)sid;
+        gst_object_unref(obj);
+        return TRUE;
+      }
+    }
+    GstObject *parent = gst_object_get_parent(obj);
+    gst_object_unref(obj);
+    obj = parent;
+  }
+  return FALSE;
+}
+
+static GstPadProbeReturn idr_start_pad_probe_cb(GstPad *pad,
+                                                 GstPadProbeInfo *info,
+                                                 gpointer u_data) {
+  guint source_id = GPOINTER_TO_UINT(u_data);
+  GstBuffer *buf = GST_PAD_PROBE_INFO_BUFFER(info);
+  gpointer key = GUINT_TO_POINTER(source_id + 1);
+
+  if (!buf) {
+    return GST_PAD_PROBE_OK;
+  }
+  if (GST_BUFFER_FLAG_IS_SET(buf, GST_BUFFER_FLAG_DELTA_UNIT)) {
+    /* Not a keyframe/IDR yet - keep waiting on this pad. */
+    return GST_PAD_PROBE_OK;
+  }
+  if (g_hash_table_contains(idr_start_logged, key)) {
+    return GST_PAD_PROBE_REMOVE;
+  }
+  g_hash_table_add(idr_start_logged, key);
+
+  guint32 sig = idr_signature_from_buffer(buf);
+  char ts_buf[MAX_TIME_STAMP_LEN];
+  generate_ts_rfc3339(ts_buf, sizeof(ts_buf));
+
+  g_print("IDR_START source_id=%u sig=0x%08x pts=%" GST_TIME_FORMAT
+          " wallclock=%s\n",
+          source_id, sig, GST_TIME_ARGS(GST_BUFFER_PTS(buf)), ts_buf);
+
+  return GST_PAD_PROBE_REMOVE;
+}
+
+static void idr_start_deep_element_added_cb(GstBin *pipeline, GstBin *sub_bin,
+                                             GstElement *element,
+                                             gpointer user_data) {
+  const gchar *name = GST_ELEMENT_NAME(element);
+  guint source_id;
+
+  if (!(g_str_has_prefix(name, "h264parse") ||
+        g_str_has_prefix(name, "h265parse"))) {
+    return;
+  }
+  if (!idr_lookup_source_id(element, &source_id)) {
+    GST_WARNING("IDR_START: could not resolve source-id for parser %s", name);
+    return;
+  }
+  if (g_hash_table_contains(idr_start_logged, GUINT_TO_POINTER(source_id + 1))) {
+    return;
+  }
+
+  GstPad *src_pad = gst_element_get_static_pad(element, "src");
+  if (src_pad) {
+    gst_pad_add_probe(src_pad, GST_PAD_PROBE_TYPE_BUFFER, idr_start_pad_probe_cb,
+                       GUINT_TO_POINTER(source_id), NULL);
+    gst_object_unref(src_pad);
+  }
+}
+
+/**
+ * Hook IDR-start logging onto appCtx's pipeline. Must be called after
+ * create_pipeline() so appCtx->pipeline.pipeline exists, and before the
+ * pipeline is set to PAUSED/PLAYING so no autoplugged parser is missed.
+ */
+static void setup_idr_start_logging(AppCtx *ctx) {
+  if (!idr_start_debug_enabled()) {
+    return;
+  }
+  if (!idr_start_logged) {
+    idr_start_logged = g_hash_table_new(NULL, NULL);
+  }
+  g_signal_connect(ctx->pipeline.pipeline, "deep-element-added",
+                    G_CALLBACK(idr_start_deep_element_added_cb), NULL);
+}
+
 void nanoseconds_to_rfc3339(int64_t nanoseconds, char *output, size_t output_size) {
     time_t seconds = nanoseconds / 1000000000;
     int32_t nanos = nanoseconds % 1000000000;
@@ -307,6 +437,100 @@ void nanoseconds_to_rfc3339(int64_t nanoseconds, char *output, size_t output_siz
     strftime(time_str, 26, "%Y-%m-%dT%H:%M:%S", tm_info);
 
     snprintf(output, output_size, "%s.%09dZ", time_str, nanos);
+}
+
+/**
+ * NTP-start logging (NTP_START_DEBUG_TS=1): log the METADATA timestamp of the
+ * first batched frame of each source, i.e. NvDsFrameMeta.ntp_timestamp -- the
+ * value that travels downstream and ends up in the broker payload.
+ *
+ * Distinct from IDR_START above, which prints CLOCK_REALTIME sampled when the
+ * probe ran. That probe sits on the parser src pad, upstream of nvstreammux,
+ * where no NvDsFrameMeta exists yet: ntp_timestamp is attached BY the muxer.
+ * So this hooks the muxer's SRC pad, the first point where it is populated.
+ *
+ * What ntp_timestamp holds depends on how the muxer is configured, and reading
+ * it without knowing which is meaningless:
+ *   attach-sys-ts-as-ntp=1 -> the muxer's own system clock
+ *   attach-sys-ts-as-ntp=0 -> NTP derived from the source's RTCP Sender Report
+ * A source with no RTP session (file/URI input) has no Sender Report, so with
+ * attach-sys-ts-as-ntp=0 its ntp_timestamp stays 0 or unsynchronized. That is
+ * a property of the input, not a defect here, so 0 is reported verbatim and
+ * flagged rather than hidden.
+ *
+ * One probe on one pad, so unlike the per-parser IDR probe this callback runs
+ * on the muxer's streaming thread only and needs no locking.
+ */
+static GHashTable *ntp_start_logged = NULL; /* (source_id+1) -> logged */
+
+static gboolean ntp_start_debug_enabled(void) {
+  const char *v = g_getenv("NTP_START_DEBUG_TS");
+  return v != NULL && atoi(v) == 1;
+}
+
+static GstPadProbeReturn ntp_start_mux_probe_cb(GstPad *pad,
+                                                 GstPadProbeInfo *info,
+                                                 gpointer user_data) {
+  GstBuffer *buf = (GstBuffer *)info->data;
+  NvDsBatchMeta *batch_meta = gst_buffer_get_nvds_batch_meta(buf);
+
+  if (!batch_meta) {
+    return GST_PAD_PROBE_OK;
+  }
+
+  for (NvDsMetaList *l = batch_meta->frame_meta_list; l != NULL; l = l->next) {
+    NvDsFrameMeta *fm = (NvDsFrameMeta *)l->data;
+    gpointer key = GUINT_TO_POINTER(fm->source_id + 1);
+    char ts_buf[MAX_TIME_STAMP_LEN + 1];
+
+    if (g_hash_table_contains(ntp_start_logged, key)) {
+      continue;
+    }
+    g_hash_table_add(ntp_start_logged, key);
+
+    nanoseconds_to_rfc3339((int64_t)fm->ntp_timestamp, ts_buf, sizeof(ts_buf));
+    g_print("NTP_START source_id=%u ntp_ns=%" G_GUINT64_FORMAT " ntp=%s"
+            " buf_pts=%" GST_TIME_FORMAT " frame_num=%d%s\n",
+            fm->source_id, (guint64)fm->ntp_timestamp, ts_buf,
+            GST_TIME_ARGS(fm->buf_pts), fm->frame_num,
+            fm->ntp_timestamp == 0 ? "  [UNSET: no RTCP SR / not synchronized]"
+                                   : "");
+  }
+
+  /* Kept installed: sources can be added at runtime, and each is reported on
+   * its first batched frame. Cost after that is one hash lookup per frame. */
+  return GST_PAD_PROBE_OK;
+}
+
+/**
+ * Hook metadata-NTP logging onto appCtx's muxer. Call after create_pipeline()
+ * so multi_src_bin.streammux exists.
+ */
+static void setup_ntp_start_logging(AppCtx *ctx) {
+  GstElement *streammux;
+  GstPad *src_pad;
+
+  if (!ntp_start_debug_enabled()) {
+    return;
+  }
+  if (!ntp_start_logged) {
+    ntp_start_logged = g_hash_table_new(NULL, NULL);
+  }
+
+  streammux = ctx->pipeline.multi_src_bin.streammux;
+  if (!streammux) {
+    GST_WARNING("NTP_START: no streammux in pipeline, metadata NTP not logged");
+    return;
+  }
+
+  src_pad = gst_element_get_static_pad(streammux, "src");
+  if (!src_pad) {
+    GST_WARNING("NTP_START: streammux has no src pad");
+    return;
+  }
+  gst_pad_add_probe(src_pad, GST_PAD_PROBE_TYPE_BUFFER, ntp_start_mux_probe_cb,
+                     NULL, NULL);
+  gst_object_unref(src_pad);
 }
 
 static GstClockTime generate_ts_rfc3339_from_ts(char *buf, int buf_size,
@@ -771,6 +995,9 @@ static void generate_event_msg_meta(AppCtx *appCtx, gpointer data,
     //     "this stream [%d:%s] was added using REST API; we have Sensor
     //     Info\n", sensorInfo->source_id, sensorInfo->sensor_id);
     meta->sensorStr = g_strdup(sensorInfo->sensor_name);
+    if (stream_id < MAX_SENSOR_CACHE) { g_free(g_last_sensor_str[stream_id]); g_last_sensor_str[stream_id] = g_strdup(sensorInfo->sensor_name); }
+  } else if (stream_id < MAX_SENSOR_CACHE && g_last_sensor_str[stream_id]) {
+    meta->sensorStr = g_strdup(g_last_sensor_str[stream_id]);
   }
 
   (void)ts_generated;
@@ -885,6 +1112,9 @@ generate_event_msg_meta_dummy (AppCtx * appCtx, gpointer data, gint stream_id,
     LOGD("this stream [%d:%s] was added using REST API; we have Sensor Info\n",
         sensorInfo->source_id, sensorInfo->sensor_id);
     meta->sensorStr = g_strdup (sensorInfo->sensor_id);
+    if (stream_id < MAX_SENSOR_CACHE) { g_free(g_last_sensor_str[stream_id]); g_last_sensor_str[stream_id] = g_strdup(sensorInfo->sensor_id); }
+  } else if (stream_id < MAX_SENSOR_CACHE && g_last_sensor_str[stream_id]) {
+    meta->sensorStr = g_strdup(g_last_sensor_str[stream_id]);
   }
   (void) ts_generated;
 }
@@ -1226,7 +1456,7 @@ static void bbox_generated_probe_after_analytics(AppCtx *appCtx, GstBuffer *buf,
           }
         }
       }
-      if(appCtx->config.dummy_payload && (valid_class_id == 0))
+      if(appCtx->config.dummy_payload && (frame_meta->num_obj_meta == 0))
       {
           NvDsEventMsgMeta *msg_meta =
             (NvDsEventMsgMeta *) g_malloc0 (sizeof (NvDsEventMsgMeta));
@@ -2033,7 +2263,6 @@ int main(int argc, char *argv[]) {
   GError *error = NULL;
   guint i;
   OTAInfo *otaInfo = NULL;
-  gchar versionString[256] = {0};
 
   ctx = g_option_context_new("NVIDIA Metropolis Perception");
   group = g_option_group_new("abc", NULL, NULL, NULL, NULL);
@@ -2050,9 +2279,7 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  snprintf(versionString, sizeof(versionString), "%s:%s", IMAGE_PATH, IMAGE_TAG);
   if (log_level >= LOG_LVL_INFO) {
-    g_print("Starting Perception Application Image %s\n", versionString);
     g_print("Tiled text: %d\n", show_bbox_text);
     g_print("Playback UTC: %d\n", playback_utc);
     g_print("PGIE model used: %d\n", model_used);
@@ -2065,18 +2292,6 @@ int main(int argc, char *argv[]) {
 
   if (log_level == 99 || log_level == 100) {
     show_bbox_text = TRUE;
-  }
-
-  if (print_version) {
-    g_print("deepstream-test5-app version %d.%d.%d\n", NVDS_APP_VERSION_MAJOR,
-            NVDS_APP_VERSION_MINOR, NVDS_APP_VERSION_MICRO);
-    return 0;
-  }
-
-  if (print_dependencies_version) {
-    g_print("deepstream-test5-app version %d.%d.%d\n", NVDS_APP_VERSION_MAJOR,
-            NVDS_APP_VERSION_MINOR, NVDS_APP_VERSION_MICRO);
-    return 0;
   }
 
   if (cfg_files) {
@@ -2183,6 +2398,8 @@ int main(int argc, char *argv[]) {
       return_value = -1;
       goto done;
     }
+    setup_idr_start_logging(appCtx[i]);
+    setup_ntp_start_logging(appCtx[i]);
     /** Now add probe to RTPSession plugin src pad */
     for (guint j = 0; j < appCtx[i]->pipeline.multi_src_bin.num_bins; j++) {
       testAppCtx->streams[j].id = j;

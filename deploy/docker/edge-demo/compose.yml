@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+# Device adapters compose the common services without importing every warehouse
+# deployment and simulator. Hardware/model sizing remains in the local adapter.
+include:
+  - path: ../services/compose.yml
+  - path: ../developer-profiles/dev-profile-search/compose.yml
+  - path: ../developer-profiles/dev-profile-thor-full/compose.yml

@@ -255,6 +255,34 @@ describe("OperationsWorkspace", () => {
     jest.useRealTimers();
   });
 
+  it("waits for a slow intelligence poll before scheduling another and bounds its requests", async () => {
+    jest.useFakeTimers();
+    const base = global.fetch as jest.Mock;
+    const finish: Array<(response: Response) => void> = [];
+    const signals: AbortSignal[] = [];
+    global.fetch = jest.fn((input, options) => {
+      if (String(input).includes("/api/vision/source-intelligence?")) {
+        signals.push(options?.signal as AbortSignal);
+        return new Promise<Response>((resolve) => { finish.push(resolve); });
+      }
+      return base(input, options);
+    });
+    render(<OperationsTestWorkspace />);
+    await act(async () => {});
+    expect(finish).toHaveLength(2);
+    await act(async () => { jest.advanceTimersByTime(16_000); });
+    // Even a transport that ignores cancellation cannot start duplicate polls.
+    expect(finish).toHaveLength(2);
+    expect(signals.every((signal) => signal.aborted)).toBe(true);
+    await act(async () => {
+      for (const resolve of [...finish]) resolve({ ok: true, json: async () => ({ semanticSegments: 4 }) } as Response);
+    });
+    await act(async () => { jest.advanceTimersByTime(14_999); });
+    expect(finish).toHaveLength(2);
+    await act(async () => { jest.advanceTimersByTime(1); });
+    expect(finish).toHaveLength(4);
+  });
+
   it("loads on LAN HTTP origins where crypto.randomUUID is unavailable", async () => {
     const originalRandomUuid = globalThis.crypto.randomUUID;
     Object.defineProperty(globalThis.crypto, "randomUUID", {

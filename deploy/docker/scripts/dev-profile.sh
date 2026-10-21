@@ -40,12 +40,17 @@ ngc_cli_api_key="${NGC_CLI_API_KEY:-}"
 nvidia_api_key="${NVIDIA_API_KEY:-}"
 openai_api_key="${OPENAI_API_KEY:-}"
 dry_run="false"
+use_sbsa_images="false"
+# Build the VIOS runtime-media packages into a local image instead of installing
+# them on every container start. Env var so CI can set it without a flag.
+prebake_vios_packages="${VSS_VIOS_PREBAKE_PACKAGES:-false}"
 
 # NIM-related defaults
 # LLM configuration
 llm_mode=""
 llm=""
 llm_device_id=""
+hardware_device_id=""
 llm_base_url=""
 
 # VLM configuration
@@ -60,6 +65,10 @@ vlm_env_file=""
 # External model type (LLM/VLM: nim/openai/vllm)
 llm_model_type=""
 vlm_model_type=""
+# Set when the single-GPU edge policy forces a model remote without the caller
+# passing --use-remote-llm/--use-remote-vlm (see the edge search block below).
+edge_force_remote_llm=0
+edge_force_remote_vlm=0
 
 
 # Flags to track explicitly provided options
@@ -67,11 +76,23 @@ options_provided=()
 
 # Edge hardware profiles (e.g. DGX-SPARK, IGX-THOR, AGX-THOR): device ID options not accepted
 edge_hardware_profiles=('DGX-SPARK' 'IGX-THOR' 'AGX-THOR')
+# Edge boards the search profile is enabled and validated on. A subset of
+# edge_hardware_profiles: search brings up RT-CV, RT-Embed and streamprocessing
+# on the board's single GPU, and only these two have been brought up that way.
+# IGX-THOR is deliberately excluded and still rejects -p search.
+search_edge_hardware_profiles=('DGX-SPARK' 'AGX-THOR')
 
-# Returns the first GPU's product name from nvidia-smi (display name), or empty string if nvidia-smi fails or no GPU.
+# Returns a GPU product name from nvidia-smi (display name), or empty string if
+# nvidia-smi fails or no GPU is found. When a device ID is provided, inspect
+# that device instead of assuming GPU 0.
 function get_nvidia_smi_gpu_name() {
+  local _device_id="${1:-}"
   local _name
-  _name="$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -n1)"
+  if [[ -n "${_device_id}" ]]; then
+    _name="$(nvidia-smi --id="${_device_id}" --query-gpu=name --format=csv,noheader 2>/dev/null | head -n1)"
+  else
+    _name="$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -n1)"
+  fi
   _name="${_name#"${_name%%[![:space:]]*}"}"
   _name="${_name%"${_name##*[![:space:]]}"}"
   echo "${_name}"
@@ -84,6 +105,38 @@ function get_nvidia_smi_gpu_count() {
   echo "${_count}"
 }
 
+# Returns success when the detected dotted version is at least the required
+# version. NVIDIA driver versions are numeric and compare correctly with
+# version sort (for example, 595.58.03 > 595.57.99).
+function version_is_at_least() {
+  local _detected="${1}"
+  local _required="${2}"
+  local _lowest
+  [[ -n "${_detected}" ]] && [[ -n "${_required}" ]] || return 1
+  _lowest="$(printf '%s\n%s\n' "${_required}" "${_detected}" | sort -V | head -n1)"
+  [[ "${_lowest}" == "${_required}" ]]
+}
+
+# Returns the indices of GPUs whose product name matches the requested hardware
+# profile, one per line. This is used when a service-specific device ID cannot
+# identify the deployment GPU (for example, when both LLM and VLM are remote).
+function get_matching_gpu_indices() {
+  local _requested_canonical
+  _requested_canonical="$(get_canonical_hardware_profile "${1}")"
+  local _index _name _detected_canonical
+  while IFS=',' read -r _index _name; do
+    _index="${_index#"${_index%%[![:space:]]*}"}"
+    _index="${_index%"${_index##*[![:space:]]}"}"
+    _name="${_name#"${_name%%[![:space:]]*}"}"
+    _name="${_name%"${_name##*[![:space:]]}"}"
+    [[ -n "${_index}" && -n "${_name}" ]] || continue
+    _detected_canonical="$(get_detected_hardware_profile "${_name}")"
+    if [[ "${_detected_canonical}" == "${_requested_canonical}" ]]; then
+      echo "${_index}"
+    fi
+  done < <(nvidia-smi --query-gpu=index,name --format=csv,noheader 2>/dev/null)
+}
+
 # Maps GPU product name (from nvidia-smi) to a canonical hardware type for detection. Returns OTHER if no match.
 # AGX-THOR and IGX-THOR both map to THOR (single canonical type). Matching is case-insensitive.
 function get_detected_hardware_profile() {
@@ -91,6 +144,7 @@ function get_detected_hardware_profile() {
   local _gpu_lower="${_gpu_name,,}"
   case "${_gpu_lower}" in
     *h100*) echo "H100" ;;
+    *gb300*|*b300*) echo "GB300" ;;
     *l40s*) echo "L40S" ;;
     *rtx*pro*4500*blackwell*) echo "RTXPRO4500BW" ;;
     *rtx*pro*6000*blackwell*) echo "RTXPRO6000BW" ;;
@@ -98,6 +152,18 @@ function get_detected_hardware_profile() {
     *thor*) echo "THOR" ;;
     *) echo "OTHER" ;;
   esac
+}
+
+# Returns success when any installed NVIDIA GPU matches a canonical hardware profile.
+# Mixed-GPU workstations must not be rejected merely because a different GPU is
+# listed first by nvidia-smi.
+function host_has_detected_hardware_profile() {
+  local _requested="${1}" _gpu_name _detected
+  while IFS= read -r _gpu_name; do
+    _detected="$(get_detected_hardware_profile "${_gpu_name}")"
+    [[ "${_detected}" == "${_requested}" ]] && return 0
+  done < <(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null)
+  return 1
 }
 
 # Maps requested hardware_profile (CLI/env) to the same canonical type used by get_detected_hardware_profile.
@@ -123,24 +189,68 @@ function get_canonical_display_name() {
 function get_llm_slug() {
   local _name="${1}"
   case "${_name}" in
-    nvidia/nvidia-nemotron-nano-9b-v2) echo "nvidia-nemotron-nano-9b-v2" ;;
+    nvidia/nemotron-3.5-lightning-30b-a3b) echo "nemotron-3.5-lightning-30b-a3b" ;;
     nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8) echo "nvidia-nemotron-nano-9b-v2-fp8" ;;
-    nvidia/nemotron-3-nano) echo "nemotron-3-nano" ;;
-    nvidia/llama-3.3-nemotron-super-49b-v1.5) echo "llama-3.3-nemotron-super-49b-v1.5" ;;
-    openai/gpt-oss-20b) echo "gpt-oss-20b" ;;
     *) echo "" ;;
   esac
 }
 
+# Models that used to ship with the blueprint. Returns a migration message for a
+# removed model name, or an empty string for a name that was never bundled. Kept
+# so a stale --llm fails loudly instead of resolving to an empty slug, which
+# Compose renders as zero LLM services with exit 0 (a silent no-LLM deploy).
+function get_removed_llm_message() {
+  local _name="${1}"
+  case "${_name}" in
+    nvidia/nvidia-nemotron-nano-9b-v2|nvidia/nemotron-3-nano|nvidia/llama-3.3-nemotron-super-49b-v1.5|openai/gpt-oss-20b)
+      echo "'${_name}' was removed from the blueprint. Use nvidia/nemotron-3.5-lightning-30b-a3b, the default on every hardware profile." ;;
+    *) echo "" ;;
+  esac
+}
 function get_vlm_slug() {
   local _name="${1}"
   case "${_name}" in
-    nvidia/cosmos-reason1-7b) echo "cosmos-reason1-7b" ;;
-    nvidia/cosmos-reason2-8b) echo "cosmos-reason2-8b" ;;
     nvidia/cosmos3-reasoner) echo "cosmos3-reasoner" ;;
-    Qwen/Qwen3-VL-8B-Instruct) echo "qwen3-vl-8b-instruct" ;;
+    # No standalone NIM ships this checkpoint; RT-VLM serves it, so there is no slug to select.
+    nvidia/cosmos3-reasoner-fp8) echo "none" ;;
     *) echo "" ;;
   esac
+}
+
+# Map CLI --vlm friendly names to RT-VLM MODEL_PATH for integrated (local) mode.
+# Used by base/alerts/lvs; search still uses standalone NIM slugs via get_vlm_slug.
+# Returns empty for unknown / unsupported names.
+function get_rtvi_vlm_model_path() {
+  local _name="${1}"
+  case "${_name}" in
+    nvidia/cosmos3-reasoner) echo "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final" ;;
+    nvidia/cosmos3-reasoner-fp8) echo "ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-fp8-final_format_fix" ;;
+    *) echo "" ;;
+  esac
+}
+
+function get_rtvi_vlm_model_to_use() {
+  local _name="${1}"
+  case "${_name}" in
+    nvidia/cosmos3-reasoner) echo "cosmos-reason3" ;;
+    nvidia/cosmos3-reasoner-fp8) echo "cosmos-reason3" ;;
+    *) echo "" ;;
+  esac
+}
+
+# Derive the /v1/models id RT-VLM advertises from MODEL_PATH.
+# NGC: ngc:nim/<org>/<model>:<tag> → nim_<org>_<model>_<tag> ('.' in tag → '_', matching ngc_model_downloader).
+# HF git: git:https://huggingface.co/<org>/<repo> → <repo> (best-effort; confirm via /v1/models after boot).
+function get_rtvi_vlm_name_from_model_path() {
+  local _path="${1}"
+  if [[ "${_path}" == ngc:* ]]; then
+    local _rest="${_path#ngc:}"
+    echo "${_rest}" | tr '/:' '__' | tr '.' '_'
+  elif [[ "${_path}" == git:* ]]; then
+    basename "${_path#git:}"
+  else
+    basename "${_path}"
+  fi
 }
 
 # Mode: accepted CLI values verification | real-time; written to MODE in env as 2d_cv | 2d_vlm
@@ -174,6 +284,59 @@ function set_alerts_ui_subtitle_from_mode() {
     2d_vlm)
       sed -i 's|^NEXT_PUBLIC_APP_SUBTITLE=.*|NEXT_PUBLIC_APP_SUBTITLE="Vision (Alerts - VLM)"|' "${_generated_env}"
       echo "[INFO] Set NEXT_PUBLIC_APP_SUBTITLE for alerts (MODE=2d_vlm → Vision (Alerts - VLM))"
+      ;;
+  esac
+}
+
+# Expose the Manage Alerts editors for the selected pipeline.
+# generated.env overrides the stable .env when --mode real-time is selected
+# (CV verification off). Verification mode keeps both editors.
+function set_alerts_ui_rule_kinds_from_mode() {
+  local _generated_env="${1}"
+  local _mode _realtime _verification
+  _mode="$(get_env_value "${_generated_env}" "MODE")"
+  case "${_mode}" in
+    2d_cv)
+      _realtime=true
+      _verification=true
+      ;;
+    2d_vlm)
+      _realtime=true
+      _verification=false
+      ;;
+    *)
+      return
+      ;;
+  esac
+
+  for _entry in \
+    "NEXT_PUBLIC_ALERTS_TAB_MANAGE_ALERTS_SUB_TAB_ENABLE_REALTIME_ALERTS=${_realtime}" \
+    "NEXT_PUBLIC_ALERTS_TAB_MANAGE_ALERTS_SUB_TAB_ENABLE_CV_ALERTS_VERIFICATION=${_verification}"; do
+    local _name="${_entry%%=*}"
+    if grep -q "^${_name}=" "${_generated_env}"; then
+      sed -i "s|^${_name}=.*|${_entry}|" "${_generated_env}"
+    else
+      printf '%s\n' "${_entry}" >> "${_generated_env}"
+    fi
+  done
+  echo "[INFO] Set Alerts Manage tabs for MODE=${_mode} (real-time=${_realtime}, CV verification=${_verification})"
+}
+
+# Alerts RT-VLM Kafka publishing: overrides.env disables it for verification
+# (2d_cv), where nothing consumes the output and RT-VLM would emit duplicate
+# incidents with file-relative timestamps. Real-time (2d_vlm) drives alerts from
+# RT-VLM's Kafka events, so comment the override out and let the rtvi-vlm compose
+# default (true) apply.
+function set_alerts_rtvi_vlm_kafka_from_mode() {
+  local _generated_env="${1}"
+  local _mode
+  _mode="$(get_env_value "${_generated_env}" "MODE")"
+  case "${_mode}" in
+    2d_vlm)
+      if grep -q '^RTVI_VLM_KAFKA_ENABLED=' "${_generated_env}"; then
+        sed -i 's|^RTVI_VLM_KAFKA_ENABLED=|#RTVI_VLM_KAFKA_ENABLED=|' "${_generated_env}"
+        echo "[INFO] Commented out RTVI_VLM_KAFKA_ENABLED for alerts (MODE=2d_vlm → RT-VLM Kafka publishing enabled)"
+      fi
       ;;
   esac
 }
@@ -230,6 +393,81 @@ function get_remote_model_name() {
   return 0
 }
 
+# Resolve the secure link Brev publishes for a destination port.
+#
+# Brev's environment context file is the source of truth: it lists one entry per
+# exposed port with its fqdn and public_port. Read the fqdn from it — never build
+# one from a pattern. The domain varies per instance (gobrev.dev, brevlab.com,
+# apps.run.brev.nvidia.com, ...) and a constructed hostname that happens to be
+# wrong is indistinguishable from a missing link: Brev's edge answers
+# 404 route_not_found for both, and the same wrong hostname lands in
+# VSS_PUBLIC_HOST, so HAProxy's known_host ACL then rejects the *correct* URL too.
+#
+# Key names are matched loosely so a schema tweak degrades to "no link found"
+# (which is reported) rather than a wrong hostname (which is not).
+#
+# Arguments:
+#   $1 destination port on the instance
+# Outputs: BREV_LINK_FQDN / BREV_LINK_PUBLIC_PORT on success; BREV_CONTEXT_PROBLEM
+#          when the context file itself is the reason, empty when the file was
+#          read fine and simply publishes no link for this port. Returns non-zero
+#          either way. These are globals rather than stdout on purpose: a caller
+#          using $(...) would run this in a subshell and lose the reason, and
+#          reporting "no link published" for an unreadable file is the confusion
+#          this whole function exists to avoid.
+function brev_link_for_port() {
+  local _port="${1}"
+  local _ctx _raw _result
+  _ctx="${BREV_ENVIRONMENT_CONTEXT_PATH:-/etc/brev/environment-context.json}"
+  BREV_CONTEXT_PROBLEM=""
+  BREV_LINK_FQDN=""
+  BREV_LINK_PUBLIC_PORT=""
+
+  if [[ ! "${_port}" =~ ^[0-9]+$ ]]; then
+    BREV_CONTEXT_PROBLEM="'${_port}' is not a port number"
+    return 1
+  fi
+  if ! command -v jq >/dev/null 2>&1; then
+    BREV_CONTEXT_PROBLEM="jq is required to read ${_ctx}"
+    return 1
+  fi
+
+  if [[ -r "${_ctx}" ]]; then
+    _raw="$(cat "${_ctx}" 2>/dev/null)"
+  elif [[ -e "${_ctx}" ]]; then
+    # /etc/brev is 0700 root:root on Brev images and this script usually runs as
+    # the instance user. Passwordless sudo is the norm there, so retry through it
+    # rather than reporting a link that is actually published.
+    if ! _raw="$(sudo -n cat "${_ctx}" 2>/dev/null)"; then
+      BREV_CONTEXT_PROBLEM="${_ctx} is not readable by $(id -un) and \`sudo -n cat\` failed"
+      return 1
+    fi
+  else
+    BREV_CONTEXT_PROBLEM="${_ctx} does not exist"
+    return 1
+  fi
+
+  # A jq failure means the file is not the JSON we expect; that is a different
+  # problem from a port with no link, and the caller reports them differently.
+  if ! _result="$(printf '%s' "${_raw}" | jq -r --arg p "${_port}" '
+    first(
+      .ports[]?
+      | select(((.destination_port // .destinationPort // .target_port // .port) | tostring) == $p)
+      | select((.fqdn // .hostname // .host // "") != "")
+      | "\((.fqdn // .hostname // .host) | sub("^[a-zA-Z]+://"; "") | split("/")[0]) \(.public_port // .publicPort // 443)"
+    ) // empty' 2>/dev/null)"; then
+    BREV_CONTEXT_PROBLEM="${_ctx} is not valid JSON, or does not have the expected shape"
+    return 1
+  fi
+  if [[ -z "${_result}" ]]; then
+    return 1
+  fi
+
+  BREV_LINK_FQDN="${_result%% *}"
+  BREV_LINK_PUBLIC_PORT="${_result##* }"
+  return 0
+}
+
 function get_env_value() {
   local _env_file="${1}"
   local _var_name="${2}"
@@ -243,6 +481,54 @@ function get_env_value() {
     _val="${_val#\'}"; _val="${_val%\'}"
     echo "${_val}"
   fi
+}
+
+function env_file_has_var() {
+  local _env_file="${1}"
+  local _var_name="${2}"
+  [[ -f "${_env_file}" ]] && grep -q "^${_var_name}=" "${_env_file}" 2>/dev/null
+}
+
+function get_env_value_from_files() {
+  local _var_name="${1}"
+  shift
+  local _env_file _val="" _found="false"
+  for _env_file in "$@"; do
+    if env_file_has_var "${_env_file}" "${_var_name}"; then
+      _val="$(get_env_value "${_env_file}" "${_var_name}")"
+      _found="true"
+    fi
+  done
+  if [[ "${_found}" == "true" ]]; then
+    echo "${_val}"
+  fi
+}
+
+# Value of a commented SBSA alternate, e.g. `#VSS_RT_CV_TAG="develop-latest-sbsa"`.
+# Profiles pin the SBSA build that way when it does not follow the shared
+# VSS_CONTAINER_TAG channel; suffix derivation is the fallback. Later files win.
+function get_commented_sbsa_value() {
+  local _var_name="${1}"
+  shift
+  local _env_file _line _val=""
+  for _env_file in "$@"; do
+    [[ -f "${_env_file}" ]] || continue
+    _line="$(grep -E "^#[[:space:]]*${_var_name}=" "${_env_file}" 2>/dev/null | grep -F 'sbsa' | head -1)"
+    [[ -n "${_line}" ]] && _val="${_line#*=}"
+  done
+  echo "${_val}"
+}
+
+function env_var_defined_in_files() {
+  local _var_name="${1}"
+  shift
+  local _env_file
+  for _env_file in "$@"; do
+    if env_file_has_var "${_env_file}" "${_var_name}"; then
+      return 0
+    fi
+  done
+  return 1
 }
 
 # Resolve path to absolute (relative paths are relative to current working directory).
@@ -311,10 +597,43 @@ function mask_external_ip_args() {
 function get_rtvi_vllm_gpu_memory_utilization() {
   local _hardware_profile="${1}"
   local _vlm_mode="${2}"
+  local _profile="${3}"
+
+  if [[ "${_profile}" == "alerts" ]]; then
+    case "${_hardware_profile}" in
+      GB300)
+        echo "0.2"
+        return
+        ;;
+      DGX-SPARK)
+        echo "0.35"
+        return
+        ;;
+    esac
+  fi
+
+  # search co-locates RT-CV (SigLIP v2.0 + RT-DETR) with RT-VLM on one L40S GPU;
+  # 0.8 (38.4 GiB) starves RT-CV and crashes the vLLM EngineCore. 0.7 (33.6 GiB)
+  # leaves ~14 GiB for RT-CV.
+  if [[ "${_profile}" == "search" && "${_hardware_profile}" == "L40S" ]]; then
+    echo "0.7"
+    return
+  fi
 
   if [[ "${_vlm_mode}" == "local_shared" ]]; then
     case "${_hardware_profile}" in
-      DGX-SPARK|H100|RTXPRO6000BW) echo "0.4" ;;
+      # High-memory boards: vLLM claims gpu_memory_utilization x total_memory
+      # whether the model needs it or not, and refuses to start unless free >=
+      # that reservation (it does not subtract co-resident processes).
+      # GB300 (~250 GiB): 0.2 ≈ 50 GiB for Cosmos3 Nano — still above the ~32 GiB
+      # it uses on an 80 GiB H100 — leaving ~200 GiB for LLM (0.30 x 250 ≈ 75 GiB)
+      # plus RT-CV/RT-Embed. Starting point; confirm on a live GB300 search/alerts
+      # stack that RT-VLM still reaches ready.
+      GB300) echo "0.2" ;;
+      # Spark/Thor unified memory: 0.35. Thor is applied in the Thor block
+      # below (alerts and base both need it; the helper is skipped for Thor).
+      DGX-SPARK) echo "0.35" ;;
+      H100|RTXPRO6000BW) echo "0.4" ;;
       L40S|RTXPRO4500BW) echo "0.8" ;;
       *) echo "0.7" ;;
     esac
@@ -478,7 +797,9 @@ function usage() {
   echo "   or: ${0} (-h|--help)"
   echo ""
   echo "Positional arguments:"
-  echo "  desired-state                    up, down, check-kernel-settings, or kernel-settings"
+  echo "  desired-state                    up or down"
+  echo "                                   • down performs a full reset: removes named volumes and VSS_DATA_DIR"
+  echo "                                   • to preserve data, run 'docker compose -p <project> down --remove-orphans' (default project: vss)"
   echo ""
   echo "NOTE: The following are read from the environment (no CLI options):"
   echo "  • NGC_CLI_API_KEY     — required for 'up'"
@@ -487,7 +808,6 @@ function usage() {
   echo "  • LLM_ENDPOINT_URL    — optional; required when --use-remote-llm is passed (both must be set)"
   echo "  • VLM_ENDPOINT_URL    — optional; required when --use-remote-vlm is passed (both must be set)"
   echo "  • VLM_CUSTOM_WEIGHTS  — optional; when --use-remote-vlm is not passed: absolute path to custom weights dir; when --use-remote-vlm is passed, ignored"
-  echo "  • ENABLE_CRITIC       — optional; search profile: enabled by default; when false (case-insensitive), disables the critic agent and skips local VLM deployment"
   echo ""
   echo "Options for 'up':"
   echo "  -p, --profile                    [REQUIRED] Profile."
@@ -504,12 +824,18 @@ function usage() {
   echo "                                     - L40S"
   echo "                                     - RTXPRO4500BW"
   echo "                                     - RTXPRO6000BW"
+  echo "                                     - GB300"
   echo "                                     - DGX-SPARK"
   echo "                                     - IGX-THOR"
   echo "                                     - AGX-THOR"
   echo "                                     - OTHER"
-  echo "                                   • DGX-SPARK, IGX-THOR, and AGX-THOR only valid when profile is base, alerts, or thor-full"
+  echo "                                   • RTXPRO4500BW is only valid for alerts with a remote LLM"
+  echo "                                   • DGX-SPARK, IGX-THOR, and AGX-THOR only valid when profile is base or alerts"
+  echo "                                   • profile search additionally supported on DGX-SPARK and AGX-THOR (not IGX-THOR):"
+  echo "                                     VLM must be remote (--use-remote-vlm); LLM defaults to remote, pass"
+  echo "                                     --llm <model> to host it on the board's single GPU"
   echo "                                   • DGX-SPARK, IGX-THOR, AGX-THOR: --llm-device-id, --vlm-device-id not accepted"
+  echo "                                   • GB300 is valid for search; local model device IDs must match. A unique GB300 is auto-detected when IDs are omitted"
   echo "  -i, --host-ip                    Host IP."
   echo "                                   • Default: primary IP from ip route"
   echo "  -e, --external-ip                Externally accessible IP."
@@ -521,15 +847,15 @@ function usage() {
   echo ""
   echo "  --llm                            LLM model name."
   echo "                                   • One of (local):"
-  echo "                                     - nvidia/nvidia-nemotron-nano-9b-v2"
-  echo "                                     - nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8"
-  echo "                                     - nvidia/nemotron-3-nano"
-  echo "                                     - nvidia/llama-3.3-nemotron-super-49b-v1.5"
-  echo "                                     - openai/gpt-oss-20b"
+  echo "                                     - nvidia/nemotron-3.5-lightning-30b-a3b (default)"
+  echo "                                     - nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8 (11.7 GB; for GPUs too small for the default)"
   echo "                                   • When --use-remote-llm is passed, any model name can be passed"
   echo "  --llm-device-id                  LLM device ID."
   echo "                                   • Not allowed when --use-remote-llm is passed"
   echo "                                   • DGX-SPARK, IGX-THOR, AGX-THOR: not accepted"
+  echo "  --prebake-vios-packages          Build the VIOS runtime-media packages into a local image instead of"
+  echo "                                   installing them on every container start. Cuts the VIOS start from"
+  echo "                                   ~100 s to ~0.1 s. The image is built locally and never pushed."
   echo "  --use-remote-llm                 Use remote LLM; requires LLM_ENDPOINT_URL on the host (both are required together)."
   echo "  --llm-model-type                 LLM backend type when --use-remote-llm is passed: nim, openai, or vllm."
   echo "  --llm-env-file                   Path to LLM env file. Absolute or relative to CWD."
@@ -537,11 +863,10 @@ function usage() {
   echo ""
   echo "  --vlm                            VLM model name."
   echo "                                   • One of (local):"
-  echo "                                     - nvidia/cosmos-reason1-7b"
-  echo "                                     - nvidia/cosmos-reason2-8b"
-  echo "                                     - nvidia/cosmos3-reasoner          (NIM_MODEL_SIZE=nano|super → VLM_NAME=nvidia/cosmos3-{size}-reasoner)"
-  echo "                                     - Qwen/Qwen3-VL-8B-Instruct"
-  echo "                                   • For a local bundled VLM, not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
+  echo "                                     - nvidia/cosmos3-reasoner          (search: NIM_MODEL_SIZE=nano|super → nvidia/cosmos3-{size}-reasoner;"
+  echo "                                                                         base/alerts/lvs: maps to RT-VLM MODEL_PATH + /v1/models basename)"
+  echo "                                     - nvidia/cosmos3-reasoner-fp8      (Cosmos3 Nano FP8 via RT-VLM; smaller footprint for a shared GPU)"
+  echo "                                   • Not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
   echo "                                   • When --use-remote-vlm is passed, any model name can be passed"
   echo "  --vlm-device-id                  VLM device ID."
   echo "                                   • Not allowed when --use-remote-vlm is passed"
@@ -552,6 +877,8 @@ function usage() {
   echo "  --vlm-env-file                   Path to VLM env file. Absolute or relative to CWD."
   echo "                                   • Not allowed when --use-remote-vlm is passed"
   echo "                                   • Not accepted for profile=alerts or base on IGX-THOR or AGX-THOR"
+  echo "  --use-sbsa-images                Use SBSA-tagged managed-image variants."
+  echo "                                   • Enabled automatically for -H DGX-SPARK or GB300"
   echo ""
   echo "Options for 'up' and 'down':"
   echo "  -d, --dry-run                    print commands without executing them"
@@ -576,7 +903,7 @@ function validate_args() {
   _args=("${@}")
   _all_good=0
 
-  _valid_args=$(getopt -q -o p:H:i:e:m:dh --long profile:,hardware-profile:,host-ip:,external-ip:,mode:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm:,vlm:,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,dry-run,help -- "${_args[@]}")
+  _valid_args=$(getopt -q -o p:H:i:e:m:dh --long profile:,hardware-profile:,host-ip:,external-ip:,mode:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm:,vlm:,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,use-sbsa-images,dry-run,help -- "${_args[@]}")
   if [[ $? -ne 0 ]]; then
     echo "[ERROR] Invalid usage: $(mask_external_ip_args "${_args[@]}")"
     ((_all_good++))
@@ -617,7 +944,7 @@ function process_args() {
   _args=("${@}")
   _all_good=0
 
-  _valid_args=$(getopt -q -o p:H:i:e:m:dh --long profile:,hardware-profile:,host-ip:,external-ip:,mode:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm:,vlm:,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,dry-run,help -- "${_args[@]}")
+  _valid_args=$(getopt -q -o p:H:i:e:m:dh --long profile:,hardware-profile:,host-ip:,external-ip:,mode:,llm-device-id:,vlm-device-id:,use-remote-llm,use-remote-vlm,llm:,vlm:,llm-model-type:,vlm-model-type:,llm-env-file:,vlm-env-file:,use-sbsa-images,dry-run,help -- "${_args[@]}")
   eval set -- "${_valid_args}"
 
   # Parse options
@@ -665,6 +992,11 @@ function process_args() {
         options_provided+=("vlm-device-id")
         shift
         ;;
+      --prebake-vios-packages)
+        prebake_vios_packages="true"
+        options_provided+=("prebake-vios-packages")
+        shift
+        ;;
       --use-remote-llm)
         llm_base_url="${LLM_ENDPOINT_URL:-}"
         options_provided+=("use-remote-llm")
@@ -709,6 +1041,11 @@ function process_args() {
         shift
         vlm_env_file="${1}"
         options_provided+=("vlm-env-file")
+        shift
+        ;;
+      --use-sbsa-images)
+        use_sbsa_images="true"
+        options_provided+=("use-sbsa-images")
         shift
         ;;
       -d | --dry-run)
@@ -775,58 +1112,197 @@ function process_args() {
 
       # Populate from profile .env when not provided by user (only after .env existence is verified)
       local _profile_env="${deployment_directory}/developer-profiles/dev-profile-${profile}/.env"
+      local _profile_overrides_env="${deployment_directory}/developer-profiles/dev-profile-${profile}/overrides.env"
+      if [[ ! -f "${_profile_overrides_env}" ]]; then
+        echo "[ERROR] Profile overrides env file not found: ${_profile_overrides_env}"
+        ((_all_good++))
+      fi
       if ! contains_element "hardware-profile" "${options_provided[@]}"; then
-        hardware_profile="$(get_env_value "${_profile_env}" "HARDWARE_PROFILE")"
+        hardware_profile="$(get_env_value_from_files "HARDWARE_PROFILE" "${_profile_env}" "${_profile_overrides_env}")"
       fi
       if ! contains_element "llm-device-id" "${options_provided[@]}"; then
-        llm_device_id="$(get_env_value "${_profile_env}" "LLM_DEVICE_ID")"
+        llm_device_id="$(get_env_value_from_files "LLM_DEVICE_ID" "${_profile_env}" "${_profile_overrides_env}")"
       fi
       if ! contains_element "vlm-device-id" "${options_provided[@]}"; then
-        vlm_device_id="$(get_env_value "${_profile_env}" "VLM_DEVICE_ID")"
+        vlm_device_id="$(get_env_value_from_files "VLM_DEVICE_ID" "${_profile_env}" "${_profile_overrides_env}")"
       fi
       local _fixed_shared_raw _fixed_shared_norm _reserved_raw _reserved_norm
-      _fixed_shared_raw="$(get_env_value "${_profile_env}" "FIXED_SHARED_DEVICE_IDS")"
+      _fixed_shared_raw="$(get_env_value_from_files "FIXED_SHARED_DEVICE_IDS" "${_profile_env}" "${_profile_overrides_env}")"
       _fixed_shared_raw="${_fixed_shared_raw// /}"
       _fixed_shared_norm=",${_fixed_shared_raw},"
-      _reserved_raw="$(get_env_value "${_profile_env}" "RESERVED_DEVICE_IDS")"
+      _reserved_raw="$(get_env_value_from_files "RESERVED_DEVICE_IDS" "${_profile_env}" "${_profile_overrides_env}")"
       _reserved_raw="${_reserved_raw// /}"
       _reserved_norm=",${_reserved_raw},"
       if ! contains_element "llm-model-type" "${options_provided[@]}"; then
-        llm_model_type="$(get_env_value "${_profile_env}" "LLM_MODEL_TYPE")"
+        llm_model_type="$(get_env_value_from_files "LLM_MODEL_TYPE" "${_profile_env}" "${_profile_overrides_env}")"
       fi
       if ! contains_element "vlm-model-type" "${options_provided[@]}"; then
-        vlm_model_type="$(get_env_value "${_profile_env}" "VLM_MODEL_TYPE")"
+        vlm_model_type="$(get_env_value_from_files "VLM_MODEL_TYPE" "${_profile_env}" "${_profile_overrides_env}")"
       fi
 
       # Validate hardware profile value (from profile .env or --hardware-profile)
-      _valid_hardware_profiles=('H100' 'L40S' 'RTXPRO4500BW' 'RTXPRO6000BW' 'DGX-SPARK' 'IGX-THOR' 'AGX-THOR' 'OTHER')
+      _valid_hardware_profiles=('H100' 'GB300' 'L40S' 'RTXPRO4500BW' 'RTXPRO6000BW' 'DGX-SPARK' 'IGX-THOR' 'AGX-THOR' 'OTHER')
       if ! contains_element "${hardware_profile}" "${_valid_hardware_profiles[@]}"; then
-        echo "[ERROR] Invalid hardware-profile: ${hardware_profile}. Must be one of: H100, L40S, RTXPRO4500BW, RTXPRO6000BW, DGX-SPARK, IGX-THOR, AGX-THOR, OTHER"
+        echo "[ERROR] Invalid hardware-profile: ${hardware_profile}. Must be one of: H100, GB300, L40S, RTXPRO4500BW, RTXPRO6000BW, DGX-SPARK, IGX-THOR, AGX-THOR, OTHER"
         ((_all_good++))
       fi
 
-      # Fail fast: requested hardware_profile must match detected GPU (from nvidia-smi display name).
-      # OTHER is a user-selected catch-all and intentionally bypasses the host GPU match.
-      # Both sides use canonical types (AGX-THOR and IGX-THOR map to THOR for comparison).
-      # Set SKIP_HARDWARE_CHECK=true to skip (e.g. in CI/tests without matching GPU).
-      if [[ -n "${hardware_profile}" ]] && [[ "$(get_canonical_hardware_profile "${hardware_profile}")" != "OTHER" ]] && [[ "${SKIP_HARDWARE_CHECK,,}" != "true" ]]; then
-        local _gpu_name _detected_canonical
-        _gpu_name="$(get_nvidia_smi_gpu_name)"
-        if [[ -z "${_gpu_name}" ]]; then
-          echo "[ERROR] Hardware profile '${hardware_profile}' does not match detected hardware (no NVIDIA GPU detected)."
-          ((_all_good++))
-        elif _detected_canonical="$(get_detected_hardware_profile "${_gpu_name}")" && [[ "$(get_canonical_hardware_profile "${hardware_profile}")" != "${_detected_canonical}" ]]; then
-          echo "[ERROR] Hardware profile '${hardware_profile}' does not match detected hardware '$(get_canonical_display_name "${_detected_canonical}")'."
+      # RTX PRO 4500 Blackwell is validated only for Alerts with a remote LLM.
+      # Keep this policy outside SKIP_HARDWARE_CHECK: that escape hatch skips
+      # host probing in CI, not unsupported profile/model combinations.
+      case "${hardware_profile}" in
+        RTXPRO4500BW)
+          if [[ "${profile}" != "alerts" ]]; then
+            echo "[ERROR] Hardware profile 'RTXPRO4500BW' is only valid for profile alerts, not '${profile}'"
+            ((_all_good++))
+          fi
+          if ! contains_element "use-remote-llm" "${options_provided[@]}"; then
+            echo "[ERROR] Hardware profile 'RTXPRO4500BW' requires --use-remote-llm with LLM_ENDPOINT_URL"
+            ((_all_good++))
+          fi
+          ;;
+      esac
+
+      # FIRST pass over the remote predicates. Computed here because GB300
+      # placement below needs them, and that must happen before the edge search
+      # policy runs -- so this pass sees only explicit --use-remote-* flags.
+      # Edge forcing is folded in by the second pass further down; do not add
+      # edge_force_remote_* here, where those flags are always still 0.
+      local _llm_is_remote _vlm_is_remote
+      _llm_is_remote=0
+      _vlm_is_remote=0
+      if contains_element "use-remote-llm" "${options_provided[@]}" && [[ -n "${llm_base_url}" ]]; then
+        _llm_is_remote=1
+      fi
+      if contains_element "use-remote-vlm" "${options_provided[@]}" && [[ -n "${vlm_base_url}" ]]; then
+        _vlm_is_remote=1
+      fi
+
+      # Every profile places its GPU-consuming services on one selected GB300.
+      # Resolve that GPU from an explicitly selected local model, or auto-detect
+      # it when exactly one GB300 is present (including remote+remote).
+      if [[ "${hardware_profile}" == "GB300" ]]; then
+        # Device IDs reach here from the CLI or from the profile environment, and
+        # only a CLI value is an explicit selection. The profile defaults describe
+        # the two-GPU layout (LLM on 1, VLM on 0), which cannot apply to a single
+        # shared GB300, so disagreeing profile values are advisory: fall through to
+        # auto-detection rather than rejecting a command the user never typed.
+        local _llm_id_is_cli=0 _vlm_id_is_cli=0
+        if contains_element "llm-device-id" "${options_provided[@]}"; then
+          _llm_id_is_cli=1
+        fi
+        if contains_element "vlm-device-id" "${options_provided[@]}"; then
+          _vlm_id_is_cli=1
+        fi
+
+        local _llm_selector="" _vlm_selector=""
+        if [[ "${_llm_is_remote}" -eq 0 ]] && [[ -n "${llm_device_id}" ]]; then
+          _llm_selector="${llm_device_id}"
+        fi
+        if [[ "${_vlm_is_remote}" -eq 0 ]] && [[ -n "${vlm_device_id}" ]]; then
+          _vlm_selector="${vlm_device_id}"
+        fi
+
+        if [[ -n "${_llm_selector}" ]] && [[ -n "${_vlm_selector}" ]] && [[ "${_llm_selector}" != "${_vlm_selector}" ]]; then
+          # A conflict the user actually expressed is an error; one inherited
+          # wholly from the profile environment is not.
+          if [[ "${_llm_id_is_cli}" -eq 1 ]] || [[ "${_vlm_id_is_cli}" -eq 1 ]]; then
+            echo "[ERROR] GB300 requires local LLM and VLM device IDs to select the same GPU"
+            ((_all_good++))
+          fi
+        else
+          hardware_device_id="${_llm_selector:-${_vlm_selector}}"
+        fi
+
+        if [[ -z "${hardware_device_id}" ]]; then
+          local _gb300_matches=()
+          local _gb300_index
+          while IFS= read -r _gb300_index; do
+            [[ -n "${_gb300_index}" ]] && _gb300_matches+=("${_gb300_index}")
+          done < <(get_matching_gpu_indices "GB300")
+          if [[ "${#_gb300_matches[@]}" -eq 1 ]]; then
+            hardware_device_id="${_gb300_matches[0]}"
+          elif [[ "${#_gb300_matches[@]}" -eq 0 ]]; then
+            echo "[ERROR] Hardware profile 'GB300' was selected, but no GB300 GPU was detected"
+            ((_all_good++))
+          else
+            echo "[ERROR] Multiple GB300 GPUs were detected; select the deployment GPU with the device ID of a local LLM or VLM"
+            ((_all_good++))
+          fi
+        fi
+
+        if [[ "${_llm_is_remote}" -eq 0 ]]; then
+          llm_device_id="${hardware_device_id}"
+        fi
+        if [[ "${_vlm_is_remote}" -eq 0 ]]; then
+          vlm_device_id="${hardware_device_id}"
+        fi
+        if [[ "${profile}" == "search" ]] && [[ "${_llm_is_remote}" -eq 0 ]] && contains_element "llm" "${options_provided[@]}" \
+          && [[ "${llm}" != "nvidia/nemotron-3.5-lightning-30b-a3b" ]]; then
+          echo "[ERROR] The search profile on GB300 supports only the locally hosted LLM nvidia/nemotron-3.5-lightning-30b-a3b"
           ((_all_good++))
         fi
       fi
 
-      # Edge hardware profiles use fixed device placement. thor-full is the
-      # unified AGX Thor profile and deliberately shares this validation path.
-      if contains_element "${hardware_profile}" "${edge_hardware_profiles[@]}"; then
-        if [[ "${profile}" != "base" ]] && [[ "${profile}" != "alerts" ]] && [[ "${profile}" != "thor-full" ]]; then
-          echo "[ERROR] Hardware profile '${hardware_profile}' is only valid for profile base, alerts, or thor-full, not '${profile}'"
+      # Fail fast: requested hardware_profile must match a detected GPU from nvidia-smi.
+      # OTHER is a user-selected catch-all and intentionally bypasses the host GPU match.
+      # Both sides use canonical types (AGX-THOR and IGX-THOR map to THOR for comparison).
+      # Set SKIP_HARDWARE_CHECK=true to skip (e.g. in CI/tests without matching GPU).
+      if [[ -n "${hardware_profile}" ]] && [[ "$(get_canonical_hardware_profile "${hardware_profile}")" != "OTHER" ]] && [[ "${SKIP_HARDWARE_CHECK,,}" != "true" ]]; then
+        local _gpu_name
+        # GB300 resolves one specific deployment GPU, so probe that device to
+        # confirm it exists. Other hardware profiles keep the historical
+        # first-GPU probe: their device IDs come from the profile environment,
+        # where search and alerts default to GPU 1, so probing those would
+        # change which GPU is validated on every host.
+        local _hardware_check_device_id=""
+        if [[ "${hardware_profile}" == "GB300" ]]; then
+          _hardware_check_device_id="${hardware_device_id}"
+        fi
+        _gpu_name="$(get_nvidia_smi_gpu_name "${_hardware_check_device_id}")"
+        if [[ -z "${_gpu_name}" ]]; then
+          echo "[ERROR] Hardware profile '${hardware_profile}' does not match detected hardware (no NVIDIA GPU detected)."
           ((_all_good++))
+        elif [[ "${hardware_profile}" == "GB300" ]] && [[ "$(get_detected_hardware_profile "${_gpu_name}")" != "GB300" ]]; then
+          echo "[ERROR] Selected GPU device ID '${_hardware_check_device_id}' is not a GB300."
+          ((_all_good++))
+        elif ! host_has_detected_hardware_profile "$(get_canonical_hardware_profile "${hardware_profile}")"; then
+          echo "[ERROR] Hardware profile '${hardware_profile}' does not match any detected NVIDIA GPU."
+          ((_all_good++))
+        fi
+
+        case "${hardware_profile}" in
+          RTXPRO4500BW)
+            local _gpu_count
+            _gpu_count="$(get_nvidia_smi_gpu_count)"
+            if [[ "${_gpu_count}" -lt 2 ]]; then
+              echo "[ERROR] Hardware profile 'RTXPRO4500BW' requires at least 2 NVIDIA GPUs; detected ${_gpu_count}."
+              ((_all_good++))
+            fi
+
+            local _minimum_driver_version="595.58.03"
+            local _driver_version
+            _driver_version="$(nvidia-smi --query-gpu=driver_version --format=csv,noheader 2>/dev/null | head -n1)"
+            _driver_version="${_driver_version//[[:space:]]/}"
+            if ! version_is_at_least "${_driver_version}" "${_minimum_driver_version}"; then
+              echo "[ERROR] Hardware profile 'RTXPRO4500BW' requires NVIDIA driver ${_minimum_driver_version} or newer; detected ${_driver_version:-unknown}."
+              ((_all_good++))
+            fi
+            ;;
+        esac
+      fi
+
+      # DGX-SPARK, IGX-THOR, AGX-THOR (edge_hardware_profiles): only valid for base and alerts,
+      # plus search on the search_edge_hardware_profiles subset; device ID options not accepted
+      if contains_element "${hardware_profile}" "${edge_hardware_profiles[@]}"; then
+        if [[ "${profile}" != "base" ]] && [[ "${profile}" != "alerts" ]]; then
+          if [[ "${profile}" != "search" ]]; then
+            echo "[ERROR] Hardware profile '${hardware_profile}' is only valid for profile base or alerts (or search on ${search_edge_hardware_profiles[*]}), not '${profile}'"
+            ((_all_good++))
+          elif ! contains_element "${hardware_profile}" "${search_edge_hardware_profiles[@]}"; then
+            echo "[ERROR] Profile search is not supported on hardware profile '${hardware_profile}'. Supported edge boards: ${search_edge_hardware_profiles[*]}"
+            ((_all_good++))
+          fi
         fi
         if contains_element "llm-device-id" "${options_provided[@]}"; then
           echo "[ERROR] --llm-device-id is not accepted for hardware profile '${hardware_profile}'"
@@ -840,27 +1316,47 @@ function process_args() {
         vlm_device_id="0"
       fi
 
-      # The unified profile is a qualified AGX Thor deployment backed by the
-      # operator's local OpenAI-compatible servers. Requiring both remote flags
-      # prevents a direct dev-profile invocation from accidentally selecting
-      # and loading the bundled NIMs on the same device.
-      if [[ "${profile}" == "thor-full" ]]; then
-        if [[ "${hardware_profile}" != "AGX-THOR" ]]; then
-          echo "[ERROR] Profile thor-full requires hardware profile AGX-THOR"
+      # Search on edge hardware has one GPU, and streamprocessing, RT-CV and
+      # RT-Embed all need it, so both models run on remote endpoints. Neither can
+      # be hosted on the board:
+      #
+      # - The VLM never fits: the perception pipeline already owns the GPU.
+      # - Two vLLM engines cannot share one GPU at all. Each sizes itself as
+      #   (fraction x total) - (memory held by every other process) and then
+      #   expands its KV cache to fill the remainder, so no pair of fractions
+      #   satisfies both. Measured on AGX Thor (122.82 GiB unified, 2026-08-31):
+      #   the LLM alone holds 36.85 GiB and cannot go under the INT4 profile's
+      #   32 GiB floor, and rt-embed needs ~6 GiB to build its TensorRT engine.
+      #
+      # Only the endpoint URLs are needed; --use-remote-llm/--use-remote-vlm are
+      # accepted but redundant. --llm/--vlm still name the *remote* model when
+      # the matching --use-remote-* flag is passed.
+      if contains_element "${hardware_profile}" "${search_edge_hardware_profiles[@]}" && [[ "${profile}" == "search" ]]; then
+        if contains_element "llm" "${options_provided[@]}" && ! contains_element "use-remote-llm" "${options_provided[@]}"; then
+          echo "[ERROR] Search on ${hardware_profile} cannot host a local LLM: the board's only GPU already carries the perception pipeline. Use --use-remote-llm with LLM_ENDPOINT_URL."
           ((_all_good++))
         fi
-        if ! contains_element "use-remote-llm" "${options_provided[@]}"; then
-          echo "[ERROR] Profile thor-full requires --use-remote-llm with LLM_ENDPOINT_URL"
+        if contains_element "vlm" "${options_provided[@]}" && ! contains_element "use-remote-vlm" "${options_provided[@]}"; then
+          echo "[ERROR] Search on ${hardware_profile} cannot host a local VLM: the board's only GPU already carries the perception pipeline. Use --use-remote-vlm with VLM_ENDPOINT_URL."
           ((_all_good++))
         fi
-        if ! contains_element "use-remote-vlm" "${options_provided[@]}"; then
-          echo "[ERROR] Profile thor-full requires --use-remote-vlm with VLM_ENDPOINT_URL"
+        # The endpoints are read here because llm_base_url/vlm_base_url are only
+        # populated by the --use-remote-* option handlers.
+        edge_force_remote_llm=1
+        llm_base_url="${llm_base_url:-${LLM_ENDPOINT_URL:-}}"
+        if [[ -z "${llm_base_url}" ]]; then
+          echo "[ERROR] Search on ${hardware_profile} uses a remote LLM: set LLM_ENDPOINT_URL."
+          ((_all_good++))
+        fi
+        edge_force_remote_vlm=1
+        vlm_base_url="${vlm_base_url:-${VLM_ENDPOINT_URL:-}}"
+        if [[ -z "${vlm_base_url}" ]]; then
+          echo "[ERROR] Search on ${hardware_profile} uses a remote VLM: set VLM_ENDPOINT_URL."
           ((_all_good++))
         fi
       fi
 
-      # Alerts or base profile on IGX-THOR or AGX-THOR: the bundled VLM is fixed for this configuration.
-      # Operator-hosted VLM endpoints remain supported through --use-remote-vlm.
+      # Alerts or base profile on IGX-THOR or AGX-THOR: VLM options are not accepted (VLM is fixed for this configuration).
       # Note: --vlm-device-id is already rejected for all IGX-THOR/AGX-THOR/DGX-SPARK in the edge_hardware_profiles block above.
       if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && ([[ "${profile}" == "alerts" ]] || [[ "${profile}" == "base" ]]); then
         if ! contains_element "use-remote-vlm" "${options_provided[@]}"; then
@@ -879,18 +1375,26 @@ function process_args() {
         fi
       fi
 
-      # Remote predicates (must match llm_mode/vlm_mode == remote) for same-GPU local_shared checks; computed before modes so LLM and VLM branches stay symmetric.
-      local _llm_is_remote _vlm_is_remote
+      # SECOND pass over the remote predicates -- deliberate, not a duplicate of
+      # the block above the GB300 placement code. That earlier pass runs before
+      # the edge search policy has executed, so it can only see explicit
+      # --use-remote-llm/--use-remote-vlm. The edge policy sets
+      # edge_force_remote_llm/edge_force_remote_vlm further down (single-GPU
+      # boards cannot host a local VLM), and those flags must be folded in here
+      # or DGX-SPARK/AGX-THOR would derive local_shared and try to place a local
+      # model on a board that has no room for one. Deleting this recomputation
+      # breaks edge search silently -- no error, just the wrong mode.
+      # Re-assigned rather than re-declared: already `local` in this function.
       _llm_is_remote=0
       _vlm_is_remote=0
-      if contains_element "use-remote-llm" "${options_provided[@]}" && [[ -n "${llm_base_url}" ]]; then
+      if { contains_element "use-remote-llm" "${options_provided[@]}" || [[ "${edge_force_remote_llm}" -eq 1 ]]; } && [[ -n "${llm_base_url}" ]]; then
         _llm_is_remote=1
       fi
-      if contains_element "use-remote-vlm" "${options_provided[@]}" && [[ -n "${vlm_base_url}" ]]; then
+      if { contains_element "use-remote-vlm" "${options_provided[@]}" || [[ "${edge_force_remote_vlm}" -eq 1 ]]; } && [[ -n "${vlm_base_url}" ]]; then
         _vlm_is_remote=1
       fi
 
-      # Derive LLM mode: remote only when --use-remote-llm is passed and LLM_ENDPOINT_URL is set (non-empty llm_base_url); else local_shared if device ID is in RESERVED_DEVICE_IDS, FIXED_SHARED_DEVICE_IDS, or (VLM not remote and equals VLM_DEVICE_ID), else local. Do not use vlm_device_id when VLM is remote.
+      # Derive LLM mode: remote only when --use-remote-llm is passed (or the edge search policy forced it) and LLM_ENDPOINT_URL is set (non-empty llm_base_url); else local_shared if device ID is in RESERVED_DEVICE_IDS, FIXED_SHARED_DEVICE_IDS, or (VLM not remote and equals VLM_DEVICE_ID), else local. Do not use vlm_device_id when VLM is remote.
       if [[ "${_llm_is_remote}" -eq 1 ]]; then
         llm_mode="remote"
       else
@@ -906,7 +1410,7 @@ function process_args() {
           llm_mode="local"
         fi
       fi
-      # Derive VLM mode: remote only when --use-remote-vlm is passed and VLM_ENDPOINT_URL is set (non-empty vlm_base_url); else local_shared if device ID is in RESERVED_DEVICE_IDS, FIXED_SHARED_DEVICE_IDS, or (LLM not remote and equals LLM_DEVICE_ID), else local. Do not use llm_device_id when LLM is remote.
+      # Derive VLM mode: remote only when --use-remote-vlm is passed (or the edge search policy forced it) and VLM_ENDPOINT_URL is set (non-empty vlm_base_url); else local_shared if device ID is in RESERVED_DEVICE_IDS, FIXED_SHARED_DEVICE_IDS, or (LLM not remote and equals LLM_DEVICE_ID), else local. Do not use llm_device_id when LLM is remote.
       if [[ "${_vlm_is_remote}" -eq 1 ]]; then
         vlm_mode="remote"
       else
@@ -923,6 +1427,13 @@ function process_args() {
         fi
       fi
 
+      # Every local model on the single selected GB300 shares that GPU with
+      # the profile runtime services, even when the other model is remote.
+      if [[ "${hardware_profile}" == "GB300" ]]; then
+        [[ "${llm_mode}" != "remote" ]] && llm_mode="local_shared"
+        [[ "${vlm_mode}" != "remote" ]] && vlm_mode="local_shared"
+      fi
+
       # --use-remote-* without a host URL is invalid (remote mode requires both the flag and the endpoint env var).
       if contains_element "use-remote-llm" "${options_provided[@]}" && [[ -z "${llm_base_url}" ]]; then
         echo "[ERROR] LLM_ENDPOINT_URL must be set when --use-remote-llm is passed"
@@ -935,7 +1446,7 @@ function process_args() {
 
       # When VLM is not remote, use host env VLM_CUSTOM_WEIGHTS if set; when remote, ignore it (do not set in generated.env).
       if [[ "${vlm_mode}" != "remote" ]]; then
-        vlm_custom_weights="${VLM_CUSTOM_WEIGHTS:-}"
+        vlm_custom_weights="${VLM_CUSTOM_WEIGHTS:-$(get_env_value_from_files "VLM_CUSTOM_WEIGHTS" "${_profile_env}" "${_profile_overrides_env}")}"
       else
         vlm_custom_weights=""
       fi
@@ -973,25 +1484,28 @@ function process_args() {
         ((_all_good++))
       fi
 
-      # L40S: neither LLM nor VLM may use local_shared (device ID cannot be shared with other services)
+      # L40S (48 GB) cannot share the LLM with another NIM (no hw-L40S-shared.env).
+      # Search RT-VLM may share GPU 0 with RT-CV. LLM and VLM still cannot share a GPU.
       if [[ "${hardware_profile}" == "L40S" ]]; then
         if [[ "${llm_mode}" == "local_shared" ]]; then
           echo "[ERROR] On L40S, the device ID for the LLM cannot be shared with other services"
           ((_all_good++))
         fi
-        if [[ "${vlm_mode}" == "local_shared" ]]; then
-          echo "[ERROR] On L40S, the device ID for the VLM cannot be shared with other services"
+        if [[ "${llm_mode}" != "remote" ]] && [[ "${vlm_mode}" != "remote" ]] && [[ -n "${llm_device_id}" ]] && [[ -n "${vlm_device_id}" ]] && [[ "${llm_device_id}" == "${vlm_device_id}" ]]; then
+          echo "[ERROR] On L40S, the LLM and VLM cannot share the same GPU"
           ((_all_good++))
         fi
       fi
 
       # Device IDs must not be in profile RESERVED_DEVICE_IDS (comma-separated list; may be empty).
-      # Exception: DGX-SPARK, IGX-THOR, AGX-THOR are exempt (device ID options not accepted).
-      if ! contains_element "${hardware_profile}" "${edge_hardware_profiles[@]}"; then
+      # Edge boards and GB300 are exempt: their resolved device is the shared
+      # deployment GPU, so it intentionally supersedes profile reservations.
+      if [[ "${hardware_profile}" != "GB300" ]] && ! contains_element "${hardware_profile}" "${edge_hardware_profiles[@]}"; then
         if [[ -n "${profile}" ]] && [[ -f "${deployment_directory}/developer-profiles/dev-profile-${profile}/.env" ]]; then
           local _profile_env_reserved="${deployment_directory}/developer-profiles/dev-profile-${profile}/.env"
+          local _profile_overrides_env_reserved="${deployment_directory}/developer-profiles/dev-profile-${profile}/overrides.env"
           local _reserved_raw
-          _reserved_raw="$(get_env_value "${_profile_env_reserved}" "RESERVED_DEVICE_IDS")"
+          _reserved_raw="$(get_env_value_from_files "RESERVED_DEVICE_IDS" "${_profile_env_reserved}" "${_profile_overrides_env_reserved}")"
           _reserved_raw="${_reserved_raw// /}"  # normalize: remove spaces so "0, 1" matches id "0" and "1"
           local _reserved_norm=",${_reserved_raw},"
           if [[ "${llm_mode}" != "remote" ]] && [[ -n "${llm_device_id}" ]]; then
@@ -1053,8 +1567,25 @@ function process_args() {
         # Validate LLM model name if provided (only for non-remote modes; known names map to a slug)
         if contains_element "llm" "${options_provided[@]}"; then
           if [[ -z "$(get_llm_slug "${llm}")" ]]; then
-            echo "[ERROR] Invalid LLM model name: ${llm}. Must be one of: nvidia/nvidia-nemotron-nano-9b-v2, nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8, nvidia/nemotron-3-nano, nvidia/llama-3.3-nemotron-super-49b-v1.5, openai/gpt-oss-20b"
+            _removed_llm="$(get_removed_llm_message "${llm}")"
+            if [[ -n "${_removed_llm}" ]]; then
+              echo "[ERROR] ${_removed_llm}"
+            else
+              echo "[ERROR] Invalid LLM model name: ${llm}. Must be one of: nvidia/nemotron-3.5-lightning-30b-a3b, nvidia/NVIDIA-Nemotron-Nano-9B-v2-FP8"
+            fi
             ((_all_good++))
+          else
+            # A valid model id still needs sizing for the selected hardware and
+            # mode; without it compose fails later on a missing env_file. The
+            # implicit path is covered by the edge auto-selection below, but an
+            # explicit --llm bypasses that, so check the resolved file here.
+            _hw_suffix=""
+            [[ "${llm_mode}" == "local_shared" ]] && _hw_suffix="-shared"
+            _hw_env="${deployment_directory}/services/nim/$(get_llm_slug "${llm}")/hw-${hardware_profile}${_hw_suffix}.env"
+            if [[ ! -f "${_hw_env}" ]]; then
+              echo "[ERROR] ${llm} has no sizing for ${hardware_profile} in ${llm_mode} mode ($(basename "${_hw_env}") not found). Choose a model that supports this hardware, or pass --use-remote-llm."
+              ((_all_good++))
+            fi
           fi
         fi
         if contains_element "llm-model-type" "${options_provided[@]}"; then
@@ -1094,20 +1625,21 @@ function process_args() {
         fi
         if contains_element "vlm" "${options_provided[@]}"; then
           if [[ -z "$(get_vlm_slug "${vlm}")" ]]; then
-            echo "[ERROR] Invalid VLM model name: ${vlm}. Must be one of: nvidia/cosmos-reason1-7b, nvidia/cosmos-reason2-8b, nvidia/cosmos3-reasoner, Qwen/Qwen3-VL-8B-Instruct"
+            echo "[ERROR] Invalid VLM model name: ${vlm}. Must be one of: nvidia/cosmos3-reasoner, nvidia/cosmos3-reasoner-fp8"
             ((_all_good++))
           fi
         fi
       fi
 
-      # Search critic requires a local VLM unless --use-remote-vlm is provided.
-      # On 2-GPU Brev launchables the configured local VLM device is unavailable,
-      # so fail fast instead of silently deploying without the critic service.
-      if [[ "${profile}" == "search" ]] && [[ -n "${BREV_ENV_ID:-}" ]] && [[ "${vlm_mode}" != "remote" ]] && ! ([[ "${ENABLE_CRITIC+set}" == "set" ]] && [[ "${ENABLE_CRITIC,,}" == "false" ]]); then
+      # Search deploys a local RT-VLM (critic + video_understanding) that shares GPU 0
+      # with RT-CV, while RT-Embed and the LLM share GPU 1, so two GPUs are the floor
+      # unless --use-remote-vlm is provided. A single-GPU Brev launchable cannot host
+      # that layout, so fail fast instead of a broken deployment.
+      if [[ "${profile}" == "search" ]] && [[ "${hardware_profile}" != "GB300" ]] && [[ -n "${BREV_ENV_ID:-}" ]] && [[ "${vlm_mode}" != "remote" ]]; then
         local _brev_gpu_count
         _brev_gpu_count="$(get_nvidia_smi_gpu_count)"
-        if [[ "${_brev_gpu_count}" =~ ^[0-9]+$ ]] && [[ "${_brev_gpu_count}" -gt 0 ]] && [[ "${_brev_gpu_count}" -le 2 ]]; then
-          echo "[ERROR] Search critic requires a local VLM GPU, but this Brev environment has ${_brev_gpu_count} GPU(s). Set ENABLE_CRITIC=false to deploy search without critic, or pass --use-remote-vlm with VLM_ENDPOINT_URL."
+        if [[ "${_brev_gpu_count}" =~ ^[0-9]+$ ]] && [[ "${_brev_gpu_count}" -gt 0 ]] && [[ "${_brev_gpu_count}" -lt 2 ]]; then
+          echo "[ERROR] Search deploys a local RT-VLM and needs at least 2 GPUs, but this Brev environment has ${_brev_gpu_count} GPU(s). Pass --use-remote-vlm with VLM_ENDPOINT_URL to run search here."
           ((_all_good++))
         fi
       fi
@@ -1151,12 +1683,13 @@ function print_args() {
     fi
     echo "ngc-cli-api-key:           $(mask_secret "${ngc_cli_api_key}")"
     local _env_file="${deployment_directory}/developer-profiles/dev-profile-${profile}/.env"
-    local _llm_mode="${llm_mode:-$(get_env_value "${_env_file}" "LLM_MODE")}"
-    local _vlm_mode="${vlm_mode:-$(get_env_value "${_env_file}" "VLM_MODE")}"
+    local _overrides_env_file="${deployment_directory}/developer-profiles/dev-profile-${profile}/overrides.env"
+    local _llm_mode="${llm_mode:-$(get_env_value_from_files "LLM_MODE" "${_env_file}" "${_overrides_env_file}")}"
+    local _vlm_mode="${vlm_mode:-$(get_env_value_from_files "VLM_MODE" "${_env_file}" "${_overrides_env_file}")}"
 
-    echo "hardware-profile:          ${hardware_profile:-$(get_env_value "${_env_file}" "HARDWARE_PROFILE")}"
+    echo "hardware-profile:          ${hardware_profile:-$(get_env_value_from_files "HARDWARE_PROFILE" "${_env_file}" "${_overrides_env_file}")}"
     if [[ "${profile}" == "alerts" ]]; then
-      echo "mode:                      ${mode:-$(get_mode_display_value "$(get_env_value "${_env_file}" "MODE")")}"
+      echo "mode:                      ${mode:-$(get_mode_display_value "$(get_env_value_from_files "MODE" "${_env_file}" "${_overrides_env_file}")")}"
     fi
 
     echo "llm-mode:                  ${_llm_mode}"
@@ -1168,17 +1701,17 @@ function print_args() {
         _llm_model="$(get_remote_model_name "${llm_base_url}" "llm")"
       fi
     else
-      _llm_model="${llm:-$(get_env_value "${_env_file}" "LLM_NAME")}"
+      _llm_model="${llm:-$(get_env_value_from_files "LLM_NAME" "${_env_file}" "${_overrides_env_file}")}"
     fi
     echo "llm:                       ${_llm_model}"
     if [[ "${_llm_mode}" != "remote" ]]; then
-      local _llm_device_id="${llm_device_id:-$(get_env_value "${_env_file}" "LLM_DEVICE_ID")}"
+      local _llm_device_id="${llm_device_id:-$(get_env_value_from_files "LLM_DEVICE_ID" "${_env_file}" "${_overrides_env_file}")}"
       echo "llm-device-id:             ${_llm_device_id}"
     fi
     if [[ "${_llm_mode}" == "remote" ]]; then
-      local _llm_base_url="${llm_base_url:-$(get_env_value "${_env_file}" "LLM_BASE_URL")}"
+      local _llm_base_url="${llm_base_url:-$(get_env_value_from_files "LLM_BASE_URL" "${_env_file}" "${_overrides_env_file}")}"
       echo "llm-base-url:              ${_llm_base_url}"
-      local _llm_model_type="${llm_model_type:-$(get_env_value "${_env_file}" "LLM_MODEL_TYPE")}"
+      local _llm_model_type="${llm_model_type:-$(get_env_value_from_files "LLM_MODEL_TYPE" "${_env_file}" "${_overrides_env_file}")}"
       if [[ -n "${_llm_model_type}" ]]; then
         echo "llm-model-type:            ${_llm_model_type}"
       fi
@@ -1196,17 +1729,17 @@ function print_args() {
         _vlm_model="$(get_remote_model_name "${vlm_base_url}" "vlm")"
       fi
     else
-      _vlm_model="${vlm:-$(get_env_value "${_env_file}" "VLM_NAME")}"
+      _vlm_model="${vlm:-$(get_env_value_from_files "VLM_NAME" "${_env_file}" "${_overrides_env_file}")}"
     fi
     echo "vlm:                       ${_vlm_model}"
     if [[ "${_vlm_mode}" != "remote" ]]; then
-      local _vlm_device_id="${vlm_device_id:-$(get_env_value "${_env_file}" "VLM_DEVICE_ID")}"
+      local _vlm_device_id="${vlm_device_id:-$(get_env_value_from_files "VLM_DEVICE_ID" "${_env_file}" "${_overrides_env_file}")}"
       echo "vlm-device-id:             ${_vlm_device_id}"
     fi
     if [[ "${_vlm_mode}" == "remote" ]]; then
-      local _vlm_base_url="${vlm_base_url:-$(get_env_value "${_env_file}" "VLM_BASE_URL")}"
+      local _vlm_base_url="${vlm_base_url:-$(get_env_value_from_files "VLM_BASE_URL" "${_env_file}" "${_overrides_env_file}")}"
       echo "vlm-base-url:              ${_vlm_base_url}"
-      local _vlm_model_type="${vlm_model_type:-$(get_env_value "${_env_file}" "VLM_MODEL_TYPE")}"
+      local _vlm_model_type="${vlm_model_type:-$(get_env_value_from_files "VLM_MODEL_TYPE" "${_env_file}" "${_overrides_env_file}")}"
       if [[ -n "${_vlm_model_type}" ]]; then
         echo "vlm-model-type:            ${_vlm_model_type}"
       fi
@@ -1227,10 +1760,35 @@ function print_args() {
   echo "=========================="
 }
 
+function export_managed_container_channel() {
+  local deployment_directory="$1"
+
+  # Read containers.env in a subshell: `set -a` exports everything it defines,
+  # and Compose gives the process environment precedence over every --env-file.
+  # Leaking those exports silently overrode the image tags this script wrote to
+  # generated.env -- including the SBSA tag swap, which appeared to succeed
+  # while Compose kept deploying the default tags.
+  #
+  # GHCR acceptance only exports VSS_CONTAINER_TAG. Export the shared registry
+  # and tag pair here so compose does not fall back to nvstaging/nvidia inline
+  # defaults while still leaving per-image tag overrides in generated.env.
+  eval "$(
+    (
+      set -a
+      # shellcheck disable=SC1091
+      source "${deployment_directory}/containers.env"
+      set +a
+      printf 'export VSS_CONTAINER_REGISTRY=%q\n' "${VSS_CONTAINER_REGISTRY}"
+      printf 'export VSS_CONTAINER_TAG=%q\n' "${VSS_CONTAINER_TAG}"
+    )
+  )"
+}
+
 function state_up() {
-  local _profile_dir _source_env _generated_env
+  local _profile_dir _source_env _overrides_env _generated_env
   _profile_dir="${deployment_directory}/developer-profiles/dev-profile-${profile}"
   _source_env="${_profile_dir}/.env"
+  _overrides_env="${_profile_dir}/overrides.env"
   _generated_env="${_profile_dir}/generated.env"
 
   echo "[INFO] Generating environment file for profile '${profile}'..."
@@ -1241,9 +1799,15 @@ function state_up() {
     exit 1
   fi
 
-  # Copy source .env to generated.env
-  cp "${_source_env}" "${_generated_env}"
-  echo "[INFO] Copied ${_source_env} to ${_generated_env}"
+  # Check if overrides.env exists
+  if [[ ! -f "${_overrides_env}" ]]; then
+    echo "[ERROR] Overrides env file not found: ${_overrides_env}"
+    exit 1
+  fi
+
+  # Copy overrides.env to generated.env. The stable .env is passed separately to Compose.
+  cp "${_overrides_env}" "${_generated_env}"
+  echo "[INFO] Copied ${_overrides_env} to ${_generated_env}"
 
   ensure_generated_env_trailing_newline() {
     if [[ -s "${_generated_env}" ]] && [[ "$(tail -c 1 "${_generated_env}" | wc -l)" -eq 0 ]]; then
@@ -1253,13 +1817,13 @@ function state_up() {
   ensure_generated_env_trailing_newline
 
   # Append compose-wide defaults for variables not already defined in the profile
-  local _compose_defaults="${deployment_directory}/vst/compose-defaults.env"
+  local _compose_defaults="${deployment_directory}/services/vios/compose-defaults.env"
   if [[ -f "${_compose_defaults}" ]]; then
     while IFS= read -r line || [[ -n "${line}" ]]; do
       [[ "${line}" =~ ^[[:space:]]*# ]] && continue
       [[ -z "${line// }" ]] && continue
       local _var_name="${line%%=*}"
-      if ! grep -q "^${_var_name}=" "${_generated_env}"; then
+      if ! env_var_defined_in_files "${_var_name}" "${_source_env}" "${_generated_env}"; then
         echo "${line}" >> "${_generated_env}"
       fi
     done < "${_compose_defaults}"
@@ -1274,15 +1838,17 @@ function state_up() {
     local var_value="${2}"
     local mask="${3:-false}"
     local display_value="${var_value}"
+    local sed_value
+    sed_value="$(printf '%s' "${var_value}" | sed 's/[&|\\]/\\&/g')"
     if [[ "${mask}" == "true" ]]; then
       display_value="$(mask_secret "${var_value}")"
     fi
     if grep -q "^${var_name}=" "${_generated_env}"; then
       # Variable exists (uncommented), update it
-      sed -i "s|^${var_name}=.*|${var_name}=${var_value}|" "${_generated_env}"
+      sed -i "s|^${var_name}=.*|${var_name}=${sed_value}|" "${_generated_env}"
     elif grep -Eq "^#[[:space:]]*${var_name}=" "${_generated_env}"; then
       # Variable exists but is commented (with optional whitespace), uncomment and update it
-      sed -i -E "s|^#[[:space:]]*${var_name}=.*|${var_name}=${var_value}|" "${_generated_env}"
+      sed -i -E "s|^#[[:space:]]*${var_name}=.*|${var_name}=${sed_value}|" "${_generated_env}"
     else
       # Variable doesn't exist, append it
       echo "${var_name}=${var_value}" >> "${_generated_env}"
@@ -1300,39 +1866,50 @@ function state_up() {
   # Export INSTALL_PROPRIETARY_CODECS=false to keep them off at runtime too.
   set_env_var "INSTALL_PROPRIETARY_CODECS" "${INSTALL_PROPRIETARY_CODECS:-true}"
   set_env_var "VST_CONFIG_PATH" "${deployment_directory}/services/vios/configs"
-  set_env_var "VSS_AGENT_CONFIG_FILE" "/vss-agent/deploy/docker/developer-profiles/dev-profile-${profile}/vss-agent/configs/config.yml"
-  if [[ -f "${_profile_dir}/vss-agent/configs/va_mcp_server_config.yml" ]]; then
-    set_env_var "VSS_VA_MCP_CONFIG_FILE" "/vss-agent/deploy/docker/developer-profiles/dev-profile-${profile}/vss-agent/configs/va_mcp_server_config.yml"
-  fi
   if [[ -n "${external_ip}" ]]; then
     set_env_var "EXTERNAL_IP" "${external_ip}" "true"
   fi
 
   # ===== Brev secure links =====
-  # Brev secure links use <prefix>-<env>.<domain>. During the phased tunnel
-  # migration, Netbird identifies Skybridge; Cloudflare remains the fallback.
-  # An explicit BREV_LINK_DOMAIN always overrides automatic detection.
+  # The hostname is read from Brev's environment context file, never constructed,
+  # so a Brev secure-link domain migration needs no change here. BREV_PUBLIC_HOST
+  # is the escape hatch, and it has to be the whole hostname copied from the Brev
+  # console: the secure-link prefix is a NAME the creator chooses, not the port
+  # number, so "<port>-<env>.<domain>" is a convention rather than a rule.
   if [[ -n "${BREV_ENV_ID:-}" ]]; then
     local _proxy_port="${PROXY_PORT:-7777}"
-    local _link_prefix="${BREV_LINK_PREFIX:-${_proxy_port}}"
-    local _link_domain
-    if [[ -n "${BREV_LINK_DOMAIN:-}" ]]; then
-      _link_domain="${BREV_LINK_DOMAIN}"
-    elif netbird status >/dev/null 2>&1; then
-      _link_domain="apps.run.brev.nvidia.com"
+    local _secure_link_host="${BREV_PUBLIC_HOST:-}"
+    local _public_port="${BREV_PUBLIC_PORT:-}"
+    local _ctx
+    _ctx="${BREV_ENVIRONMENT_CONTEXT_PATH:-/etc/brev/environment-context.json}"
+    if [[ -n "${_secure_link_host}" ]]; then
+      _public_port="${_public_port:-443}"
+    elif brev_link_for_port "${_proxy_port}"; then
+      _secure_link_host="${BREV_LINK_FQDN}"
+      _public_port="${BREV_LINK_PUBLIC_PORT}"
     else
-      _link_domain="brevlab.com"
+      # A context file we could not read is a different problem from a port with
+      # no link, and only one of the two is fixed in the Brev console.
+      if [[ -n "${BREV_CONTEXT_PROBLEM:-}" ]]; then
+        echo "[ERROR] Could not resolve the Brev secure link for port ${_proxy_port}: ${BREV_CONTEXT_PROBLEM}."
+        echo "[ERROR] Make that file readable (e.g. sudo chmod a+r ${_ctx}) and re-run."
+      else
+        echo "[ERROR] Could not resolve the Brev secure link for port ${_proxy_port}: no entry for destination port ${_proxy_port} in ${_ctx}."
+        echo "[ERROR] Create the link in the Brev console: Secure Links -> + HTTP port -> destination port ${_proxy_port}."
+      fi
+      echo "[ERROR] Or copy the endpoint from the Secure Links page and export it verbatim, e.g. export BREV_PUBLIC_HOST=7777-abcd1234.gobrev.dev"
+      echo "[ERROR] Do not assemble the hostname from a pattern: a wrong value is baked into VSS_PUBLIC_HOST, after which HAProxy rejects the correct URL too."
+      exit 1
     fi
-    local _secure_link_host="${_link_prefix}-${BREV_ENV_ID}.${_link_domain}"
-    echo "[INFO] Brev environment detected (${BREV_ENV_ID}). Setting HAProxy ingress to ${_secure_link_host}..."
+    echo "[INFO] Brev environment detected (${BREV_ENV_ID}). Setting HAProxy ingress to ${_secure_link_host}:${_public_port}..."
     set_env_var "BREV_ENV_ID" "${BREV_ENV_ID}"
-    set_env_var "BREV_LINK_PREFIX" "${_link_prefix}"
-    set_env_var "BREV_LINK_DOMAIN" "${_link_domain}"
+    # Informational only — nothing builds a hostname out of it any more.
+    set_env_var "BREV_LINK_DOMAIN" "${_secure_link_host#*.}"
     set_env_var "HAPROXY_PORT" "${_proxy_port}"
     set_env_var "VSS_PUBLIC_HTTP_PROTOCOL" "https"
     set_env_var "VSS_PUBLIC_WS_PROTOCOL" "wss"
     set_env_var "VSS_PUBLIC_HOST" "${_secure_link_host}"
-    set_env_var "VSS_PUBLIC_PORT" "443"
+    set_env_var "VSS_PUBLIC_PORT" "${_public_port}"
   fi
 
   set_env_var "NGC_CLI_API_KEY" "${ngc_cli_api_key}" "true"
@@ -1342,6 +1919,16 @@ function state_up() {
   fi
   if [[ "${profile}" == "alerts" ]] || [[ "${profile}" == "thor-full" ]]; then
     set_alerts_ui_subtitle_from_mode "${_generated_env}"
+    set_alerts_ui_rule_kinds_from_mode "${_generated_env}"
+    set_alerts_rtvi_vlm_kafka_from_mode "${_generated_env}"
+    # Real-time: VLM service list + always-on gate. Verification keeps overrides defaults
+    # (COMPOSE_PROFILES_CV, ALERT_AGENT_ALWAYS_ON=false).
+    if [[ "$(get_env_value "${_generated_env}" "MODE")" == "2d_vlm" ]]; then
+      set_env_var "COMPOSE_PROFILES" "\${COMPOSE_PROFILES_VLM}"
+      set_env_var "ALERT_AGENT_ALWAYS_ON" "true"
+    else
+      set_env_var "ALERT_AGENT_ALWAYS_ON" "false"
+    fi
   fi
 
   # ===== LLM Configuration =====
@@ -1364,9 +1951,37 @@ function state_up() {
     set_env_var "LLM_NAME" "${llm}"
     set_env_var "LLM_NAME_SLUG" "$(get_llm_slug "${llm}")"
   fi
+  # A local LLM reads services/nim/<slug>/hw-<HARDWARE_PROFILE>[-shared].env as a
+  # Compose env_file. A missing file surfaces as an opaque Compose error after the
+  # stack has begun coming up, so fail here with the actual reason instead.
+  local _llm_slug_final _llm_hw_env _llm_hw_suffix
+  _llm_slug_final="$(get_env_value "${_generated_env}" "LLM_NAME_SLUG")"
+  if [[ "${llm_mode}" != "remote" ]] && [[ -n "${_llm_slug_final}" ]] && [[ "${_llm_slug_final}" != "none" ]]; then
+    _llm_hw_suffix=""
+    [[ "${llm_mode}" == "local_shared" ]] && _llm_hw_suffix="-shared"
+    _llm_hw_env="${deployment_directory}/services/nim/${_llm_slug_final}/hw-${hardware_profile}${_llm_hw_suffix}.env"
+    if [[ ! -f "${_llm_hw_env}" ]]; then
+      echo "[ERROR] LLM '${_llm_slug_final}' has no tuning file for hardware profile '${hardware_profile}' in ${llm_mode} mode."
+      echo "[ERROR] Expected: ${_llm_hw_env}"
+      echo "[ERROR] Choose an LLM that supports this board, or use a remote LLM endpoint."
+      exit 1
+    fi
+  fi
   if contains_element "${hardware_profile}" "${edge_hardware_profiles[@]}"; then
     set_env_var "LLM_DEVICE_ID" "0"
     set_env_var "VLM_DEVICE_ID" "0"
+    # Every edge platform now ships Lightning sizing files, so none of them needs
+    # the LLM rewritten away from the blueprint default. The FP8 build stays
+    # reachable through an explicit --llm.
+    #
+    # Search's profile .env pins a 2-GPU layout (RT-CV on 0, RT-Embed on 1).
+    # These boards have one GPU, and a device_ids entry of "1" is a hard startup
+    # failure, so collapse every placement onto device 0.
+    if [[ "${profile}" == "search" ]]; then
+      set_env_var "RT_CV_DEVICE_ID" "0"
+      set_env_var "RT_EMBED_DEVICE_ID" "0"
+      set_env_var "FIXED_SHARED_DEVICE_IDS" "0"
+    fi
   else
     if [[ "${llm_mode}" != "remote" ]] && [[ -n "${llm_device_id}" ]]; then
       set_env_var "LLM_DEVICE_ID" "${llm_device_id}"
@@ -1375,11 +1990,18 @@ function state_up() {
       set_env_var "VLM_DEVICE_ID" "${vlm_device_id}"
     fi
   fi
+  if [[ "${hardware_profile}" == "GB300" ]]; then
+    local _gb300_device_id="${hardware_device_id}"
+    set_env_var "SHARED_LLM_VLM_DEVICE_ID" "${_gb300_device_id}"
+    set_env_var "FIXED_SHARED_DEVICE_IDS" "${_gb300_device_id}"
+    set_env_var "RT_CV_DEVICE_ID" "${_gb300_device_id}"
+    set_env_var "RT_EMBED_DEVICE_ID" "${_gb300_device_id}"
+  fi
   if [[ -n "${llm_base_url}" ]]; then
     set_env_var "LLM_BASE_URL" "${llm_base_url}"
   fi
   if [[ "${llm_mode}" == "remote" ]]; then
-    local _llm_type="${llm_model_type:-$(get_env_value "${_source_env}" "LLM_MODEL_TYPE")}"
+    local _llm_type="${llm_model_type:-$(get_env_value_from_files "LLM_MODEL_TYPE" "${_source_env}" "${_overrides_env}")}"
     if [[ -n "${_llm_type}" ]]; then
       set_env_var "LLM_MODEL_TYPE" "${_llm_type}"
     fi
@@ -1410,7 +2032,7 @@ function state_up() {
   elif [[ -n "${vlm}" ]]; then
     set_env_var "VLM_NAME_SLUG" "$(get_vlm_slug "${vlm}")"
     if [[ "${vlm}" == "nvidia/cosmos3-reasoner" ]]; then
-      local _nim_model_size="${NIM_MODEL_SIZE:-$(get_env_value "${_source_env}" "NIM_MODEL_SIZE")}"
+      local _nim_model_size="${NIM_MODEL_SIZE:-$(get_env_value_from_files "NIM_MODEL_SIZE" "${_source_env}" "${_overrides_env}")}"
       _nim_model_size="${_nim_model_size:-nano}"
       set_env_var "VLM_NAME" "nvidia/cosmos3-${_nim_model_size}-reasoner"
     else
@@ -1428,7 +2050,7 @@ function state_up() {
     fi
   fi
   if [[ "${vlm_mode}" == "remote" ]]; then
-    local _vlm_type="${vlm_model_type:-$(get_env_value "${_source_env}" "VLM_MODEL_TYPE")}"
+    local _vlm_type="${vlm_model_type:-$(get_env_value_from_files "VLM_MODEL_TYPE" "${_source_env}" "${_overrides_env}")}"
     if [[ -n "${_vlm_type}" ]]; then
       set_env_var "VLM_MODEL_TYPE" "${_vlm_type}"
     fi
@@ -1437,14 +2059,22 @@ function state_up() {
     set_env_var "OPENAI_API_KEY" "${openai_api_key}" "true"
   fi
 
-  # Alerts/LVS + remote VLM: override VLM_PORT to the standard NIM port (30082) and
+  # Base/alerts/LVS/search + remote VLM: override VLM_PORT to the standard NIM port (30082) and
   # switch rtvi-vlm to openai-compat mode (cosmos-reason3 is only valid when the
   # local rtvi-vlm container is serving the integrated checkpoint).
   # The rtvi-vlm container defaults to 8018 for local deployments;
   # for remote we fall back to 30082 so any VLM_BASE_URL-unset consumer uses the conventional port.
-  if ([[ "${profile}" == "alerts" ]] || [[ "${profile}" == "lvs" ]]) && [[ "${vlm_mode}" == "remote" ]]; then
+  if ([[ "${profile}" == "alerts" ]] || [[ "${profile}" == "lvs" ]] || [[ "${profile}" == "base" ]] || [[ "${profile}" == "search" ]]) && [[ "${vlm_mode}" == "remote" ]]; then
     set_env_var "VLM_PORT" "30082"
     set_env_var "RTVI_VLM_MODEL_TO_USE" "openai-compat"
+    # LVS requests defer frame sampling to RT-VLM. Default remote endpoints to
+    # five frames per chunk unless their profile or environment overrides it.
+    if [[ "${profile}" == "lvs" ]]; then
+      local _configured_frame_default
+      _configured_frame_default="$(get_env_value_from_files "RTVI_VLM_DEFAULT_NUM_FRAMES_PER_SECOND_OR_FIXED_FRAMES_CHUNK" "${_source_env}" "${_overrides_env}")"
+      local _remote_frame_default="${RTVI_VLM_DEFAULT_NUM_FRAMES_PER_SECOND_OR_FIXED_FRAMES_CHUNK:-${_configured_frame_default}}"
+      set_env_var "RTVI_VLM_DEFAULT_NUM_FRAMES_PER_SECOND_OR_FIXED_FRAMES_CHUNK" "${_remote_frame_default:-5}"
+    fi
   fi
 
   # Handle custom weights for VLM
@@ -1459,18 +2089,6 @@ function state_up() {
     set_env_var "VLM_ENV_FILE" "${vlm_env_file}"
   fi
 
-  # Search profile: critic agent is enabled by default. Host ENABLE_CRITIC case-insensitive false → write ENABLE_CRITIC=false and force VLM_NAME_SLUG=none (skip local VLM).
-  # Otherwise write ENABLE_CRITIC=true (VLM_NAME_SLUG is not overridden here; remote VLM block already sets it to none when --use-remote-vlm is passed).
-  # Brev 2-GPU local-VLM critic deployments are rejected during argument validation.
-  if [[ "${profile}" == "search" ]] || [[ "${profile}" == "thor-full" ]]; then
-    if [[ "${ENABLE_CRITIC+set}" == "set" ]] && [[ "${ENABLE_CRITIC,,}" == "false" ]]; then
-      set_env_var "ENABLE_CRITIC" "false"
-      set_env_var "VLM_NAME_SLUG" "none"
-    else
-      set_env_var "ENABLE_CRITIC" "true"
-    fi
-  fi
-
   # Alerts profile: conditionally set perception prefix for edge (DGX-SPARK, IGX-THOR, AGX-THOR)
   if [[ "${profile}" == "alerts" ]] && contains_element "${hardware_profile}" "${edge_hardware_profiles[@]}"; then
     set_env_var "PERCEPTION_DOCKERFILE_PREFIX" "EDGE-"
@@ -1480,28 +2098,22 @@ function state_up() {
     set_env_var "VLM_AS_VERIFIER_CONFIG_FILE_PREFIX" "EDGE-LOCAL-VLM-"
   fi
 
-  # Alerts or base profile on IGX-THOR or AGX-THOR: set VLM name/slug, base URL, and RTVI-related env (fixed configuration)
-  if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && [[ "${profile}" == "base" ]] && [[ "${vlm_mode}" != "remote" ]]; then
+  # Base/alerts/LVS/search for ALL hardware profiles: set VLM name/slug, base URL, and RTVI-related env (fixed RT-VLM configuration)
+  if ([[ "${profile}" == "alerts" ]] || [[ "${profile}" == "lvs" ]] || [[ "${profile}" == "base" ]] || [[ "${profile}" == "search" ]]); then
     set_env_var "VLM_NAME_SLUG" "none"
-    set_env_var "VLM_NAME" "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
-    set_env_var "VLM_BASE_URL" "http://${host_ip}:8018"
-    set_env_var "RTVI_VLM_MODEL_PATH" "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
-    set_env_var "RTVI_VLM_MODEL_TO_USE" "cosmos-reason3"
-    set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "${RTVI_VLLM_GPU_MEMORY_UTILIZATION:-0.35}"
-  fi
-  # Alerts/LVS profile for ALL hardware profiles: set VLM name/slug, base URL, and RTVI-related env (fixed configuration)
-  if  ([[ "${profile}" == "alerts" ]] || [[ "${profile}" == "lvs" ]]); then
-    set_env_var "VLM_NAME_SLUG" "none"
-    # Local VLM only: rtvi-vlm serves the VLM locally on port 8018. VLM_BASE_URL
-    # needs runtime host_ip injection (source .env has it empty). VLM_NAME and
-    # RTVI_VLM_MODEL_PATH should come straight from the source .env.
+    # Local VLM only: rtvi-vlm serves the VLM locally on the Compose network.
+    # Keep VLM_BASE_URL internal so sibling containers do not need host-published ports.
+    # VLM_NAME and RTVI_VLM_MODEL_PATH come from the profile env files unless hardware/remote settings override them.
     if [[ "${vlm_mode}" != "remote" ]]; then
-      set_env_var "VLM_BASE_URL" "http://${host_ip}:8018"
+      set_env_var "VLM_BASE_URL" "http://rtvi-vlm:8000"
     fi
     # RTVI local VLM memory utilization. Remote VLM uses rtvi-vlm as a proxy, so
     # vLLM memory sizing only applies when rtvi-vlm hosts the model locally.
     if [[ "${vlm_mode}" != "remote" ]] && [[ "${hardware_profile}" != "IGX-THOR" ]] && [[ "${hardware_profile}" != "AGX-THOR" ]]; then
-      set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "$(get_rtvi_vllm_gpu_memory_utilization "${hardware_profile}" "${vlm_mode}")"
+      set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "$(get_rtvi_vllm_gpu_memory_utilization "${hardware_profile}" "${vlm_mode}" "${profile}")"
+      if [[ "${hardware_profile}" == "GB300" ]]; then
+        set_env_var "RTVI_VLLM_ATTENTION_BACKEND" "TRITON_ATTN"
+      fi
       local _rtvi_vlm_max_model_len
       _rtvi_vlm_max_model_len="$(get_rtvi_vlm_max_model_len "${hardware_profile}")"
       if [[ -n "${_rtvi_vlm_max_model_len}" ]]; then
@@ -1514,27 +2126,75 @@ function state_up() {
     if [[ "${hardware_profile}" != "IGX-THOR" ]] && [[ "${hardware_profile}" != "AGX-THOR" ]]; then
       if [[ "${vlm_mode}" == "local_shared" ]]; then
         local _shared_rt_dev_id
-        _shared_rt_dev_id="$(get_env_value "${_source_env}" "SHARED_LLM_VLM_DEVICE_ID")"
+        _shared_rt_dev_id="$(get_env_value_from_files "SHARED_LLM_VLM_DEVICE_ID" "${_source_env}" "${_overrides_env}")"
         set_env_var "RT_VLM_DEVICE_ID" "${_shared_rt_dev_id:-${vlm_device_id}}"
       elif [[ "${vlm_mode}" == "remote" ]]; then
         set_env_var "RT_VLM_DEVICE_ID" "0"
       else
         set_env_var "RT_VLM_DEVICE_ID" "${vlm_device_id}"
       fi
+      # RT-VLM remains a local proxy for remote VLM endpoints on GB300, so it
+      # follows the selected deployment GPU for every profile.
+      if [[ "${hardware_profile}" == "GB300" ]]; then
+        set_env_var "RT_VLM_DEVICE_ID" "${hardware_device_id}"
+      fi
     fi
     if [[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]; then
-      set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "${RTVI_VLLM_GPU_MEMORY_UTILIZATION}"
+      # Same 0.35 Spark uses: vLLM reserves gpu_memory_utilization x total, so
+      # the unset/empty profile default would leave RT-VLM at vLLM's ~0.9 and
+      # starve co-resident services. Host env still wins when it is non-empty.
+      set_env_var "RTVI_VLLM_GPU_MEMORY_UTILIZATION" "${RTVI_VLLM_GPU_MEMORY_UTILIZATION:-0.35}"
       set_env_var "RT_VLM_DEVICE_ID" "0"
     fi
-    if [[ "${hardware_profile}" == "RTXPRO4500BW" ]] && [[ "${vlm_mode}" != "remote" ]]; then
+    if [[ "${hardware_profile}" == "RTXPRO4500BW" ]] && [[ "${vlm_mode}" != "remote" ]] && [[ -z "${vlm}" ]]; then
       set_env_var "RTVI_VLM_MODEL_PATH" "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
       set_env_var "VLM_NAME" "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
     fi
+    # Honor --vlm for local RT-VLM: map friendly CLI name → MODEL_PATH + advertised basename.
+    # (Standalone NIM slug/VLM_NAME from the generic --vlm block above is overwritten here.)
+    if [[ "${vlm_mode}" != "remote" ]] && [[ -n "${vlm}" ]]; then
+      local _rtvi_path _rtvi_to_use _rtvi_name
+      _rtvi_path="$(get_rtvi_vlm_model_path "${vlm}")"
+      if [[ -z "${_rtvi_path}" ]]; then
+        echo "[ERROR] VLM '${vlm}' is not supported as an integrated RT-VLM checkpoint for profile ${profile}."
+        exit 1
+      fi
+      _rtvi_name="$(get_rtvi_vlm_name_from_model_path "${_rtvi_path}")"
+      _rtvi_to_use="$(get_rtvi_vlm_model_to_use "${vlm}")"
+      set_env_var "RTVI_VLM_MODEL_PATH" "${_rtvi_path}"
+      set_env_var "VLM_NAME" "${_rtvi_name}"
+      if [[ -n "${_rtvi_to_use}" ]]; then
+        set_env_var "RTVI_VLM_MODEL_TO_USE" "${_rtvi_to_use}"
+      fi
+    fi
   fi
-  # Base profile only on IGX-THOR or AGX-THOR: set VLM_MODEL_TYPE to rtvi
-  # (alerts defaults to VLM_MODEL_TYPE=rtvi via its source .env, so it does not need this override)
-  if ([[ "${hardware_profile}" == "IGX-THOR" ]] || [[ "${hardware_profile}" == "AGX-THOR" ]]) && [[ "${profile}" == "base" ]] && [[ "${vlm_mode}" != "remote" ]]; then
-    set_env_var "VLM_MODEL_TYPE" "rtvi"
+  # Search on edge hardware: the VLM is always a remote endpoint, and the agent
+  # calls it directly instead of proxying through RT-VLM, which frees the GPU that
+  # the container would otherwise hold for media preprocessing. That means routing
+  # the agent at a direct profile (nim/openai rather than rtvi), switching its
+  # media framing to inline base64, and dropping rtvi-vlm from the deployment.
+  if [[ "${profile}" == "search" ]] && contains_element "${hardware_profile}" "${search_edge_hardware_profiles[@]}"; then
+    # Only an explicit --vlm-model-type counts here: vlm_model_type is otherwise
+    # pre-filled from the profile env files, where search sets it to rtvi.
+    if contains_element "vlm-model-type" "${options_provided[@]}" && [[ -n "${vlm_model_type}" ]]; then
+      set_env_var "VLM_MODEL_TYPE" "${vlm_model_type}"
+    else
+      set_env_var "VLM_MODEL_TYPE" "nim"
+    fi
+    set_env_var "VLM_AGENT_MEDIA_MODE" "remote"
+    local _search_edge_profiles _search_edge_kept _search_edge_entry
+    local -a _search_edge_split
+    _search_edge_profiles="$(get_env_value "${_generated_env}" "COMPOSE_PROFILES")"
+    _search_edge_kept=""
+    IFS=',' read -ra _search_edge_split <<< "${_search_edge_profiles}"
+    for _search_edge_entry in "${_search_edge_split[@]}"; do
+      [[ "${_search_edge_entry}" == "rtvi-vlm" ]] && continue
+      _search_edge_kept="${_search_edge_kept:+${_search_edge_kept},}${_search_edge_entry}"
+    done
+    if [[ "${_search_edge_kept}" != "${_search_edge_profiles}" ]]; then
+      set_env_var "COMPOSE_PROFILES" "${_search_edge_kept}"
+      echo "[INFO] Removed rtvi-vlm from COMPOSE_PROFILES (search on ${hardware_profile} calls the remote VLM directly)"
+    fi
   fi
   # The Thor-specific base Compose profile starts rtvi-vlm. When the operator
   # explicitly supplies a VLM endpoint, use the generic base service profile so
@@ -1543,20 +2203,18 @@ function state_up() {
     set_env_var "COMPOSE_PROFILES" '${BP_PROFILE}_${MODE},llm_${LLM_MODE}_${LLM_NAME_SLUG},vlm_${VLM_MODE}_${VLM_NAME_SLUG}'
   fi
 
-  # When hardware profile is DGX-SPARK: for any env var that has a commented line with sbsa in the value,
-  # comment the uncommented line (non-sbsa) and uncomment the sbsa line. Discover keys from the file.
-  # Comment format may be "# VAR=..." or "#VAR=..." (optional space after #).
-  if [[ "${hardware_profile}" == "DGX-SPARK" ]]; then
-    local _key
-    while IFS= read -r _key; do
-      [[ -z "${_key}" ]] && continue
-      # Comment the uncommented line for this key when value does not contain sbsa
-      sed -i -E "/sbsa/! s/^(${_key})=(.*)/# \1=\2/" "${_generated_env}"
-      # Uncomment the commented line for this key when value contains sbsa
-      sed -i -E "/sbsa/ s/^#[[:space:]]*(${_key})=(.*)/\1=\2/" "${_generated_env}"
-      echo "[INFO] Swapped to SBSA (DGX-SPARK): ${_key}"
-    done < <(grep -E '^#[[:space:]]*[A-Za-z0-9_]+=.*sbsa' "${_generated_env}" 2>/dev/null | sed -nE 's/^#[[:space:]]*([A-Za-z0-9_]+)=.*/\1/p' | sort -u)
+  # Base local VLM always uses the rtvi_vlm agent profile (overrides default to rtvi; keep explicit for Thor/history).
+  # Remote VLM may still set VLM_MODEL_TYPE via --vlm-model-type / profile remote defaults above.
+  if [[ "${profile}" == "base" ]] && [[ "${vlm_mode}" != "remote" ]]; then
+    set_env_var "VLM_MODEL_TYPE" "rtvi"
+    local _compose_profiles
+    _compose_profiles="$(get_env_value "${_generated_env}" "COMPOSE_PROFILES")"
+    case ",${_compose_profiles}," in
+      *,rtvi-vlm,*) ;;
+      *) set_env_var "COMPOSE_PROFILES" "${_compose_profiles},rtvi-vlm" ;;
+    esac
   fi
+
 
   echo "[INFO] Generated environment file: ${_generated_env}"
 
@@ -1577,9 +2235,8 @@ function state_up() {
     provision_runtime_directory "${_runtime_directory}"
   done
 
-  # Create alert-analysis directories and stage its host-mounted models. The
-  # unified Thor profile activates the same perception workloads.
-  if [[ "${profile}" == "alerts" ]] || [[ "${profile}" == "thor-full" ]]; then
+  # Create alerts-specific directories
+  if [[ "${profile}" == "alerts" ]]; then
     echo "[INFO] Creating alerts-specific directories..."
 
     provision_runtime_directory "${data_directory}/data_log/vss_video_analytics_api"
@@ -1595,63 +2252,7 @@ function state_up() {
       chmod -R 777 "${deployment_directory}/engines"
     fi
 
-    # Download alerts models from NGC
-    echo "[INFO] Downloading alerts models from NGC..."
-
-    if [[ "${dry_run}" == "true" ]]; then
-      echo "[DRY-RUN] rm -rf ${data_directory}/models"
-      echo "[DRY-RUN] mkdir -p ${data_directory}/models/rtdetr-its"
-      echo "[DRY-RUN] mkdir -p ${data_directory}/models/gdino"
-      echo "[DRY-RUN] NGC_CLI_API_KEY=<ngc-cli-api-key> ngc registry model download-version nvidia/tao/trafficcamnet_transformer_lite:deployable_resnet50_v2.0"
-      echo "[DRY-RUN] mv trafficcamnet_transformer_lite_vdeployable_resnet50_v2.0/resnet50_trafficcamnet_rtdetr.fp16.onnx ${data_directory}/models/rtdetr-its/model_epoch_035.fp16.onnx"
-      echo "[DRY-RUN] rm -rf trafficcamnet_transformer_lite_vdeployable_resnet50_v2.0"
-      echo "[DRY-RUN] NGC_CLI_API_KEY=<ngc-cli-api-key> ngc registry model download-version nvidia/tao/mask_grounding_dino:mask_grounding_dino_swin_tiny_commercial_deployable_v2.1_wo_mask_arm"
-      echo "[DRY-RUN] mv mask_grounding_dino_vmask_grounding_dino_swin_tiny_commercial_deployable_v2.1_wo_mask_arm/mgdino_mask_head_pruned_dynamic_batch.onnx ${data_directory}/models/gdino/mgdino_mask_head_pruned_dynamic_batch.onnx"
-      echo "[DRY-RUN] rm -rf mask_grounding_dino_vmask_grounding_dino_swin_tiny_commercial_deployable_v2.1_wo_mask_arm"
-      echo "[DRY-RUN] chmod -R 777 ${data_directory}/models"
-    else
-      rm -rf "${data_directory}/models"
-
-      mkdir -p "${data_directory}/models/rtdetr-its"
-      mkdir -p "${data_directory}/models/gdino"
-
-      # Download and install trafficcamnet RT-DETR model
-      run_required_step "Failed to download trafficcamnet RT-DETR model from NGC" \
-        env NGC_CLI_API_KEY="${ngc_cli_api_key}" ngc \
-        registry \
-        model \
-        download-version \
-        nvidia/tao/trafficcamnet_transformer_lite:deployable_resnet50_v2.0
-
-      require_downloaded_model_file \
-        "trafficcamnet_transformer_lite_vdeployable_resnet50_v2.0/resnet50_trafficcamnet_rtdetr.fp16.onnx" \
-        "trafficcamnet RT-DETR ONNX artifact"
-      run_required_step "Failed to install trafficcamnet RT-DETR model" \
-        mv trafficcamnet_transformer_lite_vdeployable_resnet50_v2.0/resnet50_trafficcamnet_rtdetr.fp16.onnx \
-        "${data_directory}/models/rtdetr-its/model_epoch_035.fp16.onnx"
-
-      rm -rf trafficcamnet_transformer_lite_vdeployable_resnet50_v2.0
-
-      # Download and install grounding DINO model
-      run_required_step "Failed to download grounding DINO model from NGC" \
-        env NGC_CLI_API_KEY="${ngc_cli_api_key}" ngc \
-        registry \
-        model \
-        download-version \
-        nvidia/tao/mask_grounding_dino:mask_grounding_dino_swin_tiny_commercial_deployable_v2.1_wo_mask_arm
-
-      require_downloaded_model_file \
-        "mask_grounding_dino_vmask_grounding_dino_swin_tiny_commercial_deployable_v2.1_wo_mask_arm/mgdino_mask_head_pruned_dynamic_batch.onnx" \
-        "grounding DINO ONNX artifact"
-      run_required_step "Failed to install grounding DINO model" \
-        mv mask_grounding_dino_vmask_grounding_dino_swin_tiny_commercial_deployable_v2.1_wo_mask_arm/mgdino_mask_head_pruned_dynamic_batch.onnx \
-        "${data_directory}/models/gdino/mgdino_mask_head_pruned_dynamic_batch.onnx"
-
-      rm -rf mask_grounding_dino_vmask_grounding_dino_swin_tiny_commercial_deployable_v2.1_wo_mask_arm
-
-      chmod -R 777 "${data_directory}/models"
-      echo "[INFO] Alerts models downloaded and installed to ${data_directory}/models"
-    fi
+    echo "[INFO] Alerts model download runs in ds-start.sh phase 0 (perception)."
   fi
 
   # Search and thor-full both require the RT-DETR warehouse artifact. The
@@ -1660,37 +2261,7 @@ function state_up() {
     echo "[INFO] Creating search-specific directories..."
     provision_runtime_directory "${data_directory}/data_log/vss_video_analytics_api"
 
-    # Download RT-DETR model from NGC (host-staged, bind-mounted into container).
-    echo "[INFO] Downloading RT-DETR model from NGC..."
-
-    if [[ "${dry_run}" == "true" ]]; then
-      echo "[DRY-RUN] mkdir -p ${data_directory}/models"
-      echo "[DRY-RUN] NGC_CLI_API_KEY=<ngc-cli-api-key> ngc registry model download-version nvidia/tao/rtdetr_2d_warehouse:deployable_rn50_v1.0.2 --org nvidia"
-      echo "[DRY-RUN] mv rtdetr_2d_warehouse_vdeployable_rn50_v1.0.2/rtdetr_warehouse_v1.0.2.fp16.onnx ${data_directory}/models/rtdetr_warehouse_v1.0.2.fp16.onnx"
-      echo "[DRY-RUN] rm -rf rtdetr_2d_warehouse_vdeployable_rn50_v1.0.2"
-      echo "[DRY-RUN] chmod -R 777 ${data_directory}/models"
-    else
-      mkdir -p "${data_directory}/models"
-
-      run_required_step "Failed to download RT-DETR model from NGC" \
-        env NGC_CLI_API_KEY="${ngc_cli_api_key}" ngc \
-        registry \
-        model \
-        download-version \
-        nvidia/tao/rtdetr_2d_warehouse:deployable_rn50_v1.0.2 \
-        --org nvidia
-
-      require_downloaded_model_file \
-        "rtdetr_2d_warehouse_vdeployable_rn50_v1.0.2/rtdetr_warehouse_v1.0.2.fp16.onnx" \
-        "RT-DETR warehouse ONNX artifact"
-      run_required_step "Failed to install RT-DETR model" \
-        mv rtdetr_2d_warehouse_vdeployable_rn50_v1.0.2/rtdetr_warehouse_v1.0.2.fp16.onnx "${data_directory}/models/rtdetr_warehouse_v1.0.2.fp16.onnx"
-
-      rm -rf rtdetr_2d_warehouse_vdeployable_rn50_v1.0.2
-
-      chmod -R 777 "${data_directory}/models"
-      echo "[INFO] RT-DETR model downloaded and installed to ${data_directory}/models"
-    fi
+    echo "[INFO] Search model download runs in ds-start.sh phase 0 (perception)."
   fi
 
   # VSS kernel settings (non-dry-run only). The setter checks active values
@@ -1699,6 +2270,50 @@ function state_up() {
     echo "[INFO] Checking required VSS Linux kernel settings..."
     set_vss_linux_kernel_settings
   fi
+
+  if [[ "${hardware_profile}" == "DGX-SPARK" || "${hardware_profile}" == "GB300" || "${use_sbsa_images}" == "true" ]]; then
+    export VSS_CONTAINER_TAG_SUFFIX="-sbsa"
+    echo "[INFO] Managed container tag suffix: ${VSS_CONTAINER_TAG_SUFFIX}"
+    # containers.env applies the suffix during compose interpolation only, so a
+    # service that reads a tag as plain configuration never sees it. Write the
+    # same four suffixed keys into generated.env, preferring an explicit tag
+    # (shell, uncommented env-file line, then the profile's commented SBSA pin)
+    # over the derived one.
+    local _sbsa_base_tag _sbsa_key _sbsa_value
+    _sbsa_base_tag="${VSS_CONTAINER_TAG:-$(get_env_value_from_files "VSS_CONTAINER_TAG" "${_source_env}" "${_generated_env}")}"
+    for _sbsa_key in VSS_RT_CV_TAG VSS_RT_EMBED_TAG VSS_RT_VLM_TAG VSS_VIDEO_SUMMARIZATION_TAG; do
+      _sbsa_value="${!_sbsa_key:-$(get_env_value_from_files "${_sbsa_key}" "${_source_env}" "${_generated_env}")}"
+      if [[ -z "${_sbsa_value}" ]] && [[ -z "${_sbsa_base_tag}" ]]; then
+        # No shared channel selected, so the profile's pinned SBSA build is the
+        # only meaningful tag. A selected channel always wins over the pin.
+        _sbsa_value="$(get_commented_sbsa_value "${_sbsa_key}" "${_source_env}" "${_generated_env}")"
+      fi
+      set_env_var "${_sbsa_key}" "${_sbsa_value:-${_sbsa_base_tag:-develop-latest}${VSS_CONTAINER_TAG_SUFFIX}}"
+    done
+  fi
+
+  # Resolve and display the managed container channel before deployment.
+  export_managed_container_channel "${deployment_directory}"
+  echo "[INFO] Managed container registry: ${VSS_CONTAINER_REGISTRY}"
+  echo "[INFO] Managed container tag:      ${VSS_CONTAINER_TAG}"
+
+  # -f disables Compose's default file discovery, so the base file must be named
+  # explicitly alongside any overlay.
+  local compose_files=(-f compose.yml)
+  if [[ "${prebake_vios_packages}" == "true" ]]; then
+    compose_files+=(-f services/vios/streamprocessing/docker-compose.prebaked.yaml)
+    echo "[INFO] Prebaking VIOS runtime-media packages into a local image."
+  fi
+  echo "[INFO] Resolved compose images:"
+  (
+    cd "${deployment_directory}"
+    docker compose \
+      "${compose_files[@]}" \
+      --env-file containers.env \
+      --env-file "developer-profiles/dev-profile-${profile}/.env" \
+      --env-file "developer-profiles/dev-profile-${profile}/generated.env" \
+      config --images | sort -u
+  )
 
   # Docker login to nvcr.io
   echo "[INFO] Logging into nvcr.io..."
@@ -1714,25 +2329,81 @@ function state_up() {
   # Docker compose up
   echo "[INFO] Starting docker compose..."
   if [[ "${dry_run}" == "true" ]]; then
-    echo "[DRY-RUN] cd ${deployment_directory} && docker compose --env-file developer-profiles/dev-profile-${profile}/generated.env up --detach --force-recreate --build"
+    echo "[DRY-RUN] cd ${deployment_directory} && docker compose ${compose_files[*]} --env-file containers.env --env-file developer-profiles/dev-profile-${profile}/.env --env-file developer-profiles/dev-profile-${profile}/generated.env up --detach --pull always --force-recreate --build"
   else
-    cd "${deployment_directory}" && docker compose \
-      --env-file "developer-profiles/dev-profile-${profile}/generated.env" \
-      up \
-      --detach \
-      --force-recreate \
-      --build
+    if ! (
+      cd "${deployment_directory}" && docker compose \
+        "${compose_files[@]}" \
+        --env-file containers.env \
+        --env-file "developer-profiles/dev-profile-${profile}/.env" \
+        --env-file "developer-profiles/dev-profile-${profile}/generated.env" \
+        up \
+        --detach \
+        --pull always \
+        --force-recreate \
+        --build
+    ); then
+      echo "[ERROR] docker compose up failed for developer profile '${profile}'"
+      return 1
+    fi
   fi
 
   echo "[INFO] State up completed"
 }
 
 function state_down() {
-  local preserve_data="${1:-false}"
-  local _profile_dir_names _profile_dir_name _generated_env
+  local _profile_dir_names _profile_dir_name _profile_dir _source_env _overrides_env _generated_env
+  local _compose_project_name _compose_project_names=()
+
+  _profile_dir_names=('base' 'lvs' 'search' 'alerts')
+
+  if [[ -n "${COMPOSE_PROJECT_NAME:-}" ]]; then
+    _compose_project_names+=("${COMPOSE_PROJECT_NAME}")
+  fi
+
+  for _profile_dir_name in "${_profile_dir_names[@]}"; do
+    _profile_dir="${deployment_directory}/developer-profiles/dev-profile-${_profile_dir_name}"
+    _source_env="${_profile_dir}/.env"
+    _overrides_env="${_profile_dir}/overrides.env"
+    _generated_env="${_profile_dir}/generated.env"
+    if [[ -f "${_generated_env}" ]]; then
+      _compose_project_name="$(get_env_value_from_files "COMPOSE_PROJECT_NAME" "${_source_env}" "${_overrides_env}" "${_generated_env}")"
+      _compose_project_name="${_compose_project_name:-vss}"
+      if ! contains_element "${_compose_project_name}" "${_compose_project_names[@]}"; then
+        _compose_project_names+=("${_compose_project_name}")
+      fi
+    fi
+  done
+
+  if [[ ${#_compose_project_names[@]} -eq 0 ]]; then
+    for _profile_dir_name in "${_profile_dir_names[@]}"; do
+      _profile_dir="${deployment_directory}/developer-profiles/dev-profile-${_profile_dir_name}"
+      _compose_project_name="$(get_env_value_from_files "COMPOSE_PROJECT_NAME" "${_profile_dir}/.env" "${_profile_dir}/overrides.env")"
+      if [[ -n "${_compose_project_name}" ]]; then
+        _compose_project_names+=("${_compose_project_name}")
+        break
+      fi
+    done
+  fi
+  if [[ ${#_compose_project_names[@]} -eq 0 ]]; then
+    _compose_project_names=('vss')
+  fi
+
+  echo "[WARNING] Full reset: named volumes and the configured VSS_DATA_DIR will be deleted."
+  for _compose_project_name in "${_compose_project_names[@]}"; do
+    echo "[WARNING] To preserve project '${_compose_project_name}', use: docker compose -p ${_compose_project_name} down --remove-orphans"
+  done
+
+  for _compose_project_name in "${_compose_project_names[@]}"; do
+    echo "[INFO] Bringing down docker compose project '${_compose_project_name}' (with volumes)..."
+    if [[ "${dry_run}" == "true" ]]; then
+      echo "[DRY-RUN] docker compose -p ${_compose_project_name} down -v --remove-orphans"
+    else
+      docker compose -p "${_compose_project_name}" down -v --remove-orphans
+    fi
+  done
 
   echo "[INFO] Cleaning up generated.env files from all profiles..."
-  _profile_dir_names=('base' 'lvs' 'search' 'alerts' 'thor-full')
   for _profile_dir_name in "${_profile_dir_names[@]}"; do
     _generated_env="${deployment_directory}/developer-profiles/dev-profile-${_profile_dir_name}/generated.env"
     if [[ -f "${_generated_env}" ]]; then
@@ -1745,25 +2416,13 @@ function state_down() {
     fi
   done
 
-  if [[ "${preserve_data}" == "true" ]]; then
-    echo "[INFO] Bringing down docker compose project 'mdx' while preserving volumes..."
+  echo "[INFO] Removing dangling docker volumes..."
+  if [[ "${dry_run}" == "true" ]]; then
+    echo "[DRY-RUN] docker volume ls -q -f \"dangling=true\" | xargs docker volume rm"
   else
-    echo "[INFO] Bringing down docker compose project 'mdx' (with volumes)..."
-  fi
-  if [[ "${dry_run}" == "true" ]] && [[ "${preserve_data}" == "true" ]]; then
-    echo "[DRY-RUN] docker compose -p mdx down --remove-orphans"
-  elif [[ "${dry_run}" == "true" ]]; then
-    echo "[DRY-RUN] docker compose -p mdx down -v --remove-orphans"
-  elif [[ "${preserve_data}" == "true" ]]; then
-    docker compose -p mdx down --remove-orphans
-  else
-    docker compose -p mdx down -v --remove-orphans
-  fi
-
-  if [[ "${VSS_PRUNE_DANGLING_VOLUMES:-true}" == "true" ]]; then
-    echo "[INFO] Removing dangling docker volumes..."
-    if [[ "${dry_run}" == "true" ]]; then
-      echo "[DRY-RUN] docker volume ls -q -f \"dangling=true\" | xargs docker volume rm"
+    dangling_volumes=$(docker volume ls -q -f "dangling=true")
+    if [[ -n "${dangling_volumes}" ]]; then
+      echo "${dangling_volumes}" | xargs docker volume rm
     else
       dangling_volumes=$(docker volume ls -q -f "dangling=true")
       if [[ -n "${dangling_volumes}" ]]; then

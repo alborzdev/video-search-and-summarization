@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,8 +30,8 @@ struct _FdIndexInfo
 class NvSurfacePool
 {
 public:
-    NvSurfacePool() {};
-    ~NvSurfacePool() {};
+    NvSurfacePool() = default;
+    ~NvSurfacePool() = default;
     FD_Index_Pair getFreeFd(bool is_drc, unsigned int target_width, unsigned int target_height, bool need_allocations);
 
     bool allocateSurfaces    (int num_surfaces, unsigned int target_width, unsigned int target_height, bool need_allocations,
@@ -63,6 +63,10 @@ public:
     { 
         m_fd = fd; m_index = index;
     }
+    fdWrapper (const fdWrapper&) = delete;
+    fdWrapper& operator= (const fdWrapper&) = delete;
+    fdWrapper (fdWrapper&&) = delete;
+    fdWrapper& operator= (fdWrapper&&) = delete;
     ~fdWrapper ()
     {
         try {
@@ -72,9 +76,9 @@ public:
             fd_index_info.m_isTransformed = true;
             m_surfacePool->addFreeSurfaceToQ(fd_index_info);
         } catch (const std::exception& e) {
-            try { LOG(error) << "Exception in ~fdWrapper: " << e.what() << endl; } catch (...) { (void)std::current_exception(); }
+            try { LOG(error) << "Exception in ~fdWrapper: " << e.what() << std::endl; } catch (...) { (void)std::current_exception(); }
         } catch (...) {
-            try { LOG(error) << "Unknown exception in ~fdWrapper" << endl; } catch (...) { (void)std::current_exception(); }
+            try { LOG(error) << "Unknown exception in ~fdWrapper" << std::endl; } catch (...) { (void)std::current_exception(); }
         }
     }
     void setIndex (int index)

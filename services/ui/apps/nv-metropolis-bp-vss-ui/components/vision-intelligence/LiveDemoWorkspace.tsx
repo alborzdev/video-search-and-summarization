@@ -120,6 +120,13 @@ function LiveSceneDesk({
     ? "Disconnected"
     : "Live preview paused";
   const mounted = useRef(true);
+  const questionRequest = useRef<AbortController | null>(null);
+  const clipRequest = useRef<AbortController | null>(null);
+
+  useEffect(() => () => {
+    questionRequest.current?.abort();
+    clipRequest.current?.abort();
+  }, []);
   const disconnected =
     stream.connectionState === "removed";
   const {
@@ -196,10 +203,22 @@ function LiveSceneDesk({
   const ask = async (event: FormEvent) => {
     event.preventDefault();
     if (!canAsk || !validLookbackSeconds(lookbackSeconds) || asking || !query.trim()) return;
+    questionRequest.current?.abort();
+    const controller = new AbortController();
+    questionRequest.current = controller;
+    const current = () => mounted.current && !controller.signal.aborted && questionRequest.current === controller;
     setAsking(true);
     setError(null);
+    const deadline = window.setTimeout(() => {
+      if (current()) {
+        setError("The visual question timed out. Try a shorter interval or ask again.");
+        setAsking(false);
+      }
+      controller.abort();
+    }, 90_000);
     try {
       const response = await fetch("/api/vision/analyst", {
+        signal: controller.signal,
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -217,48 +236,62 @@ function LiveSceneDesk({
       const payload = await response.json();
       if (!response.ok)
         throw new Error(payload.error || "The video could not be inspected.");
-      if (mounted.current && !isBeforeHistoryCutoff(payload.generatedAt, clearedCutoff.current)) {
+      if (current() && !isBeforeHistoryCutoff(payload.generatedAt, clearedCutoff.current)) {
         setAnswer(payload);
         setClip(null);
         setClipError(null);
       }
     } catch (failure) {
-      if (mounted.current)
+      if (current())
         setError(
           failure instanceof Error
             ? failure.message
             : "The video could not be inspected."
         );
     } finally {
-      if (mounted.current) setAsking(false);
+      window.clearTimeout(deadline);
+      if (current()) setAsking(false);
     }
   };
 
   const playEvidence = async () => {
     if (!answer?.observedWindow || preparingClip) return;
+    clipRequest.current?.abort();
+    const controller = new AbortController();
+    clipRequest.current = controller;
+    const current = () => mounted.current && !controller.signal.aborted && clipRequest.current === controller;
     setPreparingClip(true);
     setClipError(null);
+    const deadline = window.setTimeout(() => {
+      if (current()) {
+        setClipError("Preparing the clip took too long. Try a shorter interval.");
+        setPreparingClip(false);
+      }
+      controller.abort();
+    }, 330_000);
     try {
       const response = await fetch(
         evidenceClipEndpoint(
           stream.streamId,
           answer.observedWindow.startTime,
           answer.observedWindow.endTime
-        )
+        ),
+        { signal: controller.signal }
       );
       const payload = await response.json();
       if (!response.ok || !payload.videoUrl)
         throw new Error(payload.error || "The inspected clip is unavailable.");
-      if (mounted.current && !isBeforeHistoryCutoff(answer.generatedAt, clearedCutoff.current)) setClip(payload.videoUrl);
+      if (current() && !isBeforeHistoryCutoff(answer.generatedAt, clearedCutoff.current)) setClip(payload.videoUrl);
     } catch (failure) {
-      if (mounted.current)
+      if (current())
         setClipError(
           failure instanceof Error
             ? failure.message
             : "The inspected clip is unavailable."
         );
     } finally {
-      if (mounted.current) setPreparingClip(false);
+      window.clearTimeout(deadline);
+      if (current()) setPreparingClip(false);
     }
   };
   const analysisState = analysisById[stream.streamId];
@@ -291,7 +324,7 @@ function LiveSceneDesk({
                   aria-label="Live camera"
                   value={stream.streamId}
                   onChange={(event) => onSelect(event.target.value)}
-                  disabled={asking || changing}
+                  disabled={changing}
                 >
                   {streams.map((item) => (
                     <option key={item.streamId} value={item.streamId}>

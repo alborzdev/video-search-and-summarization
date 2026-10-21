@@ -32,6 +32,12 @@ function withConnectionStates(streams: VisionStream[], states: Record<string, { 
   return changed ? next : streams;
 }
 
+// Reuse an unchanged catalog so its consumers do not tear down and restart
+// their polling or playback effects every time VST returns the same snapshot.
+function retainUnchangedCatalog(previous: VisionStream[], next: VisionStream[]): VisionStream[] {
+  return JSON.stringify(previous) === JSON.stringify(next) ? previous : next;
+}
+
 export function useVisionStreams(vstApiUrl?: string | null, active = true): VisionStreamsState {
   const [streams, setStreams] = useState<VisionStream[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -74,15 +80,15 @@ export function useVisionStreams(vstApiUrl?: string | null, active = true): Visi
       // sensors. Background polling must not unmount an operator's live desk.
       // Explicit refresh still lets the operator confirm an empty catalog.
       if (background && !catalog.length && populated.current) {
-        setStreams((previous) => withConnectionStates(previous, {}));
+        setStreams((previous) => retainUnchangedCatalog(previous, withConnectionStates(previous, {})));
         setError('Video I/O is restoring its source catalog. Showing previously known cameras until it responds.');
         return;
       }
       populated.current = catalog.length > 0;
-      setStreams((previous) => withConnectionStates(catalog, Object.fromEntries(previous.map((stream) => [stream.sensorId, { state: stream.connectionState }]))));
+      setStreams((previous) => retainUnchangedCatalog(previous, withConnectionStates(catalog, Object.fromEntries(previous.map((stream) => [stream.sensorId, { state: stream.connectionState }])))));
       setIsLoading(false);
       const states = catalog.length ? await connectionStates(vstApiUrl) : {};
-      if (current()) setStreams(withConnectionStates(catalog, states));
+      if (current()) setStreams((previous) => retainUnchangedCatalog(previous, withConnectionStates(catalog, states)));
     } catch (requestError) {
       if (!current()) return;
       setError(

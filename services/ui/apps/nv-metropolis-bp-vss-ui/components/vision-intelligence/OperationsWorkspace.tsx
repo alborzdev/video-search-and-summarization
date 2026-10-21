@@ -610,7 +610,12 @@ export function OperationsWorkspace({
   useEffect(() => {
     if (!streams.length) return;
     const controller = new AbortController();
+    let nextPoll: number | undefined;
     const loadIntelligence = async () => {
+      const requestController = new AbortController();
+      const abortRequest = () => requestController.abort();
+      controller.signal.addEventListener("abort", abortRequest, { once: true });
+      const deadline = window.setTimeout(abortRequest, 12_000);
       const generation = ++pollGeneration.current;
       const current = () =>
         !controller.signal.aborted &&
@@ -628,7 +633,7 @@ export function OperationsWorkspace({
               try {
                 const response = await fetch(
                   `/api/vision/source-intelligence?${params.toString()}`,
-                  { cache: "no-store", signal: controller.signal }
+                  { cache: "no-store", signal: requestController.signal }
                 );
                 if (!response.ok) return null;
                 return [
@@ -656,7 +661,7 @@ export function OperationsWorkspace({
                     `${agentApiUrl}/rtsp-streams/${encodeURIComponent(
                       stream.sensorId
                     )}/analysis`,
-                    { cache: "no-store", signal: controller.signal }
+                    { cache: "no-store", signal: requestController.signal }
                   );
                   const payload = (await response.json()) as {
                     analysisProfileId?: string;
@@ -719,14 +724,20 @@ export function OperationsWorkspace({
           if (ranked[0]) setSelectedId(ranked[0].streamId);
         }
       } finally {
+        window.clearTimeout(deadline);
+        controller.signal.removeEventListener("abort", abortRequest);
         if (current()) setIntelligenceLoading(false);
+        // Wait for the entire observation before starting another. Overlapping
+        // polls can supersede every result when one backend slows down.
+        if (!controller.signal.aborted) {
+          nextPoll = window.setTimeout(() => void loadIntelligence(), 15_000);
+        }
       }
     };
     void loadIntelligence();
-    const interval = window.setInterval(() => void loadIntelligence(), 15_000);
     return () => {
       controller.abort();
-      window.clearInterval(interval);
+      window.clearTimeout(nextPoll);
     };
   }, [agentApiUrl, analysisProfiles, intelligenceRefresh, streams]);
 

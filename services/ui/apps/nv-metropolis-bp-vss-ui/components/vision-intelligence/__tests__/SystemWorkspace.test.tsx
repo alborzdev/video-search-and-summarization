@@ -6,6 +6,20 @@ import React from "react";
 import { SystemWorkspace } from "../SystemWorkspace";
 
 describe("SystemWorkspace", () => {
+  it("counts selected services and shows disabled detector explicitly", () => {
+    render(<SystemWorkspace
+      health={{ checkedAt: new Date().toISOString(), status: "online", demoProfile: "clips", services: [
+        { key: "vlm", label: "Cosmos visual reasoning", ok: true, latencyMs: 2, selected: true },
+        { key: "perception", label: "Detection + tracking", ok: false, latencyMs: null, selected: false },
+      ] }}
+      panel="overview" onPanelChange={jest.fn()} onRefreshHealth={jest.fn()} rules={null} sources={null}
+      searchCoverage={null} searchCoverageUnavailable={false} workloadAdmissions={null} workloadCheckedAt={null}
+    />);
+    expect(screen.getByText("1 of 1 services ready")).toBeVisible();
+    const detector = screen.getByText("Detection + tracking").closest("div")!;
+    expect(detector).toHaveTextContent("Not selected");
+    expect(detector).not.toHaveTextContent("Unavailable");
+  });
   it("labels Spark and displays measured reserve and guard facts", () => {
     render(<SystemWorkspace
       health={{ checkedAt: new Date().toISOString(), status: "online", services: [], hardwareProfile: "DGX-SPARK", thor: null,
@@ -18,6 +32,22 @@ describe("SystemWorkspace", () => {
     expect(screen.getByText("24 GiB")).toBeVisible();
     expect(screen.getByText("Memory guard").closest("div")).toHaveTextContent("Active");
     expect(screen.queryByText(/local Thor runtime/)).not.toBeInTheDocument();
+  });
+
+  it.each([
+    ["3.2.1", false, false, "Runtime upgrade needed"],
+    ["3.3.0", true, false, "Off"],
+    ["3.3.0", true, true, "Configured"],
+    [null, null, null, "Unconfirmed"],
+  ])("shows adaptive sampling configuration without inventing runtime validation: %s", (version, compatible, configured, label) => {
+    render(<SystemWorkspace health={{ checkedAt: new Date().toISOString(), status: "online", services: [],
+      videoEfficiency: { sourceVersion: "3.3.0", runtimeVersion: version, adaptiveEvsCompatible: compatible, adaptiveEvsConfigured: configured } }}
+      panel="overview" onPanelChange={jest.fn()} onRefreshHealth={jest.fn()} rules={null} sources={null}
+      searchCoverage={null} searchCoverageUnavailable={false} workloadAdmissions={null} workloadCheckedAt={null} />);
+    const efficiency = screen.getByRole("article", { name: "Video processing efficiency" });
+    expect(within(efficiency).getAllByText(label).length).toBeGreaterThan(0);
+    expect(efficiency).toHaveTextContent("3.3.0");
+    expect(efficiency).not.toHaveTextContent(/twice|80%|validated/);
   });
 
   it("shows file spans without synthetic calendar dates and keeps live timestamps", () => {

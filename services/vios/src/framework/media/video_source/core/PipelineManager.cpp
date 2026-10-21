@@ -26,9 +26,15 @@
 // Implementation of PipelineManager
 PipelineManager::PipelineManager() = default;
 
+void PipelineManager::setDashConsumer(std::shared_ptr<IMediaDataConsumer> consumer)
+{
+    m_dashConsumer = std::move(consumer);
+}
+
 void PipelineManager::createPipeline(const PipelineConfiguration& config)
 {
     m_builder = createBuilder(config);
+    m_builder->setDashConsumer(m_dashConsumer);
     m_builder->buildPipeline(config);
     m_isComposite = config.getCompositor().enabled;
 }
@@ -168,7 +174,7 @@ std::shared_ptr<NativeStreamProducer> PipelineManager::getNativeStreamProducer()
     return m_builder ? m_builder->getNativeStreamProducer() : nullptr;
 }
 
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
 std::shared_ptr<NvIPCProducer> PipelineManager::getIPCProducer() const
 {
     return m_builder ? m_builder->getIPCProducer() : nullptr;

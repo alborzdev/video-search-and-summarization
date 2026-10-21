@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,11 +51,10 @@ using vstserver::IceCandidate;
 class  GrpcUdpService final : public VstGrpcServer::Service
 {
 public:
-    GrpcUdpService(std::shared_ptr<nv_vms::DeviceManager> deviceMngr): m_deviceManager(deviceMngr)
+    explicit GrpcUdpService(std::shared_ptr<nv_vms::DeviceManager> deviceMngr): m_deviceManager(deviceMngr)
     {}
 
-    ~GrpcUdpService()
-    {}
+    ~GrpcUdpService() = default;
 
     grpc::Status CreateUDPConnection(ServerContext* context, const CreateUDPConnectionRequest* request,
                             CreateUDPConnectionReply* reply) override;
@@ -64,11 +63,11 @@ public:
 
     void addRequestHandler(std::map<std::string, HttpServerRequestHandler::httpFunction, std::less<>>& func);
 
-     grpc::Status addDevice(std::shared_ptr<DeviceManager> deviceMngr,
+     grpc::Status addDevice(std::shared_ptr<nv_vms::DeviceManager> deviceMngr,
                             const CreateUDPConnectionRequest* request,
                             CreateUDPConnectionReply* reply,
-                            string& peerid, string& stream_id);
-    std::string createUniqueStreamId(std::shared_ptr<SensorInfo> sensor);
+                            std::string& peerid, std::string& stream_id);
+    std::string createUniqueStreamId(std::shared_ptr<nv_vms::SensorInfo> sensor);
 
 private:
     std::shared_ptr<nv_vms::DeviceManager>      m_deviceManager;
@@ -97,18 +96,18 @@ public:
     };
 
     void addRequestHandler(std::map<std::string, HttpServerRequestHandler::httpFunction, std::less<>>& func);
-    VmsErrorCode remotePeerAnswer(const Json::Value &in);
-    VmsErrorCode remotePeerCandidate(const Json::Value &in);
+    nv_vms::VmsErrorCode remotePeerAnswer(const Json::Value &in);
+    nv_vms::VmsErrorCode remotePeerCandidate(const Json::Value &in);
 
     grpc::Status sdpExchange(ServerContext* context, const Sdp* request, Sdp* reply) override;
     grpc::Status iceCandidateExchange(ServerContext* context, grpc::ServerReaderWriter<IceCandidate, IceCandidate>* stream) override;
 private:
     std::map<std::string, HttpServerRequestHandler::httpFunction, std::less<>>   m_callbackMap;
-    std::unordered_map<string, std::shared_ptr<RemotePeerAnswer>>   m_remoteAnswers;
-    std::unordered_map<string, std::shared_ptr<RemotePeerCandidate>> m_candidates;
+    std::unordered_map<std::string, std::shared_ptr<RemotePeerAnswer>>   m_remoteAnswers;
+    std::unordered_map<std::string, std::shared_ptr<RemotePeerCandidate>> m_candidates;
     std::mutex                                                      m_remoteAnswersMutex;
     std::mutex                                                      m_remoteCandidatesMutex;
-    std::unordered_map<string, string>                              m_ipToStreamid;
+    std::unordered_map<std::string, std::string>                              m_ipToStreamid;
 };
 
 class GrpcServer
@@ -138,15 +137,15 @@ private:
 class GrpcClient
 {
 public:
-    GrpcClient(std::shared_ptr<Channel> channel)
+    explicit GrpcClient(std::shared_ptr<Channel> channel)
         : m_stub(VstGrpcServer::NewStub(channel)) {}
     GrpcClient();
 
     static GrpcClient* getInstance();
     static void deleteInstance();
 
-    void CreateStub(string target);
-    void CreateDummyUDPDevice(string connection_id, int32_t& audio_port, int32_t& video_port);
+    void CreateStub(std::string target);
+    void CreateDummyUDPDevice(std::string connection_id, int32_t& audio_port, int32_t& video_port);
 
 private:
     static GrpcClient* m_instance;

@@ -22,7 +22,10 @@
 #include <ctime>
 #include <iomanip>
 
-#define MSG_EXPIRY_HOURS 1
+using namespace std;
+using namespace nv_vms;
+
+constexpr int MSG_EXPIRY_HOURS = 1;
 
 namespace   {
     bool isMessageExpired(string msgTime)

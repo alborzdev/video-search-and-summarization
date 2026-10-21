@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
  */
 
 #pragma once
+#include <chrono>
 #include "logger.h"
 
 #include <string.h>
@@ -79,7 +80,6 @@ struct DecoderData : public EventLoopData
 struct DecoderOutData : public EventLoopOutData
 {
     map<string, string> data;
-    void* data2;
     int result;
 };
 
@@ -110,7 +110,7 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
                     m_decStats.printTotalStats();
                     m_decStats.clearQueue();
                 }
-                destroy(true);
+                GstNvVideoDecoder::destroy(true);
                 LOG(info) << "Decoder instance is deleted "<< m_peerid << endl;
             } catch (const std::exception& e) {
                 try { LOG(error) << "Exception in ~GstNvVideoDecoder: " << e.what() << endl; } catch (...) { (void)std::current_exception(); }
@@ -127,18 +127,25 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         std::string getstate(const std::string& peerid);
         bool isPlaying();
         bool getError() { return m_error; }
+        /* True once this decoder has been told to stop delivering frames. The
+         * flag is only cleared by building a pipeline, so a stopped decoder that
+         * is still in the pool would silently drop every frame for a viewer that
+         * attached to it. DecoderPool checks this before handing one out. */
+        [[nodiscard]] bool isStopped() const { return m_stop; }
         void setResolution(int width, int height) override;
         void setDecoderStride(int stride_y, int stride_u, int stride_v) override;
 
         bool play();
-#ifdef JETSON_PLATFORM
-        void registerDecoderPlayingStatusListener(IStreamStatusEvent *listener);
-        void deregisterDecoderPlayingStatusListener(IStreamStatusEvent *listener);
-#endif
+        void registerDecoderPlayingStatusListener(nv_vms::IStreamStatusEvent *listener);
+        void deregisterDecoderPlayingStatusListener(nv_vms::IStreamStatusEvent *listener);
         int createSwDecodePipeline ();
         void setQuality(const std::string&, const std::string& quality);
         void setQuality(const std::string&, const std::string& quality, int width, int height);
-        void removeConsumer(const std::string&);
+        /* A pooled decoder can have a viewer which has acquired ownership but
+         * has not yet attached its sink. In that short interval the pool
+         * removes a departing sink without stopping frame delivery. All
+         * ordinary callers retain the existing stop-on-last-consumer behavior. */
+        void removeConsumer(const std::string&, bool stopWhenUnused = true);
         std::map<std::string, std::shared_ptr<VideoSinkInfo>, std::less<>> getWebrtcBroacasterList() { return m_videoSinkList; }
         bool isCreated() { return (m_pipeline != nullptr); }
         void setError() { m_error = true; };
@@ -147,15 +154,29 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         unsigned int getPort() { return m_port; }
 
         void getStats(const std::string& peerid, LatencyStats& stats);
-        VmsErrorCode controlStream (const std::string& action, const std::string& speed);
-        VmsErrorCode update (std::string action = "", std::string speed = "", bool eos = 0);
+        nv_vms::VmsErrorCode controlStream (const std::string& action, const std::string& speed);
+        nv_vms::VmsErrorCode update (std::string action = "", std::string speed = "", bool eos = 0);
         bool setFileAndUpdatePipelineState (bool first_time = false);
         gint64 getNextFile ();
         GstFlowReturn processNewSampleFromSink(GstElement * appsink);
+        /* Passthrough counterpart: the sample holds a compressed access unit
+        ** rather than a decoded surface, so none of the decode bookkeeping in
+        ** processNewSampleFromSink applies.
+        */
+        /* Passthrough counterpart of processNewSampleFromSink: the sample holds
+        ** a compressed access unit rather than a decoded surface.
+        */
+        GstFlowReturn processEncodedSampleFromSink(GstElement * appsink);
+        /* Hands one encoded access unit to the registered consumers. */
+        void dispatchEncodedBuffer (GstBuffer* buffer, GstCaps* caps);
+        /* Timestamp the passthrough segment is anchored to, so running time
+        ** starts at zero and the sink can pace on the clock.
+        */
+        guint64 passthroughAnchorNs () const;
         GstFlowReturn processJpegImageFromSink(GstElement *appsink);
         void setSourceFrameSize(uint32_t w, uint32_t h);
         friend gboolean busWatch (GstBus *bus, GstMessage *message, gpointer data);
-        friend void process_dec_message(std::shared_ptr<EventLoopData> data, void*);
+        friend void process_dec_message(std::shared_ptr<EventLoopData> data, GstNvVideoDecoder*);
 
         int create_internal();
         int create_recorded_internal();
@@ -176,6 +197,11 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         bool isSeeking() { return m_isSeeking; }
         gint64 getAbsPosition();
         void updateDecoderElement();
+        /* Milestone (mms) VOD recorded-playback seek: instead of a GStreamer
+        ** pipeline seek (which does not apply to a live RTSP/appsrc source), flush
+        ** the appsrc and re-PLAY the same RTSP session at the new absolute time
+        ** (RTSP Range) via the producer. */
+        nv_vms::VmsErrorCode seekMmsVodPlayback(const std::string& action, const std::string& seek_value);
         uint64_t getLastTS();
         int64_t getFileStartTime();
         uint32_t getDurationStream();
@@ -194,16 +220,26 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         std::pair <std::string, std::string> getUrlPath_internal();
         void setConsumer(const string& peerid, std::shared_ptr<IMediaDataConsumer> consumer);
         void setConsumerReady(const string& peerid, bool is_ready = true);
+        /* Exempt one sink from the live latency frame drop (DASH sinks). */
+        void setLatencyDropExempt(const string& peerid, bool exempt = true);
+        [[nodiscard]] bool hasLatencyExemptSink();
         std::shared_ptr<NvEncoderVideoConsumer> getConsumer(const string& media_type);
         void addFrameTs(int64_t ts);
         void setEOS();
         void setOptions(const std::map<std::string, std::string, std::less<>> &opts);
-        int getVideoSinkListSize() { return m_videoSinkList.size(); }
-        std::vector<VideoFileInfo> getActiveFileList() { return m_fileNameArray; }
+        /* Number of viewers currently attached to this decoder. Load bearing:
+         * DecoderPool uses this to decide whether a shared decoder still has
+         * an audience, so it must be read under m_videoSinkLock. */
+        [[nodiscard]] size_t getVideoSinkListSize()
+        {
+            std::lock_guard<std::mutex> lock(m_videoSinkLock);
+            return m_videoSinkList.size();
+        }
+        std::vector<nv_vms::VideoFileInfo> getActiveFileList() { return m_fileNameArray; }
 #ifdef UNIT_TEST
         void setPeerid(const string& peer_id);
         uint32_t getCurrentFileNumber();
-        std::vector<VideoFileInfo> getFileInfo();
+        std::vector<nv_vms::VideoFileInfo> getFileInfo();
 #endif
 
         //IVideoDataConsumer virtual function
@@ -238,15 +274,26 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         bool isCloudStorageEnabled() const { return m_cloudStorageEnabled && m_unifiedStorageReader != nullptr; }
 
         // Cloud storage configuration getters
-        std::string getCloudType() const { return m_storageConfig.getParameter(StorageConstants::CLOUD_TYPE_KEY, ""); }
-        std::string getCloudEndpoint() const { return m_storageConfig.getParameter(StorageConstants::ENDPOINT_KEY, ""); }
-        std::string getCloudBucket() const { return m_storageConfig.getParameter(StorageConstants::BUCKET_NAME_KEY, ""); }
+        std::string getCloudType() const { return m_storageConfig.getParameter(nv_vms::StorageConstants::CLOUD_TYPE_KEY, ""); }
+        std::string getCloudEndpoint() const { return m_storageConfig.getParameter(nv_vms::StorageConstants::ENDPOINT_KEY, ""); }
+        std::string getCloudBucket() const { return m_storageConfig.getParameter(nv_vms::StorageConstants::BUCKET_NAME_KEY, ""); }
     private:
         std::map<std::string, std::shared_ptr<VideoSinkInfo>, std::less<>> m_videoSinkList;
         std::string             m_uri;
         unsigned int            m_port {0};
         bool                    m_recordedPlayback;
         bool                    m_hlsPlayback;
+        /* DASH republishes the recording's own bitstream, so for a session
+        ** without overlay the pipeline neither decodes nor encodes.
+        */
+        bool                    m_dashPassthrough {false};
+        /* True for any DASH session, with or without an overlay.  DASH is a
+        ** buffered pull protocol: the player fetches segments seconds behind the
+        ** edge, so completeness matters where interactive latency does not.
+        */
+        /* Pacing state for passthrough playback. */
+        uint64_t                m_passthroughFirstPtsMs {0};
+        std::chrono::steady_clock::time_point m_passthroughStart{};
         bool                    m_compositePlayback {false};
         bool                    m_compositeShowSensorName {false};
         GstElement*             m_pipeline = nullptr;
@@ -277,7 +324,7 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         int                     m_playBackSpeed;
         gint64                  m_position_forward;
         gint64                  m_position_rewind;
-        std::vector<VideoFileInfo> m_fileNameArray;
+        std::vector<nv_vms::VideoFileInfo> m_fileNameArray;
         std::string              m_startTime;
         std::string              m_endTime;
         gint64                   m_position;
@@ -298,6 +345,9 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         std::string             m_sensorName;
         std::mutex              m_debugData;
         uint64_t                m_firstFrameTS = 0;
+        /* Epoch (ms) of the most recently delivered frame; used to report the
+        ** current position and to anchor relative seeks for mms VOD playback. */
+        std::atomic<int64_t>    m_lastFramePtsMs {0};
         std::queue<std::pair< int64_t, uint64_t >>    m_frameTsQueue;
         std::mutex              m_frameTsQueueLock;
         std::condition_variable m_frameTsQueueCond;
@@ -320,15 +370,37 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         std::string             m_objectId{""};
         std::string             m_isoStartTime{""};
         std::string             m_isoEndTime{""};
-        int64_t                 m_epochStartTime{0};
+        /* Frame-gate anchor for mms VOD: written by the seek thread in
+        ** seekMmsVodPlayback() and read by the GStreamer streaming thread in the
+        ** onFrame gate, so it must be atomic to avoid a data race. */
+        std::atomic<int64_t>    m_epochStartTime{0};
+        /* In-session mms VOD seek guard. A seek re-PLAYs the RTSP session; issuing
+        ** the next seek before the previous one has resumed frames churns the VOD
+        ** session and can stall it (tripping the data-timeout watchdog that then
+        ** tears the RTSP client down). While a seek is in progress we reject new
+        ** seeks, UNLESS the in-flight one has failed to settle within the watchdog
+        ** window (so a stalled seek can never permanently block seeking).
+        ** m_mmsSeekInProgress: set on re-PLAY, cleared when the first post-seek
+        ** frame is delivered. m_mmsSeekIssuedAtMs: wall-clock ms of that re-PLAY. */
+        std::atomic<bool>       m_mmsSeekInProgress{false};
+        std::atomic<int64_t>    m_mmsSeekIssuedAtMs{0};
+        /* One-shot marker to log the first RTSP frame received from the Milestone VOD
+        ** server. Armed at start (default true) and re-armed on each seek. Kept as an
+        ** always-on general diagnostic of when frames start flowing and at what PTS. */
+        std::atomic<bool>       m_logFirstRtspFrameAfterSeek{true};
+        /* After an mms seek, drop stale in-flight frames from the OLD position (which
+        ** arrive before the new RTSP Range takes effect) so they do not advance the
+        ** decoder PTS and cause the real target frames to be rejected as backward --
+        ** the cause of backward-seek freezes. Fail-open after a bounded number of
+        ** drops so a mis-estimate can never permanently freeze playback. */
+        std::atomic<bool>       m_awaitTargetFrameAfterSeek{false};
+        std::atomic<int>        m_staleFrameDropCount{0};
         int64_t                 m_epochEndTime{0};
         int64_t                 m_fileStartTime{0};
         bool                    m_continuosPlayback = false;
         std::time_t             m_lastDRCTime {0};
-#ifdef JETSON_PLATFORM
-        std::set<IStreamStatusEvent*> m_listeners;
+        std::set<nv_vms::IStreamStatusEvent*> m_listeners;
         std::mutex                    m_listenerMutex;
-#endif
         bool                    m_isOverlay = false;
         GstPad*                 m_teeSrcAppsink = nullptr;
         GstPad*                 m_teeSrcIpcsink = nullptr;
@@ -366,7 +438,7 @@ class GstNvVideoDecoder : public IMediaDataConsumer, public GstNvDecoder, public
         
         // Unified storage reader for cloud storage access
         std::shared_ptr<nv_vms::UnifiedStorageReader> m_unifiedStorageReader = nullptr;
-        StorageConfig m_storageConfig;
+        nv_vms::StorageConfig m_storageConfig;
         std::string m_asyncDownloadSessionId; // Store async download session ID
 
         // Producer reference for data source

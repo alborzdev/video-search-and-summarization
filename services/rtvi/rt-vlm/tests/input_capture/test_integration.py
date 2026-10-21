@@ -4,6 +4,7 @@ import asyncio
 from contextlib import nullcontext
 from pathlib import Path
 from types import SimpleNamespace
+from typing import Optional
 import unittest
 from unittest.mock import Mock, patch
 
@@ -15,9 +16,9 @@ SOURCE = Path(__file__).resolve().parents[2] / 'src/models/vllm_compatible/vllm_
 class IntegrationTests(unittest.TestCase):
     def test_capture_is_optional_and_failures_do_not_change_inference(self):
         tree=ast.parse(SOURCE.read_text())
-        method=next(n for n in ast.walk(tree) if isinstance(n,ast.AsyncFunctionDef) and n.name=='process_async_vllm')
+        method=next(n for n in ast.walk(tree) if isinstance(n,ast.AsyncFunctionDef) and n.name=='_process_async_vllm')
         import os
-        namespace={'CPU_COPY_OTHER_THREAD':True,'asyncio':asyncio,'os':os,'logger':Mock(),'TimeMeasure':lambda label:nullcontext()}
+        namespace={'CPU_COPY_OTHER_THREAD':True,'asyncio':asyncio,'os':os,'logger':Mock(),'TimeMeasure':lambda label:nullcontext(), 'Optional':Optional,'VlmGenerationConfig':object}
         exec(compile(ast.Module(body=[method],type_ignores=[]),str(SOURCE),'exec'),namespace)
         source='rtsp://camera.test/live/one'
         for enabled,fail,file in [(False,False,source),(True,False,source),(True,True,source),
@@ -34,13 +35,14 @@ class IntegrationTests(unittest.TestCase):
                     calls.append((value,kwargs))
                     yield SimpleNamespace(outputs=[SimpleNamespace(text='YES')])
                 model=SimpleNamespace(_llm=SimpleNamespace(generate=generate),_inflight_req_ids=['one'],
-                    _vlm_model_type='test',_model_architecture='test',_postprocess_vllm=lambda *args:'YES')
+                    _vlm_model_type='test',_model_architecture='test',_postprocess_vllm=lambda *args:'YES',
+                    _should_use_preprocess_admission=lambda *_args:False)
                 helper=SimpleNamespace(capture_input=Mock(return_value=Path('/capture/one')),
                     capture_response=Mock())
                 if fail:helper.capture_input.side_effect=OSError('disk full')
                 params=SimpleNamespace(seed=42,temperature=0,ignore_eos=False)
                 with patch.dict(os.environ,{'RTVI_CAPTURE_INPUTS_DIR':'/capture' if enabled else '', 'RTVI_CAPTURE_SOURCE_URL':source}), patch.dict('sys.modules',{'utils.input_capture':helper}):
-                    result=asyncio.run(namespace['process_async_vllm'](model,inputs,params,[0,2.5,5,7.5],'one',chunk=SimpleNamespace(file=file)))
+                    result=asyncio.run(namespace['_process_async_vllm'](model,inputs,params,[0,2.5,5,7.5],'one',chunk=SimpleNamespace(file=file)))
                 self.assertEqual(result,'YES')
                 self.assertIs(calls[0][0],inputs)
                 tensor.cpu.assert_called_once_with()

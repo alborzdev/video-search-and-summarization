@@ -5,6 +5,7 @@ export interface VisionServiceHealth {
   label: string;
   latencyMs: number | null;
   ok: boolean;
+  selected?: boolean;
 }
 
 export interface ThorHealthMetrics {
@@ -23,6 +24,13 @@ export interface SystemHealth {
   status: "degraded" | "offline" | "online";
   thor?: ThorHealthMetrics | null;
   hardwareProfile?: string;
+  demoProfile?: "clips" | "all" | null;
+  videoEfficiency?: {
+    sourceVersion: string | null;
+    runtimeVersion: string | null;
+    adaptiveEvsConfigured: boolean | null;
+    adaptiveEvsCompatible: boolean | null;
+  };
   sparkCapacity?: {
     state: "fresh" | "unknown";
     guardActive: boolean;
@@ -42,7 +50,9 @@ const DEMO_SERVICE_DEPENDENCIES = [
 export function demoServiceChecks(health: SystemHealth) {
   return DEMO_SERVICE_DEPENDENCIES.map(({ label, keys }) => {
     const checks = keys.map((key) => health.services.find((service) => service.key === key));
-    const status = checks.some((service) => service?.ok === false)
+    const status = checks.some((service) => service?.selected === false)
+      ? "not-selected"
+      : checks.some((service) => service?.ok === false)
       ? "unavailable"
       : checks.every((service) => service?.ok === true)
       ? "available"

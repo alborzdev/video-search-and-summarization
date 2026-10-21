@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: Apache-2.0
 """Check that a deploy image tag points at the current source subtree.
 
-For every ``vss-agent`` / ``vss-agent-ui`` image referenced from ``deploy/docker``
-compose + ``.env`` files, fetch the image's OCI index annotations from the
+For every configured VSS service image referenced from ``deploy/docker``
+compose + env files, fetch the image's OCI index annotations from the
 registry and compare ``com.nvidia.vss.source_tree_sha`` to the current
 checkout's tree SHA for the corresponding source folder.
 
@@ -18,23 +18,39 @@ content survives unchanged on the merge target).
 A git-based fallback remains for images that lack the annotation (older builds
 predating the manifest-annotation rollout).
 """
+
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import json
 import os
 import re
 import subprocess
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 
 
+# Optional per-service file (e.g. services/agent/.ignore_source_code_check) that
+# lists gitignore-style paths which are NOT built into the image (unit tests,
+# READMEs, AGENTS.md, ...). When the folder's git tree SHA differs from the
+# deployed image's baked SHA but the only differing files are ignored here, the
+# container is still considered a match — the differences never entered the image.
+SOURCE_IGNORE_FILENAME = ".ignore_source_code_check"
+
 SOURCE_TREE_SHA_LABEL = "com.nvidia.vss.source_tree_sha"
 SOURCE_PATH_LABEL = "com.nvidia.vss.source_path"
 IMAGE_NAME_LABEL = "com.nvidia.vss.image_name"
+# The release line (nearest v* tag, SemVer) the image was built on. Images
+# that bake a version in (VSS_PACKAGE_VERSION, or the harness VSS_REF fetch)
+# must not be reused across it: ghcr_image_guard.py reuse compares it.
+RELEASE_LINE_LABEL = "com.nvidia.vss.release_line"
 
-TAG_COMMIT_RE = re.compile(r"(?:^|[-_/])(?P<sha>[0-9a-f]{7,40})(?:$|[+._-])", re.IGNORECASE)
+TAG_COMMIT_RE = re.compile(
+    r"(?:^|[-_/])(?P<sha>[0-9a-f]{7,40})(?:$|[+._-])", re.IGNORECASE
+)
 IMAGE_LINE_RE = re.compile(r"^\s*image:\s*(?P<ref>\S+)\s*(?:#.*)?$")
 COMPOSE_VAR_RE = re.compile(
     r"\$\{(?P<name>[A-Za-z_][A-Za-z0-9_]*)(?:(?P<op>:?[-?])(?P<value>[^}]*))?\}"
@@ -44,18 +60,106 @@ COMPOSE_VAR_RE = re.compile(
 @dataclass(frozen=True)
 class ImageConfig:
     image_name: str
+    # The service folder: where ``.ignore_source_code_check`` lives and what the
+    # fix hints name. The image's *identity* is the tree of this path plus
+    # ``extra_source_paths`` -- see ``source_tree_sha``.
     source_path: Path
+    # Further build-context paths the Dockerfile COPYs from outside
+    # ``source_path``. Any path a Dockerfile reads and this list omits is a
+    # silent staleness bug: a change there neither rebuilds the image nor
+    # changes its content tag, so the workflow re-tags the old image.
+    # test_detect_changed_images.py audits every inventory Dockerfile for that.
+    extra_source_paths: tuple[Path, ...] = ()
+    # Compose basenames that identify this image in deploy/docker. Defaults to
+    # (image_name,). The alert service is published/promoted as ``vss-alert-ms``
+    # but the deploy stack still pins the released basename
+    # ``vss-alert-verification``, so both must be recognized when scanning
+    # compose refs. Still consumed by release_set.py and compose_image_golden.py.
+    deploy_image_names: tuple[str, ...] = ()
+
+    def compose_names(self) -> tuple[str, ...]:
+        return self.deploy_image_names or (self.image_name,)
+
+    def source_paths(self) -> tuple[Path, ...]:
+        return (self.source_path, *self.extra_source_paths)
+
+    def source_path_label(self) -> str:
+        """The ``com.nvidia.vss.source_path`` label value: every path, joined."""
+        return source_path_label(self.source_paths())
 
 
 IMAGE_CONFIGS = {
-    "vss-agent": ImageConfig(image_name="vss-agent", source_path=Path("services/agent")),
-    "vss-agent-ui": ImageConfig(image_name="vss-agent-ui", source_path=Path("services/ui")),
+    "vss-agent": ImageConfig(
+        image_name="vss-agent",
+        source_path=Path("services/agent"),
+        # services/agent/docker/Dockerfile installs the CLI library workspace
+        # (nvidia-vss-core, nvidia-vss-cli) from libs/vss.
+        extra_source_paths=(Path("libs/vss"),),
+    ),
+    "vss-agent-ui": ImageConfig(
+        image_name="vss-agent-ui",
+        source_path=Path("services/ui"),
+        # services/ui/Dockerfile COPYs the repository LICENSE into the image.
+        extra_source_paths=(Path("LICENSE"),),
+    ),
+    "vss-alert-ms": ImageConfig(
+        image_name="vss-alert-ms",
+        source_path=Path("services/alert"),
+        deploy_image_names=("vss-alert-ms", "vss-alert-verification"),
+    ),
+    "vss-video-analytics-api": ImageConfig(
+        image_name="vss-video-analytics-api",
+        source_path=Path("services/analytics/video-analytics-api"),
+    ),
+    "vss-behavior-analytics": ImageConfig(
+        image_name="vss-behavior-analytics",
+        source_path=Path("services/analytics/behavior-analytics"),
+    ),
+    "vss-rt-cv": ImageConfig(
+        image_name="vss-rt-cv",
+        source_path=Path("services/rtvi/rt-cv"),
+    ),
+    "vss-vios-sensor": ImageConfig(
+        image_name="vss-vios-sensor",
+        source_path=Path("services/vios"),
+    ),
+    "vss-vios-streamprocessing": ImageConfig(
+        image_name="vss-vios-streamprocessing",
+        source_path=Path("services/vios"),
+    ),
+    "vss-vios-nvstreamer": ImageConfig(
+        image_name="vss-vios-nvstreamer",
+        source_path=Path("services/vios"),
+    ),
+    "vss-vios-ingress": ImageConfig(
+        image_name="vss-vios-ingress",
+        source_path=Path("services/vios"),
+    ),
+    "sdr-mw-l": ImageConfig(
+        image_name="sdr-mw-l", source_path=Path("services/sdrc")
+    ),
+    "vss-configurator": ImageConfig(
+        image_name="vss-configurator",
+        source_path=Path("services/configurators/vss-configurator"),
+        # services/configurators/vss-configurator/docker/Dockerfile installs the
+        # Spatial AI data utilities from libs/analytics.
+        extra_source_paths=(Path("libs/analytics/spatialai-data-utils"),),
+    ),
+    "vss-rt-config-adaptor": ImageConfig(
+        image_name="vss-rt-config-adaptor",
+        source_path=Path("services/configurators/vss-rt-config-adaptor"),
+    ),
+    "vss-rt-embed": ImageConfig(
+        image_name="vss-rt-embed", source_path=Path("services/rtvi/rt-embed")
+    ),
 }
 
 DEPLOY_DIR = Path("deploy/docker")
 
 
-def run_git(repo: Path, *args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
+def run_git(
+    repo: Path, *args: str, check: bool = True
+) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["git", "-C", str(repo), *args],
         check=check,
@@ -126,49 +230,105 @@ def commit_prefix_from_tag(tag: str | None) -> str | None:
     return matches[-1].group("sha").lower()
 
 
-def image_refs_in_text(text: str, expected_image_name: str) -> list[str]:
+def image_refs_in_text(text: str, expected_image_name: str | Iterable[str]) -> list[str]:
     """Extract ``image:`` refs matching ``expected_image_name`` from compose
-    content. Shared with the gate helper (see ``parse_env_text``)."""
+    content. ``expected_image_name`` may be a single basename or an iterable of
+    accepted basenames (for images whose deploy basename differs from the
+    published name). Shared with the gate helper (see ``parse_env_text``).
+
+    The registry+name portion may itself be parameterized via the
+    ``deploy/docker/containers.env`` single source of truth, e.g.
+    ``image: ${VSS_AGENT_IMAGE:-nvcr.io/nvstaging/vss-core/vss-agent}:${VSS_AGENT_VERSION}``.
+    We therefore expand inline ``${VAR:-default}`` fallbacks (with an empty env,
+    so only the literal defaults are applied) purely to compute the image name
+    for matching. The RAW ref is still returned so the caller resolves the tag
+    against the real ``.env`` values exactly as before."""
+    accepted = (
+        {expected_image_name}
+        if isinstance(expected_image_name, str)
+        else set(expected_image_name)
+    )
     refs: list[str] = []
     for line in text.splitlines():
         match = IMAGE_LINE_RE.match(line)
         if not match:
             continue
         ref = strip_quotes(match.group("ref"))
-        if image_name(ref) == expected_image_name and ref not in refs:
+        name_probe, _ = resolve_compose_vars(ref, {})
+        if image_name(name_probe) in accepted and ref not in refs:
             refs.append(ref)
     return refs
 
 
-def find_image_refs(compose_file: Path, expected_image_name: str) -> list[str]:
+def find_image_refs(compose_file: Path, expected_image_name: str | Iterable[str]) -> list[str]:
     return image_refs_in_text(compose_file.read_text(), expected_image_name)
 
 
 def resolve_compose_vars(text: str, env: dict[str, str]) -> tuple[str, tuple[str, ...]]:
-    missing: list[str] = []
+    """Resolve Compose substitutions, including nested default expressions."""
+    missing: set[str] = set()
 
-    def replace(match: re.Match[str]) -> str:
-        name = match.group("name")
-        op = match.group("op")
-        fallback = match.group("value") or ""
-        value = env.get(name)
+    def resolve(value: str) -> str:
+        result: list[str] = []
+        index = 0
+        while index < len(value):
+            match = re.match(
+                r"\$\{(?P<name>[A-Za-z_][A-Za-z0-9_]*)(?P<op>:?[-?])?",
+                value[index:],
+            )
+            if not match:
+                result.append(value[index])
+                index += 1
+                continue
 
-        if op == ":-":
-            return value if value else fallback
-        if op == "-":
-            return value if value is not None else fallback
-        if op in (":?", "?"):
-            if value:
-                return value
-            missing.append(name)
-            return match.group(0)
-        if value is None:
-            missing.append(name)
-            return match.group(0)
-        return value
+            start = index
+            name = match.group("name")
+            op = match.group("op")
+            cursor = index + match.end()
+            if op is None:
+                if cursor < len(value) and value[cursor] == "}":
+                    env_value = env.get(name)
+                    if env_value is None:
+                        missing.add(name)
+                        result.append(value[start : cursor + 1])
+                    else:
+                        result.append(env_value)
+                    index = cursor + 1
+                    continue
+                result.append(value[index])
+                index += 1
+                continue
 
-    resolved = COMPOSE_VAR_RE.sub(replace, text)
-    return resolved, tuple(sorted(set(missing)))
+            depth = 1
+            end = cursor
+            while end < len(value) and depth:
+                if value.startswith("${", end):
+                    depth += 1
+                    end += 2
+                elif value[end] == "}":
+                    depth -= 1
+                    end += 1
+                else:
+                    end += 1
+            if depth:
+                result.append(value[index])
+                index += 1
+                continue
+
+            fallback = value[cursor : end - 1]
+            env_value = env.get(name)
+            use_fallback = env_value is None or (op.startswith(":") and env_value == "")
+            if op.endswith("?") and use_fallback:
+                missing.add(name)
+                result.append(value[start:end])
+            elif use_fallback:
+                result.append(resolve(fallback))
+            else:
+                result.append(env_value)
+            index = end
+        return "".join(result)
+
+    return resolve(text), tuple(sorted(missing))
 
 
 def resolve_commit(repo: Path, prefix: str) -> str | None:
@@ -178,11 +338,263 @@ def resolve_commit(repo: Path, prefix: str) -> str | None:
     return None
 
 
-def tree_sha(repo: Path, commit: str, source_path: Path) -> str | None:
-    result = run_git(repo, "rev-parse", f"{commit}:{source_path.as_posix()}", check=False)
+TREE_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+
+
+def source_paths_of(value: object) -> list[str]:
+    """Normalise a ``source_path`` value to a list of repo-relative paths.
+
+    The inventory and the release-set label both spell one path as a string;
+    an image whose Dockerfile COPYs from several places lists them (inventory)
+    or joins them with commas (the ``com.nvidia.vss.source_path`` label). Every
+    consumer of either form goes through here, so they cannot disagree.
+    """
+    if value is None:
+        return []
+    if isinstance(value, (str, Path)):
+        parts = str(value).split(",")
+    else:
+        parts = [str(item) for item in value]
+    paths = [part.strip().strip("/") for part in parts]
+    return [path for path in paths if path]
+
+
+def bakes_release_line(dockerfile: str | None) -> bool:
+    """Whether an image built from ``dockerfile`` carries a version inside it.
+
+    True for Dockerfiles that declare ``ARG VSS_PACKAGE_VERSION`` (the stamped
+    Python packages) or ``ARG VSS_REF`` (the harness images, whose CLI wheels
+    hatch-vcs versions from the fetched ref). Only those need a rebuild when the
+    release line moves; every other image keeps reusing on tree alone.
+    """
+    if not dockerfile:
+        return False
+    try:
+        text = Path(dockerfile).read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return any(
+        line.strip().startswith(("ARG VSS_PACKAGE_VERSION", "ARG VSS_REF"))
+        for line in text.splitlines()
+    )
+
+
+def source_path_label(paths: Iterable[str | Path]) -> str:
+    """The ``com.nvidia.vss.source_path`` label: the paths in declared order."""
+    return ",".join(Path(str(path)).as_posix() for path in paths)
+
+
+def source_tree_sha(repo: Path, commit: str, paths: Iterable[str | Path]) -> str | None:
+    """The content hash of ``paths`` at ``commit``: the image's source identity.
+
+    One path is exactly ``git rev-parse <commit>:<path>``, unchanged from when
+    that was the whole definition, so every image with a single ``source_path``
+    keeps the tree SHA (and the ``tree-<sha>`` content tag) it already has.
+
+    Several paths become one real git tree object, built with ``git mktree``
+    from each path's object in declared-name order: a 40-hex SHA like any other
+    tree, inspectable with ``git ls-tree``, and different whenever any listed
+    path differs. Object type is looked up rather than assumed so a single file
+    (``LICENSE``) can be listed alongside directories.
+
+    ``None`` when a path does not exist at ``commit`` or git cannot answer, so
+    callers fail closed (or open) the way they already do for a missing tree.
+    """
+    names = [Path(str(path)).as_posix() for path in paths]
+    if not names:
+        return None
+    if len(names) == 1:
+        result = run_git(repo, "rev-parse", f"{commit}:{names[0]}", check=False)
+        if result.returncode != 0:
+            return None
+        value = result.stdout.strip()
+        return value if TREE_SHA_RE.fullmatch(value) else None
+
+    entries: list[str] = []
+    seen: set[str] = set()
+    for name in names:
+        # mktree entry names cannot contain '/', so the path is flattened; two
+        # listed paths flattening to the same name would silently drop one.
+        entry_name = name.replace("/", "-")
+        if entry_name in seen:
+            return None
+        seen.add(entry_name)
+        result = run_git(repo, "rev-parse", f"{commit}:{name}", check=False)
+        if result.returncode != 0:
+            return None
+        oid = result.stdout.strip()
+        kind = run_git(repo, "cat-file", "-t", oid, check=False)
+        if kind.returncode != 0:
+            return None
+        mode = {"tree": "040000", "blob": "100644"}.get(kind.stdout.strip())
+        if mode is None:
+            return None
+        entries.append(f"{mode} {kind.stdout.strip()} {oid}\t{entry_name}")
+    result = subprocess.run(
+        ["git", "-C", str(repo), "mktree"],
+        input="\n".join(entries) + "\n",
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
     if result.returncode != 0:
         return None
-    return result.stdout.strip()
+    value = result.stdout.strip()
+    return value if TREE_SHA_RE.fullmatch(value) else None
+
+
+def tree_sha(
+    repo: Path, commit: str, source_path: Path | Iterable[str | Path]
+) -> str | None:
+    """Tree SHA for one path or for an image's full ``source_paths()``."""
+    paths = [source_path] if isinstance(source_path, (str, Path)) else list(source_path)
+    return source_tree_sha(repo, commit, paths)
+
+
+def load_source_ignore_patterns(repo: Path, source_path: Path) -> list[str]:
+    """Read gitignore-style patterns from ``<source_path>/.ignore_source_code_check``.
+
+    Blank lines and ``#`` comments are skipped. Returns an empty list when the
+    file is absent (so the source comparison behaves exactly as before)."""
+    ignore_file = repo / source_path / SOURCE_IGNORE_FILENAME
+    if not ignore_file.exists():
+        return []
+    patterns: list[str] = []
+    for raw_line in ignore_file.read_text().splitlines():
+        line = raw_line.strip()
+        if line and not line.startswith("#"):
+            patterns.append(line)
+    return patterns
+
+
+def path_is_ignored(rel: str, patterns: list[str]) -> bool:
+    """Match ``rel`` (POSIX path relative to the service folder) against
+    gitignore-style ``patterns``:
+
+    * ``dir/`` or a bare ``dir`` name → matches everything under that directory
+    * ``a/b/**`` or ``a/b/*`` → matches everything under ``a/b``
+    * a pattern with ``/`` and globs → ``fnmatch`` on the full relative path
+    * a bare name/glob (no ``/``) → ``fnmatch`` on the basename (any depth) or path
+    """
+    base = rel.rsplit("/", 1)[-1]
+    for pattern in patterns:
+        pat = pattern.rstrip()
+        if pat.endswith("/"):
+            # Directory: ``tests/`` ⇒ tests/ and everything under it.
+            directory = pat.rstrip("/")
+            if rel == directory or rel.startswith(directory + "/"):
+                return True
+        elif pat.endswith("/**") or pat.endswith("/*"):
+            directory = pat.rsplit("/", 1)[0].rstrip("/")
+            if rel == directory or rel.startswith(directory + "/"):
+                return True
+        elif pat.startswith("**/"):
+            # Any depth: ``**/*.md`` ⇒ every .md file at any depth.
+            if fnmatch.fnmatch(rel, pat) or fnmatch.fnmatch(base, pat[3:]):
+                return True
+        elif "/" in pat:
+            # Path pattern anchored at the service root.
+            if fnmatch.fnmatch(rel, pat):
+                return True
+        else:
+            # Bare name/glob, anchored at the service root (NOT basename-anywhere,
+            # so a bare ``README.md`` never ignores a shipped src/**/README.md):
+            #   - exact file, or a directory prefix (``tests`` ⇒ tests/...)
+            #   - a glob (``*.md``) matched against the root-relative path
+            if rel == pat or rel.startswith(pat + "/"):
+                return True
+            if ("*" in pat or "?" in pat) and fnmatch.fnmatch(rel, pat):
+                return True
+    return False
+
+
+def changed_source_paths(
+    repo: Path,
+    source_path: Path | Iterable[str | Path],
+    from_commit: str,
+    to_ref: str,
+) -> list[str] | None:
+    """Paths under the image's source paths that differ between ``from_commit``
+    and ``to_ref``. Files under the service folder (the first path) are made
+    relative to it, so ``.ignore_source_code_check`` patterns apply; files under
+    any extra path keep their repo-relative name, which no pattern anchored at
+    the service root matches -- a change there is never rescued as ignorable.
+    Returns ``None`` if git can't diff (e.g. the commit is unknown)."""
+    paths = [source_path] if isinstance(source_path, (str, Path)) else list(source_path)
+    names = [Path(str(path)).as_posix() for path in paths]
+    result = run_git(
+        repo, "diff", "--name-only", from_commit, to_ref, "--", *names, check=False
+    )
+    if result.returncode != 0:
+        return None
+    prefix = names[0] + "/"
+    rels: list[str] = []
+    for line in result.stdout.splitlines():
+        path = line.strip()
+        if not path:
+            continue
+        rels.append(path[len(prefix) :] if path.startswith(prefix) else path)
+    return rels
+
+
+def diff_is_ignored_only(
+    repo: Path,
+    source_path: Path | Iterable[str | Path],
+    from_commit: str,
+    to_ref: str,
+    patterns: list[str],
+) -> tuple[bool, list[str]]:
+    """Return ``(True, changed)`` when every file that differs in ``source_path``
+    between ``from_commit`` and ``to_ref`` is ignored by ``patterns``. Returns
+    ``(False, [])`` when git can't diff or nothing changed."""
+    changed = changed_source_paths(repo, source_path, from_commit, to_ref)
+    if not changed:
+        return False, []
+    not_ignored = [c for c in changed if not path_is_ignored(c, patterns)]
+    return (not not_ignored), changed
+
+
+def rescue_ignored_only(
+    repo: Path,
+    config: "ImageConfig",
+    tag: str | None,
+    build_tree_sha: str,
+    current_commit: str,
+) -> bool:
+    """When the folder tree SHA differs from the deployed image, pass anyway iff
+    the ONLY differing files are ignored (unit tests, docs, ...).
+
+    Locates the image's build commit from the tag's commit-SHA suffix and
+    confirms its ``source_path`` tree matches ``build_tree_sha`` (so we know we
+    found the exact source the image was built from) before diffing to HEAD.
+    """
+    patterns = load_source_ignore_patterns(repo, config.source_path)
+    if not patterns:
+        return False
+    prefix = commit_prefix_from_tag(tag)
+    build_commit = resolve_commit(repo, prefix) if prefix else None
+    if not build_commit:
+        return False
+    if tree_sha(repo, build_commit, config.source_paths()) != build_tree_sha:
+        # The tag-suffix commit isn't the one this image was built from; don't
+        # trust a diff against it.
+        return False
+    ignored_only, changed = diff_is_ignored_only(
+        repo, config.source_paths(), build_commit, current_commit, patterns
+    )
+    if not ignored_only:
+        return False
+    src = config.source_path.as_posix()
+    print(f"  build commit:  {build_commit[:12]} ({src}/ tree matches the image)")
+    print(
+        f"  {len(changed)} file(s) differ vs the built image, all ignored by {SOURCE_IGNORE_FILENAME}:"
+    )
+    for path in sorted(changed):
+        print(f"    - {path}")
+    print(
+        f"  [PASS] only non-build (ignored) files differ from the deployed {config.image_name} image."
+    )
+    return True
 
 
 @dataclass(frozen=True)
@@ -190,6 +602,7 @@ class ImageManifestLabels:
     source_tree_sha: str
     source_path: str | None
     image_name: str | None
+    release_line: str | None = None
 
 
 _INDEX_ACCEPT = (
@@ -240,12 +653,19 @@ def _parse_image_ref(image_ref: str) -> tuple[str, str, str] | None:
     return registry, name, tag
 
 
-def _fetch_bearer_token(registry: str, name: str, ngc_key: str | None) -> tuple[str | None, str | None]:
+def _fetch_bearer_token(
+    registry: str,
+    name: str,
+    ngc_key: str | None,
+    registry_username: str | None = None,
+    registry_password: str | None = None,
+) -> tuple[str | None, str | None]:
     """Resolve a registry pull token via the ``WWW-Authenticate`` challenge flow.
 
     Some registries (Docker Hub, GHCR) accept anonymous tokens for public
-    repos; nvcr.io requires Basic-auth with ``$oauthtoken`` + the NGC API key.
-    Returns ``(token, None)`` or ``(None, error_message)``.
+    repos. Private GHCR packages require the workflow actor and GitHub token;
+    nvcr.io requires ``$oauthtoken`` plus the NGC API key. Returns
+    ``(token, None)`` or ``(None, error_message)``.
     """
     import base64
     import urllib.error
@@ -285,6 +705,11 @@ def _fetch_bearer_token(registry: str, name: str, ngc_key: str | None) -> tuple[
     req = urllib.request.Request(token_url)
     if ngc_key:
         basic = base64.b64encode(f"$oauthtoken:{ngc_key}".encode()).decode()
+        req.add_header("Authorization", f"Basic {basic}")
+    elif registry_username and registry_password:
+        basic = base64.b64encode(
+            f"{registry_username}:{registry_password}".encode()
+        ).decode()
         req.add_header("Authorization", f"Basic {basic}")
     try:
         with urllib.request.urlopen(req, timeout=20) as resp:
@@ -396,7 +821,15 @@ def read_image_manifest_labels(
     registry, name, reference = parsed
 
     ngc_key = os.environ.get("NGC_CLI_API_KEY") or os.environ.get("NGC_API_KEY")
-    token, token_err = _fetch_bearer_token(registry, name, ngc_key)
+    ghcr_username = os.environ.get("GHCR_USERNAME") if registry == "ghcr.io" else None
+    ghcr_token = os.environ.get("GHCR_TOKEN") if registry == "ghcr.io" else None
+    token, token_err = _fetch_bearer_token(
+        registry,
+        name,
+        ngc_key,
+        registry_username=ghcr_username,
+        registry_password=ghcr_token,
+    )
     if token_err:
         return None, token_err, False
 
@@ -455,6 +888,7 @@ def read_image_manifest_labels(
             source_tree_sha=tree,
             source_path=labels.get(SOURCE_PATH_LABEL),
             image_name=labels.get(IMAGE_NAME_LABEL),
+            release_line=labels.get(RELEASE_LINE_LABEL),
         ),
         None,
         False,
@@ -462,6 +896,24 @@ def read_image_manifest_labels(
 
 
 def discover_compose_files(repo_root: Path) -> list[Path]:
+    # Validate committed deploy state; generated or untracked compose files in
+    # the workspace should not affect the container-source gate.
+    tracked = run_git(
+        repo_root,
+        "ls-files",
+        "--",
+        DEPLOY_DIR.as_posix(),
+        check=False,
+    )
+    if tracked.returncode == 0:
+        files = [
+            repo_root / line
+            for line in tracked.stdout.splitlines()
+            if line.endswith((".yml", ".yaml"))
+        ]
+        if files:
+            return sorted(path for path in files if path.is_file())
+
     deploy = repo_root / DEPLOY_DIR
     files: set[Path] = set()
     for pattern in ("**/*.yml", "**/*.yaml"):
@@ -473,7 +925,12 @@ def discover_compose_files(repo_root: Path) -> list[Path]:
 
 def discover_env_files(repo_root: Path) -> list[Path]:
     deploy = repo_root / DEPLOY_DIR
-    return sorted(p for p in deploy.glob("**/.env") if p.is_file())
+    files: set[Path] = set()
+    for pattern in ("**/.env", "**/*.env"):
+        for path in deploy.glob(pattern):
+            if path.is_file():
+                files.add(path)
+    return sorted(files)
 
 
 @dataclass(frozen=True)
@@ -501,7 +958,7 @@ def collect_resolved_images(
     unresolved: list[UnresolvedImage] = []
 
     for compose_file in compose_files:
-        raw_refs = find_image_refs(compose_file, config.image_name)
+        raw_refs = find_image_refs(compose_file, config.compose_names())
         if not raw_refs:
             continue
         compose_rel = str(compose_file.relative_to(repo_root))
@@ -519,14 +976,20 @@ def collect_resolved_images(
                     continue
                 any_applicable = True
                 env_rel = str(env_file.relative_to(repo_root))
-                resolved, missing = resolve_compose_vars(raw_ref, {**env_values, **os.environ})
+                resolved, missing = resolve_compose_vars(
+                    raw_ref, {**env_values, **os.environ}
+                )
                 if missing:
-                    unresolved.append(UnresolvedImage(compose_rel, env_rel, raw_ref, missing))
+                    unresolved.append(
+                        UnresolvedImage(compose_rel, env_rel, raw_ref, missing)
+                    )
                 else:
                     by_resolved.setdefault(resolved, []).append((compose_rel, env_rel))
 
             if not any_applicable:
-                unresolved.append(UnresolvedImage(compose_rel, None, raw_ref, tuple(sorted(needed))))
+                unresolved.append(
+                    UnresolvedImage(compose_rel, None, raw_ref, tuple(sorted(needed)))
+                )
 
     images = [
         ResolvedImage(resolved_ref=ref, origins=tuple(origins))
@@ -567,10 +1030,10 @@ def check_resolved_image(
                 f"expected {config.image_name!r}"
             )
             return False
-        if labels.source_path and labels.source_path != src:
+        if labels.source_path and labels.source_path != config.source_path_label():
             print(
                 f"  [FAIL] manifest {SOURCE_PATH_LABEL}={labels.source_path!r}, "
-                f"expected {src!r}"
+                f"expected {config.source_path_label()!r}"
             )
             return False
         print(f"  manifest:      {SOURCE_TREE_SHA_LABEL}={labels.source_tree_sha}")
@@ -582,8 +1045,19 @@ def check_resolved_image(
             print("  [PASS]")
             return True
         print("    → DIFFERENT")
-        print(f"  [FAIL] {config.image_name} container does NOT match the current {src}/ source.")
-        print(f"         Image's source tree SHA at build time: {labels.source_tree_sha}")
+        # The whole-folder tree SHA differs, but the deployed image may still
+        # match the built source if the only differences are non-build files
+        # (unit tests, docs) listed in <src>/.ignore_source_code_check.
+        if rescue_ignored_only(
+            repo_root, config, tag, labels.source_tree_sha, current_commit
+        ):
+            return True
+        print(
+            f"  [FAIL] {config.image_name} container does NOT match the current {src}/ source."
+        )
+        print(
+            f"         Image's source tree SHA at build time: {labels.source_tree_sha}"
+        )
         print(f"         Current {src}/ tree SHA:               {current_tree}")
         _print_fix_hint(config)
         return False
@@ -613,7 +1087,9 @@ def check_resolved_image(
 
     prefix = commit_prefix_from_tag(tag)
     if not prefix:
-        print("  [FAIL] tag does not contain a git commit SHA suffix; cannot verify source.")
+        print(
+            "  [FAIL] tag does not contain a git commit SHA suffix; cannot verify source."
+        )
         return False
 
     tag_commit = resolve_commit(repo_root, prefix)
@@ -629,7 +1105,7 @@ def check_resolved_image(
         return False
     print(f"  built from:    {tag_commit}")
 
-    tag_tree = tree_sha(repo_root, tag_commit, config.source_path)
+    tag_tree = tree_sha(repo_root, tag_commit, config.source_paths())
     if not tag_tree:
         print(f"  [FAIL] could not read {src}/ at commit {tag_commit[:12]}.")
         return False
@@ -642,7 +1118,27 @@ def check_resolved_image(
         print("  [PASS]")
         return True
     print("    → DIFFERENT")
-    print(f"  [FAIL] {config.image_name} container does NOT match the current {src}/ source.")
+    # Same ignored-only rescue as the manifest path: the build commit is known
+    # here (tag_commit), so pass iff only non-build files changed since.
+    patterns = load_source_ignore_patterns(repo_root, config.source_path)
+    if patterns:
+        ignored_only, changed = diff_is_ignored_only(
+            repo_root, config.source_paths(), tag_commit, current_commit, patterns
+        )
+        if ignored_only:
+            print(
+                f"  {len(changed)} file(s) differ vs {tag_commit[:12]}, all ignored by "
+                f"{SOURCE_IGNORE_FILENAME}:"
+            )
+            for path in sorted(changed):
+                print(f"    - {path}")
+            print(
+                f"  [PASS] only non-build (ignored) files differ from the deployed {config.image_name} image."
+            )
+            return True
+    print(
+        f"  [FAIL] {config.image_name} container does NOT match the current {src}/ source."
+    )
     print(f"         See the diff:  git diff {tag_commit[:12]} HEAD -- {src}")
     _print_fix_hint(config)
     return False
@@ -665,52 +1161,71 @@ def verify(repo_root: Path, config: ImageConfig) -> int:
     src = config.source_path.as_posix()
     bar = "=" * 78
     print(bar)
-    print(f" {config.image_name}  —  check every deployable container tag against {src}/")
+    print(
+        f" {config.image_name}  —  check every deployable container tag against {src}/"
+    )
     print(bar)
     print()
 
     current_commit = git_stdout(repo_root, "rev-parse", "HEAD")
     current_branch = git_stdout(repo_root, "rev-parse", "--abbrev-ref", "HEAD")
-    current_tree = tree_sha(repo_root, "HEAD", config.source_path)
+    current_tree = tree_sha(repo_root, "HEAD", config.source_paths())
     if not current_tree:
-        print(f"ERROR: could not resolve HEAD:{src}", file=sys.stderr)
+        print(
+            f"ERROR: could not resolve HEAD:{config.source_path_label()}",
+            file=sys.stderr,
+        )
         return 1
 
     print("Current source (HEAD)")
     print(f"  branch:  {current_branch}")
     print(f"  commit:  {current_commit}")
     print(f"  folder:  {src}/  (content hash: {current_tree})")
+    if config.extra_source_paths:
+        extras = ", ".join(path.as_posix() for path in config.extra_source_paths)
+        print(f"  also:    {extras}  (hashed into the content hash above)")
     print()
 
     compose_files = discover_compose_files(repo_root)
     env_files = discover_env_files(repo_root)
     print(
-        f"Scanned {len(compose_files)} compose file(s) and {len(env_files)} .env file(s) "
+        f"Scanned {len(compose_files)} compose file(s) and {len(env_files)} env file(s) "
         f"under {DEPLOY_DIR.as_posix()}/."
     )
     print()
 
-    images, unresolved = collect_resolved_images(repo_root, config, compose_files, env_files)
+    images, unresolved = collect_resolved_images(
+        repo_root, config, compose_files, env_files
+    )
 
     if unresolved:
         print(f"WARNING: {len(unresolved)} unresolved image reference(s):")
         for item in unresolved:
-            origin = f"{item.compose_rel}" + (f"  ←  {item.env_rel}" if item.env_rel else "")
+            origin = f"{item.compose_rel}" + (
+                f"  ←  {item.env_rel}" if item.env_rel else ""
+            )
             print(f"  - {origin}")
             print(f"      raw:      {item.raw_ref}")
             print(f"      missing:  {', '.join(item.missing)}")
         print()
 
     if not images:
-        print(f"ERROR: no resolvable {config.image_name} image references found.", file=sys.stderr)
+        print(
+            f"ERROR: no resolvable {config.image_name} image references found.",
+            file=sys.stderr,
+        )
         return 1
 
-    print(f"Found {len(images)} unique {config.image_name} image reference(s) to check:")
+    print(
+        f"Found {len(images)} unique {config.image_name} image reference(s) to check:"
+    )
     print()
 
     failures = 0
     for idx, item in enumerate(images, start=1):
-        if not check_resolved_image(repo_root, config, item, current_commit, current_tree, idx, len(images)):
+        if not check_resolved_image(
+            repo_root, config, item, current_commit, current_tree, idx, len(images)
+        ):
             failures += 1
         print()
 

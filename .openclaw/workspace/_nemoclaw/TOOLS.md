@@ -3,10 +3,9 @@
 ## Sandbox host alias
 
 Inside the openshell/nemoclaw sandbox, `HOST_IP` is the sandbox host
-alias — the only hostname the egress policy whitelists for VSS backend
-ports. Skills should curl `${HOST_IP}` for every runtime call — never
-`localhost` and never a literal IP — so the same skill works in-sandbox
-and on bare metal.
+alias for Docker Compose host ports. For existing deployments, preserve the
+operator's origin from `ENV.md` and use the installed VSS CLI; no orchestrator
+check is required.
 
 `/sandbox/.bashrc` is root-owned and read-only in this sandbox, so
 `HOST_IP` is **not** persisted to a shell init file. Instead, the
@@ -87,14 +86,14 @@ them from the host environment.
 
 If host-side setup is missing (NGC CLI, Docker login to `nvcr.io`, or
 `uv sync` of `services/agent/`), tell the user to run the matching cell in
-`deploy/docker/scripts/deploy_nemoclaw_vss.ipynb`. The notebook lives on the
+`deploy/docker/scripts/deploy_vss_orchestrator.ipynb`. The notebook lives on the
 host, not in the sandbox — do not try to read, list, find, or open it from
 inside the sandbox.
 
 ## Calling MCP tools
 
-Openclaw's built-in MCP client can't fully handshake with the orchestrator's
-`nat mcp serve` (protocol mismatch: openclaw opens the SSE GET before
+OpenClaw's built-in MCP client can't fully handshake with the orchestrator's
+`nat mcp serve` (protocol mismatch: OpenClaw opens the SSE GET before
 establishing a session). Only **`vss_orchestrator__docker_list`** reliably
 registers as a native tool. Prefer it natively when present. Every other
 orchestrator tool (`prereqs`, `docker_generate`, `docker_up`, `docker_down`,
@@ -215,12 +214,42 @@ healthy?" check, use:
 These are also robust to orchestrator restarts since container state lives
 in Docker, not in the orchestrator's process memory.
 
+## VSS CLI
+
+The `vss` CLI is on PATH in this image and exposed as the `vss_cli` tool; the
+skills name the subcommands. Do not clone a repository or install `uv` to get
+it, and never replace it with raw HTTP.
+
+If the baked executable fails or is missing, report the image problem and stop.
+Development-checkout instructions in a skill do not apply to this image.
+
+The CLI operates whatever deployment it has recorded. Inspect `vss configure
+show`; record the operator's selected origin only when it is missing or differs:
+
+```bash
+vss configure --base-url "${VSS_PUBLIC_URL}"
+```
+
+`configure` probes the path routes behind the origin (`/api`, `/vst`,
+`/lvs`, ...) and records what answered; Alert Bridge is not one of them (see
+AGENTS.md). Use `configure check` when readiness is requested. Re-run
+`configure` after an intended deployment change; do not repair a failed evaluation's deployment. If
+`VSS_PUBLIC_URL` is empty, stop and follow `ENV.md` "Empty VSS_PUBLIC_URL" -
+ask the user for the origin instead of guessing one; keep the port in it.
+
+A supplied video URL uses `vss-ask-video`'s direct media path; do not ingest it
+or register a sensor unless the request explicitly calls for it.
+
+A `CONNECT tunnel failed, response 403` here is an egress-policy gap, not a
+broken deployment: the origin's host is not named in the host-side policy.
+Report it and stop; do not try to work around it.
+
 ## Skills
 
-Skills are managed by OpenClaw — discover and invoke them via the
-`openclaw skills` CLI (e.g. `openclaw skills list`, `openclaw skills <name>`).
-Do **not** `read` / `cat` / `find` `SKILL.md` paths directly. Paths under
-`/usr/local/lib/node_modules/openclaw/skills/` are OpenClaw's bundled core
-skills (1password, github, etc.) and do not contain VSS skills like
-`deploy`, `alerts`, or `video-search` — those live under the plugin install
-dir and are reachable only via the CLI.
+Skills are managed by the agent runtime. In OpenClaw sandboxes, discover and
+invoke them via the `openclaw skills` CLI (e.g. `openclaw skills list`,
+`openclaw skills <name>`). Do **not** `read` / `cat` / `find` `SKILL.md` paths
+directly. Paths under `/usr/local/lib/node_modules/openclaw/skills/` are
+OpenClaw's bundled core skills (1password, github, etc.) and do not contain VSS
+skills like `deploy`, `alerts`, or `video-search` — those live under the plugin
+install dir and are reachable only via the runtime CLI.

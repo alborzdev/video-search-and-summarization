@@ -52,13 +52,13 @@ We provide multiple reference [Agent Workflows](https://docs.nvidia.com/vss/late
 
 ## Software Components
 <div align="center">
-  <img src="https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/raw/main/assets/vss-architecture.png" width="800">
+  <img src="https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/raw/develop/assets/vss-architecture.png" width="800">
 </div>
 
 1. **NIM microservices**: Here are models used in this blueprint:
 
     - [Cosmos3 Nano Reasoner](https://build.nvidia.com/nvidia/cosmos3-nano-reasoner)
-    - [NVIDIA Nemotron-Nano-9B-v2](https://build.nvidia.com/nvidia/nvidia-nemotron-nano-9b-v2)
+    - [NVIDIA Nemotron 3.5 Lightning 30B A3B](https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b)
 
 2. **Real-time video intelligence**: The Real-Time Video Intelligence layer extracts rich visual features, semantic embeddings, and contextual understanding from video data in real-time, publishing results to a message broker for downstream analytics and agentic workflows. It provides three core microservices for processing video streams.
 
@@ -77,17 +77,27 @@ This blueprint is designed for ease of setup with extensive configuration option
 
 | Directory | Description |
 |-----------|-------------|
-| `services/agent/` | Video search and summarization agent (Python). Contains `src/vss_agents/` (tools, agents, APIs, embeddings, evaluators, video analytics), `tests/`, `stubs/`, `docker/`, and `3rdparty/`. See [services/agent/README.md](services/agent/README.md). |
-| `services/ui/` | Frontend monorepo (Next.js, Turbo): `apps/` (nemo-agent-toolkit-ui, nv-metropolis-bp-vss-ui) and shared `packages/`. See [services/ui/README.md](services/ui/README.md). |
+| `services/agent/` | Video search and summarization agent (Python). Contains `packages/vss_agents/` (tools, agents, APIs, embeddings, evaluators, video analytics), `scripts/`, `docker/`, and `3rdparty/`. See [services/agent/README.md](services/agent/README.md). |
+| `services/ui/` | Frontend monorepo (Next.js, Turbo): `apps/` (nv-metropolis-bp-vss-ui, vss-chat) and shared `packages/`. See [services/ui/README.md](services/ui/README.md). |
+| `services/rtvi/` | Real-time video intelligence microservices: `rt-vlm/` (dense captioning and incidents from live streams), `rt-embed/` (video, image, and text embeddings), `rt-cv/` (2D detection and tracking), and `rt-cv-3d/` (RT-DETR plus Multi-View 3D Tracking for fused BEV output). |
+| `services/vios/` | Video I/O Service: the ingest and storage layer. Connects to RTSP/ONVIF/Milestone cameras, VMS systems, and NVStreamer sources, manages sensor registration and recording, and serves live and recorded video plus a dashboard. See [services/vios/README.md](services/vios/README.md). |
+| `services/alert/` | Configuration-driven alerts microservice: VLM-based alert verification, realtime alert generation, and on-demand clip verification. See [services/alert/README.md](services/alert/README.md). |
+| `services/video-summarization/` | Long video summarization (LVS) microservice. Processes video with VLMs and returns timestamped captions, structured event detections, and aggregated summaries over a REST API. See [services/video-summarization/README.md](services/video-summarization/README.md). |
+| `services/sdrc/` | Sensor Distribution and Routing Controller: the stream-placement and traffic-routing layer that assigns live streams to backend workers and keeps that routing stable and recoverable. See [services/sdrc/README.md](services/sdrc/README.md). |
+| `services/configurators/` | Configuration services: `vss-configurator/` (unified sensor and hardware-profile configuration) and `vss-rt-config-adaptor/` (writes DeepStream runtime configs from posted metadata). |
 | `services/analytics/` | Downstream analytics services for processing real-time video intelligence metadata. Contains behavior analytics stream processing and REST APIs for querying analytics results. |
 | `services/analytics/behavior-analytics/` | Python streaming pipeline for spatial AI analytics, incident detection, Smart City, warehouse, playback, and other behavior analytics applications. Includes app entry points, configs, Docker support, tests, and detailed guides. See [services/analytics/behavior-analytics/README.md](services/analytics/behavior-analytics/README.md). |
 | `services/analytics/video-analytics-api/` | Node.js and Express REST API service for VSS Video Analytics data. Exposes metrics, tracker, frames, behavior, clustering, events, sensor, config, alerts, and incidents endpoints backed by Elasticsearch. See [services/analytics/video-analytics-api/README.md](services/analytics/video-analytics-api/README.md). |
-| `deploy/` | Deployment configs, Docker Compose, and Helm charts: NIM model configs, developer profiles (dev-profile-base, dev-profile-search, dev-profile-alerts, dev-profile-lvs), foundational services, LVS, RTVI, VLM-as-verifier, VST, and root `compose.yml`. Also contains `deploy/docker/scripts/` — the Brev launchable notebook and dev-profile / patch scripts. |
+| `deploy/` | Deployment configs, Docker Compose, and Helm charts: NIM model configs, developer profiles (dev-profile-base, dev-profile-search, dev-profile-alerts, dev-profile-lvs), foundational services, LVS, RTVI, VLM-as-verifier, VST, and root `compose.yml`. Also contains `deploy/docker/scripts/` — the Brev launchable notebooks (base, warehouse, smart cities) and dev-profile / patch scripts. |
 | `tools/message-broker-consumers/` | Multiprocessing Redis and Kafka consumers that decode VSS protobuf messages from streams/topics and export them as JSON Lines files for inspection, debugging, or offline processing. See [tools/message-broker-consumers/README.md](tools/message-broker-consumers/README.md). |
 | `tools/sdg-postprocessing/` | Dataset post-processing utilities for synthetic data generation workflows: semantic labeling helpers, raw data sanity checks, RGB/depth/video conversion, and ground-truth conversion for MTMC-compatible datasets. See [tools/sdg-postprocessing/README.md](tools/sdg-postprocessing/README.md). |
 | `tools/rtvi-cv-mv3dt-utils/` | Offline utilities for generating MV3DT RTVI-CV configuration artifacts, including per-camera `camInfo` projection configs and MQTT publish/subscribe topology files for warehouse MV3DT deployments. See [tools/rtvi-cv-mv3dt-utils/README.md](tools/rtvi-cv-mv3dt-utils/README.md). |
-| `skills/` | [agentskills.io](https://agentskills.io/specification)-compatible agent skills for VSS: one self-contained subdirectory per skill with `SKILL.md` frontmatter. Covers deploy and usage of search, summarization, alerts, VIOS, RT-VLM, LVS, and other related workflows—see the catalog and install notes in [skills/README.md](skills/README.md). |
+| `tools/logstash-plugins/` | Custom Logstash plugins for the ELK ingest pipeline. Includes `input/redis-stream/` (`logstash-input-redis_stream`), a Java input plugin that reads from Redis Streams via consumer groups (`XREADGROUP`) with optional Protocol Buffer decoding. See [tools/logstash-plugins/input/redis-stream/README.md](tools/logstash-plugins/input/redis-stream/README.md). |
+| `skills/` | [agentskills.io](https://agentskills.io/specification)-compatible agent skills for VSS: self-contained skill directories with `SKILL.md` frontmatter, grouped by category (`deployment/`, `operations/`, `tools/`, `benchmarking/`) plus the top-level `vss-build-vision-ai`. Covers deploy and usage of search, summarization, alerts, VIOS, RT-VLM, LVS, and other related workflows—see the catalog and install notes in [skills/README.md](skills/README.md). |
 | `libs/analytics/spatialai-data-utils/` | Spatial AI Data Utils (SDU): NVSchema / ground-truth / calibration / Sparse4D loaders, camera calibration + grouping (BEV group-origin / per-group fan-out), 3D&#x2194;2D geometry, multi-cam 3D-bbox visualization, detection (mAP) + tracking (HOTA, CLEAR, identity, count) evaluators, NVSchema result converters, and video&#x2194;frame utilities. See [libs/analytics/spatialai-data-utils/README.md](libs/analytics/spatialai-data-utils/README.md). |
+| `libs/vss/` | The `vss` command-line interface (`cli/`) and its shared core (`core/`) — the host-side entry point to a deployed stack, used by the skills above. See [libs/vss/cli/README.md](libs/vss/cli/README.md). |
+| `libs/nvschema/` | Protobuf schema shared by the services that publish and consume VSS metadata. See [libs/nvschema/README.md](libs/nvschema/README.md). |
+| `.openclaw/`, `.hermes/` | Self-contained agent harnesses that package the harness-neutral `skills/` tree for OpenClaw and Hermes. See [.openclaw/README.md](.openclaw/README.md) and [.hermes/README.md](.hermes/README.md). |
 
 ## Documentation
 
@@ -104,6 +114,10 @@ index](docs/README.md).
 - NVIDIA AI Enterprise developer licence required to local host NVIDIA NIM.
 - API catalog keys:
    - NVIDIA [API catalog](https://build.nvidia.com/) or [NGC](https://org.ngc.nvidia.com/setup/api-keys) ([steps to generate key](https://docs.nvidia.com/ngc/gpu-cloud/ngc-user-guide/index.html#generating-api-key))
+
+### Container Image Availability
+
+> **Development Container Notice:** Images tagged `develop-*` or `nightly-*` are pre-release artifacts intended for development and testing only. They may change without notice and are provided “AS IS.” Official release images are published through NVIDIA NGC. For production deployments, use only a versioned release image from NGC that has completed NVIDIA’s release review.
 
 ## Hardware Requirements
 
@@ -125,15 +139,18 @@ Follow the steps from the [documentation](https://docs.nvidia.com/vss/latest/clo
 #### System Requirements
 
 - OS:
-    - x86 hosts: Ubuntu 22.04 or Ubuntu 24.04
-    - DGX-SPARK: DGX OS 7.4.0
-    - IGX-THOR: Jetson Linux BSP (Rel 38.5)
-    - AGX-THOR: Jetson Linux BSP (Rel 38.4)
+    - x86 hosts: Ubuntu 24.04
+    - DGX Station (GB300): DGX OS 7.6.0
+    - DGX-SPARK: DGX OS 7.5.0
+    - IGX-THOR (T5000 and T7000): IGX-SW 2.0 Production (LTS), including IGX OS 2.0 (Ubuntu 24.04)
+    - Jetson AGX-THOR: JetPack 7.2 (Jetson Linux/L4T r39.2)
+    - Jetson AGX Orin and Jetson Orin NX: public JetPack 7.2.2 release
 - NVIDIA Driver:
-    - 580.105.08 (x86 hosts with Ubuntu 24.04)
-    - 580.65.06 (x86 hosts with Ubuntu 22.04)
-    - 580.95.05 (DGX-SPARK)
-    - 580.00 (IGX-THOR and AGX-THOR)
+    - 595.58.03 (x86 hosts with Ubuntu 24.04)
+    - 595.58.03 (DGX Station GB300)
+    - 580.173.02 (DGX-SPARK)
+    - 580.00, bundled with IGX-SW 2.0 (IGX-THOR)
+    - 595.78 (Jetson AGX Orin, AGX-THOR, and Jetson Orin NX)
 - NVIDIA Container Toolkit: 1.17.8+
 - Docker Engine: 28.3.3 <= Docker Engine < 29.5.0
 - Docker Compose: v2.39.1+
@@ -149,4 +166,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, branch nami
 
 
 ## License
-Refer to [LICENSE](LICENSE)
+
+This project's licensing is documented across the following files:
+
+- [`LICENSE`](LICENSE) — Apache-2.0 for the repository. Elasticsearch, Kibana, and Redis configuration files remain dual-licensed as described there.
+- [`LICENSE-3rd-party.txt`](LICENSE-3rd-party.txt) — index of per-service third-party attribution files, including [`services/ui/LICENSE-3rd-party.txt`](services/ui/LICENSE-3rd-party.txt) for the UI image.
+- [`LICENSE.DATA`](LICENSE.DATA) — NVIDIA Asset License.

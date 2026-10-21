@@ -39,7 +39,7 @@ class LiveStreamTest : public ::testing::Test
 {
 protected:
     static IVstModule* s_module;
-    static std::map<std::string, HttpServerRequestHandler::httpFunction> s_handlers;
+    static std::map<std::string, HttpServerRequestHandler::httpFunction, std::less<>> s_handlers;
     static bool s_initialized;
 
     static void SetUpTestSuite()
@@ -100,7 +100,7 @@ protected:
 };
 
 IVstModule* LiveStreamTest::s_module = nullptr;
-std::map<std::string, HttpServerRequestHandler::httpFunction> LiveStreamTest::s_handlers;
+std::map<std::string, HttpServerRequestHandler::httpFunction, std::less<>> LiveStreamTest::s_handlers;
 bool LiveStreamTest::s_initialized = false;
 
 TEST_F(LiveStreamTest, GetVersion)
@@ -113,6 +113,37 @@ TEST_F(LiveStreamTest, GetVersion)
 
     cout << "[TEST] GET /api/v1/live/version => " << static_cast<int>(result) << endl;
     EXPECT_EQ(result, VmsErrorCode::NoError);
+}
+
+TEST_F(LiveStreamTest, DashHandlersRegistered)
+{
+    if (!s_initialized) GTEST_SKIP() << "LivePeerConnection not available";
+
+    EXPECT_NE(s_handlers.find("/api/v1/live/dash/start"), s_handlers.end());
+    EXPECT_NE(s_handlers.find("/api/v1/live/dash/stop"), s_handlers.end());
+    EXPECT_NE(s_handlers.find("/api/v1/live/dash/status"), s_handlers.end());
+}
+
+TEST_F(LiveStreamTest, DashStartRejectsMissingStreamId)
+{
+    if (!s_initialized) GTEST_SKIP() << "LivePeerConnection not available";
+
+    Json::Value response;
+    const VmsErrorCode result = callHandler("/api/v1/live/dash/start", "POST",
+                                            Json::Value(Json::objectValue), response);
+    EXPECT_EQ(result, VmsErrorCode::InvalidParameterError);
+    EXPECT_FALSE(response["error_message"].asString().empty());
+}
+
+TEST_F(LiveStreamTest, DashStopRejectsUnknownViewer)
+{
+    if (!s_initialized) GTEST_SKIP() << "LivePeerConnection not available";
+
+    Json::Value input;
+    input["viewerId"] = "missing-viewer";
+    Json::Value response;
+    const VmsErrorCode result = callHandler("/api/v1/live/dash/stop", "POST", input, response);
+    EXPECT_EQ(result, VmsErrorCode::CameraNotFoundError);
 }
 
 TEST_F(LiveStreamTest, GetHelp)

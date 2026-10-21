@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,8 @@
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
+
+using namespace std;
 
 namespace nv_vms
 {
@@ -89,7 +91,7 @@ CloudStorageBuffer::~CloudStorageBuffer()
     }
 }
 
-bool CloudStorageBuffer::bufferFrame(const void* data, size_t size, int64_t timestamp, const std::string& media_type,
+bool CloudStorageBuffer::bufferFrame(const uint8_t* data, size_t size, int64_t timestamp, const std::string& media_type,
                                      const std::string& session_id, const std::string& stream_id)
 {
     if (!m_running.load())
@@ -134,7 +136,8 @@ bool CloudStorageBuffer::bufferFrame(const void* data, size_t size, int64_t time
     std::unique_ptr<BufferedFrame> frame;
     try
     {
-        frame = std::make_unique<BufferedFrame>(data, size, timestamp, timestamp, media_type, session_id, stream_id);
+        frame = std::make_unique<BufferedFrame>(data, size, timestamp, timestamp,
+                                                media_type, session_id, stream_id);
 
         // Validate the created frame
         if (!frame || frame->m_data.empty() || frame->m_size != size)

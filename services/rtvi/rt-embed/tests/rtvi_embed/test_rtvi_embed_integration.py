@@ -41,13 +41,17 @@ API_PREFIX = "/v1"
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
+pytestmark = pytest.mark.skipif(
+    os.getenv("SKIP_INTEGRATION_TESTS") == "1", reason="Integration tests disabled"
+)
+
 
 @pytest.fixture(scope="class")
 def test_video_file():
     """Fixture providing test video file path"""
     # Try common test video locations
     test_paths = [
-        "/opt/nvidia/rtvi/warmup_streams/its_264.mp4",
+        "/opt/nvidia/rtvi/warmup_streams/sample_1080p_h264.mp4",
         # os.path.join(os.path.dirname(__file__), "..", "test_data", "bridge.mp4"),
     ]
     for path in test_paths:
@@ -58,16 +62,9 @@ def test_video_file():
 
 @pytest.fixture(scope="class")
 def test_live_stream_url():
-    """Fixture providing test live stream URL"""
+    """Return the opt-in RTSP URL used by live-stream integration tests."""
 
-    test_urls = [
-        # "rtsp://nv-wowza-pdc.nvidia.com:1935/vod/Jensen_AI_Summit_India_1080p_blackwell_opus.mp4",
-        "rtsp://nv-wowza-pdc.nvidia.com:1935/vod/warehouse_1min.mp4",
-    ]
-    for url in test_urls:
-        if url:
-            return url
-    return None
+    return os.getenv("RTVI_TEST_LIVE_STREAM_URL") or None
 
 
 @pytest.fixture(scope="class")
@@ -99,7 +96,7 @@ def test_server():
             "0.0.0.0",
             "--port",
             "8017",
-            "--kafka-topic",
+            "--message-bus-topic",
             "mdx-embed",
             "--kafka-bootstrap-servers",
             "kafka:9092",
@@ -409,6 +406,8 @@ class TestCvStreamApiIntegration:
         add_data = resp.json()
         assert add_data["camera_id"] == camera_id
         assert "asset_id" in add_data
+        # asset_id is reused from camera_id, not a server-generated UUID.
+        assert add_data["asset_id"] == camera_id
         assert add_data["status"] in ("added", "processing")
         assert isinstance(add_data["inference"], bool)
         asset_id = add_data["asset_id"]

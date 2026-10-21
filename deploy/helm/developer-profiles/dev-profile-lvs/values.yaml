@@ -13,12 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# VSS parent chart — LVS profile. Default install matches full LVS stack (equiv. dev-profile.sh -p lvs).
+# VSS parent chart — LVS profile. The default install enables the full LVS stack.
 # Install: helm upgrade --install vss . -f values-lvs.yaml -n vss --create-namespace
 
 profile: lvs
 mode: ""
-llmNameSlug: nvidia-nemotron-nano-9b-v2
+# Reserved for compatibility with older profile tooling; LVS uses the explicit
+# NIM enablement and service settings below.
+llmNameSlug: ""
 vlmNameSlug: none
 
 ngc:
@@ -43,8 +45,74 @@ global:
   llmBaseUrl: ""
   vlmBaseUrl: ""
   # NGC model ids — shared by vss-agent (LLM_NAME / VLM_NAME) and vss-summarization (LVS_LLM_MODEL_NAME, VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME). Override per subchart if needed.
-  llmName: "nvidia/nvidia-nemotron-nano-9b-v2"
+  llmName: "nvidia/nemotron-3.5-lightning-30b-a3b"
   vlmName: "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
+  # VIOS-only SDRC mode. true -> the VIOS pods get SDRC enabled.
+  # Enable SDRC mode for the VIOS pods.
+  vios:
+    useSdrc: true
+    maxDevicesSupported: 100
+    # Register direct VST camera additions with RT-VLM before caption generation.
+    # Both the sensor and streamprocessing charts consume this shared config.
+    notificationConfig: |-
+      {
+        "message_broker": {
+          "enable_notification": true,
+          "enable_notification_consumer": true,
+          "use_message_broker_consumer": "kafka",
+          "message_broker_topic_consumer": "mdx-raw",
+          "use_message_broker": "redis",
+          "message_broker_payload_key": "sensor.id",
+          "message_broker_topic": "vst.event",
+          "message_broker_metadata_topic": "mdx-raw",
+          "redis_server_env_var": "__REDIS_ADDRESS__",
+          "kafka_server_address": "__KAFKA_ADDRESS__",
+          "mqtt_broker_address": "__MQTT_BROKER_ADDRESS__"
+        },
+        "webhooks": {
+          "enabled": true,
+          "items": [
+            {
+              "enabled": true,
+              "camera_status_change": "camera_add",
+              "request": [{
+                "url": "http://__RTVI_VLM_ADDRESS__/v1/stream/add",
+                "method": "POST",
+                "headers": {"Content-Type": "application/json", "x-stream-id": "{{event.camera_id}}"},
+                "query_params": {"change": "{{event.change}}"},
+                "camera_type": ["rtsp", "file"],
+                "timeout_ms": 5000,
+                "retry": {"max_attempts": 3, "backoff_ms": [1000, 5000, 15000], "retry_on_status": [408, 429, 500, 502, 503, 504]}
+              }]
+            },
+            {
+              "enabled": true,
+              "camera_status_change": "camera_streaming",
+              "request": [{
+                "url": "http://__RTVI_VLM_ADDRESS__/v1/stream/add",
+                "method": "POST",
+                "headers": {"Content-Type": "application/json", "x-stream-id": "{{event.camera_id}}"},
+                "query_params": {"change": "{{event.change}}"},
+                "camera_type": ["rtsp", "file"],
+                "timeout_ms": 5000,
+                "retry": {"max_attempts": 3, "backoff_ms": [1000, 5000, 15000], "retry_on_status": [408, 429, 500, 502, 503, 504]}
+              }]
+            },
+            {
+              "enabled": true,
+              "camera_status_change": "camera_remove",
+              "request": [{
+                "url": "http://__RTVI_VLM_ADDRESS__/v1/stream/remove",
+                "method": "POST",
+                "headers": {"accept": "application/json", "Content-Type": "application/json", "x-stream-id": "{{event.camera_id}}"},
+                "camera_type": ["rtsp", "file"],
+                "timeout_ms": 600000,
+                "retry": {"max_attempts": 3, "backoff_ms": [1000, 5000, 15000], "retry_on_status": [408, 429, 500, 502, 503, 504]}
+              }]
+            }
+          ]
+        }
+      }
 
 # Set global.external* and optional global.kibanaPublicUrl in values-lvs.yaml. Images/replicas: charts/<name>/values.yaml.
 
@@ -78,9 +146,9 @@ infra:
       enabled: true
       env:
         ELASTICSEARCH_ILM_MIN_AGE: 4h
+        ELASTICSEARCH_ENABLE_EMBEDDINGS: "false"
         ELASTICSEARCH_RTVI_CV_EMBEDDINGS_DIM: '1536'
         ELASTICSEARCH_VISION_LLM_EMBEDDINGS_DIM: '768'
-        BP_PROFILE: bp_developer_lvs
   kibana:
     enabled: true
     init:
@@ -116,7 +184,6 @@ infra:
       - name: mdx-events
       - name: mdx-incidents
       - name: mdx-vlm-incidents
-      - name: mdx-vlm
       - name: mdx-embed
       - name: mdx-embed-filtered
       - name: mdx-vlm-captions
@@ -145,7 +212,7 @@ vios:
 
   vss-vios-sensor:
     enabled: true
-    # Sensor talks to SDRC — same pattern as dev-profile-search / dev-profile-alerts.
+    # Sensor registers streams through SDRC.
     streamProcessorService: sdrc
     persistence:
       vstData: { enabled: true, create: false, existingClaim: "" }
@@ -164,10 +231,8 @@ vios:
     enabled: true
     externallyAccessibleIp: ""
 
-  # Compose parity: dev-profile-lvs/compose.yml `nvstreamer-lvs` (profile
-  # `bp_developer_lvs_2d`). Subchart defaults already match the compose
-  # image, HTTP_PORT=31000, ADAPTOR=streamer, and
-  # NVSTREAMER_INSTALL_ADDITIONAL_PACKAGES=true.
+  # The subchart defaults provide the LVS streamer image, HTTP_PORT=31000,
+  # ADAPTOR=streamer, and NVSTREAMER_INSTALL_ADDITIONAL_PACKAGES=true.
   vss-vios-nvstreamer:
     enabled: true
 
@@ -175,17 +240,16 @@ vss-summarization:
   enabled: true
   elasticsearchHost: ""
   elasticsearchPort: "9200"
-  llmService: ""
+  llmService: "nemotron-35-lightning-30b-a3b"
   vlmService: "vss-rtvi-vlm"
-  # LVS backend routes VLM calls through vss-rtvi-vlm (docker parity: RTVI_VLM_URL=http://HOST:RTVI_VLM_PORT).
+  # LVS routes VLM calls through the in-cluster vss-rtvi-vlm service.
   # Values are rendered with `tpl` so {{ .Release.Name }} works when global.useReleaseNamePrefix is enabled.
   extraEnv:
     - name: RTVI_VLM_URL
       value: '{{- $g := .Values.global | default dict }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $svc := "vss-rtvi-vlm" }}{{- printf "http://%s:8000" (ternary (printf "%s-%s" .Release.Name $svc) $svc $pfx) -}}'
     - name: RTVI_VLM_URL_PASSTHROUGH
       value: "true"
-    # Compose parity: dev-profile-lvs/.env sets LVS_ENABLE_LLM_MERGING=true.
-    # Subchart default is "false"; this override re-enables LLM-based merging
+    # The subchart default is "false"; this profile enables LLM-based merging
     # of overlapping/duplicate events for the LVS profile.
     - name: LVS_ENABLE_LLM_MERGING
       value: "true"
@@ -194,6 +258,10 @@ agent:
   enabled: true
   vss-agent:
     enabled: true
+    # Search / summarization runs outlast the controller default; this backend
+    # carries its own server timeout instead of the ingress imposing one on
+    # every route.
+    ingressTimeoutServer: "3600s"
     # Subchart: keep `lvs` for deployment/env wiring (not used for ConfigMap paths).
     profile: lvs
     mountConfigEdge: false
@@ -207,9 +275,10 @@ agent:
     vstInternalUrl: ""
     vstInternalIp: ""
     vssAgentExternalUrl: ""
-    vssAgentVersion: "3.2.1"
+    vssAgentVersion: "3.3.0-65576357eb80"
     evalLlmJudgeName: ""
     evalLlmJudgeBaseUrl: ""
+    llmServiceName: "nemotron-35-lightning-30b-a3b"
     reportsBaseUrl: ""
     vstExternalUrl: ""
     externalIp: ""
@@ -258,9 +327,8 @@ agent:
       - name: NVIDIA_API_KEY
         value: ''
       - name: OPENAI_API_KEY
-        value: ''
-      # Enterprise RAG (used by config_rag.yml when enabled). Compose parity:
-      # deploy/docker/services/agent/compose.yml.
+        value: 'NOAPIKEYSET'
+      # Enterprise RAG defaults used by config_rag.yml when enabled.
       - name: RAG_SERVER_URL
         value: 'http://rag-server:8081/v1'
       - name: RAG_API_KEY
@@ -276,7 +344,7 @@ agent:
       - name: PHOENIX_ENDPOINT
         value: '{{- $g := .Values.global | default dict }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{ ternary (printf "http://%s-phoenix:6006" .Release.Name) "http://phoenix:6006" $pfx }}'
       - name: LLM_BASE_URL
-        value: '{{- $g := .Values.global | default dict }}{{- $llm := ((coalesce (.Values.llmBaseUrl | default "") ((index $g "llmBaseUrl") | default "") "") | default "" | toString | trim) }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $def := ternary (printf "http://%s-nvidia-nemotron-nano-9b-v2:8000" .Release.Name) "http://nvidia-nemotron-nano-9b-v2:8000" $pfx }}{{- if $llm }}{{ $llm }}{{- else }}{{ $def }}{{- end }}'
+        value: '{{- $g := .Values.global | default dict }}{{- $llm := ((coalesce (.Values.llmBaseUrl | default "") ((index $g "llmBaseUrl") | default "") "") | default "" | toString | trim) }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $svc := .Values.llmServiceName | default "nemotron-35-lightning-30b-a3b" }}{{- $def := ternary (printf "http://%s-%s:8000" .Release.Name $svc) (printf "http://%s:8000" $svc) $pfx }}{{- if $llm }}{{ $llm }}{{- else }}{{ $def }}{{- end }}'
       - name: VLM_BASE_URL
         value: '{{- $g := .Values.global | default dict }}{{- $vlm := ((coalesce (.Values.vlmBaseUrl | default "") ((index $g "vlmBaseUrl") | default "") "") | default "" | toString | trim) }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $def := ternary (printf "http://%s-vss-rtvi-vlm:8000" .Release.Name) "http://vss-rtvi-vlm:8000" $pfx }}{{- if $vlm }}{{ $vlm }}{{- else }}{{ $def }}{{- end }}'
       - name: VST_EXTERNAL_URL
@@ -284,13 +352,13 @@ agent:
       - name: VST_INTERNAL_URL
         value: '{{- $g := .Values.global | default dict }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $vstHttp := ternary (printf "http://%s-vss-vios-ingress:30888" .Release.Name) "http://vss-vios-ingress:30888" $pfx }}{{ coalesce .Values.vstInternalUrl $vstHttp }}'
       - name: LLM_NAME
-        value: '{{- $g := .Values.global | default dict }}{{ trim (coalesce .Values.llmName ((index $g "llmName") | default "") "nvidia/nvidia-nemotron-nano-9b-v2") }}'
+        value: '{{- $g := .Values.global | default dict }}{{ trim (coalesce .Values.llmName ((index $g "llmName") | default "") "nvidia/nemotron-3.5-lightning-30b-a3b") }}'
       - name: VLM_NAME
         value: '{{- $g := .Values.global | default dict }}{{ trim (coalesce .Values.vlmName ((index $g "vlmName") | default "") "nim_nvidia_cosmos3-nano-reasoner_bf16-final") }}'
       - name: EVAL_LLM_JUDGE_NAME
-        value: '{{- $g := .Values.global | default dict }}{{- $ln := trim (coalesce .Values.llmName ((index $g "llmName") | default "") "nvidia/nvidia-nemotron-nano-9b-v2") }}{{ coalesce .Values.evalLlmJudgeName $ln }}'
+        value: '{{- $g := .Values.global | default dict }}{{- $ln := trim (coalesce .Values.llmName ((index $g "llmName") | default "") "nvidia/nemotron-3.5-lightning-30b-a3b") }}{{ coalesce .Values.evalLlmJudgeName $ln }}'
       - name: EVAL_LLM_JUDGE_BASE_URL
-        value: '{{- $g := .Values.global | default dict }}{{- $llm := ((coalesce (.Values.llmBaseUrl | default "") ((index $g "llmBaseUrl") | default "") "") | default "" | toString | trim) }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $def := ternary (printf "http://%s-nvidia-nemotron-nano-9b-v2:8000" .Release.Name) "http://nvidia-nemotron-nano-9b-v2:8000" $pfx }}{{ coalesce .Values.evalLlmJudgeBaseUrl $llm $def }}'
+        value: '{{- $g := .Values.global | default dict }}{{- $llm := ((coalesce (.Values.llmBaseUrl | default "") ((index $g "llmBaseUrl") | default "") "") | default "" | toString | trim) }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $svc := .Values.llmServiceName | default "nemotron-35-lightning-30b-a3b" }}{{- $def := ternary (printf "http://%s-%s:8000" .Release.Name $svc) (printf "http://%s:8000" $svc) $pfx }}{{ coalesce .Values.evalLlmJudgeBaseUrl $llm $def }}'
       - name: VSS_AGENT_REPORTS_BASE_URL
         value: '{{- $g := .Values.global | default dict }}{{- $eh := index $g "externalHost" | default "" | trim }}{{- $es := index $g "externalScheme" | default "http" }}{{- $ep := index $g "externalPort" | default "" | trim }}{{- $globalBase := ternary (ternary (printf "%s://%s:%s" $es $eh $ep) (printf "%s://%s" $es $eh) (ne $ep "")) "" (ne $eh "") }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $vssAgentHttp := ternary (printf "http://%s-vss-agent:8000" .Release.Name) "http://vss-agent:8000" $pfx }}{{ coalesce .Values.reportsBaseUrl (ternary (printf "%s/static/" $globalBase) "" (ne $globalBase "")) (printf "%s/static/" $vssAgentHttp) }}'
       - name: VSS_AGENT_EXTERNAL_URL
@@ -298,8 +366,8 @@ agent:
       - name: AGENT_BASE_URL
         value: '{{- $g := .Values.global | default dict }}{{- $eh := index $g "externalHost" | default "" | trim }}{{- $es := index $g "externalScheme" | default "http" }}{{- $ep := index $g "externalPort" | default "" | trim }}{{- $globalBase := ternary (ternary (printf "%s://%s:%s" $es $eh $ep) (printf "%s://%s" $es $eh) (ne $ep "")) "" (ne $eh "") }}{{- $pfx := default false (coalesce .Values.useReleaseNamePrefix ((index $g "useReleaseNamePrefix") | default false)) }}{{- $vssAgentHttp := ternary (printf "http://%s-vss-agent:8000" .Release.Name) "http://vss-agent:8000" $pfx }}{{ coalesce .Values.vssAgentExternalUrl .Values.vstExternalUrl $globalBase $vssAgentHttp }}'
       - name: VSS_AGENT_VERSION
-        value: '{{ .Values.vssAgentVersion | default "3.2.1" }}'
-      # Audio configuration (compose parity: deploy/docker/services/agent/compose.yml).
+        value: '{{ .Values.vssAgentVersion | default "3.3.0-65576357eb80" }}'
+      # Audio configuration for audio-aware VLMs.
       # Set enableAudio=true for Nemotron Nano Omni audio-aware VLM.
       - name: ENABLE_AUDIO
         value: '{{ .Values.enableAudio | default "false" }}'
@@ -331,7 +399,7 @@ vss-agent-ui:
     - name: NEXT_PUBLIC_APP_SUBTITLE
       value: "Vision (LVS)"
     - name: NEXT_PUBLIC_CHAT_API_CUSTOM_AGENT_PARAMS_JSON
-      value: '{"params":[{"name":"llm_reasoning","label":"LLM Reasoning","type":"boolean","default-value":false,"changeable":true,"tooltip-info":""},{"name":"vlm_reasoning","label":"VLM Reasoning","type":"boolean","default-value":false,"changeable":true,"tooltip-info":""}]}'
+      value: '{"params":[{"name":"llm_reasoning","label":"LLM Reasoning","type":"boolean","default-value":true,"changeable":true,"tooltip-info":"Improves tool-call planning and QA accuracy; adds latency on multi-turn conversations. Turn off for fastest multi-turn replies."},{"name":"vlm_reasoning","label":"VLM Reasoning","type":"boolean","default-value":false,"changeable":true,"tooltip-info":""}]}'
     - name: NEXT_PUBLIC_CHAT_HISTORY_DEFAULT_ON
       value: "true"
     - name: NEXT_PUBLIC_CHAT_INPUT_MIC_ENABLED
@@ -368,8 +436,6 @@ vss-agent-ui:
       value: "false"
     - name: NEXT_PUBLIC_ENABLE_VIDEO_MANAGEMENT_TAB
       value: "true"
-    - name: NEXT_PUBLIC_INTERACTION_MODAL_CANCEL_ENABLED
-      value: "false"
     - name: NEXT_PUBLIC_MAP_URL
       value: ""
     - name: NEXT_PUBLIC_MDX_WEB_API_URL
@@ -377,7 +443,7 @@ vss-agent-ui:
     - name: NEXT_PUBLIC_RIGHT_MENU_OPEN
       value: "false"
     - name: NEXT_PUBLIC_SIDEBAR_CHAT_CHAT_API_CUSTOM_AGENT_PARAMS_JSON
-      value: '{"params":[{"name":"llm_reasoning","label":"LLM Reasoning","type":"boolean","default-value":false,"changeable":true,"tooltip-info":""},{"name":"vlm_reasoning","label":"VLM Reasoning","type":"boolean","default-value":false,"changeable":true,"tooltip-info":""}]}'
+      value: '{"params":[{"name":"llm_reasoning","label":"LLM Reasoning","type":"boolean","default-value":true,"changeable":true,"tooltip-info":"Improves tool-call planning and QA accuracy; adds latency on multi-turn conversations. Turn off for fastest multi-turn replies."},{"name":"vlm_reasoning","label":"VLM Reasoning","type":"boolean","default-value":false,"changeable":true,"tooltip-info":""}]}'
     - name: NEXT_PUBLIC_SIDEBAR_CHAT_CHAT_HISTORY_DEFAULT_ON
       value: "true"
     - name: NEXT_PUBLIC_SIDEBAR_CHAT_CHAT_INPUT_MIC_ENABLED
@@ -396,8 +462,6 @@ vss-agent-ui:
       value: "true"
     - name: NEXT_PUBLIC_SIDEBAR_CHAT_ENABLE_INTERMEDIATE_STEPS
       value: "true"
-    - name: NEXT_PUBLIC_SIDEBAR_CHAT_INTERACTION_MODAL_CANCEL_ENABLED
-      value: "false"
     - name: NEXT_PUBLIC_ENABLE_CHAT_SIDEBAR
       value: "true"
     - name: NEXT_PUBLIC_CHAT_SIDEBAR_OPEN_DEFAULT
@@ -437,14 +501,48 @@ vss-agent-ui:
 #         http: 80
 #         https: 443
 
-# LVS profile Ingress: UI, agent, VST; optional kibana.* and phoenix.* hosts when those subcharts are enabled.
+# The version this deployment reports at GET /api/v1/version, answered by the
+# HAProxy ingress. Stamped by .github/scripts/stamp_versions.py from the nearest
+# v* git tag, never by hand. See .github/version-convention.md.
+vssVersion: "3.3.0-rc0"
+
+# LVS profile Ingress: UI, agent, VST, LVS/RT-VLM summarization APIs; optional
+# kibana.* and phoenix.* hosts when those subcharts are enabled.
 vssIngress:
   enabled: false
   ingressClassName: haproxy
+  # Additional controller annotations, e.g. a Traefik routing middleware. They
+  # win over the profile's own; setting haproxy.org/path-rewrite replaces the
+  # generated rewrite table instead of merging into it.
+  annotations: {}
   host: ""
+  # Backend ports for the canonical route table (deploy/helm/services/common).
+  # Every service is mounted at its own name — LVS at /lvs, RT-VLM at
+  # /rtvi-vlm, Elasticsearch at /elasticsearch — which are the paths the Docker
+  # edge publishes and `vss configure` records. Neither LVS nor RT-VLM owns the
+  # origin root any more: use /lvs/v1/summarize and /rtvi-vlm/v1/models.
   vssUiPort: 3000
   vssAgentPort: 8000
   vstIngressPort: 30888
+  lvsBackendPort: 38111
+  rtviVlmPort: 8000
+  vaMcpPort: 9901
+  # /elasticsearch is mounted whenever infra.elasticsearch is deployed. The edge
+  # guard is on the Elasticsearch Service (infra.elasticsearch.ingressGuard),
+  # not here, so it binds to that one backend. It denies PUT/DELETE,
+  # cluster-admin paths and the two-segment mutating operations, and allows a
+  # PUT to a unified-memory document path — but POST is allowed, so _bulk,
+  # _reindex and /<index>/_doc still reach Elasticsearch, exactly as on the
+  # Docker edge. This is not a read-only endpoint.
+  elasticsearchPort: 9200
+  # Rendered for continuity with earlier releases, but inert: this controller
+  # reads timeout-client only from its own ConfigMap, never from an Ingress
+  # annotation. Raising it is a cluster-wide controller setting, outside this
+  # chart. Server-side timeouts do work per backend and are set on the Services
+  # that need them (vss-summarization, vss-rtvi-vlm, vss-agent); set
+  # timeoutServer only to impose an ingress-wide floor on every backend as well.
+  timeoutClient: "3600s"
+  timeoutServer: ""
   # Optional; default kibana.<global.externalHost or vssIngress.host>.
   kibanaHost: ""
   # Default Phoenix exposure is path-based on main host: http://<host>/phoenix
@@ -455,8 +553,8 @@ vssIngress:
   phoenixPort: 6006
 
 # RTVI umbrella: LVS always-on rtvi-vlm. By default, rtvi-vlm loads the integrated
-# Cosmos checkpoint in-pod to match the docker LVS profile. LVS deploys Kafka so
-# RTVI can publish mdx-vlm events while the LVS backend and vss-agent call RTVI over HTTP.
+# Cosmos checkpoint in-pod. LVS deploys Kafka so
+# RTVI can publish mdx-vlm-captions events while the LVS backend and vss-agent call RTVI over HTTP.
 rtvi:
   enabled: true
   vss-rtvi-cv:
@@ -466,6 +564,9 @@ rtvi:
   vss-rtvi-vlm:
     enabled: true
     useSharedNim: false
+    # Long generations outlast the controller default; this backend carries its
+    # own server timeout instead of the ingress imposing one on every route.
+    ingressTimeoutServer: "3600s"
     modelPath: "ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final"
     sharedNimPort: "8000"
     # Wait for the LVS Kafka broker and RTVI topics created by infra.kafka.topicJob.
@@ -474,7 +575,6 @@ rtvi:
       topics:
         - mdx-vlm-captions
         - mdx-vlm-incidents
-    # Docker parity: shape from services/rtvi/charts/rtvi-vlm/values.yaml.
     # Full list is required because the subchart replaces `env` rather than merging.
     env:
       - name: OPENAI_API_KEY
@@ -489,14 +589,43 @@ rtvi:
         value: "cosmos-reason3"
       - name: KAFKA_ENABLED
         value: "true"
-      # Raw VLM event topic produced by rtvi-vlm; consumed by the shared
-      # Logstash LVS pipeline.
-      - name: KAFKA_TOPIC
-        value: "mdx-vlm-captions"
       - name: KAFKA_INCIDENT_TOPIC
         value: "mdx-vlm-incidents"
       - name: ERROR_MESSAGE_TOPIC
-        value: "vision-llm-errors"
+        value: "mdx-vlm-errors"
+      # Generated-output and error buses (empty MESSAGE_BUS/ERROR_BUS disables that bus).
+      # Enable the LVS generated-output and error buses.
+      - name: MESSAGE_BUS
+        value: "kafka"
+      - name: MESSAGE_BUS_TOPIC
+        value: "mdx-vlm-captions"
+      - name: ERROR_BUS
+        value: "kafka"
+      - name: RTVI_ENABLE_CUDA_OOM_RECOVERY
+        value: "true"
+      - name: RTVI_LIVE_STREAM_GPU_MEMORY_GUARD
+        value: "true"
+      - name: RTVI_LIVE_STREAM_GPU_MEMORY_HEADROOM_MB
+        value: "1024"
+      - name: ENABLE_MESSAGES_FOR_CHAT_COMPLETIONS
+        value: "false"
+      # Optional EVS++ session controls.
+      - name: VIA_EVS_SESSION
+        value: ""
+      - name: VLLM_EVS_SIMILARITY_THRESHOLD
+        value: ""
+      - name: VLLM_NUM_PREPROCESS_WORKERS
+        value: "16"
+      - name: VIA_EVS_TOKEN_BUDGET
+        value: ""
+      - name: VIA_EVS_MAX_SESSIONS
+        value: ""
+      - name: VLLM_USE_AOT_COMPILE
+        value: "0"
+      - name: VLLM_DISABLE_COMPILE_CACHE
+        value: "1"
+      - name: VLLM_LOGGING_LEVEL
+        value: "INFO"
       - name: LOG_LEVEL
         value: "INFO"
       - name: ENABLE_OTEL_MONITORING
@@ -541,11 +670,26 @@ rtvi:
         value: "10"
       - name: VLLM_GPU_MEMORY_UTILIZATION
         value: ""
+      - name: VLLM_DISABLED_KERNELS
+        value: "FlashInferFP8ScaledMMLinearKernel"
+      # GB300 uses TRITON_ATTN; an empty value preserves the default on other platforms.
+      - name: VLLM_ATTENTION_BACKEND
+        value: ""
       - name: VLM_BATCH_SIZE
         value: ""
-      # Edge platforms (DGX-SPARK, IGX-THOR, AGX-THOR): override to 860 / 467 / 20 (see dev-profile.sh).
+      # Edge platforms (DGX-SPARK, IGX-THOR, AGX-THOR): override the frame
+      # chunk, input width, and input height with 20, 860, and 467 respectively.
       - name: VLM_DEFAULT_NUM_FRAMES_PER_SECOND_OR_FIXED_FRAMES_CHUNK
         value: "1"
+      # Maximum frames per inference chunk; envOverrides can raise the existing cap.
+      - name: RTVI_VLLM_MM_PROCESSOR_VIDEO_NUM_FRAMES
+        value: "256"
+      # Integrated engine context (input + output tokens); preserve the runtime default.
+      - name: VLM_MAX_MODEL_LEN
+        value: "32768"
+      # API cap on output tokens; preserve the runtime default.
+      - name: VLM_MAX_GENERATION_TOKENS
+        value: "16384"
       - name: VLM_INPUT_WIDTH
         value: ""
       - name: VLM_INPUT_HEIGHT
@@ -561,7 +705,7 @@ rtvi:
       - name: VLM_TRUST_REMOTE_CODE
         value: "false"
       - name: VLM_VIDEO_PRUNING_RATE
-        value: "0.0"
+        value: ""
 
 nims:
   enabled: true
@@ -571,7 +715,7 @@ nims:
     authSecretName: ngc-api
     storageClass: ""
   # Keep profile values minimal; model defaults live in helm/services/nims.
-  nemotron:
+  nemotron35:
     enabled: true
   cosmos:
     enabled: false
@@ -581,3 +725,17 @@ nims:
         nvidia.com/gpu: "1"
       requests:
         nvidia.com/gpu: "1"
+
+# Optional monitoring subchart (Kubernetes port of services/monitoring compose).
+# Keep it off by default because the NVIDIA GPU Operator commonly provides
+# dcgm-exporter. Enable both monitoring.enabled and the desired component.
+monitoring:
+  enabled: false
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+  nodeExporter:
+    enabled: false
+  dcgmExporter:
+    enabled: false

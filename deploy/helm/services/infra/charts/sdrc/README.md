@@ -48,8 +48,8 @@ dependencies:
 sdrc:
   enabled: true
   image:
-    repository: nvcr.io/nvidia/vss-core/sdr-mw-l
-    tag: 3.2.0
+    repository: nvcr.io/nvstaging/vss-core/sdr-mw-l
+    tag: 3.3.0-2026.08.13
   imagePullSecrets:
     - name: ngc-docker-reg-secret
   service:
@@ -75,6 +75,7 @@ sdrc:
     KUBERNETES_HOST: kubernetes.default.svc
     KUBERNETES_PORT: "443"
     WDM_CONTROLLER_HOST: "127.0.0.1"
+    WDM_XDS_GRPC_ADS_ENABLED: "true"  # enables gRPC ADS server for Envoy xDS; required for multi-workload mode
 ```
 
 The `sdrc` container discovers workloads from `/config.yml`, which is the
@@ -88,5 +89,15 @@ endpoint can choose its own Service `type`, `port`, and optional `nodePort`. The
 same port values are passed to the container as `WDM_CONTROLLER_PORT`,
 `WDM_SDRC_DIRECT_LISTENER_PORT`, `ENVOY_ADMIN_PORT`, and `ROUTER_PORT`.
 Workload Envoy listener ports such as `WDM_MS_LISTENER_PORT` are defined in
-`config.yml`; this Service intentionally exposes only controller, SDRC direct,
-and Envoy admin ports.
+`config.yml`. When a workload listener must be reachable through Kubernetes
+Service discovery, add the matching port under `service.workloadListeners`.
+
+```yaml
+service:
+  workloadListeners:
+    # Exposes the Envoy listener generated from WDM_MS_LISTENER_PORT=10001.
+    # This is useful for workload-compatible HTTP-header lifecycle facades.
+    - name: rtvi-cv-http
+      port: 10001
+      targetPort: 10001
+```

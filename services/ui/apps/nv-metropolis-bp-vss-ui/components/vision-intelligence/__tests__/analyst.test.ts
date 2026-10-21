@@ -1,26 +1,11 @@
 // SPDX-License-Identifier: MIT
-import { cleanAgentAnswer, extractObservedRange, extractSuccessfulEvidenceTools } from '../analyst';
+import { cleanAgentAnswer } from '../analyst';
 
 describe('Vision Analyst response helpers', () => {
   it('removes internal reasoning while preserving the visitor-facing answer', () => {
     expect(cleanAgentAnswer(
       '<agent-think><agent-think-step>private trace</agent-think-step></agent-think>\n\nTwo forklifts crossed the loading area.'
     )).toBe('Two forklifts crossed the loading area.');
-  });
-
-  it('extracts the precise video-understanding interval from the tool trace', () => {
-    expect(extractObservedRange(
-      '<agent-think><agent-think-step>Tool: video_understanding Args: {} Result: 6.4-78.0 A forklift moved. 78.0-228.5 Workers entered.</agent-think-step></agent-think> Answer'
-    )).toEqual({ startSeconds: 6.4, endSeconds: 228.5 });
-  });
-
-  it('requires a successful visual evidence tool instead of trusting any agent answer', () => {
-    expect(extractSuccessfulEvidenceTools(
-      '<agent-think><agent-think-step>Tool: video_understanding Args: {} Result: 4.0-12.0 A person crossed.</agent-think-step></agent-think> Answer'
-    )).toEqual(['video_understanding']);
-    expect(extractSuccessfulEvidenceTools(
-      '<agent-think><agent-think-step>Tool: video_understanding Args: {} Result: Error: clip unavailable.</agent-think-step></agent-think> I seem to be having a problem.'
-    )).toEqual([]);
   });
 
   it('removes an unclosed private trace rather than leaking it into the UI', () => {

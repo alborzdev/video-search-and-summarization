@@ -30,6 +30,7 @@ class ChunkInfo(BaseModel):
     """Represents a video or text chunk"""
 
     streamId: str = Field(default="")
+    evs_session_id: str = Field(default="", description="Internal request owner for EVS temporal state")
     chunkIdx: int = Field(default=0)
     chunk_type: str = Field(default="video", description="Type of chunk: video or text")
     text_input: str = Field(default="")

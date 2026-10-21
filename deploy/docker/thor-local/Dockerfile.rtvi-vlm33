@@ -1,0 +1,27 @@
+# SPDX-License-Identifier: Apache-2.0
+# Coherent 3.3 engine, including EVS++ protocol and compiled modules. Source
+# overlays may only be used on this matching 3.3 dependency/runtime baseline.
+ARG RTVI_VLM33_BASE_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-rt-vlm@sha256:23f844c9715e2d98ac01260b085fd1f9c7523d748dd594995c4ec952b7f4f65d
+FROM ${RTVI_VLM33_BASE_IMAGE}
+ARG CODEC_LOCK_PATH=deploy/docker/thor-current/codecs.lock.json
+ARG CODEC_BUNDLE_PATH=deploy/docker/thor-current/vios-codecs/bundle
+ARG CODEC33_LOCK_PATH=deploy/docker/thor-current/rtvi-vlm33-codecs.lock.json
+ARG CODEC33_BUNDLE_PATH=deploy/docker/thor-current/rtvi-vlm33-codecs/bundle
+USER root
+COPY deploy/docker/thor-local/vios-codecs/install-codec-bundle.sh /tmp/install-codec-bundle.sh
+COPY ${CODEC_LOCK_PATH} /tmp/codec-lock.json
+COPY ${CODEC_BUNDLE_PATH}/ /tmp/codec-bundle/
+RUN bash /tmp/install-codec-bundle.sh /tmp/codec-bundle / install /tmp/codec-lock.json \
+    && rm -rf /tmp/codec-bundle /tmp/codec-lock.json /tmp/install-codec-bundle.sh
+COPY deploy/docker/thor-local/vios-codecs/rtvi33_codec_closure.py /tmp/rtvi33_codec_closure.py
+COPY ${CODEC33_LOCK_PATH} /tmp/codec33-lock.json
+COPY ${CODEC33_BUNDLE_PATH}/ /tmp/codec33-bundle/
+RUN VSS_CODEC_IMAGE_BUILD=1 python3 /tmp/rtvi33_codec_closure.py install --bundle /tmp/codec33-bundle --lock /tmp/codec33-lock.json \
+    && rm -rf /tmp/codec33-bundle /tmp/codec33-lock.json /tmp/rtvi33_codec_closure.py
+# Keep Python and startup behavior from the reviewed 3.3 source together; do
+# not install/upgrade vLLM at runtime or rebuild its EVS extensions here.
+COPY --chown=1001:1001 services/rtvi/rt-vlm/src/ /opt/nvidia/rtvi/rtvi/
+COPY --chown=1001:1001 services/rtvi/rt-vlm/src/ /opt/nvidia/rtvi/src/
+ENV INSTALL_PROPRIETARY_CODECS=false
+LABEL com.nvidia.vss.rtvi-runtime="3.3" com.nvidia.vss.codecs="offline-locked-arm64"
+USER 1001:1001

@@ -19,13 +19,7 @@ The VSS RTVI Embed Microservice supports the following input types:
 
 
 ## Prerequisites
-- **NGC API key** to download the base container and any NGC-hosted model.
-- **Docker registry access** — authenticate to NGC before `docker compose pull`:
-
-```bash
-export NGC_API_KEY=<your-key>
-echo "$NGC_API_KEY" | docker login nvcr.io -u '$oauthtoken' --password-stdin
-```
+- **NGC API key** only when using an NGC-hosted model or asset source. The default public GHCR image does not require registry authentication.
 
 ### Software Requirements
 - **OS**: Ubuntu 24.04/22.04 or compatible Linux distribution
@@ -57,20 +51,24 @@ Create `docker/.env` with the variables you want to override. A starting templat
 
 ```bash
 BACKEND_PORT=8017
-RTVI_IMAGE=nvcr.io/nvidia/vss-core/vss-rt-embed:<tag>
-#RTVI_IMAGE=docker.io/library/rtvi-embed:3.2.1-custom
+RTVI_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-rt-embed:develop-latest
+#RTVI_IMAGE=docker.io/library/rtvi-embed:3.3.0-custom
 MODEL_PATH=git:https://huggingface.co/nvidia/Cosmos-Embed1-448p
 #HF_TOKEN=<HF_TOKEN>
 #NGC_API_KEY=nvapi-XXXXXX
 NVIDIA_VISIBLE_DEVICES=0
 
-KAFKA_ENABLED=true
 #KAFKA_BOOTSTRAP_SERVERS=<Kafka_server_ip:port>
-#KAFKA_TOPIC=vision-embed-messages
-#ERROR_MESSAGE_TOPIC=vision-embed-errors
+MESSAGE_BUS=kafka
+MESSAGE_BUS_TOPIC=mdx-embed
+ERROR_BUS=kafka
+
+# Optional decoded-frame IPC for a compatible RTVI CV producer on this host.
+#RTVI_IPC_FRAME_COPY=true
+#RTVI_IPC_SOCKET_HOST_DIR=/tmp
 ```
 
-Replace `<tag>` with the NGC image tag for your platform (for example `3.2.1` on x86, or `3.2.1-sbsa` on SBSA). You can set `RTVI_IMAGE` in `docker/.env` to pin the exact image tag for your deployment.
+Set `RTVI_IMAGE` in `docker/.env` to a promoted or immutable GHCR tag when you need to pin an exact image for your deployment.
 
 `compose.yaml` provides defaults for every other variable — see [Complete Environment Variable Reference](#complete-environment-variable-reference) below for the full list.
 
@@ -104,6 +102,75 @@ curl -fsS "http://localhost:${BACKEND_PORT}/v1/ready" && echo "Service is ready"
 
 The APIs are available at `http://<host_ip>:<BACKEND_PORT>/docs`.
 
+## Optional: Run RT-Embed on an NVIDIA MIG slice
+
+MIG is optional. Existing Docker Compose and Helm deployments continue to use their
+default full-GPU configuration without changes. Before using MIG, configure the
+GPU and NVIDIA Container Toolkit or Kubernetes device plugin on the host, then
+obtain the slice UUID or resource name from `nvidia-smi -L` or `kubectl describe
+node <node-name>`. The selected slice must have sufficient memory for the model.
+
+MIG availability, the supported profile geometries, and valid co-placement
+combinations are defined by the GPU and its driver. Consult NVIDIA's
+[Supported MIG Profiles](https://docs.nvidia.com/datacenter/tesla/mig-user-guide/supported-mig-profiles.html)
+before partitioning a GPU; do not infer a profile name or instance count from a
+different platform.
+
+### VSS Docker Compose profiles
+
+For the VSS deployment Compose manifest at
+`deploy/docker/services/rtvi/rtvi-embed/rtvi-embed-docker-compose.yml`, set both
+variables to the same MIG UUID reported by `nvidia-smi -L` in the active
+deployment override or shell environment. Current drivers may report a compact
+`MIG-<uuid>` value; older drivers report `MIG-GPU-<gpu-uuid>/<gi>/<ci>`.
+
+```bash
+RT_EMBED_DEVICE_ID="MIG-<uuid-from-nvidia-smi-L>"
+RTVI_EMBED_NVIDIA_VISIBLE_DEVICES="MIG-<uuid-from-nvidia-smi-L>"
+```
+
+`RT_EMBED_DEVICE_ID` assigns the MIG device to the container.
+`RTVI_EMBED_NVIDIA_VISIBLE_DEVICES` exposes that same device to CUDA and the
+embedding service. Inside the container it is CUDA device `0`. Do not set these
+MIG values for a normal full-GPU deployment.
+
+For a multi-instance deployment, run isolated Compose projects or service
+instances and give each service a different MIG UUID. Do not assign multiple MIG
+UUIDs to one single-GPU RT-Embed service.
+
+### Standalone Docker Compose
+
+The standalone Compose file under `services/rtvi/rt-embed/docker/` uses its
+existing `NVIDIA_VISIBLE_DEVICES` setting. Set it to the MIG UUID in that stack's
+`.env` file:
+
+```bash
+NVIDIA_VISIBLE_DEVICES="MIG-<uuid-from-nvidia-smi-L>"
+```
+
+### Standalone Helm chart
+
+The Kubernetes NVIDIA device plugin assigns the device. Do not set a MIG UUID in
+`NVIDIA_VISIBLE_DEVICES`. Configure the resource name advertised by the plugin
+instead. For a device plugin using the `mixed` MIG strategy, an example is:
+
+```yaml
+gpuResourceName: "nvidia.com/mig-3g.40gb"
+```
+
+The repository provides `overrides_rtvi_embed_mig.yaml` as a complete example.
+Install it after the normal standalone override:
+
+```bash
+helm upgrade --install vss-rtvi-embed . \
+  -n vss-rtvi \
+  -f overrides_rtvi_embed.yaml \
+  -f overrides_rtvi_embed_mig.yaml
+```
+
+The MIG resource replaces the chart's default `nvidia.com/gpu: 1` request; the
+chart does not request a full GPU and a MIG slice together.
+
 ### 3. (Optional) Enable monitoring
 
 To start the Prometheus + Jaeger + OpenTelemetry stack alongside the service, set `ENABLE_OTEL_MONITORING=true` in your `.env` and run:
@@ -120,15 +187,18 @@ The monitoring profile uses the configs under [`configs/`](configs/): [`promethe
 Only needed if you've edited files under [`src/`](src/) and want those changes baked into the running container. Otherwise skip this step.
 
 ```bash
-# From the rt-embed/ directory — Dockerfile expects src/ in the build context
-docker build -f docker/Dockerfile -t rtvi-embed:3.2.1-custom .
+# From the rt-embed/ directory — Dockerfile expects src/ in the build context.
+# The source build uses BuildKit bind mounts and requires the target architecture.
+DOCKER_BUILDKIT=1 docker build --network host \
+  --build-arg TARGETARCH="$(dpkg --print-architecture)" \
+  -f docker/Dockerfile -t rtvi-embed:3.3.0-custom .
 ```
 
 Then, in `docker/.env`, comment out the shipped image and uncomment the local-build line:
 
 ```bash
-#RTVI_IMAGE=nvcr.io/nvidia/vss-core/vss-rt-embed:<tag>
-RTVI_IMAGE=docker.io/library/rtvi-embed:3.2.1-custom
+#RTVI_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-rt-embed:develop-latest
+RTVI_IMAGE=docker.io/library/rtvi-embed:3.3.0-custom
 ```
 
 Restart:
@@ -173,7 +243,7 @@ python3 rtvi_client_cli.py generate-video-embeddings\
 ### Use python client to generate embeddings for live-stream
 
 ```bash
-LIVE_STREAM="rtsp://nv-wowza-pdc.nvidia.com:1935/vod/Jensen_AI_Summit_India_1080p_blackwell_opus.mp4"
+LIVE_STREAM="${RTVI_TEST_LIVE_STREAM_URL:?Set RTVI_TEST_LIVE_STREAM_URL to an RTSP stream URL}"
 
 # Add live stream
 STREAM_ID=$(python3 rtvi_client_cli.py add-live-stream "$LIVE_STREAM" \
@@ -268,7 +338,7 @@ To enable password authentication for Redis in the Docker Compose deployment, mo
 
 ```yaml
 redis:
-  image: redis:7-alpine
+  image: redis:8.10.0-alpine
   ports:
     - "6379:6379"
   volumes:
@@ -417,16 +487,17 @@ ASSET_STORAGE_DIR=/path/to/assets           # Host path for uploaded files
 EXAMPLE_STREAMS_DIR=/path/to/sample-videos  # Host path for example streams
 
 # GPU Configuration
-NVIDIA_VISIBLE_DEVICES=0                    # Use specific GPUs (default: all)
+NVIDIA_VISIBLE_DEVICES=0                    # GPU index, UUID, or MIG UUID (default: all)
 VLM_BATCH_SIZE=128                          # Override automatic batch size
 
 # Logging
 LOG_LEVEL=INFO                              # DEBUG, INFO, WARNING, ERROR
 
-# Kafka server config
-KAFKA_ENABLED=<true/false>                  # Enable Kafka messages containing generated embeddings
+# Message bus config
+MESSAGE_BUS=kafka                           # Enable generated embedding messages over Kafka; empty disables generated-output messages
 KAFKA_BOOTSTRAP_SERVERS=<ip_address:port>   # Kafka server
-KAFKA_TOPIC=vision-embed-messages           # Kafka message topic
+MESSAGE_BUS_TOPIC=mdx-embed                 # Generated embedding message topic
+ERROR_BUS=kafka                             # Enable error messages over Kafka; empty disables error bus publishing
 
 # Redis error message config
 ERROR_MESSAGE_TOPIC=vision-embed-errors     # Error message topic (Kafka or Redis channel)
@@ -501,9 +572,14 @@ Use the /v1/models API to get the name of the model once the server is up.
 | `VLM_BATCH_SIZE` | Inference batch size | Auto-calculated | No |
 | `NUM_VLM_PROCS` | Number of inference processes | `10` | No |
 | `NUM_GPUS` | Number of GPUs to use | Auto-detected | No |
-| `NVIDIA_VISIBLE_DEVICES` | GPU device IDs | `all` | No |
+| `NVIDIA_VISIBLE_DEVICES` | GPU index, UUID, or MIG UUID exposed to the container | `all` | No |
 | `MODEL_PATH` | Model source: `ngc:<org/team/model:ver>`, `git:<hf-url>`, or local path | `git:https://huggingface.co/nvidia/Cosmos-Embed1-448p` | No |
 | `MODEL_IMPLEMENTATION_PATH` | Implementation code path for the model | `/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1` | No |
+| `REMOTE_EMBED_ENDPOINT` | Optional CE1 NIM endpoint URL. When set, startup switches to the CE1 NIM backend and uses the remote endpoint instead of the local Cosmos-Embed1 model. | - | No |
+| `REMOTE_EMBED_ENDPOINT_MODEL_NAME` | Model deployment name sent to the CE1 NIM backend and used as the RTVI model id. | `nvidia/cosmos-embed1` | No |
+| `REMOTE_EMBED_ENDPOINT_API_KEY` | Optional bearer token for the CE1 NIM endpoint. | - | No |
+| `REMOTE_EMBED_ENDPOINT_TIMEOUT_SEC` | Request timeout for CE1 NIM calls. | `300` | No |
+| `REMOTE_EMBED_ENDPOINT_BATCH_SIZE` | Maximum batch size used by the CE1 NIM client wrapper. | `64` | No |
 | `COSMOS_EMBED1_TRT_PRECISION` | trtexec network precision for Cosmos-Embed1 video/text TRT engines (`fp32`, `fp16`, `bf16`, `int8`, `fp8`, `best`). Read by `create_triton_model_repo.py`. Engine filename includes the precision so engines are rebuilt on change. | `fp16` | No |
 | `COSMOS_EMBED1_TRT_EXTRA_ARGS` | Extra trtexec args (shell-quoted string) appended verbatim to both video and text engine builds, e.g. `--stronglyTyped --builderOptimizationLevel=5`. Note: `--stronglyTyped` is mutually exclusive with `--fp16`/`--bf16`/`--int8`/`--fp8`/`--best`; pair it with `COSMOS_EMBED1_TRT_PRECISION=fp32`. Engine filename includes a short hash of these args so engines are rebuilt on change. | - | No |
 
@@ -534,7 +610,30 @@ Use the /v1/models API to get the name of the model once the server is up.
 | `RTVI_RTSP_RECONNECTION_INTERVAL` | Time to detect stream interruption and wait for reconnection (seconds) | `5.0` | No |
 | `RTVI_RTSP_RECONNECTION_WINDOW` | Duration to attempt reconnection after interruption before terminating the session (seconds) | `60.0` | No |
 | `RTVI_RTSP_RECONNECTION_MAX_ATTEMPTS` | Max attempts for reconnection after interruption before terminating the session (no.) | `10` | No |
+| `RTVI_IPC_FRAME_COPY` | Enable decoded-frame IPC for live streams. | `false` | No |
+| `RTVI_IPC_SOCKET_HOST_DIR` | Host directory containing producer IPC sockets. Compose mounts it at the fixed container path `/run/rtvi-ipc` when set. | *(unset)* | No |
 | `RTVI_STREAM_DELETE_DRAIN_TIMEOUT_SEC` | Per-delete upper bound (seconds) shared by the pre-delete setup wait (while `use_count > 1`) and the pipeline drain of in-flight chunks. On timeout each stage logs a warning and proceeds. Applies to `DELETE /v1/streams/delete-batch`, `DELETE /v1/streams/delete/{stream_id}`, `POST /v1/stream/remove`, `DELETE /v1/generate_video_embeddings/{stream_id}`. | `30` | No |
+
+#### Single decode for multiple microservices
+
+RTVI CV can own the RTSP connection and publish decoded frames through
+`nvunixfd` Unix sockets for RTVI Embed. Set `RTVI_IPC_FRAME_COPY=true` for
+live RTSP streams that consume a compatible CV producer. CV and Embed must run
+on the same host. The producer and consumer must use the same camera ID and
+socket template, so camera `camera-1` resolves to `nvds_ipc_camera-1.sock` by
+default. Send the stream processing request to both RTVI CV (the producer) and
+RTVI Embed (the consumer) with that same camera ID.
+
+IPC camera, sensor, and stream IDs must be non-empty and use only ASCII letters,
+digits, `.`, `_`, and `-` (standard UUIDs are valid). Other characters are
+rejected to prevent distinct stream IDs from selecting the same socket.
+
+Set `RTVI_IPC_SOCKET_HOST_DIR` to the producer's host directory; Compose mounts
+it at the fixed `/run/rtvi-ipc` path.
+Embed resolves each socket as `nvds_ipc_{camera_id}.sock`. The directory and
+socket must be accessible to the Embed container user (UID/GID `1001`). A
+compatible RTVI CV image must provide `ipc-frame-copy` and create the producer
+socket before Embed starts the stream.
 
 #### OpenTelemetry / Monitoring
 | Variable | Description | Default | Required |
@@ -549,10 +648,11 @@ Use the /v1/models API to get the name of the model once the server is up.
 #### Kafka Configuration
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| `KAFKA_ENABLED` | Enable Kafka integration | `false` | No |
 | `KAFKA_PORT` | Host port to expose Kafka (Docker Compose only) | `9092` | No |
 | `KAFKA_BOOTSTRAP_SERVERS` | Kafka broker addresses | `localhost:9092` | No |
-| `KAFKA_TOPIC` | Kafka topic name for VisionLLM/embedding messages | `vision-embed-messages` | No |
+| `MESSAGE_BUS` | Generated-output bus type; set to `kafka` to publish embedding messages or empty to disable publishing | `kafka` | No |
+| `MESSAGE_BUS_TOPIC` | Generated embedding message topic | `mdx-embed` | No |
+| `ERROR_BUS` | Error bus type; set to `kafka` to publish errors or empty to disable error bus publishing | `kafka` | No |
 | `ERROR_MESSAGE_TOPIC` | Kafka topic name for error messages (or Redis channel when Redis is enabled) | `vision-embed-errors` | No |
 | `ENABLE_KAFKA_MESSAGES_FOR_TEXT_INPUT` | Enable streaming text embeddings results to Kafka | `false` | No |
 | `KAFKA_ASYNC_SEND_QUEUE_MAXSIZE` | Max queued Kafka producer send jobs before dropping during broker metadata stalls | `1024` | No |
@@ -576,7 +676,7 @@ Use the /v1/models API to get the name of the model once the server is up.
 #### Docker Configuration
 | Variable | Description | Default | Required |
 |----------|-------------|---------|----------|
-| `RTVI_IMAGE` | Docker image to use | `nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1` | No |
+| `RTVI_IMAGE` | Docker image to use | `ghcr.io/nvidia-ai-blueprints/vss/vss-rt-embed:develop-latest` | No |
 | `HF_TOKEN` | Hugging Face Hub access token for private `git:` model downloads; forwarded from `docker/.env` into the container by Compose | - | No |
 
 #### AWS Configuration
@@ -594,7 +694,7 @@ Use the /v1/models API to get the name of the model once the server is up.
 |----------|-------------|---------|----------|
 | `ASSET_DOWNLOAD_TOTAL_TIMEOUT` | Total timeout for asset (file) download via url in seconds | `300` | No |
 | `ASSET_DOWNLOAD_CONNECT_TIMEOUT` | Timeout for establishing connection for asset (file) download via url in seconds | `10` | No |
-| `ASSET_DOWNLOAD_SSL_SKIP_VERIFY_DOMAINS` | Comma-separated domains to skip SSL verification (e.g., `artifactory.nvidia.com`) | *(empty)* | No |
+| `ASSET_DOWNLOAD_SSL_SKIP_VERIFY_DOMAINS` | Comma-separated domains to skip SSL verification (e.g., `media.example.com`) | *(empty)* | No |
 | `ASSET_DOWNLOAD_MAX_REDIRECTS` | Max redirect hops for URL downloads (0 = disabled, max 10). SSRF-validated. | `0` | No |
 | `ASSET_DOWNLOAD_MAX_FILE_SIZE_GB` | Max file size for HTTP/data URI asset ingestion. Direct multipart uploads are constrained by `ASSET_TMPFS_SIZE` or `ASSET_STORAGE_DIR` plus `MAX_ASSET_STORAGE_SIZE_GB`. | `8` | No |
 | `ASSET_DOWNLOAD_AUTH_TOKENS` | Server-level auth for URL downloads. Format: `domain1=Bearer token1;domain2=Basic xyz` | *(empty)* | No |
@@ -609,4 +709,8 @@ Use the /v1/models API to get the name of the model once the server is up.
 
 ## License
 
-This project is licensed under the **Apache License, Version 2.0**. See the top-level [LICENSE](../../../LICENSE) file in the repository, and the SPDX header carried in every source file in [`src/`](src/) and [`tests/`](tests/).
+This project is licensed under the **Apache License, Version 2.0**. See the [top-level LICENSE](https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/main/LICENSE) file in the repository, and the SPDX header carried in every source file in [`src/`](src/) and [`tests/`](tests/).
+
+## External Materials Notice
+
+NOTICE AND DISCLAIMER: This software automatically retrieves, accesses or interacts with external materials.  Those retrieved materials are not distributed with this software and are governed solely by separate terms, conditions and licenses.  You are solely responsible for finding, reviewing and complying with all applicable terms, conditions, and licenses, and for verifying the security, integrity and suitability of any retrieved materials for your specific use case. This software is provided "AS IS", without warranty of any kind. The author makes no representations or warranties regarding any retrieved materials, and assumes no liability for any losses, damages, liabilities or legal consequences from your use or inability to use this software or any retrieved materials. Use this software and the retrieved materials at your own risk.

@@ -54,6 +54,7 @@ import zipfile
 DEFAULT_OPENCV_VERSION = "4.13.0.92"
 PACKAGE = "opencv-python-headless"
 DEFAULT_TARGET_DIR = "/vss-agent/.codecs"
+DEFAULT_CACHED_WHEEL = "/vss-agent/.codec-wheels/opencv.whl"
 
 # Retry policy for the (network) PyPI metadata query + wheel download. PyPI and
 # the operator's network can flake transiently, so we retry with exponential
@@ -186,6 +187,8 @@ def install() -> str | None:
     try:
         with tempfile.TemporaryDirectory() as tmp:
             local_wheel = os.environ.get("VSS_PROPRIETARY_CODECS_WHEEL")
+            if not local_wheel and os.path.isfile(DEFAULT_CACHED_WHEEL):
+                local_wheel = DEFAULT_CACHED_WHEEL
             if local_wheel:
                 if not os.path.isfile(local_wheel):
                     raise RuntimeError(f"VSS_PROPRIETARY_CODECS_WHEEL not found: {local_wheel}")

@@ -8,8 +8,6 @@ const ENABLE_ADD_RTSP_BUTTON = env('NEXT_PUBLIC_VIDEO_MANAGEMENT_TAB_ADD_RTSP_EN
 const ENABLE_VIDEO_UPLOAD = env('NEXT_PUBLIC_VIDEO_MANAGEMENT_VIDEO_UPLOAD_ENABLE') || process?.env?.NEXT_PUBLIC_VIDEO_MANAGEMENT_VIDEO_UPLOAD_ENABLE;
 
 export async function fetchVideoManagementData() {
-  await new Promise(resolve => setTimeout(resolve, 100));
-
   return {
     systemStatus: 'operational',
     vstApiUrl: VST_API_URL || null,

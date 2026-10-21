@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2022-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,22 +29,22 @@ namespace nv_vms {
 class ISensorDiscoveryEvent
 {
     public:
-        ISensorDiscoveryEvent() {}
-        virtual ~ISensorDiscoveryEvent() {}
+        ISensorDiscoveryEvent() = default;
+        virtual ~ISensorDiscoveryEvent() = default;
 
         virtual int onSensorFound(SensorInfo& sensorInfo) = 0;
         virtual int onSensorChanged(SensorInfo& sensorInfo) = 0;
-        virtual int onSensorRemoved(const string& sensorInfo) = 0;
+        virtual int onSensorRemoved(const std::string& sensorInfo) = 0;
 
-        virtual void notifyEvent(const SensorStatus& status, const string& url) {}
-        virtual void refreshSensorList() {}
+        virtual void notifyEvent(const SensorStatus& status, const std::string& url, const std::string& ipc_url = "") { /* Optional hook: listeners that do not track sensor status changes keep this no-op. */ }
+        virtual void refreshSensorList() { /* Optional hook: backends holding no cached sensor list keep this no-op. */ }
 };
 
 class ISensorDiscoveryInterface
 {	
 public:
-    ISensorDiscoveryInterface() {}
-    virtual ~ISensorDiscoveryInterface() {}
+    ISensorDiscoveryInterface() = default;
+    virtual ~ISensorDiscoveryInterface() = default;
 
     virtual void start() = 0;
     virtual void stop()  = 0;
@@ -87,7 +87,7 @@ public:
         return ret;
     }
 
-    int publishOnSensorRemoved(const string& sensor_id)
+    int publishOnSensorRemoved(const std::string& sensor_id)
     {
         std::lock_guard<std::mutex> lock(m_sensorDiscoveryLock);
         int ret = 0;
@@ -107,12 +107,12 @@ public:
         }
     }
 
-    void setCacheSensorList(std::vector<shared_ptr<SensorInfo>> list)
+    void setCacheSensorList(std::vector<std::shared_ptr<SensorInfo>> list)
     {
         std::lock_guard<std::mutex> lock(m_cacheSensorLock);
         m_cacheSensorList = list;
     }
-    std::vector<shared_ptr<SensorInfo>> getCacheSensorList()
+    std::vector<std::shared_ptr<SensorInfo>> getCacheSensorList()
     {
         std::lock_guard<std::mutex> lock(m_cacheSensorLock);
         return m_cacheSensorList;
@@ -122,7 +122,7 @@ private:
     std::vector<ISensorDiscoveryEvent*> m_listners;
     std::mutex m_sensorDiscoveryLock;
     std::mutex m_cacheSensorLock;
-    std::vector<shared_ptr<SensorInfo>> m_cacheSensorList;
+    std::vector<std::shared_ptr<SensorInfo>> m_cacheSensorList;
 };
 
 ISensorDiscoveryInterface* createDiscoveryObject();

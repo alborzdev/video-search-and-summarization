@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 # VCS + CI
 .git*
 Jenkins*
@@ -6,6 +9,11 @@ Jenkins*
 # Tests and local test data
 tests/
 data/
+
+# Documentation and example-only configuration
+docs/
+configs/
+README.md
 
 # Editor/IDE
 .idea/

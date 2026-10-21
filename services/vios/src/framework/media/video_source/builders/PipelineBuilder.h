@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,8 @@ class NvCompositor;
 class VideoWebRTCSender;
 class NativeStreamProducer;
 class IMediaDataProducer;
-#ifdef JETSON_PLATFORM
+class IMediaDataConsumer;
+#ifdef AARCH64_PLATFORM
 class NvIPCProducer;
 #endif
 
@@ -54,20 +55,34 @@ public:
     
     // Common getters for pipeline components
     virtual std::shared_ptr<GstNvVideoDecoder> getDecoder() const = 0;
-    virtual std::shared_ptr<NvEncoderVideoConsumer> getEncoder() const = 0;
-    virtual std::shared_ptr<WebrtcSinkConsumer> getWebrtcConsumer() const = 0;
-    virtual std::shared_ptr<NvLLOverlay> getOverlay() const = 0;
-    virtual std::shared_ptr<NvLLTransform> getTransform() const = 0;
-    virtual std::shared_ptr<NvLLTransform> getTransformSink() const = 0;
-    virtual std::shared_ptr<ImageEnc> getImageEncoder() const = 0;
+    virtual std::shared_ptr<NvEncoderVideoConsumer> getEncoder() const { return m_encoder; }
+    virtual std::shared_ptr<WebrtcSinkConsumer> getWebrtcConsumer() const { return m_webrtcConsumer; }
+
+    // The DASH packager is created and owned by the DASH session, not by the
+    // builder, so it is injected before the pipeline is built.
+    void setDashConsumer(std::shared_ptr<IMediaDataConsumer> consumer) { m_dashConsumer = std::move(consumer); }
+    std::shared_ptr<IMediaDataConsumer> getDashConsumer() const { return m_dashConsumer; }
+    virtual std::shared_ptr<NvLLOverlay> getOverlay() const { return m_overlay; }
+    virtual std::shared_ptr<NvLLTransform> getTransform() const { return m_transform; }
+    virtual std::shared_ptr<NvLLTransform> getTransformSink() const { return m_transformSink; }
+    virtual std::shared_ptr<ImageEnc> getImageEncoder() const { return m_imageEncoder; }
     virtual std::shared_ptr<NvCompositor> getCompositor() const = 0;
     virtual std::shared_ptr<VideoWebRTCSender> getVideoSender() const = 0;
     virtual std::shared_ptr<NativeStreamProducer> getNativeStreamProducer() const = 0;
-#ifdef JETSON_PLATFORM
+    // IPC producer path is aarch64-only (gstnvipcproducer is not built for x86) and is
+    // exercised at runtime only when isJetsonPlatform(). Present on all aarch64 targets
+    // so one build serves both Orin and Thor/SBSA.
+#ifdef AARCH64_PLATFORM
     virtual std::shared_ptr<NvIPCProducer> getIPCProducer() const = 0;
 #endif
 
 protected:
+    // Every branch of the pipeline ends in the same place, and DASH differs
+    // from WebRTC only in which object that is.  Resolving the terminal
+    // consumer here keeps the branch structure identical for both.
+    std::shared_ptr<IMediaDataConsumer> getSinkConsumer(const PipelineConfiguration& config) const;
+
+
     void createCommonComponents(const PipelineConfiguration& config);
     void destroyCommonComponents();
     void setupOverlay(const PipelineConfiguration& config);
@@ -81,7 +96,9 @@ protected:
     void setupDecoderWithProducer(std::shared_ptr<GstNvVideoDecoder> decoder, const std::string& url, const PipelineConfiguration& config);
     void clearDecoderProducer(std::shared_ptr<GstNvVideoDecoder> decoder, const PipelineConfiguration& config);
 
+private:
     // Common pipeline components
+    std::shared_ptr<IMediaDataConsumer> m_dashConsumer = nullptr;
     std::shared_ptr<NvEncoderVideoConsumer> m_encoder = nullptr;
     std::shared_ptr<NvLLOverlay> m_overlay = nullptr;
     std::shared_ptr<NvLLTransform> m_transform = nullptr;

@@ -1,0 +1,9 @@
+# Narrow public source context; never traverse private runtime databases.
+**
+!services
+!services/analytics
+!services/analytics/behavior-analytics
+!services/analytics/behavior-analytics/apps
+!services/analytics/behavior-analytics/apps/**
+!services/analytics/behavior-analytics/src
+!services/analytics/behavior-analytics/src/**
