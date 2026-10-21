@@ -80,11 +80,12 @@ base's inherited Bash initializer was observed creating `/dev/nvidiactl` even
 under runc without requested GPU devices. The strict device guard caught that
 before compilation and remains unchanged.
 
-The internal native make command is `make -j2 arch=aarch64
+The internal native make command is `make -j${VSS_NATIVE_JOBS-2} arch=aarch64
 CUDA_TARGET_DIR=/usr/local/cuda PROJECT=vst MODULE=streamprocessing
 GRPC_LIBS="$(pkg-config --libs grpc++ protobuf)" CXX_SYSROOT= all`. It preserves the
 full streamprocessing/adaptor scope. The native gRPC override avoids upstream's
-ARM64 cross-qemu assumption. Recursive make uses its two-job jobserver. This
+ARM64 cross-qemu assumption. `VSS_NATIVE_JOBS` accepts only `1` or `2`, defaulting
+to two jobs; recursive make inherits that bounded jobserver. This
 explicit recipe replaces `build.sh` only because that wrapper pulls cross
 builders and launches uncapped nested Docker with `-j12`.
 
@@ -93,6 +94,11 @@ read-only snapshot and incomplete scratch/output mounts. Every original input
 is rehashed; only narrowly scoped generated `.o`/`.d`, protobuf, native shared
 libraries and the executable may be extra. Altered source, manifests or escaping
 symlinks stop the build. Changed source requires a fresh snapshot and scratch.
+If a compiler is killed by the build container's memory limit, retain the
+verified incomplete scratch and add both `--env VSS_NATIVE_RESUME=1` and
+`--env VSS_NATIVE_JOBS=1` when rerunning with the documented 4 GiB/2 CPU limits.
+Serial recovery reduces concurrent compiler memory without removing any source,
+features, optimization flags, linker checks or resource guards.
 
 ## Stage and qualify the runtime
 

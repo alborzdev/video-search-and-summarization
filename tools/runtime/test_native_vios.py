@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import tempfile
 import unittest
 import importlib.util
@@ -71,7 +72,7 @@ class ResumeVerifierTest(unittest.TestCase):
 
 
 class ResourceGuardTest(unittest.TestCase):
-    def verify(self, memory='4294967296', cpu='200000 100000', gpu=False, drm=False):
+    def verify(self, memory='4294967296', cpu='200000 100000', gpu=False, drm=False, jobs='2'):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             (root / 'cgroup').mkdir()
@@ -86,11 +87,19 @@ class ResourceGuardTest(unittest.TestCase):
             code = re.findall("python3 - <<'PY'\n(.*?)\nPY", text, re.S)[0]
             for original, replacement in [('/sys/fs/cgroup', root / 'cgroup'), ('/dev/dri', root / 'dev/dri'), ('/dev', root / 'dev'), ('/build/vios', root / 'scratch'), ('/out', root / 'out')]:
                 code = code.replace(f"Path('{original}')", f'Path({str(replacement)!r})')
-            with patch.dict(os.environ, {'VSS_NATIVE_RESUME': '0'}):
+            with patch.dict(os.environ, {'VSS_NATIVE_RESUME': '0', 'VSS_NATIVE_JOBS': jobs}):
                 exec(compile(code, 'production-resource-guard', 'exec'), {})
 
     def test_accepts_bounded_cpu_only_fixture(self):
         self.verify()
+
+    def test_accepts_serial_recovery_with_same_resource_guards(self):
+        self.verify(jobs='1')
+
+    def test_rejects_unsupported_job_counts_before_build(self):
+        for jobs in ('', '0', '3', '-1', 'all', '1; exit 0'):
+            with self.subTest(jobs=jobs), self.assertRaisesRegex(AssertionError, 'VSS_NATIVE_JOBS'):
+                self.verify(jobs=jobs)
 
     def test_rejects_unlimited_or_excess_memory(self):
         for memory in ('max', '8589934592'):
@@ -106,6 +115,23 @@ class ResourceGuardTest(unittest.TestCase):
         for keyword in ('gpu', 'drm'):
             with self.assertRaisesRegex(AssertionError, 'devices'):
                 self.verify(**{keyword: True})
+
+
+class NativeMakeJobTest(unittest.TestCase):
+    def test_serial_and_default_commands_preserve_full_native_scope(self):
+        script = (recipe.RECIPES / 'build-native.sh').read_text()
+        command = script[script.index('vios_grpc_libs='):script.index('test -s launch_vst')]
+        functions = 'pkg-config() { printf "%s\\n" "-lgrpc++ -lprotobuf"; }; make() { printf "%s\\n" "$@"; };\n'
+        for jobs, expected in ((None, '-j2'), ('1', '-j1'), ('2', '-j2')):
+            env = dict(os.environ)
+            env.pop('VSS_NATIVE_JOBS', None)
+            if jobs is not None:
+                env['VSS_NATIVE_JOBS'] = jobs
+            result = subprocess.run(['/bin/bash', '-eu', '-c', functions + command],
+                                    env=env, text=True, capture_output=True, check=True)
+            self.assertEqual(result.stdout.splitlines(), [expected, 'arch=aarch64',
+                'CUDA_TARGET_DIR=/usr/local/cuda', 'PROJECT=vst', 'MODULE=streamprocessing',
+                'GRPC_LIBS=-lgrpc++ -lprotobuf', 'CXX_SYSROOT=', 'all'])
 
 
 class PackagingTest(unittest.TestCase):

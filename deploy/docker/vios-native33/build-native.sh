@@ -4,6 +4,8 @@ set -euo pipefail
 python3 - <<'PY'
 from pathlib import Path
 import os
+jobs = os.environ.get('VSS_NATIVE_JOBS', '2')
+assert jobs in ('1', '2'), 'VSS_NATIVE_JOBS must be 1 or 2'
 memory = (Path('/sys/fs/cgroup') / 'memory.max').read_text().strip()
 quota, period = (Path('/sys/fs/cgroup') / 'cpu.max').read_text().split()
 assert memory != 'max' and int(memory) <= 4 * 1024**3, 'Builder requires <=4GiB memory limit'
@@ -56,7 +58,7 @@ export LD_LIBRARY_PATH="/build/vios/prebuilts/aarch64:/build/vios/prebuilts/aarc
 # The vms_media adaptor assumes cross-qemu even on native ARM64. Explicit
 # native pkg-config flags preserve its full gRPC functionality without qemu.
 vios_grpc_libs="$(pkg-config --libs grpc++ protobuf)"
-make -j2 arch=aarch64 CUDA_TARGET_DIR=/usr/local/cuda PROJECT=vst MODULE=streamprocessing \
+make -j"${VSS_NATIVE_JOBS-2}" arch=aarch64 CUDA_TARGET_DIR=/usr/local/cuda PROJECT=vst MODULE=streamprocessing \
     GRPC_LIBS="${vios_grpc_libs}" CXX_SYSROOT= all
 test -s launch_vst
 test -s prebuilts/aarch64/libnvvideo_source.so
