@@ -1,0 +1,27 @@
+# Overlay fragment appended to Dockerfile.codecs by build_vios_native.py.
+# FROM remains the public immutable streamprocessing manifest digest.
+USER root
+ENV BASH_ENV="" ENV=""
+ENV LD_LIBRARY_PATH="/home/vst/vst_release/prebuilts/aarch64/aws:/home/vst/vst_release/prebuilts/aarch64/minio:/home/vst/vst_release/prebuilts/aarch64/prom_so:${LD_LIBRARY_PATH}"
+COPY runtime/ /home/vst/vst_release/
+COPY checksums.sha256 /tmp/vios-source-checksums.sha256
+RUN cd /home/vst/vst_release \
+    && sha256sum --check /tmp/vios-source-checksums.sha256 \
+    && for object in launch_vst \
+         prebuilts/aarch64/libnvvideo_source.so \
+         prebuilts/aarch64/rtsp_streams.so \
+         prebuilts/aarch64/libnvdatabase.so \
+         prebuilts/aarch64/libnvstoragemanagement.so \
+         prebuilts/aarch64/libnvconfigmanager.so \
+         prebuilts/aarch64/gst-plugins/libgstdashmp4mux.so \
+         /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstlibav.so \
+         /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstx264.so \
+         /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstdash.so; do \
+         test -s "$object" || exit 1; \
+         ldd "$object" > /tmp/vios-object-linker.txt || { cat /tmp/vios-object-linker.txt; exit 1; }; \
+         if grep -q 'not found' /tmp/vios-object-linker.txt; then \
+           cat /tmp/vios-object-linker.txt; exit 1; \
+         fi; \
+       done \
+    && ldconfig \
+    && rm -f /tmp/vios-source-checksums.sha256 /tmp/vios-object-linker.txt
