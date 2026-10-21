@@ -33,6 +33,43 @@ with `--no-detector` when testing only uploaded clips; `--demo-profile all`
 restores the shared live analytics roles. These render flags never start
 services or change the saved reserve, model or KV-cache budgets.
 
+### Explicit Spark VIOS 3.3 selection
+
+The default stream processor remains the cached 3.2.1 derivative, with DASH
+playback disabled in UI metadata. Spark can explicitly select the source-fixed
+native 3.3 derivative after its separate encoded-file playback test passes:
+
+```sh
+python3 tools/runtime/bootstrap.py render --host-ip 127.0.0.1 --vios-streamprocessing-image vss-vios-streamprocessing:3.3-native
+```
+
+Only that reviewed local tag is accepted. It is promoted from the native-source
+build after recording its actual immutable image ID and successful encoded DASH
+receipt. The public 3.3 base pinned at
+`ghcr.io/nvidia-ai-blueprints/vss/vss-vios-streamprocessing@sha256:426f48add56f5ba95b0a70eb8036f4b0590da9fb3228d2065f539d6f9721723a`
+lacks the uploaded-file sensor-type repair and cannot replace the derivative.
+Before selecting the new runtime against existing appliance data, preserve a
+PostgreSQL backup and review the matching image/data rollback procedure. Merely
+restoring an image flag does not undo database changes made by a running image.
+
+Omitting the option preserves the saved selection. Passing
+`--vios-streamprocessing-image ''` renders the cached legacy choice again.
+Selection removes only the stream processor's legacy build and entrypoint,
+retains the sensor image, stores, hardware profile and budgets, and sets server
+metadata `VSS_DASH_PLAYBACK_ENABLED=true`; legacy rendering explicitly sets it
+to `false`. This metadata describes the selected capability, not current health
+or a new playback test. Rendering validates references and Compose configuration;
+it does not inspect, pull, start or replace container images, or write to the
+database. Actual recreation and playback validation are separate operator steps.
+The explicit Spark choice sets only the new DASH settings to the bounded CPU
+archive profile: one session, encoded output at 1500 kbps, two-second segments,
+a four-segment playlist and a 15-second idle timeout. The reviewed native image
+uses software codecs. This qualifies one archive viewer; additional viewers,
+live cameras and overlays require separate measurements. Legacy rendering
+does not add or change the DASH configuration block.
+Thor refuses the new selection, including one copied into saved state, before
+generating configuration; its native runtime remains unqualified.
+
 Local source derivatives use immutable 3.3 base-image digests and narrow build
 contexts in `deploy/docker/thor-local/Dockerfile.*33`. The VLM derivative bakes
 in the reviewed codec bundle; Agent and VA-MCP mount the verified local OpenCV

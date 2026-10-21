@@ -11,6 +11,9 @@ import shutil
 SOURCE_VERSION = '3.3.0-rc0'
 LEGACY_VLM_VERSION = '3.2.1'
 VLM33_SBSA_IMAGE = 'ghcr.io/nvidia-ai-blueprints/vss/vss-rt-vlm@sha256:23f844c9715e2d98ac01260b085fd1f9c7523d748dd594995c4ec952b7f4f65d'
+# This tag is promoted only after encoded-file DASH qualification. The public
+# 3.3 image lacks our FILE sensor-type repair and is not interchangeable.
+VIOS33_NATIVE_IMAGE = 'vss-vios-streamprocessing:3.3-native'
 PROFILE = ','.join((
     'bp_developer_thor_full_2d', 'alert-bridge', 'broker-health-check',
     'cadvisor', 'centralizedb', 'elasticsearch', 'elasticsearch-init-container',
@@ -31,11 +34,21 @@ HOST_SERVICES = {
 }
 
 
-def runtime_options(saved, adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None):
+def runtime_options(saved, adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None,
+                    vios_streamprocessing_image=None, hardware=None):
     """Preserve saved choices; never imply old engine supports EVS++ sessions."""
     enabled = saved.get('adaptive_evs', False) if adaptive_evs is None else adaptive_evs
     image = saved.get('rtvi_vlm_image', '') if rtvi_vlm_image is None else rtvi_vlm_image
     profile = saved.get('demo_profile', 'all') if demo_profile is None else demo_profile
+    vios_image = (saved.get('vios_streamprocessing_image', '') if vios_streamprocessing_image is None
+                  else vios_streamprocessing_image)
+    if not isinstance(vios_image, str) or vios_image not in ('', VIOS33_NATIVE_IMAGE):
+        raise RuntimeError('VIOS streamprocessing requires the reviewed source-fixed image '
+                           f'{VIOS33_NATIVE_IMAGE}, or an empty string to restore the cached 3.2.1 runtime; '
+                           'the public unpatched 3.3 image is not qualified for encoded DASH.')
+    if vios_image and hardware is not None and hardware != 'DGX-SPARK':
+        raise RuntimeError('The native 3.3 VIOS streamprocessing image is qualified for Spark only; '
+                           'Thor must retain its cached runtime until separately qualified.')
     if not isinstance(enabled, bool) or not isinstance(image, str):
         raise RuntimeError('adaptive_evs must be a boolean and rtvi_vlm_image an image reference.')
     if image and (any(char.isspace() for char in image) or not re.fullmatch(r'[A-Za-z0-9./_:@+-]+', image)):
@@ -46,7 +59,8 @@ def runtime_options(saved, adaptive_evs=None, rtvi_vlm_image=None, demo_profile=
         raise RuntimeError('Adaptive EVS needs an explicitly selected compatible 3.3 RT-VLM image; the cached 3.2.1 engine does not support it.')
     if profile not in ('all', 'clips'):
         raise RuntimeError('demo_profile must be all or clips.')
-    return dict(adaptive_evs=enabled, rtvi_vlm_image=image, demo_profile=profile)
+    return dict(adaptive_evs=enabled, rtvi_vlm_image=image, demo_profile=profile,
+                vios_streamprocessing_image=vios_image)
 
 
 def runtime_version(image):
@@ -107,6 +121,9 @@ def prepare_literal_build_contexts(services, root, state, names):
 
 def reconcile(graph, root, hardware, options, detector_enabled=None):
     """Adapt 3.3 bridge defaults to the existing loopback appliance contracts."""
+    # Revalidate direct callers too. This is reference validation only: image
+    # staging/provenance and database rollback review belong to the operator.
+    options = runtime_options(options, hardware=hardware)
     selected_image = options['rtvi_vlm_image']
     if hardware != 'DGX-SPARK' and (selected_image == VLM33_SBSA_IMAGE or 'sbsa' in selected_image.lower()):
         raise RuntimeError('Thor requires its own reviewed non-SBSA RT-VLM image; a Spark image cannot be reused on Thor.')
@@ -213,9 +230,9 @@ def reconcile(graph, root, hardware, options, detector_enabled=None):
     for name in ('vss-search-analytics-2d-fusion', 'vss-behavior-analytics-thor-candidates'):
         if name in services:
             services[name]['build'] = dict(context=str(root), dockerfile='deploy/docker/thor-local/Dockerfile.behavior-analytics33', network='none')
-    # The PostgreSQL/VIOS and persistent Kafka volumes keep their measured
-    # runtime versions. App-source updates must not silently upgrade data
-    # formats on an existing demo appliance.
+    # Persistent services keep their measured runtime versions by default.
+    # A VIOS image change below requires a separate explicit selection; source
+    # updates must not silently upgrade formats on an existing demo appliance.
     services['kafka']['image'] = 'confluentinc/cp-kafka:8.2.0'
     services['kafka']['environment'].update(
         KAFKA_ADVERTISED_LISTENERS='INTERNAL://127.0.0.1:29092,EXTERNAL://' +
@@ -224,6 +241,14 @@ def reconcile(graph, root, hardware, options, detector_enabled=None):
         services[name].setdefault('environment', {}).update(BOOTSTRAP_HOST='127.0.0.1', KAFKA_PORT='9092')
     services['kibana'].setdefault('environment', {})['ELASTICSEARCH_HOSTS'] = '["http://127.0.0.1:9200"]'
     services['sensor-ms']['image'] = 'nvcr.io/nvidia/vss-core/vss-vios-sensor:3.2.1'
+    if options['vios_streamprocessing_image']:
+        stream = services['streamprocessing-ms']
+        stream['image'] = options['vios_streamprocessing_image']
+        stream.pop('build', None)
+        # The source-fixed 3.3 image already contains its reviewed codec bytes;
+        # it does not contain the old derivative's offline-entrypoint script.
+        stream['entrypoint'] = ['/home/vst/vst_release/launch_vst']
+        stream.setdefault('environment', {})['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'false'
     # The UI talks through this same host-local edge; Compose DNS names are not
     # resolvable from host-network services.
     ingress = services['vss-haproxy-ingress'].setdefault('environment', {})
@@ -242,7 +267,8 @@ def reconcile(graph, root, hardware, options, detector_enabled=None):
               VSS_SOURCE_VERSION=SOURCE_VERSION,
               VSS_RTVI_RUNTIME_VERSION=runtime_version(options['rtvi_vlm_image']),
               VSS_DEMO_PROFILE=options['demo_profile'],
-              VSS_ADAPTIVE_EVS_ENABLED=str(options['adaptive_evs']).lower())
+              VSS_ADAPTIVE_EVS_ENABLED=str(options['adaptive_evs']).lower(),
+              VSS_DASH_PLAYBACK_ENABLED=str(bool(options['vios_streamprocessing_image'])).lower())
     if detector_enabled is not None:
         ui['VSS_DETECTOR_ENABLED'] = str(detector_enabled).lower()
     # Restrict host-published chat URLs to the existing ingress.

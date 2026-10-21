@@ -351,6 +351,90 @@ class BootstrapTests(unittest.TestCase):
         services = json.loads((b.STATE / 'compose.json').read_text())['services']
         self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
 
+    def test_native_vios_selection_changes_only_streamprocessor_and_ui_capability(self):
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1',
+                 reserve_gib=20, cached_models=True, demo_profile='clips')
+        before = json.loads((b.STATE / 'compose.json').read_text())
+        legacy_config = json.loads((b.STATE / 'vst-config.json').read_text())
+        self.assertNotIn('dash', legacy_config['network'])
+        self.assertEqual(before['services']['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'], 'false')
+        inherited = json.loads(json.dumps(before))
+        inherited['services']['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'] = 'true'
+        with patch.object(subprocess, 'run', side_effect=AssertionError('renderer must be pure')), \
+                patch.object(Path, 'write_text', side_effect=AssertionError('renderer must not write files')):
+            b.vss33.reconcile(inherited, b.ROOT, 'DGX-SPARK', b.vss33.runtime_options({}))
+        self.assertEqual(inherited['services']['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'], 'false')
+        legacy_stream = before['services']['streamprocessing-ms']
+        self.assertIn('build', legacy_stream)
+        self.assertEqual(legacy_stream['entrypoint'], ['/usr/local/bin/vios-offline-entrypoint'])
+        with patch.object(b, 'run', wraps=b.run) as run:
+            b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1',
+                     vios_streamprocessing_image=b.vss33.VIOS33_NATIVE_IMAGE)
+        # Config rendering performs no image inspection, pulls or lifecycle calls.
+        for call in run.call_args_list:
+            self.assertEqual(call.args[0][:2], ['docker', 'compose'])
+            self.assertIn('config', call.args[0])
+        after = json.loads((b.STATE / 'compose.json').read_text())
+        selected_config = json.loads((b.STATE / 'vst-config.json').read_text())
+        self.assertEqual(selected_config['network'].pop('dash'), {
+            'max_live_sessions': 1, 'segment_duration_sec': 2, 'playlist_length': 4,
+            'idle_timeout_sec': 15, 'always_encode': True, 'bitrate_kbps': 1500})
+        self.assertEqual(selected_config, legacy_config)
+        stream = after['services']['streamprocessing-ms']
+        self.assertEqual(stream['image'], b.vss33.VIOS33_NATIVE_IMAGE)
+        self.assertNotIn('build', stream)
+        self.assertEqual(stream['entrypoint'], ['/home/vst/vst_release/launch_vst'])
+        self.assertEqual(stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'], 'false')
+        self.assertEqual(after['services']['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'], 'true')
+        for name in before['services'].keys() - {'streamprocessing-ms', 'vss-ui'}:
+            self.assertEqual(before['services'][name], after['services'][name], name)
+        for key in legacy_stream.keys() - {'image', 'build', 'entrypoint'}:
+            self.assertEqual(legacy_stream[key], stream[key], key)
+        settings = json.loads((b.STATE / 'settings.json').read_text())
+        self.assertEqual(settings['vios_streamprocessing_image'], b.vss33.VIOS33_NATIVE_IMAGE)
+        self.assertEqual(settings['reserve_gib'], 20)
+        self.assertTrue(settings['cached_models'])
+        self.assertEqual(settings['demo_profile'], 'clips')
+        self.assertFalse((b.STATE / 'data').exists())
+        # Ordinary rendering preserves the opt-in; an explicit empty value restores legacy.
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1')
+        self.assertEqual(json.loads((b.STATE / 'compose.json').read_text()), after)
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', vios_streamprocessing_image='')
+        self.assertEqual(json.loads((b.STATE / 'compose.json').read_text()), before)
+        self.assertEqual(json.loads((b.STATE / 'vst-config.json').read_text()), legacy_config)
+
+    def test_vios_selection_rejects_unreviewed_references_before_rendering(self):
+        saved = {'reserve_gib': 20, 'vios_streamprocessing_image': ''}
+        b.private_write(b.STATE / 'settings.json', json.dumps(saved))
+        for image in (True, 33, 'vss-vios-streamprocessing:3.3',
+                      'vss-vios-streamprocessing:3.3-native-unreviewed',
+                      'vss-vios-streamprocessing:3.3-native;echo unsafe',
+                      ('ghcr.io/nvidia-ai-blueprints/vss/vss-vios-streamprocessing@sha256:'
+                       '426f48add56f5ba95b0a70eb8036f4b0590da9fb3228d2065f539d6f9721723a')):
+            with self.subTest(image=image), patch.object(b, 'run') as run, \
+                    patch.object(b, 'private_write') as write:
+                with self.assertRaisesRegex(RuntimeError, 'reviewed source-fixed image'):
+                    b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1',
+                             vios_streamprocessing_image=image)
+                run.assert_not_called()
+                write.assert_not_called()
+        self.assertEqual(json.loads((b.STATE / 'settings.json').read_text()), saved)
+
+    def test_vios_cli_selection_is_forwarded_only_to_render(self):
+        for image in (b.vss33.VIOS33_NATIVE_IMAGE, ''):
+            with self.subTest(image=image), patch.object(sys, 'argv', ['bootstrap.py', 'render',
+                    '--host-ip', '127.0.0.1', '--vios-streamprocessing-image', image]), \
+                    patch.object(b, 'render') as render:
+                b.main()
+                self.assertEqual(render.call_args.args[-1], image)
+        with patch.object(sys, 'argv', ['bootstrap.py', 'up', '--vios-streamprocessing-image',
+                                       b.vss33.VIOS33_NATIVE_IMAGE]), \
+                contextlib.redirect_stderr(io.StringIO()), patch.object(b, 'up') as up:
+            with self.assertRaises(SystemExit) as error:
+                b.main()
+            self.assertEqual(error.exception.code, 2)
+            up.assert_not_called()
+
     def test_render_preserves_persistent_infrastructure_and_host_bound_redis(self):
         b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', reserve_gib=20)
         services = json.loads((b.STATE / 'compose.json').read_text())['services']

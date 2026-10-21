@@ -162,7 +162,8 @@ def doctor():
 def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detector_enabled=None, reserve_gib=None,
            adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None):
     saved = settings() if (STATE / 'settings.json').exists() else {}
-    options = shared.vss33.runtime_options(saved, adaptive_evs, rtvi_vlm_image, demo_profile)
+    options = shared.vss33.runtime_options(saved, adaptive_evs, rtvi_vlm_image, demo_profile,
+                                         hardware='AGX-THOR')
     reserve = memory_reserve() if reserve_gib is None else shared.validate_reserve(reserve_gib)
     host_ip = host_ip or saved.get('host_ip', '127.0.0.1')
     gateway = gateway or saved.get('gateway', '172.17.0.1')
@@ -390,7 +391,10 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
     ui['volumes'] += [
         {'type': 'bind', 'source': str(ROOT / 'services/ui'), 'target': '/workspace'},
         {'type': 'bind', 'source': str(STATE / 'ui-next'),
-         'target': '/workspace/apps/nv-metropolis-bp-vss-ui/.next'}]
+         'target': '/workspace/apps/nv-metropolis-bp-vss-ui/.next'},
+        {'type': 'bind', 'source': str(ROOT / 'services/vios/ui/streaming-lib/src/dash'),
+         'target': '/vios/ui/streaming-lib/src/dash', 'read_only': True,
+         'bind': {'create_host_path': False}}]
     for name, service in services.items():
         service.pop('profiles', None)
         service['restart'] = 'no'

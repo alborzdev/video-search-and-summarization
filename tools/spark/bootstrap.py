@@ -208,10 +208,11 @@ def doctor():
 
 
 def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org', reserve_gib=None, cached_models=None, detector_enabled=None,
-           adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None):
+           adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None, vios_streamprocessing_image=None):
     saved_path = STATE / 'settings.json'
     saved = json.loads(saved_path.read_text()) if saved_path.exists() else {}
-    options = vss33.runtime_options(saved, adaptive_evs, rtvi_vlm_image, demo_profile)
+    options = vss33.runtime_options(saved, adaptive_evs, rtvi_vlm_image, demo_profile,
+                                  vios_streamprocessing_image, hardware='DGX-SPARK')
     reserve = memory_reserve() if reserve_gib is None else validate_reserve(reserve_gib)
     if cached_models is None:
         settings_path = STATE / 'settings.json'
@@ -288,16 +289,23 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     # Both ARM64 profiles need the released image's stripped codec bytes.
     # Share the reviewed Ubuntu bundle; never install into an ephemeral runtime.
     stream = services['streamprocessing-ms']
-    stream['build']['args'].update(
-        CODEC_LOCK_PATH='deploy/docker/thor-current/codecs.lock.json',
-        CODEC_BUNDLE_PATH='deploy/docker/thor-current/vios-codecs/bundle')
-    stream['entrypoint'] = ['/usr/local/bin/vios-offline-entrypoint']
+    if not options['vios_streamprocessing_image']:
+        stream['build']['args'].update(
+            CODEC_LOCK_PATH='deploy/docker/thor-current/codecs.lock.json',
+            CODEC_BUNDLE_PATH='deploy/docker/thor-current/vios-codecs/bundle')
+        stream['entrypoint'] = ['/usr/local/bin/vios-offline-entrypoint']
     stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'false'
     # Sim's MediaMTX publisher accepts TCP only. Keep the inherited Thor
     # configuration intact and bind a generated Spark copy to each VST role.
     vst_config = json.loads((ROOT / 'deploy/docker/thor-local/vios/vst_config.json').read_text())
     vst_config['network']['rtsp_streaming_over_tcp'] = True
     vst_config['network']['server_domain_name'] = host_ip
+    if options['vios_streamprocessing_image']:
+        # Match the isolated encoded CPU archive probe's single-viewer bounds.
+        # Do not carry upstream's multi-session defaults onto the demo machine.
+        vst_config['network']['dash'] = dict(
+            max_live_sessions=1, segment_duration_sec=2, playlist_length=4,
+            idle_timeout_sec=15, always_encode=True, bitrate_kbps=1500)
     vst_config_path = STATE / 'vst-config.json'
     private_write(vst_config_path, json.dumps(vst_config, indent=2) + '\n')
     for service in services.values():
@@ -733,16 +741,18 @@ def main():
     parser.add_argument('--detector', action=argparse.BooleanOptionalAction, dest='detector_enabled', default=None, help='Enable the single-source Spark detection/tracking worker; render preserves the saved mode when omitted')
     parser.add_argument('--adaptive-evs', action=argparse.BooleanOptionalAction, default=None, help='Enable EVS++ only with a separately staged compatible 3.3 RT-VLM image')
     parser.add_argument('--rtvi-vlm-image', help='Explicit compatible RT-VLM image; omit to preserve the saved selection')
+    parser.add_argument('--vios-streamprocessing-image', help='Reviewed Spark source-fixed VIOS image; omit to preserve the saved selection, or use an empty string to restore cached 3.2.1')
     parser.add_argument('--demo-profile', choices=['all', 'clips'], help='all retains live analytics; clips omits live alert candidates and keeps the CPU embedding relay needed for search')
     args = parser.parse_args()
     if args.command == 'render':
         if not args.host_ip:
             parser.error('render requires --host-ip <Spark LAN IPv4>')
         render(args.host_ip, args.data_dir, args.gateway, args.npm_registry, args.reserve_gib, args.cached_models, args.detector_enabled,
-               args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile)
+               args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile, args.vios_streamprocessing_image)
     elif any(value is not None for value in (args.reserve_gib, args.cached_models, args.detector_enabled,
-                                             args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile)):
-        parser.error('--reserve-gib, --cached-models and --detector/--no-detector apply to render; restart the guard after changing its reserve')
+                                             args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile,
+                                             args.vios_streamprocessing_image)):
+        parser.error('Runtime configuration flags apply only to render; restart the guard after changing its reserve')
     elif args.command == 'stop':
         run(compose('stop'))
         import history_metadata
