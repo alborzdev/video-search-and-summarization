@@ -98,6 +98,7 @@ public:
 
     [[nodiscard]] bool start() override;
     void stop() override;
+    void onLastFrame() override;
     void sendEOS() override;
     [[nodiscard]] bool hasError() const override;
 

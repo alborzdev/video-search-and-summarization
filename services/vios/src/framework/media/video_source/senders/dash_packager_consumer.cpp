@@ -550,9 +550,22 @@ void DashPackagerConsumer::stop()
     }
 }
 
+void DashPackagerConsumer::onLastFrame()
+{
+    // Recorded decoders finish through this callback, not sendEOS(). Flush the
+    // last fragment while the viewer still owns its files; stop() removes them.
+    sendEOS();
+}
+
 void DashPackagerConsumer::sendEOS()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
+    // An empty source has no negotiated caps. As in stop(), do not ask the
+    // muxer to finalize an initialization segment it cannot describe.
+    if (m_videoTimeline.framesPushed == 0 && m_audioTimeline.framesPushed == 0)
+    {
+        return;
+    }
     if (m_videoAppsrc != nullptr)
     {
         gst_app_src_end_of_stream(GST_APP_SRC(m_videoAppsrc));
