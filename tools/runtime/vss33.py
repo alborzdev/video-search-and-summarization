@@ -271,12 +271,18 @@ def reconcile(graph, root, hardware, options, detector_enabled=None):
     # Local embedding continues using the pinned model/dimension and cache.
     services['rtvi-embed'].pop('build', None)
     services['rtvi-embed']['image'] = 'vss-spark-rtvi-embed:source' if hardware == 'DGX-SPARK' else 'vss-thor-rtvi-embed:source'
+    # Cached 3.2.1 Embed reads KAFKA_TOPIC, while 3.3 uses MESSAGE_BUS_TOPIC.
+    # Keep both contracts explicit so completed ingestion reaches search rather
+    # than silently publishing vectors to the default caption topic.
     services['rtvi-embed'].setdefault('environment', {}).update(
-        MESSAGE_BUS='kafka', MESSAGE_BUS_TOPIC='mdx-embed', KAFKA_ENABLED='true')
+        MESSAGE_BUS='kafka', MESSAGE_BUS_TOPIC='mdx-embed',
+        KAFKA_TOPIC='mdx-embed', KAFKA_ENABLED='true')
     broker = services['kafka']['environment']['KAFKA_ADVERTISED_LISTENERS'].split('EXTERNAL://')[-1]
     for name in ('rtvi-embed', 'rtvi-vlm'):
         services[name].setdefault('environment', {})['KAFKA_BOOTSTRAP_SERVERS'] = broker
     if options['demo_profile'] == 'clips':
-        for name in ('vss-behavior-analytics-thor-candidates', 'vss-search-analytics-2d-fusion'):
-            services.pop(name, None)
+        # Search analytics also relays mdx-embed to mdx-embed-filtered, which is
+        # the Logstash input for recorded-video search. It remains required
+        # without live CV; only the live alert candidate consumer is optional.
+        services.pop('vss-behavior-analytics-thor-candidates', None)
     return graph

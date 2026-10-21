@@ -27,7 +27,8 @@ while retaining the selected engine. The UI reports the configured engine and
 EVS choice; inference validation is separate. Thor's pinned MPS launcher must
 be reviewed against a new image before that engine is qualified on Thor.
 
-`--demo-profile clips` omits the two live CV analytics consumers. Combine it
+`--demo-profile clips` omits the live alert-candidate consumer while retaining
+the CPU search consumer that forwards embeddings to the indexed topic. Combine it
 with `--no-detector` when testing only uploaded clips; `--demo-profile all`
 restores the shared live analytics roles. These render flags never start
 services or change the saved reserve, model or KV-cache budgets.

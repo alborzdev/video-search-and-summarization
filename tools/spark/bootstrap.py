@@ -733,7 +733,7 @@ def main():
     parser.add_argument('--detector', action=argparse.BooleanOptionalAction, dest='detector_enabled', default=None, help='Enable the single-source Spark detection/tracking worker; render preserves the saved mode when omitted')
     parser.add_argument('--adaptive-evs', action=argparse.BooleanOptionalAction, default=None, help='Enable EVS++ only with a separately staged compatible 3.3 RT-VLM image')
     parser.add_argument('--rtvi-vlm-image', help='Explicit compatible RT-VLM image; omit to preserve the saved selection')
-    parser.add_argument('--demo-profile', choices=['all', 'clips'], help='all retains live analytics; clips omits the two live CV analytics consumers')
+    parser.add_argument('--demo-profile', choices=['all', 'clips'], help='all retains live analytics; clips omits live alert candidates and keeps the CPU embedding relay needed for search')
     args = parser.parse_args()
     if args.command == 'render':
         if not args.host_ip:

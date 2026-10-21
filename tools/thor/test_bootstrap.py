@@ -532,6 +532,8 @@ class ThorBootstrapTest(unittest.TestCase):
             self.assertEqual(services['rtvi-vlm']['image'], 'vss-thor-rtvi-vlm:source')
             self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
             self.assertEqual(services['rtvi-embed']['image'], 'vss-thor-rtvi-embed:source')
+            self.assertEqual(services['rtvi-embed']['environment']['KAFKA_TOPIC'], 'mdx-embed')
+            self.assertEqual(services['rtvi-embed']['environment']['MESSAGE_BUS_TOPIC'], 'mdx-embed')
             self.assertEqual(services['rtvi-vlm']['environment']['VLLM_KV_CACHE_MEMORY_BYTES'], '3221225472')
             self.assertEqual(services['rtvi-vlm']['command'], ['python3', '/opt/thor/cosmos-launcher.py'])
             self.assertTrue(any(m['target'] == '/opt/thor/cosmos-launcher.py'
