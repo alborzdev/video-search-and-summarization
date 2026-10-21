@@ -218,6 +218,7 @@ private:
 
     static std::string createStreamToken(const std::string& streamId);
     std::shared_ptr<nv_vms::StreamInfo> findStream(const std::string& streamId) const;
+    std::string findSensorType(const std::string& streamId) const;
     void reaperLoop();
     void destroySession(std::shared_ptr<Session> session);
 

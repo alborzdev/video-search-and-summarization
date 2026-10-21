@@ -408,6 +408,21 @@ std::shared_ptr<nv_vms::StreamInfo> DashSessionManager::findStream(const std::st
     return nullptr;
 }
 
+std::string DashSessionManager::findSensorType(const std::string& streamId) const
+{
+    std::shared_ptr<nv_vms::DeviceManager> deviceManager;
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+        deviceManager = m_deviceManager.lock();
+    }
+    if (!deviceManager)
+    {
+        return {};
+    }
+    const auto sensor = deviceManager->searchSensor(streamId);
+    return sensor ? sensor->type : std::string{};
+}
+
 std::string DashSessionManager::createStreamToken(const std::string& streamId)
 {
     std::string prefix;
@@ -1025,6 +1040,9 @@ DashStartResult DashSessionManager::startReplay(const std::string& streamId,
     opts["source_width"] = stream->settings.encoderValues.resolution.width;
     opts["source_height"] = stream->settings.encoderValues.resolution.height;
     opts["peerid"] = session->streamToken;
+    // Uploaded files carry relative PTS; their real sensor type enables the
+    // decoder's file epoch offset. A recorded RTSP source must retain its type.
+    opts["sensor_type"] = findSensorType(streamId);
     opts["startTime"] = startTime;
     if (!endTime.empty())
     {
