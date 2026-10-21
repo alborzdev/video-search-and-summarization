@@ -401,6 +401,7 @@ bool DashPackagerConsumer::start()
     }
     m_state.store(DashPackagerState::Starting);
     m_hasError.store(false);
+    m_eosComplete.store(false);
     {
         std::lock_guard<std::mutex> errorLock(m_errorMutex);
         m_lastError.clear();
@@ -1187,6 +1188,11 @@ DashPackagerState DashPackagerConsumer::state() const
     return m_state.load();
 }
 
+bool DashPackagerConsumer::finalized() const
+{
+    return m_eosComplete.load() && !m_hasError.load();
+}
+
 bool DashPackagerConsumer::audioEnabled() const
 {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -1355,7 +1361,11 @@ void DashPackagerConsumer::setFailure(const std::string& message)
 GstBusSyncReply DashPackagerConsumer::busSyncHandler(GstBus* /*bus*/, GstMessage* message, gpointer userData)
 {
     auto* self = static_cast<DashPackagerConsumer*>(userData);
-    if (self != nullptr && GST_MESSAGE_TYPE(message) == GST_MESSAGE_ERROR)
+    if (self != nullptr && GST_MESSAGE_TYPE(message) == GST_MESSAGE_EOS)
+    {
+        self->m_eosComplete.store(true);
+    }
+    else if (self != nullptr && GST_MESSAGE_TYPE(message) == GST_MESSAGE_ERROR)
     {
         GError* error = nullptr;
         gchar* debug = nullptr;

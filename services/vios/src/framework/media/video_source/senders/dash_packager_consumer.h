@@ -103,6 +103,9 @@ public:
     [[nodiscard]] bool hasError() const override;
 
     [[nodiscard]] DashPackagerState state() const;
+    // Downstream bus EOS proves every accepted frame and its final fragment
+    // have drained; merely sending EOS to appsrc does not prove completion.
+    [[nodiscard]] bool finalized() const;
     [[nodiscard]] bool audioEnabled() const;
 
     /* The segment length this session publishes at, so the pruner can keep a
@@ -203,6 +206,7 @@ private:
 
     std::atomic<DashPackagerState> m_state{DashPackagerState::Stopped};
     std::atomic<bool> m_hasError{false};
+    std::atomic<bool> m_eosComplete{false};
     // Epoch milliseconds at which the newest frame was published; zero until a
     // frame has been.
     std::atomic<int64_t> m_lastFrameEpochMs{0};

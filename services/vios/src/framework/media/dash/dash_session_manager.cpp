@@ -1455,6 +1455,7 @@ DashAssetResult DashSessionManager::resolveAsset(const std::string& streamToken,
     session->lastActivity = std::chrono::steady_clock::now();
     result.valid = true;
     result.replay = session->replay;
+    result.finished = session->replay && session->packager->finalized();
     result.path = session->packager->manifestPath().parent_path() / fileName;
     if (result.path.extension() == ".mpd")
     {
@@ -1535,22 +1536,23 @@ DashAssetResult DashSessionManager::resolveAsset(const std::string& streamToken,
             /* A recording can be shorter than the preroll asks for - a twelve
              * second clip seeked six seconds in has six seconds left, and
              * waiting for eight of them waits forever, which the viewer sees as
-             * a seek that failed. There is no end-of-stream signal to consult,
-             * but there is a simpler one: a live source keeps writing and a
-             * recording played to its end stops, so media that has not grown
-             * for a few seconds is all there is ever going to be. */
+             * a seek that failed. Downstream EOS proves a recording is done;
+             * retain the existing idle fallback for producers that do not
+             * forward that signal. Only acknowledged EOS lets the manifest
+             * expose the final fragment and declare a finite duration. */
             constexpr double kSourceIdleSeconds = 3.0;
             const bool enoughMedia = published.seconds >= required;
             const bool sourceFinished = published.fragments >= 1
-                                        && published.secondsSinceNewestWrite >= kSourceIdleSeconds;
+                                        && (result.finished
+                                            || published.secondsSinceNewestWrite >= kSourceIdleSeconds);
             session->prerollComplete =
                 (enoughMedia && published.fragments >= neededFragments) || sourceFinished;
             if (sourceFinished && !enoughMedia)
             {
                 LOG(info) << "DASH publishing a short recording for " << session->streamToken
                           << ": " << published.seconds << " s in " << published.fragments
-                          << " fragments, and the source stopped writing "
-                          << published.secondsSinceNewestWrite << " s ago" << endl;
+                          << " fragments, finalized=" << result.finished
+                          << ", newest fragment age=" << published.secondsSinceNewestWrite << " s" << endl;
             }
             result.starting = !session->prerollComplete;
             if (session->prerollComplete)

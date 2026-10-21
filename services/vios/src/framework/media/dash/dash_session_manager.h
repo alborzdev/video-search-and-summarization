@@ -92,6 +92,9 @@ struct DashAssetResult
     // distance is buffer the player can absorb jitter from, and it costs only
     // latency nobody is watching for.
     bool replay = false;
+    // Replay only: the downstream packager has acknowledged EOS, so its last
+    // fragment is closed even though there will never be a successor file.
+    bool finished = false;
     std::filesystem::path path;
     std::string mimeType;
 };

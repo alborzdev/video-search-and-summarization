@@ -205,9 +205,15 @@ public:
 
     // Measures anything not seen before and returns every known segment.  Only
     // segments the muxer has finished are considered: a segment is complete
-    // once its successor exists, which is when the muxer closed it.
-    std::map<uint64_t, uint64_t> refresh(const std::filesystem::path& directory)
+    // once its successor exists, or downstream EOS proves the final replay
+    // fragment has closed. Never infer that from an idle writer or appsrc EOS.
+    std::map<uint64_t, uint64_t> refresh(const std::filesystem::path& directory,
+                                       bool finalized = false, bool* finalFragmentReady = nullptr)
     {
+        if (finalFragmentReady != nullptr)
+        {
+            *finalFragmentReady = false;
+        }
         std::set<uint64_t> present;
         std::error_code ec;
         for (const auto& entry : std::filesystem::directory_iterator(directory, ec))
@@ -259,7 +265,7 @@ public:
         }
         for (const uint64_t number : present)
         {
-            if (known.count(number) != 0 || present.count(number + 1) == 0)
+            if (known.count(number) != 0 || (!finalized && present.count(number + 1) == 0))
             {
                 continue;
             }
@@ -273,6 +279,12 @@ public:
             {
                 known[number] = ticks;
             }
+        }
+        // EOS is permission to inspect the last file, not permission to hide a
+        // truncated/unreadable tail behind the sum of older valid fragments.
+        if (finalFragmentReady != nullptr && finalized && !ec && !present.empty())
+        {
+            *finalFragmentReady = known.count(*present.rbegin()) != 0;
         }
         return known;
     }
@@ -813,25 +825,27 @@ void addUtcTiming(std::string& manifest)
 // a player is entitled to believe the listing: it then treats the whole session
 // as seekable and may begin playback at the far end of it, which leaves it as
 // far behind live as the session is old.
-void applyMeasuredSegmentTimeline(std::string& manifest, const std::filesystem::path& directory,
-                                  uint32_t timescale, uint64_t windowTicks)
+uint64_t applyMeasuredSegmentTimeline(std::string& manifest, const std::filesystem::path& directory,
+                                     uint32_t timescale, uint64_t windowTicks,
+                                     bool finalized = false, bool* finalFragmentReady = nullptr)
 {
-    const std::map<uint64_t, uint64_t> segments = SegmentDurations::instance().refresh(directory);
+    const std::map<uint64_t, uint64_t> segments =
+        SegmentDurations::instance().refresh(directory, finalized, finalFragmentReady);
     if (segments.empty())
     {
-        return;
+        return 0;
     }
 
     constexpr const char* templateTag = "<SegmentTemplate ";
     const size_t position = manifest.find(templateTag);
     if (position == std::string::npos)
     {
-        return;
+        return 0;
     }
     const size_t close = manifest.find("/>", position);
     if (close == std::string::npos)
     {
-        return;
+        return 0;
     }
 
     std::string tag = manifest.substr(position, close - position);
@@ -930,6 +944,7 @@ void applyMeasuredSegmentTimeline(std::string& manifest, const std::filesystem::
              << "</SegmentTimeline>\n</SegmentTemplate>";
 
     manifest.replace(position, close - position + 2, timeline.str());
+    return total;
 }
 
 
@@ -1012,8 +1027,69 @@ void setAvailabilityTimeOffset(std::string& manifest, int seconds)
     }
 }
 
+// Set or remove one attribute within a single opening tag. A completed replay
+// must not retain the availability/delay rules of an unbounded live stream.
+void setTagAttribute(std::string& manifest, size_t begin, const char* attribute,
+                     const std::string& value)
+{
+    const size_t end = manifest.find('>', begin);
+    if (end == std::string::npos)
+    {
+        return;
+    }
+    const std::string key = std::string(attribute) + "=\"";
+    const size_t position = manifest.find(key, begin);
+    if (position == std::string::npos || position >= end)
+    {
+        if (!value.empty())
+        {
+            manifest.insert(end, " " + key + value + '"');
+        }
+        return;
+    }
+    const size_t valueBegin = position + key.size();
+    const size_t valueEnd = manifest.find('"', valueBegin);
+    if (valueEnd == std::string::npos || valueEnd >= end)
+    {
+        return;
+    }
+    if (value.empty())
+    {
+        manifest.erase(position, valueEnd - position + 1);
+    }
+    else
+    {
+        manifest.replace(valueBegin, valueEnd - valueBegin, value);
+    }
+}
+
+void finalizeReplayManifest(std::string& manifest, uint64_t ticks, uint32_t timescale)
+{
+    const size_t mpd = manifest.find("<MPD");
+    if (mpd == std::string::npos || ticks == 0 || timescale == 0)
+    {
+        return;
+    }
+    std::ostringstream duration;
+    duration << "PT" << std::fixed << std::setprecision(6)
+             << static_cast<long double>(ticks) / timescale << 'S';
+    setTagAttribute(manifest, mpd, "type", "static");
+    setTagAttribute(manifest, mpd, "mediaPresentationDuration", duration.str());
+    for (const char* attribute : {"availabilityStartTime", "availabilityEndTime", "publishTime",
+                                  "minimumUpdatePeriod", "timeShiftBufferDepth", "suggestedPresentationDelay"})
+    {
+        setTagAttribute(manifest, mpd, attribute, "");
+    }
+    const size_t period = manifest.find("<Period");
+    if (period != std::string::npos)
+    {
+        setTagAttribute(manifest, period, "start", "PT0S");
+        setTagAttribute(manifest, period, "duration", duration.str());
+    }
+}
+
 void normalizeLiveManifest(std::string& manifest, const std::filesystem::path& directory,
-                           bool replay)
+                           bool replay, bool finalized = false)
 {
     // dashsink writes self-initializing fMP4 segments but omits SegmentTemplate@initialization.
     // dash.js requires that attribute, so expose segment 1 as the initialization segment and
@@ -1052,8 +1128,15 @@ void normalizeLiveManifest(std::string& manifest, const std::filesystem::path& d
     // its buffer.  Keep this a dynamic MPD, but publish its measured sliding
     // timeline so every completed live fragment has its real duration.
     const uint32_t timescale = mediaTimescale(directory / "video_0_1.mp4");
-    applyMeasuredSegmentTimeline(manifest, directory, timescale,
-                                 replay ? 0 : static_cast<uint64_t>(kDashTimeShiftBufferDepthSec) * timescale);
+    bool finalFragmentReady = false;
+    const uint64_t ticks = applyMeasuredSegmentTimeline(manifest, directory, timescale,
+        replay ? 0 : static_cast<uint64_t>(kDashTimeShiftBufferDepthSec) * timescale,
+        replay && finalized, &finalFragmentReady);
+    if (replay && finalized && finalFragmentReady && ticks > 0)
+    {
+        finalizeReplayManifest(manifest, ticks, timescale);
+        return;
+    }
 
     // dashsink emits a valid dynamic MPD for live sessions.  Do not add a
     // finite/static duration to it: that makes dash.js prefetch the entire
@@ -1134,7 +1217,7 @@ bool sendManifest(struct mg_connection* connection, const DashAssetResult& asset
     {
         return false;
     }
-    normalizeLiveManifest(manifest, asset.path.parent_path(), asset.replay);
+    normalizeLiveManifest(manifest, asset.path.parent_path(), asset.replay, asset.finished);
 #ifdef VST_DASH_DIAG
     // Per-request manifest trace.  An MPD is fetched about once a second per
     // viewer, so this is far too loud to leave on; build with -DVST_DASH_DIAG
