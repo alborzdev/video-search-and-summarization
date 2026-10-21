@@ -9784,7 +9784,8 @@ body:has(.vi-app [role="dialog"][aria-modal="true"]) { overflow: hidden; }
 .vi-world-card-media > .vi-playback-frame,
 .vi-grid-camera-media > .vi-playback-frame { position: absolute; inset: 0; }
 .vi-camera-video-frame .vi-replay-controls { bottom: 14px; }
-.vi-camera-video-frame .vi-replay-controls > button { color: #f4f7f7; }
+.vi-camera-video-frame .vi-replay-controls > button,
+.vi-demo-media .vi-replay-controls > button { color: #f4f7f7; }
 .vi-playback-selector { position: absolute; z-index: 8; top: 10px; right: 10px; display: flex; align-items: center; gap: 6px; padding: 5px 7px; border-radius: 7px; color: #fff; background: #071012e8; font-size: 11px; }
 .vi-playback-selector select { max-width: 205px; border: 1px solid #ffffff55; border-radius: 4px; padding: 3px; color: #fff; background: #152626; font: inherit; }
 .vi-playback-fallback { position: absolute; z-index: 8; left: 10px; right: 10px; top: 48px; margin: 0; border-radius: 6px; padding: 7px 9px; background: #342b12ee; color: #fff4c5; font-size: 12px; }
