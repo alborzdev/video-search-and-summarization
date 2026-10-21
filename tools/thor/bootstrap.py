@@ -85,6 +85,14 @@ def prepare_build_contexts(services):
     """
     for name in ('alert-bridge', 'lvs-server'):
         build = services[name]['build']
+        if build.get('dockerfile') == 'deploy/docker/thor-local/Dockerfile.alert33':
+            # The 3.3 derivative's Dockerfile-specific allowlist already
+            # excludes private data and copies the complete source package.
+            continue
+        if name == 'alert-bridge' and Path(build.get('context', ROOT)) == ROOT / 'services/alert':
+            # The complete 3.3 image has a narrow context already; its source
+            # layout and dependency build replace the old literal-COPY shim.
+            continue
         dockerfile = Path(build['dockerfile'])
         context = STATE / 'build-contexts' / name
         if context.is_symlink():
@@ -151,8 +159,11 @@ def doctor():
           'Application and driver compatibility still require runtime tests.')
 
 
-def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detector_enabled=None, reserve_gib=None):
+def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detector_enabled=None, reserve_gib=None,
+           adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None):
     saved = settings() if (STATE / 'settings.json').exists() else {}
+    options = shared.vss33.runtime_options(saved, adaptive_evs, rtvi_vlm_image, demo_profile,
+                                         hardware='AGX-THOR')
     reserve = memory_reserve() if reserve_gib is None else shared.validate_reserve(reserve_gib)
     host_ip = host_ip or saved.get('host_ip', '127.0.0.1')
     gateway = gateway or saved.get('gateway', '172.17.0.1')
@@ -171,7 +182,7 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
     if not graph_password.exists():
         shared.private_write(graph_password, secrets.token_hex(24))
     values = dict(
-        HARDWARE_PROFILE='AGX-THOR', COMPOSE_PROFILES='bp_developer_thor_full_2d',
+        HARDWARE_PROFILE='AGX-THOR', COMPOSE_PROFILES=shared.vss33.PROFILE,
         COMPOSE_PROJECT_NAME=PROJECT, VSS_APPS_DIR=str(ROOT / 'deploy/docker'), VSS_REPO_ROOT=str(ROOT),
         VSS_DATA_DIR=str(data), MODEL_ROOT_DIR=str(data / 'models'),
         HOST_IP=host_ip, EXTERNAL_IP=host_ip, THOR_LOCAL_MODEL_BIND_HOST=gateway,
@@ -202,9 +213,10 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
             template += '\n' + line + '\n'
     env_path = STATE / 'generated.env'
     shared.private_write(env_path, template)
-    graph = json.loads(run(['docker', 'compose', '--env-file', env_path,
-        '-f', ROOT / 'deploy/docker/compose.yml', '-f', ROOT / 'deploy/docker/thor-local/compose.yml',
+    graph = json.loads(run(['docker', 'compose', '--env-file', ROOT / 'deploy/docker/containers.env', '--env-file', env_path,
+        '-f', ROOT / 'deploy/docker/edge-demo/compose.yml', '-f', ROOT / 'deploy/docker/thor-local/compose.yml',
         'config', '--format', 'json'], env=clean_env(), capture_output=True, text=True).stdout)
+    shared.vss33.reconcile(graph, ROOT, 'AGX-THOR', options, detector_enabled=detector_enabled)
     services = graph['services']
     services['evidence-clip']['build'].setdefault('args', {})['PYTHON_BASE_IMAGE'] = \
         'python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c'
@@ -379,13 +391,17 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
     ui['volumes'] += [
         {'type': 'bind', 'source': str(ROOT / 'services/ui'), 'target': '/workspace'},
         {'type': 'bind', 'source': str(STATE / 'ui-next'),
-         'target': '/workspace/apps/nv-metropolis-bp-vss-ui/.next'}]
+         'target': '/workspace/apps/nv-metropolis-bp-vss-ui/.next'},
+        {'type': 'bind', 'source': str(ROOT / 'services/vios/ui/streaming-lib/src/dash'),
+         'target': '/workspace/external/vios-dash', 'read_only': True,
+         'bind': {'create_host_path': False}}]
     for name, service in services.items():
         service.pop('profiles', None)
         service['restart'] = 'no'
         service.get('deploy', {}).pop('restart_policy', None)
         if service.get('build'):
-            service['image'] = f'vss-thor-{name}:source'
+            service['image'] = ('vss-thor-video-analytics-api:source' if name == 'vss-video-analytics-api-fusion'
+                                else f'vss-thor-{name}:source')
         service.setdefault('group_add', []).append(str(os.getgid()))
         for dependency in list(service.get('depends_on', {})):
             if dependency not in services:
@@ -402,7 +418,7 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
     encoded = encoded.replace('$${NGC_API_KEY:-}', '${NGC_API_KEY:-}')
     shared.private_write(STATE / 'compose.json', encoded + '\n')
     shared.private_write(STATE / 'settings.json', json.dumps(dict(host_ip=host_ip, gateway=gateway,
-        data_dir=str(data), reserve_gib=reserve, cached_models=cached_models, detector_enabled=detector_enabled), indent=2))
+        data_dir=str(data), reserve_gib=reserve, cached_models=cached_models, detector_enabled=detector_enabled, **options), indent=2))
     run(compose('config', '--quiet'), env=clean_env())
     print(f'Rendered {len(services)} Thor services. No models or services have been started.')
 
@@ -1230,12 +1246,16 @@ def main():
     parser.add_argument('--reuse-ready', action='store_true', help='Preserve already-ready dependencies during staged startup')
     parser.add_argument('--cached-models', action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument('--detector', action=argparse.BooleanOptionalAction, dest='detector_enabled', default=None)
+    parser.add_argument('--adaptive-evs', action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument('--rtvi-vlm-image')
+    parser.add_argument('--demo-profile', choices=['all', 'clips'])
     parser.add_argument('--stage', choices=['support', 'thor-llm', 'rtvi-embed', 'rtvi-vlm', 'thor-perception', 'app'], default='support')
     args = parser.parse_args()
     if args.action == 'render':
-        render(args.host_ip, args.data_dir, args.gateway, args.cached_models, args.detector_enabled, args.reserve_gib)
-    elif args.reserve_gib is not None:
-        parser.error('--reserve-gib is only supported with render')
+        render(args.host_ip, args.data_dir, args.gateway, args.cached_models, args.detector_enabled, args.reserve_gib,
+               args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile)
+    elif any(value is not None for value in (args.reserve_gib, args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile)):
+        parser.error('Runtime configuration flags are only supported with render')
     elif args.action == 'start':
         startup(args.stage, reuse_ready=args.reuse_ready)
     else:

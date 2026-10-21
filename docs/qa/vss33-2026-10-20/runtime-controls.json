@@ -1,0 +1,1897 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-21T06:31:06.905126+00:00",
+  "scope": "Small diagnostic controls for a known positive conveyor clip, a sampled-negative clip, one JPEG input and synthetic convolution math; no overall accuracy benchmark or sustained/live-ingestion qualification.",
+  "model": {
+    "served_name": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "architecture": "Qwen3VLForConditionalGeneration",
+    "vision_patch": {
+      "in_channels": 3,
+      "out_channels": 1152,
+      "kernel_and_stride": [
+        2,
+        16,
+        16
+      ],
+      "bias": true,
+      "padding": [
+        0,
+        0,
+        0
+      ],
+      "dilation": [
+        1,
+        1,
+        1
+      ],
+      "groups": 1
+    }
+  },
+  "input_clip": {
+    "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+    "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+    "bytes": 2611191,
+    "duration_seconds": 7.534,
+    "ground_truth": {
+      "observation": "A large cardboard box is clearly visible on the conveyor at 7.3 seconds.",
+      "image": "docs/qa/vss33-2026-10-20/actual-validation-clip-final-frame-7.3.png",
+      "image_sha256": "8e6a71db840bac19dfc6594ffd7bf9d06d93ae6f30ec56ace7e74ea4185a9b3a",
+      "exhaustive_temporal_annotation": false
+    }
+  },
+  "interpretation": [
+    "transport_pass describes API/SSE completion or acknowledged terminal/storage delivery; it does not mean an answer is correct.",
+    "semantic_pass checks only consistency of the reported box presence with this reviewed positive clip. It does not validate every motion/time claim in an answer.",
+    "The model-generated 3.75 second timestamp is not a sampling receipt. Both direct and inline inputs logged 4 planned/4 decoded endpoint frames ending 7.5 seconds; selected pixel tensors were not captured.",
+    "The identical-question controls with 4 or 8 frames streaming controls do not support an SSE-only explanation for the false empty-scene answers.",
+    "The EVS OFF comparison used the original three broad prompts. Exact any-frame/JSON EVS ON-vs-OFF controls are pending; these records do not establish or rule out an EVS-specific accuracy regression.",
+    "VIA_EVS_TOKEN_BUDGET=1 is the documented per-clip generation trigger, not evidence of a one-token visual retention cap.",
+    "Convolution checks qualify the tested native linear projection math/dispatch, not cuDNN fallback convolution or model answer quality.",
+    "Plain any-frame positive controls returned YES at 4 and 20 requested frames, while JSON positive controls returned NO at the matching 4 and 20 frame counts. The output instructions and json_object request setting change together; the format flag alone is not isolated.",
+    "Post-short-clip-fix JPEG returns HTTP 200 with a nonempty two-token NO in 1.256 s. The empty-completion software regression is resolved for this input, but the model verdict remains incorrect. The original empty-response receipt is retained.",
+    "Archive fixed-frame sampling is honored. A single-variable removal of the overly small total-video pixel override changed this positive binary verdict from rejected to confirmed; the empty control stayed rejected. The predicted 64\u00d7128 cap shrink is CPU source-derived, not a runtime pixel capture. This does not fix or qualify JSON answers.",
+    "After finite-image terminal metadata fix 12b7e2224, the actual rebuilt engine still answered No for the visible-box JPEG in 1.238 s. The 20-frame positive YES (2.482 s) and empty NO (2.555 s) controls matched their labels; all three responses were nonempty HTTP 200 stop completions and their owned EVS sessions closed. This is a remaining single-image semantic limitation, not an unresolved empty-response or terminal-metadata bug."
+  ],
+  "direct_chat": [
+    {
+      "receipt": "work/vss33/vlm-evs-probe.json",
+      "evs_mode": "enabled",
+      "started_at": "2026-10-21T03:53:54.071365+00:00",
+      "endpoint": "/v1/chat/completions",
+      "media_transport": "uploaded_file_id",
+      "parameters": {
+        "temperature": 0,
+        "seed": 42,
+        "max_tokens": 64,
+        "chunk_duration": 0,
+        "chunk_overlap_duration": 0,
+        "num_frames_per_second_or_fixed_frames_chunk": 4,
+        "use_fps_for_chunking": false,
+        "vlm_input_width": 512,
+        "vlm_input_height": 512,
+        "enable_audio": false,
+        "enable_reasoning": false
+      },
+      "system_prompt": null,
+      "response_format": "text",
+      "requests": [
+        {
+          "case": 1,
+          "prompt": "Describe the visible conveyor scene in one short sentence. Mention only objects you can see.",
+          "stream": false,
+          "http_status": 200,
+          "seconds": 4.914,
+          "answer": "A cardboard box moves along a curved blue conveyor belt.",
+          "transport_pass": true,
+          "sse_done": null,
+          "semantic_pass": true,
+          "semantic_check": "Box presence consistent with the reviewed positive clip; other answer claims not exhaustively checked."
+        },
+        {
+          "case": 2,
+          "prompt": "Is a cardboard box visible on the conveyor? Answer YES or NO, then one short reason.",
+          "stream": false,
+          "http_status": 200,
+          "seconds": 11.424,
+          "answer": "Yes. A brown cardboard box appears on the conveyor belt around 3.75 seconds.",
+          "transport_pass": true,
+          "sse_done": null,
+          "semantic_pass": true,
+          "semantic_check": "Box presence consistent with the reviewed positive clip; other answer claims not exhaustively checked."
+        },
+        {
+          "case": 3,
+          "prompt": "Briefly describe the visible objects and whether the conveyor is occupied.",
+          "stream": true,
+          "http_status": 200,
+          "seconds": 2.879,
+          "answer": "The conveyor belt is empty throughout the video segment.",
+          "transport_pass": true,
+          "sse_done": true,
+          "semantic_pass": false,
+          "semantic_check": "False empty-scene assertion contradicts visible box."
+        }
+      ]
+    },
+    {
+      "receipt": "work/vss33/vlm-no-evs-probe.json",
+      "evs_mode": "disabled",
+      "started_at": "2026-10-21T04:14:26.539316+00:00",
+      "endpoint": "/v1/chat/completions",
+      "media_transport": "uploaded_file_id",
+      "parameters": {
+        "temperature": 0,
+        "seed": 42,
+        "max_tokens": 64,
+        "chunk_duration": 0,
+        "chunk_overlap_duration": 0,
+        "num_frames_per_second_or_fixed_frames_chunk": 4,
+        "use_fps_for_chunking": false,
+        "vlm_input_width": 512,
+        "vlm_input_height": 512,
+        "enable_audio": false,
+        "enable_reasoning": false
+      },
+      "system_prompt": null,
+      "response_format": "text",
+      "requests": [
+        {
+          "case": 1,
+          "prompt": "Describe the visible conveyor scene in one short sentence. Mention only objects you can see.",
+          "stream": false,
+          "http_status": 200,
+          "seconds": 2.776,
+          "answer": "A box is moving on a curved conveyor belt.",
+          "transport_pass": true,
+          "sse_done": null,
+          "semantic_pass": true,
+          "semantic_check": "Box presence consistent with the reviewed positive clip; other answer claims not exhaustively checked."
+        },
+        {
+          "case": 2,
+          "prompt": "Is a cardboard box visible on the conveyor? Answer YES or NO, then one short reason.",
+          "stream": false,
+          "http_status": 200,
+          "seconds": 5.556,
+          "answer": "Yes, it appears later in the sequence. A brown cardboard box is seen moving along the conveyor belt towards the end of the clip.",
+          "transport_pass": true,
+          "sse_done": null,
+          "semantic_pass": true,
+          "semantic_check": "Box presence consistent with the reviewed positive clip; other answer claims not exhaustively checked."
+        },
+        {
+          "case": 3,
+          "prompt": "Briefly describe the visible objects and whether the conveyor is occupied.",
+          "stream": true,
+          "http_status": 200,
+          "seconds": 3.064,
+          "answer": "The conveyor belt is empty, with no items present on it.",
+          "transport_pass": true,
+          "sse_done": true,
+          "semantic_pass": false,
+          "semantic_check": "False empty-scene assertion contradicts visible box."
+        }
+      ]
+    }
+  ],
+  "streaming_frame_count_control": {
+    "receipt": "work/vss33/vlm-accuracy-probe.json",
+    "evs_mode": "enabled",
+    "evs_mode_basis": "operator run context; mode not embedded in this compact raw receipt",
+    "endpoint": "/v1/chat/completions",
+    "media_transport": "uploaded_file_id",
+    "prompt": "Briefly describe the visible objects and whether the conveyor is occupied.",
+    "parameters": {
+      "temperature": 0,
+      "seed": 42,
+      "max_tokens": 64,
+      "chunk_duration": 0,
+      "chunk_overlap_duration": 0,
+      "use_fps_for_chunking": false,
+      "vlm_input_width": 512,
+      "vlm_input_height": 512,
+      "enable_audio": false,
+      "enable_reasoning": false
+    },
+    "parameter_provenance": {
+      "path": "work/vss33/vlm_accuracy_probe.py",
+      "sha256": "523cd29a543240b73abf96019da593510172d0f79095908be7e07418225a49c9",
+      "note": "Constant payload fields are preserved in this script; actual frames/stream values and observed responses are retained in the receipt."
+    },
+    "requests": [
+      {
+        "frames": 4,
+        "stream": false,
+        "http_status": 200,
+        "seconds": 3.618,
+        "answer": "The conveyor belt is empty throughout the video segment.",
+        "sse_done": null,
+        "transport_pass": true,
+        "semantic_pass": false,
+        "semantic_check": "False empty-scene assertion contradicts visible box."
+      },
+      {
+        "frames": 4,
+        "stream": true,
+        "http_status": 200,
+        "seconds": 3.143,
+        "answer": "The conveyor belt is empty throughout the video segment.",
+        "sse_done": true,
+        "transport_pass": true,
+        "semantic_pass": false,
+        "semantic_check": "False empty-scene assertion contradicts visible box."
+      },
+      {
+        "frames": 8,
+        "stream": true,
+        "http_status": 200,
+        "seconds": 3.206,
+        "answer": "The conveyor belt is empty throughout the entire sequence.",
+        "sse_done": true,
+        "transport_pass": true,
+        "semantic_pass": false,
+        "semantic_check": "False empty-scene assertion contradicts visible box."
+      },
+      {
+        "frames": 8,
+        "stream": false,
+        "http_status": 200,
+        "seconds": 3.097,
+        "answer": "The conveyor belt is empty throughout the entire sequence.",
+        "sse_done": null,
+        "transport_pass": true,
+        "semantic_pass": false,
+        "semantic_check": "False empty-scene assertion contradicts visible box."
+      }
+    ]
+  },
+  "archive_alert_verification": [
+    {
+      "receipt": "work/vss33/alert-archive-probe.json",
+      "started_at": "2026-10-21T04:28:08.809336+00:00",
+      "evs_mode": "enabled",
+      "evs_mode_basis": "operator run context",
+      "endpoint": "/api/v1/verification/ondemand",
+      "media_transport": "Alert Bridge HTTP download followed by inline video",
+      "parameters": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "max_tokens": 64,
+        "temperature": 0.0,
+        "request_timeout": 30,
+        "num_frames": 4,
+        "enable_sampling": false,
+        "do_resize": true,
+        "min_pixels": 65536,
+        "max_pixels": 262144,
+        "response_format": "json",
+        "json_parser": {
+          "verdict_field": "prediction_answer",
+          "reasoning_fields": [
+            "reasoning"
+          ]
+        }
+      },
+      "system_prompt": "Verify only visible evidence from this archived clip. Return exactly one JSON object with prediction_answer and reasoning.",
+      "prompt": "Does any frame in this video show a cardboard box on the blue conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only JSON with prediction_answer (YES or NO) and reasoning (one concise visible-evidence sentence).",
+      "provider_input_dimensions": "No explicit RTVI width/height fields; processor bounds are min_pixels 65536/max_pixels 262144.",
+      "provider_seed": "Not explicitly sent by Alert Bridge; service default.",
+      "terminal_state": "completed",
+      "processing_outcome": "verified",
+      "verification_response_code": 200,
+      "observed_verdict": "rejected",
+      "reasoning": "The blue conveyor belt is visible throughout the frames, but no cardboard box appears on it during the observed period.",
+      "terminal_job_seconds": 8.777,
+      "probe_total_seconds": 11.45,
+      "sink_delivery": {
+        "transport": "elastic",
+        "outcome": "acknowledged",
+        "index": "mdx-vlm-incidents-2025-01-01",
+        "document_id": "eacfcea9e1c2e65f8698d981f698063896c47d8b",
+        "stored_document_found": true
+      },
+      "transport_pass": true,
+      "semantic_pass": false,
+      "semantic_check": "Parsed rejected/NO contradicts reviewed box presence. processingOutcome=verified means processing succeeded, not that this verdict was correct.",
+      "cleanup": {
+        "owned_category_delete_http_status": 200,
+        "config_preserved": false,
+        "stored_event_retained": true
+      }
+    },
+    {
+      "receipt": "work/vss33/alert-archive-probe-20frames.json",
+      "started_at": "2026-10-21T04:31:52.619603+00:00",
+      "evs_mode": "enabled",
+      "evs_mode_basis": "operator run context",
+      "endpoint": "/api/v1/verification/ondemand",
+      "media_transport": "Alert Bridge HTTP download followed by inline video",
+      "parameters": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "max_tokens": 64,
+        "temperature": 0.0,
+        "request_timeout": 30,
+        "num_frames": 20,
+        "enable_sampling": false,
+        "do_resize": true,
+        "min_pixels": 65536,
+        "max_pixels": 262144,
+        "response_format": "json",
+        "json_parser": {
+          "verdict_field": "prediction_answer",
+          "reasoning_fields": [
+            "reasoning"
+          ]
+        }
+      },
+      "system_prompt": "Verify only visible evidence from this archived clip. Return exactly one JSON object with prediction_answer and reasoning.",
+      "prompt": "Does any frame in this video show a cardboard box on the blue conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only JSON with prediction_answer (YES or NO) and reasoning (one concise visible-evidence sentence).",
+      "provider_input_dimensions": "No explicit RTVI width/height fields; processor bounds are min_pixels 65536/max_pixels 262144.",
+      "provider_seed": "Not explicitly sent by Alert Bridge; service default.",
+      "terminal_state": "completed",
+      "processing_outcome": "verified",
+      "verification_response_code": 200,
+      "observed_verdict": "rejected",
+      "reasoning": "The blue conveyor belt is visible throughout the frames, but no cardboard box appears on it at any point.",
+      "terminal_job_seconds": 7.87,
+      "probe_total_seconds": 8.686,
+      "sink_delivery": {
+        "transport": "elastic",
+        "outcome": "acknowledged",
+        "index": "mdx-vlm-incidents-2025-01-01",
+        "document_id": "fbc3e8a80532868cf431175d2ffbe9ce478a9a78",
+        "stored_document_found": true
+      },
+      "transport_pass": true,
+      "semantic_pass": false,
+      "semantic_check": "Parsed rejected/NO contradicts reviewed box presence. processingOutcome=verified means processing succeeded, not that this verdict was correct.",
+      "cleanup": {
+        "owned_category_delete_http_status": 200,
+        "config_preserved": false,
+        "stored_event_retained": true
+      }
+    },
+    {
+      "receipt": "work/vss33/alert-archive-binary-positive.json",
+      "started_at": "2026-10-21T05:39:23.858970+00:00",
+      "evs_mode": "enabled",
+      "evs_mode_basis": "operator run context",
+      "endpoint": "/api/v1/verification/ondemand",
+      "media_transport": "Alert Bridge HTTP download followed by inline video",
+      "format": "binary",
+      "input_clip_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+      "parameters": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "max_tokens": 64,
+        "temperature": 0.0,
+        "request_timeout": 30,
+        "num_frames": 20,
+        "enable_sampling": false,
+        "do_resize": true,
+        "min_pixels": 65536,
+        "max_pixels": 262144,
+        "response_format": "cosmos-reason"
+      },
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "Does any frame in this video show a cardboard box on the blue conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only YES or NO.",
+      "provider_processor_size_override": {
+        "size": {
+          "shortest_edge": 65536,
+          "longest_edge": 262144
+        }
+      },
+      "provider_input_dimensions": "No explicit RTVI width/height; observed server input config608\u00d7320. See alert-media-contract.json for processor-size semantics and CPU predictions.",
+      "provider_seed": "Not explicitly sent by Alert Bridge; service default.",
+      "terminal_state": "completed",
+      "processing_outcome": "verified",
+      "verification_response_code": 200,
+      "expected_verdict": "confirmed",
+      "observed_verdict": "rejected",
+      "reasoning": "",
+      "terminal_job_seconds": 1.703,
+      "probe_total_seconds": 2.223,
+      "sink_delivery": {
+        "transport": "elastic",
+        "outcome": "acknowledged",
+        "index": "mdx-vlm-incidents-2025-01-01",
+        "document_id": "7da73a1ecec82566a525587655c79358d11116bf",
+        "stored_document_found": true
+      },
+      "transport_pass": true,
+      "semantic_pass": false,
+      "assertions_passed": 17,
+      "assertions_total": 19,
+      "semantic_check": "Box-presence consistency only on the reviewed positive or historical empty fixture. No general accuracy or motion/time claim.",
+      "cleanup": {
+        "owned_category_delete_http_status": 200,
+        "config_preserved": false,
+        "stored_event_retained": true
+      }
+    },
+    {
+      "receipt": "work/vss33/alert-archive-binary-empty.json",
+      "started_at": "2026-10-21T05:40:16.774751+00:00",
+      "evs_mode": "enabled",
+      "evs_mode_basis": "operator run context",
+      "endpoint": "/api/v1/verification/ondemand",
+      "media_transport": "Alert Bridge HTTP download followed by inline video",
+      "format": "binary",
+      "input_clip_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+      "parameters": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "max_tokens": 64,
+        "temperature": 0.0,
+        "request_timeout": 30,
+        "num_frames": 20,
+        "enable_sampling": false,
+        "do_resize": true,
+        "min_pixels": 65536,
+        "max_pixels": 262144,
+        "response_format": "cosmos-reason"
+      },
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "Does any frame in this video show a cardboard box on the blue conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only YES or NO.",
+      "provider_processor_size_override": {
+        "size": {
+          "shortest_edge": 65536,
+          "longest_edge": 262144
+        }
+      },
+      "provider_input_dimensions": "No explicit RTVI width/height; observed server input config608\u00d7320. See alert-media-contract.json for processor-size semantics and CPU predictions.",
+      "provider_seed": "Not explicitly sent by Alert Bridge; service default.",
+      "terminal_state": "completed",
+      "processing_outcome": "verified",
+      "verification_response_code": 200,
+      "expected_verdict": "rejected",
+      "observed_verdict": "rejected",
+      "reasoning": "",
+      "terminal_job_seconds": 2.042,
+      "probe_total_seconds": 3.351,
+      "sink_delivery": {
+        "transport": "elastic",
+        "outcome": "acknowledged",
+        "index": "mdx-vlm-incidents-2025-01-01",
+        "document_id": "3d78e8c86f5212f067b3a44056150ce099a2d5d7",
+        "stored_document_found": true
+      },
+      "transport_pass": true,
+      "semantic_pass": true,
+      "assertions_passed": 19,
+      "assertions_total": 19,
+      "semantic_check": "Box-presence consistency only on the reviewed positive or historical empty fixture. No general accuracy or motion/time claim.",
+      "cleanup": {
+        "owned_category_delete_http_status": 200,
+        "config_preserved": false,
+        "stored_event_retained": true
+      }
+    },
+    {
+      "receipt": "work/vss33/alert-archive-binary-native-budget-positive.json",
+      "started_at": "2026-10-21T05:46:38.233474+00:00",
+      "evs_mode": "enabled",
+      "evs_mode_basis": "operator run context",
+      "endpoint": "/api/v1/verification/ondemand",
+      "media_transport": "Alert Bridge HTTP download followed by inline video",
+      "format": "binary",
+      "input_clip_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+      "parameters": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "max_tokens": 64,
+        "temperature": 0.0,
+        "request_timeout": 30,
+        "num_frames": 20,
+        "enable_sampling": false,
+        "do_resize": false,
+        "min_pixels": 65536,
+        "max_pixels": 262144,
+        "response_format": "cosmos-reason"
+      },
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "Does any frame in this video show a cardboard box on the blue conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only YES or NO.",
+      "provider_processor_size_override": null,
+      "provider_input_dimensions": "No explicit RTVI width/height; observed server input config608\u00d7320. See alert-media-contract.json for processor-size semantics and CPU predictions.",
+      "provider_seed": "Not explicitly sent by Alert Bridge; service default.",
+      "terminal_state": "completed",
+      "processing_outcome": "verified",
+      "verification_response_code": 200,
+      "expected_verdict": "confirmed",
+      "observed_verdict": "confirmed",
+      "reasoning": "",
+      "terminal_job_seconds": 2.336,
+      "probe_total_seconds": 4.099,
+      "sink_delivery": {
+        "transport": "elastic",
+        "outcome": "acknowledged",
+        "index": "mdx-vlm-incidents-2025-01-01",
+        "document_id": "6bf5c48786779c0a6066daa703705eb1108076a4",
+        "stored_document_found": true
+      },
+      "transport_pass": true,
+      "semantic_pass": true,
+      "assertions_passed": 19,
+      "assertions_total": 19,
+      "semantic_check": "Box-presence consistency only on the reviewed positive or historical empty fixture. No general accuracy or motion/time claim.",
+      "cleanup": {
+        "owned_category_delete_http_status": 200,
+        "config_preserved": false,
+        "stored_event_retained": true
+      }
+    },
+    {
+      "receipt": "work/vss33/alert-archive-binary-native-budget-empty.json",
+      "started_at": "2026-10-21T05:46:59.931951+00:00",
+      "evs_mode": "enabled",
+      "evs_mode_basis": "operator run context",
+      "endpoint": "/api/v1/verification/ondemand",
+      "media_transport": "Alert Bridge HTTP download followed by inline video",
+      "format": "binary",
+      "input_clip_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+      "parameters": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "max_tokens": 64,
+        "temperature": 0.0,
+        "request_timeout": 30,
+        "num_frames": 20,
+        "enable_sampling": false,
+        "do_resize": false,
+        "min_pixels": 65536,
+        "max_pixels": 262144,
+        "response_format": "cosmos-reason"
+      },
+      "system_prompt": "You are a helpful assistant.",
+      "prompt": "Does any frame in this video show a cardboard box on the blue conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only YES or NO.",
+      "provider_processor_size_override": null,
+      "provider_input_dimensions": "No explicit RTVI width/height; observed server input config608\u00d7320. See alert-media-contract.json for processor-size semantics and CPU predictions.",
+      "provider_seed": "Not explicitly sent by Alert Bridge; service default.",
+      "terminal_state": "completed",
+      "processing_outcome": "verified",
+      "verification_response_code": 200,
+      "expected_verdict": "rejected",
+      "observed_verdict": "rejected",
+      "reasoning": "",
+      "terminal_job_seconds": 2.627,
+      "probe_total_seconds": 3.42,
+      "sink_delivery": {
+        "transport": "elastic",
+        "outcome": "acknowledged",
+        "index": "mdx-vlm-incidents-2025-01-01",
+        "document_id": "2d5ff82e834e51b3b0f4500e241c12f7f17c2a67",
+        "stored_document_found": true
+      },
+      "transport_pass": true,
+      "semantic_pass": true,
+      "assertions_passed": 19,
+      "assertions_total": 19,
+      "semantic_check": "Box-presence consistency only on the reviewed positive or historical empty fixture. No general accuracy or motion/time claim.",
+      "cleanup": {
+        "owned_category_delete_http_status": 200,
+        "config_preserved": false,
+        "stored_event_retained": true
+      }
+    }
+  ],
+  "native_conv3d": [
+    {
+      "receipt": "work/vss33/native-conv-random-cpu.json",
+      "torch": "2.11.0a0+a6c236b9fd.nv26.03.46836102",
+      "device": "cpu",
+      "reference_device": "cpu",
+      "official_dispatch_exercised": false,
+      "installed_conv_source_sha256": "5151c6947141a39eab2f314aedb384db65a40c40785b7c69309a78a58b713a37",
+      "tolerances": {
+        "fp32_rtol": 0.0001,
+        "fp32_atol": 0.0001,
+        "bf16_relative_l2_less_than": 0.01,
+        "bf16_max_absolute_less_than": "0.02*max(1,reference_absolute_max)"
+      },
+      "qualification": "Installed class AST and numeric methods unchanged; only registration/dispatch shell replaced. Full vLLM dispatch not exercised.",
+      "rows": [
+        {
+          "case": "asymmetric-multiple-patches-bias",
+          "dtype": "torch.float32",
+          "shape": [
+            2,
+            3,
+            4,
+            9,
+            20
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            2,
+            5,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 0.0,
+          "relative_l2": 0.0,
+          "passed": true
+        },
+        {
+          "case": "asymmetric-multiple-patches-bias",
+          "dtype": "torch.bfloat16",
+          "shape": [
+            2,
+            3,
+            4,
+            9,
+            20
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            2,
+            5,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 0.0019268393516540527,
+          "relative_l2": 0.0015967176295816898,
+          "passed": true
+        },
+        {
+          "case": "asymmetric-trailing-partial-patches",
+          "dtype": "torch.float32",
+          "shape": [
+            3,
+            2,
+            5,
+            10,
+            21
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": false,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            7,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 0.0,
+          "relative_l2": 0.0,
+          "passed": true
+        },
+        {
+          "case": "asymmetric-trailing-partial-patches",
+          "dtype": "torch.bfloat16",
+          "shape": [
+            3,
+            2,
+            5,
+            10,
+            21
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": false,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            7,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 0.001945197582244873,
+          "relative_l2": 0.0016783789033070207,
+          "passed": true
+        },
+        {
+          "case": "actual-cosmos-patch-geometry-small-batch",
+          "dtype": "torch.float32",
+          "shape": [
+            3,
+            3,
+            2,
+            16,
+            16
+          ],
+          "kernel": [
+            2,
+            16,
+            16
+          ],
+          "stride": [
+            2,
+            16,
+            16
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            1152,
+            1,
+            1,
+            1
+          ],
+          "max_absolute_error": 3.5762786865234375e-06,
+          "relative_l2": 5.499778126250021e-07,
+          "passed": true
+        },
+        {
+          "case": "actual-cosmos-patch-geometry-small-batch",
+          "dtype": "torch.bfloat16",
+          "shape": [
+            3,
+            3,
+            2,
+            16,
+            16
+          ],
+          "kernel": [
+            2,
+            16,
+            16
+          ],
+          "stride": [
+            2,
+            16,
+            16
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            1152,
+            1,
+            1,
+            1
+          ],
+          "max_absolute_error": 0.008898258209228516,
+          "relative_l2": 0.0016400968888774514,
+          "passed": true
+        },
+        {
+          "case": "noneligible-overlap-retains-convolution",
+          "dtype": "torch.float32",
+          "shape": [
+            2,
+            3,
+            4,
+            7,
+            9
+          ],
+          "kernel": [
+            2,
+            3,
+            2
+          ],
+          "stride": [
+            1,
+            2,
+            1
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": false,
+          "output_shape": [
+            2,
+            5,
+            3,
+            3,
+            8
+          ],
+          "max_absolute_error": 0.0,
+          "relative_l2": 0.0,
+          "passed": true
+        },
+        {
+          "case": "noneligible-groups-retains-convolution",
+          "dtype": "torch.float32",
+          "shape": [
+            2,
+            4,
+            4,
+            6,
+            9
+          ],
+          "kernel": [
+            2,
+            2,
+            3
+          ],
+          "stride": [
+            2,
+            2,
+            3
+          ],
+          "groups": 2,
+          "bias": true,
+          "enable_linear": false,
+          "output_shape": [
+            2,
+            6,
+            2,
+            3,
+            3
+          ],
+          "max_absolute_error": 0.0,
+          "relative_l2": 0.0,
+          "passed": true
+        }
+      ],
+      "numeric_pass": true,
+      "semantic_pass": null
+    },
+    {
+      "receipt": "work/vss33/native-conv-random-cuda.json",
+      "torch": "2.11.0a0+a6c236b9fd.nv26.03.46836102",
+      "device": "cuda",
+      "reference_device": "cpu",
+      "official_dispatch_exercised": true,
+      "installed_conv_source_sha256": "5151c6947141a39eab2f314aedb384db65a40c40785b7c69309a78a58b713a37",
+      "tolerances": {
+        "fp32_rtol": 0.0001,
+        "fp32_atol": 0.0001,
+        "bf16_relative_l2_less_than": 0.01,
+        "bf16_max_absolute_less_than": "0.02*max(1,reference_absolute_max)"
+      },
+      "qualification": "Real CustomOp forward_native dispatch on CUDA; only eligible native-linear layers selected.",
+      "rows": [
+        {
+          "case": "asymmetric-multiple-patches-bias",
+          "dtype": "torch.float32",
+          "shape": [
+            2,
+            3,
+            4,
+            9,
+            20
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            2,
+            5,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 1.7881393432617188e-07,
+          "relative_l2": 1.527299247072733e-07,
+          "passed": true
+        },
+        {
+          "case": "asymmetric-multiple-patches-bias",
+          "dtype": "torch.bfloat16",
+          "shape": [
+            2,
+            3,
+            4,
+            9,
+            20
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            2,
+            5,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 0.0019268393516540527,
+          "relative_l2": 0.0015967176295816898,
+          "passed": true
+        },
+        {
+          "case": "asymmetric-trailing-partial-patches",
+          "dtype": "torch.float32",
+          "shape": [
+            3,
+            2,
+            5,
+            10,
+            21
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": false,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            7,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 1.7881393432617188e-07,
+          "relative_l2": 1.4452005814291624e-07,
+          "passed": true
+        },
+        {
+          "case": "asymmetric-trailing-partial-patches",
+          "dtype": "torch.bfloat16",
+          "shape": [
+            3,
+            2,
+            5,
+            10,
+            21
+          ],
+          "kernel": [
+            2,
+            3,
+            4
+          ],
+          "stride": [
+            2,
+            3,
+            4
+          ],
+          "groups": 1,
+          "bias": false,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            7,
+            2,
+            3,
+            5
+          ],
+          "max_absolute_error": 0.001945197582244873,
+          "relative_l2": 0.001678378670476377,
+          "passed": true
+        },
+        {
+          "case": "actual-cosmos-patch-geometry-small-batch",
+          "dtype": "torch.float32",
+          "shape": [
+            3,
+            3,
+            2,
+            16,
+            16
+          ],
+          "kernel": [
+            2,
+            16,
+            16
+          ],
+          "stride": [
+            2,
+            16,
+            16
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            1152,
+            1,
+            1,
+            1
+          ],
+          "max_absolute_error": 2.205371856689453e-06,
+          "relative_l2": 3.834793744772469e-07,
+          "passed": true
+        },
+        {
+          "case": "actual-cosmos-patch-geometry-small-batch",
+          "dtype": "torch.bfloat16",
+          "shape": [
+            3,
+            3,
+            2,
+            16,
+            16
+          ],
+          "kernel": [
+            2,
+            16,
+            16
+          ],
+          "stride": [
+            2,
+            16,
+            16
+          ],
+          "groups": 1,
+          "bias": true,
+          "enable_linear": true,
+          "output_shape": [
+            3,
+            1152,
+            1,
+            1,
+            1
+          ],
+          "max_absolute_error": 0.008898258209228516,
+          "relative_l2": 0.0016400970052927732,
+          "passed": true
+        }
+      ],
+      "numeric_pass": true,
+      "semantic_pass": null
+    }
+  ],
+  "accuracy_diagnostic_cases": {
+    "status": "partially_observed_with_failures_and_pending_controls",
+    "inference_run": true,
+    "passed": null,
+    "script": "work/vss33/vlm_accuracy_diagnostic.py",
+    "prepared_payloads": "work/vss33/accuracy-diagnostic-plan.json",
+    "note": "Thirteen diagnostic observations were run by root with EVS enabled across the original, short-image-completion and finite-image-terminal-metadata builds. Plain any-frame positive/negative controls matched reviewed labels at 4 and 20 frames; JSON positive controls at 4 and 20 frames were false NO. The latest rebuilt JPEG still returns nonempty No, while 20-frame positive YES/empty NO remain correct. All three latest request-owned EVS sessions closed. No overall accuracy benchmark is claimed.",
+    "cases": [
+      "original-positive",
+      "original-empty",
+      "json20-positive",
+      "json20-empty",
+      "final-image",
+      "historical-system-positive",
+      "json4-positive",
+      "raw20-positive",
+      "raw20-empty"
+    ],
+    "observations": [
+      {
+        "case": "original-positive",
+        "receipt": "work/vss33/accuracy-original-image-evs-on.json",
+        "started_at": "2026-10-21T05:03:55.992027+00:00",
+        "evs_mode": "enabled",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+          "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "bytes": 2611191,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 4,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 1.471,
+        "answer": "YES",
+        "verdict": "YES",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "semantic_pass": true,
+        "semantic_scope": "Box-presence consistency only; no motion or temporal-precision claim."
+      },
+      {
+        "case": "original-empty",
+        "receipt": "work/vss33/accuracy-original-image-evs-on.json",
+        "started_at": "2026-10-21T05:03:55.992027+00:00",
+        "evs_mode": "enabled",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/4.mp4",
+          "sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "bytes": 2211450,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 4,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "NO",
+        "http_status": 200,
+        "seconds": 1.597,
+        "answer": "NO",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "semantic_pass": true,
+        "semantic_scope": "Box-presence consistency only; negative clip is a historical reviewed-sample control, not an exhaustive temporal annotation."
+      },
+      {
+        "case": "final-image",
+        "receipt": "work/vss33/accuracy-original-image-evs-on.json",
+        "started_at": "2026-10-21T05:03:55.992027+00:00",
+        "evs_mode": "enabled",
+        "media": {
+          "path": "work/vss33/accuracy-final-frame-7.3.jpg",
+          "sha256": "0544e4769489b7c6b85c002acfc0648849a62b7aec6a09478d10960bc7661bfa",
+          "bytes": 229673,
+          "transport": "inline_jpeg"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 1,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 0.288,
+        "answer": "",
+        "verdict": null,
+        "transport_pass": true,
+        "nonempty_model_completion": false,
+        "semantic_pass": false,
+        "semantic_scope": "Box-presence consistency only; no motion or temporal-precision claim."
+      },
+      {
+        "case": "json20-positive",
+        "receipt": "work/vss33/accuracy-json20-history-evs-on.json",
+        "started_at": "2026-10-21T05:07:05.017583+00:00",
+        "evs_mode": "enabled",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+          "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "bytes": 2611191,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only JSON with prediction_answer (YES or NO) and reasoning (one concise visible-evidence sentence).",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 20,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512,
+          "response_format": {
+            "type": "json_object"
+          }
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 7.136,
+        "answer": "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout all frames.\"}",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "semantic_pass": false,
+        "semantic_scope": "Box-presence consistency only; no motion or temporal-precision claim."
+      },
+      {
+        "case": "json20-empty",
+        "receipt": "work/vss33/accuracy-json20-history-evs-on.json",
+        "started_at": "2026-10-21T05:07:05.017583+00:00",
+        "evs_mode": "enabled",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/4.mp4",
+          "sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "bytes": 2211450,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only JSON with prediction_answer (YES or NO) and reasoning (one concise visible-evidence sentence).",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 20,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512,
+          "response_format": {
+            "type": "json_object"
+          }
+        },
+        "expected_box_presence": "NO",
+        "http_status": 200,
+        "seconds": 6.968,
+        "answer": "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout the entire sequence of frames.\"}",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "semantic_pass": true,
+        "semantic_scope": "Box-presence consistency only; negative clip is a historical reviewed-sample control, not an exhaustive temporal annotation."
+      },
+      {
+        "case": "historical-system-positive",
+        "receipt": "work/vss33/accuracy-json20-history-evs-on.json",
+        "started_at": "2026-10-21T05:07:05.017583+00:00",
+        "evs_mode": "enabled",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+          "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "bytes": 2611191,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+        "system_prompt": [
+          "Answer yes or no"
+        ],
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 4,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 1.567,
+        "answer": "YES",
+        "verdict": "YES",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "semantic_pass": true,
+        "semantic_scope": "Box-presence consistency only; no motion or temporal-precision claim."
+      },
+      {
+        "case": "final-image",
+        "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+        "started_at": "2026-10-21T05:33:11.126421+00:00",
+        "evs_mode": "enabled",
+        "runtime_label": "enabled-after-short-image-fix",
+        "source_fix_commit": "9f943c70e4bbc25eda399b957d3102db39c085aa",
+        "media": {
+          "path": "work/vss33/accuracy-final-frame-7.3.jpg",
+          "sha256": "0544e4769489b7c6b85c002acfc0648849a62b7aec6a09478d10960bc7661bfa",
+          "bytes": 229673,
+          "transport": "inline_jpeg"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 1,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 1.256,
+        "answer": "No",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "usage": {
+          "prompt_tokens": 18,
+          "completion_tokens": 2,
+          "total_tokens": 20
+        },
+        "semantic_pass": false,
+        "semantic_scope": "Box-presence consistency only; no motion or temporal-precision claim."
+      },
+      {
+        "case": "json4-positive",
+        "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+        "started_at": "2026-10-21T05:33:11.126421+00:00",
+        "evs_mode": "enabled",
+        "runtime_label": "enabled-after-short-image-fix",
+        "source_fix_commit": "9f943c70e4bbc25eda399b957d3102db39c085aa",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+          "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "bytes": 2611191,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only JSON with prediction_answer (YES or NO) and reasoning (one concise visible-evidence sentence).",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 4,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512,
+          "response_format": {
+            "type": "json_object"
+          }
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 6.511,
+        "answer": "{\"prediction_answer\": \"NO\", \"reasoning\": \"The cardboard box is not present in any of the frames provided.\"}",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "usage": {
+          "prompt_tokens": 52,
+          "completion_tokens": 27,
+          "total_tokens": 79
+        },
+        "semantic_pass": false,
+        "semantic_scope": "Box-presence consistency only; no motion or temporal-precision claim."
+      },
+      {
+        "case": "raw20-positive",
+        "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+        "started_at": "2026-10-21T05:33:11.126421+00:00",
+        "evs_mode": "enabled",
+        "runtime_label": "enabled-after-short-image-fix",
+        "source_fix_commit": "9f943c70e4bbc25eda399b957d3102db39c085aa",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+          "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "bytes": 2611191,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 20,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 2.776,
+        "answer": "YES",
+        "verdict": "YES",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 2,
+          "total_tokens": 42
+        },
+        "semantic_pass": true,
+        "semantic_scope": "Box-presence consistency only; no motion or temporal-precision claim."
+      },
+      {
+        "case": "raw20-empty",
+        "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+        "started_at": "2026-10-21T05:33:11.126421+00:00",
+        "evs_mode": "enabled",
+        "runtime_label": "enabled-after-short-image-fix",
+        "source_fix_commit": "9f943c70e4bbc25eda399b957d3102db39c085aa",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/4.mp4",
+          "sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "bytes": 2211450,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 20,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "NO",
+        "http_status": 200,
+        "seconds": 2.583,
+        "answer": "NO",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 2,
+          "total_tokens": 42
+        },
+        "semantic_pass": true,
+        "semantic_scope": "Box-presence consistency only; negative clip is a historical reviewed-sample control, not an exhaustive temporal annotation."
+      },
+      {
+        "case": "final-image",
+        "receipt": "work/vss33/accuracy-after-finite-image-fix.json",
+        "started_at": "2026-10-21T06:29:07.023089+00:00",
+        "evs_mode": "enabled",
+        "runtime_label": "enabled-finite-image-terminal-metadata-fix",
+        "source_fix_commit": "12b7e222438c410d92d09669dec2ee8372ac40ba",
+        "media": {
+          "path": "work/vss33/accuracy-final-frame-7.3.jpg",
+          "sha256": "0544e4769489b7c6b85c002acfc0648849a62b7aec6a09478d10960bc7661bfa",
+          "bytes": 229673,
+          "transport": "inline_jpeg"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Is a box visible on the conveyor belt? Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 1,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 1.238,
+        "answer": "No",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18,
+          "completion_tokens": 2,
+          "total_tokens": 20
+        },
+        "semantic_pass": false,
+        "request_owned_session_closed": true,
+        "cleanup_evidence": "work/vss33/accuracy-finite-image-cleanup.json",
+        "semantic_scope": "Box-presence consistency only; the empty fixture is a historical reviewed-sample label, not an exhaustive whole-interval annotation."
+      },
+      {
+        "case": "raw20-positive",
+        "receipt": "work/vss33/accuracy-after-finite-image-fix.json",
+        "started_at": "2026-10-21T06:29:07.023089+00:00",
+        "evs_mode": "enabled",
+        "runtime_label": "enabled-finite-image-terminal-metadata-fix",
+        "source_fix_commit": "12b7e222438c410d92d09669dec2ee8372ac40ba",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+          "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "bytes": 2611191,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 20,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "YES",
+        "http_status": 200,
+        "seconds": 2.482,
+        "answer": "YES",
+        "verdict": "YES",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 2,
+          "total_tokens": 42
+        },
+        "semantic_pass": true,
+        "request_owned_session_closed": true,
+        "cleanup_evidence": "work/vss33/accuracy-finite-image-cleanup.json",
+        "semantic_scope": "Box-presence consistency only; the empty fixture is a historical reviewed-sample label, not an exhaustive whole-interval annotation."
+      },
+      {
+        "case": "raw20-empty",
+        "receipt": "work/vss33/accuracy-after-finite-image-fix.json",
+        "started_at": "2026-10-21T06:29:07.023089+00:00",
+        "evs_mode": "enabled",
+        "runtime_label": "enabled-finite-image-terminal-metadata-fix",
+        "source_fix_commit": "12b7e222438c410d92d09669dec2ee8372ac40ba",
+        "media": {
+          "path": "artifacts/demo-boundary-probe-2026-09-28/clips/4.mp4",
+          "sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "bytes": 2211450,
+          "transport": "inline_video"
+        },
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "prompt": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only.",
+        "system_prompt": null,
+        "parameters": {
+          "max_tokens": 128,
+          "temperature": 0,
+          "seed": 42,
+          "chunk_duration": 0,
+          "enable_audio": false,
+          "enable_reasoning": false,
+          "num_frames_per_second_or_fixed_frames_chunk": 20,
+          "use_fps_for_chunking": false,
+          "vlm_input_width": 512,
+          "vlm_input_height": 512
+        },
+        "expected_box_presence": "NO",
+        "http_status": 200,
+        "seconds": 2.555,
+        "answer": "NO",
+        "verdict": "NO",
+        "transport_pass": true,
+        "nonempty_model_completion": true,
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 40,
+          "completion_tokens": 2,
+          "total_tokens": 42
+        },
+        "semantic_pass": true,
+        "request_owned_session_closed": true,
+        "cleanup_evidence": "work/vss33/accuracy-finite-image-cleanup.json",
+        "semantic_scope": "Box-presence consistency only; the empty fixture is a historical reviewed-sample label, not an exhaustive whole-interval annotation."
+      }
+    ],
+    "pending": [
+      {
+        "case": "exact-any-frame-and-json-evs-off",
+        "status": "not_run",
+        "reason": "Existing OFF controls use broad prompts and do not isolate these diagnostic payloads."
+      }
+    ],
+    "short_image_regression": {
+      "fix_commit": "9f943c70e4bbc25eda399b957d3102db39c085aa",
+      "before": {
+        "receipt": "work/vss33/accuracy-original-image-evs-on.json",
+        "case": "final-image",
+        "http_status": 200,
+        "seconds": 0.288,
+        "answer": "",
+        "nonempty_model_completion": false,
+        "verdict": null,
+        "semantic_pass": false
+      },
+      "after": {
+        "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+        "case": "final-image",
+        "http_status": 200,
+        "seconds": 1.256,
+        "answer": "No",
+        "nonempty_model_completion": true,
+        "completion_tokens": 2,
+        "verdict": "NO",
+        "semantic_pass": false
+      },
+      "interpretation": "The obsolete short-clip placeholder no longer suppresses the response. The returned verdict still contradicts the visible box; software completion and semantic correctness are separate checks."
+    },
+    "matched_frame_count_comparisons": [
+      {
+        "requested_frames": 4,
+        "positive_plain": {
+          "receipt": "work/vss33/accuracy-original-image-evs-on.json",
+          "case": "original-positive",
+          "verdict": "YES",
+          "semantic_pass": true
+        },
+        "positive_json": {
+          "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+          "case": "json4-positive",
+          "verdict": "NO",
+          "semantic_pass": false
+        }
+      },
+      {
+        "requested_frames": 20,
+        "positive_plain": {
+          "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+          "case": "raw20-positive",
+          "verdict": "YES",
+          "semantic_pass": true
+        },
+        "positive_json": {
+          "receipt": "work/vss33/accuracy-json20-history-evs-on.json",
+          "case": "json20-positive",
+          "verdict": "NO",
+          "semantic_pass": false
+        },
+        "negative_plain": {
+          "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+          "case": "raw20-empty",
+          "verdict": "NO",
+          "semantic_pass": true
+        },
+        "negative_json": {
+          "receipt": "work/vss33/accuracy-json20-history-evs-on.json",
+          "case": "json20-empty",
+          "verdict": "NO",
+          "semantic_pass": true
+        }
+      }
+    ],
+    "comparison_limits": [
+      "Each pair has the same source media hash, requested frame count, 512x512 input dimensions, seed 42, temperature 0, max 128 tokens and no system message.",
+      "The plain and JSON requests jointly vary the output instructions and response_format=json_object. These controls do not isolate the format flag alone.",
+      "Comparisons span separate requests and a controlled runtime reload; actual selected frame/pixel tensors and EVS retention were not dumped. They establish an observed request-output difference for these clips, not a general causal accuracy claim.",
+      "Direct chat and archive provider requests differ. Separate archive binary controls are now observed: capped 20-frame positive false NO; removing only the provider size override gives confirmed positive and rejected empty with durable terminal/ES evidence."
+    ],
+    "finite_image_terminal_metadata": {
+      "source_fix_commit": "12b7e222438c410d92d09669dec2ee8372ac40ba",
+      "source_path": "services/rtvi/rt-vlm/src/utils/file_splitter.py",
+      "contract": "A finite single JPEG/PNG or semicolon image-list request emits exactly one chunk and then end-of-input. It now marks that chunk both is_first and is_last, matching the final-video-chunk contract.",
+      "evs_handoff": "One image is padded to the two-frame temporal factor; the recording-handler regression confirms terminal=True survives that padding. Short nonterminal live clips retain terminal=False.",
+      "cpu_checks": {
+        "finite_single_image_and_list_splitter": {
+          "passed": 2,
+          "seconds": 0.31
+        },
+        "short_image_metadata_admission_and_error_subset": {
+          "passed": 18,
+          "seconds": 4.47
+        },
+        "environment": "Actual 3.3 CPU-only tool image; no vLLM engine/model inference. Splitter ran without unrelated service conftest; EVS used recording handler."
+      },
+      "runtime_gpu_status": "actual_rebuilt_engine_observed_with_semantic_failure",
+      "prior_actual_observation": {
+        "receipt": "work/vss33/accuracy-after-short-image-fix.json",
+        "case": "final-image",
+        "answer": "No",
+        "semantic_pass": false
+      },
+      "interpretation": "The finite-input completion flag repair passed CPU and actual rebuilt-engine transport/completion/EVS cleanup checks. The JPEG still misclassifies the visible box as No; metadata completion and semantic accuracy remain separate. No claim about missing compiled vision tokens or corrected JPEG accuracy is made.",
+      "latest_actual_observations": [
+        {
+          "case": "final-image",
+          "receipt": "work/vss33/accuracy-after-finite-image-fix.json",
+          "answer": "No",
+          "verdict": "NO",
+          "seconds": 1.238,
+          "http_status": 200,
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 18,
+            "completion_tokens": 2,
+            "total_tokens": 20
+          },
+          "transport_pass": true,
+          "semantic_pass": false,
+          "request_owned_session_closed": true
+        },
+        {
+          "case": "raw20-positive",
+          "receipt": "work/vss33/accuracy-after-finite-image-fix.json",
+          "answer": "YES",
+          "verdict": "YES",
+          "seconds": 2.482,
+          "http_status": 200,
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 2,
+            "total_tokens": 42
+          },
+          "transport_pass": true,
+          "semantic_pass": true,
+          "request_owned_session_closed": true
+        },
+        {
+          "case": "raw20-empty",
+          "receipt": "work/vss33/accuracy-after-finite-image-fix.json",
+          "answer": "NO",
+          "verdict": "NO",
+          "seconds": 2.555,
+          "http_status": 200,
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 40,
+            "completion_tokens": 2,
+            "total_tokens": 42
+          },
+          "transport_pass": true,
+          "semantic_pass": true,
+          "request_owned_session_closed": true
+        }
+      ]
+    }
+  },
+  "source_receipts": [
+    {
+      "path": "work/vss33/vlm-evs-probe.json",
+      "sha256": "fbde96306649190d51b77ae018d92e375ad7a3615553aeacb500e79020a37a10"
+    },
+    {
+      "path": "work/vss33/vlm-no-evs-probe.json",
+      "sha256": "3a0248ae0ad55d9110b73ea529a04fff7ac7ba45204e684911e958cf0c92f531"
+    },
+    {
+      "path": "work/vss33/vlm-accuracy-probe.json",
+      "sha256": "c5d65f89d8073493af22b9bda121c97507ffd5653ee4b1ce94fe70b3af45338d"
+    },
+    {
+      "path": "work/vss33/alert-archive-probe.json",
+      "sha256": "4bf43b86de81f4c406fb0c5ecb15fa26230f28a9f420d2025bb436411ffbddd4"
+    },
+    {
+      "path": "work/vss33/alert-archive-probe-20frames.json",
+      "sha256": "900867b1e3db2690cc9310ca77b5820d2c0eb2811d08840cdea53f7c3762a6e3"
+    },
+    {
+      "path": "work/vss33/native-conv-random-cpu.json",
+      "sha256": "a90bb04753f069f50f8d632a98d1c56208406dae8e0db633045fc78606de340b"
+    },
+    {
+      "path": "work/vss33/native-conv-random-cuda.json",
+      "sha256": "41f1c1ebbdbbcca32d12f56dea6156d7b89d590c32d03a568709ed9db8c16b35"
+    },
+    {
+      "path": "work/vss33/accuracy-original-image-evs-on.json",
+      "sha256": "3643f7e76b343324213064e4d2303826c655aab994bb40f960cab496a2765f0b"
+    },
+    {
+      "path": "work/vss33/accuracy-json20-history-evs-on.json",
+      "sha256": "d2532a4b798ad7615741c49a8bfbdf2b438a73aa83313e581ce706260749b03f"
+    },
+    {
+      "path": "work/vss33/accuracy-after-short-image-fix.json",
+      "sha256": "8bbe5a5462013c572f9ed1ede3a5c811246b77f4257c736514acf9ac43e5be95"
+    },
+    {
+      "path": "work/vss33/alert-archive-binary-positive.json",
+      "sha256": "43ea88c4dcad87a97dab5902d9dd18869cb0ab0ed311952adb42ca0dd8460816"
+    },
+    {
+      "path": "work/vss33/alert-archive-binary-empty.json",
+      "sha256": "ff132fc8faa051b98397ead059475517e63b18ed848b945eb22bf6dac0b2ead0"
+    },
+    {
+      "path": "work/vss33/alert-archive-binary-native-budget-positive.json",
+      "sha256": "88e1bc56c111ac4735b846d50b06d87c7b877aabf9a69549ec0dbb20588dbfb1"
+    },
+    {
+      "path": "work/vss33/alert-archive-binary-native-budget-empty.json",
+      "sha256": "8f472edc3e4fbf2a6fd84a7ae98da97a2f39622efe4427d68e906a98eebe69f3"
+    },
+    {
+      "path": "work/vss33/provider-controls.json",
+      "sha256": "51e5cf6c37c61facfc9a6f26f556aebe4a8458589af3271db1073064272db933"
+    },
+    {
+      "path": "work/vss33/accuracy-after-finite-image-fix.json",
+      "sha256": "b74a1c55b8cd7b1ae8401d5ed05e5e2faa6dcae2c44520c3618092b9ae6977b0"
+    },
+    {
+      "path": "work/vss33/accuracy-finite-image-cleanup.json",
+      "sha256": "27cb4571f169d181f963e2ae95f40e0c3489fd669b188d24ecd4bab78e753325"
+    }
+  ],
+  "archive_media_fidelity": {
+    "source_and_cpu_audit": "docs/qa/vss33-2026-10-20/alert-media-contract.json",
+    "observed_sampling": "Capped binary positive request decoded 20/planned 20, endpoint 7.5 s; media_io_kwargs was respected.",
+    "processor_budget": "Installed Qwen3VLVideoProcessor interprets size.longest_edge as total video pixels. CPU evaluation of its exact smart_resize predicts 20\u00d7608\u00d7320\u219220\u00d764\u00d7128 under 262144. These dimensions are not a runtime pixel capture.",
+    "controlled_change": "Own temporary category do_resize:false omits only mm_processor_kwargs.size. Same 20 frames, prompt, system, binary parser, 64-token cap, temperature 0, 30 s timeout; source clips identical by SHA.",
+    "corrected_positive": {
+      "receipt": "work/vss33/alert-archive-binary-native-budget-positive.json",
+      "verdict": "confirmed",
+      "terminal_seconds": 2.336,
+      "transport_pass": true,
+      "semantic_pass": true
+    },
+    "corrected_empty": {
+      "receipt": "work/vss33/alert-archive-binary-native-budget-empty.json",
+      "verdict": "rejected",
+      "terminal_seconds": 2.627,
+      "transport_pass": true,
+      "semantic_pass": true
+    },
+    "qualification": "Two known archived fixtures pass typed terminal+ES delivery and box-presence consistency using an explicit opt-in binary preset with server media size defaults. Global verifier behavior and JSON controls remain unchanged; no RTSP, long-video or general semantic accuracy qualification."
+  }
+}

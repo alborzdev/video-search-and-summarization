@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2020-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,7 +58,7 @@ class RecorderQos
         static RecorderQos _instance;
         return &_instance;
     }
-    void write(const string& data);
+    void write(const std::string& data);
 
    private:
     RecorderQos();
@@ -73,7 +73,7 @@ class GstMux;
 class GstMux : public IMediaDataConsumer
 {
    public:
-    GstMux(RecordState record_state)
+    explicit GstMux(RecordState record_state)
         : IMediaDataConsumer("GstMux"),
           m_totalFileSize(0),
           m_isError(false),
@@ -87,15 +87,13 @@ class GstMux : public IMediaDataConsumer
         m_eventType = EventTypeWaitForEvent;
         m_recordingStopped = false;
         m_fpsDisplay.reset(new FPSDisplay());
-        m_checkStatusScheduler = make_unique<Bosma::Scheduler>(1);
-        setConsumerMediaType(MediaTypeAudioVideo);
+        m_checkStatusScheduler = std::make_unique<Bosma::Scheduler>(1);
+        IMediaDataConsumer::setConsumerMediaType(MediaTypeAudioVideo);
         m_videoQueue.setRecordingState(m_recordingState);
     }
-    ~GstMux()
-    {
-    }
+    ~GstMux() = default;
 
-    int create(shared_ptr<StreamInfo> stream, GAsyncQueue* qErrorDeviceID, bool recreate_muxer = false);
+    int create(std::shared_ptr<StreamInfo> stream, GAsyncQueue* qErrorDeviceID, bool recreate_muxer = false);
     void destroy();
     void destroyPipeline();
     bool isCreated();
@@ -117,7 +115,8 @@ class GstMux : public IMediaDataConsumer
     bool isPlaying();
     bool isAudioSupported();
     void checkStatus();
-    virtual void onFrame(FrameParams& params);
+    using IMediaDataConsumer::onFrame;
+    void onFrame(FrameParams& params) override;
     GstMux* getSelf()
     {
         return this;
@@ -127,7 +126,7 @@ class GstMux : public IMediaDataConsumer
     int changeRecordStateTo(RecordState new_state);
 
     // Storage methods
-    bool CreateUnifiedStorage(const std::map<string, media_info, std::less<>>& media_details);
+    bool CreateUnifiedStorage(const std::map<std::string, media_info, std::less<>>& media_details);
     bool isUsingLocalStorage() const;
     std::string getStorageMode() const;
 
@@ -174,7 +173,7 @@ class GstMux : public IMediaDataConsumer
     int m_freq{8000};
     bool m_audioSupported{false};
     VideoQueue m_videoQueue;
-    shared_ptr<StreamInfo> m_stream{nullptr};
+    std::shared_ptr<StreamInfo> m_stream{nullptr};
     std::unique_ptr<FPSDisplay> m_fpsDisplay = nullptr;
     std::vector<double> m_fpsVector;
     RecordState m_recordingState;
@@ -198,7 +197,7 @@ class GstMux : public IMediaDataConsumer
 
     void resetFileParams();
     bool pushBuffer(FrameInfo frameinfo);
-    void insertRowInDB(int64_t& ts, string& file_name, RecordState& record_state, string& codec);
+    void insertRowInDB(int64_t& ts, std::string& file_name, RecordState& record_state, std::string& codec);
     double calculateAvgFPS(bool clear);
     friend gboolean busWatchFunc(GstBus* bus, GstMessage* message, gpointer data);
     friend gpointer muxerProcessThread(gpointer data);
@@ -226,8 +225,8 @@ class VideoRecordUpdater
         static VideoRecordUpdater instance;
         return instance;
     }
-    void addToQueue(VideoRecordDBColumns record);
-    void addInsertToQueue(VideoRecordDBColumns record);
+    void addToQueue(nv_vms::VideoRecordDBColumns record);
+    void addInsertToQueue(nv_vms::VideoRecordDBColumns record);
     void start();
     void stop();
 
@@ -241,9 +240,9 @@ class VideoRecordUpdater
         try {
             stop();
         } catch (const std::exception& e) {
-            try { LOG(error) << "Exception in ~VideoRecordUpdater: " << e.what() << endl; } catch (...) { (void)std::current_exception(); }
+            try { LOG(error) << "Exception in ~VideoRecordUpdater: " << e.what() << std::endl; } catch (...) { (void)std::current_exception(); }
         } catch (...) {
-            try { LOG(error) << "Unknown exception in ~VideoRecordUpdater" << endl; } catch (...) { (void)std::current_exception(); }
+            try { LOG(error) << "Unknown exception in ~VideoRecordUpdater" << std::endl; } catch (...) { (void)std::current_exception(); }
         }
     }
 
@@ -254,8 +253,8 @@ class VideoRecordUpdater
     void UpdateVideoRecordLoop();
     void logCombinedQueueSizeWarning(size_t& lastReportedSize);
 
-    std::queue<VideoRecordDBColumns> m_insertQueue;
-    std::queue<VideoRecordDBColumns> m_updateQueue;
+    std::queue<nv_vms::VideoRecordDBColumns> m_insertQueue;
+    std::queue<nv_vms::VideoRecordDBColumns> m_updateQueue;
     std::mutex m_queueMutex;
     std::condition_variable m_insertCv;
     std::condition_variable m_updateCv;

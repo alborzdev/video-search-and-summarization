@@ -16,8 +16,8 @@
 enabled: false
 global: {}
 image:
-  repository: nvcr.io/nvidia/vss-core/vss-video-summarization
-  tag: "3.2.1"
+  repository: ghcr.io/nvidia-ai-blueprints/vss/vss-video-summarization
+  tag: "develop-latest"
   pullPolicy: IfNotPresent
 replicas: 1
 # Backend (API), MCP ports — match Compose
@@ -25,15 +25,18 @@ service:
   backendPort: 38111
   mcpPort: 38112
   type: ClusterIP
-# GPU required
+# A summarization run outlasts any sane ingress default, and a 504 mid-job
+# reads as a backend failure. The CLI bounds the wait itself. Matches the
+# per-backend `timeout server` the Docker edge sets on bk_lvs_strip.
+ingressTimeoutServer: "3600s"
+# No GPU: all VLM inference is delegated to RTVI-VLM over HTTP.
 resources:
   requests:
-    nvidia.com/gpu: "1"
-  limits:
-    nvidia.com/gpu: "1"
+    cpu: "250m"
+    memory: "1Gi"
 # In-cluster: template builds http://<release>-<slug>:8000/v1 from llmService/vlmService (NIM subchart names).
 # Remote NIM: prefer global.llmBaseUrl / global.vlmBaseUrl (same base as vss-agent). LVS deployment appends /v1 when missing.
-llmService: ""   # e.g. nvidia-nemotron-nano-9b-v2 — ignored when llmBaseUrl/global.llmBaseUrl resolves non-empty
+llmService: ""   # e.g. nemotron-35-lightning-30b-a3b — ignored when llmBaseUrl/global.llmBaseUrl resolves non-empty
 vlmService: ""  # e.g. nvidia-cosmos3-reasoner — ignored when vlmBaseUrl/global.vlmBaseUrl resolves non-empty
 llmBaseUrl: ""  # optional: overrides global.llmBaseUrl for LVS only
 vlmBaseUrl: ""  # optional: overrides global.vlmBaseUrl for LVS only
@@ -68,8 +71,6 @@ env:
     value: "false"
   - name: ENABLE_VIA_HEALTH_EVAL
     value: "false"
-  - name: GPU_DEVICES
-    value: "0"
   - name: GRAPH_DB_BOLT_PORT
     value: "7687"
   - name: GRAPH_DB_HOST
@@ -114,12 +115,8 @@ env:
     value: /tmp/model_cache
   - name: NGC_MODEL_CACHE
     value: /tmp/model_cache
-  - name: NUM_GPUS
-    value: "1"
   - name: NVIDIA_API_KEY
     value: ""
-  - name: NVIDIA_VISIBLE_DEVICES
-    value: "0"
   - name: VLM_MODEL_TO_USE
     value: openai-compat
   - name: VLM_SYSTEM_PROMPT

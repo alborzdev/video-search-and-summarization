@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Generate Harbor tasks for the vss-setup-behavior-analytics skill.
 
-This adapter handles specs under `skills/vss-setup-behavior-analytics/evals/`.
+This adapter handles specs under `skills/deployment/vss-setup-behavior-analytics/evals/`.
 The current spec (`standalone_deploy.json`) exercises the skill's
 **standalone-deploy** flow — pulling and starting `vss-behavior-analytics`
 via the service compose file at
@@ -18,7 +18,7 @@ The spec declares `"resources": {"platforms": {"ANY": {"gpu_count": 0}}}`:
   `nvidia-vss/vss-setup-behavior-analytics-standalone-deploy-any`).
   A bare Brev instance is sufficient — `behavior-analytics` is CPU-only.
 
-No `/vss-deploy-profile` prerequisite: the spec omits `profile`, so
+No `/vss-build-vision-ai` prerequisite: the spec omits `profile`, so
 `BrevEnvironment._ensure_prerequisite_deployed` runs the box-clean path
 (desired = "") and the trial starts on a guaranteed-clean box.
 
@@ -36,7 +36,7 @@ Directory layout (one spec → one task per platform key):
 Usage from the repository root:
     python3 .github/skill-eval/adapters/vss-setup-behavior-analytics/generate.py \\
         --output-dir .github/skill-eval/datasets/vss-setup-behavior-analytics \\
-        --skill-dir skills/vss-setup-behavior-analytics
+        --skill-dir skills/deployment/vss-setup-behavior-analytics
 
 Run with Harbor:
     export PYTHONPATH="$(pwd)/.github/skill-eval:${PYTHONPATH:-}"
@@ -98,7 +98,7 @@ PLATFORMS: dict[str, dict] = {
 PREAMBLE = (
     "You are running inside a non-interactive evaluation harness. "
     "You are pre-authorized to deploy prerequisites autonomously — "
-    "do not pause to ask for confirmation on `/vss-deploy-profile` or any other "
+    "do not pause to ask for confirmation on `/vss-build-vision-ai` or any other "
     "setup action the trial requires."
 )
 
@@ -271,6 +271,9 @@ def generate_task(
         f'description = "vss-setup-behavior-analytics {spec_stem} on {platform}"',
         f'keywords = ["vss-setup-behavior-analytics", "{spec_stem}", "{platform}"]',
         "",
+        "[agent]",
+        "timeout_sec = 600.0",
+        "",
         "[environment]",
         "# Harbor copies this into $CLAUDE_CONFIG_DIR/skills so the agent",
         "# can invoke /vss-setup-behavior-analytics via the skill.",
@@ -279,7 +282,7 @@ def generate_task(
         "[metadata]",
         'skill = "vss-setup-behavior-analytics"',
         # No `profile` field — this trial runs on a bare Brev instance with
-        # no /vss-deploy-profile prerequisite. behavior-analytics is CPU-only
+        # no /vss-build-vision-ai prerequisite. behavior-analytics is CPU-only
         # and stands up standalone.
         f'platform = "{platform}"',
         f"gpu_count = {gpu_count}",
@@ -378,7 +381,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--skill-dir", required=True,
-        help="Path to skills/vss-setup-behavior-analytics",
+        help="Path to skills/deployment/vss-setup-behavior-analytics",
     )
     parser.add_argument(
         "--spec", default=None,

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2020-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,53 +43,52 @@
 #include "modules_apis.h"
 #include "stream_event_manager.h"
 
-using namespace std;
 namespace nv_vms {
 
 typedef struct _StreamDetails
 {
-    string id;
-    string name;
-    string sensorUrl;
-    string sensorName;
-    string proxyUrl;
-    string vodUrl;
-    string codec;
-    string resolution;
-    string framerate;
-    string tags;
+    std::string id;
+    std::string name;
+    std::string sensorUrl;
+    std::string sensorName;
+    std::string proxyUrl;
+    std::string vodUrl;
+    std::string codec;
+    std::string resolution;
+    std::string framerate;
+    std::string tags;
 } StreamDetails;
 class RtspServer
 {
     public:
-        RtspServer(u_int16_t port);
+        explicit RtspServer(u_int16_t port);
         ~RtspServer();
         int16_t getPort() { return m_rtspServerPortNum; }
-        std::string createProxy(const string& id, const string& name, const string& url);
-        bool deleteProxy(const string& id);
-        int addProxy(const string& id, const string& name, string& url);
-        int removeProxy(const string& id);
-        void addStream(const string& streamId, const string& url);
+        std::string createProxy(const std::string& id, const std::string& name, const std::string& url);
+        bool deleteProxy(const std::string& id);
+        int addProxy(const std::string& id, const std::string& name, std::string& url);
+        int removeProxy(const std::string& id);
+        void addStream(const std::string& streamId, const std::string& url);
         std::string urlPrefix() { return m_urlPrefix; }
-        string originalPrefix();
+        std::string originalPrefix();
         unsigned int activeClientSessions();
-        vector<string> getActiveStreams();
-        ServerMediaSession* serverMediaSessionForStream(const string& id);
-        int removeServerMediaSession(const string& id);
+        std::vector<std::string> getActiveStreams();
+        ServerMediaSession* serverMediaSessionForStream(const std::string& id);
+        int removeServerMediaSession(const std::string& id);
         UsageEnvironment& getEnv() { return m_env; }
         void updateUser(const char *username);
         void addUser(const char *username, const char *passwordHash);
         void removeUser(const char *username);
-        vector<StreamDetails> streamList();
-        bool findStreamId(const string& id);
-        string getRtspServerDomainPrefix() { return m_rtspServerDomainPrefix; }
+        std::vector<StreamDetails> streamList();
+        bool findStreamId(const std::string& id);
+        std::string getRtspServerDomainPrefix() { return m_rtspServerDomainPrefix; }
         bool isError() { return m_isError; }
         void setVodServer(bool isVodServer);
-        map<string, StreamDetails, std::less<>> getStreamList() { return m_streamsList; }
+        std::map<std::string, StreamDetails, std::less<>> getStreamList() { return m_streamsList; }
         INotificationInterface* getNotifier() { return m_notifier; }
-        void updateStreamMetadata(const string& id, const string& vodUrl,
-                                  const string& codec, const string& resolution,
-                                  const string& framerate, const string& tags);
+        void updateStreamMetadata(const std::string& id, const std::string& vodUrl,
+                                  const std::string& codec, const std::string& resolution,
+                                  const std::string& framerate, const std::string& tags);
 
         /* Register a stream asynchronously with the device manager and notify
          * downstream consumers. All optional/derived parameters are bundled
@@ -114,8 +113,8 @@ class RtspServer
          *       "channels"    : int
          *   }
          */
-        void registerStreamAsync(const string& id, const string& name,
-                                 const string& proxyUrl,
+        void registerStreamAsync(const std::string& id, const std::string& name,
+                                 const std::string& proxyUrl,
                                  const Json::Value& params);
 
     private:
@@ -130,15 +129,16 @@ class RtspServer
         TaskScheduler* m_scheduler = nullptr;
         bool m_threadRunning = false;
         std::unique_ptr<std::thread> m_thread = nullptr;
-        std::map<string, string, std::less<>> m_liveCameraStreamList;
+        std::map<std::string, std::string, std::less<>> m_liveCameraStreamList;
         std::mutex               m_streamLock;
         TaskToken m_eventAddStream;
         TaskToken m_eventRemoveStream;
         std::string m_urlPrefix;
+        std::string m_preferredIface;
         ServerMediaSession* m_sms = nullptr;
-        UserAuthenticationDatabase* m_authDB = nullptr;
+        std::unique_ptr<UserAuthenticationDatabase> m_authDB;
         SyncObject m_sync;
-        map<string, StreamDetails, std::less<>> m_streamsList;
+        std::map<std::string, StreamDetails, std::less<>> m_streamsList;
         std::string m_rtspServerDomainPrefix;
         bool m_isError = false;
         INotificationInterface* m_notifier = nullptr;
@@ -165,11 +165,12 @@ class RtspServer
                                                     int socketNumToServer = -1,
                                                     MediaTranscodingTable* transcodingTable = nullptr)
         {
-            return new AppProxyServerMediaSession(rtspServer, env, ourMediaServer, inputStreamURL,
+            return std::make_unique<AppProxyServerMediaSession>(
+                                                rtspServer, env, ourMediaServer, inputStreamURL,
                                                 streamName, username, password,
                                                 tunnelOverHTTPPortNum, verbosityLevel,
                                                 initialPortNum, multiplexRTCPWithRTP,
-                                                socketNumToServer, transcodingTable);
+                                                socketNumToServer, transcodingTable).release();
         }
 
         AppProxyServerMediaSession(RtspServer *rtspServer,
@@ -202,45 +203,47 @@ class RtspServer
             if (urlPtr != nullptr)
             {
                 m_savedUrl = urlPtr;
-                LOG(warning) << "SDP is ready url:" << secureUrlForLogging(urlPtr) << ", streamName:" << streamName() << endl;
+                LOG(warning) << "SDP is ready url:" << secureUrlForLogging(urlPtr) << ", streamName:" << streamName() << std::endl;
             }
             else
             {
-                LOG(warning) << "SDP is ready url: <null>, streamName:" << streamName() << endl;
+                LOG(warning) << "SDP is ready url: <null>, streamName:" << streamName() << std::endl;
             }
 
             // Access codec information through SDP description
-            vector<string> detectedVideoCodecs;
+            Json::Value detectedVideoCodecs(Json::arrayValue);
             Json::Value detectedAudioInfo;
+            Json::Value videoParameterSets(Json::arrayValue);
             detectedAudioInfo["present"] = false;
-            char* sdpDesc = generateSDPDescription(AF_INET);
+            std::unique_ptr<char[]> sdpDesc(generateSDPDescription(AF_INET));
             if (sdpDesc)
             {
-                // Parse SDP to extract video codec information
-                detectedVideoCodecs = parseVideoCodecsFromSDP(sdpDesc);
+                Json::Value videoInfo = parseVideoInfoFromSDP(sdpDesc.get());
+                detectedVideoCodecs = videoInfo["codecs"];
+                videoParameterSets  = videoInfo["parameterSets"];
                 for (const auto& codec : detectedVideoCodecs)
                 {
-                    LOG(warning) << "Detected video codec from SDP: " << codec << endl;
+                    LOG(warning) << "Detected video codec from SDP: " << codec.asString() << std::endl;
                 }
                 /* Also pull audio info from the same SDP buffer. This is the
                  * earliest hook we have for audio detection -- it runs at
                  * proxy DESCRIBE-response time, before any RTSP client
                  * connects and well before the recorder is started. */
-                detectedAudioInfo = parseAudioInfoFromSDP(sdpDesc);
+                detectedAudioInfo = parseAudioInfoFromSDP(sdpDesc.get());
                 if (detectedAudioInfo.get("present", false).asBool())
                 {
                     LOG(warning) << "Detected audio from SDP: codec="
                                  << detectedAudioInfo.get("codec", "").asString()
                                  << ", sample_rate=" << detectedAudioInfo.get("sample_rate", 0).asInt()
                                  << ", channels=" << detectedAudioInfo.get("channels", 0).asInt()
-                                 << endl;
+                                 << std::endl;
                     /* Normalize codec name for storage. The download API and
                      * other consumers look for "AAC" specifically; the SDP
                      * RTP payload format is "MPEG4-GENERIC". Map it here in
                      * one place so all downstream consumers stay consistent. */
-                    string sdpAudioCodec = detectedAudioInfo.get("codec", "").asString();
-                    string normalizedCodec = sdpAudioCodec;
-                    string codecLower      = sdpAudioCodec;
+                    std::string sdpAudioCodec = detectedAudioInfo.get("codec", "").asString();
+                    std::string normalizedCodec = sdpAudioCodec;
+                    std::string codecLower      = sdpAudioCodec;
                     std::transform(codecLower.begin(), codecLower.end(),
                                    codecLower.begin(),
                                    [](unsigned char c) { return (char)std::tolower(c); });
@@ -250,27 +253,26 @@ class RtspServer
                     }
                     detectedAudioInfo["encoding"] = normalizedCodec;
                 }
-                delete[] sdpDesc; // Important: free the memory as per Live555 documentation
             }
 
 
-            string proxyStreamName = streamName();
-            map<string, StreamDetails, std::less<>> streamsList = m_rtspServer->getStreamList();
+            std::string proxyStreamName = streamName();
+            std::map<std::string, StreamDetails, std::less<>> streamsList = m_rtspServer->getStreamList();
             for (auto stream : streamsList)
             {
                 StreamDetails streamInfo = stream.second;
                 if (streamInfo.name == proxyStreamName)
                 {
-                    string live_proxy_url = vst_common::toDomainName(streamInfo.proxyUrl, streamInfo.id);
-                    string vod_url = vst_rtsp::vodServerDomainPrefix(streamInfo.id) + string("vod/") + streamInfo.id;
+                    std::string live_proxy_url = vst_common::toDomainName(streamInfo.proxyUrl, streamInfo.id);
+                    std::string vod_url = vst_rtsp::vodServerDomainPrefix(streamInfo.id) + std::string("vod/") + streamInfo.id;
 
-                    string sdpDetectedCodec;
+                    std::string sdpDetectedCodec;
                     if (!detectedVideoCodecs.empty())
                     {
-                        sdpDetectedCodec = detectedVideoCodecs[0];
+                        sdpDetectedCodec = detectedVideoCodecs[0].asString();
                     }
-                    string asyncCodec = sdpDetectedCodec.empty() ? streamInfo.codec : sdpDetectedCodec;
-                    string asyncVodUrl = streamInfo.vodUrl.empty() ? vod_url : streamInfo.vodUrl;
+                    std::string asyncCodec = sdpDetectedCodec.empty() ? streamInfo.codec : sdpDetectedCodec;
+                    std::string asyncVodUrl = streamInfo.vodUrl.empty() ? vod_url : streamInfo.vodUrl;
 
                     Json::Value params;
                     params["vodUrl"]           = asyncVodUrl;
@@ -280,6 +282,7 @@ class RtspServer
                     params["tags"]             = streamInfo.tags;
                     params["sdpDetectedCodec"] = sdpDetectedCodec;
                     params["audio"]            = detectedAudioInfo;
+                    params["parameterSets"]    = videoParameterSets;
 
                     m_rtspServer->registerStreamAsync(
                         streamInfo.id, streamInfo.sensorName, live_proxy_url, params);
@@ -294,18 +297,18 @@ class RtspServer
             // Use saved URL if available, otherwise try to get current URL
             if (!m_savedUrl.empty())
             {
-                LOG(warning) << "SDP reset for url:" << secureUrlForLogging(m_savedUrl.c_str()) << endl;
+                LOG(warning) << "SDP reset for url:" << secureUrlForLogging(m_savedUrl.c_str()) << std::endl;
             }
             else
             {
                 const char* urlPtr = url();
                 if (urlPtr != nullptr)
                 {
-                    LOG(warning) << "SDP reset for url:" << secureUrlForLogging(urlPtr) << endl;
+                    LOG(warning) << "SDP reset for url:" << secureUrlForLogging(urlPtr) << std::endl;
                 }
                 else
                 {
-                    LOG(warning) << "SDP reset for url: <null>" << endl;
+                    LOG(warning) << "SDP reset for url: <null>" << std::endl;
                 }
             }
         }
@@ -314,66 +317,82 @@ class RtspServer
         RtspServer *m_rtspServer;
         std::string m_savedUrl;  // Store URL for use in sdpReset when url() may be null
 
-        // Helper function to parse video codecs from SDP description (ignores audio)
-        vector<string> parseVideoCodecsFromSDP(const char* sdp)
+        /* Reads the video m-section in one pass (audio: parseAudioInfoFromSDP).
+         * Returns "codecs" from a=rtpmap and "parameterSets" from a=fmtp, base64
+         * and in bitstream order. Decoding them is left to the caller: this runs
+         * on the live555 event-loop thread, which must not block. */
+        Json::Value parseVideoInfoFromSDP(const char* sdp)
         {
-            vector<string> videoCodecs;
-            if (!sdp) return videoCodecs;
+            Json::Value videoInfo;
+            videoInfo["codecs"] = Json::Value(Json::arrayValue);
+            videoInfo["parameterSets"] = Json::Value(Json::arrayValue);
+            if (!sdp) return videoInfo;
 
-            string sdpStr(sdp);
-            istringstream stream(sdpStr);
-            string line;
+            // Value of <key> in an a=fmtp parameter list
+            auto attributeValue = [](const std::string& line, const std::string& key) -> std::string {
+                size_t keyPos = line.find(key);
+                if (keyPos == std::string::npos) return "";
+                std::string value = line.substr(keyPos + key.length());
+                size_t endPos = value.find_first_of(" ;\r\n");
+                if (endPos != std::string::npos)
+                {
+                    value.erase(endPos);
+                }
+                return value;
+            };
+
+            std::string sdpStr(sdp);
+            std::istringstream stream(sdpStr);
+            std::string line;
             bool inVideoSection = false;
 
-            while (getline(stream, line))
+            while (std::getline(stream, line))
             {
                 // Track media sections: m=<media> <port> <proto> <payload_types>
                 if (line.find("m=") == 0)
                 {
-                    if (line.find("m=video") == 0)
-                    {
-                        inVideoSection = true;
-                    }
-                    else if (line.find("m=audio") == 0)
-                    {
-                        inVideoSection = false;
-                    }
-                    else
-                    {
-                        inVideoSection = false; // Reset for other media types
-                    }
+                    inVideoSection = (line.find("m=video") == 0);
                 }
                 // Only process rtpmap lines when in video section
                 else if (inVideoSection && line.find("a=rtpmap:") == 0)
                 {
                     size_t spacePos = line.find(' ');
-                    if (spacePos != string::npos)
+                    if (spacePos != std::string::npos)
                     {
-                        string codecInfo = line.substr(spacePos + 1);
+                        std::string codecInfo = line.substr(spacePos + 1);
                         size_t slashPos = codecInfo.find('/');
-                        if (slashPos != string::npos)
+                        if (slashPos != std::string::npos)
                         {
-                            string codecName = codecInfo.substr(0, slashPos);
-                            videoCodecs.push_back(codecName);
+                            videoInfo["codecs"].append(codecInfo.substr(0, slashPos));
                         }
                     }
                 }
                 // Only process format parameters when in video section
-                else if (inVideoSection && line.find("a=fmtp:") == 0)
+                else if (inVideoSection && line.find("a=fmtp:") == 0 &&
+                         videoInfo["parameterSets"].empty())
                 {
-                    // Extract profile information for H.264/H.265
-                    if (line.find("profile-level-id") != string::npos)
+                    // H.265 form first, H.264 packs all sets into one attribute
+                    for (const char* const key : {"sprop-vps=", "sprop-sps=", "sprop-pps="})
                     {
-                        size_t profilePos = line.find("profile-level-id=");
-                        if (profilePos != string::npos)
+                        std::string value = attributeValue(line, key);
+                        if (!value.empty())
                         {
-                            string profile = line.substr(profilePos + 17, 6); // Extract 6-char profile
+                            videoInfo["parameterSets"].append(value);
+                        }
+                    }
+                    if (videoInfo["parameterSets"].empty() == false) continue;
+
+                    for (const std::string& value : splitString(attributeValue(line, "sprop-parameter-sets="), ","))
+                    {
+                        if (!value.empty())
+                        {
+                            videoInfo["parameterSets"].append(value);
                         }
                     }
                 }
             }
 
-            return videoCodecs;
+            return videoInfo;
         }
 
         /* Helper function to parse audio info from SDP description.
@@ -395,12 +414,12 @@ class RtspServer
             audio["channels"]    = 1;
             if (!sdp) return audio;
 
-            string sdpStr(sdp);
-            istringstream stream(sdpStr);
-            string line;
+            std::string sdpStr(sdp);
+            std::istringstream stream(sdpStr);
+            std::string line;
             bool inAudioSection = false;
 
-            while (getline(stream, line))
+            while (std::getline(stream, line))
             {
                 if (line.find("m=") == 0)
                 {
@@ -420,17 +439,17 @@ class RtspServer
                      * non-deterministically overwrite the result with
                      * whichever line comes last. */
                     size_t spacePos = line.find(' ');
-                    if (spacePos == string::npos) continue;
-                    string rtpmapVal = line.substr(spacePos + 1);
+                    if (spacePos == std::string::npos) continue;
+                    std::string rtpmapVal = line.substr(spacePos + 1);
                     size_t firstSlash = rtpmapVal.find('/');
-                    if (firstSlash == string::npos) continue;
+                    if (firstSlash == std::string::npos) continue;
 
                     audio["present"] = true;
                     audio["codec"]   = rtpmapVal.substr(0, firstSlash);
 
-                    string rest = rtpmapVal.substr(firstSlash + 1);
+                    std::string rest = rtpmapVal.substr(firstSlash + 1);
                     size_t secondSlash = rest.find('/');
-                    string rateStr     = (secondSlash == string::npos) ? rest
+                    std::string rateStr     = (secondSlash == std::string::npos) ? rest
                                                                        : rest.substr(0, secondSlash);
                     /* Trim trailing CR / whitespace introduced by SDP line endings. */
                     while (!rateStr.empty() && (rateStr.back() == '\r' || rateStr.back() == ' '))
@@ -445,9 +464,9 @@ class RtspServer
                     {
                         audio["sample_rate"] = 0;
                     }
-                    if (secondSlash != string::npos)
+                    if (secondSlash != std::string::npos)
                     {
-                        string chStr = rest.substr(secondSlash + 1);
+                        std::string chStr = rest.substr(secondSlash + 1);
                         while (!chStr.empty() && (chStr.back() == '\r' || chStr.back() == ' '))
                         {
                             chStr.pop_back();

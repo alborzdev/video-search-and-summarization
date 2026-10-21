@@ -107,3 +107,19 @@ it('retains sources through an empty background startup snapshot while respectin
     expect(result.current.streams).toEqual([]);
   } finally { unmount(); jest.useRealTimers(); }
 });
+
+
+it("retains the catalog reference when the next observation has the same source facts", async () => {
+  jest.useFakeTimers();
+  global.fetch = jest.fn(async (input) => ({ ok: true, json: async () => String(input).endsWith('/sensor/status')
+    ? { camera: { state: 'online' } }
+    : [{ camera: [{ streamId: 'camera', name: 'Camera', type: 'Rtsp', url: 'rtsp://camera', metadata: {}, isMain: true }] }] }));
+  const { result, unmount } = renderHook(() => useVisionStreams('/vst/api'));
+  try {
+    await act(async () => { await Promise.resolve(); });
+    const catalog = result.current.streams;
+    expect(catalog[0].connectionState).toBe('online');
+    await act(async () => { jest.advanceTimersByTime(15_000); });
+    expect(result.current.streams).toBe(catalog);
+  } finally { unmount(); jest.useRealTimers(); }
+});

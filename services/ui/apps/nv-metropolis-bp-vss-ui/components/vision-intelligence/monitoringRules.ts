@@ -187,15 +187,3 @@ export function monitoringRuleIsComplete(rule: MonitoringRuleDraft): boolean {
 export function monitoringEngineLabel(engine: MonitoringEngine): string {
   return engine === 'deepstream' ? 'Detection + tracking' : 'Visual reasoning';
 }
-
-export function ruleMatchesSource(
-  rule: Pick<MonitoringRule, 'sourceId' | 'sourceName'>,
-  sensorId?: string,
-): boolean {
-  if (!sensorId) return false;
-  const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, '');
-  const sensor = normalize(sensorId);
-  return [rule.sourceId, rule.sourceName]
-    .map(normalize)
-    .some((candidate) => candidate === sensor || candidate.includes(sensor) || sensor.includes(candidate));
-}

@@ -1,161 +1,196 @@
-# NemoClaw VSS Installer
+# NemoClaw + VSS (canonical CLI flow)
 
-`init_nemoclaw.sh` bootstraps a NemoClaw sandbox on a local Ubuntu host (including AGX/IGX Thor), configures its model provider, installs the repository's OpenClaw plugin and complete `skills/` bundle, applies the VSS policy, and updates OpenClaw allowed origins. Brev secure links are supported but are not required; a non-Brev host uses the loopback dashboard plus an SSH tunnel for remote browsers.
+VSS creates and configures its NemoClaw/OpenClaw sandbox using **only canonical
+upstream NemoClaw, OpenShell, and OpenClaw commands** — there is no VSS-specific
+install/patch script and no hand-editing of `openclaw.json`. The flow is driven
+from [`deploy_nemoclaw.ipynb`](../deploy_nemoclaw.ipynb) (section 3); this
+document is the equivalent command reference for running it by hand.
 
-It supports two onboard providers, selected with `NEMOCLAW_PROVIDER` or `--provider`:
 
-- `build` — NVIDIA Endpoints (`integrate.api.nvidia.com`), authenticated with `NVIDIA_API_KEY`.
-- `custom` — any OpenAI-compatible endpoint (e.g. a local vLLM), configured with `NEMOCLAW_ENDPOINT_URL` and `COMPATIBLE_API_KEY`.
+## Prerequisites
 
-## What It Does
+- A recent NemoClaw release pinned via `NEMOCLAW_INSTALL_REF` (this repo pins
+  `v0.0.80+`) that ships the sandbox-first grammar:
+  `nemoclaw onboard --from` and `nemoclaw <sandbox> {policy-add, mcp, config set, upload, gateway-token}`.
+- `docker`, `node`/`npm`, `nemoclaw`, and `openshell` on `PATH`.
+- Provider credentials in the environment (`NVIDIA_API_KEY`, or
+  `NEMOCLAW_ENDPOINT_URL` + `NEMOCLAW_MODEL` + `COMPATIBLE_API_KEY` for a custom
+  OpenAI-compatible endpoint). The default agent model is **Claude Opus 5
+  through the NVIDIA Inference Hub**, which is reachable from NVIDIA
+  infrastructure and issues its own token:
 
-When you run `init_nemoclaw.sh`, it:
+  ```bash
+  export NEMOCLAW_ENDPOINT_URL="https://inference-api.nvidia.com/v1"
+  export NEMOCLAW_MODEL="aws/anthropic/bedrock-claude-opus-5"
+  export COMPATIBLE_API_KEY="<token for that endpoint>"
+  ```
 
-1. Runs NemoClaw onboarding if `nemoclaw` is already available, or falls back to `$HOME/NemoClaw/install.sh`.
-2. Configures the OpenShell inference provider to use NVIDIA Endpoints or the selected OpenAI-compatible endpoint.
-3. Applies the VSS sandbox policy from `assets/vss_nemoclaw_policy.yaml`.
-4. Packs and installs the OpenClaw plugin with the repository's current `skills/`.
-5. Updates OpenClaw's allowed origins and prints the final OpenClaw UI URL when available.
+  Create a Hub key at <https://inference.nvidia.com/key-management?action=new-key>;
+  the model ids it serves are listed at <https://inference.nvidia.com/?new=0>.
 
-## Expected Environment
+  Any other endpoint replaces all three — your own gateway or router with the id
+  it serves the model under, a self-hosted server, or a provider's public API —
+  and its own documentation is where that key and those model ids come from.
+  `NVIDIA_API_KEY` (`nvapi-…`, from <https://build.nvidia.com>) is the
+  build.nvidia.com path instead, and a NemoClaw-managed local model needs no key
+  at all. Notebook section 1.2 stays the authority on which variables each
+  provider reads.
+- This repo checked out so the policy, the harness image definition for the
+  runtime you pick (`.openclaw/` or `.hermes/`), skills, and workspace docs are
+  available.
 
-This script is meant to run on a NemoClaw-ready Ubuntu machine with this repository already checked out. It is not architecture-specific; the model endpoint selected for OpenClaw must support the host. On Thor, use the `custom` provider with a local OpenAI-compatible server to keep inference local.
-
-The following repo content is expected to exist:
-
-- `skills/`
-- `assets/vss_nemoclaw_policy.yaml`
-- `deploy/docker/scripts/nemoclaw/update_openclaw_config.py`
-
-The following host tools or resources are also expected:
-
-- `python3`
-- `docker`
-- `sudo`
-- a working NemoClaw install source at `$HOME/NemoClaw/install.sh`, unless `nemoclaw` is already in `PATH`
-
-## Usage
-
-Choose a provider with `NEMOCLAW_PROVIDER` or `--provider`. The script exits before making changes if neither is set.
-
-### `build` provider (NVIDIA Endpoints)
-
-```bash
-NEMOCLAW_PROVIDER=build \
-NVIDIA_API_KEY="$NVIDIA_API_KEY" \
-  bash deploy/docker/scripts/nemoclaw/init_nemoclaw.sh demo
-```
-
-Or use explicit flags:
+## Canonical flow
 
 ```bash
-NEMOCLAW_PROVIDER=build \
-  bash deploy/docker/scripts/nemoclaw/init_nemoclaw.sh \
-    --sandbox-name demo \
-    --model nvidia/nemotron-3-super-120b-a12b \
-    --nvidia-api-key "$NVIDIA_API_KEY"
+SB="${NEMOCLAW_SANDBOX_NAME:-vss-harness-sandbox}"
+RUNTIME="${AGENT_RUNTIME:-openclaw}"          # openclaw (default) or hermes
+REPO="$(git rev-parse --show-toplevel)"
+
+# 1. Install NemoClaw (pinned). The installer auto-onboards a sandbox from the
+#    environment when NEMOCLAW_NON_INTERACTIVE=1 / NEMOCLAW_PROVIDER are exported,
+#    and non-interactive onboard takes the image from NEMOCLAW_FROM_DOCKERFILE
+#    alone - export it first, or the installer creates a stock sandbox under $SB
+#    that step 2 then finds and keeps. The notebook's 3.1 probes a reused
+#    sandbox for the `vss` CLI and refuses one without it.
+export NEMOCLAW_SANDBOX_NAME="$SB" NEMOCLAW_FROM_DOCKERFILE="$REPO/.$RUNTIME/Dockerfile"
+curl -fsSL "https://raw.githubusercontent.com/NVIDIA/NemoClaw/${NEMOCLAW_INSTALL_REF}/install.sh" | bash
+
+# 2. Create the sandbox (provider/model come from the environment)
+#    NEMOCLAW_PROVIDER=build|custom, NEMOCLAW_MODEL, NEMOCLAW_ENDPOINT_URL, COMPATIBLE_API_KEY / NVIDIA_API_KEY
+# CHAT_UI_URL bakes gateway.controlUi's auth for a remote UI (gateway.* cannot be
+# edited afterwards) — set it to the dashboard origin before onboarding. That
+# origin is the *relay* port (18790, step 7), not NemoClaw's own forward port
+# 18789, which stays loopback-only.
+# On Brev, read that origin from the environment context file instead of
+# assembling it: the secure-link domain varies per instance (gobrev.dev,
+# brevlab.com, ...), and a wrong one is baked in for the sandbox's lifetime.
+# The sandbox image is built from the repo's own harness Dockerfile (NemoClaw's
+# custom-image workflow, `--from`; the Dockerfile's directory is the build
+# context). .openclaw extends NemoClaw's managed OpenClaw runtime
+# with the VSS OpenClaw plugin (the `vss` CLI as a tool, the operation skills,
+# the workspace docs); .hermes extends the managed Hermes runtime
+# with the same skills, docs and CLI. Nothing is installed into the sandbox
+# afterwards except the policy and, for Kubernetes, a rendered ENV.md.
+BREV_CTX="${BREV_ENVIRONMENT_CONTEXT_PATH:-/etc/brev/environment-context.json}"
+# /etc/brev is 0700 root:root, hence the sudo read. Resolve the fqdn in its own
+# command and check it before onboarding: as a `VAR=$(...) cmd` prefix, a failed
+# substitution still runs the command, so a missing link would bake
+# "https://null" in as the allowed origin for the sandbox's lifetime.
+CHAT_UI_FQDN="$(sudo -n cat "$BREV_CTX" | jq -er '[.ports[]?|select(.destination_port==18790)|.fqdn][0]')"
+if [ -z "$CHAT_UI_FQDN" ] || [ "$CHAT_UI_FQDN" = null ]; then
+  echo "No secure link published for destination port 18790 (the relay port). Create it in the Brev console (Secure Links -> + HTTP port -> 18790) and re-run, or drop CHAT_UI_URL to onboard without a remote origin."
+else
+  CHAT_UI_URL="https://$CHAT_UI_FQDN" \
+    nemoclaw onboard --non-interactive --agent "$RUNTIME" --name "$SB" \
+      --from "$REPO/.$RUNTIME/Dockerfile"
+fi
+
+# 3. Apply the VSS sandbox policy (merges into the base OpenShell policy)
+nemoclaw "$SB" policy-add --from-file "$REPO/assets/vss_nemoclaw_policy.yaml" --yes
+
+# 3b. Record the deployment the agent operates. One contract for Compose and
+#     Kubernetes: `vss configure` probes the path routes behind a single origin;
+#     only the origin differs (haproxy on this host, or a cluster's Ingress).
+#     The notebook also uploads it as VSS_PUBLIC_URL in ENV.md so the agent
+#     re-runs the same call at session start.
+VSS_PUBLIC_URL="${VSS_PUBLIC_URL:-http://host.openshell.internal:7777}"
+openshell sandbox exec -n "$SB" -- vss configure --base-url "$VSS_PUBLIC_URL"
+openshell sandbox exec -n "$SB" -- vss configure check
+openshell sandbox exec -n "$SB" -- vss-openclaw-sync    # vss-hermes-sync on Hermes
+
+# 4. Deployment origin (Kubernetes only): render VSS_PUBLIC_URL into ENV.md and
+#    upload it over the image's copy. Compose deployments leave it as shipped.
+# NOTE: the destination is a DIRECTORY (OpenShell mkdir + tar-extracts into it)
+# sed "s|^export VSS_PUBLIC_URL=.*|export VSS_PUBLIC_URL=\"$VSS_PUBLIC_URL\"|" \
+#   "$REPO/.openclaw/workspace/_nemoclaw/ENV.md" > /tmp/ENV.md
+# nemoclaw "$SB" upload /tmp/ENV.md /sandbox/.openclaw/workspace/   # hermes: /sandbox/
+
+# The checked-in NemoClaw ENV.md defaults HITL_ENABLED=false. In this mode the
+# agent asks required questions in its normal response, ends the turn, and
+# continues after the user's next chat message. Do not enable structured HITL
+# unless both the active harness protocol and its UI support response events.
+
+# 5. Orchestrator MCP registration — only for HTTPS.
+#    Default path: leave this out. deploy_vss_orchestrator.ipynb starts the
+#    host-side HTTP MCP at http://host.openshell.internal:9988/mcp; the agent
+#    reaches it without a sandbox `mcp add`.
+#    HTTPS only: set ORCHESTRATOR_ENABLE_HTTPS=true in both notebooks, then:
+# nemoclaw "$SB" mcp add vss_orchestrator --url https://host.openshell.internal:9988/mcp
+
+# 6. Sandbox config: only the optional webhooks need config set.
+#    gateway.* (incl. controlUi) is rejected — it comes from
+#    CHAT_UI_URL at onboard; agents.defaults.workspace already defaults to
+#    ~/.openclaw/workspace (= /sandbox/.openclaw/workspace in the sandbox).
+nemoclaw "$SB" config set --key hooks.enabled \
+  --value true --config-accept-new-path --restart
+
+# 7. Forward the dashboard, relay it off-loopback, read the UI token.
+#    The forward stays on 127.0.0.1: `nemoclaw $SB connect|recover|start`
+#    re-creates it there and retires a 0.0.0.0 one as stale (a --from image
+#    cannot use NemoClaw's remote-bind contract), and it refuses to act when
+#    any second listener shares the port. Off-loopback clients — the
+#    vss-agent-ui container via host.docker.internal, the Brev secure link —
+#    use the relay on its own port instead. The notebook resolves the bind
+#    addresses at run time; by hand, bind Docker's default-bridge gateway
+#    (what host.docker.internal resolves to) or 0.0.0.0 on Brev.
+openshell forward start --background 18789 "$SB"
+if [ -n "${BREV_ENV_ID:-}" ]; then BIND=0.0.0.0;   # the secure-link edge arrives off-loopback
+else BIND=$(docker network inspect bridge -f '{{(index .IPAM.Config 0).Gateway}}'); fi
+setsid -f python3 "$REPO/deploy/docker/scripts/nemoclaw/dashboard-relay.py" \
+  --sandbox "$SB" --listen "$BIND" --port 18790 --upstream 127.0.0.1:18789
+#    Optional: repair a forward that holds 18789 but stops carrying HTTP (the
+#    notebook starts this by default; stop this sandbox's alone with
+#    `pkill -f "dashboard-forward-watchdog.py --sandbox $SB( |$)"`).
+setsid -f python3 "$REPO/deploy/docker/scripts/nemoclaw/dashboard-forward-watchdog.py" \
+  --sandbox "$SB" --port 18789 >>/tmp/nemoclaw-dashboard-watchdog.log 2>&1
+nemoclaw "$SB" gateway-token
+#    vss-agent-ui then reaches the gateway at ws://host.docker.internal:18790.
 ```
 
-### `custom` provider (OpenAI-compatible endpoint)
+## Non-interactive execution
 
-`NEMOCLAW_ENDPOINT_URL` and `COMPATIBLE_API_KEY` are required when `NEMOCLAW_PROVIDER=custom`:
+Automation runs the notebook itself rather than a copy of the steps above.
+[`run_setup_notebook.py`](../run_setup_notebook.py) — "the runner" below — reads
+a checked-in notebook with `nbformat` and executes every cell with `nbclient`
+(`allow_errors=False`, so the first failing cell aborts the run), which keeps
+the notebook as the single source of setup logic:
 
 ```bash
-NEMOCLAW_PROVIDER=custom \
-NEMOCLAW_ENDPOINT_URL=http://host.openshell.internal:8000/v1 \
-NEMOCLAW_MODEL=datasheet-chat \
-COMPATIBLE_API_KEY=EMPTY \
-  bash deploy/docker/scripts/nemoclaw/init_nemoclaw.sh demo
+uv run --isolated --no-project --python 3.12 \
+  --with nbformat --with nbclient --with ipykernel -- \
+  python deploy/docker/scripts/run_setup_notebook.py \
+    --notebook deploy/docker/scripts/deploy_nemoclaw.ipynb
 ```
 
-Equivalent with CLI flags:
+Two things invoke it. The
+[`vss-build-vision-ai`](../../../../skills/vss-build-vision-ai/references/agent-harness.md)
+skill is the usual one: it exports the settings below and runs
+`deploy_nemoclaw.ipynb` through the command above, once the deployment the
+harness drives is ready. That is also how skill-eval CI reaches the runner — a
+NemoClaw leg's first task provisions the build and attaches the harness through
+that skill. The other is anyone running the command by hand or from their own
+automation. Caller-specific work — provider mapping, cleanup, test fixtures —
+stays in the caller; the runner knows only the notebooks and their parameter
+tables.
 
-```bash
-NEMOCLAW_PROVIDER=custom \
-  bash deploy/docker/scripts/nemoclaw/init_nemoclaw.sh \
-    --sandbox-name demo \
-    --model datasheet-chat \
-    --endpoint-url http://host.openshell.internal:8000/v1 \
-    --compatible-api-key EMPTY
-```
+Settings come from the environment. Most are picked up unaided, because the
+notebook's own advanced-settings block reads them from its `SHELL_ENV` snapshot.
+The provider variables in section 1.2 are the exception: cells (a), (b) and (c)
+are mutually exclusive choices a human picks between, each assigning
+`NEMOCLAW_PROVIDER` and friends as plain Python literals, so executing the
+notebook top to bottom runs all three and the last one wins no matter what the
+caller asked for. The runner therefore injects
+`NAME = os.environ.get("NAME", NAME)` immediately before the derived-settings
+marker — the first point where every provider literal is in scope — giving the
+environment the last word. `NOTEBOOK_PARAMETERS` in the runner lists which
+variables get that treatment per notebook; a variable the notebook already
+reads from `SHELL_ENV` does not belong there. The injection touches only the
+in-memory copy and executed notebooks are never written back, so a run cannot
+persist credentials into the checkout.
 
-`host.openshell.internal` is the policy-approved host alias inside the sandbox. The local server must listen on a host/bridge address reachable through that alias, not only on host loopback. Before onboarding, verify the server from the host and use the returned model id as `NEMOCLAW_MODEL`:
+## Why canonical
 
-```bash
-curl -fsS http://172.17.0.1:8000/v1/models | jq -r '.data[].id'
-```
-
-The bridge address above is the Thor reference deployment's bind address. If the server uses another local address or port, probe that address and add the selected port to the `vss-backend` policy before onboarding.
-
-### Background run on a Brev instance
-
-```bash
-nohup env NEMOCLAW_PROVIDER=build NVIDIA_API_KEY="$NVIDIA_API_KEY" \
-  bash /home/ubuntu/video-search-and-summarization/deploy/docker/scripts/nemoclaw/init_nemoclaw.sh \
-  > /tmp/nemoclaw_install.log 2>&1 &
-```
-
-## Options
-
-| Option | Description | Default |
-|---|---|---|
-| `--provider NAME` | `build` or `custom`; equivalent to `NEMOCLAW_PROVIDER` | required |
-| `--sandbox-name NAME` | Target sandbox name | `demo` |
-| `--model NAME` | NemoClaw inference model | `nvidia/nemotron-3-super-120b-a12b` |
-| `--nvidia-base-url URL` | NVIDIA API base URL for the `build` provider | `https://integrate.api.nvidia.com/v1` |
-| `--nvidia-api-key KEY` | API key for the `build` provider | `NVIDIA_API_KEY` env fallback |
-| `--endpoint-url URL` | OpenAI-compatible endpoint URL (required when `NEMOCLAW_PROVIDER=custom`) | — |
-| `--compatible-api-key KEY` | API key for the OpenAI-compatible endpoint (required when `NEMOCLAW_PROVIDER=custom`) | — |
-| `--openclaw-config-script PATH` | Path to `update_openclaw_config.py` | `deploy/docker/scripts/nemoclaw/update_openclaw_config.py` |
-| `--policy-file PATH` | Custom sandbox policy file | `assets/vss_nemoclaw_policy.yaml` |
-| `--help` | Show usage help | n/a |
-
-## Environment Variables
-
-The script also honors these environment variables:
-
-- `VSS_REPO_DIR`: repo root used to resolve plugin assets and the default policy file
-- `NEMOCLAW_SANDBOX_NAME`
-- `NEMOCLAW_PROVIDER` (**required**) — `build` or `custom`
-- `NEMOCLAW_ENDPOINT_URL` — OpenAI-compatible endpoint URL; required when `NEMOCLAW_PROVIDER=custom`
-- `COMPATIBLE_API_KEY` — API key for the OpenAI-compatible endpoint; required when `NEMOCLAW_PROVIDER=custom`
-- `OPENSHELL_PROVIDER_NAME`
-- `NEMOCLAW_MODEL`
-- `NVIDIA_BASE_URL`
-- `NVIDIA_API_KEY`
-- `OPENCLAW_CONFIG_UPDATE_SCRIPT`
-- `NEMOCLAW_POLICY_FILE`
-- `VSS_CONTAINER_NAME`: explicit OpenShell gateway container name, if autodetection is not sufficient
-- `VSS_NAMESPACE`: Kubernetes namespace for the sandbox pod, default `openshell`
-- `BREV_LINK_DOMAIN`: optional secure-link domain override; Netbird selects `apps.run.brev.nvidia.com`, otherwise `brevlab.com`
-
-## Expected Output
-
-Successful runs usually include log lines like:
-
-```text
-[init_nemoclaw] Start installing/onboarding NemoClaw
-[init_nemoclaw] Finished installing/onboarding NemoClaw
-[init_nemoclaw] Applying custom policy file /home/ubuntu/video-search-and-summarization/assets/vss_nemoclaw_policy.yaml to sandbox demo
-[init_nemoclaw] VSS skills installed
-[init_nemoclaw] Updating OpenClaw config for sandbox demo using script /home/ubuntu/video-search-and-summarization/deploy/docker/scripts/nemoclaw/update_openclaw_config.py
-OpenClaw UI at https://18789-<brev-id>.<brev-link-domain>/#token=<token>
-```
-
-If the config update succeeds, the helper also prints:
-
-- `Updated /sandbox/.openclaw/openclaw.json` or `No JSON change needed ...`
-- `Brev instance ID: ...`
-- `Origin allowed in OpenClaw: https://18789-<brev-id>.<brev-link-domain>`
-- `Dashboard token: ...`
-
-## Troubleshooting
-
-- Verify `NEMOCLAW_PROVIDER` is set (`build` or `custom`) — the script exits immediately if it is unset.
-- For `NEMOCLAW_PROVIDER=custom`, verify both `NEMOCLAW_ENDPOINT_URL` and `COMPATIBLE_API_KEY` are set (or pass `--endpoint-url` / `--compatible-api-key`).
-- For the `build` provider, verify `NVIDIA_API_KEY` is set before running the installer; the `custom` provider does not use it.
-- If NemoClaw onboarding fails, verify `nemoclaw` is resolvable or that `$HOME/NemoClaw/install.sh` exists and is executable.
-- If the custom policy is skipped, confirm `assets/vss_nemoclaw_policy.yaml` exists or pass `--policy-file`.
-- If the skills upload is skipped, verify the repo checkout includes `skills/`.
-- If the skills upload cannot determine a gateway container, set `VSS_CONTAINER_NAME` explicitly.
-- If the OpenClaw origin update fails, run `python3 deploy/docker/scripts/nemoclaw/update_openclaw_config.py demo` directly to inspect the underlying error.
+Keeping the flow on first-class NemoClaw commands means VSS and NemoClaw stay
+decoupled: NemoClaw version upgrades, new agent runtimes (e.g. Hermes via
+`--agent hermes`), and new features are picked up without VSS having to
+patch, post-edit, or re-implement installer/onboard behaviour.

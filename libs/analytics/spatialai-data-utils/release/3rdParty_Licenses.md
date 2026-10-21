@@ -21635,7 +21635,7 @@ either expressed or implied, of David Wolever.
 
 ---
 
-## pillow:12.2.0
+## pillow:12.3.0
 
 **License Type:** MIT (HPND / MIT-CMU (CMU variant of MIT))
 
@@ -23500,7 +23500,7 @@ limitations under the License.
 
 ---
 
-## urllib3:2.7.0
+## urllib3:2.8.0
 
 **License Type:** MIT
 

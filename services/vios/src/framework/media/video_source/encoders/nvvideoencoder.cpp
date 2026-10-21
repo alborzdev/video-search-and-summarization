@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2022-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,10 @@
 
 #include "nvvideoencoder.h"
 #include "stream_buffer.h"
+#include "video_resolution.h"
 #include <chrono>
+
+using namespace nv_vms;
 
 constexpr int MAX_Q_WAIT_SEC = 2;
 
@@ -45,7 +48,7 @@ NvEncoderVideoConsumer::NvEncoderVideoConsumer(const std::string& consumer_name,
     m_encoderProcessThread = std::thread(&NvEncoderVideoConsumer::encoderProcessThread, this);
     m_transcodeStats.clear();
     // Performance tracking element name is now set in base constructor
-    setConsumerType (encoder);
+    IMediaDataConsumer::setConsumerType (encoder);
 
     /* Initialize encoder with default resolution */
     if (NvHwDetection::getInstance()->m_useNvV4l2Enc == true)
@@ -375,7 +378,7 @@ void NvEncoderVideoConsumer::encoderProcessThread()
                 }
                 if (output_buffer)
                 {
-                    free (output_buffer);
+                    delete[] output_buffer;
                     output_buffer = nullptr;
                 }
             }
@@ -415,9 +418,10 @@ void NvEncoderVideoConsumer::encoderProcessThread()
                 software_mode = true;
             }
         }
-#ifndef JETSON_PLATFORM
-        frame_data->m_isTransformed = true;
-#endif
+        if (!isJetsonPlatform())
+        {
+            frame_data->m_isTransformed = true;
+        }
         m_encoderTransformed = frame_data->m_isTransformed;
         fd_index_pair = resetEncIfRequiredAndGetFreeBuffer (encoder_width, encoder_height, false);
         fd  = fd_index_pair.first;
@@ -494,33 +498,82 @@ void NvEncoderVideoConsumer::encoderProcessThread()
         /* Get QP and Bitrate values feedback from webRTCSender Class */
         int qp = 0, bitrate = 0;
         double frame_rate = 0;
+        const bool is_dash_consumer =
+            m_consumer && m_consumer->getConsumerType() == ConsumerType::dashConsumer;
         if (m_consumer && m_consumer->getConsumerType() == ConsumerType::webrtcConsumer)
         {
             m_consumer->getwebRTCFeedback (&qp, &bitrate, &frame_rate);
         }
 
-        int min_bitrate = DEFAULT_WEBRTC_MIN_BITRATE;
-        int max_bitrate = DEFAULT_WEBRTC_MAX_BITRATE;
-        Json::Value webrtc_video_quality_tunning = VmsConfigManager::getInstance()->getWebrtcVideoQualityValues(encoder_height);
-        if (webrtc_video_quality_tunning != Json::nullValue)
+        int target_bitrate = 0;
+        if (is_dash_consumer)
         {
-            std::vector<int> bitrate_range;
-            for (const auto& bitrate : webrtc_video_quality_tunning["bitrate_range"])
+            /* A DASH session has no congestion controller to report back, so the
+             * feedback above never runs for it and clamping would raise a bitrate
+             * of zero to the bottom of the WebRTC range - the rate a controller is
+             * allowed to fall to, not a rate anyone chose to publish at. Ask for
+             * the DASH rate instead, the same one the software encoder uses, so
+             * both platforms publish the same picture. */
+            target_bitrate = dashBitrateKbpsForHeight (GET_CONFIG().dash_bitrate_kbps,
+                                                       encoder_height) * 1000;
+        }
+        else
+        {
+            int min_bitrate = DEFAULT_WEBRTC_MIN_BITRATE;
+            int max_bitrate = DEFAULT_WEBRTC_MAX_BITRATE;
+            Json::Value webrtc_video_quality_tunning =
+                VmsConfigManager::getInstance()->getWebrtcVideoQualityValues(encoder_height);
+            if (webrtc_video_quality_tunning != Json::nullValue)
             {
-                bitrate_range.push_back(bitrate.asInt());
+                std::vector<int> bitrate_range;
+                for (const auto& range_value : webrtc_video_quality_tunning["bitrate_range"])
+                {
+                    bitrate_range.push_back(range_value.asInt());
+                }
+                if (bitrate_range.size() == 2)
+                {
+                    min_bitrate = bitrate_range[0];
+                    max_bitrate = bitrate_range[1];
+                }
             }
-            if (bitrate_range.size() == 2)
+            target_bitrate = std::clamp(bitrate, min_bitrate * 1000, max_bitrate * 1000);
+        }
+        /* A segment ends on a keyframe, so the encoder has to produce one at the
+         * spacing DASH publishes at. The WebRTC interval counts frames, which
+         * describes a different length at every frame rate: a wall composed at
+         * eight frames a second turned an interval of thirty into a keyframe
+         * every 3.75 s, so segments came out at four seconds however short the
+         * configured length was, and the preroll that waits for two of them
+         * held the first picture for sixteen seconds. Ask in seconds instead. */
+        if (is_dash_consumer && m_frameRate > 0.0)
+        {
+            const unsigned segmentSeconds =
+                m_consumer ? m_consumer->publishedSegmentSeconds() : 0u;
+            if (segmentSeconds > 0)
             {
-                min_bitrate = bitrate_range[0];
-                max_bitrate = bitrate_range[1];
+                const auto wanted = static_cast<uint32_t>(std::max(
+                    1L, std::lround(m_frameRate * static_cast<double>(segmentSeconds))));
+                if (wanted != m_dashIdrInterval && m_nvEncoder)
+                {
+                    m_nvEncoder->setIDRInterval(wanted);
+                    m_dashIdrInterval = wanted;
+                    LOG(info) << "DASH hardware encoder keyframe interval: " << wanted
+                              << " frames for a " << segmentSeconds << "s segment at "
+                              << m_frameRate << " fps" << endl;
+                }
             }
         }
-        bitrate = std::clamp(bitrate, min_bitrate * 1000,
-                            max_bitrate * 1000);
-        if (bitrate != 0 && m_prevBitRate != bitrate)
+
+        if (target_bitrate != 0 && m_prevBitRate != target_bitrate)
         {
-            setRates ((unsigned int)bitrate);
-            m_prevBitRate = bitrate;
+            if (is_dash_consumer)
+            {
+                LOG(info) << "DASH hardware encoder bitrate: " << (target_bitrate / 1000)
+                          << " kbit/s for height " << encoder_height
+                          << " (configured=" << GET_CONFIG().dash_bitrate_kbps << ")" << endl;
+            }
+            setRates ((unsigned int)target_bitrate);
+            m_prevBitRate = target_bitrate;
         }
 
         FD_Index_Pair free_pair(-1, -1);
@@ -577,7 +630,7 @@ void NvEncoderVideoConsumer::encoderProcessThread()
         }
         if (output_buffer)
         {
-            free (output_buffer);
+            delete[] output_buffer;
             output_buffer = nullptr;
         }
         {

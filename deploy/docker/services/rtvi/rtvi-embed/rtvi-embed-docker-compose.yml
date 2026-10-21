@@ -17,11 +17,12 @@
 
 services:
   rtvi-embed:
-    # for release, change this to the versioned image from the registry
-    image: ${RTVI_EMBED_IMAGE:-nvcr.io/nvidia/vss-core/vss-rt-embed}:${RTVI_EMBED_TAG:-3.2.1}
+    # SBSA/DGX-Spark uses the same GHCR repository with
+    # VSS_RT_EMBED_TAG=develop-latest-sbsa.
+    image: ${VSS_RT_EMBED_IMAGE:-${VSS_CONTAINER_REGISTRY:-ghcr.io/nvidia-ai-blueprints/vss}/vss-rt-embed}:${VSS_RT_EMBED_TAG:-develop-latest}
     container_name: vss-rtvi-embed
     user: "1001:1001"
-    profiles: ["bp_developer_search_2d", "bp_developer_thor_full_2d"]
+    profiles: ["rtvi-embed"]
     deploy:
       resources:
         reservations:
@@ -30,6 +31,8 @@ services:
             - gpu
             driver: nvidia
             device_ids:
+            # Accepts a GPU index, GPU UUID, or MIG UUID (MIG-... or MIG-GPU-...).
+            # The NVIDIA Container Toolkit exposes only this device to RTVI-Embed.
             - "${RT_EMBED_DEVICE_ID:-0}"
     ports:
       - "${RTVI_EMBED_PORT?}:8000"
@@ -38,8 +41,16 @@ services:
       MODEL_PATH: "${MODEL_PATH:-git:https://huggingface.co/nvidia/Cosmos-Embed1-448p}"
       MODEL_IMPLEMENTATION_PATH: "${MODEL_IMPLEMENTATION_PATH:-/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1}"
       MODEL_REPOSITORY_SCRIPT_PATH: "${MODEL_REPOSITORY_SCRIPT_PATH:-/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1/create_triton_model_repo.py}"
+      REMOTE_EMBED_ENDPOINT: "${REMOTE_EMBED_ENDPOINT:-}"
+      REMOTE_EMBED_ENDPOINT_MODEL_NAME: "${REMOTE_EMBED_ENDPOINT_MODEL_NAME:-nvidia/cosmos-embed1}"
+      REMOTE_EMBED_ENDPOINT_API_KEY: "${REMOTE_EMBED_ENDPOINT_API_KEY:-}"
+      REMOTE_EMBED_ENDPOINT_TIMEOUT_SEC: "${REMOTE_EMBED_ENDPOINT_TIMEOUT_SEC:-300}"
+      REMOTE_EMBED_ENDPOINT_BATCH_SIZE: "${REMOTE_EMBED_ENDPOINT_BATCH_SIZE:-64}"
       NGC_API_KEY: "${NGC_API_KEY:-}"
       NVIDIA_API_KEY: "${NVIDIA_API_KEY:-NOAPIKEYSET}"
+      # Default is intentionally "all" for compatibility with existing deployments.
+      # For MIG, set both RT_EMBED_DEVICE_ID and RTVI_EMBED_NVIDIA_VISIBLE_DEVICES
+      # to the same MIG-... or MIG-GPU-... UUID; the slice appears as logical CUDA device 0.
       NVIDIA_VISIBLE_DEVICES: "${RTVI_EMBED_NVIDIA_VISIBLE_DEVICES:-all}"
       NUM_VLM_PROCS: "${RTVI_EMBED_NUM_VLM_PROCS:-}"
       VLM_BATCH_SIZE: "${VLM_BATCH_SIZE:-}"
@@ -52,15 +63,18 @@ services:
       RTVI_RTSP_RECONNECTION_INTERVAL: "${RTVI_EMBED_RTSP_RECONNECTION_INTERVAL:-5}"
       RTVI_RTSP_RECONNECTION_WINDOW: "${RTVI_EMBED_RTSP_RECONNECTION_WINDOW:-60}"
       RTVI_RTSP_RECONNECTION_MAX_ATTEMPTS: "${RTVI_EMBED_RTSP_RECONNECTION_MAX_ATTEMPTS:-10}"
+      RTVI_IPC_FRAME_COPY: "${RTVI_EMBED_IPC_FRAME_COPY:-false}"
       ENABLE_OTEL_MONITORING: "${RTVI_EMBED_ENABLE_OTEL_MONITORING:-false}"  # Set to 'true' to enable OpenTelemetry
       OTEL_RESOURCE_ATTRIBUTES: "${RTVI_EMBED_OTEL_RESOURCE_ATTRIBUTES:-}"
       OTEL_TRACES_EXPORTER: "${RTVI_EMBED_OTEL_TRACES_EXPORTER:-otlp}"
       OTEL_EXPORTER_OTLP_ENDPOINT: "${RTVI_EMBED_OTEL_EXPORTER_OTLP_ENDPOINT:-http://otel-collector:4318}"
       OTEL_METRIC_EXPORT_INTERVAL: "${RTVI_EMBED_OTEL_METRIC_EXPORT_INTERVAL:-60000}"  # Metrics export interval in milliseconds
-      KAFKA_ENABLED: "${RTVI_EMBED_KAFKA_ENABLED:-false}"
-      KAFKA_TOPIC: "${RTVI_EMBED_KAFKA_TOPIC:-vision-embed-messages}"
       ERROR_MESSAGE_TOPIC: "${RTVI_EMBED_ERROR_MESSAGE_TOPIC:-vision-embed-errors}"
-      KAFKA_BOOTSTRAP_SERVERS: ${HOST_IP}:9092
+      KAFKA_BOOTSTRAP_SERVERS: ${RTVI_EMBED_KAFKA_BOOTSTRAP_SERVERS:-kafka:29092}
+      # Generated-output and error buses (empty MESSAGE_BUS/ERROR_BUS disables that bus).
+      MESSAGE_BUS: "${MESSAGE_BUS:-}"
+      MESSAGE_BUS_TOPIC: "${MESSAGE_BUS_TOPIC:-mdx-embed}"
+      ERROR_BUS: "${ERROR_BUS:-}"
       HF_TOKEN: "${HF_TOKEN:-}"
       ENABLE_REDIS_ERROR_MESSAGES: "${ENABLE_REDIS_ERROR_MESSAGES:-false}"
       REDIS_HOST: "${REDIS_HOST:-redis}"
@@ -69,7 +83,13 @@ services:
       REDIS_PASSWORD: "${REDIS_PASSWORD:-}"
       ASSET_DOWNLOAD_TOTAL_TIMEOUT: "${ASSET_DOWNLOAD_TOTAL_TIMEOUT:-300}"
       ASSET_DOWNLOAD_CONNECT_TIMEOUT: "${ASSET_DOWNLOAD_CONNECT_TIMEOUT:-10}"
-      ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS: "${ASSET_DOWNLOAD_ALLOWED_PRIVATE_HOSTS:-}"
+      ASSET_DOWNLOAD_MAX_FILE_SIZE_GB: "${ASSET_DOWNLOAD_MAX_FILE_SIZE_GB:-8}"
+      ASSET_DOWNLOAD_SSL_SKIP_VERIFY_DOMAINS: "${ASSET_DOWNLOAD_SSL_SKIP_VERIFY_DOMAINS:-}"
+      ASSET_DOWNLOAD_MAX_REDIRECTS: "${ASSET_DOWNLOAD_MAX_REDIRECTS:-0}"
+      ASSET_DOWNLOAD_AUTH_TOKENS: "${ASSET_DOWNLOAD_AUTH_TOKENS:-}"
+      FILE_URL_ALLOWED_DIRS: "${FILE_URL_ALLOWED_DIRS:-}"
+      MAX_ASSET_STORAGE_SIZE_GB: "${MAX_ASSET_STORAGE_SIZE_GB:-}"
+      ASSET_MAX_AGE_HOURS: "${ASSET_MAX_AGE_HOURS:-0}"
       ENABLE_REQUEST_PROFILING: "${ENABLE_REQUEST_PROFILING:-false}"
 
 
@@ -78,6 +98,7 @@ services:
       - "${ASSET_STORAGE_DIR:-/dummy}${ASSET_STORAGE_DIR:+:/tmp/assets}"
       - "${NGC_MODEL_CACHE:-rtvi-ngc-model-cache}:/opt/nvidia/rtvi/.rtvi/ngc_model_cache"
       - "${RTVI_EMBED_LOG_DIR:-/dummy}${RTVI_EMBED_LOG_DIR:+:/opt/nvidia/rtvi/log/rtvi/}"
+      - "${RTVI_EMBED_IPC_SOCKET_HOST_DIR:-/dummy}${RTVI_EMBED_IPC_SOCKET_HOST_DIR:+:/run/rtvi-ipc}"
       - "${RTVI_EMBED_HF_CACHE:-rtvi-hf-cache}:/tmp/huggingface"
       - ${VSS_DATA_DIR}/data_log/vst/clip_storage:/home/vst/vst_release/streamer_videos
       - rtvi-triton-model-repo:/tmp/triton_model_repo

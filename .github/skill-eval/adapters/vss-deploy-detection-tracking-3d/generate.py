@@ -7,33 +7,31 @@ The vss-deploy-detection-tracking-3d skill deploys and operates the
 RTVI-CV-3D / MV3DT stack (Multi-View 3D Tracking) — per-camera
 DeepStream perception plus BEV Fusion over multiple calibrated cameras.
 
-Four eval specs ship with the skill:
-  - evals/deploy.json           — Full deploy/verify/teardown flow on the
-                                  bundled sample dataset (3 steps)
-  - evals/calibration-chain.json — End-to-end custom-data calibration
-                                  chain + deploy + teardown (2 steps)
-  - evals/routing.json          — CPU-only routing coverage eval; no
-                                  containers deployed (4 queries, 1 step
-                                  each treated as single-step)
-  - evals/evals.json            — Static routing/knowledge tests (no
-                                  deploy, JSON array format)
+Three dispatchable eval specs ship with the skill:
+  - evals/sample-deployment.json — Real end-to-end sample dataset deployment
+                                   with saved grid/BEV verification.
+  - evals/calibration-chain.json — Plan-only custom-data calibration handoff
+                                   coverage for local MP4 and RTSP inputs.
+  - evals/routing.json           — Plan-only routing coverage; no containers
+                                   deployed.
+  - evals/evals.json             — Static routing/knowledge tests (no deploy,
+                                   JSON array format, not dispatched).
 
-All specs target RTXPRO6000BW. deploy.json and calibration-chain.json
-are multi-step (state preserved between steps); routing.json is
-single-step (each query is independent, treated as one step with all
-queries as checks).
+All dispatchable specs target RTXPRO6000BW. routing.json and
+calibration-chain.json are plan-only; sample-deployment.json is the real GPU
+runtime smoke test.
 
 Usage from the repository root:
     python3 .github/skill-eval/adapters/vss-deploy-detection-tracking-3d/generate.py \\
         --output-dir /tmp/skill-eval/datasets/<leg-slug>/<run_id> \\
-        --skill-dir skills/vss-deploy-detection-tracking-3d \\
-        --spec skills/vss-deploy-detection-tracking-3d/evals/deploy.json
+        --skill-dir skills/deployment/vss-deploy-detection-tracking-3d \\
+        --spec skills/deployment/vss-deploy-detection-tracking-3d/evals/sample-deployment.json
 
     # With platform filter:
     python3 .github/skill-eval/adapters/vss-deploy-detection-tracking-3d/generate.py \\
         --output-dir /tmp/skill-eval/datasets/<leg-slug>/<run_id> \\
-        --skill-dir skills/vss-deploy-detection-tracking-3d \\
-        --spec skills/vss-deploy-detection-tracking-3d/evals/deploy.json \\
+        --skill-dir skills/deployment/vss-deploy-detection-tracking-3d \\
+        --spec skills/deployment/vss-deploy-detection-tracking-3d/evals/sample-deployment.json \\
         --platform RTXPRO6000BW
 """
 from __future__ import annotations
@@ -59,16 +57,33 @@ PLATFORMS: dict[str, dict] = {
 }
 
 DEFAULT_PLATFORM = "RTXPRO6000BW"
-DEFAULT_SPEC = "deploy.json"
+DEFAULT_SPEC = "sample-deployment.json"
 
 GENERIC_JUDGE = Path(__file__).resolve().parents[2] / "verifiers" / "generic_judge.py"
 
 PREAMBLE = (
     "You are running inside a non-interactive evaluation harness. "
     "You are pre-authorized to deploy prerequisites autonomously — "
-    "do not pause to ask for confirmation on `/vss-deploy-profile` or any other "
+    "do not pause to ask for confirmation on `/vss-build-vision-ai` or any other "
     "setup action the trial requires."
 )
+
+
+def _peer_skill_dir(skill_dir: Path, name: str) -> Path | None:
+    """Resolve a peer skill by its leaf directory name.
+
+    A skill lives at either skills/<name>/ or skills/<category>/<name>/, and a
+    peer may sit in a different category than the caller — so look beside the
+    caller first, then across the categories one level up.
+    """
+    beside = skill_dir.parent / name
+    if beside.is_dir():
+        return beside
+    for category in sorted(skill_dir.parent.parent.glob("*")):
+        nested = category / name
+        if nested.is_dir():
+            return nested
+    return None
 
 
 def _substitute_spec(spec: dict, platform: str) -> dict:
@@ -212,6 +227,9 @@ def generate_task(
             f'description = "MV3DT {kind} query {idx}/{len(expects)} on {platform}"',
             f'keywords = ["vss-deploy-detection-tracking-3d", "mv3dt", "{kind}", "{platform}"]',
             "",
+            "[agent]",
+            "timeout_sec = 600.0",
+            "",
             "[environment]",
             'skills_dir = "/skills"',
             "",
@@ -333,6 +351,9 @@ def generate_routing_task(
             f'description = "MV3DT routing query {idx}/{len(expects)} on {platform}"',
             f'keywords = ["vss-deploy-detection-tracking-3d", "mv3dt", "{kind}", "{platform}", "routing"]',
             "",
+            "[agent]",
+            "timeout_sec = 600.0",
+            "",
             "[environment]",
             'skills_dir = "/skills"',
             "",
@@ -400,9 +421,9 @@ def main() -> None:
     parser.add_argument("--output-dir", required=True,
                         help="Dataset output root")
     parser.add_argument("--skill-dir", required=True,
-                        help="Path to skills/vss-deploy-detection-tracking-3d")
+                        help="Path to skills/deployment/vss-deploy-detection-tracking-3d")
     parser.add_argument("--calibration-skill-dir", default=None,
-                        help="Path to skills/vss-generate-video-calibration "
+                        help="Path to skills/tools/vss-generate-video-calibration "
                              "(included for calibration-chain spec)")
     parser.add_argument(
         "--spec",
@@ -417,9 +438,9 @@ def main() -> None:
     skill_dir = Path(args.skill_dir)
     calibration_skill_dir = (
         Path(args.calibration_skill_dir) if args.calibration_skill_dir
-        else skill_dir.parent / "vss-generate-video-calibration"
+        else _peer_skill_dir(skill_dir, "vss-generate-video-calibration")
     )
-    if not calibration_skill_dir.exists():
+    if calibration_skill_dir is not None and not calibration_skill_dir.exists():
         calibration_skill_dir = None
 
     if args.spec:

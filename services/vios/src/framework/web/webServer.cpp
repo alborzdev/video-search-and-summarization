@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,12 +21,17 @@
 #include "vst_common.h"
 #include "config.h"
 
+using namespace std;
+using namespace nv_vms;
+
 // Handler to redirect /vst prefixed static file requests to root
 // e.g., /vst/ → /, /vst/index.html → /index.html
 // Note: API paths (/vst/api/...) are NOT redirected - they're handled by API handlers
 class VstPrefixRedirectHandler : public CivetHandler
 {
 public:
+    using CivetHandler::handleGet;
+
     bool handleGet(CivetServer *server, struct mg_connection *conn) override
     {
         const struct mg_request_info *req_info = mg_get_request_info(conn);
@@ -147,6 +152,9 @@ WebServer::WebServer()
     #ifdef LIVE_STREAM_MODULE
     m_civetServer->addWebSocketHandler("/api/v1/live/ws", *m_websocket);
     m_civetServer->addWebSocketHandler(URL_PREFIX + "/api/v1/live/ws", *m_websocket);
+    m_dashHttpHandler = std::make_unique<DashHttpHandler>();
+    m_civetServer->addHandler("/dash/", *m_dashHttpHandler);
+    m_civetServer->addHandler(URL_PREFIX + "/dash/", *m_dashHttpHandler);
     #endif
 
     #ifdef REPLAY_STREAM_MODULE
@@ -189,7 +197,7 @@ WebServer::WebServer()
         LOG(info) << "OpenTelemetry tracing disabled by configuration" << std::endl;
     }
 
-    LOG(info) << "HTTP Listen at " << g_hostIp << ":" << config.http_port << std::endl;
+    LOG(info) << "HTTP Listen at " << getHostIpAddress() << ":" << config.http_port << std::endl;
 }
 
 

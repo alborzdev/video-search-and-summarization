@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,9 +27,10 @@
 #include <cctype>
 #include <chrono>
 
-VideoGeneratorTaskManager::VideoGeneratorTaskManager()
-{
-}
+using namespace std;
+using namespace nv_vms;
+
+VideoGeneratorTaskManager::VideoGeneratorTaskManager() = default;
 
 VideoGeneratorTaskManager::~VideoGeneratorTaskManager() noexcept
 {

@@ -12,29 +12,53 @@ Pydantic v2, OpenCV, xhtml2pdf. Package manager: `uv`. Linter/formatter: Ruff. T
 
 ```bash
 # Setup
-uv venv --python 3.13 && uv sync --group dev && source .venv/bin/activate
+uv venv --python 3.13 && uv sync --group dev --extra agent && source .venv/bin/activate
 sudo apt-get install libcairo2-dev pkg-config python3-dev   # PDF generation deps
 pre-commit install
 
 # Test
-uv run pytest tests/unit_test/ -v                           # all tests
-uv run pytest tests/unit_test/tools/vst/test_video_clip.py -v   # single file
+uv run pytest packages/vss_agents/tests/unit_test/ -v                           # all tests
+uv run pytest packages/vss_agents/tests/unit_test/tools/vst/test_video_clip.py -v   # single file
 
 # Lint & type-check (run all three after every change)
-uv run ruff check src/                                      # lint
-uv run ruff check src/vss_agents/tools/vst/video_clip.py        # lint single file
-uv run ruff format --check src/                             # format check
-uv run mypy src/vss_agents/                                 # type check
+uv run ruff check packages/vss_agents/src/                                      # lint
+uv run ruff check packages/vss_agents/src/vss_agents/tools/vst/video_clip.py        # lint single file
+uv run ruff format --check packages/vss_agents/src/                             # format check
+uv run mypy packages/vss_agents/src/vss_agents/                                 # type check
 
 # Run the agent (dev-profile-base example; see README.md Quick Start)
 nat serve --config_file ../../deploy/docker/developer-profiles/dev-profile-base/vss-agent/configs/config.yml \
   --host 0.0.0.0 --port 8000
 ```
 
+## Container builds
+
+Build from the **repository root**, not the service directory:
+
+```bash
+docker build -f services/agent/docker/Dockerfile \
+  --build-arg VSS_CACHE_PROPRIETARY_CODECS=1 \
+  -t vss-agent:tradeshow .
+```
+
+The optional codec cache stages the wheel during this local build. At startup,
+`INSTALL_PROPRIETARY_CODECS=true` extracts the cached wheel without network
+access. An explicit `VSS_PROPRIETARY_CODECS_WHEEL` still takes precedence.
+Source mounts must use `packages/vss_agents/src` together with `libs/vss/core/src`
+and `libs/vss/cli/src`; the old `services/agent/src` tree is superseded.
+
+## Related guides
+
+- **Driving a deployed stack from the command line** — [`libs/vss/cli/AGENTS.md`](../../libs/vss/cli/AGENTS.md).
+  That is the agent-facing contract for the `vss` CLI: bootstrap, `vss configure`,
+  exit codes, and the rules for addressing media. This file is about developing
+  the agent service; that one is about using the deployment.
+- Repository-wide index: [`AGENTS.md`](../../AGENTS.md) at the root.
+
 ## Project Structure
 
 ```
-src/vss_agents/
+packages/vss_agents/src/vss_agents/
 ├── agents/            # Orchestration agents (top_agent, report_agent, multi_report_agent)
 │   └── postprocessing/  # Response validation (URL validator, etc.)
 ├── api/               # FastAPI endpoints, custom workers, RTSP/video ingest routes
@@ -46,8 +70,8 @@ src/vss_agents/
 │   └── code_executor/ # Sandboxed code execution (Docker backend)
 ├── utils/             # Shared helpers
 └── video_analytics/   # Video Analytics MCP server and ES client
-tests/unit_test/       # Mirrors src/ tree — every module has a matching test dir
-stubs/                 # Mypy stubs for NAT framework (nat.data_models)
+packages/vss_agents/tests/unit_test/  # Mirrors the agent source tree — every module has a matching test dir
+packages/vss_agents/stubs/  # Mypy stubs for NAT framework (nat.data_models)
 ```
 
 ## Code Style
@@ -63,6 +87,7 @@ async def fetch_video_clip(sensor_id: str, start: float, end: float) -> VideoCli
     if end <= start:
         raise ValueError(f"end ({end}) must be after start ({start})")
     return await self._vst_client.get_clip(sensor_id, start, end)
+
 
 # ❌ Bad — missing types, vague name, no validation
 async def get(id, s, e):
@@ -91,17 +116,17 @@ async def get(id, s, e):
 ## Architecture Patterns
 
 - **Tools** subclass `FunctionBaseConfig` (NAT framework). Each tool has a `register.py`
-  entry point listed under `[project.entry-points.'nat.components']` in `pyproject.toml`.
+  entry point listed under `[project.entry-points.'nat.components']` in `packages/vss_agents/pyproject.toml`.
 - **Agents** are LangGraph state machines (`top_agent.py` routes to tools and sub-agents).
 - **Config** is YAML with `${ENV_VAR}` substitution. Profiles live in
   `../../deploy/docker/developer-profiles/<profile>/vss-agent/configs/config.yml`
   (e.g. `dev-profile-base`, `dev-profile-search`, `dev-profile-lvs`, `dev-profile-alerts`).
-- **Stubs**: `stubs/` has Mypy stubs for NAT. When subclassing a NAT base config,
-  verify `uv run mypy src/vss_agents/` passes — extend the stub if needed.
+- **Stubs**: `packages/vss_agents/stubs/` has Mypy stubs for NAT. When subclassing a NAT base config,
+  verify `uv run mypy packages/vss_agents/src/vss_agents/` passes — extend the stub if needed.
 
 ## Testing
 
-- Unit tests mirror `src/` under `tests/unit_test/`. Adding a new module? Add a matching test file.
+- Unit tests mirror `src/` under `packages/vss_agents/tests/unit_test/`. Adding a new module? Add a matching test file.
 - Use `pytest-asyncio` for async tests. Mark slow tests with `@pytest.mark.slow`.
 - Mocking: mock external services (VST, LLM, VLM, Elasticsearch) — never call real endpoints in unit tests.
 
@@ -109,7 +134,7 @@ async def get(id, s, e):
 
 - Create a feature branch from `main`. Keep commits focused.
 - Pre-commit hooks run `ruff`, `gitleaks` (secret scanning), and format checks automatically.
-- Run `uv run pytest tests/unit_test/ -v` before pushing.
+- Run `uv run pytest packages/vss_agents/tests/unit_test/ -v` before pushing.
 
 ## Boundaries
 

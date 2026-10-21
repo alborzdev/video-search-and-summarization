@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import LOG from './Logger';
 import { Sensor } from '../../interfaces/interfaces';
 import nvAxios from '../../services/Axios';
 import config from '../../config';
@@ -87,13 +88,13 @@ export const getSensorsWithTimeline = async (sensors: Sensor[], replaySensors: S
                 ? `${config.storageManagementEndpoint}/api/v1/storage/timelines`
                 : `${config.storageManagementEndpoint}/api/v1/storage/size?timelines=true`;
 
-        console.log('getSensorsWithTimeline - Adaptor Type:', vstAdaptorType);
-        console.log('getSensorsWithTimeline - Calling endpoint:', endpoint);
+        LOG.info('getSensorsWithTimeline - Adaptor Type:', vstAdaptorType);
+        LOG.info('getSensorsWithTimeline - Calling endpoint:', endpoint);
 
         const response = await nvAxios.get<TimelineResponse>(endpoint);
         const timelineData = response.data;
 
-        console.log('getSensorsWithTimeline - Response received:', Object.keys(timelineData).length, 'streams');
+        LOG.info('getSensorsWithTimeline - Response received:', Object.keys(timelineData).length, 'streams');
 
         // Retain the timelines on each replay-capable sensor. VideoPlayer is
         // mounted only after this call resolves, so carrying the intervals into
@@ -116,7 +117,7 @@ export const getSensorsWithTimeline = async (sensors: Sensor[], replaySensors: S
             return sensorTimelines.length > 0 ? [{ ...sensor, timelines: sensorTimelines }] : [];
         });
     } catch (error) {
-        console.error('Error fetching timeline data:', error);
+        LOG.error('Error fetching timeline data:', error);
         // Fallback to returning all sensors if API call fails
         const availableSensors = getReplaySensors(sensors, replaySensors);
         return availableSensors;

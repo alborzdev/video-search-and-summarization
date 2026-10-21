@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2020-2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,6 +62,10 @@ class StreamClientState
 public:
     StreamClientState();
     virtual ~StreamClientState();
+    StreamClientState(const StreamClientState&) = delete;
+    StreamClientState& operator=(const StreamClientState&) = delete;
+    StreamClientState(StreamClientState&&) = delete;
+    StreamClientState& operator=(StreamClientState&&) = delete;
 
 public:
     MediaSubsessionIterator* iter;
@@ -142,7 +146,7 @@ public:
         m_env.mainloop();
     }
 
-    videoClient(char const* rtspURL)
+    explicit videoClient(char const* rtspURL)
       : m_env(m_stop)
     {
         LOG(info) << "videoClient" << endl;
@@ -173,7 +177,7 @@ public:
 
 private:
     std::thread m_capturethread;
-    char m_stop = 0;
+    EventLoopWatchVariable m_stop{0};
     Environment m_env;
     ourRTSPClient *m_ourRtspClient;
 };

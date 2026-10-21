@@ -1,0 +1,13 @@
+# Narrow public source context; never traverse private runtime databases.
+**
+!services
+!services/alert
+!services/alert/alert_request_defaults.yaml
+!services/alert/alert_type_config.json
+!services/alert/enhance_alert_with_vlm.py
+!services/alert/media_transport_config.py
+!services/alert/schemas
+!services/alert/schemas/request_schema.yaml
+!services/alert/schemas/response_schema.yaml
+!services/alert/src
+!services/alert/src/**

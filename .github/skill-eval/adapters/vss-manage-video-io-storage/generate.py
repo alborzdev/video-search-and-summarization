@@ -3,67 +3,20 @@
 # SPDX-License-Identifier: Apache-2.0
 """Generate Harbor tasks for the vss-manage-video-io-storage skill.
 
-The vss-manage-video-io-storage skill exercises VIOS (VST) API calls — upload video, extract
-snapshot URL, extract clip URL, etc. The current spec
-([`skills/vss-manage-video-io-storage/evals/vios_ops.json`]) **omits the `profile` field
-by design** — the agent is expected to stand VIOS up standalone via the
-skill's bundled `references/deploy-vios-service.md` runbook before
-exercising the API. Per `.github/skill-eval/AGENTS.md` § 2, an absent
-`profile` is the supported signal to the harness that no
-`/vss-deploy-profile` prerequisite should be prepended; the trial runs
-directly on a bare Brev instance.
+The operational runtime specs declare a Build Vision AI setup query first,
+followed by VIOS or NvStreamer API operations against that deployment. Generate
+one Harbor task per query and include the skills declared by the spec; the
+runner does not inject deployment tasks or infer setup from a `profile` label.
 
-Because VIOS/VST is mostly GPU-independent (only `streamprocessing-ms`
-uses NVDEC/NVENC, and no single-stream eval saturates one GPU), this
-adapter targets **ONE platform** by default (L40S — cheapest stoppable
-host with a working `nvidia-container-toolkit`). Use `--platform <X>`
-to override or `--all-platforms` if you really want the fan-out (not
-what the spec asks for).
-
-## Deploy modes
-
-Harbor runs exactly one task per trial on a clean environment, and the
-skill-eval harness no longer pre-deploys any VSS profile on the agent's
-behalf. So whichever path the spec picks, the **agent's first turn**
-is responsible for bringing up whatever it needs:
-
-1. **Profile-less spec (current `vios_ops.json` — `profile` absent):**
-   the instruction.md tells the agent to stand VIOS up standalone via
-   the skill's bundled `references/deploy-vios-service.md` runbook
-   (pre-authorized per the skill's "Pre-authorized autonomous mode"
-   branch). No `/vss-deploy-profile`.
-
-2. **Profile-bound spec (e.g. `profile: "base"`):** the instruction.md
-   tells the agent to deploy the profile via
-   `/vss-deploy-profile -p <profile>` in its first turn, then run the
-   VIOS API queries against that profile's stack.
-
-In both cases `task.toml [metadata]` is purely informational — the
-harness no longer reads `profile`, `requires_deployed_vss`, or
-`prerequisite_deploy_mode` (those fields and the
-`_ensure_prerequisite_deployed` consumer were removed in the same
-refactor that motivated this docstring rewrite).
-
-## Directory layout
-
-    .github/skill-eval/datasets/vss-manage-video-io-storage/base/<platform>/
-        task.toml
-        instruction.md
-        tests/test.sh
-        tests/vios_ops.json               (copied from skill)
-        solution/solve.sh
-        skills/vss-manage-video-io-storage/                (full skill copy)
-        environment/Dockerfile            (FROM scratch; BrevEnvironment takes over)
-
-One task per platform. All platforms share the same verifier — only
-the `gpu_type` / `brev_search` / resource hints in task.toml differ,
-matching the deploy-adapter convention.
+The declared resource platforms control CI selection. The standalone adapter
+CLI defaults to L40S unless a platform override or --all-platforms is supplied.
+Only VIOS streamprocessing needs a GPU for media decode and encode.
 
 Usage from the repository root:
     python3 .github/skill-eval/adapters/vss-manage-video-io-storage/generate.py \\
         --output-dir .github/skill-eval/datasets/vss-manage-video-io-storage \\
-        --skill-dir skills/vss-manage-video-io-storage \\
-        --deploy-skill-dir skills/vss-deploy-profile \\
+        --skill-dir skills/operations/vss-manage-video-io-storage \\
+        --deploy-skill-dir skills/vss-build-vision-ai \\
         --video-url https://videos.pexels.com/video-files/6079421/6079421-sd_640_360_24fps.mp4
 """
 from __future__ import annotations
@@ -75,7 +28,7 @@ import sys
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Platforms — mirrors the vss-deploy-profile adapter so vss-manage-video-io-storage runs on the same hosts
+# Platforms — mirrors the vss-build-vision-ai adapter so vss-manage-video-io-storage runs on the same hosts
 # ---------------------------------------------------------------------------
 
 PLATFORMS: dict[str, dict] = {
@@ -86,12 +39,7 @@ PLATFORMS: dict[str, dict] = {
     "IGX-THOR":      {"short_name": "thor",          "gpu_type": "Thor",         "min_vram_per_gpu": 64, "brev_search": "Thor"},
 }
 
-# The vss-manage-video-io-storage skill exercises VIOS/VST. Only `streamprocessing-ms`
-# needs a GPU (NVDEC/NVENC); the rest is CPU. A single-stream eval is
-# trivially within one GPU. The current spec is also profile-less (the
-# agent stands VIOS up standalone per the skill's deploy contract), so
-# there is no value in fanning out to multiple platforms. Default to
-# the single cheapest GPU host.
+# The CLI default is independent of CI's spec-declared platform matrix.
 DEFAULT_PLATFORM = "L40S"
 
 DEFAULT_VIDEO_URL = (
@@ -100,13 +48,13 @@ DEFAULT_VIDEO_URL = (
 DEFAULT_VIDEO_NAME = "warehouse_forklift_pexels_6079421"
 
 # Prepended to every instruction.md so the skill's own HITL bypass
-# clause fires. Skills default to "ask the user" before /vss-deploy-profile; in CI
+# clause fires. Skills default to "ask the user" before /vss-build-vision-ai; in CI
 # there's no user, so without this preamble the agent either stalls or
 # falls through to a localhost default.
 PREAMBLE = (
     "You are running inside a non-interactive evaluation harness. "
     "You are pre-authorized to deploy prerequisites autonomously — "
-    "do not pause to ask for confirmation on `/vss-deploy-profile` or any other "
+    "do not pause to ask for confirmation on `/vss-build-vision-ai` or any other "
     "setup action the trial requires."
 )
 
@@ -180,12 +128,19 @@ def generate_task(platform: str, spec: dict, output_root: Path,
         # sees — they live in the spec, are copied into tests/, and the
         # verifier evaluates them independently. If the agent sees the checks
         # it can write to the test rather than do the work.
+        # Substitute {{platform}} (and any future template vars) so the
+        # instruction the agent sees contains the concrete platform name,
+        # not a raw placeholder.  Mirrors _render_eval_spec() in the
+        # vss-build-vision-ai adapter.
+        raw_query = expect.get("query", "")
+        rendered_query = raw_query.replace("{{platform}}", platform)
+
         lines = [
             PREAMBLE,
             "",
             f"## Query {idx} of {len(expects)}",
             "",
-            expect.get("query", ""),
+            rendered_query,
             "",
             "Run autonomously without prompting for confirmation.",
             "",
@@ -199,6 +154,9 @@ def generate_task(platform: str, spec: dict, output_root: Path,
             f'name = "nvidia-vss/vss-manage-video-io-storage-base-{platform_short}{step_suffix}"',
             f'description = "VIOS API query {idx}/{len(expects)} on {platform}"',
             f'keywords = ["vss-manage-video-io-storage", "vst", "base", "{platform}"]',
+            "",
+            "[agent]",
+            "timeout_sec = 600.0",
             "",
             "[environment]",
             'skills_dir = "/skills"',
@@ -226,13 +184,7 @@ def generate_task(platform: str, spec: dict, output_root: Path,
             "",
             "[metadata]",
             'skill = "vss-manage-video-io-storage"',
-            # `profile` is emitted ONLY when the spec declares one. The
-            # current vios_ops.json omits `profile` by design — the trial
-            # then runs without a /vss-deploy-profile prerequisite (per
-            # `.github/skill-eval/AGENTS.md` § 2) and the agent stands
-            # VIOS up standalone via the skill's deploy contract.
-            # Defaulting to "base" here would resurrect the wrong
-            # prerequisite-deploy behaviour silently.
+            # Dataset labels are informational; the spec query owns setup.
             f'platform = "{platform}"',
             f'gpu_type = "{pspec["gpu_type"]}"',
             f'brev_search = "{pspec["brev_search"]}"',
@@ -275,7 +227,7 @@ def generate_task(platform: str, spec: dict, output_root: Path,
 
         # skills/ — include vss-manage-video-io-storage + deploy (so agent can diagnose
         # if VSS isn't live).
-        for src, name in ((skill_dir, "vss-manage-video-io-storage"), (deploy_skill_dir, "vss-deploy-profile")):
+        for src, name in ((skill_dir, "vss-manage-video-io-storage"), (deploy_skill_dir, "vss-build-vision-ai")):
             if src and src.exists():
                 dst = step_dir / "skills" / name
                 if dst.exists():
@@ -293,9 +245,9 @@ def main() -> None:
     parser.add_argument("--output-dir", required=True,
                         help="Dataset output root (e.g. .github/skill-eval/datasets/vss-manage-video-io-storage)")
     parser.add_argument("--skill-dir", required=True,
-                        help="Path to skills/vss-manage-video-io-storage")
+                        help="Path to skills/operations/vss-manage-video-io-storage")
     parser.add_argument("--deploy-skill-dir", default=None,
-                        help="Path to skills/vss-deploy-profile (optional — included for agent debug)")
+                        help="Path to skills/vss-build-vision-ai (optional — included for agent debug)")
     parser.add_argument("--spec", default=None,
                         help="Path to vios_ops.json "
                              "(default: <skill-dir>/evals/vios_ops.json)")
@@ -356,18 +308,7 @@ def main() -> None:
     print()
     print(f"Generated {len(platforms)} task(s) under {output_root}/base/")
     print()
-    if spec.get("profile"):
-        print("Note: this spec declares a `profile` — the coordinator (see")
-        print(".github/skill-eval/AGENTS.md § 2) will inject a matching")
-        print("/vss-deploy-profile task ahead of each vss-manage-video-io-storage task in the same")
-        print("subagent queue.")
-    else:
-        print("Note: this spec OMITS `profile`. The trial runs on a bare Brev")
-        print("instance — no /vss-deploy-profile prerequisite is injected. The agent is")
-        print("expected to stand VIOS up standalone via the skill's bundled")
-        print("references/deploy-vios-service.md runbook (documents both")
-        print("direct-routing and SDRC-routed modes — either is acceptable) before")
-        print("exercising the API.")
+    print("Setup is declared in the spec's first query; subsequent tasks reuse it.")
 
 
 if __name__ == "__main__":

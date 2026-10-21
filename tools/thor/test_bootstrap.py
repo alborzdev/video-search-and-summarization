@@ -504,6 +504,26 @@ class ThorBootstrapTest(unittest.TestCase):
                     b.render(reserve_gib=reserve)
                 self.assertEqual(b.memory_reserve(), 10)
 
+    def test_spark_adaptive_engine_is_not_accepted_on_thor(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
+            with self.assertRaisesRegex(RuntimeError, 'Spark image cannot be reused on Thor'):
+                b.render('192.0.2.40', adaptive_evs=True,
+                         rtvi_vlm_image=b.shared.vss33.VLM33_SBSA_IMAGE)
+
+    def test_copied_native_vios_selection_is_refused_before_any_render_writes(self):
+        with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
+            saved = {'reserve_gib': 10,
+                     'vios_streamprocessing_image': b.shared.vss33.VIOS33_NATIVE_IMAGE}
+            settings = b.STATE / 'settings.json'
+            settings.write_text(json.dumps(saved))
+            with patch.object(b, 'run') as run, patch.object(b.shared, 'private_write') as write:
+                with self.assertRaisesRegex(RuntimeError, 'Thor must retain its cached runtime'):
+                    b.render('192.0.2.40')
+                run.assert_not_called()
+                write.assert_not_called()
+            self.assertEqual(json.loads(settings.read_text()), saved)
+            self.assertEqual(list(b.STATE.iterdir()), [settings])
+
     def test_render_isolated_exact_models_and_safe_startup(self):
         with tempfile.TemporaryDirectory() as temporary, patch.object(b, 'STATE', Path(temporary)):
             with patch.dict(os.environ, {'NGC_API_KEY': 'credential-must-never-be-rendered',
@@ -521,8 +541,29 @@ class ThorBootstrapTest(unittest.TestCase):
             self.assertTrue(any(m['target'] == '/app/server.py' and m.get('read_only')
                                 for m in services['evidence-clip']['volumes']))
             self.assertEqual(services['vss-agent']['environment']['LLM_NAME'], b.LLM)
-            self.assertEqual(services['rtvi-vlm']['build']['args']['BASE_IMAGE'], b.VLM_IMAGE)
-            self.assertEqual(services['rtvi-embed']['build']['args']['BASE_IMAGE'], b.EMBED_IMAGE)
+            self.assertNotIn('build', services['rtvi-vlm'])
+            self.assertNotIn('build', services['rtvi-embed'])
+            self.assertEqual(services['rtvi-vlm']['image'], 'vss-thor-rtvi-vlm:source')
+            self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
+            self.assertEqual(services['rtvi-embed']['image'], 'vss-thor-rtvi-embed:source')
+            self.assertEqual(services['rtvi-embed']['environment']['KAFKA_TOPIC'], 'mdx-embed')
+            self.assertEqual(services['rtvi-embed']['environment']['MESSAGE_BUS_TOPIC'], 'mdx-embed')
+            for role in ('rtvi-vlm', 'rtvi-embed'):
+                self.assertNotIn('PYTHONPATH', services[role]['environment'])
+                self.assertFalse(any('/services/rtvi/' in mount.get('source', '')
+                                     for mount in services[role]['volumes']))
+                self.assertFalse(any(mount.get('target', '').rstrip('/') in (
+                    '/opt/nvidia/rtvi/rtvi', '/opt/nvidia/rtvi/src')
+                    for mount in services[role]['volumes']))
+            self.assertIn(services['rtvi-vlm']['environment'].get('VIA_EVS_SESSION'), ('', 'false'))
+            self.assertEqual(services['rtvi-vlm']['environment'].get('VLM_VIDEO_PRUNING_RATE'), '')
+            self.assertEqual(services['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'], 'false')
+            self.assertEqual(b.settings()['vios_streamprocessing_image'], '')
+            dash = next(m for m in services['vss-ui']['volumes']
+                        if m['target'] == '/workspace/external/vios-dash')
+            self.assertEqual(dash['source'], str(b.ROOT / 'services/vios/ui/streaming-lib/src/dash'))
+            self.assertTrue(dash['read_only'])
+            self.assertFalse(dash['bind']['create_host_path'])
             self.assertEqual(services['rtvi-vlm']['environment']['VLLM_KV_CACHE_MEMORY_BYTES'], '3221225472')
             self.assertEqual(services['rtvi-vlm']['command'], ['python3', '/opt/thor/cosmos-launcher.py'])
             self.assertTrue(any(m['target'] == '/opt/thor/cosmos-launcher.py'

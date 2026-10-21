@@ -109,7 +109,9 @@ the affected containers are recreated during the next cold Start VSS. A warm
 start preserves loaded models. The memory guard continues protecting the reserve
 after Docker errors and retries failed stops during an ongoing low-memory period.
 
-## Full-day operation
+## Historical full-day operation audit (October 1)
+
+These are pre-3.3 workload observations. Use the [current VSS 3.3 receipt](qa/2026-10-20-vss33-spark.md) for the selected clips profile, 20 GiB reserve and present qualification limits.
 
 The October 1 second audit passed 106 scoped regression checks, including
 accelerated eight-hour track churn and reconnect scenarios, plus the app
@@ -118,7 +120,7 @@ The Kafka source patch is mounted into both CPU analytics workers; both resumed
 processing fresh frames after their reload. The simulator, recorder and all three
 model containers stayed running, with the 24 GiB reserve unchanged.
 
-A five-minute observation of the current single warehouse camera recorded
+A five-minute observation of the single warehouse camera used on October 1 recorded
 307 MB of additional video. Its measured rate projects to about 29 GB of video
 and 33 GB total disk growth over eight hours; about 1.27 TB remained free.
 Available memory stayed between 36.6 and 36.8 GiB and searchable coverage advanced

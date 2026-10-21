@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: Apache-2.0
+ARG ALERT33_BASE_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-alert-ms@sha256:1fbaba04d904ae088f082c8e85dea2d2b9ace49ecca8554e69e6228804934621
+FROM ${ALERT33_BASE_IMAGE}
+COPY services/alert/src/ /app/src/
+COPY services/alert/enhance_alert_with_vlm.py services/alert/media_transport_config.py services/alert/alert_request_defaults.yaml /app/
+COPY services/alert/alert_type_config.json /app/alert_type_config.json
+COPY services/alert/schemas/request_schema.yaml services/alert/schemas/response_schema.yaml /app/src/schemas/
+ENV PYTHONPATH=/app/src
+# Exercise the production resource resolver in the packaged layout. Missing
+# YAML otherwise silently activates fallback field mappings at runtime.
+RUN ["/usr/local/bin/python", "-c", "from utils.field_extractor import load_schema; assert load_schema('request_schema.yaml').get('fields'), 'Missing packaged request mappings'; assert load_schema('response_schema.yaml').get('fields'), 'Missing packaged response mappings'"]

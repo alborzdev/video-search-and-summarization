@@ -13,6 +13,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+{{- $resources := deepCopy (.Values.resources | default dict) }}
+{{- $gpuResourceName := trim (.Values.gpuResourceName | default "") }}
+{{- if $gpuResourceName }}
+{{- $limits := $resources.limits | default dict }}
+{{- $requests := $resources.requests | default dict }}
+{{- $_ := unset $limits "nvidia.com/gpu" }}
+{{- $_ := unset $requests "nvidia.com/gpu" }}
+{{- $_ := set $limits $gpuResourceName 1 }}
+{{- $_ := set $requests $gpuResourceName 1 }}
+{{- $_ := set $resources "limits" $limits }}
+{{- $_ := set $resources "requests" $requests }}
+{{- end }}
+
 apiVersion: v1
 kind: Service
 metadata:
@@ -20,12 +33,26 @@ metadata:
   labels:
     {{- include "vss-rtvi-embed.labels" . | nindent 4 }}
     app.kubernetes.io/component: vss-rtvi-embed
-  {{- if .Values.streamAffinity.enabled }}
+  {{- if or .Values.streamAffinity.enabled .Values.ingressTimeoutServer }}
   annotations:
-    haproxy.org/load-balance: {{ printf "hdr(%s)" .Values.streamAffinity.hashHeader | quote }}
-    haproxy.org/hash-type: "consistent"
+  {{- if .Values.streamAffinity.enabled }}
+    # Stick-table stream affinity: the first request for a hashHeader value is
+    # balanced normally (controller default round-robin) and the chosen server
+    # is recorded in the table; every later request carrying the same value is
+    # routed to that server until the entry idles out. Requests without the
+    # header are balanced without sticking — no uuid fallback is needed (under
+    # the former hdr-hash balancing, header-less requests all hashed to one
+    # replica; under stick-tables they simply round-robin).
     haproxy.org/backend-config-snippet: |
-      http-request set-header {{ .Values.streamAffinity.hashHeader }} %[uuid()] if !{ req.hdr({{ .Values.streamAffinity.hashHeader }}) -m found }
+      stick-table type string len 64 size {{ .Values.streamAffinity.tableSize }} expire {{ .Values.streamAffinity.tableExpire }}
+      stick on req.hdr({{ .Values.streamAffinity.hashHeader }}) if { req.hdr({{ .Values.streamAffinity.hashHeader }}) -m found }
+  {{- end }}
+  {{- with .Values.ingressTimeoutServer }}
+    # Server-side timeout for this backend. Set here rather than on the Ingress
+    # so a long embedding call does not raise the ceiling for every other route
+    # sharing the origin.
+    haproxy.org/timeout-server: {{ . | quote }}
+  {{- end }}
   {{- end }}
 spec:
   type: {{ .Values.service.type | default "ClusterIP" }}
@@ -69,17 +96,19 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.imagePullSecrets }}
+      {{- $ips := .Values.imagePullSecrets | default (index (.Values.global | default dict) "imagePullSecrets") }}
+      {{- with $ips }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- $wfk := .Values.waitForKafka | default dict }}
-      {{- $waitKafka := and .Values.kafkaEnabled (or (not (hasKey $wfk "enabled")) $wfk.enabled) }}
+      {{- $usesKafkaBus := or (eq (.Values.messageBus | default "") "kafka") (eq (.Values.errorBus | default "") "kafka") }}
+      {{- $waitKafka := and $usesKafkaBus (or (not (hasKey $wfk "enabled")) $wfk.enabled) }}
       {{- if or $waitKafka .Values.clearCachedEnginesOnStart }}
       initContainers:
         {{- if $waitKafka }}
         - name: wait-for-kafka
-          image: busybox:1.37.0
+          image: docker.io/library/busybox:1.37.0
           imagePullPolicy: IfNotPresent
           command:
             - sh
@@ -97,7 +126,7 @@ spec:
         {{- end }}
         {{- if .Values.clearCachedEnginesOnStart }}
         - name: clear-rtvi-trt-cache
-          image: busybox:1.37.0
+          image: docker.io/library/busybox:1.37.0
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh
@@ -124,7 +153,7 @@ spec:
       {{- end }}
       containers:
         - name: vss-rtvi-embed
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: {{ include "vss-rtvi-embed.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- with .Values.securityContext }}
           securityContext:
@@ -136,14 +165,14 @@ spec:
               protocol: TCP
           env:
             {{- /*
-              NVIDIA_VISIBLE_DEVICES is only emitted when gpuDeviceId is set,
-              so the empty chart default leaves the container's runtime default
-              intact (whichever GPUs the pod's resource request exposed).
-              Set .Values.gpuDeviceId to e.g. "1" to pin a specific device.
+              NVIDIA_VISIBLE_DEVICES is emitted only when gpuDeviceId is set
+              and no gpuResourceName is configured. A MIG resource is assigned
+              by the NVIDIA device plugin, which injects the allocated device.
+              Otherwise, the empty default leaves the runtime setting intact.
             */}}
-            {{- with .Values.gpuDeviceId }}
+            {{- if and (eq $gpuResourceName "") .Values.gpuDeviceId }}
             - name: NVIDIA_VISIBLE_DEVICES
-              value: {{ . | quote }}
+              value: {{ .Values.gpuDeviceId | quote }}
             {{- end }}
             - name: LOG_LEVEL
               value: {{ .Values.logLevel | quote }}
@@ -153,12 +182,33 @@ spec:
               value: {{ .Values.modelPath | quote }}
             - name: MODEL_REPOSITORY_SCRIPT_PATH
               value: {{ .Values.modelRepositoryScriptPath | quote }}
-            - name: KAFKA_ENABLED
-              value: {{ .Values.kafkaEnabled | quote }}
+            - name: REMOTE_EMBED_ENDPOINT
+              value: {{ .Values.remoteEmbedEndpoint | default "" | quote }}
+            - name: REMOTE_EMBED_ENDPOINT_MODEL_NAME
+              value: {{ .Values.remoteEmbedEndpointModelName | default "nvidia/cosmos-embed1" | quote }}
+            {{- $remoteApiKey := .Values.remoteEmbedEndpointApiKeySecret | default dict }}
+            {{- $remoteApiKeyName := trim (default "" $remoteApiKey.name) }}
+            - name: REMOTE_EMBED_ENDPOINT_API_KEY
+              {{- if ne $remoteApiKeyName "" }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $remoteApiKeyName | quote }}
+                  key: {{ $remoteApiKey.key | default "REMOTE_EMBED_ENDPOINT_API_KEY" | quote }}
+              {{- else }}
+              value: {{ .Values.remoteEmbedEndpointApiKey | default "" | quote }}
+              {{- end }}
+            - name: REMOTE_EMBED_ENDPOINT_TIMEOUT_SEC
+              value: {{ .Values.remoteEmbedEndpointTimeoutSec | default "300" | quote }}
+            - name: REMOTE_EMBED_ENDPOINT_BATCH_SIZE
+              value: {{ .Values.remoteEmbedEndpointBatchSize | default "64" | quote }}
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: {{ include "vss-rtvi-embed.kafkaBootstrap" . | quote }}
-            - name: KAFKA_TOPIC
-              value: {{ .Values.kafkaTopic | quote }}
+            - name: MESSAGE_BUS
+              value: {{ .Values.messageBus | quote }}
+            - name: MESSAGE_BUS_TOPIC
+              value: {{ .Values.messageBusTopic | default "mdx-embed" | quote }}
+            - name: ERROR_BUS
+              value: {{ .Values.errorBus | quote }}
             - name: REDIS_HOST
               value: {{ include "vss-rtvi-embed.redisHost" . | quote }}
             - name: REDIS_PORT
@@ -216,10 +266,35 @@ spec:
               value: {{ .Values.rtspReconnectionMaxAttempts | quote }}
             - name: RTVI_RTSP_RECONNECTION_WINDOW
               value: {{ .Values.rtspReconnectionWindow | quote }}
+            - name: RTVI_IPC_FRAME_COPY
+              value: {{ .Values.ipcFrameCopy | quote }}
             - name: ASSET_DOWNLOAD_CONNECT_TIMEOUT
-              value: "10"
+              value: {{ .Values.assetDownloadConnectTimeout | default "10" | quote }}
             - name: ASSET_DOWNLOAD_TOTAL_TIMEOUT
-              value: "300"
+              value: {{ .Values.assetDownloadTotalTimeout | default "300" | quote }}
+            - name: ASSET_DOWNLOAD_MAX_FILE_SIZE_GB
+              value: {{ .Values.assetDownloadMaxFileSizeGb | default 8 | quote }}
+            - name: ASSET_DOWNLOAD_SSL_SKIP_VERIFY_DOMAINS
+              value: {{ .Values.assetDownloadSslSkipVerifyDomains | default "" | quote }}
+            - name: ASSET_DOWNLOAD_MAX_REDIRECTS
+              value: {{ .Values.assetDownloadMaxRedirects | default "0" | quote }}
+            {{- $assetTok := .Values.assetDownloadAuthTokensSecret | default dict }}
+            {{- $assetTokName := trim (default "" $assetTok.name) }}
+            - name: ASSET_DOWNLOAD_AUTH_TOKENS
+              {{- if ne $assetTokName "" }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $assetTokName | quote }}
+                  key: {{ $assetTok.key | default "ASSET_DOWNLOAD_AUTH_TOKENS" | quote }}
+              {{- else }}
+              value: {{ .Values.assetDownloadAuthTokens | default "" | quote }}
+              {{- end }}
+            - name: FILE_URL_ALLOWED_DIRS
+              value: {{ .Values.fileUrlAllowedDirs | default "" | quote }}
+            - name: MAX_ASSET_STORAGE_SIZE_GB
+              value: {{ .Values.maxAssetStorageSizeGb | default "" | quote }}
+            - name: ASSET_MAX_AGE_HOURS
+              value: {{ .Values.assetMaxAgeHours | default "0" | quote }}
             - name: ERROR_MESSAGE_TOPIC
               value: "vision-embed-errors"
           startupProbe:
@@ -245,7 +320,7 @@ spec:
             timeoutSeconds: {{ .Values.readinessProbe.timeoutSeconds }}
             failureThreshold: {{ .Values.readinessProbe.failureThreshold }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml $resources | nindent 12 }}
           volumeMounts:
             - name: ngc-model-cache
               mountPath: /opt/nvidia/rtvi/.rtvi/ngc_model_cache
@@ -260,6 +335,10 @@ spec:
             {{- if .Values.clipStorage.enabled }}
             - name: clip-storage
               mountPath: /home/vst/vst_release/streamer_videos
+            {{- end }}
+            {{- if .Values.ipcSocketHostPath }}
+            - name: ipc-socket-dir
+              mountPath: /run/rtvi-ipc
             {{- end }}
       volumes:
         - name: ngc-model-cache
@@ -289,6 +368,12 @@ spec:
           emptyDir: {}
           {{- end }}
         {{- end }}
+        {{- if .Values.ipcSocketHostPath }}
+        - name: ipc-socket-dir
+          hostPath:
+            path: {{ .Values.ipcSocketHostPath | quote }}
+            type: Directory
+        {{- end }}
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -300,8 +385,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  {{- if .Values.persistence.storageClass }}
-  storageClassName: {{ .Values.persistence.storageClass | quote }}
+  {{- $global := .Values.global | default dict }}
+  {{- $sc := .Values.persistence.storageClass | default (index $global "storageClass") }}
+  {{- with $sc }}
+  storageClassName: {{ . | quote }}
   {{- end }}
   resources:
     requests:
@@ -317,8 +404,10 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  {{- if .Values.persistence.storageClass }}
-  storageClassName: {{ .Values.persistence.storageClass | quote }}
+  {{- $global := .Values.global | default dict }}
+  {{- $sc := .Values.persistence.storageClass | default (index $global "storageClass") }}
+  {{- with $sc }}
+  storageClassName: {{ . | quote }}
   {{- end }}
   resources:
     requests:

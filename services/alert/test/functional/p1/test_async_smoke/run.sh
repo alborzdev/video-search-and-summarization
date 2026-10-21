@@ -15,7 +15,8 @@
 # limitations under the License.
 
 # Test: Async External I/O Smoke
-# Description: Enable async external I/O guardrails and verify one incident is processed end-to-end.
+# Description: Enable each async pipeline mode (thread_bridge, event_loop) and
+#              verify one incident is processed end-to-end per mode.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -94,12 +95,78 @@ if [ "$VALIDATION" != "OK" ]; then
     exit 1
 fi
 
-if grep -q "Async external I/O guardrail is enabled" "$PID_DIR/alert_bridge.log" 2>/dev/null; then
+# Matched loosely: the line names the subsystems it covers and carries the
+# timeout, and both have been reworded before. The assertion is that async
+# external I/O came up enabled, not how the line is phrased.
+if grep -qE "Async external I/O.*is enabled" "$PID_DIR/alert_bridge.log" 2>/dev/null; then
     print_status "ok" "Async guardrail enabled log detected"
 else
     print_status "fail" "FAIL: Async guardrail enable log not found"
     exit 1
 fi
 
-print_status "ok" "PASS: Async smoke path processed incident successfully"
+print_status "ok" "Thread-bridge smoke path processed incident successfully"
+
+# --- event_loop mode ---
+EVENT_LOOP_CONFIG="$PID_DIR/${TEST_NAME}_event_loop_config.yaml"
+build_event_loop_config "$BASE_CONFIG" "$EVENT_LOOP_CONFIG"
+print_status "info" "Generated event_loop config: $EVENT_LOOP_CONFIG"
+
+EL_SENSOR_ID="EVENT_LOOP_SMOKE_SENSOR_${ID_SUFFIX}"
+stop_alert_bridge_local "$PID_DIR"
+start_alert_bridge_local "$REPO_ROOT" "$PID_DIR" "$EVENT_LOOP_CONFIG"
+
+EL_PATCHED="$PID_DIR/patched_${TEST_NAME}_event_loop.json"
+python3 - "$PAYLOAD" "$EL_PATCHED" "$EL_SENSOR_ID" <<'PY'
+import json
+import sys
+from datetime import datetime, timezone
+
+src, dst, sensor_id = sys.argv[1], sys.argv[2], sys.argv[3]
+with open(src, "r", encoding="utf-8") as f:
+    data = json.load(f)
+now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S.000Z")
+data["sensorId"] = sensor_id
+data["timestamp"] = now
+data["end"] = now
+with open(dst, "w", encoding="utf-8") as f:
+    json.dump(data, f)
+PY
+
+produce_incident "$REPO_ROOT" "$BOOTSTRAP" "$TOPIC" "$EL_PATCHED" "${ID_SUFFIX}_el" --no-patch
+print_status "info" "Incident produced for sensorId=$EL_SENSOR_ID"
+
+sleep 10
+EL_DOC=$(poll_es_doc_by_sensor "$ES_HOST" "$EL_SENSOR_ID" 60 5) || {
+    print_status "fail" "FAIL: No event_loop smoke document found for sensorId=$EL_SENSOR_ID"
+    exit 1
+}
+
+EL_VALIDATION=$(echo "$EL_DOC" | python3 -c "
+import sys, json
+doc = json.load(sys.stdin)
+info = doc.get('info', {})
+errors = []
+if info.get('verdict') in (None, '', 'null'):
+    errors.append('missing verdict')
+if info.get('verificationResponseCode') in (None, '', 'null'):
+    errors.append('missing verificationResponseCode')
+if info.get('verificationResponseStatus') in (None, '', 'null'):
+    errors.append('missing verificationResponseStatus')
+print('FAIL:' + '; '.join(errors) if errors else 'OK')
+" 2>/dev/null || echo "FAIL:python_error")
+
+if [ "$EL_VALIDATION" != "OK" ]; then
+    print_status "fail" "FAIL: $EL_VALIDATION"
+    exit 1
+fi
+
+if grep -q "Event-loop message dispatch enabled" "$PID_DIR/alert_bridge.log" 2>/dev/null; then
+    print_status "ok" "Event-loop dispatch enabled log detected"
+else
+    print_status "fail" "FAIL: Event-loop dispatch enable log not found"
+    exit 1
+fi
+
+print_status "ok" "PASS: Async smoke (thread_bridge + event_loop) processed incidents successfully"
 exit 0

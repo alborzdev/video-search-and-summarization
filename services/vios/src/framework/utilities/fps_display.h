@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,6 @@
 #include "logger.h"
 #include <string.h>
 
-using namespace nv_vms;
 
 inline constexpr int DEFAULT_FPS_CAPTURE_INTERVAL_SEC = 5;  // 5 secs
 inline constexpr int DEFAULT_FPS_PUBLISH_INTERVAL_SEC = 60; // 60 secs
@@ -38,9 +37,9 @@ class FPSDisplay
             m_fpsCaptureIntervalSecs = DEFAULT_FPS_CAPTURE_INTERVAL_SEC * 1000 * 1000;
             m_fpsPublishIntervalSecs = DEFAULT_FPS_PUBLISH_INTERVAL_SEC * 1000 * 1000;
         }
-        ~FPSDisplay(){ }
+        ~FPSDisplay() = default;
 
-        void       displayFPS           (unsigned long pts_in_ms, string peerId_streamId);
+        void       displayFPS           (unsigned long pts_in_ms, std::string peerId_streamId);
         double     getAvgFPS            () { return m_avgFPS; }
         int        getInstFPS           () { return m_instFPS; }
 
@@ -53,7 +52,7 @@ class FPSDisplay
         struct timeval                                  m_prevCaptureTime {0, 0};
         struct timeval                                  m_prevPublishTime {0, 0};
         std::vector<double>                             m_fpsVector;
-        string                                          m_fpsValues;
+        std::string                                          m_fpsValues;
         int                                             m_fpsCaptureIntervalSecs {0};
         int                                             m_fpsPublishIntervalSecs {0};
         double                                          m_avgFPS {0.0};

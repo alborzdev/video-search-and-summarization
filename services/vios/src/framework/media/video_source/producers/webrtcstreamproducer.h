@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,8 +37,6 @@
 #include "modules_apis.h"
 #include "storage_management.h"
 
-using namespace std;
-using namespace nv_vms;
 
 inline constexpr const char* DEFAULT_WEBRTC_IN_VIDEO_CODEC = "h264";
 inline constexpr int DEFAULT_WEBRTC_IN_FRAMERATE = 30;
@@ -58,7 +56,7 @@ class WebrtcStream
             m_gstencoder.reset(new GstNvAudioEncoder());
             if (m_gstencoder->create(peerId) == -1)
             {
-                LOG(error) << "Error in Creating Audio Encoder Pipeline" << endl;
+                LOG(error) << "Error in Creating Audio Encoder Pipeline" << std::endl;
             }
             m_gstvideoencoder.reset(new GstNvVideoEncoder(deviceName, peerId));
             if (GET_CONFIG().webrtc_in_passthrough)
@@ -67,21 +65,21 @@ class WebrtcStream
             }
             else if (m_gstvideoencoder->create() == -1)
             {
-                LOG(error) << "Error in Creating Video Encoder Pipeline" << endl;
+                LOG(error) << "Error in Creating Video Encoder Pipeline" << std::endl;
             }
         }
 
         ~WebrtcStream() 
         {
             try {
-                LOG(info) << "~WebrtcStream, m_deviceId:" << m_deviceId << endl;
+                LOG(info) << "~WebrtcStream, m_deviceId:" << m_deviceId << std::endl;
                 m_gstencoder->destroy ();
                 m_gstvideoencoder->destroy ();
                 vst_rtsp::removeServerMediaSession(m_deviceId);
             } catch (const std::exception& e) {
-                try { LOG(error) << "Exception in ~WebrtcStream: " << e.what() << endl; } catch (...) { (void)std::current_exception(); }
+                try { LOG(error) << "Exception in ~WebrtcStream: " << e.what() << std::endl; } catch (...) { (void)std::current_exception(); }
             } catch (...) {
-                try { LOG(error) << "Unknown exception in ~WebrtcStream" << endl; } catch (...) { (void)std::current_exception(); }
+                try { LOG(error) << "Unknown exception in ~WebrtcStream" << std::endl; } catch (...) { (void)std::current_exception(); }
             }
         }
 
@@ -97,17 +95,17 @@ class WebrtcStream
             m_channels = audio_metadata.get("Channels", DEFAULT_WEBRTC_IN_CHANNELS).asInt();
         }
 
-        int addFrame (const string& media, void *buffer, unsigned int size, int sample_rate = 0,
+        int addFrame (const std::string& media, unsigned char *buffer, unsigned int size, int sample_rate = 0,
                         size_t num_channels = 0, int codec_type = 1, int64_t latencyStartTime = 0)
         {
-            LOG(verbose) << "media = " << media << " Peer ID = " << endl;
-            string codec = "";
+            LOG(verbose) << "media = " << media << " Peer ID = " << std::endl;
+            std::string codec = "";
             codec = (media == "video" && codec_type == 1) ? "h264" : ((media == "video") ? "h265" : "pcm");
 
             std::lock_guard<std::mutex> recordLock(m_webRTCConsumerLock);
             if (media == "audio" && m_consumersList.size())
             {
-                m_gstencoder->onFrame(media, codec, (const unsigned char*)buffer, size, sample_rate, num_channels);
+                m_gstencoder->onFrame(media, codec, buffer, size, sample_rate, num_channels);
             }
             if (media == "video")
             {
@@ -115,7 +113,7 @@ class WebrtcStream
                 gettimeofday(&currTime, nullptr);
                 FrameParams frame_params;
                 frame_params.m_media            = "video";
-                frame_params.m_buffer = (unsigned char*)buffer;
+                frame_params.m_buffer = buffer;
                 frame_params.m_size = size;
                 if (latencyStartTime == 0)
                 {
@@ -136,10 +134,22 @@ class WebrtcStream
             return 0;
         }
 
-        void addConsumer (shared_ptr<IMediaDataConsumer> consumer)
+        void addAudioFrame (const unsigned char *buffer, unsigned int size, int sample_rate = 0,
+                        size_t num_channels = 0)
+        {
+            LOG(verbose) << "media = audio Peer ID = " << std::endl;
+
+            std::lock_guard<std::mutex> recordLock(m_webRTCConsumerLock);
+            if (m_consumersList.size())
+            {
+                m_gstencoder->onFrame("audio", "pcm", buffer, size, sample_rate, num_channels);
+            }
+        }
+
+        void addConsumer (std::shared_ptr<IMediaDataConsumer> consumer)
         {
             std::lock_guard<std::mutex> lock(m_webRTCConsumerLock);
-            LOG(info) << "Adding consumer for " << m_deviceId << endl;
+            LOG(info) << "Adding consumer for " << m_deviceId << std::endl;
             if (std::find(m_consumersList.begin(), m_consumersList.end(), consumer) == m_consumersList.end())
             {
                 m_consumersList.push_back(consumer);
@@ -160,10 +170,10 @@ class WebrtcStream
             }
         }
 
-        void removeConsumer (shared_ptr<IMediaDataConsumer> consumer)
+        void removeConsumer (std::shared_ptr<IMediaDataConsumer> consumer)
         {
             std::lock_guard<std::mutex> lock(m_webRTCConsumerLock);
-            LOG(info) << "Removing consumer for " << m_deviceId << endl;
+            LOG(info) << "Removing consumer for " << m_deviceId << std::endl;
             m_consumersList.erase(std::remove(m_consumersList.begin(), m_consumersList.end(), consumer), m_consumersList.end());
             if (consumer->getConsumerMediaType() == MediaTypeAudio)
             {
@@ -185,34 +195,34 @@ class WebrtcStream
         void setVideoTrackEnabled(bool enable) { m_isVideoTrackEnabled = enable; }
         void setAudioTrackEnabled(bool enable) { m_isAudioTrackEnabled = enable; }
 
-        std::map<string, media_info, std::less<>> getAudioInfo()
+        std::map<std::string, media_info, std::less<>> getAudioInfo()
         {
             return m_gstencoder->getAudioInfo();
         }
 
-        std::queue<vector<uint8_t>> getVideoHeaders()
+        std::queue<std::vector<uint8_t>> getVideoHeaders()
         {
             return m_gstvideoencoder->getSpsPpsHeaders();
         }
 
-        string getVideoCodec() { return m_videoCodec; }
-        string getAudioCodec() { return m_audioCodec; }
+        std::string getVideoCodec() { return m_videoCodec; }
+        std::string getAudioCodec() { return m_audioCodec; }
         double getFramerate() { return m_frameRate; }
         int getSampleRate() { return m_sampleRate; }
         int getChannels() { return m_channels; }
 
     private:
-        string                                      m_deviceId;
-        string                                      m_deviceName;
-        string                                      m_peerId;
+        std::string                                      m_deviceId;
+        std::string                                      m_deviceName;
+        std::string                                      m_peerId;
         std::mutex                                  m_webRTCConsumerLock;
-        std::vector<shared_ptr<IMediaDataConsumer>> m_consumersList;
-        shared_ptr<GstNvAudioEncoder>               m_gstencoder = nullptr;
-        shared_ptr<GstNvVideoEncoder>               m_gstvideoencoder = nullptr;
+        std::vector<std::shared_ptr<IMediaDataConsumer>> m_consumersList;
+        std::shared_ptr<GstNvAudioEncoder>               m_gstencoder = nullptr;
+        std::shared_ptr<GstNvVideoEncoder>               m_gstvideoencoder = nullptr;
         std::atomic<bool>                           m_isVideoTrackEnabled {false};
         std::atomic<bool>                           m_isAudioTrackEnabled {false};
-        string                                      m_videoCodec = DEFAULT_WEBRTC_IN_VIDEO_CODEC;
-        string                                      m_audioCodec = DEFAULT_WEBRTC_IN_AUDIO_CODEC;
+        std::string                                      m_videoCodec = DEFAULT_WEBRTC_IN_VIDEO_CODEC;
+        std::string                                      m_audioCodec = DEFAULT_WEBRTC_IN_AUDIO_CODEC;
         double                                      m_frameRate = DEFAULT_WEBRTC_IN_FRAMERATE;
         int                                         m_sampleRate = DEFAULT_WEBRTC_IN_SAMPLE_RATE;
         int                                         m_channels = DEFAULT_WEBRTC_IN_CHANNELS;
@@ -221,10 +231,10 @@ class WebrtcStream
 class WebrtcStreamProducer : public IMediaDataProducer
 {
     private:
-        WebrtcStreamProducer () {}
+        WebrtcStreamProducer () = default;
 
     public:
-        ~WebrtcStreamProducer ()  {}
+        ~WebrtcStreamProducer () = default;
 
         static WebrtcStreamProducer* getInstance()
         {
@@ -232,13 +242,13 @@ class WebrtcStreamProducer : public IMediaDataProducer
             return &instance;
         }
 
-        void addStreamProducer (string deviceId, std::shared_ptr<WebrtcStream> ptr)
+        void addStreamProducer (std::string deviceId, std::shared_ptr<WebrtcStream> ptr)
         {
             std::lock_guard<std::mutex> lock(m_webrtcConsumerLock);
             m_webrtcStreams[deviceId] = ptr;
         }
 
-        void removeStreamProducer (string deviceId)
+        void removeStreamProducer (std::string deviceId)
         {
             std::lock_guard<std::mutex> lock(m_webrtcConsumerLock);
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
@@ -248,12 +258,12 @@ class WebrtcStreamProducer : public IMediaDataProducer
             }
         }
 
-        void registerDataCallback(std::string deviceId, shared_ptr<IMediaDataConsumer> consumer)
+        void registerDataCallback(std::string deviceId, std::shared_ptr<IMediaDataConsumer> consumer)
         {
-            LOG(info) << "add consumer for deviceId: " << deviceId << endl;
+            LOG(info) << "add consumer for deviceId: " << deviceId << std::endl;
             if (consumer == nullptr)
             {
-                LOG(error) << "Consumer is null" << endl;
+                LOG(error) << "Consumer is null" << std::endl;
                 return;
             }
 
@@ -267,12 +277,12 @@ class WebrtcStreamProducer : public IMediaDataProducer
             }
         }
 
-        void deregisterDataCallback(shared_ptr<IMediaDataConsumer> consumer, std::string& deviceId)
+        void deregisterDataCallback(std::shared_ptr<IMediaDataConsumer> consumer, std::string& deviceId)
         {
-            LOG(info) << "removing consumer for deviceId: " << deviceId << endl;
+            LOG(info) << "removing consumer for deviceId: " << deviceId << std::endl;
             if (consumer == nullptr)
             {
-                LOG(error) << "Consumer is null" << endl;
+                LOG(error) << "Consumer is null" << std::endl;
                 return;
             }
             {
@@ -285,7 +295,7 @@ class WebrtcStreamProducer : public IMediaDataProducer
             }
         }
 
-        bool isVideoTrackEnabled(const string& deviceId)
+        bool isVideoTrackEnabled(const std::string& deviceId)
         {
             bool video_track_enabled = false;
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
@@ -295,7 +305,7 @@ class WebrtcStreamProducer : public IMediaDataProducer
             }
             return video_track_enabled;
         }
-        bool isAudioTrackEnabled(const string& deviceId)
+        bool isAudioTrackEnabled(const std::string& deviceId)
         {
             bool audio_track_enabled = false;
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
@@ -306,7 +316,7 @@ class WebrtcStreamProducer : public IMediaDataProducer
             return audio_track_enabled;
         }
 
-        void setVideoTrackEnabled(const string& deviceId, bool enable)
+        void setVideoTrackEnabled(const std::string& deviceId, bool enable)
         {
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
             if (it != m_webrtcStreams.end())
@@ -315,7 +325,7 @@ class WebrtcStreamProducer : public IMediaDataProducer
             }
             return;
         }
-        void setAudioTrackEnabled(const string& deviceId, bool enable)
+        void setAudioTrackEnabled(const std::string& deviceId, bool enable)
         {
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
             if (it != m_webrtcStreams.end())
@@ -325,9 +335,9 @@ class WebrtcStreamProducer : public IMediaDataProducer
             return;
         }
 
-        std::map<string, media_info, std::less<>> getAudioInfo (std::string& deviceId)
+        std::map<std::string, media_info, std::less<>> getAudioInfo (std::string& deviceId)
         {
-            std::map<string, media_info, std::less<>> supported_map;
+            std::map<std::string, media_info, std::less<>> supported_map;
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
             if (it != m_webrtcStreams.end())
             {
@@ -339,9 +349,9 @@ class WebrtcStreamProducer : public IMediaDataProducer
             return supported_map;
         }
 
-        std::queue<vector<uint8_t>> getVideoHeaders (std::string& deviceId)
+        std::queue<std::vector<uint8_t>> getVideoHeaders (std::string& deviceId)
         {
-            std::queue<vector<uint8_t>> video_headers;
+            std::queue<std::vector<uint8_t>> video_headers;
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
             if (it != m_webrtcStreams.end())
             {
@@ -350,7 +360,7 @@ class WebrtcStreamProducer : public IMediaDataProducer
             return video_headers;
         }
 
-        string getVideoCodec(std::string& deviceId)
+        std::string getVideoCodec(std::string& deviceId)
         {
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
             if (it != m_webrtcStreams.end())
@@ -360,7 +370,7 @@ class WebrtcStreamProducer : public IMediaDataProducer
             return DEFAULT_WEBRTC_IN_VIDEO_CODEC;
         }
 
-        string getAudioCodec(std::string& deviceId)
+        std::string getAudioCodec(std::string& deviceId)
         {
             std::map<std::string, std::shared_ptr<WebrtcStream>, std::less<>>::iterator it = m_webrtcStreams.find(deviceId);
             if (it != m_webrtcStreams.end())
@@ -412,17 +422,17 @@ class WebrtcStreamProducer : public IMediaDataProducer
         // IMediaDataProducer interface implementation
         bool start() override
         {
-            LOG(info) << "WebrtcStreamProducer::start() - Starting WebrtcStreamProducer" << endl;
+            LOG(info) << "WebrtcStreamProducer::start() - Starting WebrtcStreamProducer" << std::endl;
             // WebrtcStreamProducer is a singleton and is always running
             return true;
         }
 
         void stop() override
         {
-            LOG(info) << "WebrtcStreamProducer::stop() - Stopping WebrtcStreamProducer" << endl;
+            LOG(info) << "WebrtcStreamProducer::stop() - Stopping WebrtcStreamProducer" << std::endl;
             // Note: WebrtcStreamProducer is a singleton and should not be stopped
             // This method is provided for interface compliance
-            LOG(warning) << "WebrtcStreamProducer::stop() called - WebrtcStreamProducer is a singleton and should not be stopped" << endl;
+            LOG(warning) << "WebrtcStreamProducer::stop() called - WebrtcStreamProducer is a singleton and should not be stopped" << std::endl;
         }
 
         bool isRunning() const override
@@ -462,6 +472,8 @@ class WebrtcStreamProducer : public IMediaDataProducer
             return getConsumerCount() > 0;
         }
 
+        using IMediaDataProducer::registerConsumer;
+
         void registerConsumer(std::shared_ptr<IMediaDataConsumer> consumer, const std::string& identifier = "") override
         {
             // Call the existing registerDataCallback function
@@ -479,14 +491,14 @@ class WebrtcStreamProducer : public IMediaDataProducer
         {
             // WebrtcStreamProducer doesn't directly distribute frames
             // This is handled by individual WebrtcStream instances
-            LOG(verbose) << "WebrtcStreamProducer::distributeToConsumers - RawFrameParams distribution not implemented" << endl;
+            LOG(verbose) << "WebrtcStreamProducer::distributeToConsumers - RawFrameParams distribution not implemented" << std::endl;
         }
 
         void distributeToConsumers(FrameParams& frameParams) override
         {
             // WebrtcStreamProducer doesn't directly distribute frames
             // This is handled by individual WebrtcStream instances
-            LOG(verbose) << "WebrtcStreamProducer::distributeToConsumers - FrameParams distribution not implemented" << endl;
+            LOG(verbose) << "WebrtcStreamProducer::distributeToConsumers - FrameParams distribution not implemented" << std::endl;
         }
 
     private:

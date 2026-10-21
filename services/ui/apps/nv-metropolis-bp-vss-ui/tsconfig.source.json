@@ -52,6 +52,13 @@
       ],
       "@nv-metropolis-bp-vss-ui/video-management/server": [
         "../../packages/nv-metropolis-bp-vss-ui/video-management/lib-src/server.ts"
+      ],
+      "@vss/vios-dash": [
+        "../../external/vios-dash/DashStream.ts",
+        "../../../vios/ui/streaming-lib/src/dash/DashStream.ts"
+      ],
+      "dashjs": [
+        "../../node_modules/dashjs/index.d.ts"
       ]
     }
   }

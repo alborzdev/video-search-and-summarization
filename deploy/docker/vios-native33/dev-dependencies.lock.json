@@ -1,0 +1,3161 @@
+{
+  "base_image": "ghcr.io/nvidia-ai-blueprints/vss/vss-rt-vlm@sha256:23f844c9715e2d98ac01260b085fd1f9c7523d748dd594995c4ec952b7f4f65d",
+  "architecture": "arm64",
+  "source": "Host cached signed public Ubuntu Noble/updates/security APT metadata; solver uses exact pinned base dpkg status; no recommends; no ESM/NVIDIA archives",
+  "packages": [
+    {
+      "package": "liblzma5",
+      "version": "5.6.1+really5.4.5-1ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "liblzma5_5.6.1+really5.4.5-1ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xz-utils/liblzma5_5.6.1+really5.4.5-1ubuntu0.4_arm64.deb",
+      "size": 126254,
+      "installed_size_kib": 374,
+      "sha256": "a1b42103a0fcf3264c3a124cf20ed89d593b8e27dfb6e05e71a0fe7504da827b"
+    },
+    {
+      "package": "libssl-dev",
+      "version": "3.0.13-0ubuntu3.16",
+      "architecture": "arm64",
+      "filename": "libssl-dev_3.0.13-0ubuntu3.16_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/o/openssl/libssl-dev_3.0.13-0ubuntu3.16_arm64.deb",
+      "size": 2379194,
+      "installed_size_kib": 12814,
+      "sha256": "a5026a035b9461fa9783e26a027f8c91bad7606ef0eeb7250382a532308bf61d"
+    },
+    {
+      "package": "libssl3t64",
+      "version": "3.0.13-0ubuntu3.16",
+      "architecture": "arm64",
+      "filename": "libssl3t64_3.0.13-0ubuntu3.16_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/o/openssl/libssl3t64_3.0.13-0ubuntu3.16_arm64.deb",
+      "size": 1837684,
+      "installed_size_kib": 6123,
+      "sha256": "8b2dff5ee02f3e1eaaf8106ff372c5ba61b88ee57b7658e163a2de0b90b4956e"
+    },
+    {
+      "package": "zlib1g-dev",
+      "version": "1:1.3.dfsg-3.1ubuntu2.2",
+      "architecture": "arm64",
+      "filename": "zlib1g-dev_1.3.dfsg-3.1ubuntu2.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/z/zlib/zlib1g-dev_1.3.dfsg-3.1ubuntu2.2_arm64.deb",
+      "size": 893616,
+      "installed_size_kib": 1323,
+      "sha256": "de750f2515144715015e792c391bfa2ab4a926db6c370ba519af576bb3f131b5"
+    },
+    {
+      "package": "zlib1g",
+      "version": "1:1.3.dfsg-3.1ubuntu2.2",
+      "architecture": "arm64",
+      "filename": "zlib1g_1.3.dfsg-3.1ubuntu2.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/z/zlib/zlib1g_1.3.dfsg-3.1ubuntu2.2_arm64.deb",
+      "size": 61898,
+      "installed_size_kib": 183,
+      "sha256": "e55ab3b4fb7b6edc4a628e28ec13f8780b08abe427d33ae148f030d8586d0e9a"
+    },
+    {
+      "package": "libglib2.0-data",
+      "version": "2.80.0-6ubuntu3.9",
+      "architecture": "all",
+      "filename": "libglib2.0-data_2.80.0-6ubuntu3.9_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/glib2.0/libglib2.0-data_2.80.0-6ubuntu3.9_all.deb",
+      "size": 50146,
+      "installed_size_kib": 120,
+      "sha256": "87b6c824ce057baed1144474640e083f167096453393f93727f8d3a1d75a2707"
+    },
+    {
+      "package": "libsqlite3-0",
+      "version": "3.45.1-1ubuntu2.8",
+      "architecture": "arm64",
+      "filename": "libsqlite3-0_3.45.1-1ubuntu2.8_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/s/sqlite3/libsqlite3-0_3.45.1-1ubuntu2.8_arm64.deb",
+      "size": 690864,
+      "installed_size_kib": 1787,
+      "sha256": "85925089ef6820a5b6ed80bb490d187465e49687c388333895680fda54e3ee06"
+    },
+    {
+      "package": "libtirpc-common",
+      "version": "1.3.4+ds-1.1build1",
+      "architecture": "all",
+      "filename": "libtirpc-common_1.3.4+ds-1.1build1_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libt/libtirpc/libtirpc-common_1.3.4+ds-1.1build1_all.deb",
+      "size": 8094,
+      "installed_size_kib": 29,
+      "sha256": "212d8873ac952bc68f4cf56d7eaf17566f86f5c7cc4b971899a0c56e174699cc"
+    },
+    {
+      "package": "libtirpc3t64",
+      "version": "1.3.4+ds-1.1build1",
+      "architecture": "arm64",
+      "filename": "libtirpc3t64_1.3.4+ds-1.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libt/libtirpc/libtirpc3t64_1.3.4+ds-1.1build1_arm64.deb",
+      "size": 83586,
+      "installed_size_kib": 237,
+      "sha256": "576128e2012238110464877112d022165173d5101ec6945ee5075d207ba9300c"
+    },
+    {
+      "package": "libxml2",
+      "version": "2.9.14+dfsg-1.3ubuntu3.10",
+      "architecture": "arm64",
+      "filename": "libxml2_2.9.14+dfsg-1.3ubuntu3.10_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libxml2/libxml2_2.9.14+dfsg-1.3ubuntu3.10_arm64.deb",
+      "size": 735876,
+      "installed_size_kib": 2211,
+      "sha256": "a80d5bb7f41abae8cf3bd822672f732bd91eef8f2fabdadec3beab02acd1ca01"
+    },
+    {
+      "package": "openssl",
+      "version": "3.0.13-0ubuntu3.16",
+      "architecture": "arm64",
+      "filename": "openssl_3.0.13-0ubuntu3.16_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/o/openssl/openssl_3.0.13-0ubuntu3.16_arm64.deb",
+      "size": 985334,
+      "installed_size_kib": 1897,
+      "sha256": "07fa666e2dfe758e5c4e19ccc695a19e8a56fb512fa55bd7de89219a1e65d372"
+    },
+    {
+      "package": "libevdev2",
+      "version": "1.13.1+dfsg-1build1",
+      "architecture": "arm64",
+      "filename": "libevdev2_1.13.1+dfsg-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libe/libevdev/libevdev2_1.13.1+dfsg-1build1_arm64.deb",
+      "size": 35848,
+      "installed_size_kib": 153,
+      "sha256": "4fd17e552a00e3a2dc5d39a6578b26a1ac973afc80384d165647d72441f3a064"
+    },
+    {
+      "package": "xz-utils",
+      "version": "5.6.1+really5.4.5-1ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "xz-utils_5.6.1+really5.4.5-1ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xz-utils/xz-utils_5.6.1+really5.4.5-1ubuntu0.4_arm64.deb",
+      "size": 268390,
+      "installed_size_kib": 828,
+      "sha256": "1f7132ef96fa045322084a64693e775e755db3d035cf4681865471020d1004bd"
+    },
+    {
+      "package": "gdal-data",
+      "version": "3.8.4+dfsg-3ubuntu3",
+      "architecture": "all",
+      "filename": "gdal-data_3.8.4+dfsg-3ubuntu3_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/gdal/gdal-data_3.8.4+dfsg-3ubuntu3_all.deb",
+      "size": 261442,
+      "installed_size_kib": 2753,
+      "sha256": "416e34cc440f06e84747ddf797e2a8f6a850d96389c78ece5e221d9846420a3f"
+    },
+    {
+      "package": "gdal-plugins",
+      "version": "3.8.4+dfsg-3ubuntu3",
+      "architecture": "arm64",
+      "filename": "gdal-plugins_3.8.4+dfsg-3ubuntu3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/gdal/gdal-plugins_3.8.4+dfsg-3ubuntu3_arm64.deb",
+      "size": 24796,
+      "installed_size_kib": 377,
+      "sha256": "14810ebc25e6c0da6dacb3cf26d0562b2b8135c315c907a3f210d37baa0e4875"
+    },
+    {
+      "package": "gir1.2-gudev-1.0",
+      "version": "1:238-5ubuntu1",
+      "architecture": "arm64",
+      "filename": "gir1.2-gudev-1.0_238-5ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libgudev/gir1.2-gudev-1.0_238-5ubuntu1_arm64.deb",
+      "size": 3812,
+      "installed_size_kib": 22,
+      "sha256": "e7246bb28bf3c0dfc0d87f2fed3db610bbd4db2f9b3ad93642aee02b4ac52bf0"
+    },
+    {
+      "package": "gstreamer1.0-tools",
+      "version": "1.24.2-1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "gstreamer1.0-tools_1.24.2-1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/gstreamer1.0/gstreamer1.0-tools_1.24.2-1ubuntu0.1_arm64.deb",
+      "size": 65524,
+      "installed_size_kib": 463,
+      "sha256": "f1e42af0a6626f5c575ae5746559354c6211614e6cb389cecc8e3ba2945cdee4"
+    },
+    {
+      "package": "icu-devtools",
+      "version": "74.2-1ubuntu3.1",
+      "architecture": "arm64",
+      "filename": "icu-devtools_74.2-1ubuntu3.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/i/icu/icu-devtools_74.2-1ubuntu3.1_arm64.deb",
+      "size": 208902,
+      "installed_size_kib": 1319,
+      "sha256": "a356d95c5a0576c876123c42730ae696ebd852a0e4fbb93c9b7149845ed16afc"
+    },
+    {
+      "package": "libaec0",
+      "version": "1.1.2-1build1",
+      "architecture": "arm64",
+      "filename": "libaec0_1.1.2-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/liba/libaec/libaec0_1.1.2-1build1_arm64.deb",
+      "size": 22148,
+      "installed_size_kib": 89,
+      "sha256": "a3e1d67760197ed6cb1a493ee25bbc9dfc672dec75f6c1e0f4d8daff08fb3010"
+    },
+    {
+      "package": "libarchive13t64",
+      "version": "3.7.2-2ubuntu0.9",
+      "architecture": "arm64",
+      "filename": "libarchive13t64_3.7.2-2ubuntu0.9_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/liba/libarchive/libarchive13t64_3.7.2-2ubuntu0.9_arm64.deb",
+      "size": 377834,
+      "installed_size_kib": 904,
+      "sha256": "957be45cc63f6c43e83be561c42bca9d41f11301376fa7b82279eca17935cc72"
+    },
+    {
+      "package": "libblas3",
+      "version": "3.12.0-3build1.1",
+      "architecture": "arm64",
+      "filename": "libblas3_3.12.0-3build1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/l/lapack/libblas3_3.12.0-3build1.1_arm64.deb",
+      "size": 143534,
+      "installed_size_kib": 477,
+      "sha256": "4e8102189451f653e51571cb77072fb4403efc40e682335264184083ab2d7b56"
+    },
+    {
+      "package": "libgfortran5",
+      "version": "14.2.0-4ubuntu2~24.04.1",
+      "architecture": "arm64",
+      "filename": "libgfortran5_14.2.0-4ubuntu2~24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/gcc-14/libgfortran5_14.2.0-4ubuntu2~24.04.1_arm64.deb",
+      "size": 438652,
+      "installed_size_kib": 1669,
+      "sha256": "99e5f2383ce0325fb7876c118494a8dd486afa30546102f14c26b93667ee2c70"
+    },
+    {
+      "package": "liblapack3",
+      "version": "3.12.0-3build1.1",
+      "architecture": "arm64",
+      "filename": "liblapack3_3.12.0-3build1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/l/lapack/liblapack3_3.12.0-3build1.1_arm64.deb",
+      "size": 2241256,
+      "installed_size_kib": 5793,
+      "sha256": "5c4d4b359ab5f964382cb7ec476e7ebc10975ca21e65bbb1ab0afd09da4d1f89"
+    },
+    {
+      "package": "libarpack2t64",
+      "version": "3.9.1-1.1build2",
+      "architecture": "arm64",
+      "filename": "libarpack2t64_3.9.1-1.1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/a/arpack/libarpack2t64_3.9.1-1.1build2_arm64.deb",
+      "size": 90606,
+      "installed_size_kib": 279,
+      "sha256": "08bb60dda8286f1958aa8ac0fdcdd9a40feff3d5dcd60687304a75d35da55b19"
+    },
+    {
+      "package": "libsuperlu6",
+      "version": "6.0.1+dfsg1-1build1",
+      "architecture": "arm64",
+      "filename": "libsuperlu6_6.0.1+dfsg1-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/s/superlu/libsuperlu6_6.0.1+dfsg1-1build1_arm64.deb",
+      "size": 165662,
+      "installed_size_kib": 475,
+      "sha256": "d5e33c42ef09c73356aabe52ca77e62583aa98fdc2c6494c463c637e31d0f6a2"
+    },
+    {
+      "package": "libarmadillo12",
+      "version": "1:12.6.7+dfsg-1build2",
+      "architecture": "arm64",
+      "filename": "libarmadillo12_12.6.7+dfsg-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/a/armadillo/libarmadillo12_12.6.7+dfsg-1build2_arm64.deb",
+      "size": 104912,
+      "installed_size_kib": 803,
+      "sha256": "945960cf63b396787717c54622b8c4bc1debf97a8a7e6ded445394137f900ed4"
+    },
+    {
+      "package": "libva-x11-2",
+      "version": "2.20.0-2ubuntu0.2",
+      "architecture": "arm64",
+      "filename": "libva-x11-2_2.20.0-2ubuntu0.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libv/libva/libva-x11-2_2.20.0-2ubuntu0.2_arm64.deb",
+      "size": 12092,
+      "installed_size_kib": 97,
+      "sha256": "5a6b7110c408cf00ab8080f0a69796927776d336e9ccddaee0b61c03ee6b8a51"
+    },
+    {
+      "package": "libvdpau1",
+      "version": "1.5-2build1",
+      "architecture": "arm64",
+      "filename": "libvdpau1_1.5-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libv/libvdpau/libvdpau1_1.5-2build1_arm64.deb",
+      "size": 26378,
+      "installed_size_kib": 157,
+      "sha256": "cdf07628f0b9ad247e78bbbe65059d5148590548ab4808470dea9c8bdacc72de"
+    },
+    {
+      "package": "ocl-icd-libopencl1",
+      "version": "2.3.2-1build1",
+      "architecture": "arm64",
+      "filename": "ocl-icd-libopencl1_2.3.2-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/ocl-icd/ocl-icd-libopencl1_2.3.2-1build1_arm64.deb",
+      "size": 37602,
+      "installed_size_kib": 200,
+      "sha256": "a3433cbacf5e8fac7bc9108d7f050c028be04e9d6c234a0e71004821f8d06b6b"
+    },
+    {
+      "package": "libavutil58",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libavutil58_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libavutil58_6.1.1-3ubuntu5_arm64.deb",
+      "size": 388002,
+      "installed_size_kib": 1051,
+      "sha256": "446d732c91b6ca9d890e5ba054839a2e5faf9f110e8d84c2c94f75fa2497fab7"
+    },
+    {
+      "package": "libcodec2-1.2",
+      "version": "1.2.0-2build1",
+      "architecture": "arm64",
+      "filename": "libcodec2-1.2_1.2.0-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/c/codec2/libcodec2-1.2_1.2.0-2build1_arm64.deb",
+      "size": 8995538,
+      "installed_size_kib": 16458,
+      "sha256": "2661af66edfe60bb6c628d4b8481fefe97cca6a13d3df32b088e5cf916d4af85"
+    },
+    {
+      "package": "libdav1d7",
+      "version": "1.4.1-1build1",
+      "architecture": "arm64",
+      "filename": "libdav1d7_1.4.1-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/d/dav1d/libdav1d7_1.4.1-1build1_arm64.deb",
+      "size": 298218,
+      "installed_size_kib": 730,
+      "sha256": "cfccd3c4a516ea80b7a470c2a120c26925d496cdc13b8d7f15c4e19525597eaf"
+    },
+    {
+      "package": "libhwy1t64",
+      "version": "1.0.7-8.1build1",
+      "architecture": "arm64",
+      "filename": "libhwy1t64_1.0.7-8.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/h/highway/libhwy1t64_1.0.7-8.1build1_arm64.deb",
+      "size": 436666,
+      "installed_size_kib": 2464,
+      "sha256": "57e8fc1a01fb5b122bd47feec7eec9189c152cfc72e2288066c6ef19defe5195"
+    },
+    {
+      "package": "libjxl0.7",
+      "version": "0.7.0-10.2ubuntu6.1",
+      "architecture": "arm64",
+      "filename": "libjxl0.7_0.7.0-10.2ubuntu6.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/j/jpeg-xl/libjxl0.7_0.7.0-10.2ubuntu6.1_arm64.deb",
+      "size": 690038,
+      "installed_size_kib": 1823,
+      "sha256": "91ecf29b9d6a7c9884219d61842524f5d136ece52ca59a5ebf3976eba3fb1a45"
+    },
+    {
+      "package": "librav1e0",
+      "version": "0.7.1-2",
+      "architecture": "arm64",
+      "filename": "librav1e0_0.7.1-2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/r/rust-rav1e/librav1e0_0.7.1-2_arm64.deb",
+      "size": 759866,
+      "installed_size_kib": 2141,
+      "sha256": "a37b89e7558d84d1b6dd9e24a142762758edd691505ef92c1b66d181ef56d080"
+    },
+    {
+      "package": "libshine3",
+      "version": "3.1.1-2build1",
+      "architecture": "arm64",
+      "filename": "libshine3_3.1.1-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/s/shine/libshine3_3.1.1-2build1_arm64.deb",
+      "size": 25760,
+      "installed_size_kib": 83,
+      "sha256": "edea9033dfe3a636eb1358a36401803cab5ef0a02410cc9c22cb5537205236b9"
+    },
+    {
+      "package": "libsnappy1v5",
+      "version": "1.1.10-1build1",
+      "architecture": "arm64",
+      "filename": "libsnappy1v5_1.1.10-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/s/snappy/libsnappy1v5_1.1.10-1build1_arm64.deb",
+      "size": 28622,
+      "installed_size_kib": 113,
+      "sha256": "5ec333edcfe04b83e11be0d08520b119b3a2e3809551af14fdb46b1521e776a4"
+    },
+    {
+      "package": "libsoxr0",
+      "version": "0.1.3-4build3",
+      "architecture": "arm64",
+      "filename": "libsoxr0_0.1.3-4build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libs/libsoxr/libsoxr0_0.1.3-4build3_arm64.deb",
+      "size": 56436,
+      "installed_size_kib": 148,
+      "sha256": "46efb96163ac0dd618f30242c78f4a2900b970a9ed0aac2b5bbd9970102b5aa4"
+    },
+    {
+      "package": "libswresample4",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libswresample4_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libswresample4_6.1.1-3ubuntu5_arm64.deb",
+      "size": 57894,
+      "installed_size_kib": 197,
+      "sha256": "3d1ddc8dc72d487d4b5eb091dfc1e0af19ac24f5b6b6e7d7b728c3eedb3b459b"
+    },
+    {
+      "package": "libx264-164",
+      "version": "2:0.164.3108+git31e19f9-1",
+      "architecture": "arm64",
+      "filename": "libx264-164_0.164.3108+git31e19f9-1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/x/x264/libx264-164_0.164.3108+git31e19f9-1_arm64.deb",
+      "size": 541828,
+      "installed_size_kib": 1367,
+      "sha256": "3c39d6d99faab1bc07178f0ad64512e8c7301329d24458d7538a28890fd044a2"
+    },
+    {
+      "package": "libxvidcore4",
+      "version": "2:1.3.7-1build1",
+      "architecture": "arm64",
+      "filename": "libxvidcore4_1.3.7-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/x/xvidcore/libxvidcore4_1.3.7-1build1_arm64.deb",
+      "size": 180298,
+      "installed_size_kib": 469,
+      "sha256": "2eeecbaf713c7a953e195926f53dd7daa668f2486535b2935327593b9deaed4d"
+    },
+    {
+      "package": "libavcodec60",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libavcodec60_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libavcodec60_6.1.1-3ubuntu5_arm64.deb",
+      "size": 5768814,
+      "installed_size_kib": 14096,
+      "sha256": "c2eb6e847b8134076e170e4c2aa5851cbe8e4cf367399ff9ffb7b05f602795ff"
+    },
+    {
+      "package": "libavutil-dev",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libavutil-dev_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libavutil-dev_6.1.1-3ubuntu5_arm64.deb",
+      "size": 536332,
+      "installed_size_kib": 2259,
+      "sha256": "019a9384eb5a7f135a5f632d949d0cdd00fe0cd2d6248503cdb14c31b968f591"
+    },
+    {
+      "package": "libswresample-dev",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libswresample-dev_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libswresample-dev_6.1.1-3ubuntu5_arm64.deb",
+      "size": 70152,
+      "installed_size_kib": 264,
+      "sha256": "8c2b506e7a31bc0fc78418fcefe37073026b0740bc84b78f5b3f67487e502edf"
+    },
+    {
+      "package": "libavcodec-dev",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libavcodec-dev_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libavcodec-dev_6.1.1-3ubuntu5_arm64.deb",
+      "size": 6459628,
+      "installed_size_kib": 20661,
+      "sha256": "3b6a0ef7c9492f368c07e803b8e5e4ec8f83d5cc14a4169ba7420c023b088394"
+    },
+    {
+      "package": "libudfread0",
+      "version": "1.1.2-1build1",
+      "architecture": "arm64",
+      "filename": "libudfread0_1.1.2-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libu/libudfread/libudfread0_1.1.2-1build1_arm64.deb",
+      "size": 17004,
+      "installed_size_kib": 83,
+      "sha256": "c3833623e029241e1aa93eace31ec149d1962284794b8f0bbf2da94dee6f962d"
+    },
+    {
+      "package": "libbluray2",
+      "version": "1:1.3.4-1build1",
+      "architecture": "arm64",
+      "filename": "libbluray2_1.3.4-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libb/libbluray/libbluray2_1.3.4-1build1_arm64.deb",
+      "size": 148774,
+      "installed_size_kib": 427,
+      "sha256": "e090bf75675572f8f10e0ac6b7101a1ce5d606a62fdc5c4ea96502073337f0b5"
+    },
+    {
+      "package": "librabbitmq4",
+      "version": "0.11.0-1ubuntu0.2",
+      "architecture": "arm64",
+      "filename": "librabbitmq4_0.11.0-1ubuntu0.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libr/librabbitmq/librabbitmq4_0.11.0-1ubuntu0.2_arm64.deb",
+      "size": 38920,
+      "installed_size_kib": 150,
+      "sha256": "09fcf24f5d06b5c33e774ee5f620c733f9a2a62eb4aab23ab3aa3492e6256bef"
+    },
+    {
+      "package": "libcjson1",
+      "version": "1.7.17-1",
+      "architecture": "arm64",
+      "filename": "libcjson1_1.7.17-1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/c/cjson/libcjson1_1.7.17-1_arm64.deb",
+      "size": 25102,
+      "installed_size_kib": 152,
+      "sha256": "abfd20e8ff027fc6620e4c2398bafd75c66ed90094a1091b1d5b187b023103db"
+    },
+    {
+      "package": "libmbedcrypto7t64",
+      "version": "2.28.8-1",
+      "architecture": "arm64",
+      "filename": "libmbedcrypto7t64_2.28.8-1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/m/mbedtls/libmbedcrypto7t64_2.28.8-1_arm64.deb",
+      "size": 209074,
+      "installed_size_kib": 563,
+      "sha256": "02eb8701ac42a9230a20d2360206f8f193253dde4043e41b3563bc5f282ab527"
+    },
+    {
+      "package": "librist4",
+      "version": "0.2.10+dfsg-2",
+      "architecture": "arm64",
+      "filename": "librist4_0.2.10+dfsg-2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libr/librist/librist4_0.2.10+dfsg-2_arm64.deb",
+      "size": 76224,
+      "installed_size_kib": 218,
+      "sha256": "73d6d62718c93fd6fa3081e9d8d54567553e97e0bca2626515838535d78630f8"
+    },
+    {
+      "package": "libssh-gcrypt-4",
+      "version": "0.10.6-2ubuntu0.5",
+      "architecture": "arm64",
+      "filename": "libssh-gcrypt-4_0.10.6-2ubuntu0.5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libs/libssh/libssh-gcrypt-4_0.10.6-2ubuntu0.5_arm64.deb",
+      "size": 226976,
+      "installed_size_kib": 633,
+      "sha256": "bcc6340756c1cf8f1d297422f4c9018435844e1ee9613cc21f7624d772b8173b"
+    },
+    {
+      "package": "libnorm1t64",
+      "version": "1.5.9+dfsg-3.1build1",
+      "architecture": "arm64",
+      "filename": "libnorm1t64_1.5.9+dfsg-3.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/n/norm/libnorm1t64_1.5.9+dfsg-3.1build1_arm64.deb",
+      "size": 149826,
+      "installed_size_kib": 415,
+      "sha256": "b31886b4f3f142183083d0904ea0bbf2cf4949e258cec2db6d9c6c822303dd23"
+    },
+    {
+      "package": "libpgm-5.3-0t64",
+      "version": "5.3.128~dfsg-2.1build1",
+      "architecture": "arm64",
+      "filename": "libpgm-5.3-0t64_5.3.128~dfsg-2.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libp/libpgm/libpgm-5.3-0t64_5.3.128~dfsg-2.1build1_arm64.deb",
+      "size": 161792,
+      "installed_size_kib": 347,
+      "sha256": "7ee8d73f8a553bd2c38724fb9b832abc9c7df42af5d81598f57407bcebc0e721"
+    },
+    {
+      "package": "libsodium23",
+      "version": "1.0.18-1ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libsodium23_1.0.18-1ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libs/libsodium/libsodium23_1.0.18-1ubuntu0.24.04.1_arm64.deb",
+      "size": 119490,
+      "installed_size_kib": 313,
+      "sha256": "78471032060f3edfd539a01cb69a9ce8560a15e1d9efcd93ac7854731e9d679c"
+    },
+    {
+      "package": "libzmq5",
+      "version": "4.3.5-1build2",
+      "architecture": "arm64",
+      "filename": "libzmq5_4.3.5-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/z/zeromq3/libzmq5_4.3.5-1build2_arm64.deb",
+      "size": 246946,
+      "installed_size_kib": 693,
+      "sha256": "c2e63e26929404b1627f55323b8902a098ee9e6d3054f317a6490ed3adf17f4b"
+    },
+    {
+      "package": "libavformat60",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libavformat60_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libavformat60_6.1.1-3ubuntu5_arm64.deb",
+      "size": 1187774,
+      "installed_size_kib": 2952,
+      "sha256": "5842b1c1816144839e78c07d41062955a202c5a2ccde059ef106e1a17ced9407"
+    },
+    {
+      "package": "libavformat-dev",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libavformat-dev_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libavformat-dev_6.1.1-3ubuntu5_arm64.deb",
+      "size": 1469370,
+      "installed_size_kib": 5985,
+      "sha256": "e66cc237fe46605b6d79f010528a0ad8721adb830d96c84b93229e621933a5c9"
+    },
+    {
+      "package": "libblosc1",
+      "version": "1.21.5+ds-1build1",
+      "architecture": "arm64",
+      "filename": "libblosc1_1.21.5+ds-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/c/c-blosc/libblosc1_1.21.5+ds-1build1_arm64.deb",
+      "size": 25700,
+      "installed_size_kib": 105,
+      "sha256": "d84724d0770ebfb022101a0ae13eb05d9879b511421b605e25483064520b1d1d"
+    },
+    {
+      "package": "libboost1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 10746196,
+      "installed_size_kib": 157219,
+      "sha256": "1412e461d573f66c9d5c7af63696a1d01e11a4724215299a3cf6afd1bcdd3d7f"
+    },
+    {
+      "package": "libboost-atomic1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-atomic1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-atomic1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 239230,
+      "installed_size_kib": 2210,
+      "sha256": "287a505f519f8a33787d3278817bd66d374209f81dbdf1c315d657411f34af44"
+    },
+    {
+      "package": "libboost-atomic1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-atomic1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-atomic1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 234590,
+      "installed_size_kib": 2164,
+      "sha256": "351ae4a158832289fb63323b0965d1b11e91888f3a717e0190fcf63851e1e418"
+    },
+    {
+      "package": "libboost-chrono1.83.0t64",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-chrono1.83.0t64_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-chrono1.83.0t64_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 244324,
+      "installed_size_kib": 2210,
+      "sha256": "19f8a709d48d9c6d84bc355e91157e01c66623490d513561af6db780a8113379"
+    },
+    {
+      "package": "libboost-chrono1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-chrono1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-chrono1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 245414,
+      "installed_size_kib": 2328,
+      "sha256": "3563e8258f50d1ce572bfc33730e59083195435dc7d91a286311e6111e015d11"
+    },
+    {
+      "package": "libboost-date-time1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-date-time1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-date-time1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 235922,
+      "installed_size_kib": 2210,
+      "sha256": "98f8c45441241b09402555238a4ffc4771b90763c1ec187be3b534c27e38a340"
+    },
+    {
+      "package": "libboost-serialization1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-serialization1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-serialization1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 334922,
+      "installed_size_kib": 2662,
+      "sha256": "5aa44c8c360e1c7c16b4d219542aab89f5fd41d075eb49b7ac06bc3a2ec5e8a9"
+    },
+    {
+      "package": "libboost-serialization1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-serialization1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-serialization1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 391884,
+      "installed_size_kib": 4274,
+      "sha256": "547d027027d4a8c48d6c07ad4c4d8428795f4a2e4ee754655ef884d05bfffa24"
+    },
+    {
+      "package": "libboost-date-time1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-date-time1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-date-time1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 239012,
+      "installed_size_kib": 2164,
+      "sha256": "9fe2228255eee5e93ff94c2f78aabc0a124b8f6e53b82f04836f78fef04d1870"
+    },
+    {
+      "package": "libboost-filesystem1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-filesystem1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-filesystem1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 281304,
+      "installed_size_kib": 2275,
+      "sha256": "fb95d3878980bfea01b4bc1341382aef8562de72f1051545df516bc2cf85474e"
+    },
+    {
+      "package": "libboost-system1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-system1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-system1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 235974,
+      "installed_size_kib": 2210,
+      "sha256": "2e6b718b122b3ef4f6e2d1866dc7dbbad17144702e05e5158594ad88e3fcbca0"
+    },
+    {
+      "package": "libboost-system1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-system1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-system1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 231156,
+      "installed_size_kib": 2155,
+      "sha256": "7ba3067ee5004b0fd0f59bce82ded147e0392d8066d9a2895ce1af3c5e891ba8"
+    },
+    {
+      "package": "libboost-filesystem1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-filesystem1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost1.83/libboost-filesystem1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 301366,
+      "installed_size_kib": 2590,
+      "sha256": "95b9ad5bc1b2951e851a397ec53ee7ff29799d6fc22865fc78569ddacfb22c3a"
+    },
+    {
+      "package": "libboost-filesystem-dev",
+      "version": "1.83.0.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libboost-filesystem-dev_1.83.0.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost-defaults/libboost-filesystem-dev_1.83.0.1ubuntu2_arm64.deb",
+      "size": 4094,
+      "installed_size_kib": 10,
+      "sha256": "74a4dbe5f4448e266c3affec9a282e8aa9604373fe6db8535160d3f8ed65724a"
+    },
+    {
+      "package": "libboost-regex1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-regex1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-regex1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 329266,
+      "installed_size_kib": 2466,
+      "sha256": "1f9cea5952120c35ec667aa46362aaa9313cc0759448b2a98e8bacb7266a8e00"
+    },
+    {
+      "package": "libicu-dev",
+      "version": "74.2-1ubuntu3.1",
+      "architecture": "arm64",
+      "filename": "libicu-dev_74.2-1ubuntu3.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/i/icu/libicu-dev_74.2-1ubuntu3.1_arm64.deb",
+      "size": 11881468,
+      "installed_size_kib": 48194,
+      "sha256": "65a1c1196beddbeed78562be34821be82974e322bb48fbf76c62805ec16f232b"
+    },
+    {
+      "package": "libboost-regex1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-regex1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-regex1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 349314,
+      "installed_size_kib": 2863,
+      "sha256": "1210daf3e0976568a66c55f61e663f26f8ae0aa40b85eef9cdf01e3e4fd86dcd"
+    },
+    {
+      "package": "libboost-regex-dev",
+      "version": "1.83.0.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libboost-regex-dev_1.83.0.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost-defaults/libboost-regex-dev_1.83.0.1ubuntu2_arm64.deb",
+      "size": 4324,
+      "installed_size_kib": 10,
+      "sha256": "fdb4f32b991967f363f3364811afe9d55dfd26ee2088b52565acf2702b61d775"
+    },
+    {
+      "package": "libboost-stacktrace1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-stacktrace1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost1.83/libboost-stacktrace1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 288144,
+      "installed_size_kib": 2475,
+      "sha256": "4e1007bc2ae68819fbcbc024c0d234b7e0c2281c62407b86a52020717aca8d7e"
+    },
+    {
+      "package": "libboost-stacktrace1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-stacktrace1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost1.83/libboost-stacktrace1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 246182,
+      "installed_size_kib": 2256,
+      "sha256": "07a109d320d7034db39a127351e38c3f1107cf6747840d0d181a3c6ad6e38d49"
+    },
+    {
+      "package": "libboost-stacktrace-dev",
+      "version": "1.83.0.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libboost-stacktrace-dev_1.83.0.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost-defaults/libboost-stacktrace-dev_1.83.0.1ubuntu2_arm64.deb",
+      "size": 4066,
+      "installed_size_kib": 10,
+      "sha256": "d229dfe7bcd00f48a5d8e286afbc6801846e600258996627bcf798d67c47d075"
+    },
+    {
+      "package": "libboost-system-dev",
+      "version": "1.83.0.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libboost-system-dev_1.83.0.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost-defaults/libboost-system-dev_1.83.0.1ubuntu2_arm64.deb",
+      "size": 4204,
+      "installed_size_kib": 10,
+      "sha256": "63d32008ee7e13f4d0ba104ee8a554709993267241fa0c33cbdfa13e306a2c75"
+    },
+    {
+      "package": "libboost-thread1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-thread1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-thread1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 275174,
+      "installed_size_kib": 2275,
+      "sha256": "6bea94ae8e15280e976e39ca686de2007faa605540932f7b7af3f63e050ac0ad"
+    },
+    {
+      "package": "libboost-thread1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-thread1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost1.83/libboost-thread1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 283614,
+      "installed_size_kib": 2532,
+      "sha256": "3cc5cb90a8f7ad6ae075b205cb25a7f93b3c93d6b98f619ae902d63404589d47"
+    },
+    {
+      "package": "libboost-thread-dev",
+      "version": "1.83.0.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libboost-thread-dev_1.83.0.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/b/boost-defaults/libboost-thread-dev_1.83.0.1ubuntu2_arm64.deb",
+      "size": 4088,
+      "installed_size_kib": 10,
+      "sha256": "7b32887a9b883b3476e6c88e289b18dc658e09601f8f26a61bd332509b4da169"
+    },
+    {
+      "package": "libboost-timer1.83.0",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-timer1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost1.83/libboost-timer1.83.0_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 240620,
+      "installed_size_kib": 2210,
+      "sha256": "2051e9e516f29f2bc6617c819bd19af1ca5a019797062c953498eb5f43696616"
+    },
+    {
+      "package": "libboost-timer1.83-dev",
+      "version": "1.83.0-2.1ubuntu3.2",
+      "architecture": "arm64",
+      "filename": "libboost-timer1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost1.83/libboost-timer1.83-dev_1.83.0-2.1ubuntu3.2_arm64.deb",
+      "size": 236688,
+      "installed_size_kib": 2175,
+      "sha256": "6bc5a5acf4a92d0439ccc9118eff3676c563b232958686e18ae12641b757c889"
+    },
+    {
+      "package": "libboost-timer-dev",
+      "version": "1.83.0.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libboost-timer-dev_1.83.0.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/b/boost-defaults/libboost-timer-dev_1.83.0.1ubuntu2_arm64.deb",
+      "size": 4190,
+      "installed_size_kib": 10,
+      "sha256": "978dfec472c16d39e8d844c79cb1fc9782fb015da5240411d0eb65e834998d4f"
+    },
+    {
+      "package": "libcfitsio10t64",
+      "version": "4.3.1-1.1build2",
+      "architecture": "arm64",
+      "filename": "libcfitsio10t64_4.3.1-1.1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/c/cfitsio/libcfitsio10t64_4.3.1-1.1build2_arm64.deb",
+      "size": 519704,
+      "installed_size_kib": 1543,
+      "sha256": "54b91a776673303839a9e4bc5d34c1da7e498499974f4b3f0c5d1fab27839d38"
+    },
+    {
+      "package": "libcharls2",
+      "version": "2.4.2-2build2",
+      "architecture": "arm64",
+      "filename": "libcharls2_2.4.2-2build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/c/charls/libcharls2_2.4.2-2build2_arm64.deb",
+      "size": 85688,
+      "installed_size_kib": 340,
+      "sha256": "9ff22bbbf75d98a8f8915662f6c440bfb4edb59bec7987101db98eac543eecb7"
+    },
+    {
+      "package": "libcurl4-openssl-dev",
+      "version": "8.5.0-2ubuntu10.16",
+      "architecture": "arm64",
+      "filename": "libcurl4-openssl-dev_8.5.0-2ubuntu10.16_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/c/curl/libcurl4-openssl-dev_8.5.0-2ubuntu10.16_arm64.deb",
+      "size": 456042,
+      "installed_size_kib": 1962,
+      "sha256": "c8a1a6966fda3071b24abadeb56439ce8b7620fdca1be917afa9429659a95e61"
+    },
+    {
+      "package": "libraw1394-dev",
+      "version": "2.1.2-2build3",
+      "architecture": "arm64",
+      "filename": "libraw1394-dev_2.1.2-2build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libr/libraw1394/libraw1394-dev_2.1.2-2build3_arm64.deb",
+      "size": 40842,
+      "installed_size_kib": 182,
+      "sha256": "520a1f28ef346aae1e292a7e311993a9eb1ead0db7e8a9cf8ec9d8e629cedb42"
+    },
+    {
+      "package": "libdc1394-dev",
+      "version": "2.2.6-4build1",
+      "architecture": "arm64",
+      "filename": "libdc1394-dev_2.2.6-4build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libd/libdc1394/libdc1394-dev_2.2.6-4build1_arm64.deb",
+      "size": 125532,
+      "installed_size_kib": 595,
+      "sha256": "90a64414e6f2e16540ee0253cd8e66bfaf6d6fb9676dab867b072d4f1a94b303"
+    },
+    {
+      "package": "libdeflate-dev",
+      "version": "1.19-1build1.1",
+      "architecture": "arm64",
+      "filename": "libdeflate-dev_1.19-1build1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libd/libdeflate/libdeflate-dev_1.19-1build1.1_arm64.deb",
+      "size": 51206,
+      "installed_size_kib": 134,
+      "sha256": "fb5cf90c9079aa43e53d0fcb2b5df4651566b0538fd87c3df513a55b9dc17832"
+    },
+    {
+      "package": "libdouble-conversion3",
+      "version": "3.3.0-1build1",
+      "architecture": "arm64",
+      "filename": "libdouble-conversion3_3.3.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/d/double-conversion/libdouble-conversion3_3.3.0-1build1_arm64.deb",
+      "size": 37992,
+      "installed_size_kib": 152,
+      "sha256": "de2513f24de7a48c807bc3ac36f9db6dbc18a3ae229bf0f2e62114a7d2c0dc7c"
+    },
+    {
+      "package": "libdrm-radeon1",
+      "version": "2.4.125-1ubuntu0.1~24.04.2",
+      "architecture": "arm64",
+      "filename": "libdrm-radeon1_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libd/libdrm/libdrm-radeon1_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "size": 20854,
+      "installed_size_kib": 99,
+      "sha256": "8e079c218503a4f66a1639db1056a0ed204a68f116287faf0b643ecfa132c46c"
+    },
+    {
+      "package": "libdrm-nouveau2",
+      "version": "2.4.125-1ubuntu0.1~24.04.2",
+      "architecture": "arm64",
+      "filename": "libdrm-nouveau2_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libd/libdrm/libdrm-nouveau2_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "size": 17794,
+      "installed_size_kib": 99,
+      "sha256": "6ccb3c2ecc1c11bd43e48a1a675e59c5eb04f18af84ee85ed06b126cc00a360f"
+    },
+    {
+      "package": "libdrm-freedreno1",
+      "version": "2.4.125-1ubuntu0.1~24.04.2",
+      "architecture": "arm64",
+      "filename": "libdrm-freedreno1_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libd/libdrm/libdrm-freedreno1_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "size": 20228,
+      "installed_size_kib": 99,
+      "sha256": "dc5d2ddd22648e1a0fb6cfdc5df6de0b2c475756faec537250cf63690249b077"
+    },
+    {
+      "package": "libdrm-tegra0",
+      "version": "2.4.125-1ubuntu0.1~24.04.2",
+      "architecture": "arm64",
+      "filename": "libdrm-tegra0_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libd/libdrm/libdrm-tegra0_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "size": 9636,
+      "installed_size_kib": 99,
+      "sha256": "dd4e3f0fba12022b2e62c30895db012628520f12db27c3b4b3f998733a30a3ee"
+    },
+    {
+      "package": "libdrm-etnaviv1",
+      "version": "2.4.125-1ubuntu0.1~24.04.2",
+      "architecture": "arm64",
+      "filename": "libdrm-etnaviv1_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libd/libdrm/libdrm-etnaviv1_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "size": 12476,
+      "installed_size_kib": 99,
+      "sha256": "2cf3e028faa3a0d87d3f7bb89672938d55e1d449d42f43a304863552e793767c"
+    },
+    {
+      "package": "libpciaccess0",
+      "version": "0.17-3ubuntu0.24.04.3",
+      "architecture": "arm64",
+      "filename": "libpciaccess0_0.17-3ubuntu0.24.04.3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libp/libpciaccess/libpciaccess0_0.17-3ubuntu0.24.04.3_arm64.deb",
+      "size": 19510,
+      "installed_size_kib": 89,
+      "sha256": "de9d01338c4f0b1215526a76427fc18164f9af2c84dda56a4f52dceda37dfd7d"
+    },
+    {
+      "package": "libpciaccess-dev",
+      "version": "0.17-3ubuntu0.24.04.3",
+      "architecture": "arm64",
+      "filename": "libpciaccess-dev_0.17-3ubuntu0.24.04.3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libp/libpciaccess/libpciaccess-dev_0.17-3ubuntu0.24.04.3_arm64.deb",
+      "size": 23772,
+      "installed_size_kib": 104,
+      "sha256": "1fbb35cf2bbb62a8727b96a9244dddc96478aacf4fc68e4e3c4888cafc2f4444"
+    },
+    {
+      "package": "libdrm-dev",
+      "version": "2.4.125-1ubuntu0.1~24.04.2",
+      "architecture": "arm64",
+      "filename": "libdrm-dev_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libd/libdrm/libdrm-dev_2.4.125-1ubuntu0.1~24.04.2_arm64.deb",
+      "size": 349632,
+      "installed_size_kib": 1561,
+      "sha256": "892633787d2810eb326e3b3dc5ef43cc61fa5b58efdd8474cef71a7c706d8220"
+    },
+    {
+      "package": "libzstd-dev",
+      "version": "1.5.5+dfsg2-2build1.1",
+      "architecture": "arm64",
+      "filename": "libzstd-dev_1.5.5+dfsg2-2build1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libz/libzstd/libzstd-dev_1.5.5+dfsg2-2build1.1_arm64.deb",
+      "size": 343612,
+      "installed_size_kib": 1136,
+      "sha256": "b7cfd2e0637aa0e44bbd342f9fc8b18db545df53151d252c10731540e9dfdf78"
+    },
+    {
+      "package": "libelf-dev",
+      "version": "0.190-1.1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "libelf-dev_0.190-1.1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/e/elfutils/libelf-dev_0.190-1.1ubuntu0.1_arm64.deb",
+      "size": 72244,
+      "installed_size_kib": 401,
+      "sha256": "ae8132ea400d639da2181fdb6e4b1093bbe987cd8d66f777f4c5e797dc25ea9e"
+    },
+    {
+      "package": "liblzma-dev",
+      "version": "5.6.1+really5.4.5-1ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "liblzma-dev_5.6.1+really5.4.5-1ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xz-utils/liblzma-dev_5.6.1+really5.4.5-1ubuntu0.4_arm64.deb",
+      "size": 178366,
+      "installed_size_kib": 795,
+      "sha256": "e4f27c1f593c60917e03141cc442bf53b10ce964f7d3a4a7c7ef531509d30a5b"
+    },
+    {
+      "package": "libdw-dev",
+      "version": "0.190-1.1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "libdw-dev_0.190-1.1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/e/elfutils/libdw-dev_0.190-1.1ubuntu0.1_arm64.deb",
+      "size": 340792,
+      "installed_size_kib": 1780,
+      "sha256": "7784711b4f07b151cc02f012a99e750c02afeaa561c9a4c5647658bc3b45d916"
+    },
+    {
+      "package": "xtrans-dev",
+      "version": "1.4.0-1",
+      "architecture": "all",
+      "filename": "xtrans-dev_1.4.0-1_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xtrans/xtrans-dev_1.4.0-1_all.deb",
+      "size": 68900,
+      "installed_size_kib": 302,
+      "sha256": "45277c51d5d83db351b61859314b59595c9626ac372fbb2fc0d5542e169d9086"
+    },
+    {
+      "package": "libx11-dev",
+      "version": "2:1.8.7-1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "libx11-dev_1.8.7-1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libx11/libx11-dev_1.8.7-1ubuntu0.1_arm64.deb",
+      "size": 742350,
+      "installed_size_kib": 2589,
+      "sha256": "c67aedaed249c629628c24e717c5b550a066e246c678aa98098002ed0a8017e9"
+    },
+    {
+      "package": "libglx-dev",
+      "version": "1.7.0-1build1",
+      "architecture": "arm64",
+      "filename": "libglx-dev_1.7.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libglvnd/libglx-dev_1.7.0-1build1_arm64.deb",
+      "size": 14168,
+      "installed_size_kib": 87,
+      "sha256": "dc75223f01a41118e9ba8a7861ed9c0a01578c85cf303a9fecf48515b82fe352"
+    },
+    {
+      "package": "libgl-dev",
+      "version": "1.7.0-1build1",
+      "architecture": "arm64",
+      "filename": "libgl-dev_1.7.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libglvnd/libgl-dev_1.7.0-1build1_arm64.deb",
+      "size": 102444,
+      "installed_size_kib": 1364,
+      "sha256": "9bc28c1265bb82ff2498c234893cbb891529e43fa6b100c007ba677c0a77bbc1"
+    },
+    {
+      "package": "libegl-dev",
+      "version": "1.7.0-1build1",
+      "architecture": "arm64",
+      "filename": "libegl-dev_1.7.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libglvnd/libegl-dev_1.7.0-1build1_arm64.deb",
+      "size": 18200,
+      "installed_size_kib": 118,
+      "sha256": "99e364f5b5d5847feeb57bf4bd866331da93f16ba767c25286dd7f65e4b828ec"
+    },
+    {
+      "package": "libevent-core-2.1-7t64",
+      "version": "2.1.12-stable-9ubuntu2.2",
+      "architecture": "arm64",
+      "filename": "libevent-core-2.1-7t64_2.1.12-stable-9ubuntu2.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libe/libevent/libevent-core-2.1-7t64_2.1.12-stable-9ubuntu2.2_arm64.deb",
+      "size": 90632,
+      "installed_size_kib": 306,
+      "sha256": "2fff3280ca73b151af50f29057b56b050465df23c255ece6f8cd83103c6fc711"
+    },
+    {
+      "package": "libevent-pthreads-2.1-7t64",
+      "version": "2.1.12-stable-9ubuntu2.2",
+      "architecture": "arm64",
+      "filename": "libevent-pthreads-2.1-7t64_2.1.12-stable-9ubuntu2.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libe/libevent/libevent-pthreads-2.1-7t64_2.1.12-stable-9ubuntu2.2_arm64.deb",
+      "size": 7928,
+      "installed_size_kib": 97,
+      "sha256": "07f2eb4ba77055429b24d10fce941a378197b9d4fcac44fb99fef187cede9e7b"
+    },
+    {
+      "package": "libexif12",
+      "version": "0.6.24-1ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libexif12_0.6.24-1ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libe/libexif/libexif12_0.6.24-1ubuntu0.24.04.1_arm64.deb",
+      "size": 86828,
+      "installed_size_kib": 400,
+      "sha256": "fbfe6e3202d631a75e7d01e3fd2d2029d13a00a3ceb5a412ddc645ff6c56305b"
+    },
+    {
+      "package": "libexif-dev",
+      "version": "0.6.24-1ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libexif-dev_0.6.24-1ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libe/libexif/libexif-dev_0.6.24-1ubuntu0.24.04.1_arm64.deb",
+      "size": 111624,
+      "installed_size_kib": 584,
+      "sha256": "7ab1389559a6f6c84ae59ff2fe1a73000580c2044d27492ea17fc06b5422e371"
+    },
+    {
+      "package": "librdmacm1t64",
+      "version": "50.0-2ubuntu0.2",
+      "architecture": "arm64",
+      "filename": "librdmacm1t64_50.0-2ubuntu0.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/r/rdma-core/librdmacm1t64_50.0-2ubuntu0.2_arm64.deb",
+      "size": 70630,
+      "installed_size_kib": 254,
+      "sha256": "1cb7fb8396c368ffe92d7ca21f259579667ca8c8e6d47cce86db619d67499a71"
+    },
+    {
+      "package": "libfabric1",
+      "version": "1.17.0-3build2",
+      "architecture": "arm64",
+      "filename": "libfabric1_1.17.0-3build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libf/libfabric/libfabric1_1.17.0-3build2_arm64.deb",
+      "size": 540710,
+      "installed_size_kib": 1445,
+      "sha256": "8469b772a884e6b5a42bd3fcae0e37de50adc0d4e942c648882c6ab5ecdf7036"
+    },
+    {
+      "package": "libfyba0t64",
+      "version": "4.1.1-11build1",
+      "architecture": "arm64",
+      "filename": "libfyba0t64_4.1.1-11build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/fyba/libfyba0t64_4.1.1-11build1_arm64.deb",
+      "size": 120458,
+      "installed_size_kib": 413,
+      "sha256": "8661569ad45aea52f881a6eeb00ab432643e7e32b4ece79e4814b2e6c4a7519f"
+    },
+    {
+      "package": "libgbm-dev",
+      "version": "25.2.8-0ubuntu0.24.04.4",
+      "architecture": "arm64",
+      "filename": "libgbm-dev_25.2.8-0ubuntu0.24.04.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/m/mesa/libgbm-dev_25.2.8-0ubuntu0.24.04.4_arm64.deb",
+      "size": 12744,
+      "installed_size_kib": 81,
+      "sha256": "f0faf030f4dc8b78420dbdefd3aa764b855aa6ff7fbe1b0851ba851c43c2fa08"
+    },
+    {
+      "package": "libheif-plugin-aomdec",
+      "version": "1.17.6-1ubuntu4.9",
+      "architecture": "arm64",
+      "filename": "libheif-plugin-aomdec_1.17.6-1ubuntu4.9_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libh/libheif/libheif-plugin-aomdec_1.17.6-1ubuntu4.9_arm64.deb",
+      "size": 11688,
+      "installed_size_kib": 90,
+      "sha256": "a6cfdfca009796c98d08cfbce3b42adc50ff9367fba5baf390bccaadb830cb4c"
+    },
+    {
+      "package": "libheif1",
+      "version": "1.17.6-1ubuntu4.9",
+      "architecture": "arm64",
+      "filename": "libheif1_1.17.6-1ubuntu4.9_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libh/libheif/libheif1_1.17.6-1ubuntu4.9_arm64.deb",
+      "size": 260872,
+      "installed_size_kib": 809,
+      "sha256": "f069e41958a42dac2bde82790e2590cb58238c939d10da660343063a52a8ccb4"
+    },
+    {
+      "package": "libxpm4",
+      "version": "1:3.5.17-1ubuntu0.24.04.2",
+      "architecture": "arm64",
+      "filename": "libxpm4_3.5.17-1ubuntu0.24.04.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libxpm/libxpm4_3.5.17-1ubuntu0.24.04.2_arm64.deb",
+      "size": 35274,
+      "installed_size_kib": 148,
+      "sha256": "a56d772875a3f4db1686f29fb741ffdb706a91c4779544d137a2f90ade9771d6"
+    },
+    {
+      "package": "libgd3",
+      "version": "2.3.3-9ubuntu5",
+      "architecture": "arm64",
+      "filename": "libgd3_2.3.3-9ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libgd2/libgd3_2.3.3-9ubuntu5_arm64.deb",
+      "size": 122390,
+      "installed_size_kib": 480,
+      "sha256": "5782c6ee864df13b0b57db64146d09c6a645a737e69332a5474ea68ad9d1e545"
+    },
+    {
+      "package": "libminizip1t64",
+      "version": "1:1.3.dfsg-3.1ubuntu2.2",
+      "architecture": "arm64",
+      "filename": "libminizip1t64_1.3.dfsg-3.1ubuntu2.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/z/zlib/libminizip1t64_1.3.dfsg-3.1ubuntu2.2_arm64.deb",
+      "size": 22724,
+      "installed_size_kib": 120,
+      "sha256": "257c9142cea92b03680f109471ad7f9ab86f7768aa90da7622ee71a0aaa90824"
+    },
+    {
+      "package": "libfreexl1",
+      "version": "2.0.0-1build2",
+      "architecture": "arm64",
+      "filename": "libfreexl1_2.0.0-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/freexl/libfreexl1_2.0.0-1build2_arm64.deb",
+      "size": 41888,
+      "installed_size_kib": 156,
+      "sha256": "d7d7c278ad29a8ff54a0602fe1510b0451eeb458430ef5f105c5fb521a9bf1a2"
+    },
+    {
+      "package": "libgeos3.12.1t64",
+      "version": "3.12.1-3build1",
+      "architecture": "arm64",
+      "filename": "libgeos3.12.1t64_3.12.1-3build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/geos/libgeos3.12.1t64_3.12.1-3build1_arm64.deb",
+      "size": 827594,
+      "installed_size_kib": 2891,
+      "sha256": "995a322621f2cb8dec4423558f93300f7253f0d16e7adfe117de1565a3c21c56"
+    },
+    {
+      "package": "libgeos-c1t64",
+      "version": "3.12.1-3build1",
+      "architecture": "arm64",
+      "filename": "libgeos-c1t64_3.12.1-3build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/geos/libgeos-c1t64_3.12.1-3build1_arm64.deb",
+      "size": 88722,
+      "installed_size_kib": 366,
+      "sha256": "b4834c25e0d3d3329f54364ee984dc9a354aec5ce997662cc3a1cd2d9f03a687"
+    },
+    {
+      "package": "proj-data",
+      "version": "9.4.0-1build2",
+      "architecture": "all",
+      "filename": "proj-data_9.4.0-1build2_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/proj/proj-data_9.4.0-1build2_all.deb",
+      "size": 7885446,
+      "installed_size_kib": 23515,
+      "sha256": "ea98bac78c370af5658893d6db003838e73543bec894d6d6b48047291963f213"
+    },
+    {
+      "package": "libproj25",
+      "version": "9.4.0-1build2",
+      "architecture": "arm64",
+      "filename": "libproj25_9.4.0-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/proj/libproj25_9.4.0-1build2_arm64.deb",
+      "size": 1292894,
+      "installed_size_kib": 3884,
+      "sha256": "602a949d4f9faa5d1c121acf544c7845b44185cc975dd5b078ab430740645f2d"
+    },
+    {
+      "package": "libgeotiff5",
+      "version": "1.7.1-5build1",
+      "architecture": "arm64",
+      "filename": "libgeotiff5_1.7.1-5build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libg/libgeotiff/libgeotiff5_1.7.1-5build1_arm64.deb",
+      "size": 60268,
+      "installed_size_kib": 301,
+      "sha256": "80f956b5e272ac48f10fba7e8a57e24de131de976078d31e360920346eaca74a"
+    },
+    {
+      "package": "libgif7",
+      "version": "5.2.2-1ubuntu1.2",
+      "architecture": "arm64",
+      "filename": "libgif7_5.2.2-1ubuntu1.2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/giflib/libgif7_5.2.2-1ubuntu1.2_arm64.deb",
+      "size": 36150,
+      "installed_size_kib": 100,
+      "sha256": "ef7849d9887be357725efc55c71456e1b6d4911e88314121471f715f0f0bc0c4"
+    },
+    {
+      "package": "libhdf4-0-alt",
+      "version": "4.2.16-4build1",
+      "architecture": "arm64",
+      "filename": "libhdf4-0-alt_4.2.16-4build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libh/libhdf4/libhdf4-0-alt_4.2.16-4build1_arm64.deb",
+      "size": 268992,
+      "installed_size_kib": 765,
+      "sha256": "463edb6897eb428d461ea02dbc7770eb3ae4ce10ed0328d07adf5c0a61d90810"
+    },
+    {
+      "package": "libsz2",
+      "version": "1.1.2-1build1",
+      "architecture": "arm64",
+      "filename": "libsz2_1.1.2-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/liba/libaec/libsz2_1.1.2-1build1_arm64.deb",
+      "size": 5284,
+      "installed_size_kib": 80,
+      "sha256": "a5822a735f339805359e617a7119731de4a05a4e2ef093fe23c76d2e8972103c"
+    },
+    {
+      "package": "libhdf5-103-1t64",
+      "version": "1.10.10+repack-3.1ubuntu4",
+      "architecture": "arm64",
+      "filename": "libhdf5-103-1t64_1.10.10+repack-3.1ubuntu4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/h/hdf5/libhdf5-103-1t64_1.10.10+repack-3.1ubuntu4_arm64.deb",
+      "size": 1191966,
+      "installed_size_kib": 4108,
+      "sha256": "5f0c14be1182f71c4b663e38e7f662215b259532cc5a7f7ed6f2f69e98f9320f"
+    },
+    {
+      "package": "liburiparser1",
+      "version": "0.9.7+dfsg-2build1",
+      "architecture": "arm64",
+      "filename": "liburiparser1_0.9.7+dfsg-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/u/uriparser/liburiparser1_0.9.7+dfsg-2build1_arm64.deb",
+      "size": 35352,
+      "installed_size_kib": 150,
+      "sha256": "18e1ec1d2b7e088bd051fec1fe9549b55cdf144ea7a379095e14c5c050542409"
+    },
+    {
+      "package": "libkmlbase1t64",
+      "version": "1.3.0-12build1",
+      "architecture": "arm64",
+      "filename": "libkmlbase1t64_1.3.0-12build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libk/libkml/libkmlbase1t64_1.3.0-12build1_arm64.deb",
+      "size": 47810,
+      "installed_size_kib": 169,
+      "sha256": "a0b6e87219175bedde5750ae53c606349d49db1a6e82230e3601623d1aae90bf"
+    },
+    {
+      "package": "libkmldom1t64",
+      "version": "1.3.0-12build1",
+      "architecture": "arm64",
+      "filename": "libkmldom1t64_1.3.0-12build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libk/libkml/libkmldom1t64_1.3.0-12build1_arm64.deb",
+      "size": 145928,
+      "installed_size_kib": 712,
+      "sha256": "887227ed32332a8ced931caad135f4bef842755309673a469d70f702d98936e2"
+    },
+    {
+      "package": "libkmlengine1t64",
+      "version": "1.3.0-12build1",
+      "architecture": "arm64",
+      "filename": "libkmlengine1t64_1.3.0-12build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libk/libkml/libkmlengine1t64_1.3.0-12build1_arm64.deb",
+      "size": 68138,
+      "installed_size_kib": 253,
+      "sha256": "25500dce640dd72b16bc5dd5aaaa18b3b0c18930aa142bc9edc38da2d8fe47f2"
+    },
+    {
+      "package": "mysql-common",
+      "version": "5.8+1.1.0build1",
+      "architecture": "all",
+      "filename": "mysql-common_5.8+1.1.0build1_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/m/mysql-defaults/mysql-common_5.8+1.1.0build1_all.deb",
+      "size": 6746,
+      "installed_size_kib": 33,
+      "sha256": "2a9ed286f4a78849bb0231b11a9ababf8c8694667caf986cd2563a6b67f939bc"
+    },
+    {
+      "package": "libmysqlclient21",
+      "version": "8.0.46-0ubuntu0.24.04.4",
+      "architecture": "arm64",
+      "filename": "libmysqlclient21_8.0.46-0ubuntu0.24.04.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/m/mysql-8.0/libmysqlclient21_8.0.46-0ubuntu0.24.04.4_arm64.deb",
+      "size": 1245514,
+      "installed_size_kib": 6699,
+      "sha256": "3044e9126fed3377d0e5a306c4b89ca781903df711c5af4cc2fe72dd1eddbf13"
+    },
+    {
+      "package": "libhdf5-hl-100t64",
+      "version": "1.10.10+repack-3.1ubuntu4",
+      "architecture": "arm64",
+      "filename": "libhdf5-hl-100t64_1.10.10+repack-3.1ubuntu4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/h/hdf5/libhdf5-hl-100t64_1.10.10+repack-3.1ubuntu4_arm64.deb",
+      "size": 55816,
+      "installed_size_kib": 178,
+      "sha256": "f827a0a28708aa29366dfb256454c94a8c9135f7df7541ca82f5e3370469d37d"
+    },
+    {
+      "package": "libnetcdf19t64",
+      "version": "1:4.9.2-5ubuntu4",
+      "architecture": "arm64",
+      "filename": "libnetcdf19t64_4.9.2-5ubuntu4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/n/netcdf/libnetcdf19t64_4.9.2-5ubuntu4_arm64.deb",
+      "size": 470638,
+      "installed_size_kib": 1600,
+      "sha256": "c91bfb6dd3b257d26af63dc6a4783fcfc3d6037590a5850733b2c1adb5e0169f"
+    },
+    {
+      "package": "libltdl7",
+      "version": "2.4.7-7build1",
+      "architecture": "arm64",
+      "filename": "libltdl7_2.4.7-7build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libt/libtool/libltdl7_2.4.7-7build1_arm64.deb",
+      "size": 40402,
+      "installed_size_kib": 449,
+      "sha256": "69f28804222d37670e19417cc21e54d5ec0ca3a149cbdbf0a5714d5e407e30d1"
+    },
+    {
+      "package": "libodbc2",
+      "version": "2.3.12-1ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libodbc2_2.3.12-1ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/u/unixodbc/libodbc2_2.3.12-1ubuntu0.24.04.1_arm64.deb",
+      "size": 144728,
+      "installed_size_kib": 437,
+      "sha256": "dda4144f26210c9275a781113907150c46dd131d6741bbd08b5d225c94fffe0f"
+    },
+    {
+      "package": "unixodbc-common",
+      "version": "2.3.12-1ubuntu0.24.04.1",
+      "architecture": "all",
+      "filename": "unixodbc-common_2.3.12-1ubuntu0.24.04.1_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/u/unixodbc/unixodbc-common_2.3.12-1ubuntu0.24.04.1_all.deb",
+      "size": 8806,
+      "installed_size_kib": 25,
+      "sha256": "139381c20139e28e9776c4cc519c23fd019f51e8a84f6a3f1c0b708a722dfb5f"
+    },
+    {
+      "package": "libodbcinst2",
+      "version": "2.3.12-1ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libodbcinst2_2.3.12-1ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/u/unixodbc/libodbcinst2_2.3.12-1ubuntu0.24.04.1_arm64.deb",
+      "size": 29810,
+      "installed_size_kib": 88,
+      "sha256": "17ececb17fc781652910392c670188e93a3477a0fdf45a0754242926612c45a6"
+    },
+    {
+      "package": "libogdi4.1",
+      "version": "4.1.1+ds-3build1",
+      "architecture": "arm64",
+      "filename": "libogdi4.1_4.1.1+ds-3build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/ogdi-dfsg/libogdi4.1_4.1.1+ds-3build1_arm64.deb",
+      "size": 211418,
+      "installed_size_kib": 935,
+      "sha256": "eb5f22b31c7963e84674676370747a8571c30877b5c965ef0a6a3fa11065350f"
+    },
+    {
+      "package": "libpoppler134",
+      "version": "24.02.0-1ubuntu9.10",
+      "architecture": "arm64",
+      "filename": "libpoppler134_24.02.0-1ubuntu9.10_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/poppler/libpoppler134_24.02.0-1ubuntu9.10_arm64.deb",
+      "size": 1073882,
+      "installed_size_kib": 3566,
+      "sha256": "d4b5133ad84d99ea088c4377ddc1505f9c0e3a374429ac19583f8756de9c1e04"
+    },
+    {
+      "package": "libpq5",
+      "version": "16.15-0ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libpq5_16.15-0ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/postgresql-16/libpq5_16.15-0ubuntu0.24.04.1_arm64.deb",
+      "size": 148598,
+      "installed_size_kib": 480,
+      "sha256": "055539466b14c305fbfe48a5fbfe7242d3fea3ab0bc3b9ab1b9d7c8da6548048"
+    },
+    {
+      "package": "libqhull-r8.0",
+      "version": "2020.2-6build1",
+      "architecture": "arm64",
+      "filename": "libqhull-r8.0_2020.2-6build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qhull/libqhull-r8.0_2020.2-6build1_arm64.deb",
+      "size": 188748,
+      "installed_size_kib": 535,
+      "sha256": "d5c32fba0753f90819e8d13d0b0f0d615b65135b9e5c0100b2ff3979eb956dd7"
+    },
+    {
+      "package": "librttopo1",
+      "version": "1.1.0-3build2",
+      "architecture": "arm64",
+      "filename": "librttopo1_1.1.0-3build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libr/librttopo/librttopo1_1.1.0-3build2_arm64.deb",
+      "size": 187372,
+      "installed_size_kib": 555,
+      "sha256": "6fc69d54bbb017986a919246a2108616f17c962060e5b3cce2c7c4f33be93855"
+    },
+    {
+      "package": "libspatialite8t64",
+      "version": "5.1.0-3build1",
+      "architecture": "arm64",
+      "filename": "libspatialite8t64_5.1.0-3build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/s/spatialite/libspatialite8t64_5.1.0-3build1_arm64.deb",
+      "size": 1813618,
+      "installed_size_kib": 7895,
+      "sha256": "7da25bfeaaebd2b0fa5898a5bec7418fe9b41e34f1fa80effe26d5a9eaa8c295"
+    },
+    {
+      "package": "libxerces-c3.2t64",
+      "version": "3.2.4+debian-1.2ubuntu2",
+      "architecture": "arm64",
+      "filename": "libxerces-c3.2t64_3.2.4+debian-1.2ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/x/xerces-c/libxerces-c3.2t64_3.2.4+debian-1.2ubuntu2_arm64.deb",
+      "size": 874438,
+      "installed_size_kib": 3487,
+      "sha256": "818db658812835e9da577365a4dcdb5ddfd2f4d79d4d2e380507d65809098a0f"
+    },
+    {
+      "package": "libgdal34t64",
+      "version": "3.8.4+dfsg-3ubuntu3",
+      "architecture": "arm64",
+      "filename": "libgdal34t64_3.8.4+dfsg-3ubuntu3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/gdal/libgdal34t64_3.8.4+dfsg-3ubuntu3_arm64.deb",
+      "size": 7886492,
+      "installed_size_kib": 23231,
+      "sha256": "406359f829b062fb38fd38d39d009ae2468bbc94fcf85862679c7c1ecc2e0b2f"
+    },
+    {
+      "package": "libsocket++1",
+      "version": "1.12.13+git20131030.5d039ba-1build1",
+      "architecture": "arm64",
+      "filename": "libsocket++1_1.12.13+git20131030.5d039ba-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/s/socket++/libsocket++1_1.12.13+git20131030.5d039ba-1build1_arm64.deb",
+      "size": 81492,
+      "installed_size_kib": 554,
+      "sha256": "20addcd2e40714bd45db95200ef4b58e4a691401446c7e7a3ae2ae9e63a22cae"
+    },
+    {
+      "package": "libgdcm3.0t64",
+      "version": "3.0.22-2.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libgdcm3.0t64_3.0.22-2.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/gdcm/libgdcm3.0t64_3.0.22-2.1ubuntu1_arm64.deb",
+      "size": 2049600,
+      "installed_size_kib": 10883,
+      "sha256": "e234e1c2540f1997510e53d0c6b41f7c81723b02d183eab623e267f55768872d"
+    },
+    {
+      "package": "libgdcm-dev",
+      "version": "3.0.22-2.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libgdcm-dev_3.0.22-2.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/gdcm/libgdcm-dev_3.0.22-2.1ubuntu1_arm64.deb",
+      "size": 268436,
+      "installed_size_kib": 3002,
+      "sha256": "b450e97418815547d2862dcdfd0457232fea34c3026b9036ecbe099bbee732fd"
+    },
+    {
+      "package": "libgirepository-2.0-0",
+      "version": "2.80.0-6ubuntu3.9",
+      "architecture": "arm64",
+      "filename": "libgirepository-2.0-0_2.80.0-6ubuntu3.9_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/glib2.0/libgirepository-2.0-0_2.80.0-6ubuntu3.9_arm64.deb",
+      "size": 71538,
+      "installed_size_kib": 302,
+      "sha256": "dbb8fbc690e70f41e1f32e78b11ff3d05694e073042d64f787451058e376fd20"
+    },
+    {
+      "package": "libgl2ps1.4",
+      "version": "1.4.2+dfsg1-2build1",
+      "architecture": "arm64",
+      "filename": "libgl2ps1.4_1.4.2+dfsg1-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/gl2ps/libgl2ps1.4_1.4.2+dfsg1-2build1_arm64.deb",
+      "size": 40590,
+      "installed_size_kib": 146,
+      "sha256": "383b776e9c892dd77f8d026a9127d8706b45625e8d5817bd2f8b5378785948bd"
+    },
+    {
+      "package": "libgles1",
+      "version": "1.7.0-1build1",
+      "architecture": "arm64",
+      "filename": "libgles1_1.7.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libglvnd/libgles1_1.7.0-1build1_arm64.deb",
+      "size": 11642,
+      "installed_size_kib": 225,
+      "sha256": "a7c9cd011c8e05fb573445560cab86d61583cda0f79c248fd73680e2d0618b54"
+    },
+    {
+      "package": "libgles-dev",
+      "version": "1.7.0-1build1",
+      "architecture": "arm64",
+      "filename": "libgles-dev_1.7.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libglvnd/libgles-dev_1.7.0-1build1_arm64.deb",
+      "size": 50444,
+      "installed_size_kib": 701,
+      "sha256": "df742afc0b66f24d80920b419723e072ab59d70726519d5994f50cf09e1f3961"
+    },
+    {
+      "package": "libglew2.2",
+      "version": "2.2.0-4build1",
+      "architecture": "arm64",
+      "filename": "libglew2.2_2.2.0-4build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/glew/libglew2.2_2.2.0-4build1_arm64.deb",
+      "size": 191490,
+      "installed_size_kib": 968,
+      "sha256": "b9de3eda62beed7bf9025c903fe5ed11881008a2ec942d70827c04895e9c687d"
+    },
+    {
+      "package": "libglib2.0-bin",
+      "version": "2.80.0-6ubuntu3.9",
+      "architecture": "arm64",
+      "filename": "libglib2.0-bin_2.80.0-6ubuntu3.9_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/glib2.0/libglib2.0-bin_2.80.0-6ubuntu3.9_arm64.deb",
+      "size": 97076,
+      "installed_size_kib": 531,
+      "sha256": "3470c1a342b45ac3241640f139f6467ec36e327b7c98cdaa0c35fbf814579c0b"
+    },
+    {
+      "package": "libffi-dev",
+      "version": "3.4.6-1build1",
+      "architecture": "arm64",
+      "filename": "libffi-dev_3.4.6-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libf/libffi/libffi-dev_3.4.6-1build1_arm64.deb",
+      "size": 59476,
+      "installed_size_kib": 295,
+      "sha256": "887755d6aa91c12ee0eb3404b61f6dc138c4c59234aa2add0264baf270337708"
+    },
+    {
+      "package": "python3-packaging",
+      "version": "24.0-1",
+      "architecture": "all",
+      "filename": "python3-packaging_24.0-1_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/python-packaging/python3-packaging_24.0-1_all.deb",
+      "size": 41094,
+      "installed_size_kib": 185,
+      "sha256": "decc936e9512c2de78fcf9e8d8459ce58952c40bf8bd1f06e62556d7fe887db6"
+    },
+    {
+      "package": "libglib2.0-dev-bin",
+      "version": "2.80.0-6ubuntu3.9",
+      "architecture": "arm64",
+      "filename": "libglib2.0-dev-bin_2.80.0-6ubuntu3.9_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/glib2.0/libglib2.0-dev-bin_2.80.0-6ubuntu3.9_arm64.deb",
+      "size": 138338,
+      "installed_size_kib": 821,
+      "sha256": "08a3c19bd31e66a508ae7d913f2ef30ceb6afdd8c6e9f16cd4f4e92f830bbab4"
+    },
+    {
+      "package": "uuid-dev",
+      "version": "2.39.3-9ubuntu6.6",
+      "architecture": "arm64",
+      "filename": "uuid-dev_2.39.3-9ubuntu6.6_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/u/util-linux/uuid-dev_2.39.3-9ubuntu6.6_arm64.deb",
+      "size": 34786,
+      "installed_size_kib": 127,
+      "sha256": "ec784dd46511ee35dbeded42158453325a076ab0934f80c140b5b2af17e23bb3"
+    },
+    {
+      "package": "libblkid-dev",
+      "version": "2.39.3-9ubuntu6.6",
+      "architecture": "arm64",
+      "filename": "libblkid-dev_2.39.3-9ubuntu6.6_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/u/util-linux/libblkid-dev_2.39.3-9ubuntu6.6_arm64.deb",
+      "size": 219376,
+      "installed_size_kib": 1055,
+      "sha256": "6eb614e62d79b11c294f1c971e3e116345075eff6b76b14e7224c81f89169877"
+    },
+    {
+      "package": "libsepol-dev",
+      "version": "3.5-2build1",
+      "architecture": "arm64",
+      "filename": "libsepol-dev_3.5-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libs/libsepol/libsepol-dev_3.5-2build1_arm64.deb",
+      "size": 394650,
+      "installed_size_kib": 1817,
+      "sha256": "a683217cd059d5989b9e89b2f740ec546f92d6e11ac52457657d8598717fa60b"
+    },
+    {
+      "package": "libpcre2-16-0",
+      "version": "10.42-4ubuntu2.1",
+      "architecture": "arm64",
+      "filename": "libpcre2-16-0_10.42-4ubuntu2.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/pcre2/libpcre2-16-0_10.42-4ubuntu2.1_arm64.deb",
+      "size": 196010,
+      "installed_size_kib": 538,
+      "sha256": "7107acef45dfa3f29764b8b2be6826bfc3c0fb5de067f21280112bb475cb3a99"
+    },
+    {
+      "package": "libpcre2-32-0",
+      "version": "10.42-4ubuntu2.1",
+      "architecture": "arm64",
+      "filename": "libpcre2-32-0_10.42-4ubuntu2.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/pcre2/libpcre2-32-0_10.42-4ubuntu2.1_arm64.deb",
+      "size": 183820,
+      "installed_size_kib": 538,
+      "sha256": "5b2047f3fc4acdcd96b5d471e5d398cb4adec487bd0bced68da210881d8f4bc7"
+    },
+    {
+      "package": "libpcre2-posix3",
+      "version": "10.42-4ubuntu2.1",
+      "architecture": "arm64",
+      "filename": "libpcre2-posix3_10.42-4ubuntu2.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/pcre2/libpcre2-posix3_10.42-4ubuntu2.1_arm64.deb",
+      "size": 6604,
+      "installed_size_kib": 88,
+      "sha256": "9693e4d1fc627de71072b3c902cb95fa1bc0676c775cc875725aeffa7d512e38"
+    },
+    {
+      "package": "libpcre2-dev",
+      "version": "10.42-4ubuntu2.1",
+      "architecture": "arm64",
+      "filename": "libpcre2-dev_10.42-4ubuntu2.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/pcre2/libpcre2-dev_10.42-4ubuntu2.1_arm64.deb",
+      "size": 680082,
+      "installed_size_kib": 2196,
+      "sha256": "7a7701e6c1224666b7fbd4cacface20ad80dd9c3345ccdcf7ee56fb0babe9ffe"
+    },
+    {
+      "package": "libselinux1-dev",
+      "version": "3.5-2ubuntu2.1",
+      "architecture": "arm64",
+      "filename": "libselinux1-dev_3.5-2ubuntu2.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libs/libselinux/libselinux1-dev_3.5-2ubuntu2.1_arm64.deb",
+      "size": 171880,
+      "installed_size_kib": 771,
+      "sha256": "91a5fbaed73a74f19bf441254d0b1850b0736deeec5c0ef7bfb73e2606d87221"
+    },
+    {
+      "package": "libmount-dev",
+      "version": "2.39.3-9ubuntu6.6",
+      "architecture": "arm64",
+      "filename": "libmount-dev_2.39.3-9ubuntu6.6_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/u/util-linux/libmount-dev_2.39.3-9ubuntu6.6_arm64.deb",
+      "size": 14894,
+      "installed_size_kib": 88,
+      "sha256": "31c4b0a1554ac414b035fbe4e57cb3562fe4cc79d386cfc337e2ad8189cf0db3"
+    },
+    {
+      "package": "libglib2.0-dev",
+      "version": "2.80.0-6ubuntu3.9",
+      "architecture": "arm64",
+      "filename": "libglib2.0-dev_2.80.0-6ubuntu3.9_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/glib2.0/libglib2.0-dev_2.80.0-6ubuntu3.9_arm64.deb",
+      "size": 1963852,
+      "installed_size_kib": 12030,
+      "sha256": "b943e43170f01f21f264b52a6f9c240c24f0eb4ffdb7e939f7f126813bfeee34"
+    },
+    {
+      "package": "libgphoto2-port12t64",
+      "version": "2.5.31-2.1ubuntu1.1",
+      "architecture": "arm64",
+      "filename": "libgphoto2-port12t64_2.5.31-2.1ubuntu1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libgphoto2/libgphoto2-port12t64_2.5.31-2.1ubuntu1.1_arm64.deb",
+      "size": 59644,
+      "installed_size_kib": 604,
+      "sha256": "724c0d22d5cce0a02103dadc7dc00d1e941ae5e9f2d0a2a6f7f1d982aa450df0"
+    },
+    {
+      "package": "libgphoto2-6t64",
+      "version": "2.5.31-2.1ubuntu1.1",
+      "architecture": "arm64",
+      "filename": "libgphoto2-6t64_2.5.31-2.1ubuntu1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libgphoto2/libgphoto2-6t64_2.5.31-2.1ubuntu1.1_arm64.deb",
+      "size": 732864,
+      "installed_size_kib": 3411,
+      "sha256": "b5c9b5f433a15d8b92e13bba544c5b8d63ed7df66ca9224350684456fa756e91"
+    },
+    {
+      "package": "pkg-config",
+      "version": "1.8.1-2build1",
+      "architecture": "arm64",
+      "filename": "pkg-config_1.8.1-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/pkgconf/pkg-config_1.8.1-2build1_arm64.deb",
+      "size": 7264,
+      "installed_size_kib": 29,
+      "sha256": "460d166c529651438347548fc1b2731440ce52c2643f678ec993a29dce5a3647"
+    },
+    {
+      "package": "libgphoto2-dev",
+      "version": "2.5.31-2.1ubuntu1.1",
+      "architecture": "arm64",
+      "filename": "libgphoto2-dev_2.5.31-2.1ubuntu1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libgphoto2/libgphoto2-dev_2.5.31-2.1ubuntu1.1_arm64.deb",
+      "size": 33182,
+      "installed_size_kib": 170,
+      "sha256": "27273be3b98ef56560ab51fb860a9602be42ec8a8ab74a56ba5a8ef54abb8946"
+    },
+    {
+      "package": "libunwind-dev",
+      "version": "1.6.2-3build1.1",
+      "architecture": "arm64",
+      "filename": "libunwind-dev_1.6.2-3build1.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libu/libunwind/libunwind-dev_1.6.2-3build1.1_arm64.deb",
+      "size": 1872296,
+      "installed_size_kib": 6052,
+      "sha256": "631594537a13c46231601abc0b3f6e708953bb9d4493799fe5c9b3023dc21c14"
+    },
+    {
+      "package": "libgstreamer1.0-dev",
+      "version": "1.24.2-1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "libgstreamer1.0-dev_1.24.2-1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/gstreamer1.0/libgstreamer1.0-dev_1.24.2-1ubuntu0.1_arm64.deb",
+      "size": 524214,
+      "installed_size_kib": 6281,
+      "sha256": "4d48cec747ec4b6e30450b04f4c08c567f8d2199b65022b357a46c06f87a8705"
+    },
+    {
+      "package": "liborc-0.4-dev-bin",
+      "version": "1:0.4.38-1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "liborc-0.4-dev-bin_0.4.38-1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/o/orc/liborc-0.4-dev-bin_0.4.38-1ubuntu0.1_arm64.deb",
+      "size": 20872,
+      "installed_size_kib": 147,
+      "sha256": "223c79467d3e773158349652916d35be36cf67edc41cebd719f052b9607782b7"
+    },
+    {
+      "package": "liborc-0.4-dev",
+      "version": "1:0.4.38-1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "liborc-0.4-dev_0.4.38-1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/o/orc/liborc-0.4-dev_0.4.38-1ubuntu0.1_arm64.deb",
+      "size": 30250,
+      "installed_size_kib": 274,
+      "sha256": "1162b6af94756e677cfe1e8f6aa753e877c94e8fc6e7fbdef61f66bd0e76a8da"
+    },
+    {
+      "package": "libx11-xcb-dev",
+      "version": "2:1.8.7-1ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "libx11-xcb-dev_1.8.7-1ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libx11/libx11-xcb-dev_1.8.7-1ubuntu0.1_arm64.deb",
+      "size": 10000,
+      "installed_size_kib": 71,
+      "sha256": "6a6286c4588dcde0f22d76ef59f9771759cf90d9df3523f22d5a6dad87dcc162"
+    },
+    {
+      "package": "libwayland-server0",
+      "version": "1.22.0-2.1build1",
+      "architecture": "arm64",
+      "filename": "libwayland-server0_1.22.0-2.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/w/wayland/libwayland-server0_1.22.0-2.1build1_arm64.deb",
+      "size": 34640,
+      "installed_size_kib": 152,
+      "sha256": "2b6dec0d40070685f4ce346d20b064fc5e118a3149f30be88465251985b496ed"
+    },
+    {
+      "package": "libwayland-bin",
+      "version": "1.22.0-2.1build1",
+      "architecture": "arm64",
+      "filename": "libwayland-bin_1.22.0-2.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/w/wayland/libwayland-bin_1.22.0-2.1build1_arm64.deb",
+      "size": 20302,
+      "installed_size_kib": 84,
+      "sha256": "a2cc274d08d3b966008d0a1f43545bc569c7934d383355829706fb25220b842e"
+    },
+    {
+      "package": "libwayland-dev",
+      "version": "1.22.0-2.1build1",
+      "architecture": "arm64",
+      "filename": "libwayland-dev_1.22.0-2.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/w/wayland/libwayland-dev_1.22.0-2.1build1_arm64.deb",
+      "size": 71332,
+      "installed_size_kib": 587,
+      "sha256": "6d94b723710aae35d0ff765978818601f4320c1dc4e0eec57e73b000943a1758"
+    },
+    {
+      "package": "libudev-dev",
+      "version": "255.4-1ubuntu8.18",
+      "architecture": "arm64",
+      "filename": "libudev-dev_255.4-1ubuntu8.18_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/s/systemd/libudev-dev_255.4-1ubuntu8.18_arm64.deb",
+      "size": 22024,
+      "installed_size_kib": 195,
+      "sha256": "4b287709aaddb404233155f78c4f08bb943515065d99b8a205b7a147b76b4d5d"
+    },
+    {
+      "package": "libgudev-1.0-dev",
+      "version": "1:238-5ubuntu1",
+      "architecture": "arm64",
+      "filename": "libgudev-1.0-dev_238-5ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libgudev/libgudev-1.0-dev_238-5ubuntu1_arm64.deb",
+      "size": 27236,
+      "installed_size_kib": 367,
+      "sha256": "d83f7cb47972553084c1d7d29bfc9659095ca5f4df127223ed2ded3c9a6faadc"
+    },
+    {
+      "package": "libgstreamer-plugins-base1.0-dev",
+      "version": "1.24.2-1ubuntu0.5",
+      "architecture": "arm64",
+      "filename": "libgstreamer-plugins-base1.0-dev_1.24.2-1ubuntu0.5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/g/gst-plugins-base1.0/libgstreamer-plugins-base1.0-dev_1.24.2-1ubuntu0.5_arm64.deb",
+      "size": 466304,
+      "installed_size_kib": 6272,
+      "sha256": "336ceee32f7d13acbc3e33c4979b1e80f18b03ecd2e59449b43832b3b63251a9"
+    },
+    {
+      "package": "libhiredis1.1.0",
+      "version": "1.2.0-6ubuntu3",
+      "architecture": "arm64",
+      "filename": "libhiredis1.1.0_1.2.0-6ubuntu3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/h/hiredis/libhiredis1.1.0_1.2.0-6ubuntu3_arm64.deb",
+      "size": 40686,
+      "installed_size_kib": 231,
+      "sha256": "378a26e4425a5de22fac07d94c7f98525b0638f790b3ee13c04c2b4438bcf3e1"
+    },
+    {
+      "package": "libhiredis-dev",
+      "version": "1.2.0-6ubuntu3",
+      "architecture": "arm64",
+      "filename": "libhiredis-dev_1.2.0-6ubuntu3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/h/hiredis/libhiredis-dev_1.2.0-6ubuntu3_arm64.deb",
+      "size": 77556,
+      "installed_size_kib": 333,
+      "sha256": "84f624236f895bc03dfb8daf02a0bccdad532b409cd8b1b733e067b04f36756d"
+    },
+    {
+      "package": "libice6",
+      "version": "2:1.0.10-1build3",
+      "architecture": "arm64",
+      "filename": "libice6_1.0.10-1build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libi/libice/libice6_1.0.10-1build3_arm64.deb",
+      "size": 41072,
+      "installed_size_kib": 146,
+      "sha256": "6e619ba1611f8733aac8fa6ac2cec2af9348e679db381f64c01a8856c67af511"
+    },
+    {
+      "package": "libimath-dev",
+      "version": "3.1.9-3.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libimath-dev_3.1.9-3.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/i/imath/libimath-dev_3.1.9-3.1ubuntu2_arm64.deb",
+      "size": 115272,
+      "installed_size_kib": 1042,
+      "sha256": "6dc51ee397d61b533a538da294404cd04a6e6856b085884447e97ada2c7d8746"
+    },
+    {
+      "package": "libwacom-common",
+      "version": "2.10.0-2",
+      "architecture": "all",
+      "filename": "libwacom-common_2.10.0-2_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libw/libwacom/libwacom-common_2.10.0-2_all.deb",
+      "size": 63364,
+      "installed_size_kib": 920,
+      "sha256": "416099ceae870ec8ce13f875dfdf71f81a884b3641e404a74eafd378c15a78b4"
+    },
+    {
+      "package": "libwacom9",
+      "version": "2.10.0-2",
+      "architecture": "arm64",
+      "filename": "libwacom9_2.10.0-2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libw/libwacom/libwacom9_2.10.0-2_arm64.deb",
+      "size": 23718,
+      "installed_size_kib": 85,
+      "sha256": "b3f966d819a14690963357a1b9a46ce6da6540cb690783fae461d5d885fc3846"
+    },
+    {
+      "package": "libinput-bin",
+      "version": "1.25.0-1ubuntu3.7",
+      "architecture": "arm64",
+      "filename": "libinput-bin_1.25.0-1ubuntu3.7_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libi/libinput/libinput-bin_1.25.0-1ubuntu3.7_arm64.deb",
+      "size": 23586,
+      "installed_size_kib": 299,
+      "sha256": "235d962b16d220750c60f04ce06afeddd6a88c52da4d9407f67b6d56a774197e"
+    },
+    {
+      "package": "libmtdev1t64",
+      "version": "1.1.6-1.1build1",
+      "architecture": "arm64",
+      "filename": "libmtdev1t64_1.1.6-1.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/m/mtdev/libmtdev1t64_1.1.6-1.1build1_arm64.deb",
+      "size": 14318,
+      "installed_size_kib": 101,
+      "sha256": "82822446ba3ca3afcfdafa7648b22686d058bacf1b0c7576668733b545d688d9"
+    },
+    {
+      "package": "libinput10",
+      "version": "1.25.0-1ubuntu3.7",
+      "architecture": "arm64",
+      "filename": "libinput10_1.25.0-1ubuntu3.7_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libi/libinput/libinput10_1.25.0-1ubuntu3.7_arm64.deb",
+      "size": 128770,
+      "installed_size_kib": 359,
+      "sha256": "c83589bfe0be2e7d219a77966f80aed9acbdda55e93478fa1a0f509b5292aaf8"
+    },
+    {
+      "package": "libjpeg-turbo8-dev",
+      "version": "2.1.5-2ubuntu2",
+      "architecture": "arm64",
+      "filename": "libjpeg-turbo8-dev_2.1.5-2ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libj/libjpeg-turbo/libjpeg-turbo8-dev_2.1.5-2ubuntu2_arm64.deb",
+      "size": 305408,
+      "installed_size_kib": 790,
+      "sha256": "5c54206783086e80d6b1962e8e6ad95666126ddddd532d5dfcca1bfd35c54189"
+    },
+    {
+      "package": "libjpeg8-dev",
+      "version": "8c-2ubuntu11",
+      "architecture": "arm64",
+      "filename": "libjpeg8-dev_8c-2ubuntu11_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libj/libjpeg8-empty/libjpeg8-dev_8c-2ubuntu11_arm64.deb",
+      "size": 1484,
+      "installed_size_kib": 9,
+      "sha256": "6aef39c6d2d572236a72eacd10bf6f1ec98d3eafae7805ba6daa98a32a5b39d2"
+    },
+    {
+      "package": "libjpeg-dev",
+      "version": "8c-2ubuntu11",
+      "architecture": "arm64",
+      "filename": "libjpeg-dev_8c-2ubuntu11_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libj/libjpeg8-empty/libjpeg-dev_8c-2ubuntu11_arm64.deb",
+      "size": 1482,
+      "installed_size_kib": 9,
+      "sha256": "58d6765185b95dd10f231a6499ac09b12356824eef9f38ea88345e18363b853a"
+    },
+    {
+      "package": "libjsoncpp25",
+      "version": "1.9.5-6build1",
+      "architecture": "arm64",
+      "filename": "libjsoncpp25_1.9.5-6build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libj/libjsoncpp/libjsoncpp25_1.9.5-6build1_arm64.deb",
+      "size": 78186,
+      "installed_size_kib": 280,
+      "sha256": "2ddcee633e150bd656b149bc687507bdc276080d91a2fe1f508898db20d130bc"
+    },
+    {
+      "package": "libldap-dev",
+      "version": "2.6.10+dfsg-0ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libldap-dev_2.6.10+dfsg-0ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/o/openldap/libldap-dev_2.6.10+dfsg-0ubuntu0.24.04.1_arm64.deb",
+      "size": 315202,
+      "installed_size_kib": 1628,
+      "sha256": "556a214691a6bb9d9000edcd5b5a65578502cdfd2e93d61d7b13686e79a68e0b"
+    },
+    {
+      "package": "liblept5",
+      "version": "1.82.0-3build4",
+      "architecture": "arm64",
+      "filename": "liblept5_1.82.0-3build4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/l/leptonlib/liblept5_1.82.0-3build4_arm64.deb",
+      "size": 1111546,
+      "installed_size_kib": 3046,
+      "sha256": "ade7e6886511ab34b36ce5207ce4f00f1b030a6939fcdac4a9c1d6eaf3d83284"
+    },
+    {
+      "package": "liblerc-dev",
+      "version": "4.0.0+ds-4ubuntu2",
+      "architecture": "arm64",
+      "filename": "liblerc-dev_4.0.0+ds-4ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/l/lerc/liblerc-dev_4.0.0+ds-4ubuntu2_arm64.deb",
+      "size": 167516,
+      "installed_size_kib": 924,
+      "sha256": "b280d9cb7b5fbd5b0d3a9568bfd849da0a8f4324d44615c385097d324a46c2c4"
+    },
+    {
+      "package": "libmd4c0",
+      "version": "0.4.8-1build1",
+      "architecture": "arm64",
+      "filename": "libmd4c0_0.4.8-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/m/md4c/libmd4c0_0.4.8-1build1_arm64.deb",
+      "size": 40902,
+      "installed_size_kib": 103,
+      "sha256": "5bea5c11eb4de21dfa77c5e5047f332260192c2f9696d77c23405e2ae4b10afd"
+    },
+    {
+      "package": "libtbbmalloc2",
+      "version": "2021.11.0-2ubuntu2",
+      "architecture": "arm64",
+      "filename": "libtbbmalloc2_2021.11.0-2ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/onetbb/libtbbmalloc2_2021.11.0-2ubuntu2_arm64.deb",
+      "size": 43764,
+      "installed_size_kib": 157,
+      "sha256": "264212a6839655b61eca4a9711df84ea7aa6bf58bccbb3fc111e13d42d849c57"
+    },
+    {
+      "package": "libtbbbind-2-5",
+      "version": "2021.11.0-2ubuntu2",
+      "architecture": "arm64",
+      "filename": "libtbbbind-2-5_2021.11.0-2ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/onetbb/libtbbbind-2-5_2021.11.0-2ubuntu2_arm64.deb",
+      "size": 16412,
+      "installed_size_kib": 91,
+      "sha256": "ce9c04a9364d36586bb361ad4f2c047de2c32ffc0839069173ae952048b8cdcd"
+    },
+    {
+      "package": "libtbb12",
+      "version": "2021.11.0-2ubuntu2",
+      "architecture": "arm64",
+      "filename": "libtbb12_2021.11.0-2ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/onetbb/libtbb12_2021.11.0-2ubuntu2_arm64.deb",
+      "size": 79944,
+      "installed_size_kib": 217,
+      "sha256": "7918a1dfda6b984fd53605657c27f97e44a96c81c78713db023eb1526cb39854"
+    },
+    {
+      "package": "libopencv-core406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-core406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-core406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 995168,
+      "installed_size_kib": 2985,
+      "sha256": "c5cd5dc4f9e89687630ba3ec631839f40ba3c7e4f7a2a2eb114a710acfe2fe21"
+    },
+    {
+      "package": "libopencv-flann406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-flann406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-flann406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 125728,
+      "installed_size_kib": 485,
+      "sha256": "b8d5a9b120acf688a5ad574934cd1a5ec768196a0579418dca9d11318f21f529"
+    },
+    {
+      "package": "libopencv-imgproc406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-imgproc406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-imgproc406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 1051150,
+      "installed_size_kib": 3072,
+      "sha256": "99916e1dbfb4945a2b339623e94eb33e061580fd898f1fe4dbe3be3c8c7ccbce"
+    },
+    {
+      "package": "libopencv-features2d406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-features2d406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-features2d406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 222950,
+      "installed_size_kib": 617,
+      "sha256": "db501576a44fde15eef423fb410bed7988df767ed7198ceb70fd5665aadc455b"
+    },
+    {
+      "package": "libopencv-calib3d406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-calib3d406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-calib3d406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 654976,
+      "installed_size_kib": 1636,
+      "sha256": "cfe508c79c498daab2f732261bd95209c07725f7f5cf769fb02107c262925ecf"
+    },
+    {
+      "package": "libtbb-dev",
+      "version": "2021.11.0-2ubuntu2",
+      "architecture": "arm64",
+      "filename": "libtbb-dev_2021.11.0-2ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/onetbb/libtbb-dev_2021.11.0-2ubuntu2_arm64.deb",
+      "size": 253284,
+      "installed_size_kib": 1439,
+      "sha256": "a54652245d11dfe85969486b05d55682617ced265186501a56e0a669afa53d1c"
+    },
+    {
+      "package": "libopencv-core-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-core-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-core-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 1821632,
+      "installed_size_kib": 11844,
+      "sha256": "85d91c03e29c4507cae91c7512eb6c36671f804c161562bfcbe649e29a706894"
+    },
+    {
+      "package": "libopencv-flann-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-flann-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-flann-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 208474,
+      "installed_size_kib": 1759,
+      "sha256": "5c0477f77c2799d611e56b33f0d7f62c9f0f8ebd6438ec887eb1620eeabc5e98"
+    },
+    {
+      "package": "libopencv-imgcodecs406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-imgcodecs406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-imgcodecs406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 119100,
+      "installed_size_kib": 420,
+      "sha256": "bdbec0058bcd58fcddf542488e2bf18de54461323d0dbfbf65aa04a30ea0e14f"
+    },
+    {
+      "package": "libopengl0",
+      "version": "1.7.0-1build1",
+      "architecture": "arm64",
+      "filename": "libopengl0_1.7.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libg/libglvnd/libopengl0_1.7.0-1build1_arm64.deb",
+      "size": 35136,
+      "installed_size_kib": 435,
+      "sha256": "85227472e62fe06c64dd9574a3fc1bc075dd7fc4bed157f9cc92d97bc5261cee"
+    },
+    {
+      "package": "libqt5core5t64",
+      "version": "5.15.13+dfsg-1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libqt5core5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qtbase-opensource-src/libqt5core5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "size": 1972618,
+      "installed_size_kib": 6254,
+      "sha256": "998e7bcbe04ff81ba2d90ed8e608f8049bdf554fbdc02236ec391c323905b369"
+    },
+    {
+      "package": "libqt5dbus5t64",
+      "version": "5.15.13+dfsg-1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libqt5dbus5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qtbase-opensource-src/libqt5dbus5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "size": 223826,
+      "installed_size_kib": 824,
+      "sha256": "c1206c3fea5c6f313ff29a41af164707bf00c0b7c1e86c3f017dea6f51af7c8e"
+    },
+    {
+      "package": "libqt5network5t64",
+      "version": "5.15.13+dfsg-1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libqt5network5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qtbase-opensource-src/libqt5network5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "size": 741444,
+      "installed_size_kib": 2758,
+      "sha256": "5c5cbe89e2012156327cfadea7b389b4810b2bed6ed026b089228b99bd5b586c"
+    },
+    {
+      "package": "libsm6",
+      "version": "2:1.2.3-1build3",
+      "architecture": "arm64",
+      "filename": "libsm6_1.2.3-1build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libs/libsm/libsm6_1.2.3-1build3_arm64.deb",
+      "size": 15564,
+      "installed_size_kib": 81,
+      "sha256": "4740e3b3c9584aedc8639c47307333f4eff0906a07f3e4b37f825c5202a65926"
+    },
+    {
+      "package": "libxcb-icccm4",
+      "version": "0.4.1-1.1build3",
+      "architecture": "arm64",
+      "filename": "libxcb-icccm4_0.4.1-1.1build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xcb-util-wm/libxcb-icccm4_0.4.1-1.1build3_arm64.deb",
+      "size": 10534,
+      "installed_size_kib": 100,
+      "sha256": "6151a4c23f743685cd124e0a288064c08deeaae865eeb5aa04dfd3f188859351"
+    },
+    {
+      "package": "libxcb-util1",
+      "version": "0.4.0-1build3",
+      "architecture": "arm64",
+      "filename": "libxcb-util1_0.4.0-1build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xcb-util/libxcb-util1_0.4.0-1build3_arm64.deb",
+      "size": 10650,
+      "installed_size_kib": 83,
+      "sha256": "f61e6cc77672ed8694a415a0afd7027f0b5d7db7dee1de86e9e547e56f2aca44"
+    },
+    {
+      "package": "libxcb-image0",
+      "version": "0.4.0-2build1",
+      "architecture": "arm64",
+      "filename": "libxcb-image0_0.4.0-2build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xcb-util-image/libxcb-image0_0.4.0-2build1_arm64.deb",
+      "size": 10834,
+      "installed_size_kib": 84,
+      "sha256": "b04b31296932a8a0aa331eadd9da0003b0fa59aa60c0cb68fe974e4253eb891c"
+    },
+    {
+      "package": "libxcb-keysyms1",
+      "version": "0.4.0-1build4",
+      "architecture": "arm64",
+      "filename": "libxcb-keysyms1_0.4.0-1build4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xcb-util-keysyms/libxcb-keysyms1_0.4.0-1build4_arm64.deb",
+      "size": 7984,
+      "installed_size_kib": 92,
+      "sha256": "77ab9d4bf1c7c84e2e29e5c20de7e44dac023a0c3f6c042f7ef486126f3469c3"
+    },
+    {
+      "package": "libxcb-render-util0",
+      "version": "0.3.9-1build4",
+      "architecture": "arm64",
+      "filename": "libxcb-render-util0_0.3.9-1build4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xcb-util-renderutil/libxcb-render-util0_0.3.9-1build4_arm64.deb",
+      "size": 9648,
+      "installed_size_kib": 94,
+      "sha256": "15352905a205b7adab3d5556c45d9a0f90ffab1fe7f0de8da86d25e643644e34"
+    },
+    {
+      "package": "libxcb-shape0",
+      "version": "1.15-1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libxcb-shape0_1.15-1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libxcb/libxcb-shape0_1.15-1ubuntu2_arm64.deb",
+      "size": 6250,
+      "installed_size_kib": 82,
+      "sha256": "678a611d3181c6bb72a9cd003d55e46a2491763f897c32e7712032635b62cc48"
+    },
+    {
+      "package": "libxcb-xinerama0",
+      "version": "1.15-1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libxcb-xinerama0_1.15-1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libxcb/libxcb-xinerama0_1.15-1ubuntu2_arm64.deb",
+      "size": 5598,
+      "installed_size_kib": 82,
+      "sha256": "47b834146e57c3d630ffd0330a93eb3fe00932bfbecf34c2c59961f2d55fff0d"
+    },
+    {
+      "package": "libxcb-xinput0",
+      "version": "1.15-1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libxcb-xinput0_1.15-1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libxcb/libxcb-xinput0_1.15-1ubuntu2_arm64.deb",
+      "size": 34178,
+      "installed_size_kib": 209,
+      "sha256": "95af4f4665076fbde5f1e7c18b50974b3490eade88c343f67144092b237d255f"
+    },
+    {
+      "package": "libqt5gui5t64",
+      "version": "5.15.13+dfsg-1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libqt5gui5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qtbase-opensource-src/libqt5gui5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "size": 3616730,
+      "installed_size_kib": 13513,
+      "sha256": "321a5574f85b179e1a06cbf72e571a3815b1747fe8aa97db934abf3a56a50962"
+    },
+    {
+      "package": "libqt5widgets5t64",
+      "version": "5.15.13+dfsg-1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libqt5widgets5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qtbase-opensource-src/libqt5widgets5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "size": 2564458,
+      "installed_size_kib": 7811,
+      "sha256": "8f7c60d276721e0eaaa24bd02508fe82a5c5b4ec9c409383ca5d9fed448a8c48"
+    },
+    {
+      "package": "libqt5opengl5t64",
+      "version": "5.15.13+dfsg-1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libqt5opengl5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qtbase-opensource-src/libqt5opengl5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "size": 148308,
+      "installed_size_kib": 582,
+      "sha256": "ba3114239edf958ed27b56361388b9605b5bdac015fdf345a9db7120776955d8"
+    },
+    {
+      "package": "libqt5test5t64",
+      "version": "5.15.13+dfsg-1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libqt5test5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/q/qtbase-opensource-src/libqt5test5t64_5.15.13+dfsg-1ubuntu1_arm64.deb",
+      "size": 143612,
+      "installed_size_kib": 575,
+      "sha256": "bb6a52002a984d7e9c73e5aa23dae2a11b20c311755a60bbe4f10ffb2847a4e2"
+    },
+    {
+      "package": "libopencv-highgui406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-highgui406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-highgui406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 109848,
+      "installed_size_kib": 356,
+      "sha256": "c3a35177683dfeb385974e8f17efe9967ebfa43322962df8836f108b63e6d550"
+    },
+    {
+      "package": "libopencv-imgproc-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-imgproc-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-imgproc-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 1382468,
+      "installed_size_kib": 7756,
+      "sha256": "43e8a9b506761abafc8ced7b33d962784228561525a6c85a86fede8a68d3d6b2"
+    },
+    {
+      "package": "libopencv-imgcodecs-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-imgcodecs-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-imgcodecs-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 197586,
+      "installed_size_kib": 1357,
+      "sha256": "c202c84dae36e5beec626c2fd71ebb070dc6a645260d4f3485952b66277d5082"
+    },
+    {
+      "package": "libswscale7",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libswscale7_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libswscale7_6.1.1-3ubuntu5_arm64.deb",
+      "size": 172716,
+      "installed_size_kib": 517,
+      "sha256": "80d58ac7cc2fe9efd05907a201e78775932484f8b18af0fc82cbb41142057078"
+    },
+    {
+      "package": "libopencv-videoio406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-videoio406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-videoio406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 188268,
+      "installed_size_kib": 549,
+      "sha256": "19e28ec944a6715d2463372593fa942c8936ebff4811ff8d41d4f8aadfc3f3be"
+    },
+    {
+      "package": "libopencv-videoio-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-videoio-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-videoio-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 315746,
+      "installed_size_kib": 1863,
+      "sha256": "7c35870788bfe2c79ace3b2ddf2d90a254a3b3053d5ed3f719a31d6c7268b6df"
+    },
+    {
+      "package": "libopenexr-dev",
+      "version": "3.1.5-5.1build3",
+      "architecture": "arm64",
+      "filename": "libopenexr-dev_3.1.5-5.1build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/openexr/libopenexr-dev_3.1.5-5.1build3_arm64.deb",
+      "size": 106120,
+      "installed_size_kib": 792,
+      "sha256": "58d9bb351d0beff747066236d4526d9e58cf35cd7a7fd534eea154f231a4985d"
+    },
+    {
+      "package": "libpng-dev",
+      "version": "1.6.43-5ubuntu0.7",
+      "architecture": "arm64",
+      "filename": "libpng-dev_1.6.43-5ubuntu0.7_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libp/libpng1.6/libpng-dev_1.6.43-5ubuntu0.7_arm64.deb",
+      "size": 267540,
+      "installed_size_kib": 780,
+      "sha256": "d73f6246d98ad03283f6b9a30fd86da52ea360afbf5ed48c2e4eb995d04b87aa"
+    },
+    {
+      "package": "libswscale-dev",
+      "version": "7:6.1.1-3ubuntu5",
+      "architecture": "arm64",
+      "filename": "libswscale-dev_6.1.1-3ubuntu5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/f/ffmpeg/libswscale-dev_6.1.1-3ubuntu5_arm64.deb",
+      "size": 196740,
+      "installed_size_kib": 768,
+      "sha256": "64d5e1e3161c15784d789c325f4b83d1c0bd166340328dd74a09184ac0f6e88d"
+    },
+    {
+      "package": "libjbig-dev",
+      "version": "2.1-6.1ubuntu2",
+      "architecture": "arm64",
+      "filename": "libjbig-dev_2.1-6.1ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/j/jbigkit/libjbig-dev_2.1-6.1ubuntu2_arm64.deb",
+      "size": 27548,
+      "installed_size_kib": 86,
+      "sha256": "30b0f248fd88db60c2a8109c9da8d1ced484e3ece6e93cc21cd04a4787dd47f7"
+    },
+    {
+      "package": "libwebpdemux2",
+      "version": "1.3.2-0.4build3",
+      "architecture": "arm64",
+      "filename": "libwebpdemux2_1.3.2-0.4build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libw/libwebp/libwebpdemux2_1.3.2-0.4build3_arm64.deb",
+      "size": 12296,
+      "installed_size_kib": 88,
+      "sha256": "234d050c6710e104ce91cf4f6dead4d61cee0c03af2e494d50af0a2f05908333"
+    },
+    {
+      "package": "libwebpdecoder3",
+      "version": "1.3.2-0.4build3",
+      "architecture": "arm64",
+      "filename": "libwebpdecoder3_1.3.2-0.4build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libw/libwebp/libwebpdecoder3_1.3.2-0.4build3_arm64.deb",
+      "size": 88668,
+      "installed_size_kib": 216,
+      "sha256": "eb35b9d94631a2eaa5701c032a8c4f3bdba04023141f594f9536fa62408311e2"
+    },
+    {
+      "package": "libsharpyuv-dev",
+      "version": "1.3.2-0.4build3",
+      "architecture": "arm64",
+      "filename": "libsharpyuv-dev_1.3.2-0.4build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libw/libwebp/libsharpyuv-dev_1.3.2-0.4build3_arm64.deb",
+      "size": 15056,
+      "installed_size_kib": 57,
+      "sha256": "1c40e67a85b9f028ca73004df2560709d705f295b5dc11d05ad00126f3c18bb1"
+    },
+    {
+      "package": "libwebp-dev",
+      "version": "1.3.2-0.4build3",
+      "architecture": "arm64",
+      "filename": "libwebp-dev_1.3.2-0.4build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libw/libwebp/libwebp-dev_1.3.2-0.4build3_arm64.deb",
+      "size": 334258,
+      "installed_size_kib": 1418,
+      "sha256": "2eb368f974b4fda1301213737cdbe7bb53d33a8e8f2eb1ed42fbf972a9c04f4f"
+    },
+    {
+      "package": "libtiffxx6",
+      "version": "4.5.1+git230720-4ubuntu2.5",
+      "architecture": "arm64",
+      "filename": "libtiffxx6_4.5.1+git230720-4ubuntu2.5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/t/tiff/libtiffxx6_4.5.1+git230720-4ubuntu2.5_arm64.deb",
+      "size": 5646,
+      "installed_size_kib": 86,
+      "sha256": "0dcc6b0514db89fb3738544c4639a9a6279bb8fb77e4ed82353a33fee2654bed"
+    },
+    {
+      "package": "libtiff-dev",
+      "version": "4.5.1+git230720-4ubuntu2.5",
+      "architecture": "arm64",
+      "filename": "libtiff-dev_4.5.1+git230720-4ubuntu2.5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/t/tiff/libtiff-dev_4.5.1+git230720-4ubuntu2.5_arm64.deb",
+      "size": 336894,
+      "installed_size_kib": 1162,
+      "sha256": "6435f68e43b867fb527af6fef399d0ed03a4bc22da3c5aa7fdc242eff1ba4032"
+    },
+    {
+      "package": "libopencv-highgui-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-highgui-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-highgui-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 167826,
+      "installed_size_kib": 1027,
+      "sha256": "ece9dd5348364371d3b3f09e338de7f62b0e750534576eb0283f13909beba020"
+    },
+    {
+      "package": "libopencv-ml406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-ml406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-ml406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 194632,
+      "installed_size_kib": 548,
+      "sha256": "4fa5006804d8f5ee6aaa6ff5dcc3b318b799e9e1042ba65ca8b2fc23ed928a35"
+    },
+    {
+      "package": "libopencv-ml-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-ml-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-ml-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 300542,
+      "installed_size_kib": 1691,
+      "sha256": "f0a591997ffdd1a22d68c730e1bfc18cf6aa0764896b4731cafdd45bbb88c286"
+    },
+    {
+      "package": "libopencv-features2d-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-features2d-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-features2d-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 325618,
+      "installed_size_kib": 1778,
+      "sha256": "d073491c5b0eb9f716632e6f5d33ef2c8a635c7084096832cdc91ce16d602426"
+    },
+    {
+      "package": "libopencv-calib3d-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-calib3d-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-calib3d-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 1008256,
+      "installed_size_kib": 5413,
+      "sha256": "ff08757ba0f9887c0a36580187362229cffb096454c7392d9b88b2d6f6def65c"
+    },
+    {
+      "package": "libprotobuf32t64",
+      "version": "3.21.12-8.2ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "libprotobuf32t64_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/protobuf/libprotobuf32t64_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "size": 858976,
+      "installed_size_kib": 3042,
+      "sha256": "ff59200db84971b2499b8d80dbaa09ea83ea7e2647dc7025a327a1ab9f6fcb2c"
+    },
+    {
+      "package": "libopencv-dnn406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-dnn406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-dnn406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 1047654,
+      "installed_size_kib": 3574,
+      "sha256": "112532a3ddcbd472955c567fc0159d0c74434b3706f96266810387dd79fad769"
+    },
+    {
+      "package": "libopencv-objdetect406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-objdetect406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-objdetect406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 210128,
+      "installed_size_kib": 549,
+      "sha256": "41d8bd06f30fea485e0680d312cc9d14203fb86b8bc380540fb2870b40a15b33"
+    },
+    {
+      "package": "libopencv-video406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-video406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-video406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 165512,
+      "installed_size_kib": 485,
+      "sha256": "a6cd2b662d25bcd11e09396912647430c61ec50cbe812fbc9ed696db7b1885f0"
+    },
+    {
+      "package": "libtesseract5",
+      "version": "5.3.4-1build5",
+      "architecture": "arm64",
+      "filename": "libtesseract5_5.3.4-1build5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/t/tesseract/libtesseract5_5.3.4-1build5_arm64.deb",
+      "size": 1230006,
+      "installed_size_kib": 3018,
+      "sha256": "e0c53e9b7f5b42f0250b288d5a4d3590ea5bf09ab5e937a8b05a0fbc56d63eea"
+    },
+    {
+      "package": "libopencv-contrib406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-contrib406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-contrib406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 3753460,
+      "installed_size_kib": 10332,
+      "sha256": "9362df56a11f6f9154616dbb0aa8b3f62a61864aa8c51ebc2839c5a27b9192f1"
+    },
+    {
+      "package": "libopencv-dnn-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-dnn-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-dnn-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 1788386,
+      "installed_size_kib": 14628,
+      "sha256": "f8b2bd6cc9301e7440b8d66bb6850a50e9751729a7f0a30d2c81a431d54a0045"
+    },
+    {
+      "package": "libopencv-objdetect-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-objdetect-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-objdetect-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 273226,
+      "installed_size_kib": 1311,
+      "sha256": "32cb12fff24edb57922bc1b5d9d7e87fb2fbebe4821f49a3e2b574202a0549e1"
+    },
+    {
+      "package": "libopencv-photo406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-photo406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-photo406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 179976,
+      "installed_size_kib": 548,
+      "sha256": "61176f9aba3ed139c64b46e11ec461ae3b1267d78e802fdf67721d5b691eaffe"
+    },
+    {
+      "package": "libopencv-photo-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-photo-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-photo-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 218834,
+      "installed_size_kib": 1439,
+      "sha256": "2ff8b07304861e8f50280e183dce2cc886468592f77c77e74a23815b5f3f0411"
+    },
+    {
+      "package": "libopencv-shape406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-shape406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-shape406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 47610,
+      "installed_size_kib": 164,
+      "sha256": "579509ddc9f1f29ceabefe0858d2cfa9fe430d6909a0aa9e8822c3e86659e283"
+    },
+    {
+      "package": "libopencv-video-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-video-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-video-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 246558,
+      "installed_size_kib": 1405,
+      "sha256": "42f68df30741f4241a21fa5ea63c963b04b5727d73b721f5262d5d24d6e9835f"
+    },
+    {
+      "package": "libopencv-shape-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-shape-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-shape-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 71556,
+      "installed_size_kib": 465,
+      "sha256": "3ef0946caa52fd1f507418a3a04b5a77e8086541c0a9433829a5dd882ded57a3"
+    },
+    {
+      "package": "libopencv-stitching406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-stitching406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-stitching406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 187314,
+      "installed_size_kib": 549,
+      "sha256": "669b94dc5ea7c5d1de7391c30c6fb5eb00f6a0026113755866571cf60f6f2998"
+    },
+    {
+      "package": "libopencv-stitching-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-stitching-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-stitching-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 262066,
+      "installed_size_kib": 1724,
+      "sha256": "55c35dec9de669621458c7b6b6daf75cd8b3fe3f7969739367118a5639edd88e"
+    },
+    {
+      "package": "libopencv-superres406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-superres406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-superres406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 43698,
+      "installed_size_kib": 164,
+      "sha256": "d7554a7e84e395cd82dec464bff07cb4060422797edfdddd7f31458065f8a0cf"
+    },
+    {
+      "package": "libopencv-superres-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-superres-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-superres-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 59900,
+      "installed_size_kib": 374,
+      "sha256": "7bc779b7160ebee026f8ce2121f2959799c92e9182aeba5528860a5fbcb1b63d"
+    },
+    {
+      "package": "libopencv-videostab406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-videostab406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-videostab406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 73716,
+      "installed_size_kib": 228,
+      "sha256": "d64707ac2abc3d46b62a5b3bb1a730f419ae9abc439e9a8c4bb2230e88e19933"
+    },
+    {
+      "package": "libopencv-videostab-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-videostab-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-videostab-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 109182,
+      "installed_size_kib": 701,
+      "sha256": "5b4abc28d706928d42aa7a146bb94766e00449d3ea1407f136bafbe698555760"
+    },
+    {
+      "package": "libmunge2",
+      "version": "0.5.15-4ubuntu0.1",
+      "architecture": "arm64",
+      "filename": "libmunge2_0.5.15-4ubuntu0.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/m/munge/libmunge2_0.5.15-4ubuntu0.1_arm64.deb",
+      "size": 15056,
+      "installed_size_kib": 86,
+      "sha256": "7e9261b18fe9695a1c1d21504adc0ea6b0f92aaee3017a6d4dc4aa6e01c93ff8"
+    },
+    {
+      "package": "libxnvctrl0",
+      "version": "510.47.03-0ubuntu4.24.04.1",
+      "architecture": "arm64",
+      "filename": "libxnvctrl0_510.47.03-0ubuntu4.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/n/nvidia-settings/libxnvctrl0_510.47.03-0ubuntu4.24.04.1_arm64.deb",
+      "size": 12562,
+      "installed_size_kib": 93,
+      "sha256": "f16960c955ad6edea93f33310f3e3c5d1c29e0a503889a46a33e81185e7ddbe7"
+    },
+    {
+      "package": "libhwloc-plugins",
+      "version": "2.10.0-1build1",
+      "architecture": "arm64",
+      "filename": "libhwloc-plugins_2.10.0-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/h/hwloc/libhwloc-plugins_2.10.0-1build1_arm64.deb",
+      "size": 15728,
+      "installed_size_kib": 283,
+      "sha256": "d487d61487dffa8bb0e411b06114e7fe43086ad5b5fa1aabb9dd4569830baa93"
+    },
+    {
+      "package": "libpmix2t64",
+      "version": "5.0.1-4.1build1",
+      "architecture": "arm64",
+      "filename": "libpmix2t64_5.0.1-4.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/pmix/libpmix2t64_5.0.1-4.1build1_arm64.deb",
+      "size": 655056,
+      "installed_size_kib": 2385,
+      "sha256": "2ce32e8989e1db0c7e29d3459a26e84030bb11276268a0178729b5a1db703b42"
+    },
+    {
+      "package": "libucx0",
+      "version": "1.16.0+ds-5ubuntu1",
+      "architecture": "arm64",
+      "filename": "libucx0_1.16.0+ds-5ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/u/ucx/libucx0_1.16.0+ds-5ubuntu1_arm64.deb",
+      "size": 1074226,
+      "installed_size_kib": 3220,
+      "sha256": "683193910a59fe10d56be45d8794e9604cfebc64fc940cfd623aa1605e80ebbc"
+    },
+    {
+      "package": "libopenmpi3t64",
+      "version": "4.1.6-7ubuntu2",
+      "architecture": "arm64",
+      "filename": "libopenmpi3t64_4.1.6-7ubuntu2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/openmpi/libopenmpi3t64_4.1.6-7ubuntu2_arm64.deb",
+      "size": 2463036,
+      "installed_size_kib": 15030,
+      "sha256": "237515678a6e4b8dd629040fe6a3e87a399cd1ba36e8b583df50528f8242b750"
+    },
+    {
+      "package": "libtcl8.6",
+      "version": "8.6.14+dfsg-1build1",
+      "architecture": "arm64",
+      "filename": "libtcl8.6_8.6.14+dfsg-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/t/tcl8.6/libtcl8.6_8.6.14+dfsg-1build1_arm64.deb",
+      "size": 978406,
+      "installed_size_kib": 4169,
+      "sha256": "f97b29e6459a5f8b0ccd3be93108eaf44d9713d7a61a572295a68daa79269998"
+    },
+    {
+      "package": "libxft2",
+      "version": "2.3.6-1build1",
+      "architecture": "arm64",
+      "filename": "libxft2_2.3.6-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/x/xft/libxft2_2.3.6-1build1_arm64.deb",
+      "size": 44128,
+      "installed_size_kib": 146,
+      "sha256": "0a4f24c57196b20d9edaba93111c37c031470714f3052aca7bb7ddbbec7775a2"
+    },
+    {
+      "package": "libtk8.6",
+      "version": "8.6.14-1build1",
+      "architecture": "arm64",
+      "filename": "libtk8.6_8.6.14-1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/t/tk8.6/libtk8.6_8.6.14-1build1_arm64.deb",
+      "size": 767390,
+      "installed_size_kib": 2450,
+      "sha256": "2d817e96d90a6c30f7c0615e24f1a92799dca5a81f07e251f3327559bcc177b7"
+    },
+    {
+      "package": "libvtk9.1t64",
+      "version": "9.1.0+really9.1.0+dfsg2-7.1build3",
+      "architecture": "arm64",
+      "filename": "libvtk9.1t64_9.1.0+really9.1.0+dfsg2-7.1build3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/v/vtk9/libvtk9.1t64_9.1.0+really9.1.0+dfsg2-7.1build3_arm64.deb",
+      "size": 19183022,
+      "installed_size_kib": 109968,
+      "sha256": "666db87a95485bc2bafb87d7e519e114743bea09bdae197e39367d199fc89734"
+    },
+    {
+      "package": "libopencv-viz406t64",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-viz406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-viz406t64_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 102278,
+      "installed_size_kib": 356,
+      "sha256": "9413a251c55d7043c3179a899cbe87a78d97c3b7814c01a26602f957075519ea"
+    },
+    {
+      "package": "libopencv-viz-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-viz-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-viz-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 181824,
+      "installed_size_kib": 1314,
+      "sha256": "20f2f1551603f2a312103b47ea91e9a3f65fe6e44af34bced6c48344db479b88"
+    },
+    {
+      "package": "libopencv-contrib-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-contrib-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-contrib-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 5416178,
+      "installed_size_kib": 30752,
+      "sha256": "b2f41e1f74256b5512a21cafae7461aebc1a218b6b2849e2e73c3f4a450a5503"
+    },
+    {
+      "package": "libopencv-dev",
+      "version": "4.6.0+dfsg-13.1ubuntu1",
+      "architecture": "arm64",
+      "filename": "libopencv-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/o/opencv/libopencv-dev_4.6.0+dfsg-13.1ubuntu1_arm64.deb",
+      "size": 80584,
+      "installed_size_kib": 574,
+      "sha256": "b9794c64194143a047de661f47c6be3e0d2dfe25a4af81d14d2d438fe02ae9f5"
+    },
+    {
+      "package": "libpaho-mqtt1.3",
+      "version": "1.3.13-1build2",
+      "architecture": "arm64",
+      "filename": "libpaho-mqtt1.3_1.3.13-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/paho.mqtt.c/libpaho-mqtt1.3_1.3.13-1build2_arm64.deb",
+      "size": 188070,
+      "installed_size_kib": 821,
+      "sha256": "b1175baf92db7dee0cd12baaf5179ffb385f7708e8dcb78265175296dcaf7e1d"
+    },
+    {
+      "package": "libpaho-mqtt-dev",
+      "version": "1.3.13-1build2",
+      "architecture": "arm64",
+      "filename": "libpaho-mqtt-dev_1.3.13-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/paho.mqtt.c/libpaho-mqtt-dev_1.3.13-1build2_arm64.deb",
+      "size": 190992,
+      "installed_size_kib": 1845,
+      "sha256": "1dcb0612f70225400bf5f90fbbb5f22cb1997b2d545f6013744ec548c425973e"
+    },
+    {
+      "package": "libpaho-mqttpp3-1",
+      "version": "1.2.0-2",
+      "architecture": "arm64",
+      "filename": "libpaho-mqttpp3-1_1.2.0-2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/paho.mqtt.cpp/libpaho-mqttpp3-1_1.2.0-2_arm64.deb",
+      "size": 67312,
+      "installed_size_kib": 244,
+      "sha256": "d222ba852a603164268ab26a8386831a3140e9af2c13ddb8eb640526a8901261"
+    },
+    {
+      "package": "libpaho-mqttpp-dev",
+      "version": "1.2.0-2",
+      "architecture": "arm64",
+      "filename": "libpaho-mqttpp-dev_1.2.0-2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/paho.mqtt.cpp/libpaho-mqttpp-dev_1.2.0-2_arm64.deb",
+      "size": 44884,
+      "installed_size_kib": 321,
+      "sha256": "b126e67905cd2cda24ed9f542d5f6b8833badcb90d49786c2fa8a14fe28b890e"
+    },
+    {
+      "package": "libpq-dev",
+      "version": "16.15-0ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libpq-dev_16.15-0ubuntu0.24.04.1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/postgresql-16/libpq-dev_16.15-0ubuntu0.24.04.1_arm64.deb",
+      "size": 153958,
+      "installed_size_kib": 609,
+      "sha256": "4a21839f58f13fe69a2117a66c2fdb2c904a21d1869be86de815e7b24ffe3071"
+    },
+    {
+      "package": "libpqxx-7.8t64",
+      "version": "7.8.1-2.1build1",
+      "architecture": "arm64",
+      "filename": "libpqxx-7.8t64_7.8.1-2.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libp/libpqxx/libpqxx-7.8t64_7.8.1-2.1build1_arm64.deb",
+      "size": 156740,
+      "installed_size_kib": 537,
+      "sha256": "ccc49a75799269d313f73784d9cbc25858d9168521ecd1f61c12a7f995125c89"
+    },
+    {
+      "package": "libpqxx-dev",
+      "version": "7.8.1-2.1build1",
+      "architecture": "arm64",
+      "filename": "libpqxx-dev_7.8.1-2.1build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libp/libpqxx/libpqxx-dev_7.8.1-2.1build1_arm64.deb",
+      "size": 344910,
+      "installed_size_kib": 2350,
+      "sha256": "27a895d07ebab4ceaf1fa6ccf475890a0d00e238e0a0f1ff329fbe1011c5738c"
+    },
+    {
+      "package": "libprotobuf-lite32t64",
+      "version": "3.21.12-8.2ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "libprotobuf-lite32t64_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/protobuf/libprotobuf-lite32t64_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "size": 221380,
+      "installed_size_kib": 861,
+      "sha256": "18d0a5447ae6ce9407b0a280c2edacacfbb9f2a06449ffb4f4b47543107d5b8e"
+    },
+    {
+      "package": "libprotoc32t64",
+      "version": "3.21.12-8.2ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "libprotoc32t64_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/protobuf/libprotoc32t64_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "size": 637032,
+      "installed_size_kib": 2208,
+      "sha256": "61b7e83aa8136fb812b63f832b50cf12ad4fd3114295d8093cc018b2c0436f2f"
+    },
+    {
+      "package": "librdkafka1",
+      "version": "2.3.0-1build2",
+      "architecture": "arm64",
+      "filename": "librdkafka1_2.3.0-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libr/librdkafka/librdkafka1_2.3.0-1build2_arm64.deb",
+      "size": 700846,
+      "installed_size_kib": 2013,
+      "sha256": "eff78c2ffae55da3281f70f632912718f1c8944bc2340f39ec3416b8f056bd03"
+    },
+    {
+      "package": "librdkafka++1",
+      "version": "2.3.0-1build2",
+      "architecture": "arm64",
+      "filename": "librdkafka++1_2.3.0-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libr/librdkafka/librdkafka++1_2.3.0-1build2_arm64.deb",
+      "size": 43988,
+      "installed_size_kib": 215,
+      "sha256": "e9b137d353f42d1f24139d360ee766c501094c4a09c086b2d024a71ed93d2964"
+    },
+    {
+      "package": "librdkafka-dev",
+      "version": "2.3.0-1build2",
+      "architecture": "arm64",
+      "filename": "librdkafka-dev_2.3.0-1build2_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/libr/librdkafka/librdkafka-dev_2.3.0-1build2_arm64.deb",
+      "size": 967028,
+      "installed_size_kib": 5293,
+      "sha256": "210484843697d7a84653adabf6fc983481cfb55518188372bb196a03e4873600"
+    },
+    {
+      "package": "libsqlite3-dev",
+      "version": "3.45.1-1ubuntu2.8",
+      "architecture": "arm64",
+      "filename": "libsqlite3-dev_3.45.1-1ubuntu2.8_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/s/sqlite3/libsqlite3-dev_3.45.1-1ubuntu2.8_arm64.deb",
+      "size": 916440,
+      "installed_size_kib": 3387,
+      "sha256": "bdca1d2f51c62f7a8c4e87927314d618ad334f7335fb19646c6cc56e240ea998"
+    },
+    {
+      "package": "libssh-4",
+      "version": "0.10.6-2ubuntu0.5",
+      "architecture": "arm64",
+      "filename": "libssh-4_0.10.6-2ubuntu0.5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libs/libssh/libssh-4_0.10.6-2ubuntu0.5_arm64.deb",
+      "size": 192306,
+      "installed_size_kib": 506,
+      "sha256": "f1b8da917a3d65ca77918027206b55b69d62795df2676c39828d4439bc97e68f"
+    },
+    {
+      "package": "libxml2-dev",
+      "version": "2.9.14+dfsg-1.3ubuntu3.10",
+      "architecture": "arm64",
+      "filename": "libxml2-dev_2.9.14+dfsg-1.3ubuntu3.10_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libx/libxml2/libxml2-dev_2.9.14+dfsg-1.3ubuntu3.10_arm64.deb",
+      "size": 799584,
+      "installed_size_kib": 3422,
+      "sha256": "1d54d348fe72cab32198e2f657993b13555c9d57a896bd3979b46492b43fea3d"
+    },
+    {
+      "package": "protobuf-compiler",
+      "version": "3.21.12-8.2ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "protobuf-compiler_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/p/protobuf/protobuf-compiler_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "size": 28682,
+      "installed_size_kib": 161,
+      "sha256": "58d4a1876022d14e92308a0db69990a6756564d12144f7926507e5d88e7e3350"
+    },
+    {
+      "package": "protobuf-compiler-grpc",
+      "version": "1.51.1-4.1build5",
+      "architecture": "arm64",
+      "filename": "protobuf-compiler-grpc_1.51.1-4.1build5_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/g/grpc/protobuf-compiler-grpc_1.51.1-4.1build5_arm64.deb",
+      "size": 34514,
+      "installed_size_kib": 286,
+      "sha256": "7aee2f5047282a4c7f0517c49da9b38ce55e3b1b430caf37e969d8e27bb9d8df"
+    },
+    {
+      "package": "lbzip2",
+      "version": "2.5-2.3",
+      "architecture": "arm64",
+      "filename": "lbzip2_2.5-2.3_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/universe/l/lbzip2/lbzip2_2.5-2.3_arm64.deb",
+      "size": 62410,
+      "installed_size_kib": 146,
+      "sha256": "cd2527658382ada43be93835427cc1c22bb8308c0944937ffa732d99333a5841"
+    },
+    {
+      "package": "libjsoncpp-dev",
+      "version": "1.9.5-6build1",
+      "architecture": "arm64",
+      "filename": "libjsoncpp-dev_1.9.5-6build1_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libj/libjsoncpp/libjsoncpp-dev_1.9.5-6build1_arm64.deb",
+      "size": 22988,
+      "installed_size_kib": 107,
+      "sha256": "d46f55e24cd2649ee6f54d552ea0541fe938f193b79273c0eb255be4b90d3917"
+    },
+    {
+      "package": "libldap2-dev",
+      "version": "2.6.10+dfsg-0ubuntu0.24.04.1",
+      "architecture": "all",
+      "filename": "libldap2-dev_2.6.10+dfsg-0ubuntu0.24.04.1_all.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/o/openldap/libldap2-dev_2.6.10+dfsg-0ubuntu0.24.04.1_all.deb",
+      "size": 11116,
+      "installed_size_kib": 82,
+      "sha256": "2d0237283565f5a6321f2a2cf28087370917345feddfbe7e82c0a7fcc41e1028"
+    },
+    {
+      "package": "libprotobuf-dev",
+      "version": "3.21.12-8.2ubuntu0.4",
+      "architecture": "arm64",
+      "filename": "libprotobuf-dev_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/p/protobuf/libprotobuf-dev_3.21.12-8.2ubuntu0.4_arm64.deb",
+      "size": 1416666,
+      "installed_size_kib": 12269,
+      "sha256": "6ba39e0e7179defb0a98bee50a34471726ebfc7d5087a6a7edfebd425e90c41a"
+    }
+  ],
+  "requested_roots": [
+    "pkg-config",
+    "lbzip2",
+    "libcurl4-openssl-dev",
+    "libjsoncpp-dev",
+    "libssl-dev",
+    "libxml2-dev",
+    "libsqlite3-dev",
+    "uuid-dev",
+    "libboost-filesystem-dev",
+    "libboost-thread-dev",
+    "libboost-regex-dev",
+    "libboost-system-dev",
+    "libboost-timer-dev",
+    "libboost-stacktrace-dev",
+    "libgstreamer1.0-dev",
+    "libgstreamer-plugins-base1.0-dev",
+    "librdkafka-dev",
+    "libopencv-dev",
+    "libhiredis-dev",
+    "libldap2-dev",
+    "libpq-dev",
+    "libpqxx-dev",
+    "libpaho-mqttpp-dev",
+    "libpaho-mqtt-dev",
+    "protobuf-compiler",
+    "libprotobuf-dev",
+    "libavcodec-dev",
+    "libavformat-dev",
+    "libavutil-dev",
+    "gstreamer1.0-tools",
+    "protobuf-compiler-grpc",
+    "libgrpc++-dev"
+  ]
+}

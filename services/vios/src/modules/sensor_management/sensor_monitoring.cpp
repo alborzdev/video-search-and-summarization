@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2020-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2020-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,10 +22,13 @@
 #include "sensor_management_utils.h"
 #include "vst_common.h"
 
-unsigned int max_n_threads = 10;
+using namespace nv_vms;
+using namespace std;
+
+static const unsigned int max_n_threads = 10;
 
 SensorMonitoring::SensorMonitoring(SensorManagement* sensorMgmt,
-                             std::vector<std::pair<ISensorDiscoveryInterface*, void*>>& objs)
+                             std::vector<std::pair<ISensorDiscoveryInterface*, destroyDiscoveryObject_t>>& objs)
                            : m_sensorManagement(sensorMgmt)
                            , m_sensorDiscoveryObjectPairList(objs)
 {
@@ -176,6 +179,7 @@ void SensorMonitoring::notifyEvent(const SensorStatus& status, const string& url
     event["camera_url"] = change == "camera_add" ? "" : url; // Use original URL for payload
     event["ipc_url"]    = GET_CONFIG().enable_ipc_path == true ? ipc_url : "";
     event["change"] = change;
+    event["camera_type"] = vst_common::cameraTypeForSensor(status.sensorId);
     if (status.tags.empty() == false)
     {
         event["tags"] = status.tags;

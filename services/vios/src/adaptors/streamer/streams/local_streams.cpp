@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2021-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2021-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,9 @@
 #include "modules_apis.h"
 #include <cmath>
 
+using namespace std;
+using namespace nv_vms;
+
 extern "C" ISensorControlInterface* createObject()
 {
     return new LocalStreams;
@@ -31,10 +34,6 @@ extern "C" ISensorControlInterface* createObject()
 extern "C" void destroyObject( LocalStreams* object )
 {
     delete object;
-}
-
-LocalStreams::LocalStreams()
-{
 }
 
 bool LocalStreams::isSensorExist(vector<shared_ptr<SensorInfo>>& sensors, const string &filepath)
@@ -128,7 +127,15 @@ bool LocalStreams::transcodeIfNeeded(const string& filePath,
     string fileLocation = GET_CONFIG().nv_streamer_directory_path;
 
     int original_framerate = static_cast<int>(std::round(stringToDouble(frameRate, DEFAULT_FRAMERATE)));
-    int original_keyframe_interval = keyFrameParseResult.get("keyFrameInterval", original_framerate).asInt();
+    /* parseKeyframeInterval reports the interval as "keyInt" - the upload path
+     * reads that name, and the two lines below read the other two names it
+     * publishes. Asking for "keyFrameInterval" always missed, so the fallback
+     * stood in for the answer: every scanned file looked like its keyframes
+     * were one frame rate apart, the "larger than five seconds" test below
+     * could never be true, and a file whose keyframes really are 256 frames
+     * apart was published untranscoded. Downstream that becomes 8.3 second
+     * DASH segments and a manifest that takes 36 seconds to appear. */
+    int original_keyframe_interval = keyFrameParseResult.get("keyInt", original_framerate).asInt();
     bool is_bframesPresent = keyFrameParseResult.get("bFramesPresent", false).asBool();
     bool is_largeIdrPresent = keyFrameParseResult.get("largeIdrFramesPresent", false).asBool();
     bool is_largeBitratePresent = (bitrate > DEFAULT_NVSTREAMER_MAX_BITRATE) ? true : false;

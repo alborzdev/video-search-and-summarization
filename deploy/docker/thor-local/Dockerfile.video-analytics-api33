@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+ARG VIDEO_ANALYTICS_API33_BASE_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-video-analytics-api@sha256:e6251bdab414af97c5adfa6fd8eda24ebb7ab1fb40832890258c7a599ce52394
+FROM ${VIDEO_ANALYTICS_API33_BASE_IMAGE}
+# The matching 3.3 base supplies Node and both installed dependency trees.
+# Preserve its local @nvidia-mdx/web-api-core symlink and installed modules.
+COPY --chown=1000:1000 services/analytics/video-analytics-api/src/app/ /web-api-app/
+COPY --chown=1000:1000 services/analytics/video-analytics-api/src/web-api-core/ /web-api-core/

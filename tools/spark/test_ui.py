@@ -59,6 +59,10 @@ class SparkUiTests(unittest.TestCase):
             self.assertEqual(service['network_mode'], 'host')
             self.assertTrue(any(m['target'] == '/data/reports' and m['source'] == str(reports)
                                 for m in service['volumes']))
+            dash = next(m for m in service['volumes'] if m['target'] == '/workspace/external/vios-dash')
+            self.assertEqual(dash['source'], str(ui.ROOT / 'services/vios/ui/streaming-lib/src/dash'))
+            self.assertTrue(dash['read_only'])
+            self.assertFalse(dash['bind']['create_host_path'])
             self.assertEqual(graph['services']['model']['command'], ['unchanged'])
             self.assertEqual(int(graph['services']['model']['mem_limit']), 1024**3)
 

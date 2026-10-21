@@ -45,36 +45,42 @@ fi
 # Map test-profile APP_NAME to the source-tree app dir/filename prefix.
 # Test fixture dirs stay named after APP_NAME (warehouse_2d, etc.), but the
 # Python source lives under apps/<APP_DIR>/main_<APP_DIR><APP_MODE>_app.py.
-if [ "$APP_NAME" = "warehouse" ]; then
+if [[ "$APP_NAME" = "warehouse" ]]; then
     APP_DIR="analytics"
 else
     APP_DIR="$APP_NAME"
 fi
 
+# Logstash reads whichever broker the app writes to. mqtt is bridged into kafka.
+if [[ "$PROFILE2" = "redis" ]]; then
+    STREAM_TYPE="redis"
+else
+    STREAM_TYPE="kafka"
+fi
+
+COMPOSE_PROFILES="elasticsearch,elasticsearch-init-container,kibana,logstash,broker-health-check"
+if [[ "$STREAM_TYPE" = "redis" ]]; then
+    COMPOSE_PROFILES="$COMPOSE_PROFILES,redis"
+else
+    COMPOSE_PROFILES="$COMPOSE_PROFILES,kafka,kafka-topic-init-container"
+fi
+# mosquitto is the deployment's broker; mqtt selects this suite's own bridge.
+if [[ "$PROFILE2" = "mqtt" ]]; then
+    COMPOSE_PROFILES="$COMPOSE_PROFILES,mosquitto,mqtt"
+fi
+
 # Set PLAYBACK_MODE based on profile: '--playback-from-json' for 'smart_city', empty otherwise
-if [ "$APP_NAME" = "smart_city" ]; then
+if [[ "$APP_NAME" = "smart_city" ]]; then
     PLAYBACK_MODE="--playback-from-json"
 else
     PLAYBACK_MODE=""
 fi
 
-# Get real IP address
-# Use ip first (works on Alpine/BusyBox); hostname -I is not supported on BusyBox
-if command -v ip >/dev/null 2>&1; then
-    HOST_IP="$(ip route get 1.1.1.1 2>/dev/null | awk '{print $7; exit}')"
-fi
-if [ -z "$HOST_IP" ]; then
-    HOST_IP="$(hostname -I 2>/dev/null | awk '{print $1}')"
-fi
-if [ -z "$HOST_IP" ]; then
-    HOST_IP="$(ifconfig 2>/dev/null | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | head -1)"
-fi
-
-# If we couldn't get an IP, use localhost as fallback
-if [ -z "$HOST_IP" ]; then
-    HOST_IP="localhost"
-    echo "Warning: Could not determine real IP address, using localhost"
-fi
+# The stack runs on the Compose bridge network. Kafka advertises two listeners:
+# INTERNAL (kafka:29092) for in-network clients, and EXTERNAL (HOST_IP:9092) for
+# the host-side harness reaching the published port. HOST_IP therefore only ever
+# names the host, never a container.
+HOST_IP="localhost"
 
 # Create/populate the .env file based on profiles
 ENV_FILE="$SCRIPT_DIR/docker_compose/infra/.env"
@@ -93,6 +99,11 @@ APP_DIR="$APP_DIR"
 # Streaming service from PROFILE2: $PROFILE2
 STREAMING_SERVICE="$PROFILE2"
 
+# Which broker logstash consumes from, selecting the shared pipeline set in
+# deploy/docker/services/infra/elk/logstash/pipelines/. The mqtt profile bridges
+# into kafka, so only the redis profile changes the pipeline.
+STREAM_TYPE="$STREAM_TYPE"
+
 # Playback mode configuration
 PLAYBACK_MODE="$PLAYBACK_MODE"
 
@@ -100,6 +111,22 @@ PLAYBACK_MODE="$PLAYBACK_MODE"
 PROJ_ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 MDX_SAMPLE_APPS_DIR="${SCRIPT_DIR}/docker_compose"
 MDX_DATA_DIR="${SCRIPT_DIR}/docker_compose/apps_data"
+
+# Shared infra assets (ELK/Kafka/Redis configs, ES init scripts, protobuf
+# definitions) are single-sourced from the deployment tree rather than
+# duplicated under tests/. See deploy/docker/services/infra/.
+INFRA_DIR="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)/deploy/docker/services/infra"
+
+# The deployment compose resolves every mount from these two, so point them at
+# the repo checkout and this suite's app data.
+VSS_APPS_DIR="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)/deploy/docker"
+VSS_DATA_DIR="${SCRIPT_DIR}/docker_compose/apps_data"
+
+# Service selection. The deployment tags every service with its own name, so the
+# suite names exactly what it needs; HAProxy, the SDR controller and the rest of
+# the deployment stay defined but unstarted. mqtt additionally brings up its own
+# broker and bridge, and still feeds the kafka pipeline.
+COMPOSE_PROFILES="$COMPOSE_PROFILES"
 
 # Host configuration
 HOST_IP="$HOST_IP"

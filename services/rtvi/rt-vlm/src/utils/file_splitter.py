@@ -130,30 +130,21 @@ class FileSplitter:
                 # "seek" mode. File is not actually split.
                 # Chunks are generated with start/end time in the original file.
 
-                if self._stream.find(";") != -1:
-                    # This is a list of image files
+                if self._stream.find(";") != -1 or (
+                    media_file_info is not None and media_file_info.is_image
+                ):
                     info = ChunkInfo()
                     info.chunkIdx = 0
                     info.file = self._stream
                     info.pts_offset_ns = 0
-                    info.start_pts = 0
-                    info.end_pts = 0
+                    info.start_pts = max(self._start_pts or 0, 0)
+                    info.end_pts = max(self._end_pts or info.start_pts, info.start_pts)
                     info.start_ntp = get_timestamp_str(self._base_ntp_time + info.start_pts / 1e9)
                     info.end_ntp = get_timestamp_str(self._base_ntp_time + info.end_pts / 1e9)
                     info.is_first = True
+                    info.is_last = True
                     self._on_new_chunk(info)
-                    return
-                elif media_file_info.is_image:
-                    info = ChunkInfo()
-                    info.chunkIdx = 0
-                    info.file = self._stream
-                    info.pts_offset_ns = 0
-                    info.start_pts = 0
-                    info.end_pts = 0
-                    info.start_ntp = get_timestamp_str(self._base_ntp_time + info.start_pts / 1e9)
-                    info.end_ntp = get_timestamp_str(self._base_ntp_time + info.end_pts / 1e9)
-                    info.is_first = True
-                    self._on_new_chunk(info)
+                    self._on_new_chunk(None)
                     return
 
                 # Calculate the start / end times for chunking
@@ -204,12 +195,29 @@ class FileSplitter:
                     info.end_ntp = get_timestamp_str(self._base_ntp_time + info.end_pts / 1e9)
                     info.start_ntp_float = ntp_to_unix_timestamp(info.start_ntp)
                     info.end_ntp_float = ntp_to_unix_timestamp(info.end_ntp)
+                    # Check if this is the last chunk (end of file reached,
+                    # next chunk would start past end, or the leftover tail
+                    # sliver after this chunk is too short to be emitted as a
+                    # chunk of its own — in which case the loop breaks before
+                    # creating it, so this chunk is effectively the last one).
+                    next_pts = (
+                        cur_pts
+                        + (self._chunk_duration_sec - self._sliding_window_overlap_sec) * 1000000000
+                    )
+                    remaining_after = end_pts - next_pts
+                    if (
+                        info.end_pts >= end_pts
+                        or next_pts >= end_pts
+                        or (
+                            min_video_frame_duration_ns
+                            and remaining_after < min_video_frame_duration_ns
+                        )
+                    ):
+                        info.is_last = True
                     self._on_new_chunk(info)
                     chunkIdx += 1
                     # Get the next chunk start time
-                    cur_pts += (
-                        self._chunk_duration_sec - self._sliding_window_overlap_sec
-                    ) * 1000000000
+                    cur_pts = next_pts
                     # if the end time of the chunking is already reached stop iterating
                     if info.end_pts >= end_pts:
                         break

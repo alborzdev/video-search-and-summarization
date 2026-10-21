@@ -21,11 +21,13 @@ import type {
   VideoManagementComponentProps,
   UploadProgress,
   StreamInfo,
+  FileUploadResponse,
 } from "./types";
 import { filterStreams, isRtspStream } from "./utils";
 import { requestMonitoringSetup } from "./monitoringSetup";
 import { SEMANTIC_ANALYSIS_PROFILE_ID } from "./analysisProfiles";
 import { deleteVideo } from "./videoDelete";
+import { waitForSourceIndex } from "./indexReadiness";
 import {
   UploadFilesDialog,
   VideoModal,
@@ -175,11 +177,22 @@ export const VideoManagementComponent: React.FC<
   const isUploadingRef = useRef(false);
   const uploadSessionIdRef = useRef(0);
   const uploadAbortControllerRef = useRef<AbortController | null>(null);
+  const indexingRetriesRef = useRef(new Map<string, {
+    filename: string;
+    response: FileUploadResponse;
+    formData: Record<string, any>;
+  }>());
   const pendingFilesQueueRef = useRef<Array<{ id: string; file: File }>>([]);
 
   useEffect(() => {
     isUploadingRef.current = isUploading;
   }, [isUploading]);
+
+  useEffect(() => () => {
+    uploadSessionIdRef.current += 1;
+    uploadAbortControllerRef.current?.abort();
+    pendingFilesQueueRef.current = [];
+  }, []);
 
   // Sync display filter state with enabled features so label and filter stay correct
   useEffect(() => {
@@ -264,6 +277,7 @@ export const VideoManagementComponent: React.FC<
       uploadSessionIdRef.current += 1;
       const currentSessionId = uploadSessionIdRef.current;
 
+      isUploadingRef.current = true;
       setIsUploading(true);
       const isSessionValid = () =>
         uploadSessionIdRef.current === currentSessionId;
@@ -344,20 +358,35 @@ export const VideoManagementComponent: React.FC<
           // Forward the per-upload custom params collected by the dialog
           // (from chatUploadFileConfigTemplateJson) so the agent can use them
           // downstream. Sent as `custom_params` on the /complete body.
+          const processingOptions = {
+            ...formData,
+            analysisProfileId: monitoring.analysisProfileId,
+            detectionEnabled: monitoring.detectionEnabled,
+            monitoringRuleCreated: monitoring.ruleCreated,
+          };
+          const semanticOnly = monitoring.analysisProfileId === SEMANTIC_ANALYSIS_PROFILE_ID;
+          if (semanticOnly) {
+            setUploadProgress(prev => prev.map(item => item.id === id
+              ? { ...item, indexStatus: "waiting", retryIndexing: false } : item));
+          }
           await notifyUploadComplete(
             agentApiUrl,
             file.name,
             videoUploadApiResponse,
-            {
-              ...formData,
-              analysisProfileId: monitoring.analysisProfileId,
-              detectionEnabled: monitoring.detectionEnabled,
-              monitoringRuleCreated: monitoring.ruleCreated,
-            },
+            processingOptions,
             abortController.signal
           );
+          if (semanticOnly) {
+            // Offer regeneration only after the first processing call has
+            // acknowledged completion, avoiding a second job after a client
+            // cancellation while the original generation is still running.
+            if (!isSessionValid() || abortController.signal.aborted) return;
+            indexingRetriesRef.current.set(id, { filename: file.name, response: videoUploadApiResponse, formData: processingOptions });
+            await waitForSourceIndex(videoUploadApiResponse.sensorId, { signal: abortController.signal });
+          }
 
-          if (!isSessionValid()) return;
+          if (!isSessionValid() || abortController.signal.aborted) return;
+          indexingRetriesRef.current.delete(id);
 
           setUploadProgress((prev) =>
             prev.map((p) =>
@@ -367,6 +396,7 @@ export const VideoManagementComponent: React.FC<
                     ...p,
                     status: "success",
                     progress: 100,
+                    ...(p.indexStatus ? { indexStatus: "ready" as const, retryIndexing: false } : {}),
                   }
                 : p
             )
@@ -391,6 +421,7 @@ export const VideoManagementComponent: React.FC<
                     ...p,
                     status: isCancelled ? "cancelled" : "error",
                     error: isCancelled ? undefined : errorMessage,
+                    retryIndexing: indexingRetriesRef.current.has(id),
                   }
                 : p
             )
@@ -428,6 +459,7 @@ export const VideoManagementComponent: React.FC<
         }
       }
 
+      isUploadingRef.current = false;
       setIsUploading(false);
       await Promise.all([refetchRef.current(), refetchTimelinesRef.current()]);
     },
@@ -475,16 +507,56 @@ export const VideoManagementComponent: React.FC<
         p.status === "pending" ||
         p.status === "uploading" ||
         p.status === "processing"
-          ? { ...p, status: "cancelled" }
+          ? { ...p, status: "cancelled", retryIndexing: indexingRetriesRef.current.has(p.id) }
           : p
       )
     );
     setIsUploading(false);
 
-    if (successCount > 0) {
+    if (successCount > 0 || uploadProgressRef.current.some(item => item.indexStatus)) {
       await Promise.all([refetchRef.current(), refetchTimelinesRef.current()]);
     }
   }, []);
+
+  const handleRetryIndexing = useCallback(async (id: string) => {
+    const saved = indexingRetriesRef.current.get(id);
+    if (!saved || !agentApiUrl || isUploadingRef.current) return;
+    indexingRetriesRef.current.delete(id);
+    isUploadingRef.current = true;
+    setIsUploading(true);
+    const controller = new AbortController();
+    uploadAbortControllerRef.current = controller;
+    const session = ++uploadSessionIdRef.current;
+    setUploadProgress(items => items.map(item => item.id === id
+      ? { ...item, status: "processing", indexStatus: "waiting", retryIndexing: false, error: undefined } : item));
+    try {
+      // Reprocess the retained sensor; never send the file to storage again.
+      await notifyUploadComplete(agentApiUrl, saved.filename, saved.response, saved.formData, controller.signal);
+      if (session !== uploadSessionIdRef.current || controller.signal.aborted) return;
+      indexingRetriesRef.current.set(id, saved);
+      await waitForSourceIndex(saved.response.sensorId, { signal: controller.signal });
+      if (session !== uploadSessionIdRef.current || controller.signal.aborted) return;
+      indexingRetriesRef.current.delete(id);
+      setUploadProgress(items => items.map(item => item.id === id
+        ? { ...item, status: "success", indexStatus: "ready", retryIndexing: false } : item));
+    } catch (error) {
+      if (session !== uploadSessionIdRef.current) return;
+      setUploadProgress(items => items.map(item => item.id === id
+        ? { ...item, status: controller.signal.aborted ? "cancelled" : "error", retryIndexing: indexingRetriesRef.current.has(id),
+            error: controller.signal.aborted ? undefined : error instanceof Error ? error.message : "Search indexing could not be confirmed. Your video is saved; retry indexing." } : item));
+    } finally {
+      if (session === uploadSessionIdRef.current) {
+        const queued = pendingFilesQueueRef.current.splice(0);
+        if (queued.length) {
+          await processUploadQueue(queued);
+        } else {
+          isUploadingRef.current = false;
+          setIsUploading(false);
+          await Promise.all([refetchRef.current(), refetchTimelinesRef.current()]);
+        }
+      }
+    }
+  }, [agentApiUrl, processUploadQueue]);
 
   const handleSearch = useCallback(() => {
     const currentValue = searchInputValueRef.current;
@@ -506,6 +578,7 @@ export const VideoManagementComponent: React.FC<
 
   const handleClearUploadProgress = useCallback(() => {
     setUploadProgress([]);
+    indexingRetriesRef.current.clear();
   }, []);
 
   const handleAddRtspClick = () => {
@@ -1113,6 +1186,7 @@ export const VideoManagementComponent: React.FC<
           uploads={uploadProgress}
           onClose={handleClearUploadProgress}
           onCancel={handleCancelUploads}
+          onRetryIndexing={handleRetryIndexing}
         />
 
         <AddRtspDialog

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,12 @@
 constexpr const char* MICROSERVICE_DEFAULT_ADAPTOR_NAME = "microservice";
 constexpr const char* MICROSERVICE_DEFAULT_ID = "640c3667-81e6-460f-b926-b8008a130dbd";
 
+namespace nv_vms {
+struct SharedLibrary;
+}
+
 using namespace nv_vms;
+using namespace std;
 
 static void writeToFile(const string data)
 {
@@ -48,7 +53,7 @@ static void writeToFile(const string data)
     }
 }
 
-static void* loadLibrary(const string& path)
+static SharedLibrary* loadLibrary(const string& path)
 {
     string lib_path(path);
     replaceString(lib_path, "arch", ARCH);
@@ -69,12 +74,10 @@ static void* loadLibrary(const string& path)
 
     // reset errors
     dlerror();
-    return lib_handle;
+    return static_cast<SharedLibrary*>(lib_handle);
 }
 
-AdaptorLoader::AdaptorLoader()
-{
-}
+AdaptorLoader::AdaptorLoader() = default;
 
 AdaptorLoader::~AdaptorLoader()
 {
@@ -304,6 +307,13 @@ std::shared_ptr<DeviceManager> AdaptorLoader::loadAdaptor(ModuleId module_id)
     device_manager->password = info_.get("password","").asString();
     device_manager->port = info_.get("port", "").asString();
     device_manager->type = info_.get("type","").asString();
+    // Either source is valid for adaptor credentials: a non-empty compose.env override
+    // (ADAPTOR_IP/USER/PASSWORD/PORT) takes precedence over the adaptor_config.json entry, so a
+    // deployment can configure the bridge/VMS in one place. Applied before url is built from ip below.
+    if (const char* e = getenv("ADAPTOR_IP");       e != nullptr && e[0] != '\0') { device_manager->ip = e; }
+    if (const char* e = getenv("ADAPTOR_USER");     e != nullptr && e[0] != '\0') { device_manager->user = e; }
+    if (const char* e = getenv("ADAPTOR_PASSWORD"); e != nullptr && e[0] != '\0') { device_manager->password = e; }
+    if (const char* e = getenv("ADAPTOR_PORT");     e != nullptr && e[0] != '\0') { device_manager->port = e; }
     device_manager->enabled = true;
     device_manager->needRtspServer = info_.get("need_rtsp_server", false).asBool();
     device_manager->needStreamMonitoring = info_.get("need_stream_monitoring", false).asBool();
@@ -314,7 +324,7 @@ std::shared_ptr<DeviceManager> AdaptorLoader::loadAdaptor(ModuleId module_id)
     if(control_adaptor_lib_path.empty() == false)
     {
         LOG(info) << "Loading control adaptor: " << control_adaptor_lib_path << endl;
-        std::pair<ISensorControlInterface*, void*>& pair = device_manager->m_sensorControlobjectPair;
+        std::pair<ISensorControlInterface*, destroyControlObject_t>& pair = device_manager->m_sensorControlobjectPair;
         int result = loadControlAdaptorLibrary(control_adaptor_lib_path, &pair.first, &pair.second);
         assert(result == 0);
         assert(pair.first != nullptr);
@@ -332,12 +342,12 @@ std::shared_ptr<DeviceManager> AdaptorLoader::loadAdaptor(ModuleId module_id)
             {
                 LOG(info) << "Loading Discovery adaptor: " << path << endl;
 
-                ISensorDiscoveryInterface* discoveryObject;
-                void* destroyObject;
+                ISensorDiscoveryInterface* discoveryObject = nullptr;
+                destroyDiscoveryObject_t destroyObject = nullptr;
                 int ret = loadDiscoveryAdaptorLibrary(path, &discoveryObject, &destroyObject);
                 if (ret == 0 && discoveryObject != nullptr && destroyObject != nullptr)
                 {
-                    std::pair<ISensorDiscoveryInterface*, void*> objects;
+                    std::pair<ISensorDiscoveryInterface*, destroyDiscoveryObject_t> objects;
                     objects.first = discoveryObject;
                     objects.second = destroyObject;
                     device_manager->m_sensorDiscoveryObjectPairList.push_back(objects);
@@ -351,7 +361,7 @@ std::shared_ptr<DeviceManager> AdaptorLoader::loadAdaptor(ModuleId module_id)
     return deviceManager;
 }
 
-int AdaptorLoader::loadControlAdaptorLibrary(const string& path, ISensorControlInterface** object, void** delObject)
+int AdaptorLoader::loadControlAdaptorLibrary(const string& path, ISensorControlInterface** object, destroyControlObject_t* delObject)
 {
     void* lib_handle = loadLibrary(path);
     if ( lib_handle == nullptr)
@@ -377,12 +387,13 @@ int AdaptorLoader::loadControlAdaptorLibrary(const string& path, ISensorControlI
         dlclose(lib_handle);
         return -1;
     }
-    *delObject = (void *)destroyObject_;
+    *delObject = destroyObject_;
     m_libs.push_back(lib_handle);
     return 0;
 }
 
-int AdaptorLoader::loadDiscoveryAdaptorLibrary(const string& path, ISensorDiscoveryInterface** object, void** delObject)
+int AdaptorLoader::loadDiscoveryAdaptorLibrary(const string& path, ISensorDiscoveryInterface** object,
+                                               destroyDiscoveryObject_t* delObject)
 {
     void* lib_handle = loadLibrary(path);
     if ( lib_handle == nullptr)
@@ -408,13 +419,13 @@ int AdaptorLoader::loadDiscoveryAdaptorLibrary(const string& path, ISensorDiscov
         dlclose(lib_handle);
         return -1;
     }
-    *delObject = (void *)destroyObject_;
+    *delObject = destroyObject_;
     m_libs.push_back(lib_handle);
     return 0;
 }
 
 int AdaptorLoader::loadSensorControlAdaptorLibrary(const string& path, ISensorControlInterface** object,
-                                                   void** delObject)
+                                                   destroyControlObject_t* delObject)
 {
     createControlObject_t createObject_ = nullptr;
     destroyControlObject_t destroyObject_ = nullptr;
@@ -444,7 +455,7 @@ int AdaptorLoader::loadSensorControlAdaptorLibrary(const string& path, ISensorCo
         goto handle_error;
     }
 
-    *delObject = (void *)destroyObject_;
+    *delObject = destroyObject_;
     m_libs.push_back(lib_handle);
     return 0;
 

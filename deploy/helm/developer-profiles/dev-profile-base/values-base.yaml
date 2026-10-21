@@ -20,9 +20,9 @@
 # Image tags aligned with release_3.1.0 dev-profile-base .env and agent_ui compose (see CROSS-VERIFICATION-83d604da.md).
 profile: base
 mode: ""
-llmNameSlug: <replace-with-llm-name> # e.g. nvidia-nemotron-nano-9b-v2, nvidia-nemotron-nano-9b-v2-mini, nvidia-nemotron-nano-9b-v2-mini-2
-vlmNameSlug: nvidia-cosmos3-reasoner # e.g. nvidia-cosmos3-reasoner, nvidia-cosmos-reason2-8b
-vlmName: "nvidia/cosmos3-nano-reasoner"
+llmNameSlug: <replace-with-llm-name> # e.g. nemotron-3.5-lightning-30b-a3b, nvidia-nemotron-nano-9b-v2-fp8
+vlmNameSlug: none
+vlmName: "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
 # NGC: set apiKey (createSecrets=true lets the chart create pull secrets from it). Do not commit the key.
 ngc:
   createSecrets: true
@@ -36,8 +36,8 @@ global:
   # Remote NIM: one place for vss-agent (same pattern as dev-profile-lvs values-lvs.yaml). Set nims.enabled false when using remote endpoints only.
   llmBaseUrl: ""
   vlmBaseUrl: ""
-  llmName: "nvidia/nvidia-nemotron-nano-9b-v2"
-  vlmName: "nvidia/cosmos3-nano-reasoner"
+  llmName: "nvidia/nemotron-3.5-lightning-30b-a3b"
+  vlmName: "nim_nvidia_cosmos3-nano-reasoner_bf16-final"
 
 # Shared NIM umbrella: helm/services/nims. Set nims.global.ngcApiKey to the same value as ngc.apiKey so NIMCache/NIMService can pull models (or rely on pre-created ngc-secret / ngc-api).
 nims:
@@ -45,12 +45,12 @@ nims:
   gpuType: RTXPRO6000BW
   global:
     ngcApiKey: ""
-  nemotron:
+  nemotron35:
     enabled: true
   cosmos:
     enabled: false
   cosmos3:
-    enabled: true
+    enabled: false
 
 # VIOS umbrella (helm/services/vios): parent Chart.yaml uses condition: vios.enabled — that key must stay true here or in values.yaml or the whole VST stack is skipped (no postgres/sensor/ingress/…).
 vios:
@@ -69,5 +69,12 @@ vssIngress:
   vssUiPort: 3000
   vssAgentPort: 8000
   vstIngressPort: 30888
+  # Exposes RT-VLM at /rtvi-vlm for external report clients: /rtvi-vlm/v1/models,
+  # /rtvi-vlm/v1/chat/completions. Defaults to the rtvi.vss-rtvi-vlm Service
+  # (vlmNameSlug=none does not deploy a VLM NIM).
+  rtviVlmServiceName: "vss-rtvi-vlm"
+  rtviVlmPort: 8000
+  vaMcpPort: 9901
+  elasticsearchPort: 9200
   phoenixHost: ""
   phoenixPort: 6006

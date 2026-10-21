@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,10 +29,9 @@
 #include "nvcompositor.h"
 #include "MetadataStore.h"
 
-using namespace std;
 
 inline constexpr double DEFAULT_FRAME_RATE = 30.0;
-#if defined(AARCH64_PLATFORM) || defined(JETSON_PLATFORM)
+#if defined(AARCH64_PLATFORM)
 inline constexpr int OUTPUT_PLANE_NUM_BUFFERS = 19;
 #else
 inline constexpr int OUTPUT_PLANE_NUM_BUFFERS = 20;
@@ -49,6 +48,9 @@ public:
     ~NvLLOverlay();
 
     void doDrawTask();
+    /* Only the raw-frame overload is overridden; keep the inherited
+     * FrameParams overload visible rather than hiding it. */
+    using IMediaDataConsumer::onFrame;
     void onFrame(std::shared_ptr<RawFrameParams> frame_data) override;
     void setConsumer(std::shared_ptr<IMediaDataConsumer> consumer);
     std::string getUri() { return m_uri; }
@@ -65,7 +67,7 @@ public:
     void setIPCMeta () override;
     Json::Value getOverlayStatus();
     /* Update start time for overlay */
-    void updateStartTime(string start_time) override;
+    void updateStartTime(std::string start_time) override;
     void reset() override;
     void onLastFrame() override;
 
@@ -75,13 +77,13 @@ private:
 
     std::thread                                    m_drawThread;
     std::atomic<bool>                              m_stop {false};
-    shared_ptr<NvSurfacePool>                      m_surfacePool = nullptr;
+    std::shared_ptr<NvSurfacePool>                      m_surfacePool = nullptr;
 
     /* Data structure related to Queue */
     std::queue<std::shared_ptr<RawFrameParams>> m_queue;
     std::mutex                                     m_queueLock;
     std::condition_variable                        m_condVar;
-    atomic<bool>                                   m_flowData {false};
+    std::atomic<bool>                                   m_flowData {false};
     std::string                                    m_uri;
     std::map<std::string, std::string, std::less<>>             m_opts;
     bool                                           m_compositePlayback = false;
@@ -109,8 +111,7 @@ private:
     std::string                                    m_peerid;
     std::string                                    m_isoStartTime;
     std::string                                    m_isoEndTime;
-    void*                                          m_broadcaster = nullptr;
-    uint8_t*                                       m_cpuPtr[OUTPUT_PLANE_NUM_BUFFERS];
+    std::vector<uint8_t>                           m_cpuPtr[OUTPUT_PLANE_NUM_BUFFERS];
     bool                                           m_imageCapture = false;
     bool                                           m_isIPCMeta = false;
     std::shared_ptr<IMetadataStore>                m_metadataStore = nullptr;

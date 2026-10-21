@@ -32,6 +32,7 @@
     } while(0)
 
 using namespace std;
+using namespace nv_vms;
 
 PeerConnectionManagerApis::PeerConnectionManagerApis()
 {
@@ -296,7 +297,7 @@ PeerConnectionManagerApis::PeerConnectionManagerApis()
                 try
                 {
                     int log_level_int = std::stoi(loglevel); // Convert string to integer safely
-                    rtc::LogMessage::LogToDebug(static_cast<rtc::LoggingSeverity>(log_level_int));
+                    webrtc::LogMessage::LogToDebug(static_cast<webrtc::LoggingSeverity>(log_level_int));
                 }
                 catch (const std::invalid_argument& e)
                 {
@@ -310,7 +311,7 @@ PeerConnectionManagerApis::PeerConnectionManagerApis()
                 }
             }
         }
-        response = rtc::LogMessage::GetLogToDebug();
+        response = webrtc::LogMessage::GetLogToDebug();
         return VmsErrorCode::NoError;
     };
 }

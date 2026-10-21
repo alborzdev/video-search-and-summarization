@@ -22,6 +22,8 @@
 #include <mutex>
 #include <queue>
 #include <tuple>
+#include <utility>
+#include <vector>
 
 #include "logger.h"
 #include "network_utils.h"
@@ -32,7 +34,13 @@
 class elasticSearch
 {
 private:
-    static Json::Value queryESMetadata(string url, string query)
+    /*
+     * httpStatus (optional) receives the HTTP status of the request: 0 when no
+     * HTTP response was received (curl failure / timeout), otherwise the code
+     * Elasticsearch answered with (200, 429, 503, ...). Only fetchRangeHits
+     * uses it; the other callers leave it null.
+     */
+    static Json::Value queryESMetadata(std::string url, std::string query, int* httpStatus = nullptr)
     {
         std::string jsonData;
         CurlRequestFields curlFields = {};
@@ -42,15 +50,19 @@ private:
         curlFields.m_timeout = 20;
 
         int ret = curlSendRequest(curlFields, jsonData);
-        LOG(verbose) << "ret: " << ret << endl;
+        LOG(verbose) << "ret: " << ret << std::endl;
+        if (httpStatus != nullptr)
+        {
+            *httpStatus = curlFields.m_httpErrorCode;
+        }
 
         return stringToJson(jsonData);
     }
 
-    static string getExactQueryString(const SearchParams& inData, Json::Value source, bool use_id = false);
+    static std::string getExactQueryString(const SearchParams& inData, Json::Value source, bool use_id = false);
 
 public:
-    static string getQueryString(SearchParams& inData)
+    static std::string getQueryString(SearchParams& inData)
     {
         nv_vms::DeviceConfig config =  GET_CONFIG();
         bool use_protobuf = config.use_video_metadata_protobuf;
@@ -70,7 +82,7 @@ public:
         {
             timestamp_range["lte"] = inData.m_end_time;
         }
-        string search_key = use_protobuf ? "timestamp" : "@timestamp";
+        std::string search_key = use_protobuf ? "timestamp" : "@timestamp";
         range[search_key] = timestamp_range;
 
         Json::Value must_term, must_range, must;
@@ -94,11 +106,11 @@ public:
         query["query"] = query_content;
         query["sort"] = sort;
         query["search_after"] = search_after;
-        LOG(verbose) << "query:\n" << query.toStyledString() << endl;
+        LOG(verbose) << "query:\n" << query.toStyledString() << std::endl;
         return jsonToString(query);
     }
 
-    static string getQueryStringForId(SearchParams& inData)
+    static std::string getQueryStringForId(SearchParams& inData)
     {
         nv_vms::DeviceConfig config =  GET_CONFIG();
         bool use_protobuf = config.use_video_metadata_protobuf;
@@ -124,7 +136,7 @@ public:
 
         Json::Value sort, sort_content, timestamp_sort;
         timestamp_sort["order"] = "asc";
-        string timestamp_key = use_protobuf ? "timestamp" : "@timestamp";
+        std::string timestamp_key = use_protobuf ? "timestamp" : "@timestamp";
         sort_content[timestamp_key] = timestamp_sort;
         sort.append(sort_content);
 
@@ -141,12 +153,12 @@ public:
     {
         Json::Value metadata;
         nv_vms::DeviceConfig config =  GET_CONFIG();
-        string elasticsearch_url = config.video_metadata_server;
+        std::string elasticsearch_url = config.video_metadata_server;
         bool use_protobuf = config.use_video_metadata_protobuf;
         std::string url = elasticsearch_url + "/_search?size=1";
 
-        string timestamp_format = use_protobuf ? "timestamp" : "@timestamp";
-        string search_key = use_id ? "id" : timestamp_format;
+        std::string timestamp_format = use_protobuf ? "timestamp" : "@timestamp";
+        std::string search_key = use_id ? "id" : timestamp_format;
         Json::Value source_field;
         source_field.append("sensorId");
         source_field.append("objects");
@@ -154,10 +166,10 @@ public:
         std::string string_query = getExactQueryString(inData, source_field, use_id);
 
         LOG(info) << "Querying elastic server for camera: " << inData.m_sensor_id
-                    << " and timestamp: " << inData.m_start_time << endl;
+                    << " and timestamp: " << inData.m_start_time << std::endl;
         Json::Value json_get = queryESMetadata(url, string_query);
         Json::Value& hits = json_get["hits"]["hits"];
-        LOG(info) << "Elastic Search returned number of hits: " << hits.size() << endl;
+        LOG(info) << "Elastic Search returned number of hits: " << hits.size() << std::endl;
         if (hits.size() != 0)
         {
             Json::Value& source = hits[0]["_source"];
@@ -171,4 +183,38 @@ public:
 
     static void getBboxPositionStreamer(BBoxMetaData& outData);
     static void getBboxPosition(BBoxMetaData& outData);
+
+    /*
+     * Result of fetchRangeHits.
+     *  - httpStatus: HTTP status of the query, 0 when no HTTP response was
+     *    received (curl timeout / connection refused). Lets the prefetch tell a
+     *    rejected request (429 / 503, retry at lower load) apart from an
+     *    unreachable server (stop blocking per frame).
+     *  - reachable: true when Elasticsearch answered the query with a hits
+     *    document (even with zero hits).
+     *  - hits: the metadata records, ascending by timestamp.
+     */
+    struct RangeFetchResult
+    {
+        int                      httpStatus = 0;
+        bool                     reachable  = false;
+        std::vector<Json::Value> hits;
+    };
+
+    /*
+     * Single-shot range query used by the download prefetch path. Returns up to
+     * `size` metadata hits for the window [startIso, endIso], sorted ascending,
+     * WITHOUT touching any shared queue. Safe to call concurrently (each call is
+     * independent), which lets the prefetch fan out across time-sliced windows
+     * in parallel. Does not paginate: choose `size`/window so the slice stays
+     * under the Elasticsearch max_result_window.
+     *
+     * See RangeFetchResult for how the prefetch uses the status: "empty because
+     * idle" (keep waiting for later data), "rejected" (retry with fewer parallel
+     * slices) and "ES is down" (stop blocking per frame) are all distinguished.
+     */
+    static RangeFetchResult fetchRangeHits(const std::string& sensorId,
+                                           const std::string& startIso,
+                                           const std::string& endIso,
+                                           int size);
 };

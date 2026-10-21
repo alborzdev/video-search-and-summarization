@@ -16,10 +16,9 @@
 """
 Unit tests for the CA-RAG aggregation empty-result guard.
 
-The aggregation LLM intermittently samples an unparseable response, which used to
-surface to the caller as HTTP 200 with total_events=0, events=[] and
-video_summary="". These tests cover the empty-result detection and the bounded
-retry that re-runs aggregation before such a sample reaches the caller.
+These tests distinguish valid no-match results from blank or malformed
+aggregation responses. They also cover structured-result repair, bounded
+retries, and actionable failures.
 """
 
 import json
@@ -42,10 +41,14 @@ class _FakeCtxMgr:
     def __init__(self, responses):
         self._responses = list(responses)
         self.calls = []
+        self.docs = []
 
     def call(self, state):
         self.calls.append(state)
         return self._responses.pop(0)
+
+    def add_doc(self, text, doc_i, doc_meta):
+        self.docs.append((text, doc_i, doc_meta))
 
 
 def _response(function_name, result, metadata=None):
@@ -72,17 +75,11 @@ class TestIsEmptyAggregationResult:
             None,
             "",
             "   ",
-            _summary(),
-            _summary(video_summary="   "),
-            {"events": [], "total_events": 0, "video_summary": ""},
         ],
         ids=[
             "none",
             "blank",
             "whitespace",
-            "no-events-no-summary",
-            "whitespace-summary",
-            "dict-result",
         ],
     )
     def test_empty_results(self, result):
@@ -92,14 +89,27 @@ class TestIsEmptyAggregationResult:
     @pytest.mark.parametrize(
         "result",
         [
+            _summary(),
+            _summary(video_summary="   "),
+            {"events": [], "total_events": 0, "video_summary": ""},
+            "[]",
+            [],
             _summary(video_summary="A forklift crossed the aisle."),
             _summary(events=[{"type": "forklift"}]),
             "A forklift crossed the aisle.",
-            "[]",
         ],
-        ids=["summary-only", "events-only", "free-text", "non-dict-json"],
+        ids=[
+            "no-events-no-summary",
+            "no-events-whitespace-summary",
+            "no-events-dict-result",
+            "no-events-json-array",
+            "no-events-list-result",
+            "summary-only",
+            "events-only",
+            "free-text",
+        ],
     )
-    def test_non_empty_results(self, result):
+    def test_usable_results(self, result):
         handler = _make_handler()
         assert handler._is_empty_aggregation_result(result) is False
 
@@ -122,7 +132,7 @@ class TestCallAggregationWithEmptyGuard:
     def test_empty_result_is_retried_until_non_empty(self):
         handler = _make_handler(retries=2)
         good = _response("summarization", _summary(video_summary="A forklift tipped over."))
-        ctx_mgr = _FakeCtxMgr([_response("summarization", _summary()), good])
+        ctx_mgr = _FakeCtxMgr([_response("summarization", ""), good])
 
         response = handler._call_aggregation_with_empty_guard(
             ctx_mgr, "summarization", {"start_index": 0, "end_index": 1}, "test-id"
@@ -131,30 +141,123 @@ class TestCallAggregationWithEmptyGuard:
         assert response is good
         assert len(ctx_mgr.calls) == 2
 
-    def test_retries_are_bounded_and_last_response_returned(self):
+    def test_210_second_sample_fails_actionably_after_bounded_retries(self):
+        from via_exception import ViaException
+
         handler = _make_handler(retries=2)
-        last = _response("summarization", _summary())
-        ctx_mgr = _FakeCtxMgr(
-            [_response("summarization", _summary()), _response("summarization", _summary()), last]
-        )
+        ctx_mgr = _FakeCtxMgr([_response("summarization", "") for _ in range(3)])
 
-        response = handler._call_aggregation_with_empty_guard(
-            ctx_mgr, "summarization", {"start_index": 0, "end_index": 1}, "test-id"
-        )
+        with pytest.raises(ViaException) as exc_info:
+            handler._call_aggregation_with_empty_guard(
+                ctx_mgr,
+                "summarization",
+                # The documented 210-second sample produces 21 ten-second chunks.
+                {"start_index": 0, "end_index": 21},
+                "warehouse-sample",
+                "job-210-second-regression",
+            )
 
-        assert response is last
         assert len(ctx_mgr.calls) == 3
+        assert exc_info.value.status_code == 502
+        assert exc_info.value.code == "AggregationFailed"
+        assert exc_info.value.job_id == "job-210-second-regression"
+        assert exc_info.value.failed_stage == "aggregation"
 
-    def test_retries_disabled_makes_a_single_call(self):
+    def test_retries_disabled_fails_after_a_single_call(self):
+        from via_exception import ViaException
+
         handler = _make_handler(retries=0)
-        only = _response("summarization", _summary())
+        only = _response("summarization", "")
         ctx_mgr = _FakeCtxMgr([only])
 
-        response = handler._call_aggregation_with_empty_guard(
-            ctx_mgr, "summarization", {"start_index": 0, "end_index": 1}, "test-id"
+        with pytest.raises(ViaException):
+            handler._call_aggregation_with_empty_guard(
+                ctx_mgr, "summarization", {"start_index": 0, "end_index": 1}, "test-id"
+            )
+
+        assert len(ctx_mgr.calls) == 1
+
+    @pytest.mark.parametrize(
+        "raw",
+        [
+            '```json\n{"events": [{"type": "forklift"}], "video_summary": ""}\n```',
+            '{"events": [{"type": "forklift",}], "video_summary": "",}',
+            '{"events": "[{\\"type\\": \\"forklift\\"}]", "video_summary": ""}',
+        ],
+        ids=["markdown-fence", "repairable-json", "serialized-events"],
+    )
+    def test_event_json_is_repaired_and_normalized(self, raw):
+        handler = _make_handler(retries=2)
+        response = _response("summarization", raw)
+        ctx_mgr = _FakeCtxMgr([response])
+
+        result = handler._call_aggregation_with_empty_guard(
+            ctx_mgr, "summarization", {"start_index": 0, "end_index": 21}, "test-id"
         )
 
-        assert response is only
+        parsed = json.loads(result["summarization"]["result"])
+        assert parsed["events"] == [{"type": "forklift"}]
+        assert len(ctx_mgr.calls) == 1
+
+    @pytest.mark.parametrize(
+        "raw",
+        [
+            '{"events": "null", "video_summary": ""}',
+            '{"events": "42", "video_summary": ""}',
+            '{"events": [null, "not-an-event"], "video_summary": {}}',
+            '{"events": [], "video_summary": 42}',
+        ],
+        ids=[
+            "serialized-null-events",
+            "serialized-scalar-events",
+            "scalar-event-list-and-object-summary",
+            "numeric-summary",
+        ],
+    )
+    def test_malformed_fields_do_not_bypass_empty_guard(self, raw):
+        from via_exception import ViaException
+
+        handler = _make_handler(retries=0)
+        ctx_mgr = _FakeCtxMgr([_response("summarization", raw)])
+
+        with pytest.raises(ViaException) as exc_info:
+            handler._call_aggregation_with_empty_guard(
+                ctx_mgr, "summarization", {"start_index": 0, "end_index": 21}, "test-id"
+            )
+
+        assert exc_info.value.code == "AggregationFailed"
+        assert len(ctx_mgr.calls) == 1
+
+    def test_valid_no_match_result_succeeds_without_retry(self):
+        handler = _make_handler(retries=2)
+        no_match = _response("summarization", _summary())
+        ctx_mgr = _FakeCtxMgr([no_match])
+
+        response = handler._call_aggregation_with_empty_guard(
+            ctx_mgr, "summarization", {"start_index": 0, "end_index": 21}, "test-id"
+        )
+
+        assert json.loads(response["summarization"]["result"])["events"] == []
+        assert len(ctx_mgr.calls) == 1
+
+    def test_malformed_events_do_not_discard_valid_summary(self):
+        handler = _make_handler(retries=0)
+        ctx_mgr = _FakeCtxMgr(
+            [
+                _response(
+                    "summarization",
+                    '{"events": "null", "video_summary": "Warehouse activity."}',
+                )
+            ]
+        )
+
+        result = handler._call_aggregation_with_empty_guard(
+            ctx_mgr, "summarization", {"start_index": 0, "end_index": 21}, "test-id"
+        )
+
+        parsed = json.loads(result["summarization"]["result"])
+        assert parsed["events"] == []
+        assert parsed["video_summary"] == "Warehouse activity."
         assert len(ctx_mgr.calls) == 1
 
     def test_error_response_is_not_retried(self):
@@ -185,6 +288,41 @@ class TestCallAggregationWithEmptyGuard:
         assert response["summarization_online"]["metadata"] == {"total_tokens": 1234}
         assert len(ctx_mgr.calls) == 2
 
+
+class TestReadAggregationEmptyRetries:
+    """LVS_AGGREGATION_EMPTY_RETRIES overrides the default retry budget."""
+
+    def test_default_when_unset(self, monkeypatch):
+        from via_stream_handler import DEFAULT_AGGREGATION_EMPTY_RETRIES, ViaStreamHandler
+
+        monkeypatch.delenv("LVS_AGGREGATION_EMPTY_RETRIES", raising=False)
+        assert (
+            ViaStreamHandler._read_aggregation_empty_retries() == DEFAULT_AGGREGATION_EMPTY_RETRIES
+        )
+
+    @pytest.mark.parametrize("raw,expected", [("0", 0), ("1", 1), ("5", 5)])
+    def test_valid_override(self, monkeypatch, raw, expected):
+        from via_stream_handler import ViaStreamHandler
+
+        monkeypatch.setenv("LVS_AGGREGATION_EMPTY_RETRIES", raw)
+        assert ViaStreamHandler._read_aggregation_empty_retries() == expected
+
+    def test_invalid_value_falls_back_to_default(self, monkeypatch):
+        from via_stream_handler import DEFAULT_AGGREGATION_EMPTY_RETRIES, ViaStreamHandler
+
+        monkeypatch.setenv("LVS_AGGREGATION_EMPTY_RETRIES", "many")
+        assert (
+            ViaStreamHandler._read_aggregation_empty_retries() == DEFAULT_AGGREGATION_EMPTY_RETRIES
+        )
+
+    def test_negative_value_disables_retry(self, monkeypatch):
+        from via_stream_handler import ViaStreamHandler
+
+        monkeypatch.setenv("LVS_AGGREGATION_EMPTY_RETRIES", "-3")
+        assert ViaStreamHandler._read_aggregation_empty_retries() == 0
+
+
+class TestAggregationEventBoundsGuard:
     def test_out_of_range_timestamp_sample_is_retried(self):
         handler = _make_handler(retries=2)
         invalid = _summary(
@@ -389,36 +527,3 @@ class TestStructuredInferenceDocument:
             handler._structured_inference_document(req_info, self._Chunk(), "caption")
             == "caption"
         )
-
-
-class TestReadAggregationEmptyRetries:
-    """LVS_AGGREGATION_EMPTY_RETRIES overrides the default retry budget."""
-
-    def test_default_when_unset(self, monkeypatch):
-        from via_stream_handler import DEFAULT_AGGREGATION_EMPTY_RETRIES, ViaStreamHandler
-
-        monkeypatch.delenv("LVS_AGGREGATION_EMPTY_RETRIES", raising=False)
-        assert (
-            ViaStreamHandler._read_aggregation_empty_retries() == DEFAULT_AGGREGATION_EMPTY_RETRIES
-        )
-
-    @pytest.mark.parametrize("raw,expected", [("0", 0), ("1", 1), ("5", 5)])
-    def test_valid_override(self, monkeypatch, raw, expected):
-        from via_stream_handler import ViaStreamHandler
-
-        monkeypatch.setenv("LVS_AGGREGATION_EMPTY_RETRIES", raw)
-        assert ViaStreamHandler._read_aggregation_empty_retries() == expected
-
-    def test_invalid_value_falls_back_to_default(self, monkeypatch):
-        from via_stream_handler import DEFAULT_AGGREGATION_EMPTY_RETRIES, ViaStreamHandler
-
-        monkeypatch.setenv("LVS_AGGREGATION_EMPTY_RETRIES", "many")
-        assert (
-            ViaStreamHandler._read_aggregation_empty_retries() == DEFAULT_AGGREGATION_EMPTY_RETRIES
-        )
-
-    def test_negative_value_disables_retry(self, monkeypatch):
-        from via_stream_handler import ViaStreamHandler
-
-        monkeypatch.setenv("LVS_AGGREGATION_EMPTY_RETRIES", "-3")
-        assert ViaStreamHandler._read_aggregation_empty_retries() == 0

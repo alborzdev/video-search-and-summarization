@@ -33,6 +33,8 @@ import logging
 import os
 import tempfile
 import uuid
+from urllib.parse import urlencode
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -44,6 +46,49 @@ from vlm_pipeline.vlm_pipeline import VlmModelType
 API_PREFIX = "/v1"
 
 logger = logging.getLogger(__name__)
+
+# GPU-backed session fixtures must not run under multiple xdist workers.
+pytestmark = pytest.mark.xdist_group("gpu_embed")
+
+
+def _config_payload(
+    messagingbus="redis",
+    topic_prefix="mdx-bev",
+    alert_type="config",
+    change="config",
+    errorbus=None,
+    error_topic_prefix=None,
+):
+    metadata = {
+        "messagingbus": messagingbus,
+        "region": "region-1",
+        "group": "group_1",
+        "topic-prefix": topic_prefix,
+        "create-topic": True,
+        "topic-partition": 10,
+    }
+    if errorbus is not None:
+        metadata["errorbus"] = errorbus
+    if error_topic_prefix is not None:
+        metadata["error-topic-prefix"] = error_topic_prefix
+
+    return {
+        "alert_type": alert_type,
+        "created_at": "2023-03-10T00:45:16Z",
+        "txn_id": "f03ef248-2ec0-4a99-aeb5-938bd075bada",
+        "event": {
+            "camera_id": "",
+            "name": "region-1--group_1",
+            "camera_url": "",
+            "change": change,
+            "metadata": metadata,
+            "headers": {
+                "source": "vios",
+                "created_at": "2023-03-10T00:45:16.417Z",
+            },
+        },
+        "source": "vios",
+    }
 
 
 @pytest.fixture(scope="session")
@@ -57,9 +102,9 @@ def mock_args():
     args.host = "0.0.0.0"
     args.port = "8017"
     # Add any other required args from RTVIStreamHandler
-    args.kafka_enabled = False
-    args.kafka_topic = "mdx-embed"
     args.kafka_bootstrap_servers = ""
+    args.message_bus = ""
+    args.message_bus_topic = "mdx-embed"
     args.max_file_duration = 0
     args.num_gpus = 1
     args.vlm_batch_size = 4
@@ -103,20 +148,144 @@ def mock_args():
 @pytest.fixture(scope="session")
 def rtvi_server(mock_args):
     """Create an RTVI embed server instance for testing"""
-    with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "KAFKA_ENABLED": "false"}):
+    with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "MESSAGE_BUS": ""}):
         server = RTVIServer(mock_args)
         yield server
         if hasattr(server, "_stream_handler") and server._stream_handler:
-            try:
-                server._stream_handler.stop()
-            except Exception as e:
-                logger.error(f"Error stopping RTVI stream handler: {e}")
+            server._stream_handler.stop()
 
 
 @pytest.fixture(scope="session")
 def test_client(rtvi_server):
     """Create a FastAPI test client (shared across all tests)"""
     return TestClient(rtvi_server._app)
+
+
+@pytest.fixture
+def config_rtvi_server(mock_args):
+    """Create a lightweight Embed server for config endpoint tests."""
+    with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "MESSAGE_BUS": ""}):
+        with patch("server.rtvi_stream_handler.VlmPipeline") as mock_vlm_pipeline_class:
+            mock_pipeline = MagicMock()
+            mock_model_info = MagicMock()
+            mock_model_info.id = "test-model"
+            mock_model_info.created = 1234567890
+            mock_model_info.owned_by = "test"
+            mock_model_info.api_type = "test"
+            mock_pipeline.get_models_info.return_value = mock_model_info
+            mock_pipeline.get_health_status.return_value = []
+            mock_vlm_pipeline_class.return_value = mock_pipeline
+            server = RTVIServer(mock_args)
+            yield server
+            if hasattr(server, "_stream_handler") and server._stream_handler:
+                server._stream_handler.stop()
+
+
+@pytest.fixture
+def config_test_client(config_rtvi_server):
+    """Create a FastAPI test client for lightweight config endpoint tests."""
+    return TestClient(config_rtvi_server._app)
+
+
+class TestConfigEndpoint:
+    """Test VSS config API endpoint."""
+
+    def test_config_endpoint_updates_runtime_message_bus(
+        self, config_test_client, config_rtvi_server
+    ):
+        config_rtvi_server._stream_handler.configure_message_bus = MagicMock(
+            return_value={"messagingbus": "redis", "topic": "mdx-bev"}
+        )
+
+        response = config_test_client.post(f"{API_PREFIX}/config", json=_config_payload())
+
+        assert response.status_code == 200
+        assert response.json() == {
+            "txn_id": "f03ef248-2ec0-4a99-aeb5-938bd075bada",
+            "status": "updated",
+            "messagingbus": "redis",
+            "topic": "mdx-bev",
+            "source": "vios",
+            "created_at": "2023-03-10T00:45:16Z",
+        }
+        config_rtvi_server._stream_handler.configure_message_bus.assert_called_once_with(
+            "redis",
+            "mdx-bev",
+            create_topic=True,
+            topic_partition=10,
+        )
+
+    def test_config_endpoint_updates_runtime_error_bus(
+        self, config_test_client, config_rtvi_server
+    ):
+        config_rtvi_server._stream_handler.configure_message_bus = MagicMock(
+            return_value={"messagingbus": "kafka", "topic": "mdx-bev"}
+        )
+        config_rtvi_server._stream_handler.configure_error_bus = MagicMock(
+            return_value={"errorbus": "redis", "topic": "mdx-errors"}
+        )
+
+        response = config_test_client.post(
+            f"{API_PREFIX}/config",
+            json=_config_payload(
+                messagingbus="kafka",
+                topic_prefix="mdx-bev",
+                errorbus="redis",
+                error_topic_prefix="mdx-errors",
+            ),
+        )
+
+        assert response.status_code == 200
+        assert response.json()["errorbus"] == "redis"
+        assert response.json()["error_topic"] == "mdx-errors"
+        config_rtvi_server._stream_handler.configure_error_bus.assert_called_once_with(
+            "redis",
+            "mdx-errors",
+            create_topic=True,
+            topic_partition=10,
+        )
+
+    def test_config_endpoint_supports_vios_path(self, config_test_client, config_rtvi_server):
+        config_rtvi_server._stream_handler.configure_message_bus = MagicMock(
+            return_value={"messagingbus": "kafka", "topic": "mdx-configured"}
+        )
+
+        response = config_test_client.post(
+            "/api/v1/config",
+            json=_config_payload(messagingbus="kafka", topic_prefix="mdx-configured"),
+        )
+
+        assert response.status_code == 200
+        assert response.json()["messagingbus"] == "kafka"
+        assert response.json()["topic"] == "mdx-configured"
+        assert "warnings" not in response.json()
+
+    def test_config_endpoint_returns_runtime_warning(self, config_test_client, config_rtvi_server):
+        warning = (
+            "Runtime message bus changed from kafka:old to redis:new while 1 media generation "
+            "request(s) are active. Messages already queued may still publish to the previous "
+            "route; subsequent chunk messages will use the updated route."
+        )
+        config_rtvi_server._stream_handler.configure_message_bus = MagicMock(
+            return_value={"messagingbus": "redis", "topic": "new", "warnings": [warning]}
+        )
+
+        response = config_test_client.post(
+            f"{API_PREFIX}/config",
+            json=_config_payload(messagingbus="redis", topic_prefix="new"),
+        )
+
+        assert response.status_code == 200
+        assert response.json()["warnings"] == [warning]
+
+    def test_config_endpoint_rejects_non_config_change(self, config_test_client):
+        response = config_test_client.post(
+            f"{API_PREFIX}/config",
+            json=_config_payload(change="camera_add"),
+        )
+
+        assert response.status_code == 400
+        assert "Unsupported change type" in response.json()["message"]
 
 
 class TestHealthEndpoints:
@@ -198,7 +367,7 @@ class TestModelsEndpoint:
 class TestFileEndpoints:
     """Test file management endpoints"""
 
-    VIDEO_FILE_PATH = "/opt/nvidia/rtvi/warmup_streams/its_264.mp4"
+    VIDEO_FILE_PATH = "/opt/nvidia/rtvi/warmup_streams/sample_1080p_h264.mp4"
 
     def test_list_files_empty(self, test_client):
         """Test listing files when none exist"""
@@ -225,6 +394,42 @@ class TestFileEndpoints:
         response = test_client.post(f"{API_PREFIX}/files", files=files)
         print(f" response is {response.json()}")
         assert response.status_code == 200
+
+    def test_add_file_from_urlencoded_form(self, test_client):
+        """Test adding a file by path from an urlencoded form request."""
+        response = test_client.post(
+            f"{API_PREFIX}/files",
+            data={
+                "filename": self.VIDEO_FILE_PATH,
+                "purpose": "vision",
+                "media_type": "video",
+            },
+        )
+
+        assert response.status_code == 200
+
+    def test_add_file_rejects_urlencoded_form_with_too_many_fields(self, test_client):
+        """Test urlencoded forms use Starlette's max_fields protection."""
+        fields = [("purpose", "vision"), ("media_type", "video")]
+        fields.extend((f"unused_{index}", "x") for index in range(1000))
+
+        response = test_client.post(
+            f"{API_PREFIX}/files",
+            content=urlencode(fields),
+            headers={"content-type": "application/x-www-form-urlencoded"},
+        )
+
+        assert response.status_code == 400
+
+    def test_add_file_rejects_semicolon_only_urlencoded_form(self, test_client):
+        """Test semicolons are not treated as urlencoded field separators."""
+        response = test_client.post(
+            f"{API_PREFIX}/files",
+            content="a;" * 5000,
+            headers={"content-type": "application/x-www-form-urlencoded"},
+        )
+
+        assert response.status_code == 422
 
     def test_add_file_missing_params(self, test_client):
         """Test adding file with missing parameters"""
@@ -324,6 +529,96 @@ class TestLiveStreamEndpoints:
         data = response.json()
         assert isinstance(data, list)
 
+    def test_list_cv_live_stream_with_non_uuid_id(self, test_client, rtvi_server):
+        """CV camera identifiers remain valid when returned by the legacy list API."""
+        stream_id = rtvi_server._asset_manager.add_live_stream(
+            "rtsp://example.com/live",
+            description="camera-01",
+            stream_id="camera-01",
+            camera_id="camera-01",
+        )
+        try:
+            response = test_client.get(f"{API_PREFIX}/streams/get-stream-info")
+
+            assert response.status_code == 200
+            streams = {entry["id"]: entry for entry in response.json()}
+            assert stream_id in streams
+            assert streams[stream_id] == {
+                "id": stream_id,
+                "liveStreamUrl": "rtsp://example.com/live",
+                "description": "camera-01",
+                "chunk_duration": 0,
+                "chunk_overlap_duration": 0,
+                "place_name": "",
+                "place_type": "",
+                "place_lat": None,
+                "place_lon": None,
+                "place_alt": None,
+                "place_coordinate_x": None,
+                "place_coordinate_y": None,
+            }
+        finally:
+            rtvi_server._asset_manager.cleanup_asset(stream_id)
+
+    def test_add_live_stream_with_non_uuid_id_accepted(self, test_client, rtvi_server):
+        """POST /v1/streams/add accepts a non-UUID id and returns it in the response."""
+        stream_id = rtvi_server._asset_manager.add_live_stream(
+            "rtsp://example.com/live",
+            description="camera-01",
+            stream_id="camera-01",
+            camera_id="camera-01",
+        )
+        try:
+            # The stream was added with a non-UUID id; verify the add response model
+            # can serialise it without a ResponseValidationError.
+            response = test_client.get(f"{API_PREFIX}/streams/get-stream-info")
+            assert response.status_code == 200
+            ids = [entry["id"] for entry in response.json()]
+            assert "camera-01" in ids
+        finally:
+            rtvi_server._asset_manager.cleanup_asset(stream_id)
+
+    def test_add_live_stream_request_accepts_non_uuid_id_field(self, test_client, rtvi_server):
+        """POST /v1/streams/add accepts a non-UUID id, adds the stream, and returns it in results."""
+        # Before the fix AddLiveStream.id was UUID-typed: a non-UUID id caused a 422
+        # uuid_parsing error. After the fix the id is str-typed so the stream is added
+        # successfully and camera-01 appears in results with no errors.
+        # Patch _SKIP_INPUT_MEDIA_VERIFICATION to False so the endpoint skips the
+        # RTSP probe and adds the stream without reaching an external address.
+        with patch("server.rtvi_embed_server._SKIP_INPUT_MEDIA_VERIFICATION", False):
+            response = test_client.post(
+                f"{API_PREFIX}/streams/add",
+                json={"streams": [{"liveStreamUrl": "rtsp://example.com/live", "id": "camera-01", "description": "camera-01"}]},
+            )
+        try:
+            assert response.status_code == 200, f"Expected 200, got {response.status_code}: {response.text}"
+            data = response.json()
+            assert data["errors"] == [], f"Unexpected errors: {data['errors']}"
+            ids = [r["id"] for r in data["results"]]
+            assert "camera-01" in ids, f"camera-01 not in results: {ids}"
+        finally:
+            rtvi_server._asset_manager.cleanup_asset("camera-01")
+
+    @pytest.mark.parametrize(
+        "stream_id",
+        ["camera/01", ".", "..", "camera 01", "camera?01", "camera#01", "camera\t01"],
+    )
+    def test_add_live_stream_rejects_unsafe_id(self, test_client, stream_id):
+        """Stream IDs with unsafe characters (path separators, spaces, etc.) must be rejected."""
+        response = test_client.post(
+            f"{API_PREFIX}/streams/add",
+            json={
+                "streams": [
+                    {
+                        "id": stream_id,
+                        "liveStreamUrl": "rtsp://example.com/stream",
+                        "description": "test",
+                    }
+                ]
+            },
+        )
+        assert response.status_code == 422
+
     def test_add_live_stream_missing_url(self, test_client):
         """Test adding live stream without URL"""
         response = test_client.post(
@@ -345,9 +640,14 @@ class TestLiveStreamEndpoints:
         response = test_client.delete(f"{API_PREFIX}/streams/delete/{fake_id}")
         assert response.status_code == 400
 
+    def test_delete_live_stream_accepts_non_uuid_stream_id(self, test_client):
+        """Delete-by-id accepts camera-id-derived stream IDs, not only UUIDs."""
+        response = test_client.delete(f"{API_PREFIX}/streams/delete/my-camera-123")
+        assert response.status_code == 400
+
     def test_delete_live_streams_batch(self, test_client):
         """Test batch deleting live streams"""
-        fake_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+        fake_ids = [str(uuid.uuid4()), "my-camera-batch-123"]
         response = test_client.request(
             "DELETE", f"{API_PREFIX}/streams/delete-batch", json={"stream_ids": fake_ids}
         )
@@ -434,6 +734,11 @@ class TestVideoEmbeddingsGeneration:
         response = test_client.delete(f"{API_PREFIX}/generate_video_embeddings/{fake_id}")
         assert response.status_code == 400
 
+    def test_stop_live_stream_embeddings_accepts_non_uuid_stream_id(self, test_client):
+        """Stop-by-id accepts camera-id-derived stream IDs, not only UUIDs."""
+        response = test_client.delete(f"{API_PREFIX}/generate_video_embeddings/my-camera-123")
+        assert response.status_code == 400
+
 
 class TestStreamingConstraints:
     """Test streaming implementation constraints"""
@@ -448,6 +753,249 @@ class TestStreamingConstraints:
         )
         # Should fail validation or return error about live stream requiring streaming
         assert response.status_code in [400, 422]
+
+
+class TestCVStreamEndpoints:
+    """Test CV/VIOS-compatible stream endpoints."""
+
+    def test_stream_add_accepts_vios_camera_streaming_file_sensor(self, mock_args, tmp_path):
+        """VIOS camera_streaming file sensors are registered as file assets."""
+        with TempEnv(
+            {
+                "SKIP_PIPELINE_WARMUP": "1",
+                "MESSAGE_BUS": "",
+                "FILE_URL_ALLOWED_DIRS": str(tmp_path),
+            }
+        ):
+            with patch("server.rtvi_stream_handler.VlmPipeline") as mock_vlm_pipeline_class:
+                mock_pipeline = MagicMock()
+                mock_model_info = MagicMock()
+                mock_model_info.id = "test-model"
+                mock_model_info.created = 1234567890
+                mock_model_info.owned_by = "test"
+                mock_model_info.api_type = "test"
+                mock_pipeline.get_models_info.return_value = mock_model_info
+                mock_pipeline.get_health_status.return_value = []
+                mock_vlm_pipeline_class.return_value = mock_pipeline
+
+                rtvi_server = RTVIServer(mock_args)
+                test_client = TestClient(rtvi_server._app)
+
+                try:
+                    self._assert_vios_file_sensor_roundtrip(test_client, rtvi_server, tmp_path)
+                finally:
+                    if hasattr(rtvi_server, "_stream_handler") and rtvi_server._stream_handler:
+                        rtvi_server._stream_handler.stop()
+
+    def _assert_vios_file_sensor_roundtrip(self, test_client, rtvi_server, tmp_path):
+        camera_id = f"vios-file-{uuid.uuid4()}"
+        file_path = tmp_path / "Camera_01.mp4"
+        file_path.write_bytes(b"not a real mp4")
+        body = {
+            "alert_type": "camera_status_change",
+            "created_at": "2026-07-09T15:02:40Z",
+            "event": {
+                "camera_id": camera_id,
+                "camera_name": "Camera_01",
+                "camera_url": str(file_path),
+                "change": "camera_streaming",
+                "camera_type": "file",
+                "tags": "",
+                "metadata": {
+                    "duration": "600",
+                    "file_start_time": "2026-07-09T14:58:40Z",
+                },
+            },
+            "source": "vios",
+        }
+
+        response = test_client.put(f"{API_PREFIX}/camera/streaming", json=body)
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["camera_id"] == camera_id
+        assert data["asset_id"] == camera_id
+        asset = rtvi_server._asset_manager.get_asset(data["asset_id"])
+        assert asset.path == str(file_path)
+        assert asset.is_live is False
+        assert asset.creation_time == "2026-07-09T14:58:40.000Z"
+        assert rtvi_server._asset_manager.get_asset_id_by_camera_id(camera_id) == data["asset_id"]
+
+        remove_response = test_client.request(
+            "DELETE",
+            f"{API_PREFIX}/camera/remove",
+            json={
+                "alert_type": "camera_status_change",
+                "created_at": "2026-07-09T15:03:40Z",
+                "event": {
+                    "camera_id": camera_id,
+                    "camera_name": "Camera_01",
+                    "camera_url": str(file_path),
+                    "change": "camera_remove",
+                    "camera_type": "file",
+                },
+                "source": "vios",
+            },
+        )
+        assert remove_response.status_code == 200
+        assert remove_response.json()["asset_id"] == data["asset_id"]
+
+    def test_stream_add_downloads_vios_https_file_sensor(self, mock_args):
+        """VIOS HTTPS camera URL is downloaded as a file asset with request headers."""
+        camera_id = f"vios-http-file-{uuid.uuid4()}"
+        url_headers = {"Authorization": "Bearer test-token"}
+        remote_url = (
+            "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/"
+            "Big_Buck_Bunny_360_10s_1MB.mp4"
+        )
+
+        with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "MESSAGE_BUS": ""}):
+            with patch("server.rtvi_stream_handler.VlmPipeline") as mock_vlm_pipeline_class:
+                mock_pipeline = MagicMock()
+                mock_pipeline.get_health_status.return_value = []
+                mock_vlm_pipeline_class.return_value = mock_pipeline
+
+                rtvi_server = RTVIServer(mock_args)
+                test_client = TestClient(rtvi_server._app)
+                download_file = AsyncMock(return_value=camera_id)
+                add_live_stream = MagicMock()
+                rtvi_server._asset_manager.download_file = download_file
+                rtvi_server._asset_manager.add_live_stream = add_live_stream
+
+                try:
+                    response = test_client.put(
+                        f"{API_PREFIX}/camera/streaming",
+                        json={
+                            "alert_type": "camera_status_change",
+                            "created_at": "2026-07-09T15:02:40Z",
+                            "event": {
+                                "camera_id": camera_id,
+                                "camera_name": "Camera_01",
+                                "camera_url": remote_url,
+                                "change": "camera_streaming",
+                                "metadata": {"file_start_time": "2026-07-09T14:58:40Z"},
+                                "headers": {"url_headers": url_headers},
+                            },
+                            "source": "vios",
+                        },
+                    )
+                finally:
+                    if hasattr(rtvi_server, "_stream_handler") and rtvi_server._stream_handler:
+                        rtvi_server._stream_handler.stop()
+
+        assert response.status_code == 200
+        assert response.json()["asset_id"] == camera_id
+        add_live_stream.assert_not_called()
+        download_file.assert_awaited_once_with(
+            url=remote_url,
+            file_name="Big_Buck_Bunny_360_10s_1MB.mp4",
+            purpose="vision",
+            media_type="video",
+            creation_time="2026-07-09T14:58:40.000Z",
+            file_id=camera_id,
+            url_headers=url_headers,
+            sensor_name=camera_id,
+            camera_id=camera_id,
+        )
+
+    def test_stream_add_rtsp_uses_camera_id_as_stream_id(self, mock_args):
+        """CV-compatible /v1/stream/add reuses camera_id as the internal stream/asset id."""
+        camera_id = f"cam-{uuid.uuid4()}"
+        rtsp_url = "rtsp://127.0.0.1:8554/live/video"
+
+        with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "MESSAGE_BUS": ""}):
+            with patch("server.rtvi_stream_handler.VlmPipeline") as mock_vlm_pipeline_class:
+                mock_pipeline = MagicMock()
+                mock_pipeline.get_health_status.return_value = []
+                mock_vlm_pipeline_class.return_value = mock_pipeline
+
+                rtvi_server = RTVIServer(mock_args)
+                test_client = TestClient(rtvi_server._app)
+                add_live_stream = MagicMock(return_value=camera_id)
+                rtvi_server._asset_manager.add_live_stream = add_live_stream
+
+                try:
+                    response = test_client.post(
+                        f"{API_PREFIX}/stream/add",
+                        json={
+                            "key": "sensor",
+                            "value": {
+                                "camera_id": camera_id,
+                                "camera_name": "front_door",
+                                "camera_url": rtsp_url,
+                                "change": "camera_add",
+                            },
+                        },
+                    )
+                finally:
+                    if hasattr(rtvi_server, "_stream_handler") and rtvi_server._stream_handler:
+                        rtvi_server._stream_handler.stop()
+
+        assert response.status_code == 200
+        data = response.json()
+        assert data["camera_id"] == camera_id
+        assert data["asset_id"] == camera_id
+        add_live_stream.assert_called_once_with(
+            url=rtsp_url,
+            description="front_door",
+            camera_id=camera_id,
+            sensor_name=camera_id,
+            stream_id=camera_id,
+        )
+
+    def test_stream_remove_accepts_vios_registration_without_asset(self, mock_args):
+        """VIOS camera_remove is idempotent after registration-only camera_add."""
+        camera_id = f"vios-reg-remove-{uuid.uuid4()}"
+        register_body = {
+            "alert_type": "camera_status_change",
+            "created_at": "2026-07-01T07:06:11Z",
+            "event": {
+                "camera_id": camera_id,
+                "camera_name": "Camera_01",
+                "camera_url": "",
+                "change": "camera_add",
+                "tags": "",
+            },
+            "source": "vios",
+        }
+        remove_body = {
+            "alert_type": "camera_status_change",
+            "created_at": "2026-07-01T07:15:20Z",
+            "event": {
+                "camera_id": camera_id,
+                "camera_name": "Camera_01",
+                "camera_url": "",
+                "change": "camera_remove",
+                "tags": "",
+            },
+            "source": "vios",
+        }
+
+        with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "MESSAGE_BUS": ""}):
+            with patch("server.rtvi_stream_handler.VlmPipeline") as mock_vlm_pipeline_class:
+                mock_pipeline = MagicMock()
+                mock_pipeline.get_health_status.return_value = []
+                mock_vlm_pipeline_class.return_value = mock_pipeline
+
+                rtvi_server = RTVIServer(mock_args)
+                test_client = TestClient(rtvi_server._app)
+
+                try:
+                    register_response = test_client.post("/api/v1/camera/add", json=register_body)
+                    remove_response = test_client.request(
+                        "DELETE", "/api/v1/camera/remove", json=remove_body
+                    )
+                finally:
+                    if hasattr(rtvi_server, "_stream_handler") and rtvi_server._stream_handler:
+                        rtvi_server._stream_handler.stop()
+
+        assert register_response.status_code == 200
+        assert remove_response.status_code == 200
+        assert remove_response.json() == {
+            "camera_id": camera_id,
+            "asset_id": "",
+            "status": "removed",
+        }
 
 
 class TestErrorHandling:
@@ -478,7 +1026,7 @@ class TestServerInitialization:
 
     def test_server_initialization(self, mock_args):
         """Test server can be initialized"""
-        with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "KAFKA_ENABLED": "false"}):
+        with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "MESSAGE_BUS": ""}):
             server = RTVIServer(mock_args)
             assert server._app is not None
             assert server._asset_manager is not None
@@ -502,7 +1050,7 @@ class TestServerInitialization:
                 "0.0.0.0",
                 "--port",
                 "8017",
-                "--kafka-topic",
+                "--message-bus-topic",
                 "mdx-embed",
                 "--kafka-bootstrap-servers",
                 "kafka:9092",
@@ -546,7 +1094,7 @@ class TestIntegrationWithServer:
     )
     def test_server_startup_shutdown(self, mock_args):
         """Test server can start and stop"""
-        with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "KAFKA_ENABLED": "false"}):
+        with TempEnv({"SKIP_PIPELINE_WARMUP": "1", "MESSAGE_BUS": ""}):
             server = RTVIServer(mock_args)
             # Note: Full server.run() would block, so we just test initialization
             assert server._app is not None

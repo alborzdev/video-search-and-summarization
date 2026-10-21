@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2021-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2021-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
@@ -32,19 +33,21 @@
 constexpr int DEFAULT_EACH_FILE_SIZE_MB = 100;
 constexpr int MAX_FRAME_COUNT_LIMIT = 500;
 constexpr int MAX_TOLERABLE_IDR_FRAME_SIZE = 600000;
+constexpr int DEFAULT_STREAM_DETAILS_TIMEOUT_SEC = 10;
 
 using namespace std;
+using namespace nv_vms;
 
 // HW Encoder unsupported profiles
 // TODO-MB: Need to verify if these are supported on Orin
-std::map<std::string, std::string, std::less<>> videoProfiles{
+const std::map<std::string, std::string, std::less<>> videoProfiles{
     {"constrained-baseline", "baseline"},
     {"constrained-high", "high"},
     {"main-12", "main"}
 };
 
 // H264 SW Encoder unsupported profiles
-std::map<std::string, std::string, std::less<>> videoProfilesx264{
+const std::map<std::string, std::string, std::less<>> videoProfilesx264{
     {"constrained-high", "high"},
     {"main-12", "main"}
 };
@@ -56,7 +59,7 @@ std::map<std::string, std::string, std::less<>> videoProfilesx264{
 // };
 
 // Map of pair of resolution, frame rate and level
-std::multimap<std::pair<int, int>, string> H264Levels{
+const std::multimap<std::pair<int, int>, string> H264Levels{
     {{HEIGHT_144p, 15}, "1"}, {{HEIGHT_144p, 30}, "1.1"}, {{HEIGHT_144p, 60}, "1.2"},
     {{HEIGHT_240p, 10}, "1.1"}, {{HEIGHT_240p, 20}, "1.2"}, {{HEIGHT_240p, 36}, "1.3"},
     {{HEIGHT_480p, 15}, "2.2"}, {{HEIGHT_480p, 30}, "3"}, {{HEIGHT_480p, 80}, "3.1"},
@@ -687,11 +690,42 @@ int getFrameCountForFile (string& file_path, const string& codec)
     return elements.m_parserSrcPadOutCount;
 }
 
+gint64 GstNvElements::queryPipelinePositionNs()
+{
+    if (m_pipeline == nullptr)
+    {
+        return -1;
+    }
+    gint64 position = -1;
+    if (gst_element_query_position(m_pipeline, GST_FORMAT_TIME, &position) == FALSE)
+    {
+        return -1;
+    }
+    if (!GST_CLOCK_TIME_IS_VALID(static_cast<GstClockTime>(position)))
+    {
+        return -1;
+    }
+    return position;
+}
+
 void GstNvElements::pollBusMessages()
 {
     // Maximum timeout to prevent permanent hangs (e.g., caps negotiation failures)
     const int MAX_TIMEOUT_SECONDS = GET_CONFIG().download_files_timeout_secs;
     const int POLL_INTERVAL_SECONDS = 2;
+    // A pipeline in steady state emits no bus messages, so silence alone says
+    // nothing about whether it is working.  A software encode of a long file on
+    // a slow machine is silent for far longer than the budget a fast machine
+    // needs, and failing it there discards work that was progressing.  When the
+    // budget runs out, ask the pipeline where it has reached: only a position
+    // that has not moved since the budget started is actually stuck.  One that
+    // has moved earns another slice and is asked again, up to a ceiling that
+    // still bounds a pipeline that stops moving later on.
+    const int PROGRESS_GRACE_SECONDS = 30;
+    const int PROGRESS_CEILING_SECONDS = std::max(MAX_TIMEOUT_SECONDS, 600);
+    // Position at the moment the current silent stretch began.
+    gint64 checkpoint_position = queryPipelinePositionNs();
+    int budget_seconds = MAX_TIMEOUT_SECONDS;
     int elapsed_seconds = 0;
 
     while(!m_isError)
@@ -741,6 +775,10 @@ void GstNvElements::pollBusMessages()
                     g_free (path);
                     // Reset timeout on activity - pipeline is making progress
                     elapsed_seconds = 0;
+                    // The next silent stretch is measured from here, so the
+                    // decision at its end compares against where the pipeline
+                    // stood when the silence began rather than at start-up.
+                    checkpoint_position = queryPipelinePositionNs();
                     break;
                 }
             }
@@ -750,15 +788,34 @@ void GstNvElements::pollBusMessages()
         {
             // No message received within poll interval - check for timeout
             elapsed_seconds += POLL_INTERVAL_SECONDS;
-            if (elapsed_seconds >= MAX_TIMEOUT_SECONDS)
+            if (elapsed_seconds >= budget_seconds)
             {
-                LOG(error) << "Pipeline timeout after " << MAX_TIMEOUT_SECONDS
-                          << " seconds without EOS/progress. Pipeline may be stuck." << endl;
-                m_isError = true;
-                return;
+                const gint64 position = queryPipelinePositionNs();
+                // An unanswerable position query is treated as no progress, so a
+                // pipeline that cannot say where it is still fails on the budget
+                // it would have failed on before.
+                const bool progressing = position >= 0 && position > checkpoint_position;
+                if (progressing && budget_seconds < PROGRESS_CEILING_SECONDS)
+                {
+                    budget_seconds = std::min(budget_seconds + PROGRESS_GRACE_SECONDS,
+                                              PROGRESS_CEILING_SECONDS);
+                    LOG(info) << "Pipeline still progressing at "
+                              << (position / GST_SECOND) << "s after " << elapsed_seconds
+                              << "s without a bus message; extending budget to "
+                              << budget_seconds << "s (ceiling " << PROGRESS_CEILING_SECONDS
+                              << "s)" << endl;
+                    checkpoint_position = position;
+                }
+                else
+                {
+                    LOG(error) << "Pipeline timeout after " << elapsed_seconds
+                              << " seconds without EOS/progress. Pipeline may be stuck." << endl;
+                    m_isError = true;
+                    return;
+                }
             }
             LOG(verbose) << "No message received, elapsed: " << elapsed_seconds
-                        << "s, max: " << MAX_TIMEOUT_SECONDS << "s" << endl;
+                        << "s, budget: " << budget_seconds << "s" << endl;
         }
     }
     LOG(verbose) << "Exiting from bus message task...." << endl;
@@ -1063,15 +1120,18 @@ bool GstTranscode::transcode (TranscodeParam params)
         // - SW dec + SW enc: regular -> regular (videoconvert is fine)
         if (m_useHwDecoder || m_useHwEncoder)
         {
-#ifdef JETSON_PLATFORM
-            m_videoConverter = gst_element_factory_make("nvvidconv", "convert");
-#else
-            m_videoConverter = gst_element_factory_make("nvvideoconvert", "convert");
-            if (!m_videoConverter)
+            if (isJetsonPlatform())
             {
                 m_videoConverter = gst_element_factory_make("nvvidconv", "convert");
             }
-#endif
+            else
+            {
+                m_videoConverter = gst_element_factory_make("nvvideoconvert", "convert");
+                if (!m_videoConverter)
+                {
+                    m_videoConverter = gst_element_factory_make("nvvidconv", "convert");
+                }
+            }
             if (!m_videoConverter)
             {
                 LOG(warning) << "nvvideoconvert not available, using videoconvert" << endl;
@@ -1241,7 +1301,7 @@ bool GstTranscode::transcode (TranscodeParam params)
     if (m_useHwEncoder)
     {
         // nvv4l2 encoder settings
-        g_object_set(G_OBJECT(m_enc), "gpu-id", g_gpuIndex, NULL);
+        g_object_set(G_OBJECT(m_enc), "gpu-id", getGpuIndex(), NULL);
 
         if (params.m_allIframes)
         {
@@ -1268,9 +1328,10 @@ bool GstTranscode::transcode (TranscodeParam params)
             }
         }
 
-#ifdef JETSON_PLATFORM
-        g_object_set(G_OBJECT(m_enc), "copy-timestamp", true, NULL);
-#endif
+        if (isJetsonPlatform())
+        {
+            g_object_set(G_OBJECT(m_enc), "copy-timestamp", true, NULL);
+        }
         LOG(info) << "nvv4l2enc configured (no B-frames by default), iframeinterval=" << keyFrameInterval << endl;
     }
     else
@@ -1822,20 +1883,19 @@ error:
     return (ret == 0) ? result : Json::nullValue;
 }
 
-GstDummyUdpPipeline* GstDummyUdpPipeline::m_instance = nullptr;
+std::unique_ptr<GstDummyUdpPipeline> GstDummyUdpPipeline::m_instance = nullptr;
 GstDummyUdpPipeline* GstDummyUdpPipeline::getInstance()
 {
     if (m_instance == nullptr)
     {
-        m_instance = new GstDummyUdpPipeline();
+        m_instance = std::make_unique<GstDummyUdpPipeline>();
     }
-    return m_instance;
+    return m_instance.get();
 }
 
 void GstDummyUdpPipeline::deleteInstance()
 {
-    delete m_instance;
-    m_instance = nullptr;
+    m_instance.reset();
 }
 
 GstDummyUdpPipeline::~GstDummyUdpPipeline()
@@ -2122,7 +2182,8 @@ static GstPadProbeReturn pad_cb(GstPad *pad, GstPadProbeInfo *info, gpointer use
     return GST_PAD_PROBE_OK;
 }
 
-Json::Value getRTSPStreamDetails (const string &url, std::string& codec, std::vector<std::vector<uint8_t>> sps_pps_idr_frames)
+Json::Value getRTSPStreamDetails (const string &url, std::string& codec, std::vector<std::vector<uint8_t>> sps_pps_idr_frames,
+                                  int timeoutSec)
 {
     LOG(info) << "Entry getRTSPStreamDetails for url = " << secureUrlForLogging(url) << endl;
 
@@ -2239,7 +2300,8 @@ Json::Value getRTSPStreamDetails (const string &url, std::string& codec, std::ve
 
     /* Listen to the bus */
     bus = gst_element_get_bus (elements.m_pipeline);
-    msg = gst_bus_timed_pop_filtered (bus, 10 * GST_SECOND,
+    msg = gst_bus_timed_pop_filtered (bus,
+        (timeoutSec > 0 ? timeoutSec : DEFAULT_STREAM_DETAILS_TIMEOUT_SEC) * GST_SECOND,
         (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
 
     /* Parse message */

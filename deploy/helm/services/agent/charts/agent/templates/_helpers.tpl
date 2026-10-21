@@ -27,7 +27,16 @@
 {{- end }}
 {{- end }}
 {{- end }}
-{{- define "vss-agent.image" -}}{{ printf "%s:%s" .Values.image.repository .Values.image.tag }}{{- end -}}
+{{- define "vss-agent.image" -}}
+{{- $global := .Values.global | default dict -}}
+{{- $prefix := index $global "container_prefix" | default "" -}}
+{{- $repository := .Values.image.repository -}}
+{{- if $prefix -}}
+{{- $repository = printf "%s/vss-agent" (trimSuffix "/" $prefix) -}}
+{{- end -}}
+{{- $tag := index $global "container_tag" | default .Values.image.tag -}}
+{{- printf "%s:%s" $repository $tag -}}
+{{- end -}}
 {{/*
 Expand the name of the chart.
 */}}
@@ -100,7 +109,11 @@ Create the name of the service account to use
 */}}
 {{- define "agents.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "agents.fullname" .) .Values.serviceAccount.name }}
+{{- if .Values.serviceAccount.name }}
+{{- include "agents.k8sSvcHost" (dict "root" . "short" .Values.serviceAccount.name) | trunc 63 | trimSuffix "-" }}
+{{- else }}
+{{- include "agents.fullname" . }}
+{{- end }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

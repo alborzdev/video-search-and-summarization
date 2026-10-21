@@ -176,7 +176,7 @@ describe("live demo workspace", () => {
     await screen.findByText("Live questions ready");
     const preview = screen.getByTestId("live-preview");
     const input = screen.getByRole("spinbutton", { name: "Seconds of footage" });
-    expect(input).toHaveValue(3);
+    expect(input).toHaveValue(1);
     fireEvent.change(input, { target: { value: "2" } });
     await screen.findByText("Live questions ready");
     await askQuestion();
@@ -667,6 +667,51 @@ describe("live demo workspace", () => {
     await screen.findByText(/Pause visual monitoring in Alert rules to ask a question/);
     expect(screen.getByText(answer.answer)).toBeInTheDocument();
     expect(screen.getByLabelText("Inspected video evidence")).toHaveAttribute("src", "/retained/inspected.mp4");
+  });
+
+  it("releases a timed-out question and ignores its late answer", async () => {
+    const api = mockApi({ recordingStatus: "on" });
+    let finish!: (response: Response) => void;
+    let questionSignal: AbortSignal | undefined;
+    global.fetch = jest.fn((input, options) => {
+      if (input === "/api/vision/analyst") {
+        questionSignal = options?.signal as AbortSignal;
+        return new Promise<Response>((resolve) => { finish = resolve; });
+      }
+      return api(input, options);
+    });
+    render(<LiveDemoWorkspace {...props()} />);
+    await screen.findByText("Live questions ready");
+    jest.useFakeTimers();
+    fireEvent.change(screen.getByLabelText("Your question"), { target: { value: "Describe this scene" } });
+    fireEvent.click(screen.getByRole("button", { name: "Ask the video" }));
+    await act(async () => { jest.advanceTimersByTime(90_000); });
+    expect(questionSignal?.aborted).toBe(true);
+    expect(screen.getByText(/The visual question timed out/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ask the video" })).toBeEnabled();
+    await act(async () => { finish(jsonResponse(answer)); });
+    expect(screen.queryByText(answer.answer)).not.toBeInTheDocument();
+  });
+
+  it("cancels the old camera question when the operator selects another source", async () => {
+    const api = mockApi({ recordingStatus: "on" });
+    let questionSignal: AbortSignal | undefined;
+    global.fetch = jest.fn((input, options) => {
+      if (input === "/api/vision/analyst") {
+        questionSignal = options?.signal as AbortSignal;
+        return new Promise<Response>(() => undefined);
+      }
+      return api(input, options);
+    });
+    render(<LiveDemoWorkspace {...props([hospital, other])} />);
+    await screen.findByText("Live questions ready");
+    fireEvent.change(screen.getByLabelText("Your question"), { target: { value: "Describe this scene" } });
+    fireEvent.click(screen.getByRole("button", { name: "Ask the video" }));
+    expect(questionSignal?.aborted).toBe(false);
+    expect(screen.getByRole("combobox", { name: "Live camera" })).toBeEnabled();
+    fireEvent.change(screen.getByRole("combobox", { name: "Live camera" }), { target: { value: other.streamId } });
+    await waitFor(() => expect(questionSignal?.aborted).toBe(true));
+    expect(screen.getByTestId("live-preview")).toHaveTextContent(other.streamId);
   });
 
 });

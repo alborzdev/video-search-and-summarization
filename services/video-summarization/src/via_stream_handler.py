@@ -219,6 +219,9 @@ class RequestInfo:
         self.vlm_pipeline_span = None
         self._e2e_span_context = None
         self._vlm_pipeline_span_context = None
+        # Trace context extracted from the inbound request's traceparent header,
+        # carried here because span creation happens on an executor thread.
+        self._remote_trace_context = None
         # fps metrics
         self._fps_start_time = None
         self._fps_frame_count = 0
@@ -228,6 +231,9 @@ class RequestInfo:
         self.custom_metadata = None
         self.delete_external_collection = False
         self.error_message = ""
+        self.error_code = None
+        self.error_status_code = None
+        self.failed_stage = None
         self.schema = None
         self.batch_response_method = None
         self.scenario = None
@@ -704,6 +710,13 @@ class ViaStreamHandler:
                 logger.error("".join(traceback.format_exception(ex)))
                 if not req_info.is_live:
                     req_info.status = RequestInfo.Status.FAILED
+                    if isinstance(ex, ViaException):
+                        req_info.error_message = ex.message
+                        req_info.error_code = ex.code
+                        req_info.error_status_code = ex.status_code
+                        req_info.failed_stage = ex.failed_stage
+                    else:
+                        req_info.error_message = str(ex)
                 else:
                     req_info.response += [
                         RequestInfo.Response(
@@ -1611,6 +1624,33 @@ class ViaStreamHandler:
         req_info.status = RequestInfo.Status.PROCESSING
         req_info.start_time = time.time()
 
+        # Create OTEL spans for end-to-end and VLM pipeline tracing. This runs
+        # before the dense caption cache check below so a cache hit still
+        # produces a correctly parented trace instead of orphaned chunk spans.
+        if is_tracing_enabled():
+            from opentelemetry import trace
+
+            tracer = get_tracer()
+            if tracer:
+                # _remote_trace_context is the caller's traceparent when supplied,
+                # otherwise None, which starts a new root span as before.
+                req_info._e2e_span = tracer.start_span(
+                    "Summarization E2E Latency",
+                    context=getattr(req_info, "_remote_trace_context", None),
+                )
+                req_info._e2e_span.set_attribute("request_id", req_info.request_id)
+                req_info._e2e_span.set_attribute("source_id", req_info.source_id)
+                req_info._e2e_span_context = trace.set_span_in_context(req_info._e2e_span)
+
+                req_info.vlm_pipeline_span = tracer.start_span(
+                    "VLM Pipeline Latency", context=req_info._e2e_span_context
+                )
+                req_info.vlm_pipeline_span.set_attribute("request_id", req_info.request_id)
+                req_info.vlm_pipeline_span.set_attribute("source_id", req_info.source_id)
+                req_info._vlm_pipeline_span_context = trace.set_span_in_context(
+                    req_info.vlm_pipeline_span, context=req_info._e2e_span_context
+                )
+
         # Dense caption cache: load from .dc.json if available
         enable_dense_caption = os.environ.get(
             "ENABLE_DENSE_CAPTION", "false"
@@ -1626,27 +1666,15 @@ class ViaStreamHandler:
                 req_info.chunk_count = len(req_info_deserialized.processed_chunk_list)
                 for vlm_response in req_info_deserialized.processed_chunk_list:
                     self._on_vlm_chunk_response(vlm_response, req_info)
+                if req_info.chunk_count:
+                    # The final replayed chunk ends the pipeline span and queues
+                    # _process_output, which ends the E2E span.
+                    return
+                # An empty cache replays nothing, so neither span would other-
+                # wise be closed and the trace would never be exported.
+                self._end_vlm_pipeline_span(req_info)
+                self._end_e2e_span(req_info)
                 return
-
-        # Create OTEL spans for end-to-end and VLM pipeline tracing
-        if is_tracing_enabled():
-            from opentelemetry import trace
-
-            tracer = get_tracer()
-            if tracer:
-                req_info._e2e_span = tracer.start_span("Summarization E2E Latency")
-                req_info._e2e_span.set_attribute("request_id", req_info.request_id)
-                req_info._e2e_span.set_attribute("source_id", req_info.source_id)
-                req_info._e2e_span_context = trace.set_span_in_context(req_info._e2e_span)
-
-                req_info.vlm_pipeline_span = tracer.start_span(
-                    "VLM Pipeline Latency", context=req_info._e2e_span_context
-                )
-                req_info.vlm_pipeline_span.set_attribute("request_id", req_info.request_id)
-                req_info.vlm_pipeline_span.set_attribute("source_id", req_info.source_id)
-                req_info._vlm_pipeline_span_context = trace.set_span_in_context(
-                    req_info.vlm_pipeline_span, context=req_info._e2e_span_context
-                )
 
         if req_info._ctx_mgr:
             ca_rag_config = self.update_ca_rag_config(req_info)
@@ -2231,7 +2259,7 @@ class ViaStreamHandler:
         qa_ctx.call({"ingestion_function": {"uuid": stream_id}})
         return len(accepted)
 
-    def summarize_stream(self, request: StreamSummarizeRequest):
+    def summarize_stream(self, request: StreamSummarizeRequest, trace_context=None):
         """Summarize a live stream by aggregating captions from Elasticsearch via CA-RAG.
 
         Requires ``KAFKA_ENABLED=true``. Creates a RequestInfo, borrows a
@@ -2252,6 +2280,7 @@ class ViaStreamHandler:
         camera_id = getattr(request, "camera_id", "default") or "default"
 
         req_info = RequestInfo()
+        req_info._remote_trace_context = trace_context
         req_info.source_id = stream_id
         req_info.camera_id = camera_id
         req_info.is_summarization = True
@@ -2292,7 +2321,9 @@ class ViaStreamHandler:
 
             tracer = get_tracer()
             if tracer:
-                req_info._e2e_span = tracer.start_span("Stream Summarization E2E Latency")
+                req_info._e2e_span = tracer.start_span(
+                    "Stream Summarization E2E Latency", context=trace_context
+                )
                 req_info._e2e_span.set_attribute("request_id", req_info.request_id)
                 req_info._e2e_span.set_attribute("source_id", stream_id)
                 req_info._e2e_span.set_attribute("is_live", True)
@@ -2327,7 +2358,11 @@ class ViaStreamHandler:
             )
 
             agg_response = self._call_aggregation_with_empty_guard(
-                ctx_mgr, "summarization_online", sub_state, req_info.source_id
+                ctx_mgr,
+                "summarization_online",
+                sub_state,
+                req_info.source_id,
+                req_info.request_id,
             )
 
             if agg_response.get("error"):
@@ -2437,7 +2472,13 @@ class ViaStreamHandler:
                 ex,
             )
             req_info.status = RequestInfo.Status.FAILED
-            req_info.error_message = str(ex)
+            if isinstance(ex, ViaException):
+                req_info.error_message = ex.message
+                req_info.error_code = ex.code
+                req_info.error_status_code = ex.status_code
+                req_info.failed_stage = ex.failed_stage
+            else:
+                req_info.error_message = str(ex)
         finally:
             if ctx_mgr is not None:
                 with self._lock:
@@ -3122,6 +3163,7 @@ class ViaStreamHandler:
         source: RequestSource,
         query: SummarizationQuery,
         request_id: str | None = None,
+        trace_context=None,
     ):
         """Run a summarization query on a file"""
         # Enable summarization if summarization config is enabled  OR API passes enable flag
@@ -3140,6 +3182,7 @@ class ViaStreamHandler:
             query=query,
             is_summarization=True,
             request_id=request_id,
+            trace_context=trace_context,
         )
 
     def query(
@@ -3149,12 +3192,14 @@ class ViaStreamHandler:
         is_summarization=False,
         skip_ca_rag=False,
         request_id: str | None = None,
+        trace_context=None,
     ):
         """Run a query under one pre-published exact request lease."""
 
         if request_id is None:
             request_id = self.reserve_request(source.source_id)
         req_info = self._claim_request(request_id, source.source_id)
+        req_info._remote_trace_context = trace_context
         try:
             if req_info.cancel_event.is_set():
                 self._mark_request_cancelled(req_info)
@@ -4219,35 +4264,6 @@ This is very important and you must follow this strictly.
         return retries
 
     @staticmethod
-    def _is_empty_aggregation_result(result) -> bool:
-        """True when an aggregation result carries neither events nor a summary.
-
-        A result with an empty ``events`` list but a non-empty ``video_summary``
-        is a legitimate "nothing notable happened" answer, so both fields must be
-        empty before the result is treated as a failed sample. Free-form text
-        that does not parse as JSON is a usable summary as long as it is not blank.
-        """
-        if result is None:
-            return True
-        if isinstance(result, str):
-            if not result.strip():
-                return True
-            try:
-                parsed = json.loads(result)
-            except (json.JSONDecodeError, TypeError, ValueError):
-                return False
-        elif isinstance(result, dict):
-            parsed = result
-        else:
-            return False
-
-        if not isinstance(parsed, dict):
-            return False
-        events = parsed.get("events") or []
-        video_summary = parsed.get("video_summary") or ""
-        return not events and not str(video_summary).strip()
-
-    @staticmethod
     def _full_file_aggregation_time_bounds(req_info, chunk_responses):
         """Compare replay event seconds with replay bounds, preserving NTP.
 
@@ -4327,63 +4343,170 @@ This is very important and you must follow this strictly.
                 return True
         return False
 
+    @staticmethod
+    def _parse_aggregation_result(result):
+        """Recover a structured aggregation result from common model output forms."""
+        if isinstance(result, (dict, list)):
+            parsed = deepcopy(result)
+        elif not isinstance(result, str) or not result.strip():
+            return None
+        else:
+            candidate, _ = ViaStreamHandler._remove_think_tags(result.strip())
+            candidate = re.sub(
+                r"^```(?:json)?\s*|\s*```$",
+                "",
+                candidate.strip(),
+                flags=re.IGNORECASE,
+            ).strip()
+            if not candidate.startswith(("{", "[")):
+                json_starts = [
+                    pos for pos in (candidate.find("{"), candidate.find("[")) if pos >= 0
+                ]
+                if not json_starts:
+                    return None
+                candidate = candidate[min(json_starts) :]
+
+            try:
+                parsed = json_repair.loads(candidate)
+            except (TypeError, ValueError):
+                return None
+        if isinstance(parsed, list) and all(isinstance(event, dict) for event in parsed):
+            parsed = {
+                "events": parsed,
+                "total_events": len(parsed),
+                "video_summary": "",
+            }
+        elif not isinstance(parsed, dict):
+            return None
+
+        has_events = "events" in parsed
+        has_video_summary = "video_summary" in parsed
+        if not has_events and not has_video_summary:
+            return None
+
+        events = parsed.get("events")
+        events_are_valid = not has_events
+        if isinstance(events, str):
+            try:
+                decoded_events = json_repair.loads(events)
+            except (TypeError, ValueError):
+                decoded_events = None
+            events = decoded_events
+        if isinstance(events, dict):
+            events = [events]
+
+        # Aggregated events are structured objects. Discard scalar values instead
+        # of allowing a truthy malformed field (for example ``"null"``) to bypass
+        # the empty-result guard and reach Kafka or the HTTP response.
+        if isinstance(events, list):
+            normalized_events = [event for event in events if isinstance(event, dict)]
+            events_are_valid = len(normalized_events) == len(events)
+            parsed["events"] = normalized_events
+        else:
+            parsed["events"] = []
+
+        video_summary = parsed.get("video_summary")
+        summary_is_valid = not has_video_summary or isinstance(video_summary, str)
+        if not summary_is_valid:
+            parsed["video_summary"] = ""
+
+        # A valid empty object is a legitimate no-match result. Keep malformed
+        # empty objects distinguishable from it so they still fail closed.
+        if (
+            not parsed["events"]
+            and not parsed.get("video_summary", "").strip()
+            and (not events_are_valid or not summary_is_valid)
+        ):
+            return None
+        return parsed
+
+    @classmethod
+    def _is_empty_aggregation_result(cls, result) -> bool:
+        """True when an aggregation result is blank or malformed.
+
+        A well-formed structured result with no events and no narrative is a
+        legitimate no-match answer. Free-form text is also usable as long as it
+        is not blank.
+        """
+        if result is None or (isinstance(result, str) and not result.strip()):
+            return True
+        parsed = cls._parse_aggregation_result(result)
+        if parsed is None:
+            # Plain text is a usable narrative. JSON arrays and scalars are not
+            # the documented aggregation shape and contain no usable result.
+            if isinstance(result, str):
+                try:
+                    json.loads(result)
+                except (json.JSONDecodeError, TypeError, ValueError):
+                    return False
+            return True
+        return False
+
     def _call_aggregation_with_empty_guard(
         self,
         ctx_mgr,
         function_name: str,
         state: dict,
         source_id,
+        job_id: str | None = None,
         event_time_bounds: tuple[float, float] | None = None,
     ):
-        """Run CA-RAG aggregation, retrying empty or out-of-range samples.
+        """Run aggregation, repairing output and rejecting invalid timestamps.
 
         Aggregation reads already-persisted captions and runs an LLM over them,
-        so it holds no state of its own and re-running it is safe. When every
-        attempt comes back empty the last response is returned unchanged, so a
-        genuinely empty aggregation still reaches the caller instead of becoming
-        a new error path.
+        so it holds no state of its own and re-running it is safe. An exhausted
+        retry budget fails the request rather than returning an empty success.
         """
         attempts = self._aggregation_empty_retries + 1
-        response = None
         for attempt in range(1, attempts + 1):
             response = ctx_mgr.call({function_name: state})
             if response.get("error"):
                 return response
             result = (response.get(function_name, {}) or {}).get("result", "")
-            empty = self._is_empty_aggregation_result(result)
-            out_of_range = self._aggregation_has_out_of_range_event_timestamps(
-                result, event_time_bounds
-            )
-            if not empty and not out_of_range:
+            if not self._is_empty_aggregation_result(result):
+                parsed = self._parse_aggregation_result(result)
+                if parsed is not None:
+                    response[function_name]["result"] = json.dumps(parsed)
+                if self._aggregation_has_out_of_range_event_timestamps(
+                    parsed if parsed is not None else result, event_time_bounds
+                ):
+                    if attempt < attempts:
+                        logger.warning(
+                            "%s returned out-of-range timestamps for %s (attempt %d of %d); retrying aggregation",
+                            function_name, source_id, attempt, attempts,
+                        )
+                        continue
+                    raise ViaException(
+                        "Aggregation returned event timestamps outside the processed media interval",
+                        "InvalidAggregationResponse", 502,
+                        job_id=job_id, failed_stage="aggregation",
+                    )
                 return response
             if attempt < attempts:
                 logger.warning(
-                    "%s returned an unusable aggregation for %s "
-                    "(empty=%s out_of_range_timestamps=%s, attempt %d of %d); "
-                    "retrying aggregation",
+                    "%s returned a blank or malformed result for %s "
+                    "(attempt %d of %d); retrying aggregation",
                     function_name,
                     source_id,
-                    empty,
-                    out_of_range,
                     attempt,
                     attempts,
                 )
-            elif out_of_range:
-                raise ViaException(
-                    "Aggregation returned event timestamps outside the processed "
-                    "media interval",
-                    "InvalidAggregationResponse",
-                    502,
-                )
             else:
-                logger.warning(
-                    "%s returned no events and no summary for %s after %d attempt(s); "
-                    "returning the empty aggregation",
+                logger.error(
+                    "%s returned a blank or malformed result for %s after %d attempt(s); "
+                    "failing the aggregation stage",
                     function_name,
                     source_id,
                     attempts,
                 )
-        return response
+
+        raise ViaException(
+            f"Aggregation returned no usable result after {attempts} attempt(s)",
+            "AggregationFailed",
+            502,
+            job_id=job_id,
+            failed_stage="aggregation",
+        )
 
     def _get_aggregated_summary(
         self, req_info: RequestInfo, chunk_responses: list[VlmChunkResponse]
@@ -4595,6 +4718,7 @@ This is very important and you must follow this strictly.
                                     "summarization",
                                     sum_state,
                                     req_info.source_id,
+                                    job_id=req_info.request_id,
                                     event_time_bounds=aggregation_event_bounds,
                                 )
                         if agg_response.get("error"):

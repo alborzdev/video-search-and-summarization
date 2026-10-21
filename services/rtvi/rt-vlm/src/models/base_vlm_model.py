@@ -35,10 +35,12 @@ class VlmGenerationConfig:
     seed: int = 1
     system_prompt: Optional[str] = None
     enable_reasoning: bool = False
+    prompt_driven_reasoning: bool = False
     ignore_eos: bool = False
     min_tokens: Optional[int] = None
     mm_processor_kwargs: Optional[dict] = None
     media_io_kwargs: Optional[dict] = None
+    response_format: Optional[dict] = None
     preserve_reasoning_tags: bool = False
 
 
@@ -204,6 +206,10 @@ class BaseVlmModel(ABC):
             True if the model can accept new requests, False otherwise
         """
         pass
+
+    def is_healthy(self) -> bool:
+        """Return whether the model backend can still serve requests."""
+        return True
 
     def warmup(self):
         """

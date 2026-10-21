@@ -34,9 +34,9 @@ Directory layout (one platform × mode per directory):
 Usage from the repository root:
     python3 .github/skill-eval/adapters/vss-manage-alerts/generate.py \\
         --output-dir "$SCRATCH/datasets/vss-manage-alerts" \\
-        --skill-dir   skills/vss-manage-alerts \\
-        --deploy-skill-dir skills/vss-deploy-profile \\
-        --spec        skills/vss-manage-alerts/evals/alerts_vlm_real_time.json
+        --skill-dir   skills/operations/vss-manage-alerts \\
+        --deploy-skill-dir skills/vss-build-vision-ai \\
+        --spec        skills/operations/vss-manage-alerts/evals/alerts_vlm_real_time.json
 """
 from __future__ import annotations
 
@@ -57,14 +57,13 @@ GENERIC_JUDGE = Path(__file__).resolve().parents[2] / "verifiers" / "generic_jud
 PREAMBLE = (
     "You are running inside a non-interactive evaluation harness. "
     "You are pre-authorized to deploy prerequisites autonomously — "
-    "do not pause to ask for confirmation on `/vss-deploy-profile` or any other "
-    "setup action the trial requires. This pre-authorization covers "
-    "deployment and setup ONLY. It does NOT waive a user-facing safety "
-    "confirmation that a skill's own protocol requires before a destructive "
-    "action (for example, the two-step stop/delete protocol for an alert "
-    "rule): for those, still follow the skill — ask the yes/no confirmation "
-    "question and do NOT perform the destructive call, since no interactive "
-    "user will answer here."
+    "do not pause to ask for confirmation on `/vss-build-vision-ai` or any other "
+    "setup action the trial requires. This pre-authorization covers deployment "
+    "and setup ONLY. It does not extend to a destructive call — no interactive "
+    "user exists to consent to one — so where the skill gates an action behind a "
+    "user confirmation, or requires a real operator-supplied credential, follow "
+    "the skill up to that gate and stop: ask, and do not perform the gated action "
+    "(no user will answer here)."
 )
 
 # ---------------------------------------------------------------------------
@@ -90,6 +89,12 @@ PLATFORMS: dict[str, dict] = {
         "min_vram_per_gpu": 96,
         "brev_search": "RTX PRO",
     },
+    "DGX-SPARK": {
+        "short_name": "spark",
+        "gpu_type": "GB10",
+        "min_vram_per_gpu": 96,
+        "brev_search": "GB10",
+    },
 }
 
 DEFAULT_PLATFORM = "L40S"
@@ -100,6 +105,23 @@ DEFAULT_SPEC = "alerts_vlm_real_time.json"
 # ---------------------------------------------------------------------------
 
 _SUBST_RE = re.compile(r"\{\{\s*(\w+)\s*\}\}")
+
+
+def _peer_skill_dir(skill_dir: Path, name: str) -> Path | None:
+    """Resolve a peer skill by its leaf directory name.
+
+    A skill lives at either skills/<name>/ or skills/<category>/<name>/, and a
+    peer may sit in a different category than the caller — so look beside the
+    caller first, then across the categories one level up.
+    """
+    beside = skill_dir.parent / name
+    if beside.is_dir():
+        return beside
+    for category in sorted(skill_dir.parent.parent.glob("*")):
+        nested = category / name
+        if nested.is_dir():
+            return nested
+    return None
 
 
 def _substitute(value: object, subs: dict[str, str]) -> object:
@@ -169,6 +191,7 @@ def _task_toml(
     platform: str,
     mode: str,
     profile: str,
+    deploy_mode: str,
     step_idx: int,
     step_count: int,
     check_count: int,
@@ -177,11 +200,18 @@ def _task_toml(
     step_suffix: str,
 ) -> str:
     short = pspec["short_name"]
+    # Deploy-mode-aware label + keywords (verification CV vs VLM real-time).
+    is_cv = deploy_mode == "verification"
+    desc_label = "verification (CV)" if is_cv else "VLM real-time"
+    mode_keywords = '"cv", "verification"' if is_cv else '"vlm", "real-time"'
     lines = [
         "[task]",
         f'name = "nvidia-vss/vss-manage-alerts-{spec_stem}-{short}-{mode}{step_suffix}"',
-        f'description = "Alerts VLM real-time step {step_idx}/{step_count} on {platform}/{mode}"',
-        f'keywords = ["vss-manage-alerts", "vlm", "real-time", "{platform}", "{mode}"]',
+        f'description = "Alerts {desc_label} step {step_idx}/{step_count} on {platform}/{mode}"',
+        f'keywords = ["vss-manage-alerts", {mode_keywords}, "{platform}", "{mode}"]',
+        "",
+        "[agent]",
+        "timeout_sec = 600.0",
         "",
         "[environment]",
         'skills_dir = "/skills"',
@@ -225,6 +255,10 @@ def generate_platform_mode(
     short = pspec["short_name"]
     expects = rendered_spec.get("expects") or []
     profile: str = str(spec.get("profile", "alerts"))
+    # Deploy mode (real-time VLM vs verification CV), distinct from `mode`
+    # (LLM/VLM NIM placement); drives step-2+ context + task-metadata labels.
+    deploy_mode: str = str(spec.get("deploy_mode", "real-time"))
+    mode_label = "verification (CV)" if deploy_mode == "verification" else "real-time (VLM)"
 
     platform_dir = output_root / spec_stem / f"{short}-{mode}"
     platform_dir.mkdir(parents=True, exist_ok=True)
@@ -245,17 +279,26 @@ def generate_platform_mode(
         # static host context lives in the leading paragraph below.
         if idx == 1:
             leading = [
-                f"Use the `/vss-manage-alerts` skill (and `/vss-deploy-profile` as needed) on this bare `{platform}` host.",
+                f"Use the `/vss-manage-alerts` skill (and `/vss-build-vision-ai` as needed) on this bare `{platform}` host.",
                 "Docker + NVIDIA Container Toolkit are available, `NGC_CLI_API_KEY` is set,",
                 "and the remote LLM/VLM endpoints are configured via "
                 "`LLM_REMOTE_URL` / `LLM_REMOTE_MODEL` / `VLM_REMOTE_URL` / `VLM_REMOTE_MODEL`.",
             ]
         else:
-            leading = [
-                f"Use the `/vss-manage-alerts` skill on this `{platform}` host.",
-                "The VSS **alerts** profile is already deployed in **real-time (VLM)** mode "
-                "with `remote-all` placement (deployed by step 1).",
-            ]
+            # A `skill-routing` step names neither a skill nor the alert mode:
+            # it grades which installed skill the agent picks and where it
+            # finds the records, as a user's question would leave it to.
+            if expect.get("scenario") == "skill-routing":
+                leading = [
+                    f"Answer with the VSS skills installed on this `{platform}` host.",
+                    "A VSS deployment is already running on it (deployed by step 1).",
+                ]
+            else:
+                leading = [
+                    f"Use the `/vss-manage-alerts` skill on this `{platform}` host.",
+                    f"The VSS **alerts** profile is already deployed in **{mode_label}** mode "
+                    f"with `{mode}` placement (deployed by step 1).",
+                ]
 
         instruction_lines = [
             PREAMBLE,
@@ -275,11 +318,12 @@ def generate_platform_mode(
             instruction_lines.append("")
         instruction_lines.append(
             "Run autonomously without prompting for confirmation, EXCEPT where the "
-            "skill's own protocol requires an explicit user confirmation before a "
-            "destructive action (e.g. the two-step stop/delete protocol for an alert "
-            "rule). In that case, follow the skill: ask the yes/no confirmation "
-            "question, state the rule ID and sensor, and stop without deleting "
-            "(there is no interactive user to answer 'yes')."
+            "skill gates an action behind a user confirmation (e.g. before a "
+            "destructive call) or requires a real operator-supplied credential — "
+            "no interactive user exists to consent here, so follow the skill up to "
+            "the confirmation it requires, then stop without performing the gated "
+            "action. (Setup/deploy actions the trial pre-authorizes are not gated "
+            "this way — do those autonomously.)"
         )
         instruction_lines.append("")
         (step_dir / "instruction.md").write_text("\n".join(instruction_lines) + "\n")
@@ -289,6 +333,7 @@ def generate_platform_mode(
             platform=platform,
             mode=mode,
             profile=profile,
+            deploy_mode=deploy_mode,
             step_idx=idx,
             step_count=len(expects),
             check_count=len(expect.get("checks") or []),
@@ -327,13 +372,15 @@ def generate_platform_mode(
         # are resolved as siblings of the primary skill dir.
         skills_to_copy: list[tuple[Path | None, str]] = [
             (skill_dir, "vss-manage-alerts"),
-            (deploy_skill_dir, "vss-deploy-profile"),
+            (deploy_skill_dir, "vss-build-vision-ai"),
         ]
         already = {name for _, name in skills_to_copy}
         for extra_name in spec.get("skills") or []:
             if extra_name in already:
                 continue
-            extra_dir = skill_dir.parent / extra_name
+            # Fall back to the sibling path when unresolvable so the loop below
+            # still reports a miss rather than silently dropping the skill.
+            extra_dir = _peer_skill_dir(skill_dir, extra_name) or skill_dir.parent / extra_name
             skills_to_copy.append((extra_dir, extra_name))
             already.add(extra_name)
 
@@ -368,9 +415,9 @@ def main() -> None:
     parser.add_argument("--output-dir", required=True,
                         help='Dataset output root (e.g. "$SCRATCH/datasets/vss-manage-alerts")')
     parser.add_argument("--skill-dir", required=True,
-                        help="Path to skills/vss-manage-alerts")
+                        help="Path to skills/operations/vss-manage-alerts")
     parser.add_argument("--deploy-skill-dir", default=None,
-                        help="Path to skills/vss-deploy-profile (included so agent can diagnose issues)")
+                        help="Path to skills/vss-build-vision-ai (included so agent can diagnose issues)")
     parser.add_argument("--spec", default=None,
                         help=f"Path to spec JSON (default: <skill-dir>/evals/{DEFAULT_SPEC})")
     parser.add_argument("--platform", default=None,

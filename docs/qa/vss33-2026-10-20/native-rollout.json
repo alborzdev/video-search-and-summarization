@@ -1,0 +1,654 @@
+{
+  "checked_at_utc": "2026-10-21T05:30:35.386794+00:00",
+  "public_base_digest": "sha256:426f48add56f5ba95b0a70eb8036f4b0590da9fb3228d2065f539d6f9721723a",
+  "qualified_source_image_id": "sha256:44754cbcbbd2e23fd648bc87242e62f9a5bc663f7ffe6c4cfad94d27b6591142",
+  "maintained_recipe_build_image_id": "sha256:ec0d954bcaaaca2e782b9bb91658da625a41cf9f8479431700286ac0b9547a97",
+  "native_source_tree_sha256": "7fa1591c105af9616e89742ebf66ebe643ffca4c5904c53b1c0ea2a7d4c97c89",
+  "main_cutover": {
+    "disposable_restore_matched": true,
+    "original_db_rows_schema_indexes_retained": true,
+    "only_additions": [
+      {
+        "column": "config_hash"
+      },
+      {
+        "index": "idx_temp_files_stream_time_v2"
+      }
+    ],
+    "sensor_image_unchanged": true,
+    "reserve_gib": 20,
+    "initial_streamprocessor_image_id": "sha256:44754cbcbbd2e23fd648bc87242e62f9a5bc663f7ffe6c4cfad94d27b6591142",
+    "current_streamprocessor_image_id": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75"
+  },
+  "paired_backup": {
+    "dump_bytes": 36405,
+    "restore_check": {
+      "restore_success": true,
+      "baseline_identical": true,
+      "database_dropped_after_check": true
+    },
+    "media_check": {
+      "original_files_and_links_checked": 6,
+      "failures": [],
+      "passed": true
+    },
+    "backup_checksums_sha256": "700f82593b80e4791a57e096c27fb1016cc3cc4fe8f0ff197d7746533af8548b",
+    "backup_is_private_and_not_committed": true
+  },
+  "container_envelope": {
+    "runtime": "runc",
+    "memory_bytes": 2147483648,
+    "memory_swap_bytes": 2147483648,
+    "nano_cpus": 2000000000,
+    "gpu_devices_present": false,
+    "dash_max_viewers": 1,
+    "dash_encoded_kbps": 1500
+  },
+  "isolated_source_encoded_browser": {
+    "passed": true,
+    "sample_decoded_frames": [
+      13,
+      44,
+      74
+    ],
+    "advancing_seconds": [
+      0.304307,
+      1.315749,
+      2.327833
+    ],
+    "first_observed_decoded_frame_ms": 12184,
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "numbered_media_fragments": 2,
+    "page_errors": [],
+    "cleanup_query": {
+      "status": 200,
+      "body": "[]"
+    }
+  },
+  "qualification_limits": [
+    "One 7.534-second archived uploaded clip and one CPU viewer.",
+    "No sustained RTSP, GPU hardware codecs, audio, overlays or calibrated multi-camera 3D qualification.",
+    "Public 3.3 encoded playback failed before sensor_file timestamp repair.",
+    "The final maintained completed-replay image is now selected; earlier image receipts remain as historical qualification and failure evidence."
+  ],
+  "maintained_encoded_browser": {
+    "passed": true,
+    "decoded_frames": [
+      15,
+      46,
+      76
+    ],
+    "advancing_seconds": [
+      0.344755,
+      1.357486,
+      2.372756
+    ],
+    "first_observed_decoded_frame_ms": 12235,
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "numbered_media_fragments": 2,
+    "page_errors": [],
+    "cleanup_query": {
+      "status": 200,
+      "body": "[]"
+    },
+    "resources": {
+      "container": "vss33-dash-probe-streamprocessor-1",
+      "image_reference": "vss-vios-streamprocessing:3.3-native-maintained-check",
+      "actual_image_id": "sha256:ec0d954bcaaaca2e782b9bb91658da625a41cf9f8479431700286ac0b9547a97",
+      "runtime": "runc",
+      "memory_limit": 2147483648,
+      "nano_cpus": 2000000000,
+      "devices": null,
+      "device_requests": null,
+      "source_manifest": "159e9b590dc195ed874e84bb470bf56f0ef540af1386602d7784534207efbeaf  /home/vst/vst_release/build-source-manifest.json",
+      "cgroup": {
+        "memory.max": "2147483648",
+        "memory.current": "194150400",
+        "memory.peak": "302886912",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0",
+        "cpu.max": "200000 100000"
+      },
+      "gpu_nodes": "",
+      "native_checks": {
+        "file_sensor_type": true,
+        "epoch_preserved": true,
+        "software_encoding": true,
+        "no_before_start_drop": true,
+        "viewer_cleanup": true,
+        "no_browser_errors": true,
+        "actual_mse_decode": true
+      }
+    }
+  },
+  "final_eof_rebuild": {
+    "source_tree_sha256": "00b50e4843ee516c2f7b68a23fb1a3a4e338e736c36125c479387b2566890309",
+    "source_files": 2515,
+    "fixes": [
+      "Uploaded-file epoch timestamp preservation",
+      "Filesystem-clock-safe short-tail readiness",
+      "Finite decoder EOF flushes packager EOS",
+      "Transform EOF remains behind queued and in-flight pictures"
+    ],
+    "qualification": "Native EOF flush succeeded, but HTTP publication still hid the final fragment; superseded by explicit downstream-completion rebuild.",
+    "build_recovery": {
+      "first_attempt": {
+        "memory_limit_bytes": 3221225472,
+        "jobs": 2,
+        "oom_killed": true,
+        "failure": "cc1plus killed at container limit while compiling PeerConnectionManager.cpp; no source diagnostic"
+      },
+      "resume": {
+        "same_source_and_scratch_verified": true,
+        "memory_limit_bytes": 4294967296,
+        "jobs": 1,
+        "network": "none",
+        "gpu_access": false,
+        "scope_and_flags_unchanged": true,
+        "exit_code": 0,
+        "oom_killed": false,
+        "last_observed_peak_bytes": 1690079232,
+        "last_observed_cgroup_events": {
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0
+        }
+      },
+      "training_interrupted": false,
+      "vlm_temporarily_stopped_for_recovery": true
+    },
+    "staged_runtime_overlay": {
+      "copied_elf_bytes": 216325448,
+      "skipped_static_archive_bytes": 55666620,
+      "output_checksum_verification_passed": true
+    },
+    "image_id": "sha256:cf37d4b570eabe0766d0891dbe5c0f88c7f492defe0f3c823721c989c22a8999",
+    "failed_browser": {
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "initial_manifest_coverage_seconds": 6,
+      "initial_tail_timeout_seconds": 25,
+      "page_errors": [],
+      "cleanup_query": {
+        "status": 200,
+        "body": "[]"
+      }
+    },
+    "actual_seek_fragments_seconds": [
+      2,
+      2,
+      1.5
+    ]
+  },
+  "completed_replay_rebuild": {
+    "source_tree_sha256": "ca097b99afb9f3840cea7ddc0f03f099a08a1c6e850462d42276ef7f02a08a76",
+    "source_files": 2515,
+    "commit": "b74035169",
+    "completion_contract": "Only downstream pipeline bus EOS allows a structurally complete highest replay fragment and an exact measured finite MPD; live and incomplete replay retain successor gating.",
+    "focused_compiled_tests_passed": 8,
+    "actual_browser_qualification": "Passed isolated full-tail and native replacement seek, with actual 1920x1080 source 7.3-second box frames and empty final viewer query.",
+    "build": {
+      "memory_limit_bytes": 4294967296,
+      "jobs": 1,
+      "network": "none",
+      "gpu_access": false,
+      "conservative_host_stop_threshold_gib": 21.5,
+      "spark_guard_floor_gib": 20,
+      "exit_code": 0,
+      "stop_reason": null,
+      "minimum_available_gib": 22.039852142333984,
+      "maximum_observed_builder_peak_bytes": 1693147136,
+      "elapsed_seconds": 1401.696,
+      "source_tree_sha256": "ca097b99afb9f3840cea7ddc0f03f099a08a1c6e850462d42276ef7f02a08a76",
+      "host_stop_threshold_gib": 21.5,
+      "oom_killed": false,
+      "samples": 692,
+      "all_training_pid_samples_alive": true,
+      "training_pid": 4021268
+    },
+    "staged_runtime_overlay": {
+      "copied_elf_bytes": 216260352,
+      "skipped_static_archive_bytes": 55666620,
+      "output_checksum_verification_passed": true
+    },
+    "image_id": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+    "isolated_browser": {
+      "scope": "Isolated uploaded 7.534-second Conveyor archive; CPU software encode, no overlay or audio. Does not qualify live RTSP, hardware encode, multi-viewer or long-duration ingestion.",
+      "passed": true,
+      "browser_started": "2026-10-21T07:00:05.317Z",
+      "browser_finished": "2026-10-21T07:00:32.917Z",
+      "image": "vss-vios-streamprocessing:3.3-native-finalized-replay",
+      "image_id": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+      "source_tree_sha256": "ca097b99afb9f3840cea7ddc0f03f099a08a1c6e850462d42276ef7f02a08a76",
+      "resource_envelope": {
+        "memory_limit_bytes": 2147483648,
+        "cpu_limit": 2.0,
+        "runtime": "runc",
+        "device_requests": null,
+        "observed_nvidia_or_dri_paths": [],
+        "memory_peak_bytes": 444174336,
+        "memory_peak_mib": 423.598,
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        },
+        "browser_hardware_acceleration_disabled": true,
+        "single_browser": true
+      },
+      "phases": {
+        "initial": {
+          "mpd_http_status": 200,
+          "mpd_type": "static",
+          "media_presentation_duration": "PT7.466667S",
+          "period_duration": "PT7.466667S",
+          "segment_timeline_seconds": 7.466666666666667,
+          "segment_timeline": [
+            {
+              "t": "0",
+              "d": "6000",
+              "r": "2",
+              "timescale": 3000
+            },
+            {
+              "t": "18000",
+              "d": "4400",
+              "timescale": 3000
+            }
+          ],
+          "decoded_tail": {
+            "time": 7.3,
+            "frames": 124,
+            "ready": 4,
+            "width": 1920,
+            "height": 1080,
+            "paused": true,
+            "src": "blob:http://127.0.0.1:18002/70f49751-091d-41d5-8396-7da147678b70",
+            "buffered": [
+              [
+                0,
+                7.466999
+              ]
+            ],
+            "seekable": [
+              [
+                0,
+                7.466999
+              ]
+            ],
+            "targetSourceSeconds": 7.3
+          },
+          "frame_png": "work/vss33/dash-probe/logs/browser-seek-fixed-source-tail-frame.png",
+          "frame_png_sha256": "5375469e19c07c904253b7969458483c105e6d76ff909f4311a6330b58f4c234",
+          "frame_dimensions": [
+            1920,
+            1080
+          ],
+          "visual_box_confirmed": true
+        },
+        "seek_plus_2s": {
+          "mpd_http_status": 200,
+          "mpd_type": "static",
+          "media_presentation_duration": "PT5.500000S",
+          "period_duration": "PT5.500000S",
+          "segment_timeline_seconds": 5.5,
+          "segment_timeline": [
+            {
+              "t": "0",
+              "d": "6000",
+              "r": "1",
+              "timescale": 3000
+            },
+            {
+              "t": "12000",
+              "d": "4500",
+              "timescale": 3000
+            }
+          ],
+          "decoded_tail": {
+            "time": 5.3,
+            "frames": 141,
+            "ready": 4,
+            "width": 1920,
+            "height": 1080,
+            "paused": true,
+            "src": "blob:http://127.0.0.1:18002/ce7deb35-4604-4aeb-af03-cdedc001ecc4",
+            "buffered": [
+              [
+                0,
+                5.500333
+              ]
+            ],
+            "seekable": [
+              [
+                0,
+                5.500333
+              ]
+            ],
+            "targetSourceSeconds": 7.3
+          },
+          "frame_png": "work/vss33/dash-probe/logs/browser-seek-fixed-replacement-tail-frame.png",
+          "frame_png_sha256": "9cb618226942249cfed141d8daf11fc070a9b727c2de1d57ea5883832dcfa0bd",
+          "frame_dimensions": [
+            1920,
+            1080
+          ],
+          "visual_box_confirmed": true
+        }
+      },
+      "native_seek_replacement": {
+        "old_viewer": "6392b715-762c-4d68-9937-84b760ae1bee",
+        "new_viewer": "afe98334-546f-4bad-b1d7-2fccf0464788",
+        "new_mse_blob": true,
+        "moving_samples": [
+          {
+            "elapsedMs": 7295,
+            "time": 0.956611,
+            "frames": 34,
+            "ready": 4,
+            "width": 1920,
+            "height": 1080,
+            "paused": false,
+            "src": "blob:http://127.0.0.1:18002/ce7deb35-4604-4aeb-af03-cdedc001ecc4",
+            "buffered": [
+              [
+                0,
+                5.500333
+              ]
+            ],
+            "seekable": [
+              [
+                0,
+                5.500333
+              ]
+            ]
+          },
+          {
+            "elapsedMs": 8359,
+            "time": 2.022231,
+            "frames": 66,
+            "ready": 4,
+            "width": 1920,
+            "height": 1080,
+            "paused": false,
+            "src": "blob:http://127.0.0.1:18002/ce7deb35-4604-4aeb-af03-cdedc001ecc4",
+            "buffered": [
+              [
+                0,
+                5.500333
+              ]
+            ],
+            "seekable": [
+              [
+                0,
+                5.500333
+              ]
+            ]
+          },
+          {
+            "elapsedMs": 9382,
+            "time": 3.043703,
+            "frames": 96,
+            "ready": 4,
+            "width": 1920,
+            "height": 1080,
+            "paused": false,
+            "src": "blob:http://127.0.0.1:18002/ce7deb35-4604-4aeb-af03-cdedc001ecc4",
+            "buffered": [
+              [
+                0,
+                5.500333
+              ]
+            ],
+            "seekable": [
+              [
+                0,
+                5.500333
+              ]
+            ]
+          }
+        ]
+      },
+      "cleanup": {
+        "browser_stop_http_statuses": [
+          200
+        ],
+        "browser_query": {
+          "status": 200,
+          "body": "[]"
+        },
+        "byte_probe_stop": 200,
+        "byte_probe_query": [],
+        "no_viewers_active": true,
+        "browser_closed": true
+      },
+      "errors": [],
+      "fragment_byte_probe": {
+        "receipt": "work/vss33/dash-probe/logs/seek-tail-fixed.json",
+        "duration_helper_result": "timescale=3000 seconds=5.5 fragments=3; ticks6000+6000+4500",
+        "files": [
+          {
+            "name": "video_0_1.mp4",
+            "bytes": 302619
+          },
+          {
+            "name": "video_0_3.mp4",
+            "bytes": 353230
+          },
+          {
+            "name": "video_0_2.mp4",
+            "bytes": 341173
+          },
+          {
+            "name": "344efabb-1809-4538-a1c3-46eb493a9a27-f65dd96c-d9a3-4254-a700-c5e3822df452-991d8caf-ff5e-44f5-8510-75b48852e35b.mpd",
+            "bytes": 701
+          }
+        ]
+      },
+      "receipts": {
+        "browser": "work/vss33/dash-probe/logs/browser-seek-fixed.json",
+        "byte_probe": "work/vss33/dash-probe/logs/seek-tail-fixed.json",
+        "prior_failure": "work/vss33/dash-probe/logs/browser-seek-complete-eof-first-failure.json"
+      },
+      "owned_harness": {
+        "pid": 544702,
+        "exec_session": 96618,
+        "url": "http://127.0.0.1:18002",
+        "command": "python3 work/vss33/dash-probe/harness.py --port 18002",
+        "state": "idle; root may terminate this exact process after checking its command line"
+      }
+    },
+    "main_cutover": {
+      "streamprocessor_image_id": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+      "only_role_recreated": "streamprocessing-ms",
+      "new_schema_migration_required": false,
+      "healthy": true
+    },
+    "main_ui_browser": {
+      "checks": [
+        {
+          "name": "MP4 remains default",
+          "pass": true
+        },
+        {
+          "name": "qualified runtime exposes DASH opt-in",
+          "pass": true
+        },
+        {
+          "name": "actual DASH start accepted",
+          "pass": true,
+          "detail": "200"
+        },
+        {
+          "name": "native start uses original absolute recording window",
+          "pass": true,
+          "detail": "{\"streamId\":\"af991bb7-5dc5-49c1-8590-b8f10ad9f887\",\"startTime\":\"2025-01-01T00:00:00.000Z\",\"endTime\":\"2025-01-01T00:00:07.534Z\"}"
+        },
+        {
+          "name": "actual DASH decoded frames and advancing clock",
+          "pass": true
+        },
+        {
+          "name": "DASH control remains readable on dark overlay",
+          "pass": true,
+          "detail": "rgb(244, 247, 247)"
+        },
+        {
+          "name": "pause control pauses actual video",
+          "pass": true
+        },
+        {
+          "name": "play control resumes actual video",
+          "pass": true
+        },
+        {
+          "name": "initial manifest covers the recording tail",
+          "pass": true,
+          "detail": "7.466666666666667"
+        },
+        {
+          "name": "initial DASH decodes original source 7.3-second tail",
+          "pass": true,
+          "detail": "{\"sourceTime\":7.3,\"bufferedEnd\":7.466999,\"decodedFrames\":122,\"width\":1920}"
+        },
+        {
+          "name": "seek accepted with native A to B viewer handoff",
+          "pass": true
+        },
+        {
+          "name": "native seek preserves original source timestamp",
+          "pass": true,
+          "detail": "{\"viewerId\":\"612f1c35-c6a6-4c21-b1fe-14cad023d73a\",\"startTime\":\"2025-01-01T00:00:02.000Z\"}"
+        },
+        {
+          "name": "replacement DASH video decodes after seek",
+          "pass": true
+        },
+        {
+          "name": "seek preserves original source-time offset",
+          "pass": true,
+          "detail": "2.1"
+        },
+        {
+          "name": "replacement manifest covers the recording tail",
+          "pass": true,
+          "detail": "5.5"
+        },
+        {
+          "name": "DASH decodes source 7.3-second tail after native seek",
+          "pass": true,
+          "detail": "{\"localTime\":5.3,\"sourceTime\":7.3,\"decodedFrames\":52,\"bufferedEnd\":5.500333,\"width\":1920,\"height\":1080}"
+        },
+        {
+          "name": "mobile playback has no horizontal body overflow",
+          "pass": true
+        },
+        {
+          "name": "mobile selector and replay controls do not overlap",
+          "pass": true,
+          "detail": "{\"selectorBottom\":636.71875,\"controlsTop\":732.84375}"
+        },
+        {
+          "name": "MP4 switch releases exact replacement viewer",
+          "pass": true
+        },
+        {
+          "name": "MP4 decodes again after protocol switch",
+          "pass": true
+        },
+        {
+          "name": "source switch cancels pending manifest and releases its owned viewer",
+          "pass": true
+        },
+        {
+          "name": "new source resets to MP4 without implicit DASH start",
+          "pass": true
+        },
+        {
+          "name": "canceled native viewer no longer exists",
+          "pass": true
+        },
+        {
+          "name": "saved fresh report still opens after native cutover",
+          "pass": true
+        },
+        {
+          "name": "retained report media still plays",
+          "pass": true
+        },
+        {
+          "name": "no page exceptions or unauthorized requests",
+          "pass": true,
+          "detail": "{\"errors\":[],\"blocked\":[]}"
+        }
+      ],
+      "all_passed": true,
+      "first_frame_ms": 12552,
+      "seek_first_frame_ms": 6944,
+      "initial_tail": {
+        "sourceTime": 7.3,
+        "bufferedEnd": 7.466999,
+        "decodedFrames": 122,
+        "width": 1920
+      },
+      "replacement_tail": {
+        "localTime": 5.3,
+        "sourceTime": 7.3,
+        "decodedFrames": 52,
+        "bufferedEnd": 5.500333,
+        "width": 1920,
+        "height": 1080
+      },
+      "initial_manifest_coverage_seconds": 7.466666666666667,
+      "replacement_manifest_coverage_seconds": 5.5,
+      "page_errors": [],
+      "unauthorized_requests": [],
+      "no_model_source_or_report_mutations": true
+    },
+    "demo_memory_window": {
+      "samples": 420,
+      "sample_interval_seconds": 1,
+      "minimum_available_gib": 23.510772705078125,
+      "all_guard_floor20": true,
+      "all_act_alive": true,
+      "training_pid": 4021268,
+      "start_unix": 1792565997.8752253,
+      "end_unix": 1792566417.2502172,
+      "final_main_viewer_query": {
+        "status": 200,
+        "body": []
+      }
+    },
+    "temporary_tools_cleanup": {
+      "probe_containers_removed": 3,
+      "tool_containers_removed": 5,
+      "stopped_build_containers_removed": 5,
+      "owned_fixture_servers_stopped": 2,
+      "abandoned_partial_scratch_directories_removed": 2,
+      "application_volumes_models_recordings_reports_and_backups_preserved": true
+    },
+    "final_main_container": {
+      "image_id": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+      "healthy": true,
+      "runtime": "runc",
+      "memory_bytes": 2147483648,
+      "memory_swap_bytes": 2147483648,
+      "nano_cpus": 2000000000,
+      "device_requests": null,
+      "devices": null,
+      "cgroup": "595148800\nlow 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+      "gpu_nodes_present": false
+    }
+  },
+  "final_checked_at_utc": "2026-10-21T07:08:14.252478+00:00"
+}

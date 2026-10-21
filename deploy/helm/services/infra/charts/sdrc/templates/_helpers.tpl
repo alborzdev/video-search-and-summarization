@@ -38,7 +38,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{- define "sdrc.image" -}}
-{{- printf "%s:%s" .Values.image.repository .Values.image.tag -}}
+{{- $global := .Values.global | default dict -}}
+{{- $prefix := index $global "container_prefix" | default "" -}}
+{{- $repository := .Values.image.repository -}}
+{{- if $prefix -}}
+{{- $repository = printf "%s/sdr-mw-l" (trimSuffix "/" $prefix) -}}
+{{- end -}}
+{{- $tag := index $global "container_tag" | default .Values.image.tag -}}
+{{- printf "%s:%s" $repository $tag -}}
 {{- end -}}
 
 {{- define "sdrc.serviceAccountName" -}}
@@ -60,7 +67,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 
 {{- define "sdrc.configMapName" -}}
-{{- required "config.configMapName is required" .Values.config.configMapName -}}
+{{- $name := required "config.configMapName is required" .Values.config.configMapName -}}
+{{- $global := .Values.global | default dict -}}
+{{- $usePrefix := false -}}
+{{- if and (hasKey .Values "useReleaseNamePrefix") (kindIs "bool" .Values.useReleaseNamePrefix) -}}
+{{- $usePrefix = .Values.useReleaseNamePrefix -}}
+{{- else if and (hasKey $global "useReleaseNamePrefix") (kindIs "bool" (index $global "useReleaseNamePrefix")) -}}
+{{- $usePrefix = index $global "useReleaseNamePrefix" -}}
+{{- end -}}
+{{- if $usePrefix -}}
+{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- $name -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "sdrc.configKey" -}}
@@ -69,6 +88,41 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{- define "sdrc.configMountPath" -}}
 {{- default "/config.yml" .Values.config.mountPath -}}
+{{- end -}}
+
+{{/*
+Rewrite a waitForWorkloads host:port so it matches in-cluster Service DNS when
+global.useReleaseNamePrefix (or the chart-level override) is true.
+
+Unprefixed short names become <release>-<host>. Already-prefixed names, FQDNs
+and dotted IPs are left alone so an explicit override still works.
+*/}}
+{{- define "sdrc.waitTarget" -}}
+{{- $root := .root -}}
+{{- $target := .target | toString -}}
+{{- $host := $target -}}
+{{- $port := "" -}}
+{{- if contains ":" $target -}}
+{{- $parts := splitList ":" $target -}}
+{{- $host = index $parts 0 -}}
+{{- $port = index $parts 1 -}}
+{{- end -}}
+{{- $global := $root.Values.global | default dict -}}
+{{- $usePrefix := false -}}
+{{- if and (hasKey $root.Values "useReleaseNamePrefix") (kindIs "bool" $root.Values.useReleaseNamePrefix) -}}
+{{- $usePrefix = $root.Values.useReleaseNamePrefix -}}
+{{- else if and (hasKey $global "useReleaseNamePrefix") (kindIs "bool" (index $global "useReleaseNamePrefix")) -}}
+{{- $usePrefix = index $global "useReleaseNamePrefix" -}}
+{{- end -}}
+{{- $relPrefix := printf "%s-" $root.Release.Name -}}
+{{- if and $usePrefix $host (not (hasPrefix $relPrefix $host)) (not (contains "." $host)) -}}
+{{- $host = printf "%s%s" $relPrefix $host | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+{{- if $port -}}
+{{- printf "%s:%s" $host $port -}}
+{{- else -}}
+{{- $host -}}
+{{- end -}}
 {{- end -}}
 
 {{- define "sdrc.controllerServiceName" -}}
@@ -102,8 +156,13 @@ nodePort: {{ .nodePort | int }}
 
 {{- define "sdrc.runtimeEnv" -}}
 {{- $env := .Values.runtimeEnv | default dict -}}
+{{- $redis := required "runtimeEnv.WDM_WL_REDIS_SERVER is required" (get $env "WDM_WL_REDIS_SERVER") -}}
+{{- /* The default names this release's Redis, a sibling subchart, so it takes the global prefix Redis's own name takes (not sdrc's override); any other host is used as given. */}}
+{{- if and (eq $redis "redis") (default false (index (.Values.global | default dict) "useReleaseNamePrefix")) -}}
+{{- $redis = printf "%s-redis" .Release.Name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 - name: WDM_WL_REDIS_SERVER
-  value: {{ required "runtimeEnv.WDM_WL_REDIS_SERVER is required" (get $env "WDM_WL_REDIS_SERVER") | quote }}
+  value: {{ $redis | quote }}
 - name: WDM_WL_REDIS_PORT
   value: {{ required "runtimeEnv.WDM_WL_REDIS_PORT is required" (get $env "WDM_WL_REDIS_PORT") | quote }}
 - name: OTEL_SDK_DISABLED
@@ -124,4 +183,6 @@ nodePort: {{ .nodePort | int }}
   value: {{ required "service.controller.port is required" .Values.service.controller.port | quote }}
 - name: WDM_CLUSTER_TYPE
   value: {{ required "runtimeEnv.WDM_CLUSTER_TYPE is required" (get $env "WDM_CLUSTER_TYPE") | quote }}
+- name: WDM_XDS_GRPC_ADS_ENABLED
+  value: {{ get $env "WDM_XDS_GRPC_ADS_ENABLED" | default "true" | quote }}
 {{- end -}}

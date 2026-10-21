@@ -28,6 +28,7 @@ const elasticErrors = mdx.Utils.Elasticsearch.getElasticErrors();
 const morgan = require('morgan');
 const winston = require('winston');
 const FILE_UPLOAD_DIRECTORY = path.join(__dirname, '../files');
+const VALID_STREAM_TYPES = new Set(["kafka", "redis"]);
 const logger = winston.createLogger({
     format: winston.format.combine(
         winston.format.timestamp(),
@@ -96,21 +97,34 @@ module.exports = {
             next();
         });
 
-        let port = bootstrapObjectMap.server.port;
-
-        let server = app.listen(port);
+        const port = bootstrapObjectMap.server.port;
+        let server = null;
 
         const inSimulationMode = (bootstrapObjectMap.server.configs.get("inSimulationMode") === "true");
         cache.set("inSimulationMode", inSimulationMode);
-
-        logger.info(`[SERVER] Listening on port: ${port}`);
+        const streamType = process.env.STREAM_TYPE || "kafka";
+        if (!VALID_STREAM_TYPES.has(streamType)) {
+            logger.error(`[APP ERROR] Invalid stream type: ${streamType}. Expected one of: kafka, redis.`);
+            process.exit(1);
+        }
+        logger.info(`[APP] Using ${streamType} stream type.`);
 
         const elastic = require('./elastic');
 
+        logger.info('[ELASTICSEARCH] Waiting for Elasticsearch to respond.');
         elastic.getClient().ping().then(async(_) => {
+            logger.info('[ELASTICSEARCH] Elasticsearch is reachable.');
+            await mdx.Utils.Elasticsearch.waitForIngestPipeline(
+                elastic.getClient(),
+                "insertion-timestamp-pipeline"
+            );
 
-            const kafka = require('./kafka');
-            if(kafka!=null){
+            if (streamType === "kafka") {
+                const kafka = require('./kafka');
+                if(kafka!=null){
+                logger.info('[KAFKA TOPIC] Waiting for required Kafka topics.');
+                await mdx.Utils.Kafka.waitForTopics(kafka.getAdminClient());
+
                 let calibrationObject = new mdx.Services.Calibration();
                 let configManagerObject = new mdx.Services.ConfigManager();
                 let notificationManagerObject = new mdx.Services.NotificationManager();
@@ -137,6 +151,7 @@ module.exports = {
                 mtmcObject.consumeAMRMessages(kafka, amrConfig).catch(error=>{
                     throw(error);
                 });
+                }
             }
 
             logger.info('[SERVER] Initializing routes');
@@ -167,13 +182,17 @@ module.exports = {
                 return next();
             });
 
+            server = app.listen(port);
+            logger.info(`[SERVER] Listening on port: ${port}`);
             logger.info('[APP] Server initialization successful');
         }).catch(error => {
             logger.error(`[APP ERROR] Server initialization failed: ${error.toString()}`);
             if (error instanceof Error) {
                 console.error(error);
             }
-            server.close();
+            if (server) {
+                server.close();
+            }
         });
     }
 }

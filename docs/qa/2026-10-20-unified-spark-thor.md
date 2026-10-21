@@ -2,8 +2,13 @@
 
 ## Outcome
 
-The Spark installation is running from `codex/unified-spark-thor`, now the
-fork's default branch. All 38 service roles are accounted for: 32 containers
+This receipt describes the initial unified-branch acceptance with the 3.2.1
+inference runtimes, before the subsequent VSS 3.3 integration. Current 3.3
+qualification is recorded in [the separate upgrade receipt](2026-10-20-vss33-spark.md).
+
+At this checkpoint the Spark installation was running from
+`codex/unified-spark-thor`, the fork's default branch. All 38 service roles
+were accounted for: 32 containers
 running and six initialization jobs completed successfully. The UI reports
 seven of seven runtime services ready. The operator explicitly selected a
 **20 GiB** reserve; saved settings, the active systemd guard and fresh UI

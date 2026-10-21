@@ -34,7 +34,7 @@ const fs = require('fs');
 const http = require('http');
 const https = require('https');
 
-const OPENAPI_SPEC_PATH = path.join('src', 'app', 'specification', 'openapi-governance.json');
+const OPENAPI_SPEC_PATH = path.join('src', 'app', 'specification', 'openapi.json');
 const SCRIPT_DIR = __dirname;
 const TEST_DIR = path.join(SCRIPT_DIR, '..', '..');
 const DEFAULT_VIDEO_ANALYTICS_API_ROOT = path.join(TEST_DIR, '..');
@@ -128,15 +128,6 @@ function stripAdditionalProperties(schema) {
     }
 }
 
-function stripMinLength(schema) {
-    if (!schema || typeof schema !== 'object') return;
-    if (!Array.isArray(schema)) {
-        delete schema.minLength;
-        for (const k of Object.keys(schema)) stripMinLength(schema[k]);
-    } else {
-        schema.forEach((s) => stripMinLength(s));
-    }
-}
 
 function getResponseSchema(openapi, method, requestPath, statusCode) {
     const specPath = findSpecPath(openapi, requestPath);
@@ -148,7 +139,6 @@ function getResponseSchema(openapi, method, requestPath, statusCode) {
     if (!schema) return null;
     const resolved = resolveSchemaRef(openapi, schema, new Set());
     stripAdditionalProperties(resolved);
-    stripMinLength(resolved);
     return resolved;
 }
 

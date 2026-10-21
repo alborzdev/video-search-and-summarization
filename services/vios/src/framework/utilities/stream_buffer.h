@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2021 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2021-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,17 +22,18 @@
 #include <condition_variable>
 #include <queue>
 #include <cstdint>
+#include <cstddef>
 #include <atomic>
 #include "logger.h"
 #include "stats.h"
 #include "config.h"
 
-#define STREAM_MSG_EOS "_stream_msg_eos_"
-#define STREAM_MSG_ERROR "_stream_msg_error_"
-#define STREAM_DEFAULT_BUFFER_SIZE 2*1000*1000
-#define DISCRETE_FRAME_QUEUE_MAX_SIZE 500
+constexpr const char* STREAM_MSG_EOS = "_stream_msg_eos_";
+constexpr const char* STREAM_MSG_ERROR = "_stream_msg_error_";
+constexpr int STREAM_DEFAULT_BUFFER_SIZE = 2*1000*1000;
 
-using namespace std;
+constexpr std::size_t DISCRETE_FRAME_QUEUE_MAX_SIZE = 500;
+
 
 typedef enum { eBufferInitialState = -1, eBufferPlayMode, eBufferPauseMode } eBufferState;
 
@@ -54,7 +55,7 @@ struct DiscreteFrame
     }
 
     std::vector<uint8_t> m_content;
-    string m_codec;
+    std::string m_codec;
     uint8_t m_nalType;
     struct timeval m_presentationTime;
     struct timeval m_latencyStartTime;
@@ -66,27 +67,27 @@ public:
 CodecStats webrtcToRtspLatencyStats;
 int64_t lastStatsPrintTime = 0;
 
-StreamBuffer(const string& streamName, size_t maxSize, bool isFramed = false)
+StreamBuffer(const std::string& streamName, size_t maxSize, bool isFramed = false)
     : m_streamName(streamName)
     , m_queueMutex()
     , m_pushCV()
     , m_popCV()
     , m_ringBufferState(eBufferInitialState)
 {
-    LOG(info) << "StreamBuffer::StreamBuffer stream:" << m_streamName << endl;
+    LOG(info) << "StreamBuffer::StreamBuffer stream:" << m_streamName << std::endl;
     play();
 }
 
 ~StreamBuffer()
 {
-    LOG(info) << "StreamBuffer::~StreamBuffer stream:" << m_streamName << endl;
+    LOG(info) << "StreamBuffer::~StreamBuffer stream:" << m_streamName << std::endl;
     m_frameInfoQueue = {};
     m_pushCV.notify_all();
     m_popCV.notify_all();
     m_consumerThreadBlockedCount = 0;
 }
 
-bool push(string item)
+bool push(std::string item)
 {
     bool ret = false;
     std::vector<uint8_t> vec(item.begin(), item.end());
@@ -131,12 +132,12 @@ bool push(std::shared_ptr<DiscreteFrame> frameInfo)
             std::cv_status::timeout)
         {
             LOG(error) << "!!! Buffer full..." << " Stream:" << m_streamName
-                    << ", skip framesize:" << frameInfo->m_content.size() << endl;
+                    << ", skip framesize:" << frameInfo->m_content.size() << std::endl;
             m_consumerThreadBlockedCount++;
             if (m_consumerThreadBlockedCount.load() == 3) /* 30sec*/
             {
                 /* Exiting to restart the process */
-                LOG(error) << "FATAL ERROR observed - Restart the vst" << endl;
+                LOG(error) << "FATAL ERROR observed - Restart the vst" << std::endl;
 #ifndef UNIT_TEST
                 assert(false);
 #endif
@@ -216,7 +217,7 @@ std::vector<uint8_t> read(unsigned size)
 
 void clear()
 {
-    LOG(info) << "StreamBuffer::clear stream:" << m_streamName << endl;
+    LOG(info) << "StreamBuffer::clear stream:" << m_streamName << std::endl;
     std::unique_lock<std::mutex> scopedLock(m_queueMutex);
     m_pushCV.notify_all();
     m_popCV.notify_all();

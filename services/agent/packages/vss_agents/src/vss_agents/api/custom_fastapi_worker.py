@@ -1,0 +1,499 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Custom FastAPI front-end worker that extends NAT's default worker
+to support additional streaming endpoints and a lightweight health check.
+"""
+
+import asyncio
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
+from datetime import UTC
+from datetime import datetime
+from datetime import timedelta
+import logging
+import re
+from typing import Literal
+
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
+from nat.builder.framework_enum import LLMFrameworkEnum
+from nat.builder.workflow_builder import WorkflowBuilder
+from nat.data_models.api_server import ChatResponseChunk
+from nat.data_models.config import Config
+from nat.front_ends.fastapi.fastapi_front_end_plugin_worker import FastApiFrontEndPluginWorker
+from pydantic import BaseModel
+from pydantic import Field
+from pydantic import model_validator
+from starlette.types import ASGIApp
+from starlette.types import Message
+from starlette.types import Receive
+from starlette.types import Scope
+from starlette.types import Send
+
+from vss_agents.api.analysis_profiles import register_analysis_profile_routes
+from vss_agents.api.evidence_analysis import register_evidence_analysis_routes
+from vss_agents.api.history_clear import register_history_clear_routes
+from vss_agents.api.rtsp_delete import register_rtsp_delete_routes
+from vss_agents.api.rtsp_ingest import register_rtsp_ingest_routes
+from vss_agents.api.rtsp_ingest import stop_all_managed_embedding_generation
+from vss_agents.api.source_control import register_source_control_routes
+from vss_agents.api.source_reset import register_source_reset_routes
+from vss_agents.api.thor_workload_admission import ThorVisualWorkloadAdmission
+from vss_agents.api.thor_workload_admission import ThorWorkloadAdmissionError
+from vss_agents.api.version import register_version_route
+from vss_agents.api.video_delete import register_video_delete_routes
+from vss_agents.api.video_ingest import register_video_upload
+from vss_agents.api.video_ingest import register_video_upload_complete
+from vss_agents.api.video_search_ingest import register_video_search_ingest_routes
+
+logger = logging.getLogger(__name__)
+
+_DONE_EVENT = re.compile(rb"(?:^|\r?\n)data:[\t ]*\[DONE\]\r?\n\r?\n")
+_ERROR_EVENT = re.compile(rb"(?:^|\r?\n)event:[\t ]*error[\t ]*\r?\n")
+_WORKFLOW_ERROR = re.compile(rb'"code"\s*:\s*"workflow_error"')
+_ROOT_WORKFLOW_COMPLETE = re.compile(
+    rb"(?:^|\r?\n)intermediate_data:[\t ]*\{"
+    rb'(?=[^\r\n]{0,512}"parent_id"\s*:\s*"root")'
+    rb'(?=[^\r\n]{0,512}"name"\s*:\s*"Function Complete: <workflow>")'
+)
+_STREAM_EVENT_TAIL_BYTES = 1024
+_LEGACY_CHAT_STREAM_PATHS = frozenset({"/chat/stream", "/v1/chat/stream"})
+
+
+class LegacyChatTerminalMiddleware:
+    """Complete successful NAT interactive chat streams using the OpenAI SSE contract.
+
+    NAT 1.8 routes interactive ``*/chat/stream`` requests through its interactive
+    runner, which omits the final ``finish_reason=stop`` chunk and ``[DONE]``
+    sentinel emitted by its non-interactive response helper. Repair cleanly
+    ended streams after explicit root workflow completion, but preserve
+    incomplete termination after either NAT error format so clients do not
+    mistake a partial answer for success.
+    """
+
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        response_successful = False
+        workflow_completed = False
+        stream_failed = False
+        done_sent = False
+        stream_event_tail = b""
+
+        async def send_with_terminal(message: Message) -> None:
+            nonlocal response_successful, workflow_completed, stream_failed, done_sent, stream_event_tail
+
+            if message["type"] == "http.response.start":
+                response_successful = 200 <= message["status"] < 300
+                await send(message)
+                return
+
+            if message["type"] != "http.response.body":
+                await send(message)
+                return
+
+            body = message.get("body", b"")
+            stream_event_window = stream_event_tail + body
+            workflow_completed = workflow_completed or bool(_ROOT_WORKFLOW_COMPLETE.search(stream_event_window))
+            stream_failed = stream_failed or bool(
+                _ERROR_EVENT.search(stream_event_window) or _WORKFLOW_ERROR.search(stream_event_window)
+            )
+            done_sent = done_sent or bool(_DONE_EVENT.search(stream_event_window))
+            stream_event_tail = stream_event_window[-_STREAM_EVENT_TAIL_BYTES:]
+
+            if (
+                not message.get("more_body", False)
+                and response_successful
+                and workflow_completed
+                and not stream_failed
+                and not done_sent
+            ):
+                if body:
+                    await send({**message, "more_body": True})
+                terminal = (
+                    ChatResponseChunk.create_streaming_chunk("", finish_reason="stop").get_stream_data()
+                    + "data: [DONE]\n\n"
+                ).encode()
+                await send({"type": "http.response.body", "body": terminal, "more_body": False})
+                return
+
+            await send(message)
+
+        await self.app(scope, receive, send_with_terminal)
+
+
+# This is deliberately the advertised LVS semantic surface, rather than every
+# function configured in the process.  The endpoint below resolves each name
+# through the live WorkflowBuilder and returns no configuration values, URLs,
+# credentials, prompts, or tool schemas.
+LVS_RUNTIME_TOOL_NAMES = (
+    "lvs_video_understanding",
+    "lvs_config_media",
+    "lvs_stream_understanding",
+    "lvs_caption_retrieval",
+    "video_report_gen",
+)
+
+
+class VisionInspectionRequest(BaseModel):
+    """A deterministic, single-source visual inspection request from the UI."""
+
+    source_kind: Literal["live", "replay"]
+    sensor_id: str = Field(min_length=1, max_length=160)
+    query: str = Field(min_length=1, max_length=1000)
+    asked_at: datetime
+    current_time_seconds: float | None = Field(default=None, ge=0)
+    duration_seconds: float | None = Field(default=None, gt=0)
+    live_start_time: datetime | None = None
+    live_end_time: datetime | None = None
+    lookback_seconds: int = Field(default=3, ge=1, le=60, strict=True)
+    frame_count: int | None = Field(default=None, ge=1, le=20, strict=True)
+
+    model_config = {"extra": "forbid"}
+
+    @model_validator(mode="after")
+    def validate_playback(self) -> "VisionInspectionRequest":
+        if self.source_kind == "live" and (self.current_time_seconds is not None or self.duration_seconds is not None):
+            raise ValueError("Live inspection requests cannot include replay offsets")
+        if self.source_kind == "replay" and (self.lookback_seconds != 3 or self.frame_count is not None):
+            raise ValueError("Recent-footage duration and frame count apply only to live inspections")
+        if self.frame_count is not None and self.frame_count != min(self.lookback_seconds, 20):
+            raise ValueError("Live inspections sample one frame per second, capped at 20 frames")
+        if (self.live_start_time is None) != (self.live_end_time is None):
+            raise ValueError("Provide both live recording window timestamps")
+        if self.live_start_time is not None and self.live_end_time is not None:
+            if self.source_kind != "live":
+                raise ValueError("Replay inspections cannot include a live recording window")
+            if self.live_start_time.tzinfo is None or self.live_end_time.tzinfo is None or self.asked_at.tzinfo is None:
+                raise ValueError("Live recording timestamps must include a timezone")
+            duration = (self.live_end_time - self.live_start_time).total_seconds()
+            if abs(duration - self.lookback_seconds) > 0.001:
+                raise ValueError("Live recording interval must match the selected recent-footage duration")
+            if self.live_end_time > self.asked_at - timedelta(seconds=5):
+                raise ValueError("Live recording windows must allow five seconds for storage")
+            # The UI verifies timeline advancement before selecting a delayed
+            # camera window. Preserve its actual timestamps instead of rejecting
+            # camera clock skew here; explicit retained intervals may be older.
+        return self
+
+
+def _replay_inspection_range(request: VisionInspectionRequest) -> tuple[float | None, float | None]:
+    """Choose a fast, useful replay window without pretending it covers unseen footage."""
+
+    query = request.query.lower()
+    whole_replay = any(
+        phrase in query
+        for phrase in ("entire replay", "entire video", "whole replay", "whole video", "summarize this replay")
+    )
+    if whole_replay:
+        return None, None
+
+    duration = request.duration_seconds
+    current = request.current_time_seconds or 0.0
+    # At the initial playhead, inspect the opening rather than constructing an
+    # invalid negative interval. Else center the observation around the frame
+    # the presenter is looking at.
+    start = max(0.0, current - 6.0)
+    end = current + 18.0
+    if duration is not None:
+        end = min(duration, end)
+        if end - start < 2.0:
+            start = max(0.0, end - 24.0)
+    return start, end
+
+
+async def inspect_vision_source(builder: WorkflowBuilder, request: VisionInspectionRequest) -> dict:
+    """Execute the visual evidence tool directly, bypassing agent planning."""
+
+    if request.source_kind == "live":
+        tool_name = "video_understanding_iso"
+        asked_at = request.asked_at.astimezone(UTC)
+        # Allow a small ingest/storage delay at the live edge.
+        end = request.live_end_time.astimezone(UTC) if request.live_end_time else asked_at - timedelta(seconds=5)
+        start = (
+            request.live_start_time.astimezone(UTC)
+            if request.live_start_time
+            else end - timedelta(seconds=request.lookback_seconds)
+        )
+        start_timestamp: str | float | None = start.isoformat().replace("+00:00", "Z")
+        end_timestamp: str | float | None = end.isoformat().replace("+00:00", "Z")
+        observed_range = None
+    else:
+        tool_name = "video_understanding"
+        start_timestamp, end_timestamp = _replay_inspection_range(request)
+        observed_range = (
+            {"start_seconds": start_timestamp, "end_seconds": end_timestamp}
+            if start_timestamp is not None and end_timestamp is not None
+            else None
+        )
+
+    tool = await builder.get_tool(tool_name, wrapper_type=LLMFrameworkEnum.LANGCHAIN)
+    if tool is None:
+        raise RuntimeError(f"Visual evidence tool '{tool_name}' is unavailable")
+
+    answer = await tool.ainvoke(
+        input={
+            "sensor_id": request.sensor_id,
+            "start_timestamp": start_timestamp,
+            "end_timestamp": end_timestamp,
+            "user_prompt": (
+                "Answer the visitor's question only from visible evidence in this video. "
+                "First check whether the people, objects, or events mentioned in the question are actually visible; "
+                "the question is not evidence that they exist. If they are not visible, say so plainly. "
+                "For every question, including a general scene summary, check for clearly identifiable people "
+                "before describing any human activity. Identify a person only when visible human body features "
+                "support that identification. Distant colored shapes, red equipment, monitor carts, and detector "
+                "boxes alone do not establish a person. If a small or distant shape is ambiguous, describe it as "
+                "an unclear shape and do not assign clothing, walking, or other human activity to it. "
+                "Describe people and their activity only when people are clearly visible. "
+                "Claim motion, entering, or leaving only when changes across frames support it. "
+                "Do not treat text labels or detector boxes as proof of an object or event. "
+                "If the view is unclear, state that limitation instead of guessing. "
+                "Be concise and do not infer facts that are not visible. "
+                f"Question: {request.query.strip()}"
+            ),
+            "vlm_reasoning": False,
+            **({"frame_count": min(request.lookback_seconds, 20)} if request.source_kind == "live" else {}),
+        }
+    )
+    answer_text = str(answer).strip()
+    if not answer_text:
+        raise RuntimeError("The visual evidence tool returned no observation")
+    return {
+        "answer": answer_text,
+        "evidence_tool": tool_name,
+        "observed_range": observed_range,
+        **({"frame_count": min(request.lookback_seconds, 20)} if request.source_kind == "live" else {}),
+        **(
+            {"observed_window": {"start_time": start_timestamp, "end_time": end_timestamp}}
+            if request.source_kind == "live"
+            else {}
+        ),
+    }
+
+
+async def discover_lvs_runtime_tools(builder: WorkflowBuilder) -> dict:
+    """Resolve the five advertised LVS tools from the running NAT builder.
+
+    A source-config grep cannot prove that the deployed builder successfully
+    constructed a tool.  This small, read-only probe performs the same
+    ``get_tool`` resolution used by the agents and exposes only exact requested
+    names and an aggregate readiness bit.
+    """
+
+    available: list[str] = []
+    missing: list[str] = []
+    for name in LVS_RUNTIME_TOOL_NAMES:
+        try:
+            tool = await builder.get_tool(
+                name,
+                wrapper_type=LLMFrameworkEnum.LANGCHAIN,
+            )
+        except Exception:
+            logger.warning("LVS runtime tool resolution failed for %s", name, exc_info=True)
+            missing.append(name)
+            continue
+        if tool is None:
+            missing.append(name)
+        else:
+            available.append(name)
+    return {
+        "schema_version": 1,
+        "catalog": "lvs-advertised-runtime-tools",
+        "expected": list(LVS_RUNTIME_TOOL_NAMES),
+        "available": available,
+        "missing": missing,
+        "ready": not missing,
+    }
+
+
+class CustomFastApiFrontEndWorker(FastApiFrontEndPluginWorker):
+    """
+    Custom FastAPI front-end worker that extends NAT's default worker.
+    """
+
+    def __init__(self, config: Config):
+        super().__init__(config)
+        logger.info("Initialized CustomFastApiFrontEndWorker")
+
+    def build_app(self) -> FastAPI:
+        app = super().build_app()
+        inherited_lifespan = app.router.lifespan_context
+
+        @asynccontextmanager
+        async def lifespan(starting_app: FastAPI) -> AsyncIterator[object]:
+            started = False
+            try:
+                async with inherited_lifespan(starting_app) as state:
+                    started = True
+                    try:
+                        yield state
+                    finally:
+                        # Drain supervised SSE clients before NAT closes its
+                        # session managers and workflow resources.
+                        await stop_all_managed_embedding_generation()
+            finally:
+                if not started:
+                    # Route setup can schedule reconciliation before a later
+                    # startup step fails; those tasks still need cancellation.
+                    await stop_all_managed_embedding_generation()
+
+        app.router.lifespan_context = lifespan
+        return app
+
+    async def add_routes(self, app: FastAPI, builder: WorkflowBuilder) -> None:
+        """
+        Override add_routes to add custom endpoints.
+
+        Args:
+            app: FastAPI application instance
+            builder: WorkflowBuilder instance
+        """
+        # Add standard NAT routes
+        await super().add_routes(app, builder)
+
+        self._register_legacy_chat_terminal_wrappers(app)
+
+        # Remove NAT's default health endpoint and add our custom one
+        # We need to override it to return the expected format for integration tests
+        app.routes[:] = [route for route in app.routes if getattr(route, "path", None) != "/health"]
+
+        # Add lightweight health endpoint (no telemetry)
+        @app.get("/health", include_in_schema=False)
+        async def health_check() -> dict:
+            return {"value": {"isAlive": True}}
+
+        logger.info("Registered custom /health endpoint (replaced NAT default)")
+
+        @app.get("/api/v1/runtime-tools/lvs", include_in_schema=False)
+        async def lvs_runtime_tools() -> JSONResponse:
+            result = await discover_lvs_runtime_tools(builder)
+            return JSONResponse(status_code=200 if result["ready"] else 503, content=result)
+
+        logger.info("Registered read-only /api/v1/runtime-tools/lvs discovery endpoint")
+
+        visual_admission = ThorVisualWorkloadAdmission()
+
+        @app.post("/api/v1/vision-inspection", include_in_schema=False)
+        async def vision_inspection(request: VisionInspectionRequest) -> JSONResponse:
+            """Inspect one selected source through a real visual tool call."""
+
+            timeout_seconds = 55 if request.source_kind == "live" else 180
+            try:
+                async with visual_admission.reserve("current_visual_question"):
+                    async with asyncio.timeout(timeout_seconds):
+                        result = await inspect_vision_source(builder, request)
+            except ThorWorkloadAdmissionError as exc:
+                return JSONResponse(status_code=exc.status_code, content=exc.response_body())
+            except TimeoutError:
+                return JSONResponse(
+                    status_code=504,
+                    content={"error": f"Visual inspection exceeded {timeout_seconds} seconds. Try a shorter question."},
+                )
+            except Exception as exc:
+                logger.warning("Direct visual inspection failed", exc_info=True)
+                return JSONResponse(
+                    status_code=502,
+                    content={"error": f"Visual inspection could not be completed: {exc}"},
+                )
+            return JSONResponse(status_code=200, content=result)
+
+        logger.info("Registered deterministic /api/v1/vision-inspection endpoint")
+
+        register_evidence_analysis_routes(app, builder, visual_admission)
+        logger.info("Registered grounded /api/v1/evidence-analysis endpoint")
+        register_version_route(app)
+
+        # Register custom streaming routes per capability flags in streaming_ingest
+        self._register_streaming_routes(app)
+
+    @staticmethod
+    def _register_legacy_chat_terminal_wrappers(app: FastAPI) -> None:
+        """Wrap NAT's legacy chat routes without mutating FastAPI middleware state.
+
+        NAT calls ``add_routes`` from its lifespan startup, after FastAPI has
+        frozen the application middleware stack. Route-level ASGI wrappers are
+        safe to install at that point and keep the repair scoped to the two
+        affected POST endpoints.
+        """
+        for route in app.routes:
+            if (
+                isinstance(route, APIRoute)
+                and route.path in _LEGACY_CHAT_STREAM_PATHS
+                and route.methods is not None
+                and "POST" in route.methods
+            ):
+                route.app = LegacyChatTerminalMiddleware(route.app)
+
+    def _register_streaming_routes(self, app: FastAPI) -> None:
+        """Register the custom video / RTSP / delete routes.
+
+        Every route is registered unconditionally on every profile — each
+        handler self-skips downstream calls (RTVI, storage delete, etc.)
+        when its backing service isn't configured, so the same shape works
+        on search/lvs/alerts/base:
+
+        - ``POST /api/v1/videos`` — returns the VST upload URL for a new
+          chat-tab video upload (UI handshake step 1).
+        - ``POST /api/v1/videos/{sensor_id}/complete`` — universal upload
+          completion hook (self-skips RTVI-CV / embedding when unset).
+        - ``PUT /api/v1/videos-for-search/{filename}`` — *deprecated* compat
+          shim for the ``metromind/ci-vss-oss`` search-profile test fixture.
+          Registered with ``deprecated=True`` in OpenAPI; will be dropped
+          once the fixture migrates to the new three-step flow.
+        - ``POST /api/v1/rtsp-streams/add`` and ``DELETE /.../delete/{name}``.
+        - ``POST /api/v1/rtsp-streams/{stream_id}/reset`` — clear generated
+          live analytics and optionally archive media without removing the source.
+        - ``DELETE /api/v1/videos/{video_id}``.
+
+        Raises:
+            ValueError: when ``streaming_ingest`` is missing from the config.
+                Every profile is expected to declare it explicitly.
+        """
+        front_end_cfg = getattr(getattr(self.config, "general", None), "front_end", None)
+        streaming_config = getattr(front_end_cfg, "streaming_ingest", None) if front_end_cfg else None
+
+        if streaming_config is None:
+            raise ValueError(
+                "general.front_end.streaming_ingest must be set in the profile YAML "
+                "to register custom video / RTSP routes"
+            )
+
+        # `stream_mode` and the old `enable_*` capability flags are no longer
+        # supported. Routes register unconditionally now.
+        legacy_extra = getattr(streaming_config, "model_extra", None)
+        if isinstance(legacy_extra, dict) and "stream_mode" in legacy_extra:
+            raise ValueError(
+                "general.front_end.streaming_ingest.stream_mode is no longer supported. "
+                "Drop it from the YAML; the upload-complete + RTSP + delete routes "
+                "register unconditionally on every profile."
+            )
+
+        logger.info("Registering streaming_ingest routes")
+
+        register_video_upload(app, self.config)
+        register_video_upload_complete(app, self.config)
+        register_video_search_ingest_routes(app, self.config)
+        register_rtsp_ingest_routes(app, self.config)
+        register_analysis_profile_routes(app, self.config)
+        register_rtsp_delete_routes(app, self.config)
+        register_source_reset_routes(app, self.config)
+        register_history_clear_routes(app, self.config)
+        register_source_control_routes(app, self.config)
+        register_video_delete_routes(app, self.config)

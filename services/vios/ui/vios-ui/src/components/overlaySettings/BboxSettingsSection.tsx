@@ -15,11 +15,25 @@
  * limitations under the License.
  */
 import React from 'react';
-import { Box, Grid, Typography, FormControlLabel, Switch, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import {
+    Box,
+    Grid,
+    Typography,
+    FormControlLabel,
+    Switch,
+    Checkbox,
+    TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+} from '@mui/material';
 
 interface BboxSettingsSectionProps {
     overlayBbox: boolean;
     setOverlayBbox: (value: boolean) => void;
+    filterObjects: boolean;
+    setFilterObjects: (value: boolean) => void;
     classType: string[];
     setClassType: (value: string[]) => void;
     objectIds: string;
@@ -33,6 +47,7 @@ interface BboxSettingsSectionProps {
     objIdTextBGColor: string;
     setObjIdTextBGColor: (value: string) => void;
     availableClassLabels?: string[];
+    menuContainer?: Element | null;
 }
 
 const positionOptions = [
@@ -48,6 +63,8 @@ const colorOptions = ['white', 'black', 'red', 'green', 'blue', 'yellow'];
 const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
     overlayBbox,
     setOverlayBbox,
+    filterObjects,
+    setFilterObjects,
     classType,
     setClassType,
     objectIds,
@@ -61,6 +78,7 @@ const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
     objIdTextBGColor,
     setObjIdTextBGColor,
     availableClassLabels,
+    menuContainer,
 }) => {
     return (
         <Box
@@ -76,10 +94,21 @@ const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
                 Bounding Box Configuration
             </Typography>
 
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
                 <FormControlLabel
                     control={<Switch checked={overlayBbox} onChange={e => setOverlayBbox(e.target.checked)} />}
                     label='Show Bounding Boxes'
+                    sx={{ '& .MuiFormControlLabel-label': { fontWeight: 500 } }}
+                />
+                <FormControlLabel
+                    control={
+                        <Checkbox
+                            checked={filterObjects}
+                            disabled={!overlayBbox}
+                            onChange={e => setFilterObjects(e.target.checked)}
+                        />
+                    }
+                    label='Filter Objects'
                     sx={{ '& .MuiFormControlLabel-label': { fontWeight: 500 } }}
                 />
             </Box>
@@ -88,9 +117,15 @@ const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
                 <Typography variant='subtitle2' sx={{ mb: 1, fontWeight: 500, color: 'text.primary' }}>
                     Object Classes
                 </Typography>
-                <FormControl fullWidth>
+                <FormControl fullWidth disabled={!overlayBbox || !filterObjects}>
                     <InputLabel sx={{ fontWeight: 500 }}>Class Type</InputLabel>
-                    <Select multiple value={classType} onChange={e => setClassType(e.target.value as string[])} label='Class Type'>
+                    <Select
+                        multiple
+                        value={classType}
+                        onChange={e => setClassType(e.target.value as string[])}
+                        label='Class Type'
+                        MenuProps={{ container: menuContainer }}
+                    >
                         {availableClassLabels?.map(label => (
                             <MenuItem key={label} value={label}>
                                 {label}
@@ -103,6 +138,7 @@ const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
             <Box sx={{ mb: 2 }}>
                 <TextField
                     fullWidth
+                    disabled={!overlayBbox || !filterObjects}
                     label='Specific Object IDs'
                     value={objectIds}
                     onChange={e => setObjectIds(e.target.value)}
@@ -136,7 +172,12 @@ const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
                     <Grid item xs={12} sm={4}>
                         <FormControl fullWidth disabled={!showObjId}>
                             <InputLabel sx={{ fontWeight: 500 }}>Position</InputLabel>
-                            <Select value={objIdPosition} onChange={e => setObjIdPosition(e.target.value as number)} label='Position'>
+                            <Select
+                                value={objIdPosition}
+                                onChange={e => setObjIdPosition(e.target.value as number)}
+                                label='Position'
+                                MenuProps={{ container: menuContainer }}
+                            >
                                 {positionOptions.map(opt => (
                                     <MenuItem key={opt.value} value={opt.value}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -171,7 +212,12 @@ const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
                     <Grid item xs={12} sm={4}>
                         <FormControl fullWidth disabled={!showObjId}>
                             <InputLabel sx={{ fontWeight: 500 }}>Text Color</InputLabel>
-                            <Select value={objIdTextColor} onChange={e => setObjIdTextColor(e.target.value)} label='Text Color'>
+                            <Select
+                                value={objIdTextColor}
+                                onChange={e => setObjIdTextColor(e.target.value)}
+                                label='Text Color'
+                                MenuProps={{ container: menuContainer }}
+                            >
                                 {colorOptions.map(c => (
                                     <MenuItem key={c} value={c}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -194,7 +240,12 @@ const BboxSettingsSection: React.FC<BboxSettingsSectionProps> = ({
                     <Grid item xs={12} sm={4}>
                         <FormControl fullWidth disabled={!showObjId}>
                             <InputLabel sx={{ fontWeight: 500 }}>Background Color</InputLabel>
-                            <Select value={objIdTextBGColor} onChange={e => setObjIdTextBGColor(e.target.value)} label='Background Color'>
+                            <Select
+                                value={objIdTextBGColor}
+                                onChange={e => setObjIdTextBGColor(e.target.value)}
+                                label='Background Color'
+                                MenuProps={{ container: menuContainer }}
+                            >
                                 {colorOptions.map(c => (
                                     <MenuItem key={c} value={c}>
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

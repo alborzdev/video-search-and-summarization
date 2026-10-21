@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 # VST BDD Test Suite Docker Image
 # Provides a ready-to-run testing environment with all dependencies
 
@@ -73,7 +76,11 @@ COPY pyproject.toml poetry.lock* ./
 # Install Python dependencies (without dev dependencies)
 RUN poetry install --no-root --only main
 
-# Copy the entire project
+# Copy the entire project. This also bakes test_videos/ (the sample clips) into
+# the image -- .dockerignore explicitly un-ignores test_videos/. Unlike tests/,
+# features/, scripts/, data/, conftest.py, it is NOT bind-mounted at runtime, so
+# the baked /app/test_videos copies are always available. The BDD session
+# prerequisite (conftest.py) uploads them to NVStreamer when it has no streams.
 COPY . .
 
 # Clean any cached Python bytecode with absolute paths

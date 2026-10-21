@@ -10,6 +10,32 @@ refuse to start if either runtime install flag is enabled.
 No warehouse sample bundle is used. Runtime qualification uses tiny generated
 or operator-supplied fixtures only.
 
+## Spark RT-VLM 3.3 supplement
+
+The immutable 3.3 SBSA base needs an additional `libsodium23` archive for the
+locked libavfilter/libzmq dependency chain. Its separate lock is
+`deploy/docker/thor-current/rtvi-vlm33-codecs.lock.json`; the historical
+63-package manifest remains unchanged. Stage the small supplement explicitly:
+
+```bash
+python3 deploy/docker/thor-local/vios-codecs/rtvi33_codec_closure.py stage
+python3 deploy/docker/thor-local/vios-codecs/rtvi33_codec_closure.py verify
+```
+
+`stage --archive /absolute/path/to/libsodium23_1.0.18-1ubuntu0.24.04.1_arm64.deb`
+uses an already downloaded archive without network access. Both forms enforce
+the locked size, SHA256, Debian package identity, version and ARM64 architecture.
+The ignored supplement directory is
+`deploy/docker/thor-current/rtvi-vlm33-codecs/bundle/`.
+
+`Dockerfile.rtvi-vlm33` installs it offline, configures the bundled BLAS/LAPACK
+library search directories (package extraction skips Debian's alternatives
+scripts), and requires `libgstlibav.so` to load with all symbols resolved during
+the build. This verifies library closure; actual H.264/HEVC/AAC decode still
+requires the bounded runtime clip checks. The bundled FFmpeg CLI's separate
+capture/display dependency set is not qualified on this base; the RTVI app
+uses GStreamer and pymediainfo instead.
+
 ## What is covered
 
 | Advertised behavior | Pinned implementation evidence | Runtime evidence still required |

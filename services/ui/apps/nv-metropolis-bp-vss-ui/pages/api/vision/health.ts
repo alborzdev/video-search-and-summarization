@@ -16,6 +16,7 @@ interface ServiceHealth {
   label: string;
   latencyMs: number | null;
   ok: boolean;
+  selected: boolean;
 }
 
 interface ThorMetrics {
@@ -116,8 +117,10 @@ async function readThorMetrics(): Promise<ThorMetrics | null> {
 async function probe(
   key: ServiceKey,
   label: string,
-  url: string
+  url: string,
+  selected = true
 ): Promise<ServiceHealth> {
+  if (!selected) return { key, label, latencyMs: null, ok: false, selected: false };
   const started = Date.now();
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 3_000);
@@ -126,9 +129,9 @@ async function probe(
       cache: "no-store",
       signal: controller.signal,
     });
-    return { key, label, latencyMs: Date.now() - started, ok: response.ok };
+    return { key, label, latencyMs: Date.now() - started, ok: response.ok, selected: true };
   } catch {
-    return { key, label, latencyMs: null, ok: false };
+    return { key, label, latencyMs: null, ok: false, selected: true };
   } finally {
     clearTimeout(timeout);
   }
@@ -165,7 +168,10 @@ export default async function handler(
         "perception",
         "Detection + tracking",
         process.env.RTVI_CV_HEALTH_URL ||
-          "http://127.0.0.1:9000/api/v1/health/get-dsready-state"
+          "http://127.0.0.1:9000/api/v1/health/get-dsready-state",
+        // Only explicit server-side configuration can deselect a role. Missing
+        // metadata retains every legacy probe and cannot hide an outage.
+        process.env.VSS_DETECTOR_ENABLED !== "false"
       ),
       probe(
         "embedding",
@@ -187,9 +193,10 @@ export default async function handler(
       spark ? readSparkCapacity() : Promise.resolve(null),
     ]);
   const services = [video, agent, analytics, perception, embedding, vlm, llm];
-  const healthy = services.filter((service) => service.ok).length;
+  const selectedServices = services.filter((service) => service.selected);
+  const healthy = selectedServices.filter((service) => service.ok).length;
   const status =
-    healthy === services.length ? "online" : healthy ? "degraded" : "offline";
+    healthy === selectedServices.length ? "online" : healthy ? "degraded" : "offline";
 
   res.setHeader("Cache-Control", "no-store");
   return res.status(status === "offline" ? 503 : 200).json({
@@ -198,6 +205,22 @@ export default async function handler(
     status,
     thor,
     hardwareProfile: spark ? "DGX-SPARK" : thor ? "JETSON-THOR" : "EDGE-DEVICE",
+    demoProfile: process.env.VSS_DEMO_PROFILE === "clips" || process.env.VSS_DEMO_PROFILE === "all"
+      ? process.env.VSS_DEMO_PROFILE : null,
     sparkCapacity,
+    videoPlayback: {
+      // Renderer enables this only for an explicitly qualified native VIOS image.
+      dashEnabled: process.env.VSS_DASH_PLAYBACK_ENABLED === "true",
+    },
+    videoEfficiency: {
+      sourceVersion: process.env.VSS_SOURCE_VERSION || null,
+      runtimeVersion: process.env.VSS_RTVI_RUNTIME_VERSION || null,
+      adaptiveEvsConfigured: process.env.VSS_ADAPTIVE_EVS_ENABLED === "true"
+        ? true : process.env.VSS_ADAPTIVE_EVS_ENABLED === "false" ? false : null,
+      // This is a rendered configuration fact, not a throughput or workload
+      // qualification claim. Older runtimes cannot accept adaptive EVS settings.
+      adaptiveEvsCompatible: process.env.VSS_RTVI_RUNTIME_VERSION
+        ? /^3\.3(?:[.-]|$)/.test(process.env.VSS_RTVI_RUNTIME_VERSION) : null,
+    },
   });
 }

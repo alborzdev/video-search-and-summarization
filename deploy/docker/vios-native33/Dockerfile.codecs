@@ -1,0 +1,45 @@
+# Offline codec closure for the pinned VSS 3.3 ARM64 streamprocessing runtime.
+FROM ghcr.io/nvidia-ai-blueprints/vss/vss-vios-streamprocessing@sha256:426f48add56f5ba95b0a70eb8036f4b0590da9fb3228d2065f539d6f9721723a
+USER 0:0
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+ENV LD_PRELOAD="" BASH_ENV="" ENV="" NVIDIA_VISIBLE_DEVICES=void NVIDIA_DRIVER_CAPABILITIES=""
+COPY native-bundle/ /tmp/native-bundle/
+RUN cd /tmp/native-bundle && sha256sum --check --strict checksums.sha256 \
+    && while IFS=$'\t' read -r archive package version arch; do \
+         test "$(dpkg-deb --field "$archive" Package)" = "$package" \
+         && test "$(dpkg-deb --field "$archive" Version)" = "$version" \
+         && test "$(dpkg-deb --field "$archive" Architecture)" = "$arch" \
+         && dpkg-deb --extract "$archive" / || exit 1; \
+       done < metadata.tsv \
+    && rm -rf /tmp/native-bundle
+COPY install-codec-bundle.sh /tmp/install-codec-bundle.sh
+COPY codecs.lock.json /tmp/codecs.lock.json
+COPY codec-bundle/ /tmp/codec-bundle/
+RUN bash /tmp/install-codec-bundle.sh /tmp/codec-bundle / install /tmp/codecs.lock.json \
+    && rm -rf /tmp/codec-bundle /tmp/install-codec-bundle.sh /tmp/codecs.lock.json
+COPY libsodium23.deb libsodium23.sha256 /tmp/supplement/
+RUN cd /tmp/supplement \
+    && sha256sum --check --strict libsodium23.sha256 \
+    && test "$(dpkg-deb --field libsodium23.deb Package)" = libsodium23 \
+    && test "$(dpkg-deb --field libsodium23.deb Version)" = 1.0.18-1ubuntu0.24.04.1 \
+    && test "$(dpkg-deb --field libsodium23.deb Architecture)" = arm64 \
+    && dpkg-deb --extract libsodium23.deb / \
+    && printf '/usr/lib/aarch64-linux-gnu/blas\n/usr/lib/aarch64-linux-gnu/lapack\n' > /etc/ld.so.conf.d/vss-native33-codecs.conf \
+    && /usr/sbin/ldconfig \
+    && rm -rf /tmp/supplement
+RUN set -e; for plugin in \
+      /home/vst/vst_release/prebuilts/aarch64/gst-plugins/libgstdashmp4mux.so \
+      /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstdash.so \
+      /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstisomp4.so \
+      /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstlibav.so \
+      /usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstx264.so; do \
+        test -f "$plugin"; ldd "$plugin" > /tmp/plugin-closure.txt; \
+        if grep -q 'not found' /tmp/plugin-closure.txt; then cat /tmp/plugin-closure.txt; exit 1; fi; \
+      done; rm -f /tmp/plugin-closure.txt
+RUN ldd /home/vst/vst_release/launch_vst > /tmp/launch-closure.txt \
+    && if grep -q 'not found' /tmp/launch-closure.txt; then cat /tmp/launch-closure.txt; exit 1; fi \
+    && rm /tmp/launch-closure.txt
+ENV VST_INSTALL_ADDITIONAL_PACKAGES=false USE_SOFTWARE_PATH=true ENABLE_TELEMETRY=false
+LABEL com.nvidia.vss.native33.role="offline-codec-base"
+# Source compilation and playback qualification are separate from this codec base.
+ENTRYPOINT ["/home/vst/vst_release/launch_vst"]

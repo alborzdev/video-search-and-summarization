@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2021-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2021-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,7 @@
 #include <queue>
 #include <condition_variable>
 #include <atomic>
+#include <variant>
 #include <dlfcn.h>
 #include <jsoncpp/json/json.h>
 
@@ -69,10 +70,29 @@ typedef void (*osd_draw_t) (OsdContext_t, void *);
 typedef void (*osd_global_init_t) ();
 typedef void (*osd_global_destroy_t) ();
 
-union GstMetaUnion
+/* Opaque handle to a dynamically loaded shared library (as returned by dlopen). */
+struct SharedLibraryHandle;
+
+class GstMetaUnion
 {
-    GstNvVstMeta* vstMeta;
-    GstNvIpcMeta* ipcMeta;
+    public:
+        void setVstMeta (GstNvVstMeta* meta) { m_meta = meta; }
+        void setIpcMeta (GstNvIpcMeta* meta) { m_meta = meta; }
+
+        GstNvVstMeta* vstMeta () const
+        {
+            auto* meta = std::get_if<GstNvVstMeta*>(&m_meta);
+            return meta ? *meta : nullptr;
+        }
+
+        GstNvIpcMeta* ipcMeta () const
+        {
+            auto* meta = std::get_if<GstNvIpcMeta*>(&m_meta);
+            return meta ? *meta : nullptr;
+        }
+
+    private:
+        std::variant<std::monostate, GstNvVstMeta*, GstNvIpcMeta*> m_meta;
 };
 
 struct Point2D
@@ -80,7 +100,9 @@ struct Point2D
     float x;
     float y;
     
-    Point2D(float _x = 0, float _y = 0) 
+    Point2D()
+        : x(0), y(0) {}
+    Point2D(float _x, float _y)
         : x(_x), y(_y) {}
 };
 
@@ -90,7 +112,9 @@ struct Point3D
     float y;
     float z;
     
-    Point3D(float _x = 0, float _y = 0, float _z = 0) 
+    Point3D()
+        : x(0), y(0), z(0) {}
+    Point3D(float _x, float _y, float _z)
         : x(_x), y(_y), z(_z) {}
 };
 
@@ -102,17 +126,17 @@ struct Circle
 };
 
 struct ProximityState {
-    vector<Point2D> corners;
-    string objectId;
-    string objType;
+    std::vector<Point2D> corners;
+    std::string objectId;
+    std::string objType;
     bool isInInnerCircle = false;
     bool isInOuterCircle = false;
     float centerX = 0;
     float centerY = 0;
     float radius = 0;
     double confidence = 0.0;
-    vector<string> connectedEntrants;
-    vector<string> connectedProximity;
+    std::vector<std::string> connectedEntrants;
+    std::vector<std::string> connectedProximity;
 };
 
 typedef struct _BBoxDrawingData
@@ -131,9 +155,9 @@ typedef struct _BBoxDrawingData
     uint32_t                m_timestampTolerance;
     SearchParams            m_searchParams;
     OverlayBBoxParams       m_overlay;
-    vector<pair<std::string, std::string> > m_mismatches;
-    vector<pair<std::string, std::string> > m_shifts;
-    vector<tuple<std::string, std::string, int64_t> > m_numObjects;
+    std::vector<std::pair<std::string, std::string> > m_mismatches;
+    std::vector<std::pair<std::string, std::string> > m_shifts;
+    std::vector<std::tuple<std::string, std::string, int64_t> > m_numObjects;
     bool                    m_isLive = false;
     FrameSize               m_frameSize;
     double                  m_frameRate = 30.0;
@@ -145,7 +169,7 @@ struct Point
 };
 
 // Generic helper function to check if an object type is in a comma-separated class list
-bool is_in_class_list(const string& obj_type, const string& classList);
+bool is_in_class_list(const std::string& obj_type, const std::string& classList);
 
 class NvOsdLibs
 {
@@ -165,8 +189,8 @@ public:
 
 private:
     static NvOsdLibs* _instance;
-    void* handle_nvCuLib = nullptr;
-    void* handle_nvCuosdmetaLib = nullptr;
+    SharedLibraryHandle* handle_nvCuLib = nullptr;
+    SharedLibraryHandle* handle_nvCuosdmetaLib = nullptr;
     bool error = false;
 
     NvOsdLibs();
@@ -185,9 +209,9 @@ class NvLLOverlayInternal
                              , m_frameRate(30)
             {
             }
-            string m_startTime;
-            string m_endTime;
-            string m_sensorName;
+            std::string m_startTime;
+            std::string m_endTime;
+            std::string m_sensorName;
             double m_frameRate;
             FrameSize m_frameSize;
             OverlayBBoxParams m_bboxParams;
@@ -196,9 +220,9 @@ class NvLLOverlayInternal
 
         typedef struct _TripwireDetails
         {
-            string id;
-            string name;
-            string stats;
+            std::string id;
+            std::string name;
+            std::string stats;
             OSD_LineParams        *wires[MAX_LINES] = {nullptr};
             unsigned int            wires_count = 0;
             OSD_ArrowParams       *direction[MAX_ARROWS] = {nullptr};
@@ -209,9 +233,9 @@ class NvLLOverlayInternal
 
         typedef struct _RoiDetails
         {
-            string id;
-            string name;
-            string stats;
+            std::string id;
+            std::string name;
+            std::string stats;
             OSD_LineParams        *lines[MAX_LINES] = {nullptr};
             unsigned int            lines_count = 0;
             OSD_PointParams       *endpoints[MAX_POINTS] = {nullptr};
@@ -220,10 +244,10 @@ class NvLLOverlayInternal
 
         typedef struct _CalibrationData
         {
-            vector<vector<float>> intrinsicMatrix; // 3x3 Camera intrinsic matrix
-            vector<float> proj_w2c_matrix;  // World to camera projection matrix
-            vector<float> proj_w2p_matrix;  // World to pixel projection matrix
-            string name;
+            std::vector<std::vector<float>> intrinsicMatrix; // 3x3 Camera intrinsic matrix
+            std::vector<float> proj_w2c_matrix;  // World to camera projection matrix
+            std::vector<float> proj_w2p_matrix;  // World to pixel projection matrix
+            std::string name;
             float scaleFactor;                   // Scale factor for coordinate conversion
             struct {
                 float x;                         // X translation to global coordinates
@@ -231,8 +255,13 @@ class NvLLOverlayInternal
             } translationToGlobalCoordinates;    // Translation to global coordinates
         } CalibrationData;
 
+        // A 3D cuboid can only be projected onto a camera image when every
+        // corner is in front of that camera's near plane.
+        static bool areAllPointsInFrontOfCamera(const std::vector<Point3D>& points,
+                                                 const CalibrationData& calibrationData);
+
         // Map of object id to object type, corners, and confidence
-        std::map<string, std::tuple<string, vector<Point2D>, double>, std::less<>> activeObjectCorners;
+        std::map<std::string, std::tuple<std::string, std::vector<Point2D>, double>, std::less<>> activeObjectCorners;
         std::map<std::string, ProximityState, std::less<>> proximityStates;
         std::map<std::string, ProximityState, std::less<>> entrantStates;
 
@@ -249,47 +278,48 @@ class NvLLOverlayInternal
         void readTripwire();
         void readRoi();
         void readCalibrationData();
-        bool processOsdSinkPadBufferProbeStreamer (void* buf, GstNvVstMeta *meta);
-        bool processOsdSinkPadBufferProbe (void* buf, GstMetaUnion *meta, int64_t pts = 0);
-        void fetchMetadataAgain (string new_start);
-        void updateIdList(std::vector<string> idList[OVERLAYCOUNT]);
-        void updateClassTypeList(std::vector<string> classTypeList);
-        void setBboxColor(string color) { m_bboxParams.m_overlay.m_bboxColor = color; }
+        bool processOsdSinkPadBufferProbeStreamer (unsigned char* buf, GstNvVstMeta *meta);
+        bool processOsdSinkPadBufferProbe (unsigned char* buf, GstMetaUnion *meta, int64_t pts = 0);
+        void fetchMetadataAgain (std::string new_start);
+        void updateIdList(std::vector<std::string> idList[OVERLAYCOUNT]);
+        void updateClassTypeList(std::vector<std::string> classTypeList);
+        void setBboxColor(std::string color) { m_bboxParams.m_overlay.m_bboxColor = color; }
         void setBboxPose(bool pose) { m_bboxParams.m_overlay.m_enablePose = pose; }
         void setBboxHalos(bool halos) { m_bboxParams.m_overlay.m_enableHalos = halos; }
         void setBboxThickness(uint16_t thickness) { m_bboxParams.m_overlay.m_bboxThickness = thickness; }
         void setBboxDebug(bool debug) { m_bboxParams.m_overlay.m_bboxDebug = debug; }
+        void setBboxDebugFontSize(int fontSize) { m_bboxParams.m_overlay.m_bboxDebugFontSize = fontSize; }
         void setBboxOpacity(uint8_t opacity) { m_bboxParams.m_overlay.m_bboxOpacity = opacity; }
         void setBboxId(bool enableBboxId) { m_bboxParams.m_overlay.m_enableBboxId = enableBboxId; }
         void setBboxIdPosition(BBoxIdPosition position) { m_bboxParams.m_overlay.m_bboxIdPosition = position; }
         void setBboxIdColor(const std::string& color) { m_bboxParams.m_overlay.m_bboxIdColor = color; }
         void setBboxIdBgColor(const std::string& color) { m_bboxParams.m_overlay.m_bboxIdBgColor = color; }
-        void setProximityClass(string proximityClass) { m_bboxParams.m_overlay.m_proximityClass = proximityClass; }
-        void setEntrantClass(string entrantClass) { m_bboxParams.m_overlay.m_entrantClass = entrantClass; }
+        void setProximityClass(std::string proximityClass) { m_bboxParams.m_overlay.m_proximityClass = proximityClass; }
+        void setEntrantClass(std::string entrantClass) { m_bboxParams.m_overlay.m_entrantClass = entrantClass; }
         void setProximityAreaFactor(double proximityAreaFactor) { m_bboxParams.m_overlay.m_proximityAreaFactor = proximityAreaFactor; }
-        void setProximityAnimation(string proximityAnimation) { m_bboxParams.m_overlay.m_proximityAnimation = proximityAnimation; }
-        void setColorCode(std::map<string, vector<int>, std::less<>> colorCode) { m_bboxParams.m_overlay.m_colorCode = colorCode; }
+        void setProximityAnimation(std::string proximityAnimation) { m_bboxParams.m_overlay.m_proximityAnimation = proximityAnimation; }
+        void setColorCode(std::map<std::string, std::vector<int>, std::less<>> colorCode) { m_bboxParams.m_overlay.m_colorCode = colorCode; }
         void setEnableGodsEyeView(bool enableGodsEyeView) { m_bboxParams.m_overlay.m_enableGodsEyeView = enableGodsEyeView; }
         void updateSourceResolution(int width, int height);
         void updateIPCStreamResolution(int width, int height);
         bool isOverlayEnabled();
         bool isBboxEnabled() { return m_enableBbox; }
-        bool doDraw (void* data, GstMetaUnion *meta, int64_t pts = 0);
+        bool doDraw (unsigned char* data, GstMetaUnion *meta, int64_t pts = 0);
         void draw_bbox_cuosd(Json::Value & objects, BBoxDrawingData* box_params,
-                vector<string> m_bboxList, vector<string> m_classTypeList, OsdContext_t context, GstBuffer *buffer);
+                std::vector<std::string> m_bboxList, std::vector<std::string> m_classTypeList, OsdContext_t context, GstBuffer *buffer);
         GstElement* create();
-        int draw_3d_bbox(const vector<Point2D>& corners2d, const string& obj_type,
+        int draw_3d_bbox(const std::vector<Point2D>& corners2d, const std::string& obj_type,
                          BBoxDrawingData* box_params, OsdContext_t context, GstBuffer* buffer,
-                         const string& object_id = "",
+                         const std::string& object_id = "",
                          const OSD_ColorParams& override_color = {0,0,0,0},
                          bool first_pass = false, double confidence = 0.0);
         void draw_bbox_id_cuosd(const Point& left_top, const Point& right_bottom,
-                         const string& object_id,
+                         const std::string& object_id,
                          BBoxDrawingData* box_params,
                          OsdContext_t context,
                          GstBuffer* buffer);
-        void draw_bbox_id_for_3d_projected_corners(const vector<Point2D>& corners2d,
-                         const string& object_id,
+        void draw_bbox_id_for_3d_projected_corners(const std::vector<Point2D>& corners2d,
+                         const std::string& object_id,
                          BBoxDrawingData* box_params,
                          OsdContext_t context,
                          GstBuffer* buffer);
@@ -312,7 +342,7 @@ class NvLLOverlayInternal
         bool                    m_use_protobuf = false;
         bool                    m_useId = false;
         bool                    m_isWaitForESQuery = false;
-        string                  m_sensorName = "";
+        std::string                  m_sensorName = "";
         int                     m_width = WIDTH_1080p;
         int                     m_height = HEIGHT_1080p;
         GstElement*             m_filter = nullptr;
@@ -322,26 +352,26 @@ class NvLLOverlayInternal
         async::task<void>           m_elasticTask;
         std::mutex                  m_debugData;
         std::string                 m_bboxColor;
-        uint16_t                    m_bboxThickness = DEFAULT_BBOX_WIDTH;
+        uint16_t                    m_bboxThickness = getDefaultBboxWidth();
         uint8_t                     m_bboxOpacity = DEFAULT_BBOX_OPACITY;
         bool                        m_bboxDebug = false;
         bool                        m_enableBboxId = false;
         BBoxIdPosition              m_bboxIdPosition = MIDDLE;
-        string                      m_bboxIdColor = "white";
-        string                      m_bboxIdBgColor = "black";
+        std::string                      m_bboxIdColor = "white";
+        std::string                      m_bboxIdBgColor = "black";
         bool                        m_prevEnableOverlay = false;
         bool                        m_enableBbox = false;
         bool                        m_enableHalos = false;
         bool                        m_enableTripwire = false;
         bool                        m_enableRoi = false;
         bool                        m_enablePose = false;
-        std::map<string, Tripwire>  m_tripwireList;
-        std::map<string, Roi>       m_roiList;
+        std::map<std::string, Tripwire>  m_tripwireList;
+        std::map<std::string, Roi>       m_roiList;
         int64_t                     m_lastTripwireReadTime = 0;
         int64_t                     m_lastRoiReadTime = 0;
-        std::vector<string>         m_idList[OVERLAYCOUNT];
+        std::vector<std::string>         m_idList[OVERLAYCOUNT];
         std::mutex                  m_idLock;
-        std::vector<string>         m_classTypeList;
+        std::vector<std::string>         m_classTypeList;
         std::mutex                  m_classTypeLock;
         std::thread                 m_readTripwireThread;
         std::thread                 m_readRoiThread;
@@ -358,15 +388,15 @@ class NvLLOverlayInternal
         std::atomic<int>            m_sourceHeight {HEIGHT_1080p};
         std::atomic<int>            m_ipcSourceWidth {WIDTH_1080p};
         std::atomic<int>            m_ipcSourceHeight {HEIGHT_1080p};
-        void*                       osd_ctx = nullptr;
+        OsdContext_t                osd_ctx = nullptr;
         std::shared_ptr<IMetadataStore> m_metadataStore = nullptr;
         std::shared_ptr<ReplayMetadataStore> m_replayMetadataStore = nullptr;
         bool                        m_isGst = false;
-        std::map<string, CalibrationData, std::less<>> m_calibrationData;
+        std::map<std::string, CalibrationData, std::less<>> m_calibrationData;
         std::mutex                  m_calibrationLock;
         SyncObject                  m_metaWait = {};
-#if !defined(AARCH64_PLATFORM) && !defined(JETSON_PLATFORM)
-        OsdCpuDataContext*          m_cpuCtx = nullptr;
+#if !defined(AARCH64_PLATFORM)
+        std::unique_ptr<OsdCpuDataContext> m_cpuCtx;
 #endif
         std::unique_ptr<HaloSafetyManager> m_haloSafetyManager;
 };

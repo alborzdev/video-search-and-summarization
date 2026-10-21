@@ -1,0 +1,17 @@
+{
+  "format_version": 1,
+  "architecture": "arm64",
+  "base_image": "ghcr.io/nvidia-ai-blueprints/vss/vss-rt-vlm@sha256:23f844c9715e2d98ac01260b085fd1f9c7523d748dd594995c4ec952b7f4f65d",
+  "purpose": "Additional dynamic-library closure for the 3.3 SBSA RT-VLM base; historical 63-package codec manifest stays unchanged.",
+  "packages": [
+    {
+      "package": "libsodium23",
+      "version": "1.0.18-1ubuntu0.24.04.1",
+      "architecture": "arm64",
+      "filename": "libsodium23_1.0.18-1ubuntu0.24.04.1_arm64.deb",
+      "size": 119490,
+      "sha256": "78471032060f3edfd539a01cb69a9ce8560a15e1d9efcd93ac7854731e9d679c",
+      "url": "https://ports.ubuntu.com/ubuntu-ports/pool/main/libs/libsodium/libsodium23_1.0.18-1ubuntu0.24.04.1_arm64.deb"
+    }
+  ]
+}

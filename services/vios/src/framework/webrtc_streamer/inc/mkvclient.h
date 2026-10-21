@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,13 +47,17 @@ class MKVClient
 		class Callback : public SessionCallback
 		{
 			public:
-				virtual void    onError(MKVClient&, const char*)  {}
+				virtual void    onError(MKVClient&, const char*)  { /* errors are ignored by default; subclasses override to report them */ }
 				virtual void    onEndOfFile(MKVClient& client)  { client.stop(); }
 		};
 			
 	public:
 		MKVClient(Environment& env, Callback* callback, const char* path, const std::map<std::string,std::string, std::less<>> & opts, int verbosityLevel=1);
 		virtual ~MKVClient() noexcept;
+		MKVClient(const MKVClient&) = delete;
+		MKVClient& operator=(const MKVClient&) = delete;
+		MKVClient(MKVClient&&) = delete;
+		MKVClient& operator=(MKVClient&&) = delete;
 
 		void stop() {
 			m_env.stop();
@@ -61,15 +65,9 @@ class MKVClient
 	
 	private:
 		void onMatroskaFileCreation(MatroskaFile* newFile);
-		static void onMatroskaFileCreation(MatroskaFile* newFile, void* clientData) {
-			((MKVClient*)(clientData))->onMatroskaFileCreation(newFile);
-		}
 		void onEndOfFile();
-		static void onEndOfFile(void* clientData) {
-			((MKVClient*)(clientData))->onEndOfFile();
-		}
 		
-	protected:
+	private:
 		Environment&             m_env;
 		Callback*                m_callback; 	
 		MatroskaFile*            m_mkvfile; 

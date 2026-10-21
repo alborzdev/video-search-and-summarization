@@ -131,10 +131,15 @@ export function SystemWorkspace({
   workloadAdmissions,
   workloadCheckedAt,
 }: SystemWorkspaceProps) {
-  const runningServices = health?.services.filter((service) => service.ok).length ?? 0;
-  const totalServices = health?.services.length ?? 0;
+  const selectedServices = health?.services.filter((service) => service.selected !== false) ?? [];
+  const runningServices = selectedServices.filter((service) => service.ok).length;
+  const totalServices = selectedServices.length;
   const spark = health?.hardwareProfile === "DGX-SPARK";
   const capacity = health?.sparkCapacity?.state === "fresh" ? health.sparkCapacity : null;
+  const efficiency = health?.videoEfficiency;
+  const evsStatus = efficiency?.adaptiveEvsCompatible === false ? "Runtime upgrade needed"
+    : efficiency?.adaptiveEvsCompatible == null || efficiency.adaptiveEvsConfigured == null ? "Unconfirmed"
+    : efficiency.adaptiveEvsConfigured ? "Configured" : "Off";
   return (
     <section className="vi-system-workspace">
       <div className="vi-page-intro vi-system-intro">
@@ -249,6 +254,32 @@ export function SystemWorkspace({
             )}
             </>}
           </div>
+
+          <article className="vi-compute-plan" aria-label="Video processing efficiency">
+            <div className="vi-system-section-heading">
+              <div>
+                <span className="vi-eyebrow">Video processing efficiency</span>
+                <h2>Adaptive video sampling</h2>
+              </div>
+              <span>{evsStatus}</span>
+            </div>
+            <p>
+              Adaptive EVS skips repeated visual information to reduce visual-model work.
+              {efficiency?.adaptiveEvsCompatible === false
+                ? " The configured RTVI image needs an upgrade before this feature can be enabled."
+                : evsStatus === "Configured"
+                ? " Enabled in the local runtime configuration; performance depends on the footage and model."
+                : evsStatus === "Off"
+                ? " Available in this runtime and currently switched off."
+                : " Runtime compatibility and configuration have not yet been confirmed."}
+            </p>
+            <div className="vi-system-metrics-grid">
+              {metricValue(efficiency?.sourceVersion || "Unconfirmed", "VSS source")}
+              {metricValue(efficiency?.runtimeVersion || "Unconfirmed", "RTVI runtime")}
+              {metricValue(evsStatus, "Adaptive EVS")}
+              {metricValue(health?.videoPlayback?.dashEnabled ? "Configured" : "Off", "DASH recorded playback")}
+            </div>
+          </article>
 
           <article className="vi-compute-plan">
             <div className="vi-system-section-heading">
@@ -418,11 +449,11 @@ export function SystemWorkspace({
             <div className="vi-service-list">
               {(health?.services ?? []).map((service) => (
                 <div key={service.key}>
-                  <span className={service.ok ? "is-ready" : "is-offline"}>
+                  <span className={service.selected === false ? "is-not-selected" : service.ok ? "is-ready" : "is-offline"}>
                     {service.ok ? <IconCheck size={15} /> : <IconServer size={15} />}
                   </span>
                   <strong>{service.label}</strong>
-                  <em>{service.ok ? "Ready" : "Unavailable"}</em>
+                  <em>{service.selected === false ? "Not selected" : service.ok ? "Ready" : "Unavailable"}</em>
                   <small>{service.latencyMs == null ? "—" : `${service.latencyMs} ms`}</small>
                 </div>
               ))}

@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-import type { CapabilitiesWorkspaceProps } from "./CapabilitiesWorkspace";
+import type { SystemHealth } from "./systemHealth";
+
+interface VssStoryWorkspaceProps {
+  onOpenDemo?: () => void;
+  systemHealth: SystemHealth | null;
+}
 import { industryBeats, VssIndustryScene } from "./VssIndustryScenes";
 import s from "./VssStoryWorkspace.module.css";
 import {
@@ -130,7 +135,7 @@ function Fingerprint({ query = false }: { query?: boolean }) {
     </div>
   );
 }
-export function VssStoryWorkspace({ onOpenDemo, systemHealth }: CapabilitiesWorkspaceProps) {
+export function VssStoryWorkspace({ onOpenDemo, systemHealth }: VssStoryWorkspaceProps) {
   const processingHardware = systemHealth?.hardwareProfile === "DGX-SPARK"
     ? "DGX Spark"
     : systemHealth?.hardwareProfile === "IGX-THOR"

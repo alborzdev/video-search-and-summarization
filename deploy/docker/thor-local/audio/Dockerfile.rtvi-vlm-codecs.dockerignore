@@ -1,0 +1,19 @@
+# The legacy rebuild consumes only frozen source and the verified codec bundle.
+# Never traverse private device state, models, databases or build scratch.
+**
+!deploy
+!deploy/docker
+!deploy/docker/thor-local
+!deploy/docker/thor-local/audio
+!deploy/docker/thor-local/audio/codec_bundle.py
+!deploy/docker/thor-local/audio/codec-bundle.lock.json
+!deploy/docker/thor-local/audio/install-codec-bundle.sh
+!deploy/docker/thor-local/audio/rtvi-vlm-offline-entrypoint.sh
+!deploy/docker/thor-local/audio/legacy-rtvi-src
+!deploy/docker/thor-local/audio/legacy-rtvi-src/**
+!deploy/docker/thor-local/audio/rtvi-vlm-codecs
+!deploy/docker/thor-local/audio/rtvi-vlm-codecs/bundle
+!deploy/docker/thor-local/audio/rtvi-vlm-codecs/bundle/**
+!tools
+!tools/runtime
+!tools/runtime/legacy_rtvi.py

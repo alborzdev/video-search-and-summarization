@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +48,7 @@ struct BufferedFrame
     std::string m_session_id;
     std::string m_stream_id;
 
-    BufferedFrame(const void* frame_data, size_t frame_size, int64_t ts, int64_t pts, const std::string& type,
+    BufferedFrame(const uint8_t* frame_data, size_t frame_size, int64_t ts, int64_t pts, const std::string& type,
                   const std::string& session, const std::string& stream = "")
         : m_size(frame_size), m_pts(pts), m_media_type(type), m_session_id(session), m_stream_id(stream)
     {
@@ -77,39 +77,16 @@ struct BufferedFrame
     }
 
     // Move constructor for better performance
-    BufferedFrame(BufferedFrame&& other) noexcept
-        : m_data(std::move(other.m_data))
-        , m_size(other.m_size)
-        , m_pts(other.m_pts)
-        , m_media_type(std::move(other.m_media_type))
-        , m_session_id(std::move(other.m_session_id))
-        , m_stream_id(std::move(other.m_stream_id))
-    {
-        other.m_size = 0;
-        other.m_pts = 0;
-    }
+    BufferedFrame(BufferedFrame&& other) noexcept = default;
 
     // Move assignment operator
-    BufferedFrame& operator=(BufferedFrame&& other) noexcept
-    {
-        if (this != &other)
-        {
-            m_data = std::move(other.m_data);
-            m_size = other.m_size;
-            m_pts = other.m_pts;
-            m_media_type = std::move(other.m_media_type);
-            m_session_id = std::move(other.m_session_id);
-            m_stream_id = std::move(other.m_stream_id);
-            
-            other.m_size = 0;
-            other.m_pts = 0;
-        }
-        return *this;
-    }
+    BufferedFrame& operator=(BufferedFrame&& other) noexcept = default;
 
     // Delete copy constructor and copy assignment operator to prevent expensive copies
     BufferedFrame(const BufferedFrame&) = delete;
     BufferedFrame& operator=(const BufferedFrame&) = delete;
+
+    ~BufferedFrame() = default;
 
     // Clear method for buffer reuse
     void clear()
@@ -137,7 +114,7 @@ public:
     ~CloudStorageBuffer();
 
     // Buffer management
-    bool bufferFrame(const void* data, size_t size, int64_t timestamp, const std::string& media_type,
+    bool bufferFrame(const uint8_t* data, size_t size, int64_t timestamp, const std::string& media_type,
                      const std::string& session_id, const std::string& stream_id = "");
 
     void start(std::function<bool(const BufferedFrame&)> upload_callback);

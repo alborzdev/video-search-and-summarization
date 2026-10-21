@@ -112,8 +112,8 @@ functions:
       EXAMPLE:
       [0.0s-4.0s] <description of the first event>
       [4.0s-12.0s] <description of the second event>
-    # HITL Configuration - prompts user to confirm/edit VLM prompt before report generation
-    hitl_enabled: true
+    # HITL is on by default; confirms/edits the VLM prompt. Set HITL_ENABLED=false to skip confirmation.
+    hitl_enabled: ${HITL_ENABLED:-true}
     hitl_prompt_llm: ${LLM_MODEL_TYPE:-nim}_llm  # LLM for AI-assisted prompt generation e.g. nim_llm, openai_llm
     hitl_vlm_prompt_template: |
       **VLM Prompt for Report Generation**
@@ -127,6 +127,8 @@ functions:
       • Type `/generate <description>` → AI creates a prompt based on your description
 
       • Type `/refine <instructions>` → AI modifies the current prompt
+
+      • Type `/default` → Restore the system default prompt
 
       • Type `/cancel` → Cancel report generation
 
@@ -176,32 +178,66 @@ functions:
       timeout: 300
   # <<< frag
 
+  # >>> arango_graph: reference-only ArangoDB retrieval example
+  # VSS does not create, seed, or manage this graph. Point this tool at an
+  # existing ArangoDB graph and add it to workflow.tool_names.
+  #
+  # example_graph_retrieval:
+  #   _type: knowledge_retrieval
+  #   backend: arango_graph
+  #   top_k: 5
+  #   llm_name: ${LLM_MODEL_TYPE:-nim}_llm
+  #   backend_config:
+  #     # Connection settings can also come from ARANGO_* env vars.
+  #     arango_url: ${ARANGO_URL:-http://arango-db:8529}
+  #     arango_database: ${ARANGO_DB:-example_graphs}
+  #     arango_graph_name: ${ARANGO_GRAPH_NAME:-example_graph}
+  #     # Required LangChain opt-in for generated AQL. Use read-only
+  #     # ArangoDB credentials to enforce retrieval-only access.
+  #     allow_dangerous_requests: true
+  #     schema_description: |
+  #       node_a vertices connect to node_b vertices through related_to edges.
+  #       Replace these names with your existing graph schema.
+  #     allowed_vertex_collections:
+  #     - node_a
+  #     - node_b
+  #     allowed_edge_collections:
+  #     - related_to
+  #     graph_semantics:
+  #     - name: example_relationship
+  #       user_terms: ["node", "related", "relationship", "connection"]
+  #       source_collection: node_a
+  #       edge_collection: related_to
+  #       target_collection: node_b
+  #       meaning: node_a records are connected to related node_b records.
+  # <<< arango_graph reference
+
 llms:
   # --- LLM profiles (selected by LLM_MODEL_TYPE) ---
   nim_llm:
     _type: nim
     model_name: ${LLM_NAME}
     base_url: ${LLM_BASE_URL}/v1
-    max_tokens: 4096
+    max_tokens: 32768
     temperature: 0.0
 
   openai_llm:
     _type: openai
     model_name: ${LLM_NAME}
     base_url: ${LLM_BASE_URL}/v1
-    max_tokens: 4096
+    max_tokens: 32768
     temperature: 0.0
 
   vllm_llm:
     _type: openai
     model_name: ${LLM_NAME}
     base_url: ${LLM_BASE_URL}/v1
-    max_tokens: 4096
+    max_tokens: 32768
     temperature: 0.0
     model_kwargs:
       extra_body:
         chat_template_kwargs:
-          enable_thinking: false
+          enable_thinking: ${LLM_ENABLE_THINKING:-true}
 
   # --- VLM profiles (selected by VLM_MODEL_TYPE) ---
   nim_vlm:
@@ -243,7 +279,7 @@ llms:
     _type: nim
     model_name: ${EVAL_LLM_JUDGE_NAME}
     base_url: ${EVAL_LLM_JUDGE_BASE_URL}/v1
-    max_tokens: 4096
+    max_tokens: 32768
     temperature: 0.0
 
 workflow:
@@ -251,7 +287,7 @@ workflow:
   llm_name: ${LLM_MODEL_TYPE:-nim}_llm
   log_level: INFO
   max_iterations: 50
-  llm_reasoning: false
+  llm_reasoning: true
   planning_enabled: true
   tool_names:
   - video_understanding
@@ -434,7 +470,7 @@ eval:
         The trajectory is a list of (action, result) pairs showing the agent's reasoning and tool usage:
 
         1. **Agent's Tool Selection Step**: When the tool name is an LLM model name
-           (e.g., "nvidia/nvidia-nemotron-nano-9b-v2"), this represents the agent deciding which tool to call.
+           (e.g., "nvidia/nemotron-3.5-lightning-30b-a3b"), this represents the agent deciding which tool to call.
            The result shows which tools the agent chose.
 
         2. **Tool Execution Step**: When the tool name is an actual tool (e.g., "video_understanding",
@@ -504,8 +540,9 @@ eval:
         - Focus on SEMANTIC correctness, not exact text matching.
 
         OUTPUT:
-        Think through your evaluation step by step, then output ONLY a single decimal number
-        (your score from 0.0 to 1.0) on the final line.
+        Use your reasoning channel to evaluate the answer. Your entire final response must
+        contain ONLY a single decimal score from 0.0 to 1.0. Do not include explanations,
+        labels, timestamps, counts, or other numbers from the compared answers in the final response.
 
     report_evaluator:
       _type: report_evaluator

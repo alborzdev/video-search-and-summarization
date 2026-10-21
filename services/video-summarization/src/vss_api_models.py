@@ -87,7 +87,7 @@ class ViaBaseModel(BaseModel):
 
 
 class LvsError(ViaBaseModel):
-    """LVS Error Information."""
+    """Video Summarization MS Error Information."""
 
     code: str = Field(
         description="Error code", examples=["ErrorCode"], max_length=128, pattern=ERROR_CODE_PATTERN
@@ -97,6 +97,16 @@ class LvsError(ViaBaseModel):
         examples=["Detailed error message"],
         max_length=1024,
         pattern=ERROR_MESSAGE_PATTERN,
+    )
+    job_id: Optional[str] = Field(
+        default=None,
+        description="Request identifier for a failure that occurred after the job was created.",
+        max_length=128,
+    )
+    failed_stage: Optional[str] = Field(
+        default=None,
+        description="Pipeline stage that failed.",
+        max_length=128,
     )
 
 
@@ -184,6 +194,19 @@ class DeleteFileResponse(ViaBaseModel):
     )
     object: Literal["file"] = Field(description="Type of response object.")
     deleted: bool = Field(description="Indicates if the file was deleted")
+
+
+class DeleteIndexResponse(ViaBaseModel):
+    """Response schema for the delete-asset-index request."""
+
+    asset_id: str = Field(description="The asset identifier whose index was targeted.")
+    deleted: bool = Field(
+        description="True when the index was dropped; False when the operation was skipped."
+    )
+    detail: str | None = Field(
+        default=None,
+        description="Additional context about the outcome (skip reason or error message).",
+    )
 
 
 class ListFilesResponse(ViaBaseModel):
@@ -1292,7 +1315,7 @@ class RecommendedConfig(ViaBaseModel):
         examples=[5, 10, 60, 300],
         ge=1,
         le=86400,
-        description="The target response time of LVS in seconds.",
+        description="The target response time of the Video Summarization MS in seconds.",
         json_schema_extra={"format": "int32"},
     )
     usecase_event_duration: int = Field(

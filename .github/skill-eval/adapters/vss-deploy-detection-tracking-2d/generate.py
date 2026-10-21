@@ -4,7 +4,7 @@
 """Generate Harbor tasks for the vss-deploy-detection-tracking-2d skill.
 
 The vss-deploy-detection-tracking-2d skill exercises the RTVI-CV perception
-microservice. It is standalone — there is no `/vss-deploy-profile`
+microservice. It is standalone — there is no `/vss-build-vision-ai`
 prerequisite; the skill launches its own `rtvicv-perception-docker`
 container via `docker run` from a user-supplied RTVI-CV image.
 
@@ -15,16 +15,16 @@ Two specs ship with the skill:
                              DEPLOY trial first in the same execution
                              group)
 
-Both specs target `L40S` with mode `standalone`. Each spec's `expects`
-list contains multiple steps; the adapter emits a `step-<N>/` subdir
-per step so Harbor's dispatch loop runs them in order with
-skip-on-prior-fail.
+The current CI specs target `RTXPRO6000BW` with mode `standalone`. Each
+spec's `expects` list contains multiple steps; the adapter emits a
+`step-<N>/` subdir per step so Harbor's dispatch loop runs them in order
+with skip-on-prior-fail.
 
 Usage from the repository root:
     python3 .github/skill-eval/adapters/vss-deploy-detection-tracking-2d/generate.py \\
         --output-dir .github/skill-eval/datasets/vss-deploy-detection-tracking-2d \\
-        --skill-dir skills/vss-deploy-detection-tracking-2d \\
-        --spec skills/vss-deploy-detection-tracking-2d/evals/deploy-evals.json
+        --skill-dir skills/deployment/vss-deploy-detection-tracking-2d \\
+        --spec skills/deployment/vss-deploy-detection-tracking-2d/evals/deploy-evals.json
 """
 from __future__ import annotations
 
@@ -36,16 +36,17 @@ import sys
 from pathlib import Path
 
 PLATFORMS: dict[str, dict] = {
-    "H100": {"short_name": "h100", "gpu_type": "H100", "min_vram_per_gpu": 80, "brev_search": "H100"},
-    "L40S": {"short_name": "l40s", "gpu_type": "L40S", "min_vram_per_gpu": 48, "brev_search": "L40S"},
+    "H100": {"short_name": "h100", "gpu_type": "H100", "min_vram_per_gpu": 80, "brev_search": "H100", "gpu_count": 2},
+    "L40S": {"short_name": "l40s", "gpu_type": "L40S", "min_vram_per_gpu": 48, "brev_search": "L40S", "gpu_count": 2},
     "RTXPRO6000BW": {
         "short_name": "rtxpro6000bw",
         "gpu_type": "RTX PRO 6000",
         "min_vram_per_gpu": 96,
         "brev_search": "RTX PRO",
+        "gpu_count": 2,
     },
-    "DGX-SPARK": {"short_name": "spark", "gpu_type": "GB10", "min_vram_per_gpu": 96, "brev_search": "GB10"},
-    "IGX-THOR": {"short_name": "thor", "gpu_type": "Thor", "min_vram_per_gpu": 64, "brev_search": "Thor"},
+    "DGX-SPARK": {"short_name": "spark", "gpu_type": "GB10", "min_vram_per_gpu": 96, "brev_search": "GB10", "gpu_count": 1},
+    "IGX-THOR": {"short_name": "thor", "gpu_type": "Thor", "min_vram_per_gpu": 64, "brev_search": "Thor", "gpu_count": 1},
 }
 
 DEFAULT_PLATFORM = "L40S"
@@ -111,7 +112,7 @@ def _instruction_intro(kind: str, platform: str) -> str:
             f"container on this `{platform}` host. If the container isn't already "
             "running, the precheck below brings it up via `docker start` (the "
             "image is pre-pulled on the box from a prior deploy trial); do not "
-            "invoke `/vss-deploy-profile` or `scripts/dev-profile.sh` for this "
+            "invoke `/vss-build-vision-ai` or `scripts/dev-profile.sh` for this "
             "trial — just ensure `http://localhost:9000/api/v1` responds before "
             "running the query.\n"
             "\n"
@@ -139,7 +140,7 @@ def _instruction_intro(kind: str, platform: str) -> str:
         f"Use the `/vss-deploy-detection-tracking-2d` skill on this `{platform}` host "
         "to deploy or tear down the RTVI-CV perception microservice via the skill's "
         "own `docker run` flow against a user-supplied RTVI-CV image. Do not invoke "
-        "`/vss-deploy-profile`, `scripts/dev-profile.sh`, or any full VSS profile."
+        "`/vss-build-vision-ai`, `scripts/dev-profile.sh`, or any full VSS profile."
     )
 
 
@@ -217,6 +218,23 @@ def generate_task(
     rendered_spec = _substitute_spec(spec, platform, mode)
     dataset_group = kind
 
+    # gpu_count: prefer spec's resources.platforms[platform].gpu_count if
+    # declared, else fall back to the PLATFORMS dict default. Usage specs
+    # (REST API exercises against an already-running container) only need
+    # 1 GPU — the RTVI-CV inference workload runs on a single device;
+    # the 2-GPU default is for deploy specs that build TensorRT engines.
+    spec_platforms = (spec.get("resources") or {}).get("platforms") or {}
+    spec_plat_cfg = spec_platforms.get(platform) or {}
+    if "gpu_count" in spec_plat_cfg:
+        gpu_count = int(spec_plat_cfg["gpu_count"])
+    elif kind == "usage":
+        # Usage specs exercise API endpoints on an already-deployed
+        # container — 1 GPU suffices for inference regardless of the
+        # platform's deploy-time default.
+        gpu_count = 1
+    else:
+        gpu_count = int(pspec.get("gpu_count", 1))
+
     for idx, expect in enumerate(rendered_spec.get("expects") or [], 1):
         step_dir = output_root / dataset_group / f"{platform_short}-{mode}"
         if len(expects) > 1:
@@ -244,6 +262,9 @@ def generate_task(
             f'description = "RTVI-CV {kind} query {idx}/{len(expects)} on {platform}/{mode}"',
             f'keywords = ["vss-deploy-detection-tracking-2d", "rtvi-cv", "{dataset_group}", "{platform}", "{mode}"]',
             "",
+            "[agent]",
+            "timeout_sec = 600.0",
+            "",
             "[environment]",
             'skills_dir = "/skills"',
             "",
@@ -259,7 +280,7 @@ def generate_task(
             f'mode = "{mode}"',
             f'gpu_type = "{pspec["gpu_type"]}"',
             f'brev_search = "{pspec["brev_search"]}"',
-            "gpu_count = 1",
+            f"gpu_count = {gpu_count}",
             f'min_vram_gb_per_gpu = {pspec["min_vram_per_gpu"]}',
             "min_root_disk_gb = 60",
             f"step_index = {idx}",

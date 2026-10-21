@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2022 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2022-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,30 +21,30 @@
 #include "api/peer_connection_interface.h"
 #include "datachannellistenerinterface.h"
 #include <thread>
+#include <string>
 
-using namespace std;
 
 #define GET_DATA_CHANNEL WebrtcDataChannel::getInstance
 
 class WebrtcDataChannelOberver : public webrtc::DataChannelObserver
 {
 public:
-	WebrtcDataChannelOberver(rtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel,
+	WebrtcDataChannelOberver(webrtc::scoped_refptr<webrtc::DataChannelInterface> dataChannel,
 							 std::set<IDataChannelListener *> listeners) : m_dataChannel(dataChannel), m_listeners(listeners)
 	{
 		if (m_dataChannel)
 		{
 			m_dataChannel->RegisterObserver(this);
-			LOG(info) << "Created webrtc data channel observer" << endl;
+			LOG(info) << "Created webrtc data channel observer" << std::endl;
 		}
 	}
 	virtual ~WebrtcDataChannelOberver()
 	{
-		LOG(info) << __PRETTY_FUNCTION__ << endl;
+		LOG(info) << __PRETTY_FUNCTION__ << std::endl;
 		if (m_dataChannel)
 		{
 			m_dataChannel->UnregisterObserver();
-			LOG(info) << "Exiting from webrtc data channel observer" << endl;
+			LOG(info) << "Exiting from webrtc data channel observer" << std::endl;
 		}
 	}
 
@@ -53,16 +53,16 @@ public:
 	{
 		if (m_dataChannel)
 		{
-			LOG(verbose) << "data channel: " << m_dataChannel->label() << " state: " << webrtc::DataChannelInterface::DataStateString(m_dataChannel->state()) << endl;
+			LOG(verbose) << "data channel: " << m_dataChannel->label() << " state: " << webrtc::DataChannelInterface::DataStateString(m_dataChannel->state()) << std::endl;
 		}
 	}
 	virtual void OnMessage(const webrtc::DataBuffer &buffer)
 	{
 		if (m_dataChannel)
 		{
-			std::thread asyncTask([=]()
+			std::string msg((const char *)buffer.data.data(), buffer.data.size());
+			std::thread asyncTask([this, msg = std::move(msg)]()
 			{
-				std::string msg((const char *)buffer.data.data(), buffer.data.size());
 				{
 					std::lock_guard<std::mutex> listenerLock(m_listenerMutex);
 					// invoke the listeners for this peer observer
@@ -77,14 +77,14 @@ public:
 		}
 	}
 
-	bool sendMessage(string msg)
+	bool sendMessage(std::string msg)
 	{
 		if (m_dataChannel)
 		{
 			webrtc::DataBuffer buffer(msg);
 			if (m_dataChannel->Send(buffer) == false)
 			{
-				LOG(error) << "Failed to send message on data channel" << endl;
+				LOG(error) << "Failed to send message on data channel" << std::endl;
 				return false;
 			}
 			return true;
@@ -104,8 +104,8 @@ public:
 		m_listeners.erase(listener);
 	}
 
-protected:
-	rtc::scoped_refptr<webrtc::DataChannelInterface> m_dataChannel;
+private:
+	webrtc::scoped_refptr<webrtc::DataChannelInterface> m_dataChannel;
 
 	std::mutex m_listenerMutex;
 	std::set<IDataChannelListener *> m_listeners;
@@ -131,7 +131,7 @@ public:
 		}
 	}
 
-	void addChannelObserver(std::string clientId, rtc::scoped_refptr<webrtc::DataChannelInterface> channel);
+	void addChannelObserver(std::string clientId, webrtc::scoped_refptr<webrtc::DataChannelInterface> channel);
 	void removeChannelObserver(std::string clientId);
 	bool sendMessageOnDataChannel(std::string clientId, std::string msg);
 	void sendMessageOnAllDataChannels(std::string msg);
@@ -143,11 +143,11 @@ public:
 private:
 	WebrtcDataChannel()
 	{
-		LOG(verbose) << __PRETTY_FUNCTION__ << endl;
+		LOG(verbose) << __PRETTY_FUNCTION__ << std::endl;
 	}
 	~WebrtcDataChannel()
 	{
-		LOG(info) << __PRETTY_FUNCTION__ << endl;
+		LOG(info) << __PRETTY_FUNCTION__ << std::endl;
 	}
 	static WebrtcDataChannel *m_instance;
 

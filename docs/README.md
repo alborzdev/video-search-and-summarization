@@ -44,3 +44,9 @@ evidence, not active deployment configuration. Keep evidence referenced by a
 contract or acceptance record. Generated runtime state, model caches, `.env`
 files, and `deploy/docker/data-dir/` are machine-local and must never be treated
 as disposable source cleanup targets.
+
+## NVIDIA VSS 3.3
+
+- [Upstream CLI and composed-deployment guide](upstream-cli-guide.md).
+- [Upstream release notes](release-notes.mdx) and [edge deployment](edge-deployment.mdx).
+- Upstream MDX documentation lives alongside our operator and design guides; Fern configuration is in `fern/`.

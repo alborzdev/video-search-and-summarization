@@ -73,6 +73,13 @@
       ],
       "@/*": [
         "../../packages/nemo-agent-toolkit-ui/*"
+      ],
+      "@vss/vios-dash": [
+        "../../external/vios-dash/DashStream.ts",
+        "../../../vios/ui/streaming-lib/src/dash/DashStream.ts"
+      ],
+      "dashjs": [
+        "../../node_modules/dashjs/index.d.ts"
       ]
     }
   },

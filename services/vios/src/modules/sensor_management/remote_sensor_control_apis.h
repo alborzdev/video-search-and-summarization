@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023-2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,16 +23,19 @@
 #include "datachannellistenerinterface.h"
 #include "webrtcDataChannel.h"
 
-using namespace nv_vms;
 
 class RemoteSensorControlApis
 {
     public:
-        RemoteSensorControlApis(std::shared_ptr<nv_vms::SensorManagement> sensorMgmt, std::shared_ptr<DeviceManager> deviceMngr);
+        RemoteSensorControlApis(std::shared_ptr<nv_vms::SensorManagement> sensorMgmt, std::shared_ptr<nv_vms::DeviceManager> deviceMngr);
         ~RemoteSensorControlApis()
         {
-            LOG(info) << __PRETTY_FUNCTION__ << endl;
+            LOG(info) << __PRETTY_FUNCTION__ << std::endl;
         }
+        RemoteSensorControlApis(const RemoteSensorControlApis&) = delete;
+        RemoteSensorControlApis& operator=(const RemoteSensorControlApis&) = delete;
+        RemoteSensorControlApis(RemoteSensorControlApis&&) = delete;
+        RemoteSensorControlApis& operator=(RemoteSensorControlApis&&) = delete;
         typedef std::function<void(const Json::Value& receivedData, Json::Value& response)> remoteSensorFunc;
         const std::map<std::string, remoteSensorFunc, std::less<>> getRemoteSensorControlApis() { return m_func; };
         void handleSensorCredentials(const Json::Value &data, Json::Value &response);
@@ -45,5 +48,5 @@ class RemoteSensorControlApis
     private:
         std::shared_ptr<nv_vms::SensorManagement> m_sensorManagement;
         std::map<std::string, remoteSensorFunc, std::less<>>  m_func;
-        std::shared_ptr<DeviceManager> m_deviceManager;
+        std::shared_ptr<nv_vms::DeviceManager> m_deviceManager;
 };

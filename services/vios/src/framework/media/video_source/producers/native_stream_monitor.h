@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2024 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2024-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,53 +18,54 @@
 #pragma once
 
 #include<iostream>
+#include<memory>
 #include "logger.h"
 #include "nativestreamproducer.h"
 
 class NativeStreamMonitor
 {
 private:
-    static NativeStreamMonitor* m_pInstance;
-    NativeStreamMonitor() { }
+    static std::unique_ptr<NativeStreamMonitor> m_pInstance;
+    NativeStreamMonitor() = default;
+    friend std::unique_ptr<NativeStreamMonitor> std::make_unique<NativeStreamMonitor>();
 
 public:
     static NativeStreamMonitor* getInstance()
     {
         if(m_pInstance == nullptr)
         {
-            m_pInstance  = new NativeStreamMonitor();
+            m_pInstance = std::make_unique<NativeStreamMonitor>();
         }
-        return m_pInstance;
+        return m_pInstance.get();
     }
 
     static void deleteInstance()
     {
         if(m_pInstance != nullptr)
         {
-            delete m_pInstance;
-            m_pInstance = nullptr;
+            m_pInstance.reset();
         }
     }
     ~NativeStreamMonitor();
 
-    void setDeviceManager(std::shared_ptr<DeviceManager> deviceMngr)
+    void setDeviceManager(std::shared_ptr<nv_vms::DeviceManager> deviceMngr)
     {
         m_deviceMngr = deviceMngr;
     }
 
-    void removeNativeStream(std::shared_ptr<StreamInfo> stream);
-    bool addNativeStream(std::shared_ptr<StreamInfo> stream, const string location);
+    void removeNativeStream(std::shared_ptr<nv_vms::StreamInfo> stream);
+    bool addNativeStream(std::shared_ptr<nv_vms::StreamInfo> stream, const string location);
     std::shared_ptr<NativeStreamProducer> getNativeStreamProducer(const string& stream_id);
     void registerDataCallback(std::string deviceId, shared_ptr<IMediaDataConsumer> consumer, ConsumerStreamType consumerStreamType);
     void deregisterDataCallback(shared_ptr<IMediaDataConsumer> consumer, std::string& deviceId, ConsumerStreamType consumerStreamType);
     string getVideoCodec(std::string& streamId);
-    void updateStreamSettings(std::string& streamId, SensorSettings& settings);
+    void updateStreamSettings(std::string& streamId, nv_vms::SensorSettings& settings);
     void updateSensorStatus(const string streamId);
 
 private:
     std::map<std::string, std::shared_ptr<NativeStreamProducer>>    m_nativeStreamProducer;
     std::mutex                                                      m_nativeStreamProducerLock;
-    std::shared_ptr<DeviceManager>                                  m_deviceMngr;
+    std::shared_ptr<nv_vms::DeviceManager>                                  m_deviceMngr;
 
     // Add a new NativeStreamProducer to the map
     void addNativeStreamProducer(const std::string& streamID, const std::shared_ptr<NativeStreamProducer>& nativeStream)

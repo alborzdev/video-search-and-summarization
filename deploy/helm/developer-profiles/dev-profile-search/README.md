@@ -21,35 +21,51 @@ Helm-based deployment of the VSS Developer Search Profile on Kubernetes.
 
 For full documentation, see the [Quickstart Guide - Developer Search Profile (Kubernetes)](https://docs.nvidia.com/vss/latest/agent-workflow-search.html).
 
+## RTVI CV startup policy
+
+Search uses the shared `ds-start.sh` owned by the `rtvi-cv` subchart; this
+profile's ConfigMap contains configuration data only. The pod stages the
+read-only `mounted-configs/` data into a writable `configs/` volume before the
+shared script patches vision-encoder paths.
+
+Search selects `DS_MODEL_FAMILY=rtdetr-warehouse`,
+`DS_VISION_ENCODER=true`, and `DS_TRACKER_REID=true`. Its model download Job
+writes one completion marker per destination artifact, and the RTVI CV pod
+waits for both each marker and its artifact before starting. Standalone
+warehouse and MV3DT startup scripts remain separate.
+
 ## GPU Requirements
 
-The stack requests GPUs (`nvidia.com/gpu: 1` each) for the workloads listed below. The exact total depends on whether you deploy with hosted NIMs (NVIDIA Build Endpoint) or local NIMs.
+The stack requests GPUs (`nvidia.com/gpu: 1` each) for the workloads listed below. The exact total depends on whether you serve the LLM and VLM locally (Option A) or from remote endpoints (Option B).
 
-### With NVIDIA Build Endpoint (Option A)
+### With Local NIMs (Option A)
 
-| Workload | GPU |
-|----------|-----|
-| `vss-rtvi-cv` | 1 |
-| `vss-rtvi-embed` (Cosmos Embed) | 1 |
-| `vss-vios-streamprocessing` | 1 |
-| **Total** | **3** |
-
-### With Local NIMs (Option B)
-
-The critic agent and Cosmos3 NIM are **enabled by default** (`global.enableCritic=true`, `nims.cosmos3.enabled=true`). To reduce GPU requirements, disable them with `--set global.enableCritic=false,nims.cosmos3.enabled=false` (saves 1 GPU).
+The critic agent is available by default and controlled per request with `use_critic`. Its VLM (`rtvi.vss-rtvi-vlm`) is enabled by default. Setting `rtvi.vss-rtvi-vlm.enabled=false` saves one GPU but also disables `video_understanding`.
 
 | Workload | GPU | Notes |
 |----------|-----|-------|
 | `vss-rtvi-cv` | 1 | |
 | `vss-rtvi-embed` (Cosmos Embed) | 1 | |
 | `vss-vios-streamprocessing` | 1 | |
-| `nvidia-nemotron-nano-9b-v2` (NIM) | 1 | |
-| `nvidia-cosmos3-reasoner` (NIM) | 1 | Critic agent VLM — enabled by default |
-| **Total** | **5** | **4** if critic is disabled |
+| `nemotron-3.5-lightning-30b-a3b` (NIM) | 1 | |
+| `vss-rtvi-vlm` (Cosmos3 checkpoint) | 1 | VLM used by the critic and `video_understanding` — enabled by default |
+| **Total** | **5** | **4** if the VLM is disabled (`rtvi.vss-rtvi-vlm.enabled=false`) |
 
-> **Note:** By default, `nvidia-cosmos3-reasoner` requests **1 full GPU** (`nvidia.com/gpu: "1"`).
-> If you are using GPU time-slicing, adjust the resource request in `values.yaml` as needed
-> (e.g. `nims.cosmos3.resources.limits."nvidia.com/gpu": "2"` for two time-sliced replicas).
+> **Note:** The VLM (used by the critic and `video_understanding`) is served in-pod by
+> `rtvi.vss-rtvi-vlm` (not the standalone `nvidia-cosmos3-reasoner` NIM, which is disabled by
+> default). It requests **1 full GPU** (`nvidia.com/gpu: "1"`), scheduled on any free GPU. To use
+> the standalone NIM instead, set `nims.cosmos3.enabled=true`, `rtvi.vss-rtvi-vlm.enabled=false`,
+> and flip the agent `VLM_MODEL_TYPE` back to `nim`.
+
+### With Remote LLM and VLM Endpoints (Option B)
+
+| Workload | GPU | Notes |
+|----------|-----|-------|
+| `vss-rtvi-cv` | 1 | |
+| `vss-rtvi-embed` (Cosmos Embed) | 1 | |
+| `vss-vios-streamprocessing` | 1 | |
+| `vss-rtvi-vlm` (proxy) | 1 | Forwards VLM calls to the remote endpoint and loads no local model, but still requests `nvidia.com/gpu: 1` from the `rtvi-vlm` subchart defaults |
+| **Total** | **4** | |
 
 ### GPU Time-Slicing (Limited GPU Environments)
 
@@ -60,9 +76,9 @@ For setup instructions, refer to [Time-Slicing GPUs in Kubernetes](https://docs.
 When time-slicing is enabled, each time-sliced partition appears as a separate `nvidia.com/gpu` resource. Adjust the GPU resource requests in `values.yaml` to match your time-slicing configuration:
 
 ```bash
-# Example: Cosmos3 NIM needs 1 full GPU but with 2x time-slicing per GPU
---set nims.cosmos3.resources.limits."nvidia.com/gpu"="2" \
---set nims.cosmos3.resources.requests."nvidia.com/gpu"="2"
+# Example: Nemotron NIM needs 1 full GPU but with 2x time-slicing per GPU
+--set nims.nemotron.resources.limits."nvidia.com/gpu"="2" \
+--set nims.nemotron.resources.requests."nvidia.com/gpu"="2"
 ```
 
 ## Prerequisites
@@ -73,11 +89,9 @@ When time-slicing is enabled, each time-sliced partition appears as a separate `
 
 - **NVIDIA GPU Operator**
   - Install the GPU Operator on the cluster. Follow [GPU Operator getting started](https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/getting-started.html).
-  - **Driver (x86 Ubuntu)** — pin via GPU Operator driver settings as appropriate:
-    - **580.105.08** (x86 hosts with Ubuntu 24.04)
-    - **580.65.06** (x86 hosts with Ubuntu 22.04)
+  - **Driver (x86 Ubuntu 24.04)** — pin **595.58.03** via GPU Operator driver settings.
 
-- **NVIDIA NIM Operator** (required only for [Option B: Local NIMs](#option-b-deploy-with-local-nims))
+- **NVIDIA NIM Operator** (required only for [Option A: Local NIMs](#option-a-deploy-with-local-nims))
   - Required when `nims` subcharts are enabled (`NIMCache` / `NIMService`).
   - Install **after** the GPU Operator. See [NIM Operator installation](https://docs.nvidia.com/nim-operator/latest/install.html).
   - Install the NIM Operator:
@@ -109,7 +123,7 @@ kubectl get pods -n nim-operator
 
 ### Chart / tooling
 
-- **Helm** 3.x
+- **Helm** 3.7+
 - **kubectl**
 - **GPUs**: see [GPU Requirements](#gpu-requirements)
 - **NGC**: API key for image pull, model downloads, and NIM access
@@ -124,7 +138,7 @@ export STORAGE_CLASS='<Storage Class Name>'
 export GPU_NAME='H100'  # One of: H100, L40S, RTXPRO6000BW
 ```
 
-> **Critic agent behavior** is enabled by default (`global.enableCritic=true`). With NVIDIA Build Endpoint (Option A), local Nemotron and Cosmos3 NIMs are disabled by `values-build-endpoint.yaml`; disable critic verification with `--set global.enableCritic=false`. With Local NIMs (Option B), disable both critic verification and the local Cosmos3 NIM with `--set global.enableCritic=false,nims.cosmos3.enabled=false`. See [Disabling the Critic Agent](#disabling-the-critic-agent).
+> **Critic behavior** is controlled per request with `use_critic` and defaults to enabled. RT-VLM remains available for both critic verification and `video_understanding`.
 
 ## Step 1: Volume provisioner (bare metal, optional)
 
@@ -165,7 +179,7 @@ helm upgrade --install haproxy-kubernetes-ingress haproxytech/kubernetes-ingress
   --set controller.daemonset.hostPorts.https=443
 ```
 
-> **In-cluster RTVI affinity (optional).** Only needed when you deploy the Search profile with `global.rtviInternalIngress.enabled=true` (default `false`). That path routes vss-agent → rtvi-cv / rtvi-embed through the controller's **ClusterIP Service** at `haproxy-kubernetes-ingress.haproxy-controller:80`. To enable it, append `--set controller.service.type=ClusterIP` to the install command above. If you only need external traffic, leave it off.
+> **In-cluster RTVI affinity (optional).** Only needed when you deploy the Search profile with `global.rtviInternalIngress.enabled=true` (default `false`). That path routes vss-agent → rtvi-cv / rtvi-embed through the controller's **ClusterIP Service** at `haproxy-kubernetes-ingress.haproxy-controller:80`, matching the host-less rule the main Ingress renders for `/rtvi-cv` and `/rtvi-embed`; the stick-table affinity annotations sit on those two Services (`rtvi.vss-rtvi-cv.streamAffinity`). Stick tables are per controller replica (no peers sync), so keep the RTVI path on a single controller replica for global affinity. To enable it, append `--set controller.service.type=ClusterIP` to the install command above. If you only need external traffic, leave it off.
 
 Verify the controller is running:
 
@@ -184,7 +198,7 @@ The `global.rtviInternalIngress.controllerService` default (`haproxy-kubernetes-
 
 ## Step 3: Deploy the Search Profile
 
-**Note:** The Helm install can take several minutes while dependent services start; wait for workloads to become Ready before using the UI. Use **`global.ngcApiKey`** (and **`nims.global.ngcApiKey`** for [Option B](#option-b-deploy-with-local-nims)) as in the examples below—Helm creates the needed NGC and registry secrets from those values.
+**Note:** The Helm install can take several minutes while dependent services start; wait for workloads to become Ready before using the UI. Use **`global.ngcApiKey`** (and **`nims.global.ngcApiKey`** for [Option A](#option-a-deploy-with-local-nims)) as in the examples below—Helm creates the needed NGC and registry secrets from those values.
 
 ```bash
 # Clone the repository. For a specific branch or tag, add: -b <name-or-tag> (before the URL).
@@ -194,59 +208,16 @@ cd video-search-and-summarization/deploy/helm/developer-profiles
 helm dependency build ./dev-profile-search
 ```
 
-### Option A: Remote NIMs
+### Option A: Deploy with Local NIMs
 
-Deploy with NVIDIA Build Endpoint
+**This is the default and recommended way to deploy the Search profile.** Everything the critic
+and `video_understanding` need runs on the cluster, so no external endpoint is required.
 
-Uses hosted NIMs at `https://integrate.api.nvidia.com` — no local GPU required for LLM/VLM inference.
-vss-rtvi-cv and RTVI Embed still run on local GPUs. See [GPU Requirements](#with-nvidia-build-endpoint-option-a).
-
-```bash
-helm upgrade --install vss-search ./dev-profile-search \
-  -f dev-profile-search/values-build-endpoint.yaml \
-  -n vss-search --create-namespace \
-  --set global.externalHost=vss-search.$NODE_EXTERNAL_IP.nip.io \
-  --set global.ngcApiKey=$NGC_CLI_API_KEY \
-  --set agent.vss-agent.apiKeys.nvidia=$NGC_CLI_API_KEY \
-  --set global.storageClass=$STORAGE_CLASS \
-  --wait=false
-```
-
-> **Option A note:** `values-build-endpoint.yaml` disables local Nemotron and Cosmos3 NIM deployments (`nims.nemotron.enabled=false`, `nims.cosmos3.enabled=false`). Critic verification is still enabled by default and uses the hosted VLM endpoint. To disable critic verification, add `--set global.enableCritic=false`.
-
-**Custom remote NIM (self-hosted or external endpoints)**
-
-If you already run **NIM** (or an OpenAI-compatible LLM/VLM API) outside this cluster—another namespace, a shared service, or a hosted endpoint—use the steps below to point **vss-agent** at those URLs. Set **`nims.enabled=false`** so this chart does not deploy in-cluster NIM workloads; set **`agent.vss-agent.llmBaseUrl`** and **`agent.vss-agent.vlmBaseUrl`** to the HTTP(S) base URLs your agent can reach (include path prefix if your service requires it). Keep **`agent.vss-agent.llmName`** and **`agent.vss-agent.vlmName`** aligned with the models those endpoints serve.
-
-This profile lists the **full** **`agent.vss-agent.env`** block for Search deployments. Search behavior is driven by **`general.front_end.streaming_ingest`** in `configs/vss-agent/config.yml`; the chart wires the agent for remote VLM mode, critic verification via **`global.enableCritic`**, and the default Elasticsearch index **`mdx-embed-filtered-2025-01-01`**. Override **`agent.vss-agent.elasticsearchUrl`** or **`agent.vss-agent.elasticsearchIndex`** when you need a different Elasticsearch endpoint or index.
-
-```bash
-
-export LLM_BASE_URL='<REMOTE LLM ENDPOINT>'
-export VLM_BASE_URL='<REMOTE VLM ENDPOINT>'
-
-helm upgrade --install vss-search ./dev-profile-search \
-  -f dev-profile-search/values-build-endpoint.yaml \
-  -n vss-search --create-namespace \
-  --set global.externalHost=vss-search.$NODE_EXTERNAL_IP.nip.io \
-  --set global.ngcApiKey=$NGC_CLI_API_KEY \
-  --set agent.vss-agent.apiKeys.nvidia=$NGC_CLI_API_KEY \
-  --set global.storageClass=$STORAGE_CLASS \
-  --set nims.enabled=false \
-  --set agent.vss-agent.llmName="nvidia/nvidia-nemotron-nano-9b-v2" \
-  --set agent.vss-agent.vlmName="nvidia/cosmos3-nano-reasoner" \
-  --set agent.vss-agent.llmBaseUrl="$LLM_BASE_URL" \
-  --set agent.vss-agent.vlmBaseUrl="$VLM_BASE_URL" \
-  --wait=false
-```
-
-### Option B: Deploy with Local NIMs
-
-Runs all LLM/VLM NIMs on-cluster via the NIM Operator. Requires additional GPUs for Nemotron and Cosmos (unless `ENABLE_CRITIC` is `false`). See [GPU Requirements](#with-local-nims-option-b).
+Runs the LLM NIM on-cluster via the NIM Operator, with the VLM served by `rtvi.vss-rtvi-vlm`. Requires additional GPUs for Nemotron and the VLM. See [GPU Requirements](#with-local-nims-option-a).
 
 **Prerequisite:** Install the [NVIDIA NIM Operator](#prerequisites) before deploying.
 
-Shared **`helm/services/nims`** only gates Cosmos3 on **`nims.cosmos3.enabled`** (it does not read **`global.enableCritic`**). Both default to `true`. To disable critic and skip the Cosmos3 NIM, pass both keys in a **single** `--set` (comma-separated): `--set global.enableCritic=false,nims.cosmos3.enabled=false`.
+The VLM pod is gated by **`rtvi.vss-rtvi-vlm.enabled`**, which defaults to `true`. Disabling this pod removes VLM support for both critic verification and `video_understanding`.
 
 ```bash
 helm upgrade --install vss-search ./dev-profile-search \
@@ -277,6 +248,76 @@ helm upgrade --install vss-search ./dev-profile-search \
 
 See [Access via NodePort](#access-via-nodeport) for endpoint URLs.
 
+### Option B: Remote LLM with a user-provided VLM endpoint
+
+Serves the LLM and the VLM from outside the cluster, so neither needs a local GPU for inference.
+`vss-rtvi-cv` and RTVI Embed still run on local GPUs, and `vss-rtvi-vlm` is still deployed — in this
+mode it is an OpenAI-compatible proxy that forwards VLM calls to the remote endpoint rather than
+loading a local checkpoint. See [GPU Requirements](#with-remote-llm-and-vlm-endpoints-option-b).
+
+The LLM and the evaluation judge can use the hosted `nvidia/nemotron-3.5-lightning-30b-a3b`
+on `https://integrate.api.nvidia.com` ([catalog entry](https://build.nvidia.com/nvidia/nemotron-3.5-lightning-30b-a3b)),
+matching the in-cluster default. If that hosted endpoint is ever retired, pick a current model
+from the [API catalog](https://build.nvidia.com) or point `llmBaseUrl` at your own LLM.
+**The VLM must be an endpoint you provide**: the Cosmos3 VLM
+(`nvidia/cosmos3-nano-reasoner`) has no working hosted endpoint on `https://integrate.api.nvidia.com`,
+so critic verification and `video_understanding` fail if you leave the VLM pointed there. Supply your
+own OpenAI-compatible VLM — a self-hosted NIM, a shared service in another namespace, or any other
+OpenAI-compatible API — or use [Option A](#option-a-deploy-with-local-nims) instead.
+
+Set **`nims.enabled=false`** so this chart does not deploy in-cluster NIM workloads. The LLM and the
+VLM are then configured through different keys, because the agent calls the LLM directly but reaches
+the VLM through the RT-VLM proxy:
+
+| Key | Purpose |
+|-----|---------|
+| `agent.vss-agent.llmBaseUrl` / `llmName` | The LLM endpoint the agent calls directly. Omit both to keep this file's hosted Nemotron default. |
+| `agent.vss-agent.evalLlmJudgeBaseUrl` / `evalLlmJudgeName` | The judge used by evaluation runs. This file pins them to NVIDIA Build and they take precedence over `llmBaseUrl`, so a custom LLM leaves the judge on Build unless you set these as well — the example below does. |
+| `global.vlmBaseUrl` / `global.vlmName` | The remote VLM that RT-VLM forwards to (`VIA_VLM_ENDPOINT`). Overriding only `agent.vss-agent.vlmBaseUrl` leaves the proxy pointed at this file's Cosmos3 default and the critic still fails. |
+| `agent.vss-agent.vlmName` | The model id the agent asks RT-VLM for. Must match `global.vlmName`, or RT-VLM rejects the request. |
+
+Include a path prefix in the base URLs if your service requires one, and keep every model id aligned
+with what the endpoints actually advertise on `/v1/models`.
+
+This profile lists the **full** **`agent.vss-agent.env`** block for Search deployments. Search behavior is driven by **`general.front_end.streaming_ingest`** in `configs/vss-agent/config.yml`; the chart wires the agent for remote VLM mode and the default Elasticsearch index **`mdx-embed-filtered-2025-01-01`**. Critic verification is controlled per request with `use_critic`. Override **`agent.vss-agent.elasticsearchUrl`** or **`agent.vss-agent.elasticsearchIndex`** when you need a different Elasticsearch endpoint or index.
+
+```bash
+
+export LLM_BASE_URL='<REMOTE LLM ENDPOINT>'
+export LLM_MODEL_ID='<MODEL ID YOUR LLM ENDPOINT SERVES>'
+export VLM_BASE_URL='<YOUR OPENAI-COMPATIBLE VLM ENDPOINT>'
+export VLM_MODEL_ID='<MODEL ID YOUR VLM ENDPOINT SERVES>'
+
+helm upgrade --install vss-search ./dev-profile-search \
+  -f dev-profile-search/values-build-endpoint.yaml \
+  -n vss-search --create-namespace \
+  --set global.externalHost=vss-search.$NODE_EXTERNAL_IP.nip.io \
+  --set global.ngcApiKey=$NGC_CLI_API_KEY \
+  --set agent.vss-agent.apiKeys.nvidia=$NGC_CLI_API_KEY \
+  --set global.storageClass=$STORAGE_CLASS \
+  --set nims.enabled=false \
+  --set agent.vss-agent.llmName="$LLM_MODEL_ID" \
+  --set agent.vss-agent.llmBaseUrl="$LLM_BASE_URL" \
+  --set agent.vss-agent.evalLlmJudgeName="$LLM_MODEL_ID" \
+  --set agent.vss-agent.evalLlmJudgeBaseUrl="$LLM_BASE_URL" \
+  --set global.vlmBaseUrl="$VLM_BASE_URL" \
+  --set global.vlmName="$VLM_MODEL_ID" \
+  --set agent.vss-agent.vlmName="$VLM_MODEL_ID" \
+  --wait=false
+```
+
+> **Option B note:** `values-build-endpoint.yaml` disables local Nemotron and Cosmos3 NIM
+> deployments (`nims.nemotron.enabled=false`, `nims.cosmos3.enabled=false`). Its `global.vlmBaseUrl`
+> and `global.vlmName` defaults still point at Cosmos3 on NVIDIA Build, which does not serve that
+> model — override them as shown above.
+
+> **VLM endpoint credentials:** RT-VLM authenticates to the remote VLM with `VIA_VLM_API_KEY`, which
+> the chart injects from `global.ngcApiSecret` (`ngc-api-key-secret` / `NGC_API_KEY`, populated from
+> `global.ngcApiKey`). If your endpoint expects a different token, point
+> `rtvi.vss-rtvi-vlm.ngcApiSecret.name` and `.key` at your own Secret. The `OPENAI_API_KEY` and
+> `NVIDIA_API_KEY` values of `NOAPIKEYSET` in `values-build-endpoint.yaml` are inert, because
+> `VIA_VLM_API_KEY` takes precedence over both.
+
 ### Deployed Components
 
 This single chart deploys all application components:
@@ -287,43 +328,38 @@ This single chart deploys all application components:
 - **Search Pipeline**: NVStreamer, RTVI Embed (Cosmos), Search Analytics
 - **Agent Services**: VSS Agent (search mode), VSS UI
 
-### Disabling the Critic Agent
+### Webhook-based ingestion
 
-The critic agent (VLM-based verification of search results) is **enabled by default**. With NVIDIA Build Endpoint (Option A), it uses the hosted VLM endpoint and local Cosmos3 NIM is not deployed. With Local NIMs (Option B), its backing **Cosmos3 Reasoner** NIM is enabled by default.
-For NVIDIA Build Endpoint or another remote VLM endpoint, disable critic verification with:
+VIOS loads `configs/vios/notification_config.json` — the Helm counterpart of
+the Compose file
+`deploy/docker/developer-profiles/dev-profile-search/vios/configs/notification_config.json`.
+The Search chart renders it once per VIOS service into ConfigMaps
+`vios-sensor-notification-config` and
+`vios-streamprocessing-notification-config` (see
+`global.vios.notificationConfigFile` and the two `*NotificationConfigMapName`
+values). The names gain a `<release>-` prefix when
+`global.useReleaseNamePrefix` is true. Each VIOS pod projects its own rendered
+file over the subchart default, preserving that service's broker and endpoint
+overrides.
 
-```bash
---set global.enableCritic=false
-```
+`global.vios.notificationConfig` (inline JSON) replaces the bundled file in
+that ConfigMap. A per-subchart `vios.vss-vios-sensor.notificationConfig` or
+`vios.vss-vios-streamprocessing.notificationConfig` skips the overlay on that
+pod so the subchart-generated file is used instead.
 
-For Local NIM deployments, disable both critic verification and the local Cosmos3 NIM with:
+Edit the JSON to change Search webhook fan-out. Service-address placeholders
+(`__RTVI_CV_ADDRESS__`, `__RTVI_EMBED_ADDRESS__`, `__RTVI_VLM_ADDRESS__`,
+`__ELASTICSEARCH_ADDRESS__`) are resolved at install and honor
+`global.useReleaseNamePrefix`. When `global.rtviInternalIngress.enabled=true`,
+CV and Embed webhooks use the configured HAProxy controller paths so add/remove
+requests retain `x-stream-id` affinity. Explicit per-service
+`rtviCvServerAddress` / `rtviEmbedServerAddress` values take precedence.
 
-```bash
---set global.enableCritic=false,nims.cosmos3.enabled=false
-```
+### Critic Verification
 
-This has two effects:
+The critic agent performs VLM-based verification of search results and is available by default. Set the request-level `use_critic` option to enable or skip verification for each search; it defaults to `true`.
 
-1. **Agent config**: `enable_critic` is set to `false` in the vss-agent `config.yml`, so the search and search_agent functions skip VLM verification.
-2. **Cosmos3 NIM**: For Local NIM deployments, the `nvidia-cosmos3-reasoner` NIM pod is not deployed, freeing 1 GPU (see [GPU Requirements](#with-local-nims-option-b)).
-
-> **Note:** `global.enableCritic` controls the agent behavior. `nims.cosmos3.enabled` controls the Cosmos3 NIM pod. The shared **`helm/services/nims`** subchart does not read `global.enableCritic`, so Local NIM deployments should set both keys together. When using a **remote VLM** endpoint (`nims.enabled=false` + `agent.vss-agent.vlmBaseUrl`), set only `global.enableCritic=false` to disable the critic while keeping the remote VLM URL configured for other uses.
-
-To re-enable critic verification with NVIDIA Build Endpoint or another remote VLM endpoint:
-
-```bash
-helm upgrade vss-search ./dev-profile-search \
-  --reuse-values \
-  --set global.enableCritic=true
-```
-
-To re-enable critic verification and the local Cosmos NIM with Local NIMs:
-
-```bash
-helm upgrade vss-search ./dev-profile-search \
-  --reuse-values \
-  --set global.enableCritic=true,nims.cosmos3.enabled=true
-```
+Its VLM is served in-pod by **`rtvi.vss-rtvi-vlm`** (Cosmos3 checkpoint) in [Option A](#option-a-deploy-with-local-nims), or proxied by the same service to a user-provided remote endpoint in [Option B](#option-b-remote-llm-with-a-user-provided-vlm-endpoint). The same service supports `video_understanding`, so it is not exclusive to the critic. Setting `rtvi.vss-rtvi-vlm.enabled=false` removes both capabilities and should only be used when neither is needed.
 
 ## Verify Deployment
 
@@ -342,13 +378,17 @@ kubectl logs -f deployment/vss-rtvi-embed # <RELEASE_NAME>-vss-rtvi-embed if glo
 
 ### Access via Ingress (Recommended)
 
-When deployed with `ingress.enabled=true` (the default), services are accessible via host-based routing through the Ingress controller.
+When deployed with `vssIngress.enabled=true` (the default), services are accessible via host-based routing through the Ingress controller.
 
 | Service           | URL                                                    |
 |-------------------|--------------------------------------------------------|
 | VSS UI (Search)   | `http://vss-search.<NODE_IP>.nip.io`                       |
 | VSS Agent API     | `http://vss-search.<NODE_IP>.nip.io/api`                   |
 | VST API           | `http://vss-search.<NODE_IP>.nip.io/vst/api`               |
+| RT-VLM (OpenAI)   | `http://vss-search.<NODE_IP>.nip.io/rtvi-vlm/v1`           |
+| RT-Embed          | `http://vss-search.<NODE_IP>.nip.io/rtvi-embed/v1`         |
+| RT-CV             | `http://vss-search.<NODE_IP>.nip.io/rtvi-cv/api/v1`        |
+| Elasticsearch     | `http://vss-search.<NODE_IP>.nip.io/elasticsearch`         |
 | NVStreamer HTTP    | `http://streamer.<NODE_IP>.nip.io`                     |
 | Kibana Dashboards | `http://kibana.<NODE_IP>.nip.io`                       |
 | Phoenix Tracing   | `http://phoenix.<NODE_IP>.nip.io`                      |
@@ -426,20 +466,25 @@ Upload video files through the VSS UI **Video Management** tab:
 
 ## Ingress Configuration
 
-The chart creates a Kubernetes Ingress resource when `ingress.enabled=true`. All HTTP services use ClusterIP and are routed through the Ingress controller. RTSP (NVStreamer) is not routed through HTTP Ingress; by default it is not exposed as a separate NodePort service.
+The chart creates a Kubernetes Ingress resource when `vssIngress.enabled=true`. All HTTP services use ClusterIP and are routed through the Ingress controller. Its mounts come from the [canonical route table](../../services/common/README.md), shared with the other developer profiles and with the Docker edge, so `/rtvi-vlm`, `/elasticsearch` and the rest resolve the same way on any VSS deployment. RTSP (NVStreamer) is not routed through HTTP Ingress; by default it is not exposed as a separate NodePort service.
+
+`ingress:` is the former name of the `vssIngress:` block. Keys still read from it: `enabled`, `className`, `hosts.*`, `annotations`, `tls`. Its removed `cliRoutes.*` keys are ignored — Elasticsearch and the RTVI mounts are no longer toggled. Set one block or the other, not both.
 
 ### Ingress Values
 
 | Parameter                    | Default                          | Description                        |
 |------------------------------|----------------------------------|------------------------------------|
-| `ingress.enabled`            | `true`                           | Enable Ingress resource creation   |
-| `ingress.className`          | `haproxy`                        | Ingress controller class name      |
-| `ingress.annotations`        | `{}`                             | Additional Ingress annotations     |
-| `ingress.hosts.main`         | `""` (auto: `vss-search.<IP>.nip.io`) | VSS UI + Agent + VST API host |
-| `ingress.hosts.streamer`     | `""` (auto: `streamer.<IP>.nip.io`)   | NVStreamer HTTP API host      |
-| `ingress.hosts.kibana`       | `""` (auto: `kibana.<IP>.nip.io`)     | Kibana dashboards host        |
-| `ingress.hosts.phoenix`      | `""` (auto: `phoenix.<IP>.nip.io`)    | Phoenix tracing UI host       |
-| `ingress.tls`                | `[]`                             | TLS configuration (secretName + hosts) |
+| `vssIngress.enabled`         | `true`                           | Enable Ingress resource creation   |
+| `vssIngress.ingressClassName`| `haproxy`                        | Ingress controller class name (legacy `className` still read) |
+| `vssIngress.annotations`     | `{}`                             | Additional Ingress annotations     |
+| `vssIngress.hosts.main`      | `""` (auto: `vss-search.<IP>.nip.io`) | VSS UI + Agent + VST API host |
+| `vssIngress.hosts.streamer`  | `""` (auto: `streamer.<IP>.nip.io`)   | NVStreamer HTTP API host      |
+| `vssIngress.hosts.kibana`    | `""` (auto: `kibana.<IP>.nip.io`)     | Kibana dashboards host        |
+| `vssIngress.hosts.phoenix`   | `""` (auto: `phoenix.<IP>.nip.io`)    | Phoenix tracing UI host       |
+| `vssIngress.tls`             | `[]`                             | TLS configuration (secretName + hosts) |
+| `vssIngress.elasticsearchPort` | `9200`                         | Backend port for `/elasticsearch`. The edge guard is on the `elasticsearch` Service (`infra.elasticsearch.ingressGuard`): denies PUT/DELETE, cluster-admin and two-segment mutating paths, but POST still reaches Elasticsearch |
+| `vssIngress.rtviVlmPort` / `rtviCvPort` / `rtviEmbedPort` | `8000` / `9000` / `8000` | Backend ports for `/rtvi-vlm`, `/rtvi-cv`, `/rtvi-embed` |
+| `vssIngress.timeoutClient` / `timeoutTunnel` | `3600s`          | Rendered for continuity, but **inert**: this controller reads both only from its own ConfigMap, never from an Ingress annotation. Server-side timeouts do work per backend and are set on the rtvi and agent Services |
 
 When host values are left empty (default), they are auto-constructed from `global.externalHost` using `nip.io` wildcard DNS.
 
@@ -453,10 +498,10 @@ helm upgrade --install vss-search ./dev-profile-search \
   --set global.externalHost=$NODE_EXTERNAL_IP \
   --set global.ngcApiKey=$NGC_CLI_API_KEY \
   --set global.storageClass=$STORAGE_CLASS \
-  --set ingress.hosts.main=vss-search.example.com \
-  --set ingress.hosts.streamer=streamer.example.com \
-  --set ingress.hosts.kibana=kibana.example.com \
-  --set ingress.hosts.phoenix=phoenix.example.com \
+  --set vssIngress.hosts.main=vss-search.example.com \
+  --set vssIngress.hosts.streamer=streamer.example.com \
+  --set vssIngress.hosts.kibana=kibana.example.com \
+  --set vssIngress.hosts.phoenix=phoenix.example.com \
   --wait=false
 ```
 
@@ -474,9 +519,9 @@ helm upgrade --install vss-search ./dev-profile-search \
   --set global.externalHost=$NODE_EXTERNAL_IP \
   --set global.ngcApiKey=$NGC_CLI_API_KEY \
   --set global.storageClass=$STORAGE_CLASS \
-  --set ingress.hosts.main=vss-search.example.com \
-  --set ingress.tls[0].secretName=vss-search-tls \
-  --set ingress.tls[0].hosts[0]=vss-search.example.com \
+  --set vssIngress.hosts.main=vss-search.example.com \
+  --set vssIngress.tls[0].secretName=vss-search-tls \
+  --set vssIngress.tls[0].hosts[0]=vss-search.example.com \
   --wait=false
 ```
 

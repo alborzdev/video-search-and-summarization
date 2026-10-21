@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,6 @@
 #include "Websocket.h"
 
 
-using namespace nv_vms;
 
 /* ---------------------------------------------------------------------------
 **  Civet Websocket callback 
@@ -35,12 +34,10 @@ using namespace nv_vms;
 class WebsocketServerRequestHandler : public CivetWebSocketHandler
 {
 public:
-    WebsocketServerRequestHandler()
-    {
-    }
+    WebsocketServerRequestHandler() = default;
     ~WebsocketServerRequestHandler()
     {
-        LOG(info) << "Exiting from websocket server request handler" << endl;
+        LOG(info) << "Exiting from websocket server request handler" << std::endl;
     }
     // standard websocket handlers from CivetWebSocketHandler
     bool handleConnection(CivetServer *server, const struct mg_connection *conn);
@@ -51,7 +48,7 @@ public:
     bool handleJsonData(const std::string &data, Json::Value &response, struct mg_connection *conn);
     bool handleBinaryData(const std::string &data, Json::Value &response, struct mg_connection *conn);
     // sending data on websockets
-    bool sendData(string connectionId, const std::string &data, int op_code);
+    bool sendData(std::string connectionId, const std::string &data, int op_code);
     bool sendData(struct mg_connection *conn, const std::string &data, int op_code);
 
     typedef std::function<void(const Json::Value &, Json::Value &, struct mg_connection *conn)> httpFunction;

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2025-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +17,12 @@
 
 #pragma once
 
+#include <memory>
+
 #include "MetadataStore.h"
 #include "syncobject.h"
 #include "NotificationFactory.h"
+#include <atomic>
 
 class LiveMetadataStore : public IMetadataStore
 {
@@ -45,8 +48,14 @@ private:
     };
 
     SyncObject                      m_metaWait = {};
+    /* Longest the overlay will hold a frame waiting for its analytics. */
+    static constexpr int            METADATA_WAIT_TIMEOUT_MS = 200;
+    /* Silent frames tolerated before the overlay stops waiting altogether. */
+    static constexpr unsigned       MAX_CONSECUTIVE_METADATA_TIMEOUTS = 3;
+    std::atomic<bool>               m_metadataIdle {false};
+    std::atomic<unsigned>           m_metadataTimeouts {0};
     nv_vms::INotificationInterface* m_notificationConsumer = nullptr;
-    NotificationListener*           m_notificationListener = nullptr;
+    std::unique_ptr<NotificationListener> m_notificationListener;
     std::string                     m_sensorName = "";
     std::string                     m_sensorName3d = "";
     std::string                     m_cachedSensorId = "";

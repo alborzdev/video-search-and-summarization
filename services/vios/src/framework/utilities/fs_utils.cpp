@@ -28,11 +28,15 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string.hpp>
 #include <map>
+#include <fstream>
+#include <sstream>
 #include <boost/timer.hpp>
 #include <boost/filesystem/fstream.hpp> // Required in 1.83
 #include <boost/filesystem/string_file.hpp>
 
 #include "logger.h"
+
+using namespace std;
 
 namespace fs = boost::filesystem;
 
@@ -731,9 +735,22 @@ string readFileIntoString(const string &path)
     std::string result;
     try
     {
-#ifndef JETSON_PLATFORM
-        fs::load_string_file(path, result);
-#endif
+        // Portable file read (works on Jetson/Orin, Thor/SBSA and x86). Previously
+        // this used boost::filesystem::load_string_file, which was excluded on Jetson
+        // because that Boost build lacked the symbol; std::ifstream avoids that link
+        // dependency and reads correctly on every platform.
+        std::ifstream ifs(path, std::ios::binary);
+        if (ifs)
+        {
+            std::ostringstream ss;
+            ss << ifs.rdbuf();
+            result = ss.str();
+        }
+        else
+        {
+            LOG(error) << "Failed to open file: " << path << endl;
+            return "";
+        }
     }
     catch(const std::exception& e)
     {

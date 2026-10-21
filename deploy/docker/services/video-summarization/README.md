@@ -17,11 +17,8 @@ Create a `.env.lvs-server-standalone` file with your configuration:
 
 ```bash
 # Container Configuration
-# For x86 and Jetson Thor platforms, use the plain tag:
-CONTAINER_IMAGE=nvcr.io/nvidia/vss-core/vss-video-summarization:3.2.1
-# On SBSA / DGX Spark / Grace (server-class ARM64) hosts, use the -sbsa tag:
-# CONTAINER_IMAGE=nvcr.io/nvidia/vss-core/vss-video-summarization:3.2.1-sbsa
-GPU_DEVICES=2,3
+# Multi-arch manifest: the same tag resolves on amd64 and arm64 hosts.
+CONTAINER_IMAGE=ghcr.io/nvidia-ai-blueprints/vss/vss-video-summarization:develop-latest
 
 # Port Configuration
 BACKEND_PORT=38111
@@ -43,7 +40,7 @@ ES_PORT=9200
 LVS_DATABASE_BACKEND=vector_db
 
 # LLM Configuration
-LVS_LLM_MODEL_NAME=meta/llama-3.1-70b-instruct
+LVS_LLM_MODEL_NAME=nvidia/nemotron-3.5-lightning-30b-a3b
 LVS_LLM_BASE_URL=http://localhost:9233/v1
 NVIDIA_API_KEY=nvapi-xxxxx
 
@@ -115,7 +112,7 @@ ES_PORT=9200
 ## Troubleshooting
 
 ### Container won't start
-- Check GPU availability: `nvidia-smi`
+- Check that the configured RTVI-VLM and LLM endpoints are reachable
 - Verify environment file exists: `ls -la .env.lvs-server-standalone`
 - Check logs: `docker compose logs lvs-server`
 
@@ -139,4 +136,3 @@ You can also use the legacy shell script instead of Docker Compose:
 ```
 
 This script provides the same functionality but uses `docker run` directly.
-

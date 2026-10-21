@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "recorded_at_utc": "2026-10-21T06:31:06.907727+00:00",
+  "scope": "Narrow archive Alert Bridge \u2192 RTVI sampling/resize contract audit. No inference or runtime mutation was performed by this audit; not an accuracy benchmark.",
+  "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final (Qwen3VLForConditionalGeneration)",
+  "input_clip_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+  "observed_runtime": {
+    "basis": "Filtered existing vss-rtvi-vlm logs read on 2026-10-21, not new requests.",
+    "startup_input_config": {
+      "timestamp_utc": "2026-10-21T05:29:29.459Z",
+      "num_frames": 20,
+      "width": 608,
+      "height": 320
+    },
+    "positive_archive_endpoint_sampling": {
+      "timestamp_utc": "2026-10-21T05:39:24.822Z",
+      "decoded": 20,
+      "planned": 20,
+      "final_time_seconds": 7.5,
+      "expected_final_time_seconds": 7.5
+    },
+    "conclusion": "The supplied media_io_kwargs.video.num_frames=20 is respected, including the final endpoint. Missing raw RTVI frame fields did not cause missing late frames in this request."
+  },
+  "source_contract": [
+    "Alert VLMClient sends min/max pixels as mm_processor_kwargs.size.shortest_edge/longest_edge for non-CR1 models. Fixed frame count is sent separately as media_io_kwargs.video.num_frames.",
+    "RTVI maps media_io_kwargs to fixed frame extraction and forwards mm_processor_kwargs through generation config into the EVS add_clip_tensors call.",
+    "Installed Qwen3VLVideoProcessor smart_resize compares temporal-rounded frame_count \u00d7 height \u00d7 width with longest_edge. This is a total-video pixel budget, not a per-frame bound.",
+    "Installed vLLM Qwen3VL processing selects the temporal-aware video smart_resize and forwards size.longest_edge unchanged. EVS itself is compiled; this audit did not capture processor outputs or inspect its full internal implementation."
+  ],
+  "installed_processor_source": {
+    "container": "vss33-rtvi-check",
+    "path": "/usr/local/lib/python3.12/dist-packages/transformers/models/qwen3_vl/video_processing_qwen3_vl.py",
+    "sha256": "1ca916fbb1531bf3c2ef4bf862ecb790f88c084ba99f27e324ff491a5b7abc67",
+    "pure_function": "smart_resize"
+  },
+  "configured_processor_size": {
+    "shortest_edge": 65536,
+    "longest_edge": 262144,
+    "budget_unit": "total temporal clip pixels"
+  },
+  "cpu_calculations": [
+    {
+      "case": "archive20-observed-decoder-dimensions",
+      "frames": 20,
+      "input_height_width": [
+        320,
+        608
+      ],
+      "predicted_processor_height_width": [
+        64,
+        128
+      ],
+      "predicted_total_pixels": 163840,
+      "basis": "Pure installed smart_resize function evaluated on CPU; not captured runtime pixels."
+    },
+    {
+      "case": "archive4-observed-decoder-dimensions",
+      "frames": 4,
+      "input_height_width": [
+        320,
+        608
+      ],
+      "predicted_processor_height_width": [
+        160,
+        352
+      ],
+      "predicted_total_pixels": 225280,
+      "basis": "Pure installed smart_resize function evaluated on CPU; not captured runtime pixels."
+    },
+    {
+      "case": "512-square-same-size-override-control",
+      "frames": 20,
+      "input_height_width": [
+        512,
+        512
+      ],
+      "predicted_processor_height_width": [
+        96,
+        96
+      ],
+      "predicted_total_pixels": 184320,
+      "basis": "Pure installed smart_resize function evaluated on CPU; not captured runtime pixels."
+    }
+  ],
+  "interpretation": [
+    "The derived64\u00d7128 dimensions for20 frames are a concrete potential fidelity loss relative to the direct512\u00d7512 control without this request override; they are not runtime pixel-capture evidence.",
+    "Existing direct provider controls with exact payload, decoder512\u00d7512 only, and plainer question only all returned NO on the positive fixture. None removed the size override.",
+    "The current binary archive positive has successful transport, typed terminal status and durable ES publication, but a false negative semantic verdict; those outcomes must remain separate."
+  ],
+  "next_control": {
+    "script": "work/vss33/alert_archive_probe.py",
+    "option": "--no-resize",
+    "effective_config_change": {
+      "do_resize": false
+    },
+    "wire_difference": "Omit mm_processor_kwargs.size entirely; retain media_io_kwargs.video.num_frames=20 and the same prompt, system prompt, parser, max_tokens64, temperature0 and timeout30.",
+    "configured_pixel_bounds_retained_as_metadata": true,
+    "required_runs": [
+      "known-positive expected confirmed",
+      "known-empty expected rejected"
+    ],
+    "status": "Run by root: positive confirmed and empty rejected, each19/19 assertions including terminal/ES evidence. Only the request size override was removed; global defaults unchanged."
+  },
+  "source_refs": [
+    {
+      "path": "services/alert/src/vlm/vlm_client.py",
+      "line": 116,
+      "sha256": "9deafa310ddca0cb9d7c52c3654c7526bde1d93f71b382e6056bdb3ce33c0925"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/server/rtvi_vlm_server.py",
+      "line": 3555,
+      "sha256": "7fd5d7396321252f0e02b0c5bf5b524e65f7e376285306c99e2ea03d4088175e"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/utils/media_io_kwargs.py",
+      "line": 1,
+      "sha256": "75a92d66ca3880620e2a4884af7ac03a074350decb337a1a37b0504471d30946"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",
+      "line": 632,
+      "sha256": "ac99773d015c0c9e6b3fb2512297d055836c83eb14081395facb7d10f8e4dc11"
+    },
+    {
+      "path": "services/rtvi/rt-vlm/src/models/vllm_compatible/vllm_compatible_model.py",
+      "line": 3428,
+      "sha256": "ac99773d015c0c9e6b3fb2512297d055836c83eb14081395facb7d10f8e4dc11"
+    }
+  ],
+  "source_receipts": [
+    {
+      "path": "work/vss33/alert-archive-binary-positive.json",
+      "sha256": "43ea88c4dcad87a97dab5902d9dd18869cb0ab0ed311952adb42ca0dd8460816"
+    },
+    {
+      "path": "work/vss33/provider-controls.json",
+      "sha256": "51e5cf6c37c61facfc9a6f26f556aebe4a8458589af3271db1073064272db933"
+    },
+    {
+      "path": "work/vss33/alert-archive-binary-empty.json",
+      "sha256": "ff132fc8faa051b98397ead059475517e63b18ed848b945eb22bf6dac0b2ead0"
+    },
+    {
+      "path": "work/vss33/alert-archive-binary-native-budget-positive.json",
+      "sha256": "88e1bc56c111ac4735b846d50b06d87c7b877aabf9a69549ec0dbb20588dbfb1"
+    },
+    {
+      "path": "work/vss33/alert-archive-binary-native-budget-empty.json",
+      "sha256": "8f472edc3e4fbf2a6fd84a7ae98da97a2f39622efe4427d68e906a98eebe69f3"
+    },
+    {
+      "path": "work/vss33/accuracy-after-finite-image-fix.json",
+      "sha256": "b74a1c55b8cd7b1ae8401d5ed05e5e2faa6dcae2c44520c3618092b9ae6977b0"
+    },
+    {
+      "path": "work/vss33/accuracy-finite-image-cleanup.json",
+      "sha256": "27cb4571f169d181f963e2ae95f40e0c3489fd669b188d24ecd4bab78e753325"
+    }
+  ],
+  "control_results": [
+    {
+      "receipt": "work/vss33/alert-archive-binary-positive.json",
+      "input_clip_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+      "expected_verdict": "confirmed",
+      "observed_verdict": "rejected",
+      "terminal_job_seconds": 1.703,
+      "transport_pass": true,
+      "semantic_pass": false,
+      "assertions_passed": 17,
+      "assertions_total": 19,
+      "provider_processor_size_override": {
+        "size": {
+          "shortest_edge": 65536,
+          "longest_edge": 262144
+        }
+      }
+    },
+    {
+      "receipt": "work/vss33/alert-archive-binary-empty.json",
+      "input_clip_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+      "expected_verdict": "rejected",
+      "observed_verdict": "rejected",
+      "terminal_job_seconds": 2.042,
+      "transport_pass": true,
+      "semantic_pass": true,
+      "assertions_passed": 19,
+      "assertions_total": 19,
+      "provider_processor_size_override": {
+        "size": {
+          "shortest_edge": 65536,
+          "longest_edge": 262144
+        }
+      }
+    },
+    {
+      "receipt": "work/vss33/alert-archive-binary-native-budget-positive.json",
+      "input_clip_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+      "expected_verdict": "confirmed",
+      "observed_verdict": "confirmed",
+      "terminal_job_seconds": 2.336,
+      "transport_pass": true,
+      "semantic_pass": true,
+      "assertions_passed": 19,
+      "assertions_total": 19,
+      "provider_processor_size_override": null
+    },
+    {
+      "receipt": "work/vss33/alert-archive-binary-native-budget-empty.json",
+      "input_clip_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+      "expected_verdict": "rejected",
+      "observed_verdict": "rejected",
+      "terminal_job_seconds": 2.627,
+      "transport_pass": true,
+      "semantic_pass": true,
+      "assertions_passed": 19,
+      "assertions_total": 19,
+      "provider_processor_size_override": null
+    }
+  ],
+  "qualification": "The explicit 20-frame binary archive preset with server media-size defaults passes these known positive/empty fixture checks. Prior capped false negative remains recorded. No overall accuracy, JSON-answer repair, RTSP, long-video or temporal claim.",
+  "separate_image_contract_followup": {
+    "source_fix_commit": "12b7e222438c410d92d09669dec2ee8372ac40ba",
+    "contract": "Finite image/image-list sole chunks now carry is_last=True; the selected image EVS path preserves this terminal flag after padding.",
+    "cpu_checks_passed": 20,
+    "actual_gpu_rerun": "completed_with_remaining_single_image_semantic_failure",
+    "relationship_to_archive_controls": "These archived 20-frame video controls already carried a final-chunk marker. Their cap/no-cap verdicts and delivery evidence are unchanged. The finite-image metadata fix passes completion/cleanup but did not correct the latest JPEG verdict; no general accuracy qualification follows.",
+    "latest_receipt": "work/vss33/accuracy-after-finite-image-fix.json",
+    "observed_controls": [
+      {
+        "case": "final-image",
+        "answer": "No",
+        "verdict": "NO",
+        "seconds": 1.238,
+        "transport_pass": true,
+        "semantic_pass": false,
+        "request_owned_session_closed": true
+      },
+      {
+        "case": "raw20-positive",
+        "answer": "YES",
+        "verdict": "YES",
+        "seconds": 2.482,
+        "transport_pass": true,
+        "semantic_pass": true,
+        "request_owned_session_closed": true
+      },
+      {
+        "case": "raw20-empty",
+        "answer": "NO",
+        "verdict": "NO",
+        "seconds": 2.555,
+        "transport_pass": true,
+        "semantic_pass": true,
+        "request_owned_session_closed": true
+      }
+    ]
+  }
+}

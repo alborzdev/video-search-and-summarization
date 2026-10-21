@@ -4,7 +4,7 @@ import VisionIntelligenceApp from "../VisionIntelligenceApp";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import React from "react";
 
-jest.mock("@nv-metropolis-bp-vss-ui/all", () => ({
+jest.mock("@nv-metropolis-bp-vss-ui/video-management", () => ({
   VideoManagementComponent: () => <div>Dynamic management surface</div>,
 }));
 
@@ -188,6 +188,24 @@ describe("VisionIntelligenceApp shell", () => {
       screen.getByRole("button", { name: "Close system readiness" })
     );
     expect(screen.queryByText("Local readiness")).not.toBeInTheDocument();
+  });
+
+  it("labels unselected detector roles in both readiness views without implying an outage", async () => {
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({
+      checkedAt: health.checkedAt, status: "online", demoProfile: "clips",
+      services: ["video", "agent", "embedding", "vlm", "llm", "perception"].map(key => ({
+        key, label: key === "perception" ? "Detection + tracking" : key,
+        ok: key !== "perception", selected: key !== "perception", latencyMs: key === "perception" ? null : 1,
+      })),
+    }) });
+    render(<VisionIntelligenceApp />);
+    await screen.findByText("LOCAL AI · ONLINE");
+    fireEvent.click(screen.getByRole("button", { name: "System readiness" }));
+    const checks = screen.getByRole("region", { name: "Demo service checks" });
+    expect(checks).toHaveTextContent("Ask about a video clipAvailable");
+    expect(checks).toHaveTextContent("Detect & track objectsNot selected");
+    fireEvent.click(screen.getByText("Technical service checks"));
+    expect(screen.getByText("Detection + tracking").closest("div")).toHaveTextContent("Not selected");
   });
 
   it("keeps navigation and in-workspace transitions coherent", async () => {

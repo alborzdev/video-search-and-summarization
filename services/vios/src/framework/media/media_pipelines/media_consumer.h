@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2021-2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2021-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,11 @@
 #include "nvbufsurface.h"
 #include "gstnvvstmeta.h"
 
-using namespace std;
+
+namespace webrtc
+{
+    class VideoBroadcaster;
+}
 
 typedef enum
 {
@@ -54,7 +58,8 @@ enum ConsumerType
 {
     encoder = 0,
     compositor = 1,
-    webrtcConsumer = 2
+    webrtcConsumer = 2,
+    dashConsumer = 3
 };
 
 typedef enum
@@ -104,14 +109,9 @@ struct _RawFrameParams
             gst_caps_unref (m_caps);
             m_caps = nullptr;
         }
-        if (m_fdWrapperObj)
-        {
-            delete (m_fdWrapperObj);
-            m_fdWrapperObj = nullptr;
-        }
     }
 
-    string     m_streamId;
+    std::string     m_streamId;
     unsigned char* m_buffer     = nullptr;
     bool m_isYuvBuffer          = false;
     GstBuffer* m_gstBuffer      = nullptr;
@@ -137,15 +137,15 @@ struct _RawFrameParams
     void *meta = nullptr;
     int64_t pts = 0;
 
-    std::shared_ptr<fdWrapper>*       m_fdWrapperObj = nullptr;
+    std::unique_ptr<std::shared_ptr<fdWrapper>> m_fdWrapperObj;
     EncoderMsgType m_encoderMsgType = Buffer;
     std::atomic<bool> m_eos;
 } typedef RawFrameParams;
 
 typedef struct _FrameParams
 {
-    string          m_media;
-    string          m_codec;
+    std::string          m_media;
+    std::string          m_codec;
     unsigned char*  m_buffer;
     ssize_t         m_size;
     bool            m_needParsing;
@@ -186,22 +186,22 @@ class IMediaDataConsumer : public std::enable_shared_from_this<IMediaDataConsume
         }
 
         // Constructor with consumer name - preferred way
-        IMediaDataConsumer(const std::string& consumerName) : m_consumerName(consumerName)
+        explicit IMediaDataConsumer(const std::string& consumerName) : m_consumerName(consumerName)
         {
             m_transcodeStats.setElementName(m_consumerName);
         }
 
-        shared_ptr<IMediaDataConsumer> getself()
+        std::shared_ptr<IMediaDataConsumer> getself()
         {
             try
             {
                 return shared_from_this();
             }
-            catch (const bad_weak_ptr& e)
+            catch (const std::bad_weak_ptr& e)
             {
                 // LOG(error) << "Bad Weak pointer error: " << e.what() << endl;
             }
-            return shared_ptr<IMediaDataConsumer>(nullptr);
+            return std::shared_ptr<IMediaDataConsumer>(nullptr);
         }
 
             virtual ~IMediaDataConsumer()
@@ -210,8 +210,8 @@ class IMediaDataConsumer : public std::enable_shared_from_this<IMediaDataConsume
                 m_transcodeStats.clearQueue();
             }
 
-        virtual void onFrame(FrameParams& frame_params) {}
-        virtual void onFrame(std::shared_ptr<RawFrameParams> frame_data) {};
+        virtual void onFrame(FrameParams& frame_params) { /* Default no-op: consumers that only accept raw frames keep this empty. */ }
+        virtual void onFrame(std::shared_ptr<RawFrameParams> frame_data) { /* Default no-op: consumers that only accept encoded frames keep this empty. */ }
 
         virtual eMediaType getConsumerMediaType() { return m_mediaType; }
         virtual void setConsumerMediaType(eMediaType media_type) { m_mediaType = media_type; }
@@ -221,16 +221,16 @@ class IMediaDataConsumer : public std::enable_shared_from_this<IMediaDataConsume
         bool isPpsAvailable();
         bool isSpsPpsAvailable();
 
-        virtual void setWebrtcBroadcaster(void* broadcaster) { };
-        virtual void onLastFrame() { }
-        virtual void reset() { }
+        virtual void setWebrtcBroadcaster(webrtc::VideoBroadcaster* broadcaster) { /* Default no-op: only WebRTC-backed consumers need a broadcaster. */ }
+        virtual void onLastFrame() { /* Default no-op: consumers with no end-of-stream work keep this empty. */ }
+        virtual void reset() { /* Default no-op: stateless consumers have nothing to reset. */ }
         /* Update start time for overlay */
-        virtual void updateStartTime(string start_time) { }
+        virtual void updateStartTime(std::string start_time) { /* Default no-op: only overlay-capable consumers track a start time. */ }
         /* Set decoder frame size provides original resolution decoded */
-        virtual void setOriginalFrameSize(int w, int h) { }
-        virtual void setOriginalFrameSize() { }
-        virtual void setIPCMeta() { };
-        virtual void getwebRTCFeedback(int* qp, int* bitrate, double* frame_rate) {}
+        virtual void setOriginalFrameSize(int w, int h) { /* Default no-op: consumers that do not rescale ignore the source resolution. */ }
+        virtual void setOriginalFrameSize() { /* Default no-op: consumers that do not rescale ignore the source resolution. */ }
+        virtual void setIPCMeta() { /* Default no-op: only IPC-backed consumers carry shared-memory metadata. */ }
+        virtual void getwebRTCFeedback(int* qp, int* bitrate, double* frame_rate) { /* Default no-op: only WebRTC-backed consumers report encoder feedback. */ }
         void startStatsProcessing()
         {
             m_transcodeStats.startProcessing();
@@ -239,6 +239,29 @@ class IMediaDataConsumer : public std::enable_shared_from_this<IMediaDataConsume
         {
             m_consumerType = type;
         }
+        /* Whether this consumer takes a decoded picture and encodes it itself.
+         * The WebRTC sink always does. The DASH packager does only where there
+         * is no hardware encoder to have produced an encoded frame further up,
+         * so it answers for itself rather than being inferred from its type -
+         * inferring it fed decoded pictures to a packager that wanted an
+         * encoded stream and published nothing. */
+        virtual bool wantsDecodedPictures() const
+        {
+            return m_consumerType == ConsumerType::webrtcConsumer;
+        }
+
+        /* How long a segment this consumer publishes, in seconds, or zero when
+         * it does not publish segments at all. An encoder feeding it has to
+         * emit a keyframe at that spacing, because a segment can only end on
+         * one: left to the WebRTC keyframe interval, which counts frames rather
+         * than seconds, a video wall composed at eight frames a second produced
+         * a keyframe every 3.75 s and therefore four second segments whatever
+         * DASH asked for. */
+        virtual unsigned publishedSegmentSeconds() const
+        {
+            return 0;
+        }
+
         virtual ConsumerType getConsumerType()
         {
             return m_consumerType;
@@ -254,12 +277,12 @@ class IMediaDataConsumer : public std::enable_shared_from_this<IMediaDataConsume
         // Writer lifecycle methods - default no-op implementations
         // ─────────────────────────────────────────────────────────────
         virtual bool start() { return true; }
-        virtual void stop() { }
-        virtual void sendEOS() { }
+        virtual void stop() { /* Default no-op: consumers with no writer lifecycle keep this empty. */ }
+        virtual void sendEOS() { /* Default no-op: consumers that emit no end-of-stream marker keep this empty. */ }
         virtual bool waitForCompletion(int64_t /*timeout_secs*/) { return true; }
         virtual bool hasError() const { return false; }
         virtual std::shared_ptr<IMediaDataConsumer> getAudioConsumer() { return nullptr; }
-        virtual void* getPipeline() const { return nullptr; }
+        virtual GstElement* getPipeline() const { return nullptr; }
 
         // Get actual first frame PTS in milliseconds (for remux mode filename correction)
         // Returns -1 if not available/not tracked

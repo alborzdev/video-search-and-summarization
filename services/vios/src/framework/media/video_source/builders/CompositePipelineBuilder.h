@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,16 +32,11 @@ public:
     void stopPipeline() override;
     
     std::shared_ptr<GstNvVideoDecoder> getDecoder() const override { return nullptr; }
-    std::shared_ptr<NvEncoderVideoConsumer> getEncoder() const override { return m_encoder; }
-    std::shared_ptr<WebrtcSinkConsumer> getWebrtcConsumer() const override { return m_webrtcConsumer; }
     std::shared_ptr<NvLLOverlay> getOverlay() const override { return nullptr; }
-    std::shared_ptr<NvLLTransform> getTransform() const override { return m_transform; }
-    std::shared_ptr<NvLLTransform> getTransformSink() const override { return m_transformSink; }
-    std::shared_ptr<ImageEnc> getImageEncoder() const override { return m_imageEncoder; }
     std::shared_ptr<NvCompositor> getCompositor() const override { return m_compositor; }
     std::shared_ptr<VideoWebRTCSender> getVideoSender() const override { return nullptr; }
     std::shared_ptr<NativeStreamProducer> getNativeStreamProducer() const override { return nullptr; }
-#ifdef JETSON_PLATFORM
+#ifdef AARCH64_PLATFORM
     std::shared_ptr<NvIPCProducer> getIPCProducer() const override { return nullptr; }
 #endif
 
@@ -59,5 +54,11 @@ private:
     std::vector<std::shared_ptr<NvLLOverlay>> m_overlays;
     std::shared_ptr<NvCompositor> m_compositor = nullptr;
     std::vector<std::string> m_decoderUris;
+    /* Every decoder in m_decoders comes from the pool and is released back to it,
+     * except at most one: the gods eye view stream, which this pipeline builds
+     * itself and must therefore tear down itself. It is kept in m_decoders so the
+     * compositor wiring still sees it, and identified here so teardown can tell
+     * the two apart without relying on its position in the list. */
+    std::shared_ptr<GstNvVideoDecoder> m_godsEyeDecoder = nullptr;
     PipelineConfiguration m_config;
 };

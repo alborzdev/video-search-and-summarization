@@ -128,6 +128,41 @@ describe("vision investigations API", () => {
     }
   });
 
+  it("keeps readable saved reports available when another file is corrupted", async () => {
+    await mkdir(storeDirectory, { recursive: true });
+    const good = { id: randomUUID(), created_at: "2026-10-20T12:00:00Z" };
+    const brokenId = randomUUID();
+    try {
+      await writeFile(`${storeDirectory}/${good.id}.json`, JSON.stringify(good));
+      await writeFile(`${storeDirectory}/${brokenId}.json`, "{unfinished");
+      const list = responseHarness();
+      await handler(request("GET"), list.response);
+      expect(list.state.statusCode).toBe(200);
+      expect(list.state.body).toEqual(expect.objectContaining({ partial: true,
+        investigations: expect.arrayContaining([good]) }));
+    } finally {
+      await rm(`${storeDirectory}/${good.id}.json`, { force: true });
+      await rm(`${storeDirectory}/${brokenId}.json`, { force: true });
+    }
+  });
+
+  it("prepares a shared clip once without combining the findings that cite it", async () => {
+    const evidence = {
+      client_id: "clip-1", sensor_id: "warehouse-sensor", source_name: "Warehouse",
+      start_time: "2026-08-12T10:00:00Z", end_time: "2026-08-12T10:00:28Z",
+      image_url: "", match_type: "VLM Verified", title: "First finding",
+    };
+    const create = responseHarness();
+    await handler(request("POST", { analysis, disposition: "under_review", evidence: [evidence,
+      { ...evidence, client_id: "clip-2", title: "Second finding" }], notes: "", query: "Review", severity: "high", title: "Shared evidence" }), create.response);
+    expect(create.state.statusCode).toBe(201);
+    expect(global.fetch).toHaveBeenCalledTimes(1);
+    const record = create.state.body as { id: string; evidence: Array<{client_id: string; title: string; video_url: string}> };
+    expect(record.evidence.map(item => [item.client_id, item.title])).toEqual([["clip-1", "First finding"], ["clip-2", "Second finding"]]);
+    expect(record.evidence[0].video_url).toBe(record.evidence[1].video_url);
+    await rm(`${storeDirectory}/${record.id}.json`, { force: true });
+  });
+
   it.each([undefined, "0:00 into recording"])("persists and renders evidence with offset %s", async (startLabel) => {
     const create = responseHarness();
     await handler(

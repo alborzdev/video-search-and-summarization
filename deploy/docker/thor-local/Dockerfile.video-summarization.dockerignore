@@ -12,6 +12,9 @@
 !services/video-summarization/src/protos/*.py
 !services/video-summarization/src/vlm_pipeline/
 !services/video-summarization/src/vlm_pipeline/*.py
-.thor/
-.spark/
-.git/
+.thor
+.thor/**
+.spark
+.spark/**
+.git
+.git/**

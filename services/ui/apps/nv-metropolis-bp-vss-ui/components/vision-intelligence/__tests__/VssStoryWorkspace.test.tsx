@@ -33,10 +33,6 @@ function setup(openDemo?: jest.Mock, hardwareProfile?: string) {
       systemHealth={hardwareProfile ? {
         hardwareProfile, checkedAt: "2026-10-08T00:00:00Z", services: [], status: "online",
       } : null}
-      onExplore={leave}
-      onOpenEvents={leave}
-      onOpenLive={leave}
-      onOpenRules={leave}
     />
   );
   const root = screen.getByTestId("vss-story");

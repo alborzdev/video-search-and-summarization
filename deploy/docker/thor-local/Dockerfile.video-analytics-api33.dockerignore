@@ -1,0 +1,18 @@
+# Source overlay only; keep the published image's installed dependencies.
+**
+!services
+!services/analytics
+!services/analytics/video-analytics-api
+!services/analytics/video-analytics-api/src
+!services/analytics/video-analytics-api/src/app
+!services/analytics/video-analytics-api/src/app/**
+!services/analytics/video-analytics-api/src/web-api-core
+!services/analytics/video-analytics-api/src/web-api-core/**
+**/node_modules
+**/node_modules/**
+.spark
+.spark/**
+.thor
+.thor/**
+.git
+.git/**

@@ -20,8 +20,9 @@
 #include "health_probes.h"
 
 using namespace std;
+using namespace nv_vms;
 
-static string gRecorderApiList = R"([
+static const string gRecorderApiList = R"([
         {"method": "GET - Get streams list", "endpoint": "api/v1/record/streams"},
         {"method": "GET - Get Recorder configuration", "endpoint": "api/v1/record/configuration"},
         {"method": "POST - Start Recording for all", "endpoint": "api/v1/record/start"},
@@ -43,6 +44,12 @@ void StreamRecorder::recorderApis()
     m_func["/api/v1/record/streams"] = [this](const Json::Value& req_info, const Json::Value &in,
                                 Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         StreamRecorder* recorder = GET_RECORDER();
         if (recorder == nullptr)
         {
@@ -54,6 +61,12 @@ void StreamRecorder::recorderApis()
 	m_func["/api/v1/record/stream/add"] = [this](const Json::Value& req_info, const Json::Value &in,
                                 Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "post"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         string url = in.get("url", EMPTY_STRING).asString();
         string id = in.get("id", EMPTY_STRING).asString();
         string codec = in.get("codec", EMPTY_STRING).asString();
@@ -104,6 +117,12 @@ void StreamRecorder::recorderApis()
     };
     m_func["/api/v1/record/status"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         StreamRecorder* recorder = GET_RECORDER();
         if (recorder == nullptr)
         {
@@ -114,6 +133,12 @@ void StreamRecorder::recorderApis()
     };
     m_func["/api/v1/record/configuration"] = [this](const Json::Value& req_info, const Json::Value &in, Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         StreamRecorder* recorder = GET_RECORDER();
         if (recorder == nullptr)
         {
@@ -125,6 +150,12 @@ void StreamRecorder::recorderApis()
     m_func["/api/v1/record/version"] = [this](const Json::Value& req_info, const Json::Value &in,
                                 Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         StreamRecorder* recorder = GET_RECORDER();
         if (recorder == nullptr)
         {
@@ -139,6 +170,12 @@ void StreamRecorder::recorderApis()
     m_func["/api/v1/record/help"] = [this](const Json::Value& req_info, const Json::Value &in,
                                 Json::Value &out, struct mg_connection *conn) -> VmsErrorCode
     {
+        const string requestMethod = req_info.get("method", UNKNOWN_STRING).asString();
+        if (!iequals(requestMethod, "get"))
+        {
+            SET_VMS_ERROR(VmsErrorCode::MethodNotAllowedError, out)
+            return VmsErrorCode::MethodNotAllowedError;
+        }
         Json::CharReaderBuilder builder;
         std::istringstream iss(gRecorderApiList);
 
@@ -166,8 +203,8 @@ void StreamRecorder::recorderApis()
         }
         else
         {
-            SET_VMS_ERROR2(VmsErrorCode::VMSNotSupportedError, out, "Request Method is not supported");
-            return VmsErrorCode::VMSNotSupportedError;
+            SET_VMS_ERROR2(VmsErrorCode::MethodNotAllowedError, out, "Request Method is not supported");
+            return VmsErrorCode::MethodNotAllowedError;
         }
     };
     m_func["/v1/live"] = [this](const Json::Value& req_info, const Json::Value &in,

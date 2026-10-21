@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+import { DashPlaybackCapability } from "./DashPlaybackCapability";
+
 import type { MonitoringRule } from "./monitoringRules";
 import type { SystemPanel } from "./SystemWorkspace";
 import { demoServiceChecks, formatMemory, healthLabel, type SystemHealth } from "./systemHealth";
@@ -22,7 +24,7 @@ import {
 } from "@tabler/icons-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { parseWorkspace, workspaceHref } from "../../utils/workspaceRoute";
 import type {
   WorkloadAdmissionFacts,
@@ -76,7 +78,7 @@ const SystemWorkspace = dynamic(
 
 const VideoManagement = dynamic(
   () =>
-    import("@nv-metropolis-bp-vss-ui/all").then(
+    import("@nv-metropolis-bp-vss-ui/video-management").then(
       (module) => module.VideoManagementComponent
     ),
   {
@@ -151,6 +153,7 @@ export default function VisionIntelligenceApp({
   videoManagementData,
 }: VisionIntelligenceAppProps) {
   const router = useRouter();
+  const primaryNav = useRef<HTMLElement>(null);
   const [section, setSection] = useState<PrimarySection>(() =>
     parseWorkspace(router.query.workspace)
   );
@@ -228,6 +231,14 @@ export default function VisionIntelligenceApp({
     if (section === "explore") setHasOpenedInvestigation(true);
   }, [section]);
 
+  useEffect(() => {
+    if (window.matchMedia?.("(max-width: 900px)").matches) {
+      primaryNav.current?.querySelector('[aria-current="page"]')?.scrollIntoView?.({
+        block: "nearest", inline: "nearest",
+      });
+    }
+  }, [section]);
+
   const refreshHealth = useCallback(async () => {
     try {
       const response = await fetch("/api/vision/health", { cache: "no-store" });
@@ -296,7 +307,7 @@ export default function VisionIntelligenceApp({
   }, [refreshWorkloadAdmission]);
 
   useEffect(() => {
-    if (section !== "system" && section !== "capabilities") return;
+    if (section !== "system") return;
     void refreshSearchCoverage();
     const interval = window.setInterval(refreshSearchCoverage, 60_000);
     return () => window.clearInterval(interval);
@@ -410,6 +421,7 @@ export default function VisionIntelligenceApp({
   };
 
   return (
+    <DashPlaybackCapability.Provider value={systemHealth?.videoPlayback?.dashEnabled === true}>
     <div
       className={
         presentationMode
@@ -433,7 +445,7 @@ export default function VisionIntelligenceApp({
           <strong>Vision</strong>
           <span>Intelligence</span>
         </div>
-        <nav className="vi-primary-nav" aria-label="Primary navigation">
+        <nav ref={primaryNav} className="vi-primary-nav" aria-label="Primary navigation">
           {navItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -595,7 +607,7 @@ export default function VisionIntelligenceApp({
                 <div className="vi-system-service" key={check.label}>
                   <i className={check.status === "available" ? "is-online" : check.status === "unavailable" ? "is-offline" : "is-unknown"} />
                   <span>{check.label}</span>
-                  <em>{check.status === "available" ? "Available" : check.status === "unavailable" ? "Unavailable" : "Not checked"}</em>
+                  <em>{check.status === "available" ? "Available" : check.status === "unavailable" ? "Unavailable" : check.status === "not-selected" ? "Not selected" : "Not checked"}</em>
                 </div>
               ))}
               <p>Service checks only. Camera connection, analysis settings and compute capacity also affect live monitoring.</p>
@@ -605,10 +617,10 @@ export default function VisionIntelligenceApp({
             <summary>Technical service checks</summary>
           {(systemHealth?.services ?? []).map((service) => (
             <div className="vi-system-service" key={service.key}>
-              <i className={service.ok ? "is-online" : "is-offline"} />
+              <i className={service.selected === false ? "is-unknown" : service.ok ? "is-online" : "is-offline"} />
               <span>{service.label}</span>
               <em>
-                {service.ok ? `${service.latencyMs ?? "—"} ms` : "Unavailable"}
+                {service.selected === false ? "Not selected" : service.ok ? `${service.latencyMs ?? "—"} ms` : "Unavailable"}
               </em>
             </div>
           ))}
@@ -753,18 +765,7 @@ export default function VisionIntelligenceApp({
         {section === "capabilities" && (
           <VssStoryWorkspace
             onOpenDemo={() => navigateToSection("guided")}
-            onExplore={(query) => openInvestigation(query)}
-            onOpenEvents={openEvents}
-            onOpenLive={(mode = "grid") =>
-              openLive(undefined, {
-                focused: mode !== "grid",
-                panel: mode === "history" ? "history" : undefined,
-              })
-            }
-            onOpenRules={openRules}
             systemHealth={systemHealth}
-            admissions={workloadAdmission?.admissions}
-            searchCoverage={searchCoverageUnavailable ? null : searchCoverage}
           />
         )}
         {section === "monitoring" && (
@@ -846,5 +847,6 @@ export default function VisionIntelligenceApp({
         />
       )}
     </div>
+    </DashPlaybackCapability.Provider>
   );
 }

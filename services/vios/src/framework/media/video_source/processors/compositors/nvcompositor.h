@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2023 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2023-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,6 @@
 #include "media_consumer.h"
 #include "nvvideoencoder.h"
 
-using namespace std;
 
 // Grid layout data structures matching JSON schema
 struct TileSpacing {
@@ -78,15 +77,17 @@ struct GridLayout {
 class NvCompositor : public IMediaDataConsumer
 {
 public:
-    NvCompositor(const GridLayout& gridLayout); // Constructor that extracts URLs from GridLayout
+    explicit NvCompositor(const GridLayout& gridLayout); // Constructor that extracts URLs from GridLayout
     ~NvCompositor();
 
     void doCompositeTask();
     void setTargetFrameSize (FrameSize& target_size);
+    using IMediaDataConsumer::onFrame;
     void onFrame(std::shared_ptr<RawFrameParams> frame_data) override;
     void setConsumer(std::shared_ptr<IMediaDataConsumer> consumer);
+    using IMediaDataConsumer::setOriginalFrameSize;
     void setOriginalFrameSize() override;
-    void setFrameRate(string frame_rate);
+    void setFrameRate(std::string frame_rate);
     
     // New methods for grid layout management
     void setCustomGridLayout(const GridLayout& layout);
@@ -95,11 +96,11 @@ public:
     GridLayout getCurrentLayout() const;
     static GridLayout parseJsonLayout(const std::string& jsonConfig);
 private:
-    std::vector<string>                            m_urlsList;
+    std::vector<std::string>                            m_urlsList;
     std::shared_ptr<IMediaDataConsumer>            m_consumer    = nullptr;
     std::thread                                    m_compositorThread;
-    shared_ptr<NvSurfacePool>                      m_surfacePool = nullptr;
-    std::vector<string>                            m_streamIDList;
+    std::shared_ptr<NvSurfacePool>                      m_surfacePool = nullptr;
+    std::vector<std::string>                            m_streamIDList;
     std::atomic<bool>                              m_stop {false};
     FrameSize                                      m_targetFrameSize{1920, 1080};
     FrameSize                                      m_sourceFrameSize{1920, 1080};
@@ -109,7 +110,7 @@ private:
     std::queue<std::shared_ptr<RawFrameParams>> m_queue;
     std::mutex                                     m_queueLock;
     std::condition_variable                        m_condVar;
-    atomic<bool>                                   m_flowData {false};
+    std::atomic<bool>                                   m_flowData {false};
     double                                         m_frameRate = 30.0;
     
     // New grid layout members

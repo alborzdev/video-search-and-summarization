@@ -22,7 +22,7 @@ export interface VisionAnalystRequest {
   askedAt: string;
   conversationId: string;
   query: string;
-  /** Recent live footage to inspect, in seconds; omitted uses the 3-second default. */
+  /** Recent live footage to inspect, in seconds; omitted uses the 1-second default. */
   lookbackSeconds?: number;
   scope: 'all-sources' | 'selected-source';
   sources: VisionAnalystSource[];
@@ -58,57 +58,4 @@ export function cleanAgentAnswer(value: string): string {
     .replace(/\bBy\s+\d+\.\d+\s*(?:seconds?|s)?\s*,/gi, 'By the end of the inspected clip,')
     .replace(/\bAt\s+\d+\.\d+\s*(?:seconds?|s)?\s*,/gi, 'During the inspected clip,')
     .trim();
-}
-
-const EVIDENCE_TOOL_PATTERN = '(?:video_understanding|lvs_video_understanding|lvs_stream_understanding)';
-const FAILED_TOOL_RESULT = /(?:\berror\b|\bexception\b|\bfailed\b|could not|unable to|unavailable|timed?\s*out)/i;
-
-/** Return only local visual tools whose trace contains a non-error result. */
-export function extractSuccessfulEvidenceTools(value: string): string[] {
-  const tools = new Set<string>();
-  const stepPattern = new RegExp(
-    `<agent-think-step\\b[^>]*>[\\s\\S]*?Tool:\\s*(${EVIDENCE_TOOL_PATTERN})\\b[\\s\\S]*?Result:\\s*([\\s\\S]*?)<\\/agent-think-step>`,
-    'gi'
-  );
-  for (const match of value.matchAll(stepPattern)) {
-    const result = match[2].trim();
-    if (result && !FAILED_TOOL_RESULT.test(result)) tools.add(match[1].toLowerCase());
-  }
-  return [...tools];
-}
-
-/** Prefer the precise interval emitted by video_understanding over a broader requested range. */
-export function extractObservedRange(value: string): VisionAnalystObservedRange | undefined {
-  const intervals: VisionAnalystObservedRange[] = [];
-  const stepPattern = new RegExp(
-    `<agent-think-step\\b[^>]*>[\\s\\S]*?Tool:\\s*${EVIDENCE_TOOL_PATTERN}\\b[\\s\\S]*?Result:\\s*([\\s\\S]*?)<\\/agent-think-step>`,
-    'gi'
-  );
-  for (const step of value.matchAll(stepPattern)) {
-    for (const match of step[1].matchAll(/(\d+(?:\.\d+)?)\s*(?:s\s*)?[-–]\s*(\d+(?:\.\d+)?)\s*(?:s\b)?/gi)) {
-      const startSeconds = Number(match[1]);
-      const endSeconds = Number(match[2]);
-      if (Number.isFinite(startSeconds) && Number.isFinite(endSeconds) && endSeconds >= startSeconds) {
-        intervals.push({ startSeconds, endSeconds });
-      }
-    }
-  }
-  if (intervals.length) {
-    return {
-      startSeconds: Math.min(...intervals.map((interval) => interval.startSeconds)),
-      endSeconds: Math.max(...intervals.map((interval) => interval.endSeconds)),
-    };
-  }
-
-  const fallback = value.match(
-    /(?:observed|time range|interval)[^\d]{0,24}(\d+(?:\.\d+)?)\s*(?:-|–|to)\s*(\d+(?:\.\d+)?)\s*(?:seconds?|s\b)/i
-  );
-  if (!fallback) return undefined;
-
-  const startSeconds = Number(fallback[1]);
-  const endSeconds = Number(fallback[2]);
-  if (!Number.isFinite(startSeconds) || !Number.isFinite(endSeconds) || endSeconds < startSeconds) {
-    return undefined;
-  }
-  return { startSeconds, endSeconds };
 }

@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: Copyright (c) 2019-2025 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-FileCopyrightText: Copyright (c) 2019-2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ namespace trace_semantic = opentelemetry::trace::SemanticConventions;
 #endif
 
 using namespace std;
+using namespace nv_vms;
 
 constexpr char STORAGE_MANAGEMENT_UPLOAD_API[] = "/api/v1/storage/file";
 constexpr char STORAGE_MANAGEMENT_UPLOAD_API_VST[] = "/vst/api/v1/storage/file";
@@ -97,6 +98,9 @@ static bool log_api_info(const std::string& api_name)
         (api_name == "/api/v1/replay/stream/status") ||
         (api_name == "/api/v1/live/stream/stats") ||
         (api_name == "/api/v1/sensor/debug/system/stats") ||
+        /* The container health check polls this every few seconds, so logging
+         * it buries everything else in the file it would be read from. */
+        (api_name == "/api/v1/live/version") ||
         (api_name == "/api/v1/replay/stream/stats"))
     {
         return false;
@@ -110,6 +114,7 @@ static bool log_api_info(const std::string& api_name)
         (api_name == "/vst/api/v1/replay/stream/status") ||
         (api_name == "/vst/api/v1/live/stream/stats") ||
         (api_name == "/vst/api/v1/sensor/debug/system/stats") ||
+        (api_name == "/vst/api/v1/live/version") ||
         (api_name == "/vst/api/v1/replay/stream/stats"))
     {
         return false;
@@ -394,19 +399,24 @@ class RequestHandler : public CivetHandler
         return (method != HTTP_METHOD_POST && method != HTTP_METHOD_PUT && method != HTTP_METHOD_PATCH);
     }
     
-    bool handleGet(CivetServer *server, struct mg_connection *conn)
+    using CivetHandler::handleGet;
+    using CivetHandler::handlePost;
+    using CivetHandler::handlePut;
+    using CivetHandler::handleDelete;
+
+    bool handleGet(CivetServer *server, struct mg_connection *conn) override
     {
         return handle(server, conn);
     }
-    bool handlePost(CivetServer *server, struct mg_connection *conn)
+    bool handlePost(CivetServer *server, struct mg_connection *conn) override
     {
         return handle(server, conn);
     }
-    bool handlePut(CivetServer *server, struct mg_connection *conn)
+    bool handlePut(CivetServer *server, struct mg_connection *conn) override
     {
         return handle(server, conn);
     }
-    bool handleDelete(CivetServer *server, struct mg_connection *conn)
+    bool handleDelete(CivetServer *server, struct mg_connection *conn) override
     {
         return handle(server, conn);
     }

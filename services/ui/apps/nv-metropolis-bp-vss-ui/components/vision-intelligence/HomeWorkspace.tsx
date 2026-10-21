@@ -93,30 +93,6 @@ function incidentForStream(
   });
 }
 
-function relativeTime(value: string | null | undefined): string {
-  if (!value) return "Awaiting first indexed moment";
-  const elapsed = Date.now() - Date.parse(value);
-  if (!Number.isFinite(elapsed)) return "Recently indexed";
-  const seconds = Math.max(0, Math.round(elapsed / 1_000));
-  if (seconds < 60) return `${seconds}s ago`;
-  const minutes = Math.round(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.round(minutes / 60);
-  return hours < 24 ? `${hours}h ago` : `${Math.floor(hours / 24)}d ago`;
-}
-
-export function sourceTimelineContext(
-  stream: VisionStream,
-  lastSemanticAt: string | null | undefined
-): string {
-  // Archived media keeps its original capture timestamps. Presenting those as
-  // live recency (for example, “14327h ago”) is misleading and visually noisy.
-  if (!lastSemanticAt) return "Awaiting first indexed moment";
-  return sourceKind(stream) === "Replay"
-    ? "Indexed locally"
-    : `Last indexed ${relativeTime(lastSemanticAt).toLowerCase()}`;
-}
-
 function sourceStatus(
   stream: VisionStream,
   intelligence: SourceIntelligence | undefined,

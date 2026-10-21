@@ -82,9 +82,31 @@ MODE="${MODE:-release}"
 NUM_GPUS="${NUM_GPUS:-`nvidia-smi --query-gpu=name --format=csv,noheader | wc -l`}"
 EXAMPLE_STREAMS_DIR="${EXAMPLE_STREAMS_DIR:-/opt/nvidia/rtvi/streams}"
 
+_CALLER_MODEL_IMPLEMENTATION_PATH_SET="${MODEL_IMPLEMENTATION_PATH+x}"
+_CALLER_MODEL_PATH_SET="${MODEL_PATH+x}"
+_CALLER_MODEL_REPOSITORY_SCRIPT_PATH_SET="${MODEL_REPOSITORY_SCRIPT_PATH+x}"
+_DEFAULT_EMBED_MODEL_IMPLEMENTATION_PATH="/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1"
+_DEFAULT_EMBED_MODEL_PATH="git:https://huggingface.co/nvidia/Cosmos-Embed1-448p"
+_DEFAULT_EMBED_MODEL_REPOSITORY_SCRIPT_PATH="/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1/create_triton_model_repo.py"
+
 VLM_MODEL_TO_USE="${VLM_MODEL_TO_USE:-custom}"
-MODEL_IMPLEMENTATION_PATH="${MODEL_IMPLEMENTATION_PATH:-/opt/nvidia/rtvi/rtvi/models/custom/samples/cosmos-embed1}"
-MODEL_PATH="${MODEL_PATH:-git:https://huggingface.co/nvidia/Cosmos-Embed1-448p}"
+MODEL_IMPLEMENTATION_PATH="${MODEL_IMPLEMENTATION_PATH:-${_DEFAULT_EMBED_MODEL_IMPLEMENTATION_PATH}}"
+MODEL_PATH="${MODEL_PATH:-${_DEFAULT_EMBED_MODEL_PATH}}"
+MODEL_REPOSITORY_SCRIPT_PATH="${MODEL_REPOSITORY_SCRIPT_PATH:-${_DEFAULT_EMBED_MODEL_REPOSITORY_SCRIPT_PATH}}"
+
+if [ -n "${REMOTE_EMBED_ENDPOINT}" ]; then
+    export REMOTE_EMBED_ENDPOINT_MODEL_NAME="${REMOTE_EMBED_ENDPOINT_MODEL_NAME:-nvidia/cosmos-embed1}"
+    if [ -z "${_CALLER_MODEL_IMPLEMENTATION_PATH_SET}" ] || [ "${MODEL_IMPLEMENTATION_PATH}" = "${_DEFAULT_EMBED_MODEL_IMPLEMENTATION_PATH}" ]; then
+        MODEL_IMPLEMENTATION_PATH="/opt/nvidia/rtvi/rtvi/models/custom/samples/ce1-nim"
+    fi
+    if [ -z "${_CALLER_MODEL_PATH_SET}" ] || [ "${MODEL_PATH}" = "${_DEFAULT_EMBED_MODEL_PATH}" ]; then
+        MODEL_PATH="${REMOTE_EMBED_ENDPOINT_MODEL_NAME}"
+    fi
+    if [ -z "${_CALLER_MODEL_REPOSITORY_SCRIPT_PATH_SET}" ] || [ "${MODEL_REPOSITORY_SCRIPT_PATH}" = "${_DEFAULT_EMBED_MODEL_REPOSITORY_SCRIPT_PATH}" ]; then
+        MODEL_REPOSITORY_SCRIPT_PATH=""
+    fi
+    echo "Using CE1 (Cosmos-Embed1) NIM backend at ${REMOTE_EMBED_ENDPOINT}"
+fi
 
 export VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME="${VLM_OPENAI_MODEL_DEPLOYMENT_NAME:-gpt-4o}"
 export LOG_LEVEL=$LOG_LEVEL
@@ -115,8 +137,12 @@ python3 src/utils.py 2>/dev/null
 
 FREE_GPU_MEM=$(nvidia-smi --query-gpu=memory.free --format=csv,noheader -i 0 | awk '{print $1}')
 echo "Free GPU memory is $FREE_GPU_MEM MiB"
+GPU_NAME=$(nvidia-smi --query-gpu=name --format=csv,noheader -i 0)
 
-if [ $FREE_GPU_MEM -lt 40000 ]; then
+if [[ "$GPU_NAME" == *"Orin"* ]]; then
+    # Disable decoder resue on Orin
+    export DISABLE_DECODER_REUSE=true
+elif [[ "$FREE_GPU_MEM" =~ ^[0-9]+$ && "$FREE_GPU_MEM" -lt 40000 ]]; then
     export DISABLE_DECODER_REUSE="${DISABLE_DECODER_REUSE:-true}"
 else
     export DISABLE_DECODER_REUSE="${DISABLE_DECODER_REUSE:-false}"
@@ -124,12 +150,6 @@ fi
 
 if [ "$DISABLE_DECODER_REUSE" == "true" ]; then
     echo "Disabling decoder reuse"
-fi
-
-if [ -f /etc/nv_tegra_release ]; then
-    if grep -q "R38 (release), REVISION: 2.0" /etc/nv_tegra_release; then
-        export LD_LIBRARY_PATH="/opt/nvidia/via/lib:${LD_LIBRARY_PATH}"
-    fi
 fi
 
 GPU_MEM=0
@@ -142,6 +162,18 @@ if [[ $GPU_MEM == *"N/A"* ]]; then
 fi
 echo "Total GPU memory is $GPU_MEM MiB per GPU"
 
+# Tegra runtime libraries are valid only on Thor/Jetson. Keep DeepStream
+# ahead of Tegra so its SEI metadata library is selected, while keeping both
+# ahead of the bundled RTVI libraries so NvBufSurface matches the host BSP.
+if [ -f /etc/nv_tegra_release ]; then
+    export LD_LIBRARY_PATH="/usr/lib/aarch64-linux-gnu/tegra${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+    export LD_LIBRARY_PATH="/opt/nvidia/deepstream/deepstream/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+    if grep -Fq "R38 (release), REVISION: 2.0" /etc/nv_tegra_release \
+        && [ -d /opt/nvidia/via/lib ]; then
+        export LD_LIBRARY_PATH="/opt/nvidia/via/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+    fi
+fi
+
 if [[ $GPU_MEM -le 50000 ]]; then
     if [[ -z "${VLLM_GPU_MEMORY_UTILIZATION}" ]]; then
         export VLLM_GPU_MEMORY_UTILIZATION=0.7
@@ -151,7 +183,9 @@ fi
 
 
 if [ -z $VLM_BATCH_SIZE ]; then
-    if [[ "$GPU_MEM" == *"N/A"* || $GPU_MEM -gt 80000 ]]; then
+    if [[ "$GPU_MEM" =~ ^[0-9]+$ && "$GPU_MEM" -lt 16000 ]]; then
+        VLM_BATCH_SIZE=2
+    elif [[ "$GPU_MEM" == *"N/A"* || $GPU_MEM -gt 80000 ]]; then
         VLM_BATCH_SIZE=64
     elif [[ $GPU_MEM -gt 46000 ]]; then
         VLM_BATCH_SIZE=16
@@ -224,6 +258,7 @@ start_rtvi_server() {
     fi
 
     EXTRA_ARGS="$RTVI_EXTRA_ARGS"
+    IPC_ARGS=()
     if [ "$ENABLE_AUDIO" = true ]; then
         EXTRA_ARGS+=" --enable-audio"
     fi
@@ -260,16 +295,23 @@ start_rtvi_server() {
     if [ ! -z "$MODEL_REPOSITORY_SCRIPT_PATH" ]; then
         EXTRA_ARGS+=" --model-repository-script-path $MODEL_REPOSITORY_SCRIPT_PATH"
     fi
+    ipc_frame_copy=$(echo "${RTVI_IPC_FRAME_COPY:-false}" | tr '[:upper:]' '[:lower:]')
+    if [ "$ipc_frame_copy" = "true" ] || [ "$ipc_frame_copy" = "1" ] || [ "$ipc_frame_copy" = "yes" ] || [ "$ipc_frame_copy" = "on" ]; then
+        IPC_ARGS+=(--ipc-frame-copy)
+    fi
 
-    # Kafka configuration - export environment variables for Kafka integration
-    if [ "$KAFKA_ENABLED" = "true" ]; then
-        EXTRA_ARGS+=" --kafka-enabled"
-        if [ ! -z "$KAFKA_TOPIC" ]; then
-            EXTRA_ARGS+=" --kafka-topic $KAFKA_TOPIC"
-        fi
-        if [ ! -z "$KAFKA_BOOTSTRAP_SERVERS" ]; then
-            EXTRA_ARGS+=" --kafka-bootstrap-servers $KAFKA_BOOTSTRAP_SERVERS"
-        fi
+    # Generated-message output bus configuration.
+    if [ ! -z "$MESSAGE_BUS" ]; then
+        EXTRA_ARGS+=" --message-bus $MESSAGE_BUS"
+    fi
+    if [ ! -z "$MESSAGE_BUS_TOPIC" ]; then
+        EXTRA_ARGS+=" --message-bus-topic $MESSAGE_BUS_TOPIC"
+    fi
+    if [ ! -z "$ERROR_BUS" ]; then
+        EXTRA_ARGS+=" --error-bus $ERROR_BUS"
+    fi
+    if [ ! -z "$KAFKA_BOOTSTRAP_SERVERS" ]; then
+        EXTRA_ARGS+=" --kafka-bootstrap-servers $KAFKA_BOOTSTRAP_SERVERS"
     fi
 
 
@@ -279,7 +321,7 @@ start_rtvi_server() {
         --vlm-model-type $VLM_MODEL_TO_USE \
         --vlm-batch-size $VLM_BATCH_SIZE \
         --asset-dir $ASSET_STORAGE_DIR --num-decoders-per-gpu $(( NUM_NVDEC_ENGINES + 1)) \
-        $EXTRA_ARGS &
+        $EXTRA_ARGS "${IPC_ARGS[@]}" &
     check_rtvi_process_status
 }
 

@@ -43,3 +43,6 @@ out/
 
 __pycache__/
 *.py[cod]
+
+# Empty host mountpoint for the canonical read-only VIOS browser client.
+external/vios-dash/

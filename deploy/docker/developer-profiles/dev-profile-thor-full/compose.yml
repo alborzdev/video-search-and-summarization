@@ -5,6 +5,18 @@
 # services through their existing profile lists. This file owns only resources
 # that must be composed specifically for the unified runtime.
 services:
+  # Preserve the application's existing service identity while using the common
+  # 3.3 API implementation. Never start a duplicate API on the same host port.
+  vss-video-analytics-api-fusion:
+    extends:
+      file: ${VSS_APPS_DIR}/services/analytics/video-analytics-api/compose.yml
+      service: vss-video-analytics-api
+    profiles: ["bp_developer_thor_full_2d"]
+    depends_on:
+      broker-health-check:
+        condition: service_completed_successfully
+      elasticsearch-init-container:
+        condition: service_completed_successfully
   # RT-CV already publishes tracked objects to mdx-raw. This second,
   # uniquely-grouped CPU consumer derives only the missing FOV aggregate and
   # reuses Behavior Analytics' standard incident state machine. It does not

@@ -17,8 +17,8 @@ enabled: false
 global: {}
 
 image:
-  repository: nvcr.io/nvidia/vss-core/vss-agent
-  tag: "3.2.1"
+  repository: ghcr.io/nvidia-ai-blueprints/vss/vss-agent
+  tag: develop-latest
   pullPolicy: IfNotPresent
 # Image must have mcp[cli] (typer) installed for `mcp serve` (same as Docker Compose).
 replicas: 1
@@ -32,6 +32,8 @@ hfToken: ""
 vstMcpUrl: ""
 # Optional host IP (compose: HOST_IP). In K8s often left empty; set if app needs it.
 hostIp: ""
+# vlm_verified in the video_analytics function_group.
+vlmVerified: true
 
 service:
   port: 9901

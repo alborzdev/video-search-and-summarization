@@ -1,19 +1,14 @@
-#!/usr/bin/env python3
 # SPDX-FileCopyrightText: Copyright (c) 2025-2026, NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 """Generate Harbor tasks for the vss-ask-video skill.
 
-The vss-ask-video skill answers visual questions about a named sensor
-by calling ``POST /generate`` on the VSS agent, instructing it to invoke the
-``video_understanding`` tool.  It requires a **full-remote deployed VSS base
-profile** (deploy mode = ``remote-all``; both LLM and VLM via remote
-launchpad endpoints, no local NIMs required). It does NOT deploy VSS itself;
-the coordinator chains a deploy task in front, plus a VIOS seed step to
-upload the sample warehouse video.
+The skill routes video questions through hot context, harness-owned OpenClaw
+Markdown recall, structured VSS memory, configured bounded introspection, or a
+direct fresh ``vss vlm run``. All VSS operations use the vss CLI
+installed from the host checkout. The adapter never substitutes direct judge, Elasticsearch,
+VIOS, RT-VLM, or VSS Agent HTTP calls for that contract.
 
-Because vss-ask-video is a thin wrapper around POST /generate — purely
-HTTP, GPU-independent at the harness level — the spec targets **ONE platform**
-by default (L40S — cheapest available host).  Override with ``--platform``.
+The spec targets one platform by default (L40S). Override with ``--platform``.
 
 ## Directory layout
 
@@ -30,15 +25,17 @@ by default (L40S — cheapest available host).  Override with ``--platform``.
 Usage from the repository root:
     python3 .github/skill-eval/adapters/vss-ask-video/generate.py \\
         --output-dir .github/skill-eval/datasets/vss-ask-video \\
-        --skill-dir skills/vss-ask-video \\
-        --deploy-skill-dir skills/vss-deploy-profile \\
-        --video-io-skill-dir skills/vss-manage-video-io-storage \\
-        --spec skills/vss-ask-video/evals/base_profile_video_understanding.json
+        --skill-dir skills/operations/vss-ask-video \\
+        --deploy-skill-dir skills/vss-build-vision-ai \\
+        --video-io-skill-dir skills/operations/vss-manage-video-io-storage \\
+        --spec skills/operations/vss-ask-video/evals/base_profile_video_understanding.json
 """
+
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -49,25 +46,70 @@ from pathlib import Path
 # ---------------------------------------------------------------------------
 
 PLATFORMS: dict[str, dict] = {
-    "H100":         {"short_name": "h100",         "gpu_type": "H100",         "min_vram_per_gpu": 80, "brev_search": "H100"},
-    "L40S":         {"short_name": "l40s",         "gpu_type": "L40S",         "min_vram_per_gpu": 48, "brev_search": "L40S"},
-    "RTXPRO6000BW": {"short_name": "rtxpro6000bw", "gpu_type": "RTX PRO 6000", "min_vram_per_gpu": 96, "brev_search": "RTX PRO"},
-    "DGX-SPARK":    {"short_name": "spark",        "gpu_type": "GB10",         "min_vram_per_gpu": 96, "brev_search": "GB10"},
-    "IGX-THOR":     {"short_name": "thor",         "gpu_type": "Thor",         "min_vram_per_gpu": 64, "brev_search": "Thor"},
+    "H100": {
+        "short_name": "h100",
+        "gpu_type": "H100",
+        "min_vram_per_gpu": 80,
+        "brev_search": "H100",
+    },
+    "L40S": {
+        "short_name": "l40s",
+        "gpu_type": "L40S",
+        "min_vram_per_gpu": 48,
+        "brev_search": "L40S",
+    },
+    "RTXPRO6000BW": {
+        "short_name": "rtxpro6000bw",
+        "gpu_type": "RTX PRO 6000",
+        "min_vram_per_gpu": 96,
+        "brev_search": "RTX PRO",
+    },
+    "DGX-SPARK": {
+        "short_name": "spark",
+        "gpu_type": "GB10",
+        "min_vram_per_gpu": 96,
+        "brev_search": "GB10",
+    },
+    "IGX-THOR": {
+        "short_name": "thor",
+        "gpu_type": "Thor",
+        "min_vram_per_gpu": 64,
+        "brev_search": "Thor",
+    },
 }
 
 DEFAULT_PLATFORM = "L40S"
 
 # Prepended to every instruction.md so the skill's own HITL bypass clause
-# fires.  Skills default to "ask the user" before /vss-deploy-profile; in CI there is no
+# fires.  Skills default to "ask the user" before /vss-build-vision-ai; in CI there is no
 # user, so without this preamble the agent stalls or falls through to a
 # localhost default.
 PREAMBLE = (
     "You are running inside a non-interactive evaluation harness. "
     "You are pre-authorized to deploy prerequisites autonomously — "
-    "do not pause to ask for confirmation on `/vss-deploy-profile` or any other "
+    "do not pause to ask for confirmation on `/vss-build-vision-ai` or any other "
     "setup action the trial requires."
 )
+
+# Appended only to specs whose checks require the clip URL to come from
+# `vss vios clip`. Applied globally it also reached the direct-VLM spec, whose
+# checks assert the run never touches VIOS, and regressed it.
+CLI_CLAUSE = (
+    " When a question names a VIOS sensor, obtain the clip with the `vss` CLI rather "
+    "than any REST call (if `vss` is not on PATH, install it from the host checkout with `uv tool install \"${VSS_REPO_ROOT:-$HOME/video-search-and-summarization}/libs/vss/cli\"`), then run "
+    "`vss vios clip --sensor <name>` and use its `media_url`. This applies to every step that "
+    "needs the clip, including a timestamp follow-up on a sensor already in play. Do not "
+    "hand-build `/vst/api/v1/storage/file/.../url` with times read from `/storage/timelines`."
+)
+
+
+def _preamble_for(spec: dict) -> str:
+    """PREAMBLE, plus the CLI clause only when this spec's checks demand it.
+
+    Keyed off the spec rather than a hardcoded name, so a spec that starts
+    requiring the CLI gets the instruction and one that forbids VIOS does not.
+    """
+    return PREAMBLE + CLI_CLAUSE if "vss vios clip" in json.dumps(spec) else PREAMBLE
 
 GENERIC_JUDGE = Path(__file__).resolve().parents[2] / "verifiers" / "generic_judge.py"
 
@@ -75,6 +117,7 @@ GENERIC_JUDGE = Path(__file__).resolve().parents[2] / "verifiers" / "generic_jud
 # ---------------------------------------------------------------------------
 # Generation helpers
 # ---------------------------------------------------------------------------
+
 
 def generate_test_script(step: int, spec_name: str) -> str:
     """Shell wrapper that invokes the generic LLM-as-judge verifier for
@@ -95,29 +138,23 @@ def generate_test_script(step: int, spec_name: str) -> str:
 
 
 def generate_solve_script(platform: str) -> str:
-    """Gold solution — assumes VSS base profile is already deployed and a
-    sample warehouse video is already uploaded via VIOS.  The verifier drives
-    the POST /generate assertion; the solution script asserts the agent is
-    live, then defers."""
+    """Gold solution verifies only the CLI prerequisite (installed from the checkout)."""
     return (
         "#!/bin/bash\n"
         f"# Gold solution: vss-ask-video on {platform}\n"
-        "# The verifier calls POST /generate directly — the solution script\n"
-        "# just asserts VSS agent is reachable then defers to the verifier.\n"
+        "# The skill owns routing and invokes VSS only through the vss CLI on PATH.\n"
+        "# This script does not call the judge, VLM, Elasticsearch, VIOS, or Agent directly.\n"
         "set -euo pipefail\n"
         "\n"
-        "curl -sf --connect-timeout 5 "
-        "${VSS_AGENT_URL:-http://localhost:8000}/docs "
-        ">/dev/null || {\n"
-        "    echo 'VSS agent is not deployed — cannot solve vss-ask-video task'\n"
-        "    exit 1\n"
-        "}\n"
-        "echo 'VSS agent is live — verifier will drive POST /generate.'\n"
+        'export PATH="$HOME/.local/bin:$PATH"\n'
+        'command -v vss >/dev/null || uv tool install "${VSS_REPO_ROOT:-$HOME/video-search-and-summarization}/libs/vss/cli"\n'
+        'vss --version\n'
+        "echo 'VSS CLI is available; the verifier evaluates the routing trajectory.'\n"
     )
 
 
 def _platforms_from_spec(spec: dict) -> list[str]:
-    declared = ((spec.get("resources") or {}).get("platforms") or {})
+    declared = (spec.get("resources") or {}).get("platforms") or {}
     if not declared:
         return [DEFAULT_PLATFORM]
     return [p for p in declared if p in PLATFORMS] or [DEFAULT_PLATFORM]
@@ -126,6 +163,7 @@ def _platforms_from_spec(spec: dict) -> list[str]:
 # ---------------------------------------------------------------------------
 # Task generation
 # ---------------------------------------------------------------------------
+
 
 def generate_task(
     platform: str,
@@ -154,13 +192,14 @@ def generate_task(
         # Never leak the verifier's checks[] into the instruction so the
         # agent can't write to the test rather than do the actual work.
         step_suffix = f"-step-{idx}" if len(expects) > 1 else ""
+        rendered_query = (expect.get("query") or "").replace("{{platform}}", platform)
         lines = [
-            PREAMBLE,
+            _preamble_for(spec),
             "",
             "",
             f"## Query {idx} of {len(expects)}",
             "",
-            expect.get("query", ""),
+            rendered_query,
             "",
             "Run autonomously without prompting for confirmation.",
             "",
@@ -172,7 +211,10 @@ def generate_task(
             "[task]",
             f'name = "nvidia-vss/vss-ask-video-{profile}-{platform_short}{step_suffix}"',
             f'description = "vss-ask-video query {idx}/{len(expects)} on {platform}"',
-            f'keywords = ["vss-ask-video", "generate", "{profile}", "{platform}"]',
+            f'keywords = ["vss-ask-video", "memory", "introspection", "openclaw", "{profile}", "{platform}"]',
+            "",
+            "[agent]",
+            "timeout_sec = 600.0",
             "",
             "[environment]",
             'skills_dir = "/skills"',
@@ -191,9 +233,10 @@ def generate_task(
             f'platform = "{platform}"',
             f'gpu_type = "{pspec["gpu_type"]}"',
             f'brev_search = "{pspec["brev_search"]}"',
-            f'min_vram_gb_per_gpu = {pspec["min_vram_per_gpu"]}',
-            "# Deploy mode is FULL-REMOTE (LLM + VLM both remote) — vss-ask-video",
-            "# exercises POST /generate only, so there is no benefit to local NIMs.",
+            f"min_vram_gb_per_gpu = {pspec['min_vram_per_gpu']}",
+            "# vss-ask-video uses the vss CLI for structured memory,",
+            "# configured introspection, and explicitly scoped fresh VLM jobs.",
+            "# OpenClaw Markdown recall is harness-owned and may be fixture-backed here.",
             f"step_index = {idx}",
             f"step_count = {len(expects)}",
             f"check_count = {len(expect.get('checks') or [])}",
@@ -228,13 +271,22 @@ def generate_task(
         solution_dir.mkdir(exist_ok=True)
         (solution_dir / "solve.sh").write_text(generate_solve_script(platform))
 
-        # skills/ — vss-ask-video + deploy + VIOS (the spec env mentions
-        # pre-uploading a sample warehouse video via VIOS before running checks).
+        # skills/ — vss-ask-video plus VIOS. The deploy skill is mounted only
+        # when the spec actually needs it — declared in `skills`, or asked for
+        # by a step that deploys. Keying on `skills` alone is not enough: these
+        # specs gained a "Deploy the VSS base profile" first step without their
+        # `skills` array being updated.
         copies = [
-            (skill_dir,        "vss-ask-video"),
-            (deploy_skill_dir, "vss-deploy-profile"),
-            (video_io_skill_dir,   "vss-manage-video-io-storage"),
+            (skill_dir, "vss-ask-video"),
+            (video_io_skill_dir, "vss-manage-video-io-storage"),
         ]
+        needs_deploy_skill = "vss-build-vision-ai" in (spec.get("skills") or []) or any(
+            "vss-build-vision-ai" in (e.get("query") or "")
+            or re.search(r"\bdeploy the vss\b", e.get("query") or "", re.I)
+            for e in (spec.get("expects") or [])
+        )
+        if needs_deploy_skill:
+            copies.insert(1, (deploy_skill_dir, "vss-build-vision-ai"))
         for src, name in copies:
             if src and src.exists():
                 dst = step_dir / "skills" / name
@@ -247,46 +299,65 @@ def generate_task(
 # CLI
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "--output-dir", required=True,
+        "--output-dir",
+        required=True,
         help="Dataset output root (e.g. .github/skill-eval/datasets/vss-ask-video)",
     )
     parser.add_argument(
-        "--skill-dir", required=True,
-        help="Path to skills/vss-ask-video",
+        "--skill-dir",
+        required=True,
+        help="Path to skills/operations/vss-ask-video",
     )
     parser.add_argument(
-        "--deploy-skill-dir", default=None,
-        help="Path to skills/vss-deploy-profile (optional — included for agent diagnosis)",
+        "--deploy-skill-dir",
+        default=None,
+        help="Path to skills/vss-build-vision-ai (optional — included for agent diagnosis)",
     )
     parser.add_argument(
-        "--video-io-skill-dir", dest="video_io_skill_dir", default=None,
-        help="Path to skills/vss-manage-video-io-storage (optional — spec env references VIOS video upload)",
+        "--video-io-skill-dir",
+        dest="video_io_skill_dir",
+        default=None,
+        help="Path to skills/operations/vss-manage-video-io-storage (optional — spec env references VIOS video upload)",
     )
-    parser.add_argument("--vios-skill-dir", dest="video_io_skill_dir", help=argparse.SUPPRESS)
-    if any(arg == "--vios-skill-dir" or arg.startswith("--vios-skill-dir=") for arg in sys.argv[1:]):
-        print("WARNING: --vios-skill-dir is deprecated; use --video-io-skill-dir.", file=sys.stderr)
     parser.add_argument(
-        "--spec", default=None,
+        "--vios-skill-dir", dest="video_io_skill_dir", help=argparse.SUPPRESS
+    )
+    if any(
+        arg == "--vios-skill-dir" or arg.startswith("--vios-skill-dir=")
+        for arg in sys.argv[1:]
+    ):
+        print(
+            "WARNING: --vios-skill-dir is deprecated; use --video-io-skill-dir.",
+            file=sys.stderr,
+        )
+    parser.add_argument(
+        "--spec",
+        default=None,
         help="Path to spec JSON "
-             "(default: <skill-dir>/evals/base_profile_video_understanding.json)",
+        "(default: <skill-dir>/evals/base_profile_video_understanding.json)",
     )
     parser.add_argument(
-        "--platform", default=None, choices=list(PLATFORMS.keys()),
+        "--platform",
+        default=None,
+        choices=list(PLATFORMS.keys()),
         help=f"Generate for one platform only (overrides spec.resources.platforms; "
-             f"default: {DEFAULT_PLATFORM})",
+        f"default: {DEFAULT_PLATFORM})",
     )
     args = parser.parse_args()
 
     output_root = Path(args.output_dir)
     skill_dir = Path(args.skill_dir)
     deploy_skill_dir = Path(args.deploy_skill_dir) if args.deploy_skill_dir else None
-    video_io_skill_dir = Path(args.video_io_skill_dir) if args.video_io_skill_dir else None
+    video_io_skill_dir = (
+        Path(args.video_io_skill_dir) if args.video_io_skill_dir else None
+    )
     spec_path = (
         Path(args.spec)
         if args.spec
@@ -309,22 +380,27 @@ def main() -> None:
     print(f"  profile      : {profile}")
     print(f"  platforms    : {platforms}")
     print(f"  queries      : {len(spec.get('expects', []))}")
-    print(f"  total checks : {sum(len(q.get('checks', [])) for q in spec.get('expects', []))}")
+    print(
+        f"  total checks : {sum(len(q.get('checks', [])) for q in spec.get('expects', []))}"
+    )
     print()
     for platform in platforms:
         task_id = PLATFORMS[platform]["short_name"]
         print(f"  GEN  vss-ask-video/{profile}/{task_id}")
         generate_task(
-            platform, profile, spec, output_root, skill_dir,
-            deploy_skill_dir, video_io_skill_dir,
+            platform,
+            profile,
+            spec,
+            output_root,
+            skill_dir,
+            deploy_skill_dir,
+            video_io_skill_dir,
         )
     print()
     print(f"Generated {len(platforms)} platform(s) under {output_root}/{profile}/")
     print()
-    print("Note: these tasks assume VSS base is already deployed on the target")
-    print("Brev instance and a sample warehouse video has been uploaded via VIOS.")
-    print("The coordinator is responsible for chaining those prerequisites ahead")
-    print("of each vss-ask-video task in the same subagent queue.")
+    print("Note: task queries declare any deployment and fixture prerequisites.")
+    print("All VSS operations are evaluated through the vss CLI contract.")
 
 
 if __name__ == "__main__":
