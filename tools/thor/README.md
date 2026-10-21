@@ -9,11 +9,15 @@ reviewed September Thor model identities and bounded-memory configuration.
 It uses `.thor/` for private generated configuration and fresh runtime data;
 it does not reuse historical receipt paths or replace the official-edge launcher.
 
-Cache-only inference and the actual upload, playback, search, evidence, report
-and replay-history workflows pass on this JetPack 7.2.1 / Docker 29 host.
-The CUDA detector also passes five minutes of isolated indexed output. A bounded five-minute single-source capture/detection/embedding/caption run,
-live visual question with playable evidence, and continuous visual-rule positive
-control also pass; sustained ingestion remains unqualified.
+The October 7 pre-3.3 qualification passed cache-only inference and actual upload,
+playback, search, evidence, report and replay-history workflows on JetPack 7.2.1 /
+Docker 29. The CUDA detector passed five minutes of isolated indexed output. A
+bounded five-minute single-source capture/detection/embedding/caption run, live
+visual question with playable evidence, and continuous visual-rule positive
+control also passed; sustained ingestion remains unqualified.
+The shared 3.3 backend changes require fresh Thor runtime qualification; the new
+3.3 VLM/EVS engine and native DASH runtime are not qualified on Thor. Matching
+legacy inference source and the selected 10 GiB reserve remain preserved.
 See the [acceptance receipt](../../docs/qa/2026-10-07-thor-spark-port.md).
 Container readiness alone does not establish working inference or sustained
 ingestion. Keep source collection paused until its selected workload passes a

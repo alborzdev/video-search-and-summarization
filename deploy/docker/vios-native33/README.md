@@ -67,7 +67,7 @@ running this operator-only command:
 docker run --rm --name vss-vios-native33-builder \
   --runtime runc --network none --memory 4g --memory-swap 4g --cpus 2 \
   --env NVIDIA_VISIBLE_DEVICES=void --env NVIDIA_DRIVER_CAPABILITIES= \
-  --env BASH_ENV= --env ENV= \
+  --env BASH_ENV= --env ENV= --env VSS_NATIVE_JOBS=1 \
   --mount type=bind,src="$PWD/work/vios-native33/source-<source-hash>",dst=/source,readonly \
   --mount type=bind,src="$PWD/work/vios-native33/scratch-01",dst=/build \
   --mount type=bind,src="$PWD/work/vios-native33/output-01",dst=/out \
@@ -79,6 +79,10 @@ or DRM devices. Both shell initializer variables must remain empty: the vendor
 base's inherited Bash initializer was observed creating `/dev/nvidiactl` even
 under runc without requested GPU devices. The strict device guard caught that
 before compilation and remains unchanged.
+
+The example uses one compiler job, matching the measured build alongside ACT
+and the model services. Use two only with adequate available-memory headroom;
+the active Spark guard and selected reserve still apply.
 
 The internal native make command is `make -j${VSS_NATIVE_JOBS-2} arch=aarch64
 CUDA_TARGET_DIR=/usr/local/cuda PROJECT=vst MODULE=streamprocessing
@@ -121,21 +125,33 @@ reference. No mutable intermediate codec tag is used by this maintained recipe.
 `runtime-overlay-receipt.json` records that base, codec lock hashes, source tree
 and included/skipped bytes; the image retains its source manifest.
 
-The original bounded qualification used a fresh private PostgreSQL/Redis/data
-namespace, one 7.5-second Conveyor upload, CPU software x264, one GPU-disabled
-browser and no camera. It decoded 1920x1080 frames, advanced time and multiple
-numbered fragments, then released the viewer. Source-built ELF packaging and
-that playback passed; published binaries failed the uploaded-file encode path.
-This does not qualify full-tail playback, seeking, overlays, audio, hardware
-codecs, sustained RTSP, or upgrading the existing main PostgreSQL state.
+The bounded qualification used a fresh private PostgreSQL/Redis/data namespace,
+one 7.534-second Conveyor upload, CPU software x264, one GPU-disabled browser and
+no camera. The final source (`ca097b99afb9f384…`) published a finite 7.466667-second
+measured DASH timeline and decoded the visible box at source 7.3 seconds. Native
+seek from +2 seconds produced a new owned viewer with a 5.500000-second timeline;
+its decoded local 5.3-second frame again showed the source 7.3-second box. Stop
+returned 200 and the final viewer query was empty. This qualifies that one
+short archived CPU replay path, including its tail and seek; it does not qualify
+sustained RTSP, overlays, audio or hardware codecs.
+
+The complete serial build passed under 4 GiB/2 CPU limits without GPU access.
+Its maximum observed builder peak was 1,693,147,136 bytes; host available memory
+stayed at or above 22.04 GiB while ACT remained alive and the 20 GiB guard stayed
+active. The runtime still uses its separate 2 GiB/2 CPU envelope.
+
 Repeat isolated encoded playback after changing source/dependencies. Main
-cutover requires backup and reviewed rollback/schema compatibility. Never delete
-an application volume or use global Docker prune to clean this build.
+cutover requires backup and reviewed rollback/schema compatibility; the actual
+paired backup, additive migration and UI rehearsal are in the
+[VSS 3.3 qualification receipt](../../../docs/qa/2026-10-20-vss33-spark.md).
+Never delete an application volume or use global Docker prune to clean this build.
 
 Focused CPU/static checks:
 
 ```sh
 python3 tools/runtime/test_native_vios.py -v
 python3 services/vios/test/gtests/dash_replay_sensor_type_test.py -v
+python3 services/vios/test/gtests/dash_eof_test.py -v
+python3 services/vios/test/gtests/dash_manifest_completion_test.py -v
 bash -n deploy/docker/vios-native33/build-native.sh
 ```

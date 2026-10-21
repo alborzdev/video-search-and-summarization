@@ -64,8 +64,10 @@ database. Actual recreation and playback validation are separate operator steps.
 The explicit Spark choice sets only the new DASH settings to the bounded CPU
 archive profile: one session, encoded output at 1500 kbps, two-second segments,
 a four-segment playlist and a 15-second idle timeout. The reviewed native image
-uses software codecs. This qualifies one archive viewer; additional viewers,
-live cameras and overlays require separate measurements. Legacy rendering
+uses software codecs. This is the measured initial-playback CPU envelope for one
+archive viewer; complete tail/seek qualification is recorded in the
+[VSS 3.3 receipt](../../docs/qa/2026-10-20-vss33-spark.md). Additional viewers, live
+cameras and overlays require separate measurements. Legacy rendering
 does not add or change the DASH configuration block.
 The selected stream processor uses the matching CPU container envelope:
 `runtime=runc`, 2 GiB memory with the same 2 GiB memory-plus-swap ceiling,

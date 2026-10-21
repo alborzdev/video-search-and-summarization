@@ -1,13 +1,15 @@
 # Continue the demo on DGX Spark
 
+**October 21 VSS 3.3 update:** current implementation, clip-validation evidence and operating instructions are in the [VSS 3.3 Spark receipt](qa/2026-10-20-vss33-spark.md). Spark preserves the selected **20 GiB** guard while ACT training runs; Thor preserves its separate **10 GiB** setting. The October 1 and September sections below are historical snapshots. Their active Sim/recording state, 24 GiB reserve and old engine versions do not describe this clip-based rehearsal. Live-camera and calibrated 3D qualification remain separate.
+
 **October 20 shared-branch update:** use `codex/unified-spark-thor` for both
 devices; see [shared setup and maintenance](device-setup.md). It includes all
-subsequent Thor application fixes. The platform-specific startup notes below
-remain applicable. Missing Spark data roots are now provisioned by a bounded,
+subsequent Thor application fixes. Historical platform notes below retain their original
+qualification scope; use the current receipt for runtime state and reserve settings. Missing Spark data roots are now provisioned by a bounded,
 network-isolated Docker helper, as on Thor; passwordless sudo is not required.
 Existing data roots and database contents are left intact.
 
-## Status and purpose
+## Historical platform notes (September–October 1)
 
 **October 1 pre-rehearsal audit:** The launcher now recovers late RTSP
 publication even with capture off, retries discovery outages, preserves warm

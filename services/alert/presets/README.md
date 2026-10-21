@@ -44,9 +44,10 @@ and transport/delivery failures still require the normal failure handling.
 
 The initial capped-resize version failed its positive archive control despite
 successful transport, terminal receipts and durable sink delivery. The installed
-video processor interprets `size.longest_edge` as a total video-pixel budget:
-262144 across 20 frames reduced the source to 64 × 128, losing useful detail. That
-failure remains recorded in the dated QA evidence. Changing only `do_resize` to
+video processor interprets `size.longest_edge` as a total video-pixel budget.
+Its installed resize function predicts 64 × 128 per frame for this 20-frame,
+262144-pixel request; this is source/CPU evidence, not a captured runtime tensor.
+The capped-resize failure remains recorded in the dated QA evidence. Changing only `do_resize` to
 false corrected the positive control: confirmed with all 19 terminal/stored-sink
 assertions passing in 2.34 seconds. The decoder's 20 frames at 608 × 320 fit below
 the selected model's native total video budget. The paired empty control also
