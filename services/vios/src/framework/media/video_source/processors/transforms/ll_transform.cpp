@@ -178,10 +178,20 @@ void NvLLTransform::reset()
 
 void NvLLTransform::onLastFrame()
 {
-    if (m_consumer)
     {
-        m_consumer->onLastFrame();
+        std::lock_guard<std::mutex> queueLock(m_queueLock);
+        if (m_stop)
+        {
+            return;
+        }
+        // EOF must follow queued pictures, including the one the worker is
+        // processing. Forwarding immediately lets downstream EOS discard them.
+        auto lastFrame = std::make_shared<RawFrameParams>();
+        lastFrame->m_encoderMsgType = Last_Frame;
+        m_queue.push(std::move(lastFrame));
+        m_flowData = true;
     }
+    m_condVar.notify_all();
 }
 
 void NvLLTransform::onFrame(std::shared_ptr<RawFrameParams> frame_data)
@@ -267,6 +277,14 @@ void NvLLTransform::doTransformTask()
                 {
                     gst_sample_unref(sink_frame->m_sample);
                     sink_frame->m_sample = nullptr;
+                }
+                continue;
+            }
+            if (sink_frame->m_encoderMsgType == Last_Frame)
+            {
+                if (m_consumer)
+                {
+                    m_consumer->onLastFrame();
                 }
                 continue;
             }
