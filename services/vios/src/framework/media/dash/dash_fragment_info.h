@@ -246,7 +246,9 @@ inline PublishedMedia publishedMedia(const std::filesystem::path& directory)
         ++published.fragments;
         std::error_code writeEc;
         const auto written = std::filesystem::last_write_time(entry.path(), writeEc);
-        if (!writeEc && written > newest)
+        // file_time_type's epoch is implementation-defined. Current mtimes
+        // are negative on libstdc++, so zero is not a valid initial maximum.
+        if (!writeEc && (!newestValid || written > newest))
         {
             newest = written;
             newestValid = true;
