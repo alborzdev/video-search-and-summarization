@@ -385,10 +385,16 @@ class BootstrapTests(unittest.TestCase):
         self.assertNotIn('build', stream)
         self.assertEqual(stream['entrypoint'], ['/home/vst/vst_release/launch_vst'])
         self.assertEqual(stream['environment']['VST_INSTALL_ADDITIONAL_PACKAGES'], 'false')
+        self.assertEqual(stream['runtime'], 'runc')
+        self.assertEqual(stream['mem_limit'], '2g')
+        self.assertEqual(stream['memswap_limit'], '2g')
+        self.assertEqual(stream['cpus'], 2)
+        self.assertEqual(stream['environment'], {**legacy_stream['environment'], 'NVIDIA_VISIBLE_DEVICES': 'void'})
         self.assertEqual(after['services']['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'], 'true')
         for name in before['services'].keys() - {'streamprocessing-ms', 'vss-ui'}:
             self.assertEqual(before['services'][name], after['services'][name], name)
-        for key in legacy_stream.keys() - {'image', 'build', 'entrypoint'}:
+        for key in legacy_stream.keys() - {'image', 'build', 'entrypoint', 'environment',
+                                          'runtime', 'mem_limit', 'memswap_limit', 'cpus'}:
             self.assertEqual(legacy_stream[key], stream[key], key)
         settings = json.loads((b.STATE / 'settings.json').read_text())
         self.assertEqual(settings['vios_streamprocessing_image'], b.vss33.VIOS33_NATIVE_IMAGE)

@@ -55,7 +55,7 @@ restoring an image flag does not undo database changes made by a running image.
 Omitting the option preserves the saved selection. Passing
 `--vios-streamprocessing-image ''` renders the cached legacy choice again.
 Selection removes only the stream processor's legacy build and entrypoint,
-retains the sensor image, stores, hardware profile and budgets, and sets server
+retains the sensor image, stores, hardware profile and model/reserve budgets, and sets server
 metadata `VSS_DASH_PLAYBACK_ENABLED=true`; legacy rendering explicitly sets it
 to `false`. This metadata describes the selected capability, not current health
 or a new playback test. Rendering validates references and Compose configuration;
@@ -67,6 +67,10 @@ a four-segment playlist and a 15-second idle timeout. The reviewed native image
 uses software codecs. This qualifies one archive viewer; additional viewers,
 live cameras and overlays require separate measurements. Legacy rendering
 does not add or change the DASH configuration block.
+The selected stream processor uses the matching CPU container envelope:
+`runtime=runc`, 2 GiB memory with the same 2 GiB memory-plus-swap ceiling,
+two CPUs and `NVIDIA_VISIBLE_DEVICES=void`. Legacy container limits and runtime
+remain unchanged. These limits apply only to this streamprocessor role.
 Thor refuses the new selection, including one copied into saved state, before
 generating configuration; its native runtime remains unqualified.
 

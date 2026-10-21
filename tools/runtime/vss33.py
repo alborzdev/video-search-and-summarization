@@ -245,10 +245,14 @@ def reconcile(graph, root, hardware, options, detector_enabled=None):
         stream = services['streamprocessing-ms']
         stream['image'] = options['vios_streamprocessing_image']
         stream.pop('build', None)
+        # Match the isolated software-codec archive qualification envelope.
+        # The old hardware runtime remains unchanged unless explicitly selected.
+        stream.update(runtime='runc', mem_limit='2g', memswap_limit='2g', cpus=2)
         # The source-fixed 3.3 image already contains its reviewed codec bytes;
         # it does not contain the old derivative's offline-entrypoint script.
         stream['entrypoint'] = ['/home/vst/vst_release/launch_vst']
-        stream.setdefault('environment', {})['VST_INSTALL_ADDITIONAL_PACKAGES'] = 'false'
+        stream.setdefault('environment', {}).update(
+            VST_INSTALL_ADDITIONAL_PACKAGES='false', NVIDIA_VISIBLE_DEVICES='void')
     # The UI talks through this same host-local edge; Compose DNS names are not
     # resolvable from host-network services.
     ingress = services['vss-haproxy-ingress'].setdefault('environment', {})
