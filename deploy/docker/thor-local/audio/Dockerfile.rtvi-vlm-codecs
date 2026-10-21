@@ -13,10 +13,16 @@ COPY deploy/docker/thor-local/audio/codec-bundle.lock.json /usr/local/libexec/vs
 COPY deploy/docker/thor-local/audio/install-codec-bundle.sh /usr/local/libexec/vss-thor/install-codec-bundle.sh
 COPY deploy/docker/thor-local/audio/rtvi-vlm-offline-entrypoint.sh /usr/local/bin/rtvi-vlm-offline-entrypoint
 COPY deploy/docker/thor-local/audio/rtvi-vlm-codecs/bundle/ /tmp/rtvi-vlm-codec-bundle/
-COPY services/rtvi/rt-vlm/src/ /opt/nvidia/rtvi/rtvi/
-COPY services/rtvi/rt-vlm/src/ /opt/nvidia/rtvi/src/
+# Explicit preparation exports only the immutable custom 3.2.1 Git subtree.
+# Missing staging fails COPY; a forged/modified context fails verification.
+COPY tools/runtime/legacy_rtvi.py /usr/local/libexec/vss-thor/legacy_rtvi.py
+COPY deploy/docker/thor-local/audio/legacy-rtvi-src/ /tmp/legacy-rtvi-src/
 
-RUN python3 /usr/local/libexec/vss-thor/codec_bundle.py verify --frozen \
+RUN python3 /usr/local/libexec/vss-thor/legacy_rtvi.py verify --context /tmp/legacy-rtvi-src \
+    && cp -a /tmp/legacy-rtvi-src/src/. /opt/nvidia/rtvi/rtvi/ \
+    && cp -a /tmp/legacy-rtvi-src/src/. /opt/nvidia/rtvi/src/ \
+    && rm -rf /tmp/legacy-rtvi-src \
+    && python3 /usr/local/libexec/vss-thor/codec_bundle.py verify --frozen \
       --bundle /tmp/rtvi-vlm-codec-bundle \
     && /usr/local/libexec/vss-thor/install-codec-bundle.sh \
       /tmp/rtvi-vlm-codec-bundle /opt/nvidia/rtvi/thor-codecs \

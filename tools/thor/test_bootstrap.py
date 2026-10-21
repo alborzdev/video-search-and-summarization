@@ -548,6 +548,15 @@ class ThorBootstrapTest(unittest.TestCase):
             self.assertEqual(services['rtvi-embed']['image'], 'vss-thor-rtvi-embed:source')
             self.assertEqual(services['rtvi-embed']['environment']['KAFKA_TOPIC'], 'mdx-embed')
             self.assertEqual(services['rtvi-embed']['environment']['MESSAGE_BUS_TOPIC'], 'mdx-embed')
+            for role in ('rtvi-vlm', 'rtvi-embed'):
+                self.assertNotIn('PYTHONPATH', services[role]['environment'])
+                self.assertFalse(any('/services/rtvi/' in mount.get('source', '')
+                                     for mount in services[role]['volumes']))
+                self.assertFalse(any(mount.get('target', '').rstrip('/') in (
+                    '/opt/nvidia/rtvi/rtvi', '/opt/nvidia/rtvi/src')
+                    for mount in services[role]['volumes']))
+            self.assertIn(services['rtvi-vlm']['environment'].get('VIA_EVS_SESSION'), ('', 'false'))
+            self.assertEqual(services['rtvi-vlm']['environment'].get('VLM_VIDEO_PRUNING_RATE'), '')
             self.assertEqual(services['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'], 'false')
             self.assertEqual(b.settings()['vios_streamprocessing_image'], '')
             dash = next(m for m in services['vss-ui']['volumes']

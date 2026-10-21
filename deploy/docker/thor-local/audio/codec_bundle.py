@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -40,7 +41,6 @@ THOR_RUNTIME_DEPENDENCIES = (
 )
 SCRIPT_PATH = Path(__file__).resolve()
 REPO_ROOT = SCRIPT_PATH.parents[4]
-SOURCE_INSTALLER = REPO_ROOT / "services/rtvi/rt-embed/src/scripts/install_codecs_nonroot.sh"
 DEFAULT_BUNDLE = SCRIPT_PATH.parent / "rtvi-vlm-codecs" / "bundle"
 DEFAULT_LOCK = SCRIPT_PATH.parent / "codec-bundle.lock.json"
 ALLOWED_SOURCE = ("https", "ports.ubuntu.com", 443)
@@ -82,15 +82,25 @@ def package_set_digest(packages: list[str]) -> str:
 
 
 def source_packages() -> list[str]:
-    if not SOURCE_INSTALLER.is_file():
-        raise BundleError(f"VSS 3.2.1 codec source is missing: {SOURCE_INSTALLER}")
-    digest = sha256_file(SOURCE_INSTALLER)
+    # The shared worktree is now 3.3. Audit the historical installer against
+    # its original trusted digest, never silently repin to current source.
+    helper = REPO_ROOT / "tools/runtime/legacy_rtvi.py"
+    spec = importlib.util.spec_from_file_location("legacy_rtvi_codecs", helper)
+    if spec is None or spec.loader is None or not helper.is_file():
+        raise BundleError("Frozen legacy RTVI source helper is missing")
+    legacy = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(legacy)
+    try:
+        source = legacy.read_frozen_blob(REPO_ROOT, legacy.CODEC_INSTALLER)
+    except RuntimeError as error:
+        raise BundleError(str(error)) from error
+    digest = hashlib.sha256(source).hexdigest()
     if digest != SOURCE_INSTALLER_SHA256:
         raise BundleError(
             "VSS 3.2.1 codec source digest changed: "
             f"expected {SOURCE_INSTALLER_SHA256}, got {digest}"
         )
-    text = SOURCE_INSTALLER.read_text(encoding="utf-8")
+    text = source.decode("utf-8")
     match = re.search(r"DEB_URLS_arm64=\(\n(?P<body>.*?)\n\)", text, re.DOTALL)
     if not match:
         raise BundleError("cannot find DEB_URLS_arm64 in the pinned VSS codec source")

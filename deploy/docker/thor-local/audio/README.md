@@ -61,7 +61,11 @@ capability still ignores audio for requests that leave `enable_audio=false`.
 
 ## Offline codec preparation
 
-Audit the exact VSS 3.2.1 source contract without network access:
+Audit the exact VSS 3.2.1 source contract without network access. This reads
+the historical installer from immutable local Git objects at
+`c4a44c4d956a8c039483f8f392544b8f999dc62c`; the current 3.3 installer cannot
+replace the original trusted digest. A shallow clone missing that history must
+fetch it explicitly first. The audit never downloads or changes Git state:
 
 ```bash
 python3 deploy/docker/thor-local/audio/codec_bundle.py source-audit
@@ -81,14 +85,27 @@ single shared lock and the VIOS installer's expected lock digest together, then
 rerun the adversarial codec suites. There is no automatic lock-refresh command.
 
 Then verify and construct the immutable image without build networking or a
-registry pull:
+registry pull. First stage the matching custom 3.2.1 VLM source from that same
+immutable commit. This exports 54 files (about 1.1 MB) to an ignored local build
+input, without copying the tracked 3.3 tree or changing the branch/index:
 
 ```bash
 python3 deploy/docker/thor-local/audio/codec_bundle.py verify
+python3 tools/runtime/legacy_rtvi.py stage
 docker build --network=none --pull=false \
   -f deploy/docker/thor-local/audio/Dockerfile.rtvi-vlm-codecs \
   -t cti-vss-rt-vlm:3.2.1-thor-audio-offline .
 ```
+
+The Dockerfile requires that staged directory and verifies its pinned complete
+file manifest before copying either runtime source tree. Missing or modified
+source fails the build; it cannot fall back to current 3.3 files or a vanilla
+3.2 base without the custom repairs. Repeated staging verifies an unchanged
+directory; it refuses to overwrite changed preparations. This is an explicit
+legacy rebuild lane. Normal Spark/Thor rendering still reuses the cached
+3.2.1 images without mounting application source or invoking this helper. The
+new canonical RTVI Dockerfiles build coherent 3.3 runtimes and do not rebuild
+these legacy cached images. No new Thor GPU or audio qualification is implied.
 
 The image entrypoint always resets `INSTALL_PROPRIETARY_CODECS=false` and
 sources the baked codec root. Startup cannot fall back to the released

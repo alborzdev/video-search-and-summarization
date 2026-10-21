@@ -56,6 +56,8 @@ services/analytics/video-analytics-api/test/integration-test/docker_compose/infr
 /.thor/
 /deploy/docker/thor-current/vios-codecs/bundle/
 /deploy/docker/thor-current/rtvi-vlm33-codecs/bundle/
+/deploy/docker/thor-local/audio/legacy-rtvi-src/
+/deploy/docker/thor-local/audio/.legacy-rtvi-*/
 # Local browser snapshots and high-volume runtime telemetry/captured tensors.
 /.playwright-mcp/
 /artifacts/runtime-telemetry/samples*.jsonl
