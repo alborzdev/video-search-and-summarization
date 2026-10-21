@@ -1,0 +1,17 @@
+{
+  "alert_type": "demo_archive_conveyor_binary",
+  "prompt": "Does any frame in this video show a cardboard box on the blue conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Return only YES or NO.",
+  "system_prompt": "You are a helpful assistant.",
+  "output_category": "Archive Conveyor Binary Demo",
+  "vlm_params": {
+    "max_tokens": 64,
+    "temperature": 0.0,
+    "request_timeout": 30,
+    "num_frames": 20,
+    "enable_sampling": false,
+    "do_resize": false,
+    "min_pixels": 65536,
+    "max_pixels": 262144,
+    "response_format": "cosmos-reason"
+  }
+}
