@@ -8,12 +8,14 @@ interface UploadProgressPanelProps {
   uploads: UploadProgress[];
   onClose: () => void;
   onCancel: () => void;
+  onRetryIndexing?: (id: string) => void;
 }
 
 export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
   uploads,
   onClose,
   onCancel,
+  onRetryIndexing,
 }) => {
   const completedCount = uploads.filter((u) => u.status === 'success').length;
   const errorCount = uploads.filter((u) => u.status === 'error').length;
@@ -21,6 +23,9 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
   const inProgressCount = uploads.filter((u) => u.status === 'uploading').length;
   const processingCount = uploads.filter((u) => u.status === 'processing').length;
   const pendingCount = uploads.filter((u) => u.status === 'pending').length;
+  const awaitingIndexCount = uploads.filter(u => u.indexStatus === 'waiting' &&
+    (u.status === 'error' || u.status === 'cancelled')).length;
+  const failedUploadCount = uploads.filter(u => u.status === 'error' && !u.indexStatus).length;
 
   const allDone = inProgressCount === 0 && pendingCount === 0 && processingCount === 0;
   const hasActiveUploads = inProgressCount > 0 || pendingCount > 0 || processingCount > 0;
@@ -74,7 +79,9 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
           )}
           <span data-testid="upload-progress-panel-title" className="font-medium text-sm text-gray-800 dark:text-gray-200">
             {allDone
-              ? completedCount === uploads.length
+              ? awaitingIndexCount === uploads.length
+                ? `${uploads.length === 1 ? 'Video' : 'Videos'} saved · Search not ready`
+                : completedCount === uploads.length
                 ? `Upload Complete (${completedCount}/${uploads.length})`
                 : `Upload Finished (${completedCount}/${uploads.length} succeeded)`
               : processingCount > 0 && inProgressCount === 0 && pendingCount === 0
@@ -112,7 +119,8 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
           {completedCount > 0 && (
             <span className="text-green-500 mr-3">{completedCount} succeeded</span>
           )}
-          {errorCount > 0 && <span className="text-red-500 mr-3">{errorCount} failed</span>}
+          {failedUploadCount > 0 && <span className="text-red-500 mr-3">{failedUploadCount} failed</span>}
+          {awaitingIndexCount > 0 && <span className="text-amber-600 mr-3">{awaitingIndexCount} awaiting search index</span>}
           {cancelledCount > 0 && (
             <span className="text-gray-400 dark:text-gray-500">{cancelledCount} cancelled</span>
           )}
@@ -143,7 +151,7 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
                     <span className="text-xs text-green-500">{upload.progress}%</span>
                   )}
                   {upload.status === 'processing' && (
-                    <span className="text-xs text-amber-500">Processing...</span>
+                    <span className="text-xs text-amber-500">{upload.indexStatus === 'waiting' ? 'Waiting for search index…' : 'Processing...'}</span>
                   )}
                   {upload.status === 'success' && (
                     <svg
@@ -176,6 +184,14 @@ export const UploadProgressPanel: React.FC<UploadProgressPanelProps> = ({
                   )}
                 </span>
               </div>
+
+              {upload.indexStatus && (
+                <p className="mt-1 text-xs text-gray-500">Video saved · {upload.indexStatus === 'ready' ? 'Search ready' : 'Search not ready yet'}</p>
+              )}
+              {upload.retryIndexing && onRetryIndexing && (
+                <button type="button" className="mt-2 text-sm underline" disabled={hasActiveUploads}
+                  onClick={() => onRetryIndexing(upload.id)}>Retry indexing</button>
+              )}
 
 
               {/* Progress bar for uploading files */}

@@ -3,6 +3,8 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { VideoManagementComponent } from '../../lib-src/VideoManagementComponent';
 import { videoStream, rtspStream } from '../helpers/streamFixtures';
+import * as indexReadiness from '../../lib-src/indexReadiness';
+import { chunkedUpload, notifyUploadComplete } from '../../lib-src/chunkedUpload';
 
 let mockCatalogError: string | null = null;
 const mockCatalogRetry = jest.fn();
@@ -94,6 +96,9 @@ jest.mock('../../lib-src/api', () => ({
 jest.mock('@tabler/icons-react', () => ({
   IconCheck: () => <span data-testid="icon-check" />,
   IconCopy: () => <span data-testid="icon-copy" />,
+  IconChevronDown: () => <span />,
+  IconVideo: () => <span />,
+  IconX: () => <span />,
 }));
 
 jest.mock('../../lib-src/components/LiveStreamModal', () => ({
@@ -279,5 +284,137 @@ describe('camera catalog convergence', () => {
     const settledCalls = mockCatalogRetry.mock.calls.length;
     await act(async () => { jest.advanceTimersByTime(10000); });
     expect(mockCatalogRetry).toHaveBeenCalledTimes(settledCalls);
+  });
+});
+
+describe('semantic upload search readiness', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ profiles: [{
+      id: 'semantic-search', name: 'Semantic search', shortName: 'Search only', ready: true,
+      detectionEnabled: false, resourceTier: 'low', objectTypes: [], ruleKinds: ['semantic'],
+    }] }) });
+  });
+
+  async function startUpload() {
+    const view = renderComponent();
+    fireEvent.change(view.container.querySelector('.vm-toolbar input[type="file"]')!, {
+      target: { files: [new File(['video'], 'validation.mp4', { type: 'video/mp4' })] },
+    });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Upload (1)' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: 'Upload (1)' }));
+    await waitFor(() => expect(indexReadiness.waitForSourceIndex).toHaveBeenCalled());
+    return view;
+  }
+
+  it('keeps Processing visible until the exact uploaded source has an index receipt', async () => {
+    let indexed!: () => void;
+    jest.spyOn(indexReadiness, 'waitForSourceIndex').mockImplementation(() => new Promise(resolve => { indexed = resolve; }));
+    await startUpload();
+    expect(indexReadiness.waitForSourceIndex).toHaveBeenCalledWith('mock-sensor', expect.objectContaining({ signal: expect.any(AbortSignal) }));
+    expect(screen.getByText('Video saved · Search not ready yet')).toBeVisible();
+    expect(screen.queryByText('Upload Complete (1/1)')).not.toBeInTheDocument();
+    await act(async () => indexed());
+    expect(await screen.findByText('Upload Complete (1/1)')).toBeVisible();
+    expect(screen.getByText('Video saved · Search ready')).toBeVisible();
+  });
+
+  it('retries the retained source after an indexing timeout without uploading another file', async () => {
+    jest.spyOn(indexReadiness, 'waitForSourceIndex')
+      .mockRejectedValueOnce(new Error('Video saved; Retry indexing.'))
+      .mockResolvedValueOnce(undefined);
+    await startUpload();
+    expect(await screen.findByText('Video saved · Search not ready')).toBeVisible();
+    fireEvent.click(await screen.findByRole('button', { name: 'Retry indexing' }));
+    expect(await screen.findByText('Video saved · Search ready')).toBeVisible();
+    expect(chunkedUpload).toHaveBeenCalledTimes(1);
+    expect(notifyUploadComplete).toHaveBeenCalledTimes(2);
+    expect((notifyUploadComplete as jest.Mock).mock.calls[1][2]).toEqual({ sensorId: 'mock-sensor' });
+  });
+
+  it('aborts an index check when the upload workspace unmounts', async () => {
+    let signal!: AbortSignal;
+    jest.spyOn(indexReadiness, 'waitForSourceIndex').mockImplementation((_id, options) => {
+      signal = options.signal;
+      return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new DOMException('cancelled', 'AbortError'))));
+    });
+    const view = await startUpload();
+    view.unmount();
+    expect(signal.aborted).toBe(true);
+    expect(chunkedUpload).toHaveBeenCalledTimes(1);
+    expect(notifyUploadComplete).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels the wait while preserving a retry for the saved video', async () => {
+    let signal!: AbortSignal;
+    jest.spyOn(indexReadiness, 'waitForSourceIndex').mockImplementation((_id, options) => {
+      signal = options.signal;
+      return new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new DOMException('cancelled', 'AbortError'))));
+    });
+    await startUpload();
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel All' }));
+    expect(signal.aborted).toBe(true);
+    expect(await screen.findByRole('button', { name: 'Retry indexing' })).toBeVisible();
+    expect(screen.getByText('Video saved · Search not ready yet')).toBeVisible();
+    expect(chunkedUpload).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not block a detector-profile upload on a semantic index receipt', async () => {
+    const receipt = jest.spyOn(indexReadiness, 'waitForSourceIndex').mockResolvedValue(undefined);
+    global.fetch = jest.fn().mockResolvedValue({ ok: true, json: async () => ({ profiles: [{
+      id: 'warehouse-safety', name: 'Warehouse safety', shortName: 'Warehouse', ready: true,
+      detectionEnabled: true, resourceTier: 'medium', objectTypes: [], ruleKinds: [],
+    }] }) });
+    const view = renderComponent();
+    fireEvent.change(view.container.querySelector('.vm-toolbar input[type="file"]')!, {
+      target: { files: [new File(['video'], 'warehouse.mp4', { type: 'video/mp4' })] },
+    });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Upload (1)' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: 'Upload (1)' }));
+    expect(await screen.findByText('Upload Complete (1/1)')).toBeVisible();
+    expect(receipt).not.toHaveBeenCalled();
+    expect(screen.queryByText('Search not ready yet')).not.toBeInTheDocument();
+  });
+
+  it('does not launch another indexing job after cancelling unacknowledged processing', async () => {
+    let processed!: () => void;
+    (notifyUploadComplete as jest.Mock).mockImplementationOnce(() => new Promise(resolve => { processed = resolve; }));
+    const receipt = jest.spyOn(indexReadiness, 'waitForSourceIndex').mockResolvedValue(undefined);
+    const view = renderComponent();
+    fireEvent.change(view.container.querySelector('.vm-toolbar input[type="file"]')!, {
+      target: { files: [new File(['video'], 'validation.mp4', { type: 'video/mp4' })] },
+    });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Upload (1)' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: 'Upload (1)' }));
+    await screen.findByText('Video saved · Search not ready yet');
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel All' }));
+    expect(screen.queryByRole('button', { name: 'Retry indexing' })).not.toBeInTheDocument();
+    await act(async () => processed());
+    expect(receipt).not.toHaveBeenCalled();
+    expect(notifyUploadComplete).toHaveBeenCalledTimes(1);
+    expect(chunkedUpload).toHaveBeenCalledTimes(1);
+  });
+
+  it('drains another file queued while a retained-source retry is pending', async () => {
+    let retried!: () => void;
+    jest.spyOn(indexReadiness, 'waitForSourceIndex')
+      .mockRejectedValueOnce(new Error('Video saved; Retry indexing.'))
+      .mockImplementationOnce(() => new Promise(resolve => { retried = resolve; }))
+      .mockResolvedValueOnce(undefined);
+    (chunkedUpload as jest.Mock).mockResolvedValueOnce({ sensorId: 'retry-source' })
+      .mockResolvedValueOnce({ sensorId: 'queued-source' });
+    const view = await startUpload();
+    fireEvent.click(await screen.findByRole('button', { name: 'Retry indexing' }));
+    await waitFor(() => expect(indexReadiness.waitForSourceIndex).toHaveBeenCalledTimes(2));
+    fireEvent.change(view.container.querySelector('.vm-toolbar input[type="file"]')!, {
+      target: { files: [new File(['next'], 'queued.mp4', { type: 'video/mp4' })] },
+    });
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Upload (1)' })).toBeEnabled());
+    fireEvent.click(screen.getByRole('button', { name: 'Upload (1)' }));
+    expect(chunkedUpload).toHaveBeenCalledTimes(1);
+    await act(async () => retried());
+    expect(await screen.findByText('Upload Complete (2/2)')).toBeVisible();
+    expect(chunkedUpload).toHaveBeenCalledTimes(2);
+    expect(indexReadiness.waitForSourceIndex).toHaveBeenLastCalledWith('queued-source', expect.any(Object));
   });
 });
