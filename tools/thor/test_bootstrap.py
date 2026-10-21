@@ -551,7 +551,7 @@ class ThorBootstrapTest(unittest.TestCase):
             self.assertEqual(services['vss-ui']['environment']['VSS_DASH_PLAYBACK_ENABLED'], 'false')
             self.assertEqual(b.settings()['vios_streamprocessing_image'], '')
             dash = next(m for m in services['vss-ui']['volumes']
-                        if m['target'] == '/vios/ui/streaming-lib/src/dash')
+                        if m['target'] == '/workspace/external/vios-dash')
             self.assertEqual(dash['source'], str(b.ROOT / 'services/vios/ui/streaming-lib/src/dash'))
             self.assertTrue(dash['read_only'])
             self.assertFalse(dash['bind']['create_host_path'])

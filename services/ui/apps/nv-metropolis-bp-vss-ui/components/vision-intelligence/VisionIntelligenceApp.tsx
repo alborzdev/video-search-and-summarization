@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+import { DashPlaybackCapability } from "./DashPlaybackCapability";
+
 import type { MonitoringRule } from "./monitoringRules";
 import type { SystemPanel } from "./SystemWorkspace";
 import { demoServiceChecks, formatMemory, healthLabel, type SystemHealth } from "./systemHealth";
@@ -419,6 +421,7 @@ export default function VisionIntelligenceApp({
   };
 
   return (
+    <DashPlaybackCapability.Provider value={systemHealth?.videoPlayback?.dashEnabled === true}>
     <div
       className={
         presentationMode
@@ -844,5 +847,6 @@ export default function VisionIntelligenceApp({
         />
       )}
     </div>
+    </DashPlaybackCapability.Provider>
   );
 }

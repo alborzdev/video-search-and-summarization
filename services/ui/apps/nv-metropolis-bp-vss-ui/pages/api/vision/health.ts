@@ -208,6 +208,10 @@ export default async function handler(
     demoProfile: process.env.VSS_DEMO_PROFILE === "clips" || process.env.VSS_DEMO_PROFILE === "all"
       ? process.env.VSS_DEMO_PROFILE : null,
     sparkCapacity,
+    videoPlayback: {
+      // Renderer enables this only for an explicitly qualified native VIOS image.
+      dashEnabled: process.env.VSS_DASH_PLAYBACK_ENABLED === "true",
+    },
     videoEfficiency: {
       sourceVersion: process.env.VSS_SOURCE_VERSION || null,
       runtimeVersion: process.env.VSS_RTVI_RUNTIME_VERSION || null,

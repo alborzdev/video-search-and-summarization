@@ -22,7 +22,10 @@ require running `deps` again, after returning to built mode.
 
 `dev` recreates only `vss-ui`, reusing its existing image and preserving the
 rendered Spark backend environment, network and history/report/rule mounts. It
-mounts the full `services/ui` workspace and installed dependencies. The existing
+mounts the full `services/ui` workspace and installed dependencies. The canonical
+Video I/O DASH client is separately mounted read-only at
+`/workspace/external/vios-dash`, inside Turbopack's project root, from
+`services/vios/ui/streaming-lib/src/dash`; there is one maintained implementation. The existing
 Turbopack aliases resolve shared packages to `../../packages/.../lib-src` with
 explicit `/server` entries. The process runs as UID 65532 with the developer's
 group (1000 on this Spark); a shared umask keeps generated files accessible to
@@ -80,7 +83,11 @@ No steady-state HMR benchmark is claimed. Thor's reserve and tooling remain sepa
 For a fresh October candidate with `.thor/settings.json`, use
 `python3 tools/thor/ui.py deps` followed by `python3 tools/thor/ui.py dev`.
 `tools/dev/ui.py` automatically routes to that helper. It mounts source in a
-bounded CPU Node container and preserves the 48 GiB guard. Direct port 3001
+bounded CPU Node container and preserves the explicitly saved reserve. Its
+canonical DASH client uses the same read-only `/workspace/external/vios-dash`
+mount as Spark, including when the unqualified Thor runtime keeps DASH disabled. The
+current Anvil T5 demo selection is 10 GiB; the historical 48 GiB measurements
+below do not override it. Direct port 3001
 works while the backend gateway on 7777 is still being staged. See
 [fresh Thor setup](../tools/thor/README.md). The historical workflow below
 applies when that independent candidate has not been rendered.
@@ -102,7 +109,7 @@ This recreates only `vss-agent-ui`, reuses its existing image for Node, and moun
 
 Edit UI source or CSS and watch the browser hot reload. Shared UI packages also resolve to source through the Next Turbopack aliases. Initial compilation is slower than subsequent edits. Configuration/dependency changes may require restarting this command. If dependencies are missing, run `npm ci` in `services/ui` first.
 
-The dev process has a 2 GiB JavaScript heap and a 4 GiB container memory ceiling, with no swap allowance. Keep the current 48 GiB diagnostic memory guard enabled (see tools/runtime/README.md). Check compiler output with `docker logs --tail 40 vss-agent-ui`. If compilation is killed or runs out of heap, investigate the affected imports/workload before increasing its budget.
+The dev process has a 2 GiB JavaScript heap and a 4 GiB container memory ceiling, with no swap allowance. Keep the memory guard enabled at the explicitly saved reserve (see tools/runtime/README.md). The September measurements used a 48 GiB diagnostic floor. Check compiler output with `docker logs --tail 40 vss-agent-ui`. If compilation is killed or runs out of heap, investigate the affected imports/workload before increasing its budget.
 
 Return to the last built UI without rebuilding:
 

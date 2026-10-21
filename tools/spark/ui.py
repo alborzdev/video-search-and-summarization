@@ -123,7 +123,7 @@ def dev_override(service):
             {'type': 'bind', 'source': str(UI), 'target': '/workspace'},
             {'type': 'bind', 'source': str(STATE / 'ui-next'), 'target': f'/workspace/apps/{APP}/.next'},
             {'type': 'bind', 'source': str(ROOT / 'services/vios/ui/streaming-lib/src/dash'),
-             'target': '/vios/ui/streaming-lib/src/dash', 'read_only': True,
+             'target': '/workspace/external/vios-dash', 'read_only': True,
              'bind': {'create_host_path': False}},
         ],
         'environment': {'NODE_ENV': 'development', 'NODE_OPTIONS': '--max-old-space-size=2048',

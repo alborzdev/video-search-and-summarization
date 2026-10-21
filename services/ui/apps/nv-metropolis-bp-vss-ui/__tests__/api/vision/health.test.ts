@@ -163,3 +163,17 @@ describe("vision health API", () => {
     expect(json.mock.calls[0][0].services).toEqual(expect.arrayContaining([expect.objectContaining({ key: "vlm", selected: true, ok: false })]));
   });
 });
+
+describe("DASH runtime capability", () => {
+  const original = process.env.VSS_DASH_PLAYBACK_ENABLED;
+  const originalFetch = global.fetch;
+  afterEach(() => { if (original === undefined) delete process.env.VSS_DASH_PLAYBACK_ENABLED; else process.env.VSS_DASH_PLAYBACK_ENABLED = original; global.fetch = originalFetch; });
+  it.each([["true", true], ["false", false], [undefined, false], ["yes", false]])("requires explicit qualified runtime metadata: %s", async (value, enabled) => {
+    if (value === undefined) delete process.env.VSS_DASH_PLAYBACK_ENABLED;
+    else process.env.VSS_DASH_PLAYBACK_ENABLED = value;
+    global.fetch = jest.fn(async () => ({ ok: true })) as jest.Mock;
+    const { json, response } = responseHarness();
+    await handler({ method: "GET" } as NextApiRequest, response);
+    expect(json.mock.calls[0][0].videoPlayback).toEqual({ dashEnabled: enabled });
+  });
+});

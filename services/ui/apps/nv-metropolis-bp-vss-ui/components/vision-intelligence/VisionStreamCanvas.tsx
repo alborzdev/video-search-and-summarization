@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: MIT
 
+import { DashStreamCanvas } from "./DashStreamCanvas";
+import { DashPlaybackCapability } from "./DashPlaybackCapability";
 import { evidenceClipEndpoint } from "./evidenceClip";
 import type { StreamTimeline, VisionStream } from "./types";
 import {
@@ -19,6 +21,7 @@ import {
 } from "@tabler/icons-react";
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -38,7 +41,7 @@ export type PlaybackStatus =
   | "poster"
   | "error";
 
-interface VisionStreamCanvasProps {
+export interface VisionStreamCanvasProps {
   className?: string;
   eager?: boolean;
   evidenceEvents?: ReplayEvidenceEvent[];
@@ -114,7 +117,73 @@ function chooseSnapshotTime(
   ).toISOString();
 }
 
-export function VisionStreamCanvas({
+export function VisionStreamCanvas(props: VisionStreamCanvasProps) {
+  return (
+    <ProtocolStreamCanvas
+      key={`${props.stream.streamId}\0${props.vstApiUrl || ""}`}
+      {...props}
+    />
+  );
+}
+
+function ProtocolStreamCanvas(props: VisionStreamCanvasProps) {
+  const dashEnabled = useContext(DashPlaybackCapability);
+  const [protocol, setProtocol] = useState("mp4");
+  const [fallback, setFallback] = useState(false);
+  const recorded = !isLiveStream(props.stream);
+  // Verified-event and analyst-window navigation stays on its exact MP4 path.
+  const fullRecording = !props.evidenceEvents?.length && !props.observedRange;
+  const useDash = recorded && fullRecording && dashEnabled && protocol === "dash";
+  const restoreMp4 = useCallback(() => {
+    setFallback(true);
+    setProtocol("mp4");
+  }, []);
+  useEffect(() => {
+    if (!dashEnabled || !fullRecording) {
+      setProtocol("mp4");
+      setFallback(false);
+    }
+  }, [dashEnabled, fullRecording]);
+
+  return (
+    <div className="vi-playback-frame">
+      {recorded && fullRecording && props.showReplayControls && (
+        <label className="vi-playback-selector">
+          Playback{" "}
+          <select
+            aria-label="Playback protocol"
+            value={useDash ? "dash" : "mp4"}
+            onChange={(event) => {
+              setFallback(false);
+              setProtocol(event.target.value);
+            }}
+          >
+            <option value="mp4">MP4</option>
+            <option value="dash" disabled={!dashEnabled}>
+              DASH{dashEnabled ? "" : " · needs Video I/O 3.3"}
+            </option>
+          </select>
+        </label>
+      )}
+      {fallback && (
+        <p className="vi-playback-fallback" role="status">
+          DASH playback was unavailable. MP4 restored.
+        </p>
+      )}
+      {useDash ? (
+        <DashStreamCanvas
+          key={props.stream.streamId}
+          {...props}
+          onFallback={restoreMp4}
+        />
+      ) : (
+        <StandardStreamCanvas {...props} />
+      )}
+    </div>
+  );
+}
+
+function StandardStreamCanvas({
   className = "",
   eager = true,
   evidenceEvents = [],

@@ -43,6 +43,8 @@ RUN --mount=type=cache,target=/root/.npm \
 # Copy source only after the lockfile-backed dependency layer is complete.
 WORKDIR /repo
 COPY services/ui/ services/ui/
+# Shared browser DASH client; keep one implementation across both consoles.
+COPY services/vios/ui/streaming-lib/src/dash/ services/ui/external/vios-dash/
 WORKDIR /repo/services/ui
 # Matches CI: run `bundle` after `build` where defined (e.g. nv-metropolis-bp-vss-ui). The runner
 # stage still COPYs standalone, `.next/static`, and `public` explicitly for custom-server.js, so this

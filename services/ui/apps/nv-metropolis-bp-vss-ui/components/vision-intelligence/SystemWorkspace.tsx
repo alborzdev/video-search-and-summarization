@@ -277,6 +277,7 @@ export function SystemWorkspace({
               {metricValue(efficiency?.sourceVersion || "Unconfirmed", "VSS source")}
               {metricValue(efficiency?.runtimeVersion || "Unconfirmed", "RTVI runtime")}
               {metricValue(evsStatus, "Adaptive EVS")}
+              {metricValue(health?.videoPlayback?.dashEnabled ? "Configured" : "Off", "DASH recorded playback")}
             </div>
           </article>
 

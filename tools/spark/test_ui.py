@@ -59,7 +59,7 @@ class SparkUiTests(unittest.TestCase):
             self.assertEqual(service['network_mode'], 'host')
             self.assertTrue(any(m['target'] == '/data/reports' and m['source'] == str(reports)
                                 for m in service['volumes']))
-            dash = next(m for m in service['volumes'] if m['target'] == '/vios/ui/streaming-lib/src/dash')
+            dash = next(m for m in service['volumes'] if m['target'] == '/workspace/external/vios-dash')
             self.assertEqual(dash['source'], str(ui.ROOT / 'services/vios/ui/streaming-lib/src/dash'))
             self.assertTrue(dash['read_only'])
             self.assertFalse(dash['bind']['create_host_path'])

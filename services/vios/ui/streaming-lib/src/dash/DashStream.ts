@@ -122,6 +122,7 @@ export class DashStream {
     private firstFrameReported = false;
     private videoElement: HTMLVideoElement | null = null;
     private firstFrameListener: (() => void) | null = null;
+    private videoErrorListener: (() => void) | null = null;
     private phaseListeners: { waiting: () => void; playing: () => void } | null = null;
     private autoplayListener: (() => void) | null = null;
     private autoplayBufferLevelEvent: string | null = null;
@@ -143,6 +144,8 @@ export class DashStream {
     // Remembered so the session is released through the same API that created it.
     private replay = false;
     private config: DashStreamConfig | null = null;
+    private replaySeekQueue: Promise<void> = Promise.resolve();
+    private leaseGeneration = 0;
 
     // Null means this start was overtaken while waiting and should be
     // abandoned quietly.  Anything genuinely wrong still throws.
@@ -540,12 +543,14 @@ export class DashStream {
         // not the timing, and a rejected append is invisible in the events above.
         // The element's own error and the player's error channel are where a
         // decode or append failure surfaces.
-        config.videoElement.addEventListener('error', () => {
+        this.videoErrorListener = () => {
+            if (generation !== this.startGeneration || this.player !== player) return;
             const err = config.videoElement.error;
             trace('ELEMENT_ERROR', err
                 ? { code: err.code, message: err.message }
                 : { code: 'unknown' });
-        });
+        };
+        config.videoElement.addEventListener('error', this.videoErrorListener);
 
         const ev = dashjs.MediaPlayer.events as unknown as Record<string, string>;
         /* The start-up ones earn their place: a viewer on a distant link waits
@@ -566,6 +571,7 @@ export class DashStream {
                 }
             });
         player.on(dashjs.MediaPlayer.events.ERROR, (event: { error?: { message?: string }; event?: { message?: string } }) => {
+            if (generation !== this.startGeneration || this.player !== player) return;
             const message = event.error?.message ?? event.event?.message ?? 'DASH playback error';
             config.onError?.(message);
         });
@@ -914,10 +920,6 @@ export class DashStream {
         // Unsubscribe before resetting the dash.js instance so the listener is
         // not retained by a replacement replay player.
         this.removeAutoplayListener();
-        if (this.player) {
-            this.player.reset();
-            this.player = null;
-        }
         if (this.videoElement && this.phaseListeners) {
             this.videoElement.removeEventListener('waiting', this.phaseListeners.waiting);
             this.videoElement.removeEventListener('playing', this.phaseListeners.playing);
@@ -926,6 +928,19 @@ export class DashStream {
         this.lastPhase = null;
         if (this.videoElement && this.firstFrameListener) {
             this.videoElement.removeEventListener('playing', this.firstFrameListener);
+        }
+        if (this.videoElement && this.videoErrorListener) {
+            this.videoElement.removeEventListener('error', this.videoErrorListener);
+        }
+        this.videoErrorListener = null;
+        const retired = this.player;
+        this.player = null;
+        // reset() intentionally retains a dash.js context for reuse. Every
+        // attachment creates a new instance, so retire its singleton context.
+        try {
+            retired?.destroy();
+        } catch {
+            // Viewer-lease cleanup must continue even if SDK teardown fails.
         }
         this.videoElement = null;
         this.firstFrameListener = null;
@@ -965,15 +980,38 @@ export class DashStream {
         }
     }
 
-    public async start(config: DashStreamConfig): Promise<DashStartResponse> {
-        await this.stop(config.endpoint, config.streamId);
+    private async releaseViewerLease(endpoint: string, streamId: string | undefined,
+                                     viewerId: string, replay: boolean): Promise<void> {
+        try {
+            const stopPath = replay ? '/vst/api/v1/replay/dash/stop' : '/vst/api/v1/live/dash/stop';
+            await fetch(new URL(stopPath, endpoint).toString(), {
+                method: 'POST',
+                credentials: 'include',
+                keepalive: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(streamId ? { streamid: streamId } : {}),
+                },
+                body: JSON.stringify({ viewerId }),
+            });
+        } catch {
+            // The server's idle reaper releases leases after abrupt network loss.
+        }
+    }
+
+    public async start(config: DashStreamConfig): Promise<DashStartResponse | null> {
+        // Claim ownership before the first await. A replacement may finish while
+        // the previous viewer's release is still pending.
+        const previousStop = this.stop(config.endpoint, config.streamId);
         const generation = ++this.startGeneration;
+        await previousStop;
+        if (generation !== this.startGeneration) return null;
         this.reportPhase(config, 'loading');
-        this.replay = Boolean(config.startTime);
-        const startPath = this.replay ? '/vst/api/v1/replay/dash/start' : '/vst/api/v1/live/dash/start';
+        const replay = Boolean(config.startTime);
+        const startPath = replay ? '/vst/api/v1/replay/dash/start' : '/vst/api/v1/live/dash/start';
         const startUrl = new URL(startPath, config.endpoint).toString();
         const requestBody: Record<string, unknown> = { streamId: config.streamId };
-        if (this.replay) {
+        if (replay) {
             requestBody.startTime = config.startTime as string;
             if (config.endTime) {
                 requestBody.endTime = config.endTime;
@@ -988,21 +1026,34 @@ export class DashStream {
                 requestBody.framerate = config.framerate;
             }
         }
-        const response = await fetch(startUrl, {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                streamid: config.streamId,
-            },
-            body: JSON.stringify(requestBody),
-        });
-        if (!response.ok) {
-            throw new Error(`DASH start failed (${response.status}): ${await response.text()}`);
+        let result: DashStartResponse;
+        try {
+            const response = await fetch(startUrl, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    streamid: config.streamId,
+                },
+                body: JSON.stringify(requestBody),
+            });
+            if (!response.ok) {
+                throw new Error(`DASH start failed (${response.status}): ${await response.text()}`);
+            }
+            const body = (await response.json()) as DashStartResponse | { data: DashStartResponse };
+            result = 'data' in body ? body.data : body;
+        } catch (error) {
+            if (generation !== this.startGeneration) return null;
+            throw error;
         }
-        const body = (await response.json()) as DashStartResponse | { data: DashStartResponse };
-        const result = 'data' in body ? body.data : body;
+        if (generation !== this.startGeneration) {
+            // This response belongs to an abandoned start. Never call stop()
+            // here: its mutable viewer state may already belong to a replacement.
+            await this.releaseViewerLease(config.endpoint, config.streamId, result.viewerId, replay);
+            return null;
+        }
         this.viewerId = result.viewerId;
+        this.replay = replay;
         this.config = { ...config };
         // React cleanup covers deliberate UI restarts, but it is not a reliable
         // lifecycle hook for a browser/tab close.  Release the DASH viewer
@@ -1015,41 +1066,62 @@ export class DashStream {
             void this.stop(config.endpoint, config.streamId);
         };
         window.addEventListener('pagehide', this.pageHideListener, { once: true });
-        // A start that is overtaken - by a stop, or by the viewer switching
-        // protocol - returns without attaching and without complaining.
-        // Reporting a failure here would tear down whatever took over, and the
-        // session it claimed is left to the server's idle timeout.
         await this.attachPlayer(this.config, result, generation);
-        return result;
+        return generation === this.startGeneration ? result : null;
     }
 
-    public async seekReplay(startTime: string): Promise<DashStartResponse> {
+    public async seekReplay(startTime: string): Promise<DashStartResponse | null> {
         if (!this.replay || !this.viewerId || !this.config) {
             throw new Error('DASH replay is not ready to seek');
         }
-        const response = await fetch(new URL('/vst/api/v1/replay/dash/seek', this.config.endpoint).toString(), {
-            method: 'POST',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                streamid: this.config.streamId,
-            },
-            body: JSON.stringify({ viewerId: this.viewerId, startTime }),
-        });
-        if (!response.ok) {
-            throw new Error(`DASH seek failed (${response.status}): ${await response.text()}`);
+        const owner = this.leaseGeneration;
+        const generation = ++this.startGeneration;
+        const previousSeek = this.replaySeekQueue;
+        let releaseQueue: () => void = () => undefined;
+        this.replaySeekQueue = new Promise<void>(resolve => { releaseQueue = resolve; });
+        try {
+            // The server replaces a viewer's packager on seek. Serialize those
+            // replacements, skipping queued positions superseded by a newer one.
+            await previousSeek;
+            if (owner !== this.leaseGeneration || generation !== this.startGeneration) return null;
+            // A previous seek creates a new viewer. Read its lease only after
+            // the queue settles, rather than sending a destroyed viewer ID.
+            const config = { ...this.config! };
+            const viewerId = this.viewerId;
+            this.releasePlayer();
+            let result: DashStartResponse;
+            try {
+                const response = await fetch(new URL('/vst/api/v1/replay/dash/seek', config.endpoint).toString(), {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json', streamid: config.streamId },
+                    body: JSON.stringify({ viewerId, startTime }),
+                });
+                if (!response.ok) {
+                    throw new Error(`DASH seek failed (${response.status}): ${await response.text()}`);
+                }
+                const body = (await response.json()) as DashStartResponse | { data: DashStartResponse };
+                result = 'data' in body ? body.data : body;
+            } catch (error) {
+                if (owner !== this.leaseGeneration || generation !== this.startGeneration) return null;
+                throw error;
+            }
+            if (owner !== this.leaseGeneration) {
+                // Native seek destroys A and allocates B. A stop/replacement
+                // could release only A while this response was still pending.
+                await this.releaseViewerLease(config.endpoint, config.streamId, result.viewerId, true);
+                return null;
+            }
+            // Even a superseded position must hand its new lease to the next
+            // queued seek. It must not attach its obsolete media position.
+            this.viewerId = result.viewerId;
+            this.config = { ...config, startTime };
+            if (generation !== this.startGeneration) return null;
+            await this.attachPlayer(this.config, result, generation);
+            return generation === this.startGeneration ? result : null;
+        } finally {
+            releaseQueue();
         }
-        const body = (await response.json()) as DashStartResponse | { data: DashStartResponse };
-        const result = 'data' in body ? body.data : body;
-
-        // The server has destroyed the old packager before publishing this new
-        // token.  Reset dash.js before it can request stale fragments, then
-        // attach it only to the replacement manifest.
-        this.releasePlayer();
-        this.viewerId = result.viewerId;
-        this.config = { ...this.config, startTime };
-        await this.attachPlayer(this.config, result, ++this.startGeneration);
-        return result;
     }
 
     /* Lists sessions without needing one of your own, which is what a caller
@@ -1099,28 +1171,20 @@ export class DashStream {
     }
 
     public async stop(endpoint?: string, streamId?: string): Promise<void> {
+        this.leaseGeneration += 1;
         this.startGeneration += 1;
         this.removePageHideListener();
         this.releasePlayer();
-        if (!endpoint || !this.viewerId) {
-            return;
-        }
         const viewerId = this.viewerId;
+        const config = this.config;
+        const replay = this.replay;
         this.viewerId = '';
-        try {
-            const stopPath = this.replay ? '/vst/api/v1/replay/dash/stop' : '/vst/api/v1/live/dash/stop';
-            await fetch(new URL(stopPath, endpoint).toString(), {
-                method: 'POST',
-                credentials: 'include',
-                keepalive: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(streamId ? { streamid: streamId } : {}),
-                },
-                body: JSON.stringify({ viewerId }),
-            });
-        } catch {
-            // The server's idle reaper releases leases after abrupt navigation or network loss.
+        this.config = null;
+        // A new start can pass a different endpoint or stream. Release the lease
+        // using its original identity, then allow replacements to proceed.
+        const leaseEndpoint = config?.endpoint ?? endpoint;
+        if (leaseEndpoint && viewerId) {
+            await this.releaseViewerLease(leaseEndpoint, config?.streamId ?? streamId, viewerId, replay);
         }
     }
 }

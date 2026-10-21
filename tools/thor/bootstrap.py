@@ -393,7 +393,7 @@ def render(host_ip=None, data_dir=None, gateway=None, cached_models=None, detect
         {'type': 'bind', 'source': str(STATE / 'ui-next'),
          'target': '/workspace/apps/nv-metropolis-bp-vss-ui/.next'},
         {'type': 'bind', 'source': str(ROOT / 'services/vios/ui/streaming-lib/src/dash'),
-         'target': '/vios/ui/streaming-lib/src/dash', 'read_only': True,
+         'target': '/workspace/external/vios-dash', 'read_only': True,
          'bind': {'create_host_path': False}}]
     for name, service in services.items():
         service.pop('profiles', None)

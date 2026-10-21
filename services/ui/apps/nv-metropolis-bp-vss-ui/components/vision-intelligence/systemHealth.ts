@@ -25,6 +25,7 @@ export interface SystemHealth {
   thor?: ThorHealthMetrics | null;
   hardwareProfile?: string;
   demoProfile?: "clips" | "all" | null;
+  videoPlayback?: { dashEnabled: boolean };
   videoEfficiency?: {
     sourceVersion: string | null;
     runtimeVersion: string | null;
