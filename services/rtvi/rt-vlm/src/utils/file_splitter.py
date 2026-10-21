@@ -142,6 +142,7 @@ class FileSplitter:
                     info.start_ntp = get_timestamp_str(self._base_ntp_time + info.start_pts / 1e9)
                     info.end_ntp = get_timestamp_str(self._base_ntp_time + info.end_pts / 1e9)
                     info.is_first = True
+                    info.is_last = True
                     self._on_new_chunk(info)
                     self._on_new_chunk(None)
                     return

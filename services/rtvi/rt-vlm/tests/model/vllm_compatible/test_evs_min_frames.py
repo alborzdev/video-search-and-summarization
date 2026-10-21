@@ -49,12 +49,14 @@ class _RecordingHandler:
         self.images = None
         self.metadata = None
         self.timestamps = None
+        self.is_last = None
         self.generated = False
 
     async def add_clip_tensors(self, session_id, images, on_encode_done=None, **kwargs):
         self.images = images
         self.metadata = kwargs.get("metadata")
         self.timestamps = kwargs.get("timestamps")
+        self.is_last = kwargs.get("is_last")
         if on_encode_done:
             on_encode_done()
         return SimpleNamespace(
@@ -132,6 +134,7 @@ def test_single_frame_clip_is_padded_to_two_frames(evs_model):
     assert len(handler.images) == 2
     assert handler.metadata["total_num_frames"] == 2
     assert len(handler.metadata["frames_indices"]) == 2
+    assert handler.is_last is True
 
 
 def test_padding_repeats_the_frame_and_its_timestamp(evs_model):
@@ -161,13 +164,14 @@ def test_clip_that_already_meets_the_temporal_factor_is_untouched(evs_model):
 def test_nonterminal_short_clip_reaches_handler_and_returns_generated_answer(
     evs_model, count
 ):
-    """Image requests and short live chunks need not carry an is_last marker."""
+    """Short live chunks can remain nonterminal while reaching the handler."""
     model, handler = evs_model
     handler.generated = True
 
     result = _call(model, _frames(count), [float(i) for i in range(count)])
 
     assert len(handler.images) == 2
+    assert handler.is_last is False
     assert result[0].output == "YES"
     assert result[0].output_tokens == 2
     assert model._inflight_req_ids == []
