@@ -1,0 +1,9 @@
+{
+  "error": "Analysis resume failed for isaac-intersection-southwest: Required analysis services did not confirm the requested state; incomplete steps=detection",
+  "tuning": {
+    "muxTimeoutUs": 10000,
+    "previewFps": 30,
+    "decoder": "hardware",
+    "inferenceInterval": 0
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "city.recorded-run.v1",
+  "verifiedAt": "2026-10-22T04:33:49.385487+00:00",
+  "observationsSha256": "93e7fa3c4047d0c0e4ecbefaf777127f2af7818c49caa8a0e5186d2b69bf8368",
+  "siteId": "recorded-traffic-tests",
+  "sources": [
+    {
+      "sourceId": "9821cf71-2e77-44e3-8655-7c1ddbe47681",
+      "frames": 1443,
+      "firstMediaSeconds": 0,
+      "lastMediaSeconds": 48.0666667,
+      "firstRawSourcePtsNs": "66666666",
+      "historyChecks": [
+        {
+          "requestedSeconds": 0.0,
+          "selectedSeconds": 0.0,
+          "skewSeconds": 0.0,
+          "tracks": 0
+        },
+        {
+          "requestedSeconds": 1.0,
+          "selectedSeconds": 1.0,
+          "skewSeconds": 0.0,
+          "tracks": 13
+        },
+        {
+          "requestedSeconds": 24.0333333,
+          "selectedSeconds": 24.0333333,
+          "skewSeconds": 0.0,
+          "tracks": 37
+        },
+        {
+          "requestedSeconds": 48.0666667,
+          "selectedSeconds": 48.0666667,
+          "skewSeconds": 0.0,
+          "tracks": 63
+        }
+      ]
+    },
+    {
+      "sourceId": "b6e98271-cb65-4c3f-b6c7-d0b890a2a533",
+      "frames": 795,
+      "firstMediaSeconds": 0,
+      "lastMediaSeconds": 79.4,
+      "firstRawSourcePtsNs": "200000000",
+      "historyChecks": [
+        {
+          "requestedSeconds": 0.0,
+          "selectedSeconds": 0.0,
+          "skewSeconds": 0.0,
+          "tracks": 0
+        },
+        {
+          "requestedSeconds": 1.0,
+          "selectedSeconds": 1.0,
+          "skewSeconds": 0.0,
+          "tracks": 5
+        },
+        {
+          "requestedSeconds": 39.7,
+          "selectedSeconds": 39.7,
+          "skewSeconds": 0.0,
+          "tracks": 12
+        },
+        {
+          "requestedSeconds": 79.4,
+          "selectedSeconds": 79.4,
+          "skewSeconds": 0.0,
+          "tracks": 14
+        }
+      ]
+    }
+  ],
+  "frames": 2238,
+  "trackedObjectObservations": 26510,
+  "classObservationCounts": {
+    "bus": 502,
+    "car": 13273,
+    "person": 10859,
+    "truck": 1663,
+    "bicycle": 213
+  },
+  "passed": true,
+  "scope": "Complete two-file native inference, geometry bounds, stable string IDs and durable browser-time lookup. Independent uncalibrated recordings; not event accuracy, live RTSP timing or shared-map qualification."
+}

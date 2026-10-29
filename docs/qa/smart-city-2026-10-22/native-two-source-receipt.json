@@ -1,0 +1,43 @@
+{
+  "test": "native-two-source-file-inference",
+  "exitCode": 0,
+  "wallSeconds": 4.898283677175641,
+  "paced": true,
+  "frames": 60,
+  "sources": {
+    "traffic-cam-1": {
+      "frames": 33,
+      "geometry": {
+        "width": 1920,
+        "height": 1080
+      },
+      "classes": {
+        "bus": 31,
+        "car": 138,
+        "person": 120,
+        "truck": 8
+      },
+      "emptyFrames": 2,
+      "firstMediaTimeSeconds": 0.066666666,
+      "lastMediaTimeSeconds": 1.13333333
+    },
+    "pedestrian-cam-2": {
+      "frames": 27,
+      "geometry": {
+        "width": 768,
+        "height": 576
+      },
+      "classes": {
+        "truck": 25,
+        "car": 25,
+        "person": 99
+      },
+      "emptyFrames": 2,
+      "firstMediaTimeSeconds": 0.2,
+      "lastMediaTimeSeconds": 2.8
+    }
+  },
+  "httpEnabled": false,
+  "droppedFramesInPublisher": 0,
+  "limits": "Two different camera scenes, not synchronized overlap or accuracy qualification."
+}

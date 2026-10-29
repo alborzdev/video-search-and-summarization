@@ -1,0 +1,103 @@
+{
+  "passed": false,
+  "checks": {
+    "runtimeCompleted": true,
+    "duration": true,
+    "memory": true,
+    "pairedSamples": true,
+    "sourceClockSkew": true,
+    "positionMedian": false,
+    "positionP95": false,
+    "falseMerges": false,
+    "matchedPeople": true,
+    "duplicateReduction": false
+  },
+  "metrics": {
+    "observationCount": 2200,
+    "scoredObservationCount": 1962,
+    "matchedPersonObservations": 7419,
+    "distinctMatchedPeople": 8,
+    "unmatchedEligiblePersonDetections": 812,
+    "clockUnmatchedObservations": 0,
+    "sourceSkewPairs": 981,
+    "sourceClockSkewP95Ms": 0.887359,
+    "personPositionMedianM": 1.224870324791965,
+    "personPositionP95M": 2.3218719371887917,
+    "falseMergedNativeIds": 9,
+    "baselineGroundAnchorMedianM": 0.4424625926751217,
+    "baselineGroundAnchorP95M": 0.9711839182842615,
+    "positionByCamera": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "nativeMedianM": 1.3930977313617938,
+        "nativeP95M": 2.610874504835947,
+        "baselineMedianM": 0.4667531852273188,
+        "baselineP95M": 1.0460266089894392
+      },
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "nativeMedianM": 1.082996272277372,
+        "nativeP95M": 1.913251633312795,
+        "baselineMedianM": 0.42446276665721966,
+        "baselineP95M": 0.855518921235467
+      }
+    },
+    "crossViewOpportunities": 2165,
+    "sameIdCrossViewMatches": 5,
+    "duplicateReductionFraction": 0.0023094688221709007
+  },
+  "runtime": {
+    "completedWithoutRuntimeError": true,
+    "runtimeQualified": false,
+    "globalOutputEnabled": false,
+    "diagnosticOnly": true,
+    "exitCode": 0,
+    "stopReason": null,
+    "wallSeconds": 133.08425343222916,
+    "minimumAvailableGiB": 23.823944091796875,
+    "imageId": "sha256:d522ce50f72ffb7288d6391645eae266e859d722be47593ae9d6b13a956dbd80",
+    "observationsFile": "/home/sparkdev/vss/.spark/city/state/native/mv3dt-person-plane/probe-20261023T044318Z/observations.ndjson"
+  },
+  "groundTruthSha256": "d735b8a72583b6ba42b954bea40d567cf9d70c98339cc05eb51c79e53e2d7ab6",
+  "observationsSha256": "3db19cbc684d97e73e53a7cbbc4c6fe55d7453e58bd1730abfc6be349d6f1579",
+  "falseMergeDetails": {
+    "2": [
+      "/World/Characters/Character_06/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_07/male_adult_construction_05/ManRoot/male_adult_construction_05"
+    ],
+    "16": [
+      "/World/Characters/Character/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_06/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_07/male_adult_construction_05/ManRoot/male_adult_construction_05"
+    ],
+    "11": [
+      "/World/Characters/Character/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_04/female_adult_business_02/ManRoot/female_adult_business_02",
+      "/World/Characters/Character_07/male_adult_construction_05/ManRoot/male_adult_construction_05"
+    ],
+    "20": [
+      "/World/Characters/Character_06/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_07/male_adult_construction_05/ManRoot/male_adult_construction_05"
+    ],
+    "25": [
+      "/World/Characters/Character_06/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_07/male_adult_construction_05/ManRoot/male_adult_construction_05"
+    ],
+    "28": [
+      "/World/Characters/Character_01/male_adult_construction_05/ManRoot/male_adult_construction_05",
+      "/World/Characters/Character_05/female_adult_medical_01/ManRoot/female_adult_medical_01"
+    ],
+    "40": [
+      "/World/Characters/Character_04/female_adult_business_02/ManRoot/female_adult_business_02",
+      "/World/Characters/Character_07/male_adult_construction_05/ManRoot/male_adult_construction_05"
+    ],
+    "48": [
+      "/World/Characters/Character_01/male_adult_construction_05/ManRoot/male_adult_construction_05",
+      "/World/Characters/Character_05/female_adult_medical_01/ManRoot/female_adult_medical_01"
+    ],
+    "71": [
+      "/World/Characters/Character/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_04/female_adult_business_02/ManRoot/female_adult_business_02"
+    ]
+  },
+  "warmupSeconds": 10.0,
+  "qualification": "Offline image-space label assignment and simulator-root position comparison. Not full detector recall, occlusion/HOTA/IDF1, vehicle geometry or real-city accuracy."
+}

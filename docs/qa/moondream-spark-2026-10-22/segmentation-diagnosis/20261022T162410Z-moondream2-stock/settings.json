@@ -1,0 +1,14 @@
+{
+  "child": false,
+  "compat": false,
+  "tasks": "segment",
+  "image": null,
+  "model": "moondream2",
+  "model_path": null,
+  "cases": ".spark/moondream-photon/md2-prompt-cases.json",
+  "object": "metal panel",
+  "probe_md2_segment": true,
+  "trace_segment": true,
+  "prompt": "Describe the object lying on the concrete.",
+  "timeout": 600
+}

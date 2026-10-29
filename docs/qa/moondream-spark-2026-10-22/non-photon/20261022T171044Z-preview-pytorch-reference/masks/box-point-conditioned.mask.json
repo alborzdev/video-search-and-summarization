@@ -1,0 +1,32 @@
+{
+  "valid_mask": true,
+  "quality_validated": false,
+  "image_size": [
+    640,
+    360
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.6278266608715057,
+    "y_min": 0.5155256241559982,
+    "x_max": 0.8116264641284943,
+    "y_max": 0.7500993758440018
+  },
+  "artifacts": {
+    "mask": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.mask.png",
+    "svg": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.mask.svg",
+    "overlay": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.overlay.png",
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.mask.json"
+  },
+  "nonzero_pixels": 9524,
+  "mask_fraction": 0.04133680555555556,
+  "alpha_weighted_fraction": 0.04041067538126362,
+  "raster_bbox": [
+    401,
+    185,
+    517,
+    271
+  ],
+  "status": "nonempty_mask"
+}

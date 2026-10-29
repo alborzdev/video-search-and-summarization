@@ -1,0 +1,98 @@
+{
+  "operation": "segment",
+  "model": "moondream2",
+  "object": "metal panel",
+  "status": "ok",
+  "image": {
+    "width": 1024,
+    "height": 576,
+    "rgb_sha256": "17faddf2ae1b942c68d951f8788eb340627df06b313806d20587993a612bd1e6"
+  },
+  "timings_ms": {
+    "preprocess": 1.3023470528423786,
+    "moondream_load": 0,
+    "describe": 0,
+    "presence": 0,
+    "detect": 0,
+    "point": 586.0412898473442,
+    "segmenter_load": 0,
+    "image_encode": 41.73680813983083,
+    "mask_decode": 7.2479709051549435,
+    "total": 637.4493073672056
+  },
+  "segmenter_name": "sam2.1-tiny",
+  "grounded_by": "point",
+  "presence_mode": "off",
+  "presence": null,
+  "raw_grounding": {
+    "points": [
+      {
+        "x": 0.55859375,
+        "y": 0.498046875
+      }
+    ]
+  },
+  "segmenter_used": true,
+  "grounding_generation_limit": 3,
+  "grounding_returned_at_limit": false,
+  "valid_grounding_count": 1,
+  "truncated": false,
+  "objects": [
+    {
+      "source_index": 0,
+      "grounding": {
+        "x": 0.55859375,
+        "y": 0.498046875
+      },
+      "point": [
+        0.55859375,
+        0.498046875
+      ],
+      "mask_metadata": {
+        "score": 0.98828125,
+        "score_kind": "uncalibrated_predicted_mask_iou",
+        "candidate_scores": [
+          0.92578125,
+          0.68359375,
+          0.98828125
+        ],
+        "selected_candidate": 2,
+        "candidate_count": 3,
+        "mask_area": 117682,
+        "mask_fraction": 0.1995205349392361
+      },
+      "mask_encoding": "PNG grayscale: 0 background, 255 foreground"
+    }
+  ],
+  "input_image": {
+    "source_width": 1024,
+    "source_height": 576,
+    "format": "JPEG",
+    "encoded_bytes": 217546,
+    "max_dimension": 1024,
+    "exif_transposed": true,
+    "width": 1024,
+    "height": 576,
+    "resized": false,
+    "inference_width": 1024,
+    "inference_height": 576
+  },
+  "model_identity": {
+    "moondream": "moondream2",
+    "segmenter": "sam2.1-tiny",
+    "runtime": "photon",
+    "device": "cuda",
+    "gb10_compat": false
+  },
+  "accuracy_evaluated": false,
+  "service_timings_ms": {
+    "image_prepare": 4.706748761236668,
+    "total": 645.0257408432662
+  },
+  "process_phase": "resident_reuse",
+  "provenance": "Recorded real inference on AI-generated illustration; not field validation",
+  "prompt": "metal panel",
+  "recorded_at": "2026-10-22T21:53:16.112983+00:00",
+  "input_sha256": "8487b2b8af4deb63167095e30c61c09544ba5bc1d8eccc9207ea08eca7ba6b8a",
+  "source": "/defense-preview/drone-close.png"
+}

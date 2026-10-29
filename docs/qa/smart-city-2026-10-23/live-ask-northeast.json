@@ -1,0 +1,7 @@
+{
+  "startedAt": "2026-10-23T05:10:58.336Z",
+  "answerObservedAt": "2026-10-23T05:11:26.603Z",
+  "elapsedUpperBoundMs": 28267,
+  "inspector": "Now\nAsk\nReports\nASK THIS SCENE\n\nAsk the local visual analyst about current footage from the selected camera.\n\nCamera\nisaac-intersection-southwest\nisaac-intersection-northeast\n\nCurrent footage only. Source clock time is unverified.\n\nDescribe the vehicles and pedestrians visible at this intersection.\nA yellow car enters the intersection from the right side of the frame and moves toward the center. A blue car is visible on the left side of the intersection, moving away from the camera. Another vehicle, possibly a bus or van, is partially visible further down the road on the left side. Pedestrians are present near the crosswalks; one individual walks along the sidewalk on the left side of the frame, while others are crossing the street or standing near the intersections.\n\nAnalyzed source: isaac-intersection-northeast.\n\nVSS source: 40af41ea-2180-4b7b-83d6-bb5d08ff094a\nObserved video · Oct 23, 01:10:48 AM EDT – Oct 23, 01:10:53 AM EDT\nLoad inspected clip (up to 5 s)\nView site report",
+  "selectedCamera": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+}

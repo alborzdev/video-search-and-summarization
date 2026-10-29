@@ -85,8 +85,8 @@ class SparkUiTests(unittest.TestCase):
     def test_dev_admission_preserves_saved_reserve(self):
         with patch.object(ui.bootstrap, 'doctor') as doctor, patch.object(ui, 'run') as run, \
                 patch.object(ui.bootstrap, 'memory_reserve', return_value=24), \
-                patch.object(ui.bootstrap, 'available', return_value=27.9):
-            with self.assertRaisesRegex(RuntimeError, '28 GiB'):
+                patch.object(ui.bootstrap, 'available', return_value=23.9):
+            with self.assertRaisesRegex(RuntimeError, '24 GiB'):
                 ui.preflight(True)
             doctor.assert_called_once()
             run.assert_called_once_with(['systemctl', '--user', 'is-active', '--quiet', 'vss-spark-guard.service'])

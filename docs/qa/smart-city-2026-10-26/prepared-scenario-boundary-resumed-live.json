@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-26",
+  "writtenAt": "2026-10-26T15:00:46.789216+00:00",
+  "qualification": "Bounded read-only monitor after explicitly authorized detection resume. Native reset and strict-clock/exact-preview checks passed; host recovery remained pending, so no Play/end-to-end scenario qualification.",
+  "durationSeconds": 179.038,
+  "pollSamples": 180,
+  "nativeObservationsBySource": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": 691,
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 691
+  },
+  "exactPreviewsChecked": 74,
+  "errors": [],
+  "trackingEpochs": {
+    "54e1be53-59dd-4940-910f-8e5756b9d3b3:997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "firstSourceTimeNs": "1793026741036431976",
+      "sequence": "0",
+      "sessionId": "b05600c2-3ba4-4bbb-89a3-31041a845230",
+      "fusionEpoch": "679a6e9b-086c-4c47-940c-7420d5611881",
+      "ack": {
+        "schemaVersion": "city.scenario-boundary.v1",
+        "status": "applied",
+        "trackingEpoch": "54e1be53-59dd-4940-910f-8e5756b9d3b3",
+        "afterCaptureNs": "1793026516358480802",
+        "appliedAtNs": "1793026741249254543",
+        "trackerStages": 2,
+        "method": "serialized-nvtracker-stream-reset",
+        "sourceClockReset": false,
+        "error": "",
+        "sourceIds": [
+          "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+        ]
+      }
+    },
+    "54e1be53-59dd-4940-910f-8e5756b9d3b3:40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "firstSourceTimeNs": "1793026741036099336",
+      "sequence": "0",
+      "sessionId": "ce12b617-ebbc-49dd-bb01-5e1fd6ef8b43",
+      "fusionEpoch": "679a6e9b-086c-4c47-940c-7420d5611881",
+      "ack": {
+        "schemaVersion": "city.scenario-boundary.v1",
+        "status": "applied",
+        "trackingEpoch": "54e1be53-59dd-4940-910f-8e5756b9d3b3",
+        "afterCaptureNs": "1793026516358480802",
+        "appliedAtNs": "1793026741249254543",
+        "trackerStages": 2,
+        "method": "serialized-nvtracker-stream-reset",
+        "sourceClockReset": false,
+        "error": "",
+        "sourceIds": [
+          "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+        ]
+      }
+    }
+  },
+  "lastObserved": {
+    "elapsed": 179.016,
+    "state": "failed",
+    "scope": {
+      "epoch": "acbfacd1-fea9-4ac5-a2fc-7e40779693d6",
+      "kind": "settling",
+      "runId": "6dc5fbe04c174562a4699baff0c49b16",
+      "scenarioId": "queue-recovery",
+      "startedAt": "2026-10-26T14:55:16.363015+00:00",
+      "suppressed": true
+    },
+    "tracks": 0,
+    "metrics": 0,
+    "rulesRevision": 468,
+    "siteRevision": 172,
+    "sources": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sourceSessionId": "b05600c2-3ba4-4bbb-89a3-31041a845230",
+        "sessionId": "b05600c2-3ba4-4bbb-89a3-31041a845230",
+        "sequence": "690",
+        "lastSourceTimeNs": "1793026815736976284",
+        "rawSourcePtsNs": "74840550649",
+        "trackingEpoch": "54e1be53-59dd-4940-910f-8e5756b9d3b3",
+        "fusionEpoch": "679a6e9b-086c-4c47-940c-7420d5611881",
+        "sourceClockEvidence": {
+          "schemaVersion": "city.source-native-sei.v1",
+          "method": "isaac-native-sei-wall-capture",
+          "correlation": "exact-au-pts",
+          "captureTimeNs": "1793026815736976284",
+          "auPtsNs": "74840550649",
+          "frameCounter": "2706"
+        },
+        "ingestAgeSeconds": 0.046626538038253784,
+        "calibrationRevision": "isaac-live-045c84fe5fda7a15"
+      },
+      {
+        "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "sourceSessionId": "ce12b617-ebbc-49dd-bb01-5e1fd6ef8b43",
+        "sessionId": "ce12b617-ebbc-49dd-bb01-5e1fd6ef8b43",
+        "sequence": "690",
+        "lastSourceTimeNs": "1793026815736634892",
+        "rawSourcePtsNs": "74840505409",
+        "trackingEpoch": "54e1be53-59dd-4940-910f-8e5756b9d3b3",
+        "fusionEpoch": "679a6e9b-086c-4c47-940c-7420d5611881",
+        "sourceClockEvidence": {
+          "schemaVersion": "city.source-native-sei.v1",
+          "method": "isaac-native-sei-wall-capture",
+          "correlation": "exact-au-pts",
+          "captureTimeNs": "1793026815736634892",
+          "auPtsNs": "74840505409",
+          "frameCounter": "2706"
+        },
+        "ingestAgeSeconds": 0.04458879632875323,
+        "calibrationRevision": "isaac-live-045c84fe5fda7a15"
+      }
+    ]
+  },
+  "nativeResetAck": {
+    "schemaVersion": "city.scenario-boundary.v1",
+    "status": "applied",
+    "trackingEpoch": "54e1be53-59dd-4940-910f-8e5756b9d3b3",
+    "afterCaptureNs": "1793026516358480802",
+    "appliedAtNs": "1793026741249254543",
+    "trackerStages": 2,
+    "method": "serialized-nvtracker-stream-reset",
+    "sourceClockReset": false,
+    "error": "",
+    "sourceIds": [
+      "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+    ]
+  },
+  "gatedTracksMax": 0,
+  "gatedMetricsMax": 0,
+  "operations": "Only GET requests and native file reads; no source/service/UI mutations. Monitor completed after180seconds and polling is stopped.",
+  "temporaryFullReceipt": "/tmp/prepared-boundary-resumed-readonly-monitor.json"
+}

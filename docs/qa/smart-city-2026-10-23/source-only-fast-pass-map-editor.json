@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "city.source-only-fast-pass-map-editor.v1",
+  "recordedAt": "2026-10-23T16:57:29.329759+00:00",
+  "status": "source-and-cpu-tests-passed-not-deployed",
+  "changes": [
+    "Give each map observation one keyboard-focusable button with camera-specific accessible name and selected state; a transparent 24-pixel non-scaling stroke enlarges its hit target without enlarging the visible marker.",
+    "Accept only a primary left-button map drag, retain its pointer identity, ignore other pointers, and clear dragging on cancel, capture loss or reset.",
+    "Describe shared IDs as supplied identities without claiming camera observations are deduplicated or fused.",
+    "Preserve polygon points when changing between polygon rule types; clear points only when changing camera or geometry family.",
+    "Disable editor value changes, undo, reverse, edit and delete actions while saving; keep Close available. Workspace separately protects draft generations and blocks camera drawing during a save.",
+    "Validate camera, name, rule type, selected classes, bounded integer duration/counts, finite normalized points, distinct endpoints, nonzero polygon area, polygon intersections and required movement direction before submission.",
+    "Apply orientation tolerance to each cross product rather than their product so small self-crossing polygons are rejected while valid small areas remain accepted.",
+    "Explain invalid drafts beside Save, retain empty numeric inputs as invalid rather than silently changing their meaning, and memoize validation across camera-only renders.",
+    "Reset delete confirmation when the edited rule or camera changes.",
+    "Shared CSS also includes the earlier map-legend contrast backplate, evidence hierarchy and unknown-rule reason styling from this source-only pass."
+  ],
+  "validation": {
+    "runner": "Existing vss-agent-ui development container; scoped CPU Jest, reported by the parent agent.",
+    "runs": [
+      {
+        "suites": [
+          "CityMap.test.tsx",
+          "CityRuleEditor.test.tsx",
+          "SmartCityWorkspace.test.tsx"
+        ],
+        "passed": 43,
+        "failed": 0,
+        "elapsedSeconds": 1.74,
+        "revisionNote": "Preceded the final small-polygon orientation correction. Map and Workspace source did not change afterward."
+      },
+      {
+        "suites": [
+          "CityRuleEditor.test.tsx"
+        ],
+        "passed": 19,
+        "failed": 0,
+        "elapsedSeconds": 1.146,
+        "execSession": 82127,
+        "revisionNote": "Final Editor source and tests, including small crossed and small valid polygons."
+      }
+    ],
+    "independentReview": "Reviewed Workspace draft-generation guards: late save success/error cannot modify a newer draft; successful deletion closes the same edited rule; camera drawing is blocked while saving. No blocker found.",
+    "claims": "These checks validate source-level interactions and geometry constraints. They do not establish rendered visual quality, deployment readiness or sustained runtime performance."
+  },
+  "sourceSha256": {
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMap.tsx": "999ec0b2aee4001e678bd0f4a01c39e9454cc4636db4bd1892cbe8a4be95c954",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityRuleEditor.tsx": "2836b8079d4987d0442aa7f55730cf7aa4fe3f75de3e45712ba030c59f53bf76",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/SmartCity.module.css": "b0869703270255afdf7187335147d81ac52b847fc8d2018254bd99bb8593f00d",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/CityMap.test.tsx": "ecb8064f73926725b41277e1271fd872998abc018d6ed03538696b4c5fd40e47",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/CityRuleEditor.test.tsx": "f21f451014b6d0a9288a5109d9e2aee5a953b144f7b9346d0ac483b398c677a9"
+  },
+  "deployment": {
+    "performed": false,
+    "productionUi": "Existing isolated production UI at port 7782 remains unchanged by this pass.",
+    "serviceRestarts": false,
+    "modelRequests": false,
+    "builds": false
+  },
+  "deferredChecks": [
+    "Package the new UI before testing these changes in the isolated production deployment.",
+    "At desktop booth size, confirm visible map marker sizes remain restrained and camera/rule/evidence hierarchy remains legible.",
+    "At 1366x768 and 390x844, verify the map legend backplate provides contrast over pale map imagery and does not block zoom/reset controls.",
+    "With mouse, keyboard and touch, verify the transparent map hit area, source-disambiguated focus, selected state, primary-pointer dragging and cancellation behavior.",
+    "In a suitable test configuration, exercise polygon-to-polygon type changes, camera/geometry resets, invalid numeric/geometry explanations, save/close/reopen races, and delete confirmation reset.",
+    "Verify live camera frames, map/rule evidence and hidden-tab recovery after deployment; run any later runtime qualification separately. No new screenshots or endurance pass are claimed here."
+  ],
+  "limits": [
+    "Camera identities remain local; supplied shared IDs are not a fusion implementation.",
+    "Backend validation remains authoritative.",
+    "Existing deployed screenshots predate these source edits."
+  ]
+}

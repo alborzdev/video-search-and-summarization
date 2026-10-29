@@ -1,0 +1,117 @@
+{
+  "schemaVersion": "city.vehicle-preparation-planning-source.v1",
+  "sourceOnly": true,
+  "liveAppliedByThisTask": false,
+  "scope": "Bounded actual turn predicates plus finite planning repair. No traffic, signals, safety, ROI, detector or threshold changes. Not integrated live qualification.",
+  "preservedFailure": {
+    "receipt": "logs/vss-integration/rebuild-20261026/scenario-crossing-final-family-ui.ndjson",
+    "wallSeconds": 83.06622607400641,
+    "reason": "booth-staging-deadline",
+    "candidateAid": 830,
+    "route": "NB_1:L",
+    "remainingApproachM": 6.73,
+    "restored": true,
+    "startSimSeconds": 4379.966666667215,
+    "endSimSeconds": 4409.20000000092,
+    "phaseCycleSeconds": 50,
+    "normalNSGreenStartWithinCycle": 0,
+    "normalNSGreenDurationSimSeconds": 20,
+    "untilNSGreenAtStartSimSeconds": 20.03333333278532,
+    "greenElapsedAtFailureSimSeconds": 9.200000000920227,
+    "limits": "Exact priority/pedestrian inputs from this earlier failed phase were not retained; later measured release times are illustrative, not its reconstructed outcome."
+  },
+  "actualObserver": {
+    "path": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/turn-gates-normal-180wall-20261026.json",
+    "outcome": "finished",
+    "wallSeconds": 180.19370230007917,
+    "simulationSpanSeconds": 68.4333333323375,
+    "samples": 319,
+    "errors": [],
+    "ownedStopSamples": 0,
+    "predicateMismatches": 0,
+    "nearBarHeadSummaries": [
+      {
+        "arrivalId": 841,
+        "nearBarNSGreenSamples": 18,
+        "firstReasonSampleCounts": {
+          "priority-gap": 16,
+          "released": 2
+        },
+        "firstObservedReleasePhaseSeconds": 12.36666668468115,
+        "exitOccupiedSamples": 0,
+        "priorityBlockingSources": [
+          {
+            "arrivalId": 868,
+            "class": "motorcycle",
+            "lane": "SB_1",
+            "samples": 16
+          }
+        ]
+      },
+      {
+        "arrivalId": 866,
+        "nearBarNSGreenSamples": 28,
+        "firstReasonSampleCounts": {
+          "priority-gap": 5,
+          "exit-crosswalk": 21,
+          "released": 2
+        },
+        "firstObservedReleasePhaseSeconds": 7.933333350684734,
+        "exitOccupiedSamples": 21,
+        "priorityBlockingSources": [
+          {
+            "arrivalId": 878,
+            "class": "motorcycle",
+            "lane": "SB_1",
+            "samples": 17
+          }
+        ]
+      }
+    ],
+    "limits": "Uncommitted northbound-turn observations include motorcycles. Ego class was not included in every diagnostic row; 841 is a motorcycle in the separate saved state. This is not a class-matched accuracy test or a reconstruction of car 830."
+  },
+  "changes": {
+    "vehicleOverallWallLimitSeconds": 180,
+    "preparationCeilingsWallSeconds": {
+      "queue": 131,
+      "crossing": 143,
+      "curb": 143
+    },
+    "unchangedAfterPreparationWallSeconds": {
+      "queueHold": 24,
+      "crossingCurbHold": 12,
+      "release": 3,
+      "clear": 22
+    },
+    "planning": "Latch once: actual next usable green wait + existing approach estimate + at most ONE selected normal green duration only for a left route or actual turn/lead constraint, divided by planning ratio, plus existing margin. Reserve hold/release/clear inside the fixed total. No sliding deadline.",
+    "lateGreen": "Existing pure box-clearance veto plans the next green; actual bulb state is unchanged.",
+    "readyCars": "Actual stationary-in-zone receipt begins the hold immediately. An increased cap is not an imposed delay.",
+    "limits": "One bounded opportunity is not a guaranteed gap/arrival. Crowded adverse phases can take two to three minutes or still fail safely; cancel remains available."
+  },
+  "tests": {
+    "allScenarioControls": 94,
+    "elapsedSeconds": 6.749,
+    "newVehiclePlanningControls": 6,
+    "turnPredicateParityControls": 3,
+    "turnPredicateElapsedSeconds": 0.753,
+    "pyCompile": "passed",
+    "scopedFatalRuff": "passed"
+  },
+  "hashes": {
+    "scripts/scenarios/catalog.py": "ac9e7be310534fbc88193ad7e0ac97e44c128f0ebe11adb399fe86c6c142b6db",
+    "scripts/scenarios/director.py": "b9b22a52036521ea30d55a08acd8e56890fc7b643bdbffd772644a200a112e62",
+    "scripts/scenarios/runtime.py": "5fa15f4cc49f24aea00b2ae5a086b54d641afe48306b3d98c9ba8e3f360a9dda",
+    "scripts/scenarios/test_runtime.py": "79ef6b6dc268a24c54252b714cc441cf469a536f529f6b10a0a3b84269ef1566",
+    "scripts/scenarios/test_nb_family_staging.py": "544b5c8469c56f185e9b885e26f0c3a2a6e686d03b28aa2b508be05ec0c42367",
+    "scripts/scenarios/test_vehicle_preparation_planning.py": "783046afc452923206ec4958191754a444a04a75f7b3de27cc33d73b4a085a64",
+    "scripts/traffic/vehicle_lib.py": "c0ee83c9376fcfe0a68cf079403c3dc7b5cf6807e34d526517bcc07b6678217f",
+    "scripts/traffic/turn_gate_diagnostic.py": "bcfaf4acd36dfff3d19f41946fd0136c60a799351b0829b4701ae9ecf963ec21",
+    "scripts/traffic/test_turn_gate_diagnostic.py": "d5501e7dfe87188a58d7b7ec2b1b3e533a902d74737da7478378b3e8d1440c60",
+    "scripts/tools/observe_turn_gates.py": "99714608e9da60b5729a3d7faef710c7a4e5cef040fb0151d545ea43a944612f",
+    "logs/vss-integration/rebuild-20261026/turn-gates-normal-180wall-20261026.json": "2311bc973e86f4ef8ed7ef700575ba08ee0d4146c9b0eb26a84ab2c658515a67",
+    "logs/vss-integration/rebuild-20261026/traffic-turn-hold-830-20261026.json": "4acf605658995c7e89feebd85e43ea9aa6275fbe4abe03ae644d7d1a30ac47e6",
+    "logs/vss-integration/rebuild-20261026/traffic-turn-predicate-saved-20261026.json": "d94bc6df4bdb5d05d3f163ff05a2962783303891216303f0e92aba0e95fede69",
+    "logs/vss-integration/rebuild-20261026/turn-gates-cpu-no-ped-90sim-20261026.json": "56716df9a7fd9bf0b57faeb5967bc51544a6afb62eee0919d0d2251f09c740cb",
+    "logs/vss-integration/rebuild-20261026/scenario-crossing-final-family-ui.ndjson": "7e3224c67a7914e101468ddf2b6be2aebb7d8a8d4451913a9442ffe09fc8bf96"
+  }
+}

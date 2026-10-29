@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "city.native-sei-browser-performance.v1",
+  "passed": true,
+  "seconds": 57.82,
+  "views": [
+    {
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "sameSession": true,
+      "selectedFps": 9.166378415773089,
+      "renderedFps": 9.010722933241093,
+      "aligned": "true",
+      "provenance": "native-post-inference-exact-frame"
+    },
+    {
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sameSession": true,
+      "selectedFps": 9.183673469387754,
+      "renderedFps": 9.131788308543756,
+      "aligned": "true",
+      "provenance": "native-post-inference-exact-frame"
+    }
+  ],
+  "start": {
+    "at": 1793010744338,
+    "frames": [
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-configuration-key": "[1,\"isaac-intersection-a\",163,\"live\",\"997d3a69-e052-45a4-a1ce-be1b046670c4\",960,540,\"[\\\"isaac-live-045c84fe5fda7a15\\\",[[0.0017690379381935706,-0.007790769662413364,-0.3545450720356232],[-0.001100355647511118,0.013290734306864812,1.7205687121628663],[2.8750021386564327e-20,0.00021838160235318973,0.0033603448116665212]],[[\\\"person\\\",[[0.0017690379381935706,-0.007998203075851706,-0.3577369516953689],[-0.001100355647511118,0.013698080889145543,1.7268367537907658],[2.957505728182006e-20,0.00022464847284981638,0.003456776221326511]]]],[[4.412373894679664e-13,540.0000000000007],[959.9999999999998,540.0000000000001],[960.0000000000001,131.3465984215846],[561.1744609654309,60.61308311710492],[2.0374583104293023e-13,112.84040741354512]]]\"]",
+        "data-preview-delivery-status": "fresh",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-model-revision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "data-preview-native-encoded-fps": "10.9989",
+        "data-preview-native-published-fps": "10.9989",
+        "data-preview-network-queue-dropped": "0",
+        "data-preview-pending-dropped": "0",
+        "data-preview-post-failed": "0",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-rate-skipped": "6",
+        "data-preview-render-fps": "8.9",
+        "data-preview-rendered-frames": "60",
+        "data-preview-sequence": "149",
+        "data-preview-session": "6e116200-8ef5-4bba-81d5-e9d7fa69a344",
+        "data-preview-source-queue-overruns": "0",
+        "data-preview-source-time-ns": "1793010744256210604",
+        "data-source-id": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-configuration-key": "[1,\"isaac-intersection-a\",163,\"live\",\"40af41ea-2180-4b7b-83d6-bb5d08ff094a\",960,540,\"[\\\"isaac-live-045c84fe5fda7a15\\\",[[-0.0017690379381935706,-0.00238581300724528,0.1979530038119639],[0.0011003556475111143,0.021038853583056613,-1.1923225077688824],[-2.9852631484804697e-20,0.0002183816023531898,0.003360344811666584]],[[\\\"person\\\",[[-0.0017690379381935706,-0.002470415758949739,0.196651179781554],[0.0011003556475111143,0.021616659042845588,-1.1834315317982311],[-3.0709308849027995e-20,0.0002246484728498165,0.003456776221326576]]]],[[960.0000000000003,539.9999999999997],[960.0000000000003,136.6733005387889],[566.0904826916159,64.27556527802925],[-1.8800059829022684e-13,119.83376686454346],[-2.206186947339831e-13,540]]]\"]",
+        "data-preview-delivery-status": "fresh",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-model-revision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "data-preview-native-encoded-fps": "10.9989",
+        "data-preview-native-published-fps": "9.99899",
+        "data-preview-network-queue-dropped": "0",
+        "data-preview-pending-dropped": "0",
+        "data-preview-post-failed": "0",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-rate-skipped": "5",
+        "data-preview-render-fps": "9.0",
+        "data-preview-rendered-frames": "56",
+        "data-preview-sequence": "149",
+        "data-preview-session": "b446ec1c-b2f8-4660-a675-609c40bd48ef",
+        "data-preview-source-queue-overruns": "1",
+        "data-preview-source-time-ns": "1793010744256541804",
+        "data-source-id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "end": {
+    "at": 1793010802158,
+    "frames": [
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-configuration-key": "[1,\"isaac-intersection-a\",163,\"live\",\"997d3a69-e052-45a4-a1ce-be1b046670c4\",960,540,\"[\\\"isaac-live-045c84fe5fda7a15\\\",[[0.0017690379381935706,-0.007790769662413364,-0.3545450720356232],[-0.001100355647511118,0.013290734306864812,1.7205687121628663],[2.8750021386564327e-20,0.00021838160235318973,0.0033603448116665212]],[[\\\"person\\\",[[0.0017690379381935706,-0.007998203075851706,-0.3577369516953689],[-0.001100355647511118,0.013698080889145543,1.7268367537907658],[2.957505728182006e-20,0.00022464847284981638,0.003456776221326511]]]],[[4.412373894679664e-13,540.0000000000007],[959.9999999999998,540.0000000000001],[960.0000000000001,131.3465984215846],[561.1744609654309,60.61308311710492],[2.0374583104293023e-13,112.84040741354512]]]\"]",
+        "data-preview-delivery-status": "fresh",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-model-revision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "data-preview-native-encoded-fps": "6.99713",
+        "data-preview-native-published-fps": "7.99672",
+        "data-preview-network-queue-dropped": "0",
+        "data-preview-pending-dropped": "0",
+        "data-preview-post-failed": "0",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-rate-skipped": "6",
+        "data-preview-render-fps": "8.2",
+        "data-preview-rendered-frames": "581",
+        "data-preview-sequence": "679",
+        "data-preview-session": "6e116200-8ef5-4bba-81d5-e9d7fa69a344",
+        "data-preview-source-queue-overruns": "0",
+        "data-preview-source-time-ns": "1793010802000218559",
+        "data-source-id": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-configuration-key": "[1,\"isaac-intersection-a\",163,\"live\",\"40af41ea-2180-4b7b-83d6-bb5d08ff094a\",960,540,\"[\\\"isaac-live-045c84fe5fda7a15\\\",[[-0.0017690379381935706,-0.00238581300724528,0.1979530038119639],[0.0011003556475111143,0.021038853583056613,-1.1923225077688824],[-2.9852631484804697e-20,0.0002183816023531898,0.003360344811666584]],[[\\\"person\\\",[[-0.0017690379381935706,-0.002470415758949739,0.196651179781554],[0.0011003556475111143,0.021616659042845588,-1.1834315317982311],[-3.0709308849027995e-20,0.0002246484728498165,0.003456776221326576]]]],[[960.0000000000003,539.9999999999997],[960.0000000000003,136.6733005387889],[566.0904826916159,64.27556527802925],[-1.8800059829022684e-13,119.83376686454346],[-2.206186947339831e-13,540]]]\"]",
+        "data-preview-delivery-status": "fresh",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-model-revision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "data-preview-native-encoded-fps": "6.99713",
+        "data-preview-native-published-fps": "7.99672",
+        "data-preview-network-queue-dropped": "0",
+        "data-preview-pending-dropped": "0",
+        "data-preview-post-failed": "0",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-rate-skipped": "5",
+        "data-preview-render-fps": "8.1",
+        "data-preview-rendered-frames": "584",
+        "data-preview-sequence": "680",
+        "data-preview-session": "b446ec1c-b2f8-4660-a675-609c40bd48ef",
+        "data-preview-source-queue-overruns": "1",
+        "data-preview-source-time-ns": "1793010802093298294",
+        "data-source-id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "limits": [
+    "Actual DOM rendered counter; a short partially overlapping browser window, not isolated stage timing or latency.",
+    "No booth-day stability or identity-accuracy claim."
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "status": "passed",
+  "beforeRevision": 85,
+  "revisions": [
+    86,
+    87,
+    88,
+    89,
+    90,
+    91,
+    92,
+    93,
+    94,
+    95,
+    96,
+    97
+  ],
+  "writesSeconds": 0.1107314582914114,
+  "ackSeconds": 0.6804371951147914,
+  "nativeStatus": {
+    "status": "active",
+    "requestedRevision": 97,
+    "appliedRevision": 97,
+    "primitives": [
+      {
+        "ruleId": "rtsp-pedestrian-image-occupancy",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_9759f7135a55ecd8",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      }
+    ],
+    "eventAuthority": "city-behavior-analytics",
+    "counterEpoch": "32894bb1-6a52-4080-baaf-ee3859ad18aa",
+    "sourceTimeNs": "1792678951692528600",
+    "error": "",
+    "lastAppliedRevision": 97,
+    "operationalStatus": "fresh"
+  },
+  "rulesSemanticallyUnchanged": true,
+  "temporaryFiles": [
+    "/tmp/vss-city-analytics-H12Mgi.ini"
+  ],
+  "temporaryFileCheck": "one current snapshot after final active acknowledgement"
+}

@@ -1,0 +1,27 @@
+test_baseline_prompt_lut_and_masks_unchanged (test_decode_diagnostics.DecodeDiagnosticTests.test_baseline_prompt_lut_and_masks_unchanged) ... ok
+test_forced_boundary_only_at_exact_bbox_step_then_restores (test_decode_diagnostics.DecodeDiagnosticTests.test_forced_boundary_only_at_exact_bbox_step_then_restores) ... ok
+test_forced_boundary_requires_spatial_prefix_and_rejects_combined_ablation (test_decode_diagnostics.DecodeDiagnosticTests.test_forced_boundary_requires_spatial_prefix_and_rejects_combined_ablation) ... ok
+test_lut_change_and_reset_between_cases_and_cleanup (test_decode_diagnostics.DecodeDiagnosticTests.test_lut_change_and_reset_between_cases_and_cleanup) ... ok
+test_suppression_only_after_three_spatial_tokens_and_case_snapshot (test_decode_diagnostics.DecodeDiagnosticTests.test_suppression_only_after_three_spatial_tokens_and_case_snapshot) ... ok
+test_bfloat16_activation_rounding_matches_reference (test_gb10_compat.CompatibilityMathTests.test_bfloat16_activation_rounding_matches_reference) ... ok
+test_block_scales_are_rejected (test_gb10_compat.CompatibilityMathTests.test_block_scales_are_rejected) ... ok
+test_empty_input (test_gb10_compat.CompatibilityMathTests.test_empty_input) ... ok
+test_interleave_scales_routing_and_chunking_match_float32_oracle (test_gb10_compat.CompatibilityMathTests.test_interleave_scales_routing_and_chunking_match_float32_oracle) ... ok
+test_invalid_expert_is_rejected (test_gb10_compat.CompatibilityMathTests.test_invalid_expert_is_rejected) ... ok
+test_nonunit_routing_weights_are_not_renormalized (test_gb10_compat.CompatibilityMathTests.test_nonunit_routing_weights_are_not_renormalized) ... ok
+test_residual_plus_one_is_preserved (test_gb10_compat.CompatibilityMathTests.test_residual_plus_one_is_preserved) ... ok
+test_bbox_relative_rectangle_has_correct_position_and_area (test_mask_artifacts.MaskArtifactTests.test_bbox_relative_rectangle_has_correct_position_and_area) ... ok
+test_curves_render_as_curves_not_a_box (test_mask_artifacts.MaskArtifactTests.test_curves_render_as_curves_not_a_box) ... ok
+test_hole_and_multiple_contours_are_preserved (test_mask_artifacts.MaskArtifactTests.test_hole_and_multiple_contours_are_preserved) ... ok
+test_markup_and_truncated_commands_are_rejected (test_mask_artifacts.MaskArtifactTests.test_markup_and_truncated_commands_are_rejected) ... ok
+test_masks_and_boxes_have_distinct_statuses (test_mask_artifacts.MaskArtifactTests.test_masks_and_boxes_have_distinct_statuses) ... ok
+test_finalize_sampling_captures_fused_tail_without_duplicate_generic_event (test_trace_segment.SegmentTraceTests.test_finalize_sampling_captures_fused_tail_without_duplicate_generic_event)
+Exercise the actual scheduler fast-path branch with a CPU kernel stand-in. ... ok
+test_real_finalize_valid_svg_and_empty_model_eos (test_trace_segment.SegmentTraceTests.test_real_finalize_valid_svg_and_empty_model_eos)
+A valid path survives the actual skill; an EOS-only path stays empty. ... ok
+test_sampler_observation_preserves_logits_output_and_stop_reason (test_trace_segment.SegmentTraceTests.test_sampler_observation_preserves_logits_output_and_stop_reason) ... ok
+
+----------------------------------------------------------------------
+Ran 20 tests in 1.221s
+
+OK

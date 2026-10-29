@@ -1,0 +1,12 @@
+test_bfloat16_activation_rounding_matches_reference (__main__.CompatibilityMathTests.test_bfloat16_activation_rounding_matches_reference) ... ok
+test_block_scales_are_rejected (__main__.CompatibilityMathTests.test_block_scales_are_rejected) ... ok
+test_empty_input (__main__.CompatibilityMathTests.test_empty_input) ... ok
+test_interleave_scales_routing_and_chunking_match_float32_oracle (__main__.CompatibilityMathTests.test_interleave_scales_routing_and_chunking_match_float32_oracle) ... ok
+test_invalid_expert_is_rejected (__main__.CompatibilityMathTests.test_invalid_expert_is_rejected) ... ok
+test_nonunit_routing_weights_are_not_renormalized (__main__.CompatibilityMathTests.test_nonunit_routing_weights_are_not_renormalized) ... ok
+test_residual_plus_one_is_preserved (__main__.CompatibilityMathTests.test_residual_plus_one_is_preserved) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.451s
+
+OK

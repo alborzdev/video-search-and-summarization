@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "city.production-ui-qualification.v1",
+  "createdAt": "20261022T073106035307Z",
+  "status": "built",
+  "sourceSha256": "7cc24b10bab0ebfb6cb4b8aa216d73fb645058f3b00ef72c81dfec9001e13b5b",
+  "lockSha256": "b937110179a40d8e7cb22ba570481ae759759ac2f746b450e925dcd652e40daa",
+  "dockerfileSha256": "be7b24d67daa4585a51b138f6272bc859ad170126b8096201b4c5322a7dd50bf",
+  "baseImageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+  "baseReference": "vss-spark-vss-ui:source",
+  "fallbackReference": "vss-spark-vss-ui:pre-city-0510e98cab54",
+  "builderImageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+  "nodeVersion": "22.22.3",
+  "memoryGiB": 4,
+  "cpus": 2,
+  "maximumSeconds": 1200,
+  "dependencyMode": "reuse-installed",
+  "imageId": "sha256:1b2db6c3e4e800c1f734ef696af75e68f63f73d06040ad18383231b74b284c8f",
+  "imageReference": "vss-spark-vss-ui:smart-city-7cc24b10bab0-20261022t073106035307z",
+  "artifactSha256": "48ff08c42f68afbfd676b7304100b253239d14cba127f16f1b06a681e65adb3f",
+  "buildTasks": {
+    "successful": 10,
+    "total": 10,
+    "cached": 0,
+    "wallTime": "4m40.189s"
+  },
+  "sourceValidation": {
+    "uiSuites": 16,
+    "uiTests": 119,
+    "typeScriptNoEmitPassed": true,
+    "independentReviewPassed": true
+  },
+  "deployment": {
+    "onlyUiRecreated": true,
+    "origin": "http://127.0.0.1:7777",
+    "httpChecks": {
+      "/": 200,
+      "/api/vision/city/site": 200,
+      "/api/vision/city/health": 200
+    },
+    "runtimeMemoryLimitGiB": 2,
+    "runtimeCpus": 2,
+    "nodeHeapMiB": 1024
+  },
+  "browser": {
+    "desktopViewport": [
+      1920,
+      1080
+    ],
+    "desktopDocumentWidth": 1920,
+    "mobileViewport": [
+      390,
+      844
+    ],
+    "mobileDocumentWidth": 375,
+    "viewportOverrideReset": true,
+    "consoleErrorsObserved": 0,
+    "bothCameraImageObservationNanosecondsEqual": true,
+    "bothCameraOverlayAligned": true,
+    "bothCameraMode": "exact-processed-frame",
+    "browserClockVerified": false,
+    "renderedAskEvidenceReceipt": "medium-final-ui-ask-evidence.json"
+  },
+  "screenshotFiles": [
+    "ui-final-live-desktop.jpg",
+    "ui-final-live-mobile.jpg"
+  ],
+  "limits": [
+    "Dependency reuse checks installed-lock/manifests/bytes and source snapshot; it does not reconstruct fresh registry tarball integrity.",
+    "No final-city calibration, MV3DT or Thor runtime qualification.",
+    "UI/evidence operational pass does not establish VLM semantic correctness."
+  ]
+}

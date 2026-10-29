@@ -1,0 +1,129 @@
+{
+  "schemaVersion": "city.vios-sei-versus-worker-input-rtcp.v1",
+  "capture": ".spark/city/media/staged-vios-input-clock-10s-20261026",
+  "status": "complete",
+  "decodeUsed": false,
+  "workerInputPaths": "Exact same VIOS /live source UUID endpoints as current nativeworker; independent encoded-only client, not a probe within that worker.",
+  "sourceStatistics": {
+    "cam_SW": {
+      "packets": 122,
+      "referencedNativeSeiPackets": 10,
+      "viosRtcpMinusNativeCaptureWallMs": {
+        "count": 10,
+        "min": 15.028,
+        "p50": 15.0426,
+        "p90": 15.0443,
+        "max": 15.0449
+      },
+      "receiveMinusNativeCaptureWallMs": {
+        "count": 122,
+        "min": 15.9123,
+        "p50": 16.4732,
+        "p90": 56.9071,
+        "max": 58.6156
+      },
+      "examples": [
+        {
+          "index": 112,
+          "nativeSei": {
+            "timestamp": 1792996935940430018,
+            "frame_num": 89981,
+            "publish_sim_time_ns": 3145700000000,
+            "timestamp_basis": "wall-capture"
+          },
+          "viosRtcpUnixNs": "1792996935955465888",
+          "rtcpMinusNativeCaptureWallMs": 15.03587
+        },
+        {
+          "index": 113,
+          "nativeSei": {
+            "timestamp": 1792996936027832701,
+            "frame_num": 89982,
+            "publish_sim_time_ns": 3145733333333,
+            "timestamp_basis": "wall-capture"
+          },
+          "viosRtcpUnixNs": "1792996936042877000",
+          "rtcpMinusNativeCaptureWallMs": 15.044299
+        }
+      ]
+    },
+    "cam_NE": {
+      "packets": 122,
+      "referencedNativeSeiPackets": 40,
+      "viosRtcpMinusNativeCaptureWallMs": {
+        "count": 40,
+        "min": 0.1358,
+        "p50": 0.1467,
+        "p90": 0.1553,
+        "max": 0.1562
+      },
+      "receiveMinusNativeCaptureWallMs": {
+        "count": 122,
+        "min": 1.0293,
+        "p50": 1.5517,
+        "p90": 41.9543,
+        "max": 43.3811
+      },
+      "examples": [
+        {
+          "index": 82,
+          "nativeSei": {
+            "timestamp": 1792996933351369697,
+            "frame_num": 89951,
+            "publish_sim_time_ns": 3144700000000,
+            "timestamp_basis": "wall-capture"
+          },
+          "viosRtcpUnixNs": "1792996933351525444",
+          "rtcpMinusNativeCaptureWallMs": 0.155747
+        },
+        {
+          "index": 83,
+          "nativeSei": {
+            "timestamp": 1792996933417823506,
+            "frame_num": 89952,
+            "publish_sim_time_ns": 3144733333333,
+            "timestamp_basis": "wall-capture"
+          },
+          "viosRtcpUnixNs": "1792996933417969888",
+          "rtcpMinusNativeCaptureWallMs": 0.146382
+        }
+      ]
+    }
+  },
+  "sameRenderFrame": {
+    "sourceOrder": [
+      "cam_NE",
+      "cam_SW"
+    ],
+    "basis": "Exact same SEI frame_num AND publish_sim_time_ns, unique in both sources.",
+    "matchedRenderTicks": 122,
+    "secondMinusFirstNativeHandoffMs": {
+      "count": 122,
+      "min": -1.0161,
+      "p50": -0.3442,
+      "p90": -0.3129,
+      "max": -0.2913
+    },
+    "secondMinusFirstReceiveMs": {
+      "count": 122,
+      "min": -27.1786,
+      "p50": 14.4895,
+      "p90": 54.653,
+      "max": 56.6061
+    },
+    "secondMinusFirstReferenceMs": {
+      "count": 10,
+      "min": 14.1293,
+      "p50": 14.4238,
+      "p90": 14.5516,
+      "max": 14.5738
+    }
+  },
+  "inputFileSha256": {
+    ".spark/city/media/staged-vios-input-clock-10s-20261026/cam_NE.mkv": "ce01300b642208f08da12500a3287e82fe1da4a0facad5b2d133b494a02f29af",
+    ".spark/city/media/staged-vios-input-clock-10s-20261026/cam_NE.timing.ndjson": "b718859e32fae4b34cf542f0137f0a71030182099b1a925e0b5bbd96c7fdfa92",
+    ".spark/city/media/staged-vios-input-clock-10s-20261026/cam_SW.mkv": "f3b2459169e426802e73234ec0169d6f525353654d17b9959fd92bbe3f62b8dc",
+    ".spark/city/media/staged-vios-input-clock-10s-20261026/cam_SW.timing.ndjson": "15d4dffe358d77819f0221a7c18617cbd128f088fa540e3ee76393813680be8e",
+    ".spark/city/media/staged-vios-input-clock-10s-20261026/capture.json": "175277d7c75769dce6aaa026fbc5c02bc86640585206056a06f50590db0e647f"
+  }
+}

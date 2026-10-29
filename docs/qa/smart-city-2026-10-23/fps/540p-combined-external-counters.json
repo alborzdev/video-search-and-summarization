@@ -1,0 +1,140 @@
+{
+  "seconds": 5.387216799892485,
+  "topKitThreads": [
+    {
+      "tid": "2403156",
+      "name": "1 Render Async",
+      "cpuPercent": 72.76484584912627,
+      "wait": "0"
+    },
+    {
+      "tid": "2399422",
+      "name": "kit",
+      "cpuPercent": 53.8311359598128,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399725",
+      "name": "tbb.worker",
+      "cpuPercent": 13.550596293332188,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399730",
+      "name": "tbb.worker",
+      "cpuPercent": 13.550596293332188,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399732",
+      "name": "tbb.worker",
+      "cpuPercent": 13.550596293332188,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399736",
+      "name": "tbb.worker",
+      "cpuPercent": 13.550596293332188,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399728",
+      "name": "tbb.worker",
+      "cpuPercent": 13.364971686574213,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399729",
+      "name": "tbb.worker",
+      "cpuPercent": 13.364971686574213,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399734",
+      "name": "tbb.worker",
+      "cpuPercent": 13.364971686574213,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399726",
+      "name": "tbb.worker",
+      "cpuPercent": 13.179347079816237,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399731",
+      "name": "tbb.worker",
+      "cpuPercent": 13.179347079816237,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399733",
+      "name": "tbb.worker",
+      "cpuPercent": 13.179347079816237,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399735",
+      "name": "tbb.worker",
+      "cpuPercent": 13.179347079816237,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399738",
+      "name": "tbb.worker",
+      "cpuPercent": 13.179347079816237,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399727",
+      "name": "tbb.worker",
+      "cpuPercent": 12.993722473058263,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399737",
+      "name": "tbb.worker",
+      "cpuPercent": 12.993722473058263,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399739",
+      "name": "tbb.worker",
+      "cpuPercent": 12.993722473058263,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399428",
+      "name": "carb.tasking0",
+      "cpuPercent": 8.724356517624834,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399431",
+      "name": "carb.tasking3",
+      "cpuPercent": 8.724356517624834,
+      "wait": "futex_do_wait"
+    },
+    {
+      "tid": "2399432",
+      "name": "carb.tasking4",
+      "cpuPercent": 8.724356517624834,
+      "wait": "futex_do_wait"
+    }
+  ],
+  "gpuSamplesUtilPercentMemPercentWatts": [
+    "30, 0, 45.85",
+    "30, 0, 38.53",
+    "10, 0, 28.75",
+    "10, 0, 28.58",
+    "51, 0, 29.01",
+    "51, 0, 29.87",
+    "59, 0, 46.50",
+    "59, 0, 46.71",
+    "48, 0, 28.58",
+    "48, 0, 35.60"
+  ],
+  "acceptedAsWorkingDemoBenchmark": false,
+  "failure": "Async preset delivered black decoded camera images; counts prove transport only. Preset removed.",
+  "diagnosisCorrection": "Async was not isolated as the cause: synchronous mode with maxBounces1 also delivered black images. Restoring RTPT maxBounces/maxSpecularAndTransmissionBounces3 made the same native540p camera nonblack. Both aggressive RTPT bounce overrides removed; async stays off pending separate validation."
+}

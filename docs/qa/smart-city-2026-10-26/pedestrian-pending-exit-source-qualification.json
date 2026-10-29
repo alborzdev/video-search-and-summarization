@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "city.pedestrian-pending-exit-source-qualification.v1",
+  "scope": "Source and CPU only; deployed status is recorded separately by the integration owner.",
+  "runtimeMutations": false,
+  "files": [
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/mobility_spatial.py",
+      "sha256": "04425575ac5f799a66a6244e62ea709effde329e6913406ee9c48c6e555986bc"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/tests/test_mobility_spatial.py",
+      "sha256": "15ee08696dc213659d8cc4a70ab7ae5e8addfec8aeaf6a3b4b79ff056b81f1a3"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/tests/test_pedestrian_exit_ingestion.py",
+      "sha256": "82a9b7ca89ea8e08cfccd1a01da56cbefaf5cdd4b025e4c0ee3283b5ea3a8a6d"
+    }
+  ],
+  "focusedTests": {
+    "passed": 54,
+    "failed": 0,
+    "durationSeconds": 0.11,
+    "command": "PYTHONPATH=services/analytics/behavior-analytics /tmp/vss-city-backend-test-env/bin/python -m pytest services/analytics/behavior-analytics/apps/city/tests/test_mobility_spatial.py services/analytics/behavior-analytics/apps/city/tests/test_pedestrian_exit_ingestion.py -q --tb=short"
+  },
+  "fatalRuff": {
+    "passed": true,
+    "selection": "E9,F63,F7,F82"
+  },
+  "offlineReplay": {
+    "path": "docs/qa/smart-city-2026-10-26/pedestrian-pending-exit-offline-replay.json",
+    "sha256": "4c5fc4b743f1c8550d22cd358d2130327434f1b3e6151ca77978da6b5842f949",
+    "actualFrames": 1149,
+    "actualRows": 2298,
+    "wholeEpisodeCompletedByAnalytics": false
+  },
+  "publicContract": {
+    "completionBasisUnchanged": "observed-far-side-exit",
+    "exitConfirmationBasis": "two-fresh-same-identity-observations",
+    "additiveNumericFields": [
+      "pendingExitTrackCount",
+      "recoveredExitCandidateCount"
+    ],
+    "internalRecoveryOutcomeNotPublished": true,
+    "legacyMissingCountExcludesVisiblePendingExits": true
+  },
+  "remainingLimits": [
+    "Source qualification does not replace a fresh live episode after controlled backend deployment.",
+    "The separate actual SDK identity exchange is not repaired, joined or used to claim completion.",
+    "Two consistent erroneous outside anchors can still terminate a journey; this is bounded temporal confirmation, not a validated spatial outlier classifier.",
+    "One observed exit followed by loss remains incomplete, even if a person in fact crossed."
+  ],
+  "combinedCityTests": {
+    "passed": 259,
+    "failed": 0,
+    "durationSeconds": 2.42,
+    "warning": "Existing Starlette/httpx deprecation; no installs or dependency edits.",
+    "command": "PYTHONPATH=services/analytics/behavior-analytics /tmp/vss-city-backend-test-env/bin/python -m pytest services/analytics/behavior-analytics/apps/city/tests -q --tb=short"
+  },
+  "combinedCityBackendSource": [
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/engine.py",
+      "sha256": "aff5a638e0cc8dd797230edfdb51ee9989c1945bdb97799bee8cfef834f1ee02"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/mobility.py",
+      "sha256": "d4bb65c3167ef8813b4e19eff0584041ad64bb9f3305cda381e99a63239d03e0"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/mobility_spatial.py",
+      "sha256": "04425575ac5f799a66a6244e62ea709effde329e6913406ee9c48c6e555986bc"
+    }
+  ]
+}

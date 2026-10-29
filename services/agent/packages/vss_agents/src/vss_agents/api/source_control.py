@@ -41,6 +41,9 @@ from vss_agents.api.source_analysis_state import is_source_detection_enabled
 from vss_agents.api.source_analysis_state import is_source_paused
 from vss_agents.api.source_analysis_state import set_source_kind
 from vss_agents.api.source_analysis_state import set_source_paused
+from vss_agents.api.source_indexing import get_indexing_policy
+from vss_agents.api.source_indexing import indexing_required_for_analysis
+from vss_agents.api.source_indexing_control import create_source_indexing_router
 from vss_agents.tools.vst.utils import get_streams_info as vst_get_streams_info
 from vss_agents.utils.sanitize import scrub_log
 
@@ -147,6 +150,8 @@ class SourceAnalysisResponse(BaseModel):
     sensor_id: str = Field(alias="sensorId")
     state: Literal["active", "paused", "partial"]
     steps: dict[str, bool] = Field(default_factory=dict)
+    indexing_policy: str = Field(default="continuous", alias="indexingPolicy")
+    indexing_required: bool = Field(default=True, alias="indexingRequired")
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -172,16 +177,20 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
             steps["detection"] = False
         elif not detector_endpoint:
             steps["detection"] = False
+        indexing_required = indexing_required_for_analysis(stream_id)
         if not config.rtvi_embed_url:
-            steps["embedding_resource"] = True
-            steps["embedding"] = True
-        steps["indexing"] = False if paused else await _semantic_index_is_fresh(config, stream_id)
+            # Preserve the legacy optional-service contract for continuous
+            # profiles without advertising an idle booth producer as active.
+            steps["embedding_resource"] = indexing_required
+            steps["embedding"] = indexing_required
+        steps["indexing"] = (
+            await _semantic_index_is_fresh(config, stream_id) if not paused and indexing_required else False
+        )
 
         active = (
             bool(steps)
             and (not detection_enabled or steps.get("detection", False))
-            and steps.get("embedding", False)
-            and steps.get("indexing", False)
+            and (not indexing_required or (steps.get("embedding", False) and steps.get("indexing", False)))
         )
         if paused:
             state: Literal["active", "paused", "partial"] = "paused"
@@ -194,14 +203,16 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
             message = "Source is registered; live analysis is recovering"
         return SourceAnalysisResponse(
             action="status",
-            analysis_active=active and not paused,
-            detection_enabled=detection_enabled,
-            analysis_profile_id=profile_id,
+            analysisActive=active and not paused,
+            detectionEnabled=detection_enabled,
+            analysisProfileId=profile_id,
             message=message,
             name="",
-            sensor_id=stream_id,
+            sensorId=stream_id,
             state=state,
             steps=steps,
+            indexingPolicy=get_indexing_policy(stream_id).mode,
+            indexingRequired=indexing_required,
         )
 
     @router.post(
@@ -220,13 +231,15 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
         if not found or resolved_id != stream_id or not rtsp_url:
             return SourceAnalysisResponse(
                 action=request.action,
-                analysis_active=False,
-                detection_enabled=is_source_detection_enabled(stream_id),
-                analysis_profile_id=get_source_analysis_profile(stream_id),
+                analysisActive=False,
+                detectionEnabled=is_source_detection_enabled(stream_id),
+                analysisProfileId=get_source_analysis_profile(stream_id),
                 message="The selected live source could not be verified",
                 name=request.name,
-                sensor_id=stream_id,
+                sensorId=stream_id,
                 state="partial",
+                indexingPolicy=get_indexing_policy(stream_id).mode,
+                indexingRequired=indexing_required_for_analysis(stream_id),
             )
 
         steps: dict[str, bool] = {}
@@ -275,8 +288,8 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
                         )
                         steps = get_live_analysis_runtime_steps(stream_id)
                         steps["detection"] = False
-                    complete = (not profile.detection_enabled or steps.get("detection", False)) and steps.get(
-                        "embedding", False
+                    complete = (not profile.detection_enabled or steps.get("detection", False)) and (
+                        not indexing_required_for_analysis(stream_id) or steps.get("embedding", False)
                     )
 
                 state: Literal["active", "paused", "partial"]
@@ -288,9 +301,9 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
                     state = "partial"
                 return SourceAnalysisResponse(
                     action="configure",
-                    analysis_active=state == "active",
-                    detection_enabled=profile.detection_enabled,
-                    analysis_profile_id=profile.id,
+                    analysisActive=state == "active",
+                    detectionEnabled=profile.detection_enabled,
+                    analysisProfileId=profile.id,
                     message=(
                         f"{profile.name} enabled"
                         if complete and not paused
@@ -299,9 +312,11 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
                         else "The requested analytics profile is still being applied"
                     ),
                     name=request.name,
-                    sensor_id=stream_id,
+                    sensorId=stream_id,
                     state=state,
                     steps=steps,
+                    indexingPolicy=get_indexing_policy(stream_id).mode,
+                    indexingRequired=indexing_required_for_analysis(stream_id),
                 )
 
             if request.action == "pause":
@@ -342,18 +357,20 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
                 )
                 return SourceAnalysisResponse(
                     action="pause",
-                    analysis_active=False,
-                    detection_enabled=is_source_detection_enabled(stream_id),
-                    analysis_profile_id=get_source_analysis_profile(stream_id),
+                    analysisActive=False,
+                    detectionEnabled=is_source_detection_enabled(stream_id),
+                    analysisProfileId=get_source_analysis_profile(stream_id),
                     message=(
                         "Live analysis paused; retained and indexed evidence was preserved"
                         if complete
                         else "Some analysis services could not be paused"
                     ),
                     name=request.name,
-                    sensor_id=stream_id,
+                    sensorId=stream_id,
                     state="paused" if complete else "partial",
                     steps=steps,
+                    indexingPolicy=get_indexing_policy(stream_id).mode,
+                    indexingRequired=indexing_required_for_analysis(stream_id),
                 )
 
             # Desired-active is durable even when a dependency is still
@@ -376,7 +393,9 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
                 set_live_analysis_runtime_steps(stream_id, steps)
             detection_enabled = is_source_detection_enabled(stream_id)
             profile_id = get_source_analysis_profile(stream_id)
-            complete = (not detection_enabled or steps.get("detection", False)) and steps.get("embedding", False)
+            complete = (not detection_enabled or steps.get("detection", False)) and (
+                not indexing_required_for_analysis(stream_id) or steps.get("embedding", False)
+            )
             logger.info(
                 "Live analysis resume for %s: %s",
                 scrub_log(stream_id),
@@ -384,20 +403,25 @@ def create_source_control_router(config: ServiceConfig) -> APIRouter:
             )
             return SourceAnalysisResponse(
                 action="resume",
-                analysis_active=complete,
-                detection_enabled=detection_enabled,
-                analysis_profile_id=profile_id,
+                analysisActive=complete,
+                detectionEnabled=detection_enabled,
+                analysisProfileId=profile_id,
                 message=(
-                    "Live analysis resumed; new evidence is being indexed"
+                    "Live analysis resumed; semantic indexing waits for an explicit request"
+                    if complete and not indexing_required_for_analysis(stream_id)
+                    else "Live analysis resumed; new evidence is being indexed"
                     if complete
                     else "Some analysis services could not be resumed"
                 ),
                 name=request.name,
-                sensor_id=stream_id,
+                sensorId=stream_id,
                 state="active" if complete else "partial",
                 steps=steps,
+                indexingPolicy=get_indexing_policy(stream_id).mode,
+                indexingRequired=indexing_required_for_analysis(stream_id),
             )
 
+    router.include_router(create_source_indexing_router(config))
     return router
 
 

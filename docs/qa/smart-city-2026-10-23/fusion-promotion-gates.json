@@ -1,0 +1,13 @@
+{
+  "scope": "Bounded two-camera Isaac simulator people fusion; vehicles remain camera-local.",
+  "minimumPairedSamples": 100,
+  "maximumSourceClockSkewP95Ms": 50,
+  "maximumPersonPositionMedianM": 0.5,
+  "maximumPersonPositionP95M": 1.0,
+  "maximumFalseMergedPeople": 0,
+  "minimumMatchedPeople": 5,
+  "minimumDuplicateReductionFraction": 0.5,
+  "minimumAvailableGiB": 23,
+  "minimumRunSeconds": 120,
+  "qualification": "Simulator ground truth is evaluation-only and must never supply operational tracks."
+}

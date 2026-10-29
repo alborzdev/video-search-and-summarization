@@ -114,3 +114,82 @@ Keep `.spark/`, `.thor/`, credentials, recordings, databases and TensorRT engine
 local to each device. Never copy generated device settings or compiled engines
 between Spark and Thor. Keep the existing branches as recovery checkpoints until
 the shared branch has been exercised on both machines.
+
+## October 29 Smart City transfer to another Spark
+
+The shared branch includes the current Smart City source: three booth scenarios,
+scenario-specific areas, VLM observations, native detection/tracking integration,
+and the camera continuity repairs. The simulator source is published separately
+in the private [Isaac Sim workspace](https://github.com/alborzdev/isaac-sim6-workspace).
+Its verified October 29 commit is `a4b1c5e672022643b36e71a65091c549af32f144`.
+That snapshot includes the latest pedestrian preparation fix. The older warning
+in its `docs/other-spark-setup.md` about unpublished VSS source is superseded by
+this shared-branch publication.
+
+For a fresh VSS clone using cached Spark images, avoid downloading every upstream
+platform's historical LFS binaries. After installing Git LFS, use:
+
+```sh
+GIT_LFS_SKIP_SMUDGE=1 git clone --branch codex/unified-spark-thor \
+  https://github.com/alborzdev/video-search-and-summarization.git "$HOME/vss"
+cd "$HOME/vss"
+git lfs install --local
+git lfs pull --include='services/alert/warmup/test.mp4,deploy/docker/services/infra/elk/logstash/gems/*.gem' --exclude=''
+python3 tools/runtime/platforms.py
+python3 tools/runtime/bootstrap.py doctor
+```
+
+The broad `git lfs pull` above remains available when all upstream build inputs
+are deliberately required. A full native VIOS source build additionally needs
+its `services/vios/**` LFS inputs; the narrow cached-image selection does not
+stage those. Git transfers application source and public assets. Docker images,
+model caches and generated engines have their own staging/build procedures.
+
+On the destination, authenticate `gh` with access to the private Isaac repository
+and follow its [other-Spark guide](https://github.com/alborzdev/isaac-sim6-workspace/blob/a4b1c5e672022643b36e71a65091c549af32f144/docs/other-spark-setup.md):
+
+```sh
+mkdir -p "$HOME/Documents/ChatGPT"
+gh repo clone alborzdev/isaac-sim6-workspace "$HOME/Documents/ChatGPT/isaacsim-6"
+cd "$HOME/Documents/ChatGPT/isaacsim-6"
+python3 tools/workspace_assets.py
+python3 tools/workspace_assets.py --check
+python3 tools/check_spark_migration.py
+```
+
+The asset restorer uses the authenticated, hash-checked `city-assets-2026-10-29`
+release. Isaac Sim 6.1 ARM64 is installed separately; a source ZIP does not include
+the city assets or NVIDIA runtime. Keep older checkouts and their data available
+while reconciling the new setup.
+
+`tools/smart-city/isaac_workspace.py` defaults to
+`/home/sparkdev/Documents/ChatGPT/isaacsim-6/environments/city`. A different user or
+location requires an explicit absolute `VSS_ISAAC_CITY_ROOT` in the operator and
+controller environments. For example, from the VSS checkout:
+
+```sh
+export VSS_ISAAC_CITY_ROOT="$HOME/Documents/ChatGPT/isaacsim-6/environments/city"
+python3 tools/smart-city/manage.py doctor
+```
+
+A shell export does not update an already-running user service. Recreate its
+host-local configuration with the destination paths before starting it.
+
+The current source machine selects RF-DETR Large, native MV3DT, native SEI timing
+and analyzed WebRTC previews. Historical Medium/NvDCF and camera-resolution
+receipts describe earlier configurations. The destination still needs compatible
+city/VSS images, model and BodyPose artifacts, local engine/export/quality
+receipts, MediaMTX, the controller environment, and its own source registrations.
+Current model and native-tracker selection checks exact artifact hashes; a newly
+built engine must be reconciled with its target receipts before activation.
+Preserve the destination's saved memory reserve and guard.
+
+Use [Smart City tooling](../tools/smart-city/README.md) and the companion migration
+guide to reconcile both cameras, calibration, rules, mobility and tracker pins.
+Do not copy this machine's source UUIDs, active tracker profile, `.spark` directory
+or rendered credentials. Camera geometry changes require calibration review.
+Pulling source alone does not update a cached image; use the
+[source-mounted UI workflow](ui-development.md) for current frontend source and
+the affected service's build procedure for backend/native changes. Verify both
+live previews, fresh detections, advancing recordings, all three scenarios and
+normal-traffic restoration on the actual destination before calling it ready.

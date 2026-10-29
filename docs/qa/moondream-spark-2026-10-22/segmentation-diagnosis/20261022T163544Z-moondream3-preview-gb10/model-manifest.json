@@ -1,0 +1,299 @@
+{
+  "_id": "68c327a5b7b1cbddf8a6b872",
+  "id": "moondream/moondream3-preview",
+  "private": false,
+  "pipeline_tag": "image-text-to-text",
+  "library_name": "transformers",
+  "tags": [
+    "transformers",
+    "safetensors",
+    "moondream3",
+    "text-generation",
+    "image-text-to-text",
+    "custom_code",
+    "doi:10.57967/hf/6761",
+    "license:other",
+    "eval-results",
+    "region:us"
+  ],
+  "downloads": 74969,
+  "likes": 693,
+  "modelId": "moondream/moondream3-preview",
+  "author": "moondream",
+  "sha": "5112966d1a723413b1c9a1e8bea272b72e647b35",
+  "lastModified": "2026-04-09T22:55:40.000Z",
+  "gated": false,
+  "disabled": false,
+  "widgetData": [
+    {
+      "text": "Hi, what can you help me with?"
+    },
+    {
+      "text": "What is 84 * 3 / 2?"
+    },
+    {
+      "text": "Tell me an interesting fact about the universe!"
+    },
+    {
+      "text": "Explain quantum computing in simple terms."
+    }
+  ],
+  "model-index": null,
+  "config": {
+    "architectures": [
+      "HfMoondream"
+    ],
+    "auto_map": {
+      "AutoConfig": "hf_moondream.HfConfig",
+      "AutoModelForCausalLM": "hf_moondream.HfMoondream"
+    },
+    "model_type": "moondream3"
+  },
+  "cardData": {
+    "library_name": "transformers",
+    "pipeline_tag": "image-text-to-text",
+    "license": "other"
+  },
+  "transformersInfo": {
+    "auto_model": "AutoModelForCausalLM",
+    "custom_class": "hf_moondream.HfMoondream",
+    "pipeline_tag": "text-generation"
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes",
+      "blobId": "755f3b8f8381fd7065274dbb556830cc84b25a88",
+      "size": 1745
+    },
+    {
+      "rfilename": "LICENSE.md",
+      "blobId": "626268a40bdc143ffb682475844c29b4321508a7",
+      "size": 4390
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "36c1228a71f37d244baf913bc17f7427de811de5",
+      "size": 8795
+    },
+    {
+      "rfilename": "config.json",
+      "blobId": "495a78a80f4f1a042aeea6a31e986ed5316e4d8a",
+      "size": 364
+    },
+    {
+      "rfilename": "config.py",
+      "blobId": "544b7888aac53c261dcb9ce057dc7b8ed0038c2d",
+      "size": 2834
+    },
+    {
+      "rfilename": "hf_moondream.py",
+      "blobId": "4d6a16fd59694e4a1de93acda800bda9dc3cbc5b",
+      "size": 5866
+    },
+    {
+      "rfilename": "image_crops.py",
+      "blobId": "1aa2f1e51953eced347b47830080fe2b5211b3d7",
+      "size": 8145
+    },
+    {
+      "rfilename": "layers.py",
+      "blobId": "aff0b88063394024b390a42c7745a92b10041b8c",
+      "size": 7844
+    },
+    {
+      "rfilename": "lora.py",
+      "blobId": "3453696dd757d55c7c88614a9c05c3db5e0b07be",
+      "size": 14489
+    },
+    {
+      "rfilename": "model-00001-of-00004.safetensors",
+      "blobId": "6b2f4751e624ed2291b92d062a6fe11c35ce9510",
+      "size": 4907406296,
+      "lfs": {
+        "sha256": "fd4b3d0d6daae9c4212056cd64f02f408ff083bbb0244114eecd05fcba30037e",
+        "size": 4907406296,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "model-00002-of-00004.safetensors",
+      "blobId": "3e1242611d987762bcc2ee2d9f2b1a024ac6979d",
+      "size": 4736548872,
+      "lfs": {
+        "sha256": "7cf6d17391db58801b61173510ba629875679dbcbe4bfd3cb38ac0958b3c70a0",
+        "size": 4736548872,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "model-00003-of-00004.safetensors",
+      "blobId": "1cf650c743b5398b91fa5e5fc971e326887a407a",
+      "size": 4502742464,
+      "lfs": {
+        "sha256": "f4391c6d6b46ed49aa00afddf1f7df9dd0845cbc681fdaf424e727b01ea2d3e4",
+        "size": 4502742464,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "model-00004-of-00004.safetensors",
+      "blobId": "2d94b8fb4c575e7b904b29e26ab350c4c4504e42",
+      "size": 4390620392,
+      "lfs": {
+        "sha256": "6af14858bdd7cdea5d19d786726e48434b02a3c0c52a771a0f25b6a8ca640187",
+        "size": 4390620392,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "model.safetensors.index.json",
+      "blobId": "7a3935f35dde40260d65d714e35f53c893c62714",
+      "size": 53016
+    },
+    {
+      "rfilename": "model_fp8.pt",
+      "blobId": "6b9407d44d0d01df2ac52954c2ce8a092cea6e5e",
+      "size": 10505451019,
+      "lfs": {
+        "sha256": "699bd3876f9e105440d60a5fe30c26bc33fbdf008f5bd611a3557663b24bd371",
+        "size": 10505451019,
+        "pointerSize": 136
+      }
+    },
+    {
+      "rfilename": "modelv2-00001-of-00004.safetensors",
+      "blobId": "58a1d8fe527df98abdc2987e2c9b668422b90eef",
+      "size": 4907406296,
+      "lfs": {
+        "sha256": "79006ed488cca15b173cd5c0c7c1a467c20aaf5508e13934c36378d071d48c13",
+        "size": 4907406296,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "modelv2-00002-of-00004.safetensors",
+      "blobId": "5445fe6ab2455e182afe9a0e9dcc9a02efd75311",
+      "size": 4736548872,
+      "lfs": {
+        "sha256": "40202c61286ec7386d9bbce31d87af3064e42931b10323ed4b3e44158c0521e3",
+        "size": 4736548872,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "modelv2-00003-of-00004.safetensors",
+      "blobId": "f1dfbe2beea29fc080342ad368354ce73efbb5c8",
+      "size": 4502742464,
+      "lfs": {
+        "sha256": "ff46835f23bac47c7409032391e02a095821e274f3faaeea3f826a960db9bf80",
+        "size": 4502742464,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "modelv2-00004-of-00004.safetensors",
+      "blobId": "7474e1dfea5342e6b23c90f4ef3da41672f108af",
+      "size": 4390628760,
+      "lfs": {
+        "sha256": "0a4d39e1bcb0ab835b9a00c7f458dedca4faf8741fc0b23fd2caf2af4547bca6",
+        "size": 4390628760,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "moondream.py",
+      "blobId": "5acc1785b31d62f271f47cdb218752f32c3947fc",
+      "size": 39247
+    },
+    {
+      "rfilename": "open_vocab_detect.png",
+      "blobId": "1b41d5457eda49ab6824a0dad56c8aa73107cad2",
+      "size": 1533334,
+      "lfs": {
+        "sha256": "ea98c762d53ff5b619b51c538fda3e9dce2c895d32bcb38675591e79b55e8054",
+        "size": 1533334,
+        "pointerSize": 132
+      }
+    },
+    {
+      "rfilename": "point_count.png",
+      "blobId": "9bb6f2dd5d9cb28c1448109c2d80da54a734ad3f",
+      "size": 1997226,
+      "lfs": {
+        "sha256": "fa1d46a37291c46a006abd3579a241fe0fa5995d735883e90f5d5210a843b397",
+        "size": 1997226,
+        "pointerSize": 132
+      }
+    },
+    {
+      "rfilename": "region.py",
+      "blobId": "7b6b26ee8cd5e121acc621541bb42aeade901af3",
+      "size": 4586
+    },
+    {
+      "rfilename": "rope.py",
+      "blobId": "93a3bfbb7ebe6d4c07f20d949a425a15091691e2",
+      "size": 1545
+    },
+    {
+      "rfilename": "structured_outputs.png",
+      "blobId": "ad3e0dcb90817d92b55332455c1a43a190993a8e",
+      "size": 1868851,
+      "lfs": {
+        "sha256": "655bc4f2897175ca479b40308c3a0ae8e368b943b92bfbe73075821906a83b0f",
+        "size": 1868851,
+        "pointerSize": 132
+      }
+    },
+    {
+      "rfilename": "text.py",
+      "blobId": "c5ac0fb9000f137f9f511fac21b68cf1f3cb03d5",
+      "size": 7913
+    },
+    {
+      "rfilename": "utils.py",
+      "blobId": "a4627a1eb94097bbb1349cf7daf1852a481c46d8",
+      "size": 1415
+    },
+    {
+      "rfilename": "vision.py",
+      "blobId": "de1aa5e8935061c59f5f59f4ebeb2a52e22b0e6f",
+      "size": 5087
+    },
+    {
+      "rfilename": "visual_reasoning.png",
+      "blobId": "fd2d3bc9ff21f84afdc1e83795b6bf8b4162e5c2",
+      "size": 434058,
+      "lfs": {
+        "sha256": "43f9b5eb351a66dd8a05957813beb5e18367f6b3ad232b2bde8545d90132759d",
+        "size": 434058,
+        "pointerSize": 131
+      }
+    }
+  ],
+  "spaces": [
+    "prithivMLmods/Multimodal-VLM-v1.0",
+    "sergiopaniego/vlm_object_understanding",
+    "merve/moondream3",
+    "akhaliq/moondream3-preview",
+    "Csplk/moondream2-batch-processing",
+    "mmrech/vlm_object_understanding",
+    "GF-John/moondream-pointer",
+    "KarthiEz/stampdetection",
+    "kkacquah/moondream-moondream3-preview",
+    "beeeeeeeeeeeeeeeeeeeeeeeeeeeeeee/moondream-moondream3-preview",
+    "KinetoLabs/moondream-moondream3-preview",
+    "saiful-ai-dev/OCR",
+    "Siranjeevi029/moondream3-preview",
+    "umairranag/moondream3",
+    "jclvn/olhar-ai-gradio"
+  ],
+  "createdAt": "2025-09-11T19:48:53.000Z",
+  "safetensors": {
+    "parameters": {
+      "BF16": 9268626928
+    },
+    "total": 9268626928
+  },
+  "usedStorage": 66126777526
+}

@@ -1,0 +1,131 @@
+{
+  "live": {
+    "medium": {
+      "windows": [
+        {
+          "window": 1,
+          "seconds": 29.16559641994536,
+          "sources": [
+            {
+              "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+              "analyzedFps": 12.891901629101142,
+              "previewFps": 12.583318877340743,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.2200629711151123
+            },
+            {
+              "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+              "analyzedFps": 12.85761465668332,
+              "previewFps": 12.72046676701203,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.2320098876953125
+            }
+          ],
+          "minimumAvailableGiB": 33.37166976928711,
+          "bothLiveThroughout": true
+        },
+        {
+          "window": 2,
+          "seconds": 29.16158688813448,
+          "sources": [
+            {
+              "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+              "analyzedFps": 13.202299363093033,
+              "previewFps": 12.41359056997319,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.20423030853271484
+            },
+            {
+              "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+              "analyzedFps": 13.202299363093033,
+              "previewFps": 12.48217394328796,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.15376687049865723
+            }
+          ],
+          "minimumAvailableGiB": 33.291141510009766,
+          "bothLiveThroughout": true
+        }
+      ],
+      "meanAnalyzedFpsPerCamera": 13.038528752992631,
+      "meanPreviewFpsPerCamera": 12.54988753940348
+    },
+    "large": {
+      "windows": [
+        {
+          "window": 1,
+          "seconds": 29.14940933091566,
+          "sources": [
+            {
+              "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+              "analyzedFps": 13.104896763546199,
+              "previewFps": 12.212940439325777,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.1858675479888916
+            },
+            {
+              "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+              "analyzedFps": 13.139202776016216,
+              "previewFps": 12.624612588965972,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.18557429313659668
+            }
+          ],
+          "minimumAvailableGiB": 33.35776138305664,
+          "bothLiveThroughout": true
+        },
+        {
+          "window": 2,
+          "seconds": 29.143077947199345,
+          "sources": [
+            {
+              "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+              "analyzedFps": 12.62735530772462,
+              "previewFps": 11.872459066501953,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.23296141624450684
+            },
+            {
+              "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+              "analyzedFps": 12.661668773234743,
+              "previewFps": 12.009712928542438,
+              "sessionStable": true,
+              "postFailed": 0,
+              "sourceAgeP95": 0.21757006645202637
+            }
+          ],
+          "minimumAvailableGiB": 33.268795013427734,
+          "bothLiveThroughout": true
+        }
+      ],
+      "meanAnalyzedFpsPerCamera": 12.883280905130444,
+      "meanPreviewFpsPerCamera": 12.179931255834035
+    },
+    "analyzedFpsDelta": -0.15524784786218682,
+    "previewFpsDelta": -0.36995628356944543
+  },
+  "replay": {
+    "medium": {
+      "runsFpsPerCamera": [
+        135.2564226460248,
+        149.25377361241343
+      ],
+      "meanFpsPerCamera": 142.2550981292191
+    },
+    "large": {
+      "runsFpsPerCamera": [
+        107.46259671143127,
+        102.67187906204522
+      ],
+      "meanFpsPerCamera": 105.06723788673824
+    },
+    "capacityReductionPercent": 26.141671357676643
+  }
+}

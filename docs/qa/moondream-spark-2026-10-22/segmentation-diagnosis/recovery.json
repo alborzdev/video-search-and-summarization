@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-22T16:57:59.434423+00:00",
+  "http_status": 200,
+  "body": "{\"object\":\"health.response\",\"message\":\"Service is ready.\"}",
+  "container_status": "running healthy",
+  "guard_active": true,
+  "available_gib": 38.896705627441406,
+  "reserve_gib": 20,
+  "moondream_test_processes": [],
+  "moondream_http_service_enabled": false
+}

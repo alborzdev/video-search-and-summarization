@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "city.sprint-startup-repair.v1",
+  "createdAt": "2026-10-23T16:11:15.760253+00:00",
+  "status": "cpu-validated-runtime-retry-pending",
+  "originalFailure": {
+    "logPath": ".spark/city/runtime/sprint-final-packaged-start-20261023.log",
+    "logSha256": "a7c6f4b6ceedec995720197be44b5e3fc836499d624eccd893822f664d4c3f87",
+    "agentEventAt": "2026-10-23T16:01:10Z",
+    "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+    "controllerHttpStatus": 422,
+    "controllerDetail": "Registered source CPU decode probe failed",
+    "agentHttpStatus": 200,
+    "agentResumeResult": "partial",
+    "detectionRestored": false,
+    "embeddingStarted": true,
+    "launcherPreviouslyObserved": "Timed out waiting for real inference, six rules and exact previews",
+    "cleanup": "Both owned source analysis registrations paused; launcher stopped its newly started Isaac unit."
+  },
+  "changes": [
+    "Launcher validates exact source/name/action/profile plus detection flag and required service-step confirmations.",
+    "Launcher rejects partial resume/pause immediately and uses fresh source-scoped Agent logs for sanitized diagnostics only.",
+    "Live OpenCV admission uses RTSP TCP and permits at most two open/decode-readiness attempts with a two-second delay after release.",
+    "Both OpenCV attempts share the original hard 20-second subprocess timeout. No extra child or timeout extension.",
+    "Geometry mismatch, invalid dimensions, import errors, recorded input, and process timeout never trigger another attempt.",
+    "Live ffprobe requests explicitly select TCP; recorded input and existing timeout options remain unchanged."
+  ],
+  "validation": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_isaac_demo.py tools/smart-city/tests/test_controller_probe.py tools/smart-city/test_controller.py",
+    "passed": 67,
+    "warning": "Existing Starlette/httpx deprecation warning."
+  },
+  "sourceSha256": {
+    "tools/smart-city/controller.py": "d12e62fbc6b9fa6fe3162b6d8fb94e6f7949f8f2e62ffdf1acdb42892b7521de",
+    "tools/smart-city/isaac_demo.py": "9240289ad5c27852c847ea4c12a89b87f774b2fe1d5a0abeb6948434bbac61ac",
+    "tools/smart-city/tests/test_controller_probe.py": "0f59d0e072eabea919a10b99b90e1a9ab6f8c5df6e89161a58084390b8127d62",
+    "tools/smart-city/tests/test_isaac_demo.py": "4c7fe45f8591f676d9b41e3ae0494b3f69e38f6592c449e27aee8cb8bd080311"
+  },
+  "limits": [
+    "TCP alignment is a transport consistency repair; evidence does not prove UDP caused the original failure.",
+    "ffprobe checks stream metadata and is not equivalent to the OpenCV decoded-frame check.",
+    "The controller service must be restarted by the deployment owner to load changed code.",
+    "No live source resume, simulator launch, service restart, deployment, model request, or GPU test was performed by this audit agent.",
+    "The original failed run remains a failure; a new full integrated qualification is required."
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "city.native-sei-source-runtime-check.v1",
+  "atNs": "1793010282137546019",
+  "sources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "sourceSessionId": "8f706600-df62-4cba-a44e-89a9ed17b325",
+      "sequence": "1683",
+      "lastSourceTimeNs": "1793010282059059768",
+      "rawSourcePtsNs": "173229428180",
+      "sourceClockMode": "source-native-sei",
+      "sourceClockEvidence": {
+        "schemaVersion": "city.source-native-sei.v1",
+        "method": "isaac-native-sei-wall-capture",
+        "correlation": "exact-au-pts",
+        "captureTimeNs": "1793010282059059768",
+        "auPtsNs": "173229428180",
+        "frameCounter": "78810"
+      },
+      "sourceClockAgeSeconds": 0.057726383209228516,
+      "ingestAgeSeconds": 0.028090698644518852,
+      "timestampBasis": "source-native-sei",
+      "trackingArchitecture": "nvdcf-local-then-mv3dt-v1"
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sourceSessionId": "f9cc8efe-60ee-4d72-b747-cb43a10fa3ea",
+      "sequence": "1682",
+      "lastSourceTimeNs": "1793010281915660272",
+      "rawSourcePtsNs": "173085727109",
+      "sourceClockMode": "source-native-sei",
+      "sourceClockEvidence": {
+        "schemaVersion": "city.source-native-sei.v1",
+        "method": "isaac-native-sei-wall-capture",
+        "correlation": "exact-au-pts",
+        "captureTimeNs": "1793010281915660272",
+        "auPtsNs": "173085727109",
+        "frameCounter": "78809"
+      },
+      "sourceClockAgeSeconds": 0.20116114616394043,
+      "ingestAgeSeconds": 0.16472826758399606,
+      "timestampBasis": "source-native-sei",
+      "trackingArchitecture": "nvdcf-local-then-mv3dt-v1"
+    }
+  ],
+  "latestPairSkewMs": 143.399496,
+  "scope": "Current actual source clocks only; UI exact preview/global ID qualification still pending downstream fixes."
+}

@@ -1,0 +1,111 @@
+{
+  "schemaVersion": "city.retained-northbound-entry-anchors.v1",
+  "provenance": "Actual exported first-NvDCF bottom-centre box anchors, SWsource997d3a69-e052-45a4-a1ce-be1b046670c4/session0dd7adc9-3f21-4916-b7dd-411553225ae3, October26v3. No simulator position or actor identity is supplied to the gate. Labels describe source trajectory direction only. These are regression examples, not held-out detector accuracy.",
+  "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+  "retainedInputSha256": {
+    "normal": "a5d0eefb86b18687898ccff432768c7429077f27a98d584c8178067eb82e9c61",
+    "hold": "939528336d2efdd36a2f1a0ad37111020e86eaad35e18a7715d74001e9fc6d3e"
+  },
+  "cases": [
+    {
+      "name": "actual-northbound-9215",
+      "localTrackId": "5527462707671859215",
+      "class": "bus",
+      "before": {
+        "sourceTimeNs": "1793002952193045443",
+        "anchorPx": [
+          859.21875,
+          497.219238
+        ]
+      },
+      "after": {
+        "sourceTimeNs": "1793002952300156555",
+        "anchorPx": [
+          845.5664059999999,
+          493.98925799999995
+        ]
+      },
+      "expectedCandidateHit": true
+    },
+    {
+      "name": "actual-northbound-9357",
+      "localTrackId": "5527462707671859357",
+      "class": "car",
+      "before": {
+        "sourceTimeNs": "1793003221055328444",
+        "anchorPx": [
+          870.0,
+          490.429688
+        ]
+      },
+      "after": {
+        "sourceTimeNs": "1793003221208217333",
+        "anchorPx": [
+          863.90625,
+          484.431152
+        ]
+      },
+      "expectedCandidateHit": true
+    },
+    {
+      "name": "actual-northbound-9363",
+      "localTrackId": "5527462707671859363",
+      "class": "car",
+      "before": {
+        "sourceTimeNs": "1793003228289105445",
+        "anchorPx": [
+          865.78125,
+          496.757812
+        ]
+      },
+      "after": {
+        "sourceTimeNs": "1793003228430394334",
+        "anchorPx": [
+          859.21875,
+          486.07910200000003
+        ]
+      },
+      "expectedCandidateHit": true
+    },
+    {
+      "name": "actual-anchor-outside-west-edge",
+      "localTrackId": "5527462707671859270",
+      "class": "car",
+      "before": {
+        "sourceTimeNs": "1793003104339613778",
+        "anchorPx": [
+          822.6562495,
+          537.956543
+        ]
+      },
+      "after": {
+        "sourceTimeNs": "1793003104422002667",
+        "anchorPx": [
+          809.0624995,
+          537.956543
+        ]
+      },
+      "expectedCandidateHit": false
+    },
+    {
+      "name": "actual-southbound-observed-motion",
+      "localTrackId": "5527462707671859389",
+      "class": "car",
+      "before": {
+        "sourceTimeNs": "1793003343387150778",
+        "anchorPx": [
+          796.875,
+          538.615723
+        ]
+      },
+      "after": {
+        "sourceTimeNs": "1793003343478528555",
+        "anchorPx": [
+          814.21875,
+          538.681641
+        ]
+      },
+      "expectedCandidateHit": false
+    }
+  ]
+}

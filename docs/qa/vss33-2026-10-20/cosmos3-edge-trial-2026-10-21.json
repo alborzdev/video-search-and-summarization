@@ -1,0 +1,690 @@
+{
+  "date": "2026-10-21",
+  "device": "DGX Spark GB10",
+  "source_commit": "96538737a954cd3d16a02e30b440c934b75bb6f3",
+  "edge_checkpoint": {
+    "repo": "nvidia/Cosmos3-Edge",
+    "revision": "344d602b128d1bbdacb43b08d0a3626f46343e29",
+    "precision": "BF16",
+    "download_gib": 7.20420556422323,
+    "provenance": "All downloaded source files verified against pinned Git blob IDs or LFS SHA-256 IDs before model initialization."
+  },
+  "method": {
+    "order": [
+      "nano-before",
+      "edge-compiled",
+      "nano-after"
+    ],
+    "same_inputs": true,
+    "width": 512,
+    "height": 512,
+    "max_tokens": 64,
+    "temperature": 0,
+    "seed": 42,
+    "audio": false,
+    "reasoning": false,
+    "warmups_excluded_per_model": 8,
+    "timed_repeats_per_case_per_model": 3,
+    "timed_requests": 72,
+    "total_requests_including_warmups": 96,
+    "timing": "Nonstream client wall time to complete answer including inline media transfer and preprocessing; excludes startup and warmup.",
+    "current_conditions": "Fresh matched test. The ACT PID from the earlier EVS benchmark was no longer present; do not compare these absolute times to that earlier run as a model-only gain.",
+    "kv_cache_bytes": 4294967296,
+    "max_sequences": 1,
+    "reserve_gib": 20
+  },
+  "models": {
+    "nano-before": {
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.5",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLLM_CUDAGRAPH_MODE": null,
+        "VLLM_ATTENTION_BACKEND": ""
+      },
+      "cases": [
+        {
+          "name": "raw20-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            0.87,
+            0.884,
+            0.853
+          ],
+          "median_seconds": 0.87,
+          "answers": {
+            "YES": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "raw20-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 20,
+          "timed_seconds": [
+            0.937,
+            0.917,
+            0.955
+          ],
+          "median_seconds": 0.937,
+          "answers": {
+            "NO": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "original-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 4,
+          "timed_seconds": [
+            0.614,
+            0.581,
+            0.58
+          ],
+          "median_seconds": 0.581,
+          "answers": {
+            "YES": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "original-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 4,
+          "timed_seconds": [
+            0.576,
+            0.563,
+            0.588
+          ],
+          "median_seconds": 0.576,
+          "answers": {
+            "NO": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "scene-positive",
+          "expected": null,
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            1.803,
+            1.805,
+            1.799
+          ],
+          "median_seconds": 1.803,
+          "answers": {
+            "A cardboard box is moving on a blue conveyor belt.": 3
+          },
+          "completion_tokens": [
+            12,
+            12,
+            12
+          ],
+          "semantic_correct": null,
+          "semantic_checks": 0
+        },
+        {
+          "name": "json20-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            2.688,
+            2.683,
+            2.696
+          ],
+          "median_seconds": 2.688,
+          "answers": {
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout all frames.\"}": 3
+          },
+          "completion_tokens": [
+            23,
+            23,
+            23
+          ],
+          "semantic_correct": 0,
+          "semantic_checks": 3
+        },
+        {
+          "name": "json20-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 20,
+          "timed_seconds": [
+            2.917,
+            2.927,
+            2.941
+          ],
+          "median_seconds": 2.927,
+          "answers": {
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout the entire sequence of frames.\"}": 3
+          },
+          "completion_tokens": [
+            26,
+            26,
+            26
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "final-image",
+          "expected": "YES",
+          "media_sha256": "0544e4769489b7c6b85c002acfc0648849a62b7aec6a09478d10960bc7661bfa",
+          "frames": 1,
+          "timed_seconds": [
+            0.444,
+            0.446,
+            0.45
+          ],
+          "median_seconds": 0.446,
+          "answers": {
+            "No": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 0,
+          "semantic_checks": 3
+        }
+      ]
+    },
+    "edge-compiled": {
+      "model": "cosmos3-edge-344d602b",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/cosmos3-edge-344d602b",
+        "VLM_MODEL_TO_USE": "vllm-compatible",
+        "VIA_EVS_SESSION": "false",
+        "VLM_VIDEO_PRUNING_RATE": "",
+        "VLLM_ENFORCE_EAGER": "false",
+        "VLLM_CUDAGRAPH_MODE": "PIECEWISE",
+        "VLLM_ATTENTION_BACKEND": "TRITON_ATTN"
+      },
+      "cases": [
+        {
+          "name": "raw20-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            1.335,
+            1.299,
+            1.317
+          ],
+          "median_seconds": 1.317,
+          "answers": {
+            "Yes": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "raw20-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 20,
+          "timed_seconds": [
+            1.405,
+            1.399,
+            1.403
+          ],
+          "median_seconds": 1.403,
+          "answers": {
+            "NO": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "original-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 4,
+          "timed_seconds": [
+            0.447,
+            0.455,
+            0.462
+          ],
+          "median_seconds": 0.455,
+          "answers": {
+            "YES": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "original-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 4,
+          "timed_seconds": [
+            0.404,
+            0.403,
+            0.415
+          ],
+          "median_seconds": 0.404,
+          "answers": {
+            "NO": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "scene-positive",
+          "expected": null,
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            1.613,
+            1.61,
+            1.624
+          ],
+          "median_seconds": 1.613,
+          "answers": {
+            "A cardboard box appears on a conveyor belt.": 3
+          },
+          "completion_tokens": [
+            10,
+            10,
+            10
+          ],
+          "semantic_correct": null,
+          "semantic_checks": 0
+        },
+        {
+          "name": "json20-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            2.17,
+            2.158,
+            2.195
+          ],
+          "median_seconds": 2.17,
+          "answers": {
+            "{\"answer\": \"NO\", \"reasoning\": \"The video does not display any boxes on the conveyor belt; it remains empty throughout.\"}": 3
+          },
+          "completion_tokens": [
+            30,
+            30,
+            30
+          ],
+          "semantic_correct": 0,
+          "semantic_checks": 3
+        },
+        {
+          "name": "json20-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 20,
+          "timed_seconds": [
+            2.025,
+            2.045,
+            2.054
+          ],
+          "median_seconds": 2.045,
+          "answers": {
+            "{\"answer\": \"NO\", \"reasoning\": \"No boxes are seen on the conveyor belt in these frames.\"}": 3
+          },
+          "completion_tokens": [
+            25,
+            25,
+            25
+          ],
+          "semantic_correct": 0,
+          "semantic_checks": 3
+        },
+        {
+          "name": "final-image",
+          "expected": "YES",
+          "media_sha256": "0544e4769489b7c6b85c002acfc0648849a62b7aec6a09478d10960bc7661bfa",
+          "frames": 1,
+          "timed_seconds": [
+            0.2,
+            0.211,
+            0.21
+          ],
+          "median_seconds": 0.21,
+          "answers": {
+            "NO": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 0,
+          "semantic_checks": 3
+        }
+      ]
+    },
+    "nano-after": {
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.5",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLLM_CUDAGRAPH_MODE": null,
+        "VLLM_ATTENTION_BACKEND": ""
+      },
+      "cases": [
+        {
+          "name": "raw20-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            0.813,
+            0.821,
+            0.823
+          ],
+          "median_seconds": 0.821,
+          "answers": {
+            "YES": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "raw20-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 20,
+          "timed_seconds": [
+            0.875,
+            0.881,
+            0.88
+          ],
+          "median_seconds": 0.88,
+          "answers": {
+            "NO": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "original-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 4,
+          "timed_seconds": [
+            0.569,
+            0.56,
+            0.556
+          ],
+          "median_seconds": 0.56,
+          "answers": {
+            "YES": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "original-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 4,
+          "timed_seconds": [
+            0.545,
+            0.544,
+            0.554
+          ],
+          "median_seconds": 0.545,
+          "answers": {
+            "NO": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "scene-positive",
+          "expected": null,
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            1.746,
+            1.733,
+            1.773
+          ],
+          "median_seconds": 1.746,
+          "answers": {
+            "A cardboard box is moving on a blue conveyor belt.": 3
+          },
+          "completion_tokens": [
+            12,
+            12,
+            12
+          ],
+          "semantic_correct": null,
+          "semantic_checks": 0
+        },
+        {
+          "name": "json20-positive",
+          "expected": "YES",
+          "media_sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+          "frames": 20,
+          "timed_seconds": [
+            2.667,
+            2.652,
+            2.709
+          ],
+          "median_seconds": 2.667,
+          "answers": {
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout all frames.\"}": 3
+          },
+          "completion_tokens": [
+            23,
+            23,
+            23
+          ],
+          "semantic_correct": 0,
+          "semantic_checks": 3
+        },
+        {
+          "name": "json20-empty",
+          "expected": "NO",
+          "media_sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+          "frames": 20,
+          "timed_seconds": [
+            2.895,
+            2.888,
+            2.953
+          ],
+          "median_seconds": 2.895,
+          "answers": {
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout the entire sequence of frames.\"}": 3
+          },
+          "completion_tokens": [
+            26,
+            26,
+            26
+          ],
+          "semantic_correct": 3,
+          "semantic_checks": 3
+        },
+        {
+          "name": "final-image",
+          "expected": "YES",
+          "media_sha256": "0544e4769489b7c6b85c002acfc0648849a62b7aec6a09478d10960bc7661bfa",
+          "frames": 1,
+          "timed_seconds": [
+            0.457,
+            0.431,
+            0.418
+          ],
+          "median_seconds": 0.431,
+          "answers": {
+            "No": 3
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2
+          ],
+          "semantic_correct": 0,
+          "semantic_checks": 3
+        }
+      ]
+    }
+  },
+  "comparison": [
+    {
+      "case": "raw20-positive",
+      "nano_evs_median_seconds": 0.838,
+      "edge_median_seconds": 1.317,
+      "edge_wait_change_percent": 57.1599045346062,
+      "edge_response_speed_ratio": 0.636294608959757
+    },
+    {
+      "case": "raw20-empty",
+      "nano_evs_median_seconds": 0.899,
+      "edge_median_seconds": 1.403,
+      "edge_wait_change_percent": 56.062291434927694,
+      "edge_response_speed_ratio": 0.6407697790449037
+    },
+    {
+      "case": "original-positive",
+      "nano_evs_median_seconds": 0.5745,
+      "edge_median_seconds": 0.455,
+      "edge_wait_change_percent": -20.800696257615314,
+      "edge_response_speed_ratio": 1.2626373626373626
+    },
+    {
+      "case": "original-empty",
+      "nano_evs_median_seconds": 0.5585,
+      "edge_median_seconds": 0.404,
+      "edge_wait_change_percent": -27.663384064458363,
+      "edge_response_speed_ratio": 1.3824257425742574
+    },
+    {
+      "case": "scene-positive",
+      "nano_evs_median_seconds": 1.786,
+      "edge_median_seconds": 1.613,
+      "edge_wait_change_percent": -9.686450167973126,
+      "edge_response_speed_ratio": 1.1072535647861128
+    },
+    {
+      "case": "json20-positive",
+      "nano_evs_median_seconds": 2.6855,
+      "edge_median_seconds": 2.17,
+      "edge_wait_change_percent": -19.195680506423397,
+      "edge_response_speed_ratio": 1.237557603686636
+    },
+    {
+      "case": "json20-empty",
+      "nano_evs_median_seconds": 2.9219999999999997,
+      "edge_median_seconds": 2.045,
+      "edge_wait_change_percent": -30.01368925393566,
+      "edge_response_speed_ratio": 1.4288508557457211
+    },
+    {
+      "case": "final-image",
+      "nano_evs_median_seconds": 0.445,
+      "edge_median_seconds": 0.21,
+      "edge_wait_change_percent": -52.80898876404494,
+      "edge_response_speed_ratio": 2.119047619047619
+    }
+  ],
+  "final_state": {
+    "model_path": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+    "evs_session": "true",
+    "pruning_rate": "0.5",
+    "health": "healthy",
+    "api_ready": true,
+    "saved_configuration_unchanged": true,
+    "guard_active": true
+  },
+  "decision": "Keep Nano BF16 + adaptive EVS active. Compiled Edge BF16 improves four-frame binary latency but is slower on twenty-frame binary requests and failed the requested JSON field contract. Candidate remains staged for further experiments.",
+  "limitations": [
+    "Two conveyor clips and one extracted still; no general quality or throughput claim.",
+    "Edge uses a different vision architecture and was tested with adaptive EVS disabled. Compilation/PIECEWISE CUDA graphs were explicitly configured.",
+    "Both model configurations missed the box in the still-image control and answered NO for the positive JSON video question. Edge additionally used answer instead of the requested prediction_answer field, including on the empty clip.",
+    "The short description differs: Edge uses fewer output tokens; its response time is not an isolated model-generation speed comparison.",
+    "No new image build, driver update, model/KV budget increase, live ingestion or Thor qualification."
+  ],
+  "references": [
+    "https://huggingface.co/nvidia/Cosmos3-Edge/tree/344d602b128d1bbdacb43b08d0a3626f46343e29",
+    "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization/blob/3a2744515112dce15022d5dd338bbe9e76aaeade/services/rtvi/rt-vlm/perf/benchmark/PERF_GUIDE.RTVI_VLM.md#bcd-33-model-selection"
+  ]
+}

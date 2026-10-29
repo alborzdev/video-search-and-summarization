@@ -6,12 +6,15 @@ describe('workspaceRoute', () => {
   it('accepts only known primary workspaces', () => {
     expect(parseWorkspace('monitoring')).toBe('monitoring');
     expect(parseWorkspace('guided')).toBe('guided');
+    expect(parseWorkspace('smart-city')).toBe('smart-city');
+    expect(parseWorkspace('defense')).toBe('defense');
     expect(parseWorkspace(['live', 'system'])).toBe('live');
     expect(parseWorkspace('unknown')).toBe('home');
     expect(parseWorkspace(undefined)).toBe('home');
   });
 
   it('creates a stable workspace URL while retaining unrelated query values', () => {
+    expect(workspaceHref('defense', {})).toBe('/?workspace=defense');
     expect(
       workspaceHref('events', { source: 'dock-2', workspace: 'home', view: ['all', 'open'] })
     ).toBe('/?workspace=events&source=dock-2&view=all&view=open');

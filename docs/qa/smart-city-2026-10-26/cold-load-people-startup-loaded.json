@@ -1,0 +1,29 @@
+{
+  "stage": "/home/sparkdev/isaac_city_sim/stages/neighborhood/pedestrian-pocket-v3/smart_city_expo_pedestrian.usda",
+  "playing": true,
+  "simTime": 26.20000000000046,
+  "loaded": true,
+  "error": null,
+  "loading": false,
+  "streaming": false,
+  "streamBusy": false,
+  "streams": null,
+  "log": [
+    "    light phase={'name': 'NS_green', 'index': 0, 't_in': 7.7, 't_remaining': 12.3, 'states': {'NS_through': 'green', 'EW_through': 'red', 'ped_cross_EW': 'walk', 'ped_cross_NS': 'dont_walk'}}",
+    "    vehicle counters={'spawned': 1, 'despawned': 0, 'red_stops': 0, 'crosswalk_yields': 0, 'spawn_dropped_pool': 0, 'spawn_dropped_cap': 0, 'spawn_dropped_blocked': 0, 'resets': 0, 'dt_dropped_s': 0.0, 'phase_mismatch': 0, 'ped_blockers_ignored': 0, 'box_clear_holds': 0, 'turn_holds': 0, 'event_spawns': 0}",
+    "    gate PASS: controllers registered + snapshotting",
+    "=== [  32.6s] people_motion ===",
+    "    gate PASS: signal-aware motion gate has people, traffic and light controllers",
+    "    Expo native-motion proof: 0/8, 0.0s wall, awaiting-observed-native-motion",
+    "    Expo native-motion proof: 7/8, 10.5s wall, awaiting-observed-native-motion",
+    "    Expo native-motion proof: 7/8, 20.8s wall, awaiting-observed-native-motion",
+    "    Expo native-motion proof: 7/8, 31.1s wall, awaiting-observed-native-motion",
+    "    Expo native-motion proof: 8/8, 40.8s wall, eight-native-motion-tasks-and-observed-displacements",
+    "    gate PASS: all eight pedestrians show native-task motion after traffic setup",
+    "=== [  73.4s] spill ===",
+    "    tradeshow normal flow: legacy spill prop is not created",
+    "=== [  73.4s] scenarios ===",
+    "    gate PASS: five finite tradeshow scenarios are prepared",
+    "PILOT UP in 74s (RTSP not brought up)"
+  ]
+}

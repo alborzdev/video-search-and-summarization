@@ -17,7 +17,7 @@ describe("Spark workload capacity adapter", () => {
       if (url.endsWith("/v1/health/ready")) return { ok: true } as Response;
       if (url.endsWith("/v1/stream/get-stream-info")) return { ok: true, json: async () => ({ stream_list: [] }) } as Response;
       if (url === "http://capacity.test/capacity") return { ok: sample !== "missing", json: async () => ({
-        hardwareProfile: "DGX-SPARK", guardActive: true, reserveGiB: 20,
+        hardwareProfile: "DGX-SPARK", guardActive: true, reserveGiB: 5,
         availableGiB: sample === "malformed" ? "36" : 36,
         sampledAt: Date.now() / 1000 + (sample === "submillisecond" ? 0.0005 : sample === "future" ? 1 : sample === "stale" ? -20 : 0),
       }) } as Response;

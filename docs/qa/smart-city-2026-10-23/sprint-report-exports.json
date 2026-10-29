@@ -1,0 +1,30 @@
+{
+  "reportJSON": {
+    "name": "smart-city-isaac-intersection-a.json",
+    "modifiedAt": "2026-10-23T15:48:36.372044+00:00",
+    "sha256": "4ff1ea5fa8902ece302210723cd8a04b2a9d2e43b04db94722c3042e6c3081b7",
+    "siteId": "isaac-intersection-a",
+    "mode": "live",
+    "eventCount": 525,
+    "actualEvents": 525,
+    "historyScope": "site",
+    "metricsScope": "displayed-camera-frames",
+    "cameraIdentityScope": "Per-camera unless globalTrackId is present; totals are not deduplicated across cameras.",
+    "qualification": "Scene-specific calibration and final hardware qualification are recorded separately."
+  },
+  "eventsCSV": {
+    "name": "smart-city-isaac-intersection-a-events.csv",
+    "modifiedAt": "2026-10-23T15:49:19.770992+00:00",
+    "sha256": "9cd316eda2bc3196a23668a4e1668e2af5cda3ac1e03efbee0b6e0988c4b6391",
+    "rows": 525,
+    "columns": [
+      "event_id",
+      "source",
+      "rule",
+      "state",
+      "triggered_at",
+      "message"
+    ]
+  },
+  "browser": "Both actual export buttons were clicked. JSON download wait hook timed out in IAB, but the newly written file and valid contents were independently confirmed."
+}

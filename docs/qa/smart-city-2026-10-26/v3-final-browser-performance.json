@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "city.final-browser-performance.v1",
+  "passed": true,
+  "durationSeconds": 44.073,
+  "cameras": [
+    {
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "sourceSessionId": "106e2481-c699-4a22-bd6b-9d37930a5867",
+      "renderedFrameCount": 425,
+      "renderedFps": 9.643092142581626,
+      "selectedSequenceFps": 10.210332856851133,
+      "exactFrameAlignment": true
+    },
+    {
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sourceSessionId": "206ee1d2-c3ef-43b7-a010-dabaea6085c3",
+      "renderedFrameCount": 430,
+      "renderedFps": 9.756540285435527,
+      "selectedSequenceFps": 10.233022485421914,
+      "exactFrameAlignment": true
+    }
+  ],
+  "start": {
+    "wallAt": 1793007793502,
+    "cameras": [
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-native-published-fps": "12.9973",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-render-fps": "10.3",
+        "data-preview-rendered-frames": "17800",
+        "data-preview-sequence": "34267",
+        "data-preview-session": "106e2481-c699-4a22-bd6b-9d37930a5867",
+        "data-source-id": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-native-published-fps": "13.9971",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-render-fps": "10.0",
+        "data-preview-rendered-frames": "17670",
+        "data-preview-sequence": "34298",
+        "data-preview-session": "206ee1d2-c3ef-43b7-a010-dabaea6085c3",
+        "data-source-id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "end": {
+    "wallAt": 1793007837575,
+    "cameras": [
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-native-published-fps": "8.99428",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-render-fps": "9.1",
+        "data-preview-rendered-frames": "18225",
+        "data-preview-sequence": "34717",
+        "data-preview-session": "106e2481-c699-4a22-bd6b-9d37930a5867",
+        "data-source-id": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-native-published-fps": "9.99364",
+        "data-preview-provenance": "native-post-inference-exact-frame",
+        "data-preview-render-fps": "8.9",
+        "data-preview-rendered-frames": "18100",
+        "data-preview-sequence": "34749",
+        "data-preview-session": "206ee1d2-c3ef-43b7-a010-dabaea6085c3",
+        "data-source-id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "limits": [
+    "One1920x1080 browser interval, partly overlapping the thirty-second native sample.",
+    "No absolute capture-to-display latency or whole-day result."
+  ]
+}

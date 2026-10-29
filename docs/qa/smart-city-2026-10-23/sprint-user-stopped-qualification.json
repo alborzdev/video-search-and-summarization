@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-23T16:28:00.849920+00:00",
+  "status": "user-stopped-not-qualified",
+  "runtimeChanged": false,
+  "observers": [
+    {
+      "unit": "vss-city-sprint-soak-20261023t1626z.service",
+      "pid": 1031003,
+      "reason": "User requested stopping slow tests; observer-only termination avoids failure-handler source pauses."
+    },
+    {
+      "unit": "vss-city-sprint-isaac-20261023t1626z.service",
+      "pid": 1031009,
+      "reason": "User requested stopping slow tests; observer-only termination avoids failure-handler source pauses."
+    },
+    {
+      "unit": "vss-city-sprint-preview-20261023t1626z.service",
+      "pid": 1031012,
+      "reason": "User requested stopping slow tests; observer-only termination avoids failure-handler source pauses."
+    }
+  ],
+  "reason": "User asked to defer long testing and continue fast code improvements. No partial run is a pass."
+}

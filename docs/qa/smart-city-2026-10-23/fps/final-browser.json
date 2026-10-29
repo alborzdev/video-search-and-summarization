@@ -1,0 +1,76 @@
+{
+  "before": {
+    "at": 1792789705811,
+    "cameras": [
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-render-fps": "11.3",
+        "data-preview-rendered-frames": "333",
+        "data-preview-sequence": "627",
+        "data-source-id": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-render-fps": "11.5",
+        "data-preview-rendered-frames": "327",
+        "data-preview-sequence": "627",
+        "data-source-id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "after": {
+    "at": 1792789865557,
+    "cameras": [
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-render-fps": "9.1",
+        "data-preview-rendered-frames": "1850",
+        "data-preview-sequence": "2472",
+        "data-source-id": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-render-fps": "9.0",
+        "data-preview-rendered-frames": "1843",
+        "data-preview-sequence": "2473",
+        "data-source-id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "final": {
+    "at": 1792790108917,
+    "cameras": [
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-render-fps": "8.7",
+        "data-preview-rendered-frames": "4209",
+        "data-preview-sequence": "5283",
+        "data-source-id": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "data-overlay-aligned": "true",
+        "data-preview-jpeg-height": "540",
+        "data-preview-jpeg-width": "960",
+        "data-preview-render-fps": "9.3",
+        "data-preview-rendered-frames": "4179",
+        "data-preview-sequence": "5282",
+        "data-source-id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ],
+    "title": "Vision Intelligence",
+    "url": "http://127.0.0.1:7782/?workspace=smart-city"
+  },
+  "interaction": "Zoom map in → Reset map view; live images/boxes/map remained present",
+  "viewport": "existing narrow in-app panel; no resize override",
+  "console": []
+}

@@ -1,3 +1,5 @@
+> Current Spark policy (operator request, October 28): saved reserve **5 GiB**, no additional startup allowance. The active memory guard and saved-reserve checks remain enabled. This supersedes older startup headroom and 20 GiB values below.
+
 # Fast UI development
 
 ## DGX Spark
@@ -145,3 +147,11 @@ expose actual service checks; exiting presentation restores the regular shell.
 This display choice does not start services or change memory budgets.
 
 September 28 recovery: the host LAN address changed. Updating ingress alone is insufficient: regenerate the UI public URLs, Kafka advertised address, and dependent services from the current generated environment. The recovery receipt is in `artifacts/thor-recovery-2026-09-28/`.
+
+## Smart City explainer visual direction
+
+October 22 user feedback: do not use flat schematic streets, stick figures, block
+vehicles, or abstract diagram maps for the Smart City explainer. Use the detailed
+rendered street/camera imagery and established brand treatment. Explain detection,
+areas, and camera association with restrained overlays anchored to recognizable
+objects in those images. Keep the text short and show each concept in context.

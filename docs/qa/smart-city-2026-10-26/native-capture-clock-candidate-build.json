@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "city.native-capture-clock-candidate-build.v1",
+  "candidateOnly": true,
+  "liveActivated": false,
+  "baseImageId": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+  "imageTag": "vss-city-perception:native-sei-clock-20261026",
+  "imageId": "sha256:54b13c71248e47a066aa8761f73c303289f5675a5278f55ec6c9ca4d62aa5d02",
+  "workerBinarySha256": "b3abefac4e96dc785ea26e7e53591c7a7e3238c5b441a3041bf5df28013586d0",
+  "sourceManifest": ".spark/city/runtime/native-capture-clock-candidate-20261026/build/source-manifest.json",
+  "sourceManifestSha256": "0e627823acd33c1f43cdd3dbb2aedc6838d8e65f04e62fcf0622944df7c0cc85",
+  "ownedSourceHashes": {
+    "src/native_capture_clock.hpp": "4336400c12d5902486597d831f0f8d36855fac900b55226c713902855b4e1a9e",
+    "src/city_worker.cpp": "582aa08b7cec94b2ddab0ff796128a88cdd29722d61aa1e12e4bdca4ef1f1463",
+    "tests/test_native_capture_clock.cpp": "276aa63b2f09c929c902c04dfd480e49b75b589a6f9b29c2d06e768398594f63",
+    "Makefile": "f18a4fd853b7aa87df1962ad2d6fbf42b0742dbeead27d953983b7779c0ef453"
+  },
+  "cpuWorkerCompile": {
+    "exitCode": 0,
+    "elapsedSeconds": 7.882,
+    "log": ".spark/city/runtime/native-capture-clock-candidate-20261026/worker-cpu-build.log",
+    "runtime": "runc",
+    "network": "none",
+    "cpus": 2,
+    "memoryGiB": 4,
+    "nvidiaDevices": false
+  },
+  "scopedCpuTests": {
+    "exitCode": 0,
+    "elapsedSeconds": 32.383,
+    "log": ".spark/city/runtime/native-capture-clock-candidate-20261026/native-clock-scoped-cpu-tests.log",
+    "nativeControlGroups": 19,
+    "actualNativeAuFixtures": 180,
+    "actualViosAuFixtures": 180,
+    "targets": [
+      "native-capture-clock-test",
+      "source-clock-diagnostics-test",
+      "staged-tracking-test",
+      "rtsp-transport-test"
+    ],
+    "runtime": "runc",
+    "network": "none",
+    "gpuDecode": false,
+    "gpuTrackersExecuted": false
+  },
+  "copyOnlyImageBuild": {
+    "exitCode": 0,
+    "elapsedSeconds": 134.684,
+    "log": ".spark/city/runtime/native-capture-clock-candidate-20261026/candidate-image-build.log",
+    "modelOrTensorRtBuild": false,
+    "newDependenciesInstalled": false
+  },
+  "packagedCpuSmoke": {
+    "exitCode": 0,
+    "log": ".spark/city/runtime/native-capture-clock-candidate-20261026/candidate-image-cpu-smoke.log",
+    "binaryMatches": true,
+    "explicitClockFlagPresent": true,
+    "runtime": "runc",
+    "network": "none",
+    "nvidiaDevices": false
+  },
+  "contract": {
+    "profileMode": "source-native-sei",
+    "cli": "--source-native-sei-clock",
+    "clockAuthority": "actual encoded-frame handoff wall time",
+    "format": "isaacsim-native-wall-capture-v1",
+    "observationTimestampBasis": "source-native-sei",
+    "sourceClockEvidenceSchema": "city.source-native-sei.v1",
+    "placement": "mux src before preprocess/inference/both trackers",
+    "originalRawPtsPreserved": true,
+    "rtcpFallbackWhenSelected": false,
+    "genericRtcpPathUnchanged": true,
+    "reconnectPolicy": "fail closed; fresh managed worker/source/fusion epoch required"
+  },
+  "limits": [
+    "CPU metadata tests do not execute GPU trackers or prove identity accuracy.",
+    "Candidate needs explicit approved profile and controlled live activation by root.",
+    "A renewed source client startup can mask the old issue; live proof must verify actual capture evidence, clock ages, map joins and exact previews rather than count restart as a fix."
+  ]
+}

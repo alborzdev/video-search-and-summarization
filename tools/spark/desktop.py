@@ -23,6 +23,7 @@ import bootstrap as b
 import offline
 import ui
 import history_metadata
+import local_vision
 
 APP_URL = 'http://127.0.0.1:7777/?workspace=guided'
 API = 'http://127.0.0.1:7777/api/vision'
@@ -90,8 +91,9 @@ def read_url(url, timeout=10):
 
 
 class Progress:
-    def __init__(self, action, gui):
+    def __init__(self, action, gui, *, title=None):
         self.gui = gui
+        self.title = title or 'VSS'
         self.window = None
         stamp = time.strftime('%Y%m%d-%H%M%S')
         folder = b.STATE / 'desktop-logs'
@@ -101,7 +103,7 @@ class Progress:
         self.log = os.fdopen(fd, 'w', buffering=1)
         if gui:
             self.window = subprocess.Popen(['zenity', '--progress', '--pulsate', '--no-cancel',
-                '--auto-close', '--title=' + ('Starting VSS' if action == 'start' else 'Stopping VSS'),
+                '--auto-close', '--title=' + (title or ('Starting VSS' if action == 'start' else 'Stopping VSS')),
                 '--text=Preparing…', '--width=540', '--height=170'], stdin=subprocess.PIPE,
                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, text=True, env=environment())
 
@@ -130,7 +132,7 @@ class Progress:
         self.log.close()
         if self.gui:
             subprocess.Popen(['zenity', '--error' if error else '--info', '--no-markup',
-                '--title=VSS', '--width=540', '--text=' + message + ('\n\nLog: ' + str(self.path) if error else '')],
+                '--title=' + self.title, '--width=540', '--text=' + message + ('\n\nLog: ' + str(self.path) if error else '')],
                 env=environment(), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def execute(self, command, label, timeout=1500):
@@ -212,7 +214,9 @@ def lock(action, progress):
                     pid = int(current['pid'])
                     command = Path(f'/proc/{pid}/cmdline').read_bytes().split(b'\0')
                     cwd = Path(f'/proc/{pid}/cwd').resolve()
-                    own_script = any((cwd / os.fsdecode(argument)).resolve() == Path(__file__).resolve()
+                    owned_scripts = {Path(__file__).resolve(),
+                        Path('/home/sparkdev/Documents/ChatGPT/isaacsim-6/scripts/run_tradeshow.py')}
+                    own_script = any((cwd / os.fsdecode(argument)).resolve() in owned_scripts
                                      for argument in command if argument)
                     # Avoid signaling a reused PID or an unrelated application.
                     if current['action'] == 'start' and own_script:
@@ -226,10 +230,12 @@ def lock(action, progress):
     return handle
 
 
-def model_health():
-    for url in ('http://127.0.0.1:30081/v1/models', 'http://127.0.0.1:8018/v1/health/ready',
-                'http://127.0.0.1:8017/v1/ready', 'http://127.0.0.1:8100/health',
-                'http://127.0.0.1:9000/api/v1/health/get-dsready-state'):
+def model_health(*, city=False):
+    urls = ['http://127.0.0.1:30081/v1/models', 'http://127.0.0.1:8018/v1/health/ready',
+            'http://127.0.0.1:8017/v1/ready', 'http://127.0.0.1:8100/health']
+    if not city:
+        urls.append('http://127.0.0.1:9000/api/v1/health/get-dsready-state')
+    for url in urls:
         try:
             with urllib.request.urlopen(url, timeout=3) as response:
                 if response.status != 200:
@@ -435,21 +441,22 @@ def ready_sim(prepared, progress, fresh_start):
     raise RuntimeError('VSS started, but fresh indexing and playable live recording were not verified. Check the camera in the app; do not present it as ready.')
 
 
-def start(progress):
+def start(progress, *, city=False):
     wait_docker(progress)
-    settings, graph = offline.preflight(progress.say)
+    settings, graph = offline.preflight(progress.say, city=True) if city else offline.preflight(progress.say)
     b.doctor()
     progress.execute(['systemctl', '--user', 'start', 'vss-spark-guard.service'], 'Checking the memory guard', timeout=20)
     progress.execute(['systemctl', '--user', 'is-active', '--quiet', 'vss-spark-guard.service'],
                      'Verifying the memory guard is running', timeout=20)
     history_metadata.ensure_bridge()
     touched = not (b.STATE / 'desktop-offline.json').exists() or settings['host_ip'] != settings['gateway']
+    local_started = False
     try:
         prepared = offline.prepare(settings, progress.say, progress.execute)
         # Preparation can upgrade the existing cached graph or local addresses.
         # Read readiness against that resulting configuration.
         _, graph = offline.load()
-        models_ready = model_health()
+        models_ready = model_health(city=True) if city else model_health()
         if (models_ready and not stack_ready(graph)) or (not models_ready and models_running()):
             # A missing UI or data service needs a full, guarded recovery. Stop
             # loaded models first so cold-start admission has its normal headroom.
@@ -461,18 +468,29 @@ def start(progress):
             touched = True
             progress.execute([sys.executable, Path(__file__).with_name('bootstrap.py'), 'up'],
                 'Starting cached VSS services. Model warm-up can take several minutes…')
-        if ui.current_mode() != 'dev':
+        # This auxiliary worker is deliberately absent from model_health(): an
+        # absent new worker must not tear down an otherwise healthy warm stack.
+        if local_vision.selected(state=b.STATE):
+            progress.say('Preparing local object detection and segmentation…')
+        local_started = local_vision.ensure_service(state=b.STATE)
+        if ui.current_mode() != 'dev' or not local_vision.ui_configuration_matches(graph):
             # UI recreation owns only the UI. A warm session keeps its rules
             # and loaded models even if the later app/source check fails.
             progress.execute([sys.executable, Path(__file__).with_name('ui.py'), 'dev'], 'Loading the latest workspace')
         wait_app(progress)
-        result = ready_sim(prepared, progress, touched)
+        result = ('VSS services are ready for the Smart City camera connection.' if city
+                  else ready_sim(prepared, progress, touched))
         if b.available() < b.memory_reserve():
             raise RuntimeError('The memory reserve was crossed during startup.')
         b.private_write(b.STATE / 'desktop-ready.json', json.dumps({'time': time.time(),
             'available_gib': b.available(), 'reserve_gib': b.memory_reserve(), 'message': result, 'url': APP_URL}))
         return result
     except Exception:
+        if touched or local_started:
+            try:
+                local_vision.stop_service()
+            except (OSError, RuntimeError, subprocess.SubprocessError) as error:
+                progress.log.write('Local vision cleanup failed: ' + str(error) + '\n')
         if touched:
             progress.say('Startup did not finish. Stopping partial VSS services…')
             try:
@@ -508,8 +526,13 @@ def stop(progress):
             api('/live-capture', {'streamId': sid, 'action': 'stop'}, timeout=40)
         except Exception as error:
             progress.log.write('Recording stop was unavailable: ' + str(error) + '\n')
-    progress.execute(b.compose('stop', '-t', '20'), 'Stopping VSS services. Saved recordings and reports are preserved.', timeout=180)
-    history_metadata.stop_bridge()
+    try:
+        progress.execute(b.compose('stop', '-t', '20'), 'Stopping VSS services. Saved recordings and reports are preserved.', timeout=180)
+    finally:
+        try:
+            local_vision.stop_service()
+        finally:
+            history_metadata.stop_bridge()
     remaining = b.run(b.compose('ps', '--status', 'running', '-q'), capture_output=True, text=True, timeout=15).stdout.strip()
     if remaining:
         raise RuntimeError('Some VSS services are still running. Check the shutdown log.')

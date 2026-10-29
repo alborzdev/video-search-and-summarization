@@ -1,0 +1,16 @@
+{
+  "cameraIds": [
+    "cam_SW",
+    "cam_NE"
+  ],
+  "resolution": [
+    1280,
+    720
+  ],
+  "fps": 15,
+  "rtspHost": "172.17.0.1",
+  "rtspPort": 18556,
+  "encoderPython": "/home/sparkdev/vss/.spark/city/export-env/bin/python",
+  "note": "Two Spark cameras. NVIDIA Isaac native H264 RTSP with wall-capture timing; MediaMTX relays encoded packets at the existing VSS addresses. Camera resolution and poses stay unchanged.",
+  "evaluationSeconds": 0
+}

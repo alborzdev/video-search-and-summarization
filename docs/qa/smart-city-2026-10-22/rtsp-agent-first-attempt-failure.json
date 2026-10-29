@@ -1,0 +1,159 @@
+{
+  "capturedAt": "2026-10-22T04:54:54.445088+00:00",
+  "phase": "one-rtsp-source-first-30s",
+  "reserveGiB": 20,
+  "minimumAvailableGiB": 26.096092224121094,
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "availableGiB": 26.096092224121094
+    },
+    {
+      "elapsedSeconds": 1.0,
+      "availableGiB": 26.225791931152344
+    },
+    {
+      "elapsedSeconds": 2.0,
+      "availableGiB": 26.242874145507812
+    },
+    {
+      "elapsedSeconds": 3.0,
+      "availableGiB": 26.282569885253906
+    },
+    {
+      "elapsedSeconds": 4.0,
+      "availableGiB": 26.23785400390625
+    },
+    {
+      "elapsedSeconds": 5.0,
+      "availableGiB": 26.208953857421875
+    },
+    {
+      "elapsedSeconds": 6.0,
+      "availableGiB": 26.130542755126953
+    },
+    {
+      "elapsedSeconds": 7.0,
+      "availableGiB": 26.200641632080078
+    },
+    {
+      "elapsedSeconds": 8.0,
+      "availableGiB": 26.252578735351562
+    },
+    {
+      "elapsedSeconds": 9.01,
+      "availableGiB": 26.187816619873047
+    },
+    {
+      "elapsedSeconds": 10.01,
+      "availableGiB": 26.22754669189453
+    },
+    {
+      "elapsedSeconds": 11.01,
+      "availableGiB": 26.23721694946289
+    },
+    {
+      "elapsedSeconds": 12.01,
+      "availableGiB": 26.25619888305664
+    },
+    {
+      "elapsedSeconds": 13.01,
+      "availableGiB": 26.286197662353516
+    },
+    {
+      "elapsedSeconds": 14.01,
+      "availableGiB": 26.31585693359375
+    },
+    {
+      "elapsedSeconds": 15.01,
+      "availableGiB": 26.36874771118164
+    },
+    {
+      "elapsedSeconds": 16.01,
+      "availableGiB": 26.282215118408203
+    },
+    {
+      "elapsedSeconds": 17.01,
+      "availableGiB": 26.24652099609375
+    },
+    {
+      "elapsedSeconds": 18.01,
+      "availableGiB": 26.242801666259766
+    },
+    {
+      "elapsedSeconds": 19.01,
+      "availableGiB": 26.272537231445312
+    },
+    {
+      "elapsedSeconds": 20.01,
+      "availableGiB": 26.27429962158203
+    },
+    {
+      "elapsedSeconds": 21.01,
+      "availableGiB": 26.313335418701172
+    },
+    {
+      "elapsedSeconds": 22.01,
+      "availableGiB": 26.350902557373047
+    },
+    {
+      "elapsedSeconds": 23.01,
+      "availableGiB": 26.318904876708984
+    },
+    {
+      "elapsedSeconds": 24.01,
+      "availableGiB": 26.38245391845703
+    },
+    {
+      "elapsedSeconds": 25.01,
+      "availableGiB": 26.364269256591797
+    },
+    {
+      "elapsedSeconds": 26.01,
+      "availableGiB": 26.35272979736328
+    },
+    {
+      "elapsedSeconds": 27.01,
+      "availableGiB": 26.283580780029297
+    },
+    {
+      "elapsedSeconds": 28.01,
+      "availableGiB": 26.25560760498047
+    },
+    {
+      "elapsedSeconds": 29.01,
+      "availableGiB": 26.372989654541016
+    }
+  ],
+  "snapshot": {
+    "sources": [
+      {
+        "id": "291399aa-a062-43b6-badc-48c34bc08237",
+        "status": "awaiting-observations",
+        "timestampBasis": null,
+        "lastSourceTimeNs": null,
+        "sessionId": null,
+        "frameId": null,
+        "mediaTimeSeconds": null
+      }
+    ],
+    "trackCount": 0,
+    "nativeAnalytics": {
+      "status": "pending",
+      "requestedRevision": 14,
+      "appliedRevision": "none",
+      "primitives": [],
+      "eventAuthority": "city-behavior-analytics",
+      "lastAppliedRevision": "none",
+      "operationalStatus": "awaiting-observations"
+    }
+  },
+  "mediaQualification": "recorded-video-rtsp-replay",
+  "clockQualification": "pending native/browser mapping; unsynchronized basis does not qualify overlays",
+  "result": "failed-transport",
+  "reason": "VIOS streamprocessing cgroup OOMKilled exit137 at 04:54:17 while simultaneous transcoded recording exports were in progress; all RTSP model clients then connection refused.",
+  "nativePublishedFrames": 0,
+  "sourceLifecycleQualified": false,
+  "guardUnit": "vss-spark-guard.service",
+  "guardActive": true
+}

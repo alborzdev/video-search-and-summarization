@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "city.repaired-crossing-live-ui.v1",
+  "sourceTraceSha256": "3a6012dde06a190cfc2733382f1c75eb0543a14eb10ccc490c26bbaefedc16c1",
+  "sourceTrace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-crossing-evidence-repaired-v3-ui.ndjson",
+  "sceneRunId": "45854524c4fa40c4:000002",
+  "sceneState": "completed",
+  "sceneElapsedWallSeconds": 34.29912542831153,
+  "sceneRestored": true,
+  "aiRuleId": "cam_sw-blocked-crossing",
+  "aiEventIds": [
+    "b0ccc728c0a28856f0e7f2604b4f4419"
+  ],
+  "aiBlockedObservedSeconds": 12.114111443,
+  "aiCompletedEpisodes": 1,
+  "aiUnknownEpisodes": 0,
+  "actualCameraActiveThenCleared": true,
+  "scopedAccuracyLimit": "One real UI-triggered episode on the paired simulated-camera system. This does not establish exhaustive accuracy or a production deployment."
+}

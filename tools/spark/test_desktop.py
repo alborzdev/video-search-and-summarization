@@ -9,6 +9,7 @@ from unittest.mock import patch, Mock
 sys.path.insert(0, str(Path(__file__).parent))
 import desktop as d
 import offline
+import test_safety
 
 
 class DesktopTests(unittest.TestCase):
@@ -21,6 +22,7 @@ class DesktopTests(unittest.TestCase):
                 self.assertEqual(d.model_health(), allowed)
 
     def setUp(self):
+        test_safety.install(self)
         # Real launcher state carries the live source UUID. Isolate every test
         # so even a best-effort stop cannot reach the real recording API.
         state = tempfile.TemporaryDirectory()
@@ -33,6 +35,13 @@ class DesktopTests(unittest.TestCase):
             patcher = patch.object(d.history_metadata, name)
             patcher.start()
             self.addCleanup(patcher.stop)
+        for name in ('ensure_service', 'stop_service'):
+            patcher = patch.object(d.local_vision, name, return_value=False)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        patcher = patch.object(d.local_vision, 'ui_configuration_matches', return_value=True)
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_api_failure_keeps_bounded_backend_reason_in_startup_log(self):
         (d.b.STATE / 'desktop-offline.json').write_text('{}')
@@ -41,6 +50,15 @@ class DesktopTests(unittest.TestCase):
         with patch.object(d.urllib.request, 'urlopen', side_effect=error):
             with self.assertRaisesRegex(RuntimeError, 'HTTP 502.*Cosmos captioning could not be resumed'):
                 d.api('/source-analysis')
+
+    def test_docker_shutdown_failure_still_stops_host_workers(self):
+        progress = Mock()
+        progress.execute.side_effect = RuntimeError('docker failed')
+        with patch.object(d, 'pause_rules'):
+            with self.assertRaisesRegex(RuntimeError, 'docker failed'):
+                d.stop(progress)
+        d.local_vision.stop_service.assert_called_once()
+        d.history_metadata.stop_bridge.assert_called_once()
 
     def test_api_failure_with_non_json_body_still_reports_original_http_error(self):
         (d.b.STATE / 'desktop-offline.json').write_text('{}')
@@ -411,6 +429,25 @@ class DesktopTests(unittest.TestCase):
                 self.assertTrue(any(command[-1] == 'dev' for command in commands))
                 self.assertFalse(any('stop' in command for command in commands))
 
+    def test_new_local_worker_env_change_recreates_only_ui_with_warm_models(self):
+        progress = Mock()
+        (d.b.STATE / 'desktop-offline.json').write_text('{}')
+        (d.b.STATE / 'settings.json').write_text('{"local_vision_enabled":true,"reserve_gib":20}')
+        with patch.object(d.offline, 'preflight', return_value=({'host_ip': 'local', 'gateway': 'local'}, {})), \
+                patch.object(d, 'wait_docker'), patch.object(d.b, 'doctor'), \
+                patch.object(d.offline, 'prepare', return_value={'sensor_id': 'camera'}), \
+                patch.object(d.offline, 'load', return_value=({}, {})), \
+                patch.object(d, 'model_health', return_value=True), patch.object(d, 'stack_ready', return_value=True), \
+                patch.object(d.ui, 'current_mode', return_value='dev'), patch.object(d, 'wait_app'), \
+                patch.object(d.local_vision, 'ui_configuration_matches', return_value=False), \
+                patch.object(d, 'ready_sim', return_value='ready'), \
+                patch.object(d.b, 'available', return_value=34), patch.object(d, 'stop') as stop:
+            self.assertEqual(d.start(progress), 'ready')
+        d.local_vision.ensure_service.assert_called_once_with(state=d.b.STATE)
+        stop.assert_not_called()
+        self.assertFalse(any('up' in [str(part) for part in call.args[0]] for call in progress.execute.call_args_list))
+        self.assertTrue(any(call.args[0][-1] == 'dev' for call in progress.execute.call_args_list))
+
     def test_docker_reboot_delay_is_retried_without_starting_services(self):
         with patch.object(d.time, 'monotonic', side_effect=[0, 1, 2]), patch.object(d.time, 'sleep'), \
              patch.object(d.b, 'run', side_effect=[d.subprocess.CalledProcessError(1, ['docker']), Mock()]) as run:
@@ -487,6 +524,22 @@ class DesktopTests(unittest.TestCase):
                 scope['model'](root, [])
             weights.write_bytes(struct.pack('<Q', len(header)) + header + b'12345678')
             scope['model'](root, [])
+            # NVFP4 is distributed as one safetensors file without a shard index.
+            (root / 'model.safetensors.index.json').unlink()
+            weights.rename(root / 'model.safetensors')
+            scope['model'](root, [])
+            (root / 'model.safetensors').write_bytes(struct.pack('<Q', len(header)) + header + b'1234')
+            with self.assertRaisesRegex(RuntimeError, 'Truncated tensor data'):
+                scope['model'](root, [])
+
+    def test_offline_check_uses_selected_nvfp4_checkpoint_and_precision_metadata(self):
+        code = offline.selected_cache_check({'vlm_precision': 'nvfp4'})
+        selected = offline.b.vlm_model_choice({'vlm_precision': 'nvfp4'})['name']
+        self.assertIn('/rtvi/' + selected, code)
+        self.assertNotIn('/rtvi/' + offline.b.VLM, code)
+        self.assertIn('quant_algo', code)
+        self.assertIn('NVFP4', code)
+        compile(code, '<nvfp4-offline-check>', 'exec')
 
     def test_source_migration_preserves_identity_and_guards_both_updates(self):
         sid = '3688c328-7e71-493c-a1c7-011ad2fb3893'

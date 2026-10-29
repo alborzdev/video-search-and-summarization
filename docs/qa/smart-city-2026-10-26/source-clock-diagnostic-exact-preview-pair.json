@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "city.diagnostic-latest-exact-preview-pair.v1",
+  "readOnly": true,
+  "captureSkewMs": 14.550334,
+  "timestampGuardPass": true,
+  "sameGlobalHintMatches": [],
+  "bothTimeAnd1mOpportunities": 0,
+  "frames": [
+    {
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "session": "7e7919cb-4f67-4fa1-bb93-e6924ae01bf6",
+      "sequence": "3501",
+      "sourceTimeNs": "1792998600261343223",
+      "bodySha256": "9f76754666f3f25160442c4524ff2142ad47823698e9ac605ebbd41118675517"
+    },
+    {
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "session": "2e62cb27-79bc-4d0a-a980-0884898148ba",
+      "sequence": "3530",
+      "sourceTimeNs": "1792998600246792889",
+      "bodySha256": "f39cce45a9fe42bc4b99da684e2658d6ccb52a31ed927d97653689dce3faf42e"
+    }
+  ],
+  "scope": "Concurrent server latest exact envelopes, not proof of browser rendered pair."
+}

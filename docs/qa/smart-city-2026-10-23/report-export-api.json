@@ -1,0 +1,18 @@
+{
+  "json": {
+    "httpStatus": 200,
+    "contentType": "application/json",
+    "bytes": 164575,
+    "sha256": "f88c5921f02d3a99ec9ce8ffe8284afe4dbbae1def0392d75d2db52b888e5aaf",
+    "eventRows": 99
+  },
+  "csv": {
+    "httpStatus": 200,
+    "contentType": "text/csv; charset=utf-8",
+    "bytes": 18364,
+    "sha256": "458b47a53f4117299a9afab2312db5b234cddb7790dca137b727fac1b2bfd4de",
+    "eventRows": 99
+  },
+  "at": 1792732546.1872988,
+  "scope": "Actual same-origin JSON/CSV export endpoints. In-app browser download event remains unverified."
+}

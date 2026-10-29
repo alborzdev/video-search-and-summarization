@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "city.intersection-prototype-delivery.v1",
+  "at": "2026-10-26T10:45:02.769329+00:00",
+  "boundedFunctionalAcceptance": true,
+  "goalHandoverReviewPending": false,
+  "environment": "Isaac Sim6.1 / DGX Spark; derived single intersection with retained background",
+  "nativeImageId": "sha256:4e6b73d1b19e133680a583d5d2f109e20a6953537adea1165b7a381abf42c3dd",
+  "uiImageId": "sha256:1d94d0350f90c2e4f120f0295553e6ed06d6b71789579378bf532a634605fc0f",
+  "uiPackage": "20261026T102610382036Z",
+  "uiSourceSha256": "d4aee494f102dc2a60782060735fc22a879b5313cf5f140ea79543868ed0e25f",
+  "uiArtifactSha256": "41a60b1f584e4db68d67adf4c79823b8454b3e5f1efbf2f97d04552f2c909f53",
+  "nativeProfileSha256": "cadd8867c22388c78066d9f0dac4b35e240d5512bc84a6b5e36446957dd9a1dd",
+  "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+  "rulesRevision": 450,
+  "ruleCount": 19,
+  "mobilityRevision": 6,
+  "nativeCameraCount": 2,
+  "cameraResolution": [
+    960,
+    540
+  ],
+  "displayedFps": [
+    9.010722933241093,
+    9.131788308543756
+  ],
+  "exactPreviewEnvelopeChecks": 22,
+  "latestPairTimingChecks": {
+    "median": 0.501168,
+    "max": 123.68622,
+    "within150ms": 11,
+    "samples": 11
+  },
+  "allFiveFiniteSceneControlsVerified": true,
+  "currentAskAndRetainedClipVerified": true,
+  "currentSharedPersonDisplayVerified": true,
+  "continuousIndexingActive": false,
+  "sourceOfAnalytics": "Actual camera images,RF-DETRMediumFP16,firstNvDCF,secondMV3DT optionalpersonhints; no actor-ground-truth analytics.",
+  "limits": [
+    "Working booth prototype with bounded checks; no full-day endurance or production model accuracy claim.",
+    "Latest native pedestrian episode passed but camera completion stayed0: real observation gaps exceeded unchanged1second rule. Earlier successful AI crossing is separate.",
+    "Person sharing is conditional/experimental. Vehicle identities,journeys and counts remain camera-local.",
+    "Queue membership/clearance may be incomplete; script completion is not AI clearance.",
+    "Thor configuration only; no Thor runtime result.",
+    "VLM prose is generated; structured observations remain authoritative.",
+    "Combined workload displayed about9FPS per camera; requested30FPS is not achieved."
+  ],
+  "evidenceSha256": {
+    "native-sei-final-health.json": "a907d3136152a7ddfbbd1d67b06254b7090b912ce9c6e821dcc64b3f60ff3328",
+    "native-sei-final-native-performance.json": "63baf695a3c93fa60f3a78948411e989efc3ec1fa07166c8c4a5e98d5656f16b",
+    "native-sei-final-browser-performance.json": "56049a22b1e05f92f2e08e3750c1c728cfa859e56e674540bffd9cff117060d4",
+    "native-sei-qualified-shared-pair.json": "3528d0cedfe8037b903565e53a6514494c3bac8ed61bb67eee46495117de7810",
+    "native-sei-final-ask-browser.json": "c01e5beefef1a03cd03062f7b4c8438e752997afa542843560c8469a144a86c5",
+    "native-sei-final-pedestrian.json": "29fae4d9f676295ec4a4c947e8f97ff0b71dd790302406535d89911405248a3e",
+    "native-sei-pedestrian-camera-continuity.json": "317adfea140158a8ff47af6ca2974dacd0dc4bf5905de04c419272b1c3d7c398",
+    "v3-bounded-scenarios-checkpoint.json": "dbf0b44e3ce654e90331ec2d0ef25357d976e98079387cb50b5e39032f5f718e",
+    "native-capture-clock-owner-qualification.json": "d3aed2cbb8905a231c91842e410508e794e044d026445820c624e3ebde4c29d6",
+    "native-capture-clock-proxy-ui-build.json": "ee8a121cbe3aed5103feef476f3716a72742bbf5b7ca6e2c75b3968c88b65508",
+    "native-sei-hint-candidate-build.json": "4c72e908041da2628712b239f14fe77531931e891f440cb47fb78c5f24b47a36",
+    "native-capture-clock-downstream-independent-review.json": "2d55d81b81a344602464d80c2387e25eb612db562e80ac411c1b7dd9237886b9",
+    "native-sei-final-dashboard.jpg": "d93dbccda952de5e989c421bd8fc6736139431ac7ebce8790bc512f726adef44",
+    "final-handover-health.json": "152f39118e14ceba7dbabcbcfc45828d3f59b5f467cffd4fad8f8cdb8e42277c"
+  },
+  "scenarioCoverage": {
+    "fiveControlRuns": "Same persistent v3 Isaac scenario runtime; earlier bounded five-story UI/native control receipts under f68fc720/6781.",
+    "freshFinalArtifactRun": "Pedestrian run2227daf39a19476d:000003 on4e6b/1d94. Native completion/restoration passed; camera completion unqualified.",
+    "cameraEvidence": "Earlier independent completed-crossing/blocked-access/curb/queue receipts remain tied to their original artifacts and window. No final all-five analytics rerun or combined soak claimed."
+  },
+  "implementationComplete": true,
+  "finalSourceFreezeVerifiedCount": 23,
+  "handoverDocsSha256": {
+    "docs/smart-city-as-built.md": "652eb02a32961edc70a4bd6efa9a53fb3936afc6e22353661a6743b1799de5d7",
+    "docs/smart-city-implementation-progress.md": "96c1a1fb834f1dd4184d6222744d4bb63638d2f39d25620d24a98a16563a0cd3",
+    "tools/smart-city/README.md": "2a3d02202562125046439a1887888221d936cd1c6fd50f2828cd981ea9d9ade3",
+    "docs/smart-city-isaac-integration.md": "e93f0b09d25cba038d32f7e97175d6d0cb28d588d8eddb01a30e86feec97ed3c",
+    "docs/smart-city-east-pedestrian-story-2026-10-26.md": "95aa65ba7e81fa8620e1f6874beb23dc310de433eeda192747b1e543e7340c42",
+    "tools/smart-city/UI-PACKAGING.md": "45441d9bdbd3f2ee719f754c31709192a170106c6c77c43fc48420a3e6931c26",
+    "docs/smart-city-intersection-goal-2026-10-26.md": "7eda91f0ac0641650d5c94a385dcbc795bec9e2759fa6345de66456568622e3e",
+    "docs/smart-city-native-capture-clock-2026-10-26.md": "8068b65c355c03d630c06c2ae5b752395ac794df312e45455ed50490c768e0fe",
+    "/home/sparkdev/isaac_city_sim/docs/tradeshow-operator-handover.md": "94a6a386cf8bf71a31b6e34618ece4064662762517643c6442a62e4fc406a299"
+  },
+  "newFinalEvidenceLinksResolve": true
+}

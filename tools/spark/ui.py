@@ -51,9 +51,9 @@ def preflight(needs_dev_budget):
     bootstrap.doctor()  # GB10-only; never uses Thor runtime management.
     run(['systemctl', '--user', 'is-active', '--quiet', 'vss-spark-guard.service'])
     if needs_dev_budget:
-        required = bootstrap.memory_reserve() + DEV_BUDGET_GIB
+        required = bootstrap.memory_reserve()
         if bootstrap.available() < required:
-            raise RuntimeError(f'UI admission refused: need {required:g} GiB available (saved reserve + 4 GiB UI budget).')
+            raise RuntimeError(f'UI admission refused: need {required:g} GiB available (saved reserve).')
 
 
 def dependency_fingerprint():

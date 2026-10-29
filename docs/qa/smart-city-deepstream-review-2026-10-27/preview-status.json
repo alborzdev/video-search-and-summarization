@@ -1,0 +1,123 @@
+{
+  "sampledAtUtc": "2026-10-27T15:35:30.309102+00:00",
+  "scope": "Single cumulative worker-status snapshot, not a steady-state latency or FPS benchmark.",
+  "nativeDelivery": {
+    "status": "fresh",
+    "enabled": true,
+    "failed": false,
+    "sources": [
+      {
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "width": 960,
+        "height": 540,
+        "selected": 9142,
+        "rateDropped": 5,
+        "sourceQueueOverruns": 0,
+        "identityMissing": 0,
+        "identityEvicted": 0,
+        "identitiesPending": 0,
+        "geometryMismatch": 0,
+        "encoded": 9142,
+        "oversizeDropped": 0,
+        "networkQueueDropped": 282,
+        "published": 8852,
+        "postFailed": 0,
+        "pendingDropped": 8,
+        "observedEncodedFps": 7.99662,
+        "observedPublishedFps": 7.99662,
+        "timingMs": {
+          "selectedToJpeg": {
+            "count": 9142,
+            "mean": 4.22544,
+            "last": 7.57035,
+            "max": 12.3312,
+            "p50Upper": 5,
+            "p95Upper": 10
+          },
+          "postQueue": {
+            "count": 8860,
+            "mean": 3.59596,
+            "last": 0.053615,
+            "max": 133.805,
+            "p50Upper": 1,
+            "p95Upper": 50
+          },
+          "post": {
+            "count": 8860,
+            "mean": 32.3812,
+            "last": 22.1915,
+            "max": 255.283,
+            "p50Upper": 20,
+            "p95Upper": 200
+          }
+        },
+        "lastPublishedAtNs": "1793115329786159303"
+      },
+      {
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "width": 960,
+        "height": 540,
+        "selected": 9142,
+        "rateDropped": 5,
+        "sourceQueueOverruns": 0,
+        "identityMissing": 0,
+        "identityEvicted": 0,
+        "identitiesPending": 0,
+        "geometryMismatch": 0,
+        "encoded": 9142,
+        "oversizeDropped": 0,
+        "networkQueueDropped": 273,
+        "published": 8866,
+        "postFailed": 0,
+        "pendingDropped": 3,
+        "observedEncodedFps": 6.99704,
+        "observedPublishedFps": 6.99704,
+        "timingMs": {
+          "selectedToJpeg": {
+            "count": 9142,
+            "mean": 4.06405,
+            "last": 5.43684,
+            "max": 17.2588,
+            "p50Upper": 5,
+            "p95Upper": 10
+          },
+          "postQueue": {
+            "count": 8869,
+            "mean": 3.15482,
+            "last": 0.04128,
+            "max": 143.267,
+            "p50Upper": 1,
+            "p95Upper": 50
+          },
+          "post": {
+            "count": 8869,
+            "mean": 27.184,
+            "last": 8.46535,
+            "max": 243.819,
+            "p50Upper": 20,
+            "p95Upper": 200
+          }
+        },
+        "lastPublishedAtNs": "1793115329737701843"
+      }
+    ],
+    "updatedAtNs": "1793115329790276309",
+    "deliveryAgeSeconds": 0.5175654888153076,
+    "fpsLimitPerSource": 30,
+    "jpegQuality": 70,
+    "maxJpegBytes": 2097152,
+    "identityLimitPerSource": 32,
+    "pendingJpegs": 0,
+    "batchQueueOverruns": 0
+  },
+  "cameraStatus": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "status": "live"
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "status": "live"
+    }
+  ]
+}

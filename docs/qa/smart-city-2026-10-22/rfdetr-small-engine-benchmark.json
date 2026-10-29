@@ -1,0 +1,624 @@
+{
+  "schemaVersion": "city.engine-benchmark.v1",
+  "model": "RF-DETR-small",
+  "engine": "/models/rfdetr-small-fp16-b2.engine",
+  "engineSha256": "e3f1143477f5320b45e1dfdb840ed39c1655179ef6444c77581aeaa73b07dc0c",
+  "golden": "/models/rfdetr-small/validation/golden.npz",
+  "goldenSha256": "39b24af1503040c46686f3986f6f232ea66319119a209113d32c9c6ca91c6aef",
+  "benchmarkSourceSha256": "ea89a9f9e39a20920147fa4391c1dee1878273a75bb8ad2ec14c7b0bb7e4903a",
+  "benchmarkSourceSnapshot": "/state/benchmarks/rfdetr-small-fp16-final-serial/benchmark-source.py",
+  "imageId": "sha256:87014f626496737dc888eb80d5de9baf5a37c834033cabfbbcc50139c7183251",
+  "timingValid": true,
+  "cudaLibraryPath": "/opt/tritonserver/lib/:/opt/tritonclient/lib/:/opt/hpcx/ucc/lib/:/opt/hpcx/ucx/lib/:/usr/local/cuda/compat/lib:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/root/.local/lib",
+  "declaredBuildPrecision": "fp16",
+  "inputDtype": "float32",
+  "captureFormat": "trtexec FP32-valued JSON output export",
+  "gpu": "NVIDIA GB10, 580.142, GPU-ad28c08b-0f3b-43d5-0766-4a8e7742976b",
+  "operatingStateBefore": "2424 MHz, 75, 52.19 W, [N/A], 96 %",
+  "tensorRTPackage": "10.16.1.11-1+cuda13.2",
+  "cudaToolkit": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Thu_Mar_19_11:11:41_PM_PDT_2026\nCuda compilation tools, release 13.2, V13.2.78\nBuild cuda_13.2.r13.2/compiler.37668154_0",
+  "platform": "Linux-6.17.0-1014-nvidia-aarch64-with-glibc2.39",
+  "memoryBeforeGiB": 40.3363151550293,
+  "savedMemoryReserveGiB": 20.0,
+  "referenceToOnnxReceipt": {
+    "video": "/work/media/traffic-sample.mp4",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30.0,
+    "frameCount": 1443.0,
+    "positiveDetections": [
+      {
+        "cocoSlot": 6,
+        "confidence": 0.9730281233787537
+      },
+      {
+        "cocoSlot": 1,
+        "confidence": 0.9445188045501709
+      },
+      {
+        "cocoSlot": 1,
+        "confidence": 0.9384141564369202
+      },
+      {
+        "cocoSlot": 3,
+        "confidence": 0.9132424592971802
+      },
+      {
+        "cocoSlot": 1,
+        "confidence": 0.7513138055801392
+      },
+      {
+        "cocoSlot": 3,
+        "confidence": 0.7149966359138489
+      },
+      {
+        "cocoSlot": 3,
+        "confidence": 0.7049635648727417
+      },
+      {
+        "cocoSlot": 1,
+        "confidence": 0.5380457639694214
+      },
+      {
+        "cocoSlot": 1,
+        "confidence": 0.3673938512802124
+      }
+    ],
+    "comparisons": [
+      {
+        "batch": 1,
+        "seconds": 0.20797392120584846,
+        "maxAbsoluteError": {
+          "dets": 0.00030934810638427734,
+          "labels": 0.00033664703369140625
+        }
+      },
+      {
+        "batch": 2,
+        "seconds": 0.33629090106114745,
+        "maxAbsoluteError": {
+          "dets": 0.00030934810638427734,
+          "labels": 0.00033664703369140625
+        }
+      }
+    ],
+    "scope": "Reference-to-ONNX parity on one real traffic frame, batches one and two; not dataset accuracy"
+  },
+  "measurementContext": "Other VSS model services may be loaded; coordinated serial benchmark with no concurrent inference requested.",
+  "parity": [
+    {
+      "batch": 1,
+      "finite": true,
+      "rawTensorDiagnostics": {
+        "dets": {
+          "maxAbsoluteError": 1.045677799731493,
+          "meanAbsoluteError": 0.09335346227046103,
+          "p95AbsoluteError": 0.5589479885995386,
+          "elementwiseAllcloseAtol0_002Rtol0_001": false
+        },
+        "labels": {
+          "maxAbsoluteError": 4.573148727416992,
+          "meanAbsoluteError": 0.44029991039808414,
+          "p95AbsoluteError": 1.5630734443664545,
+          "elementwiseAllcloseAtol0_002Rtol0_001": false
+        }
+      },
+      "predictionSetSamples": [
+        {
+          "sampleIndex": 0,
+          "referenceDetections": 9,
+          "engineDetections": 9,
+          "referenceClasses": [
+            "bus",
+            "car",
+            "person"
+          ],
+          "engineClasses": [
+            "bus",
+            "car",
+            "person"
+          ],
+          "matches": [
+            {
+              "class": "bus",
+              "referenceQuery": 2,
+              "engineQuery": 2,
+              "iou": 0.999562589158454,
+              "scoreAbsoluteError": 0.0003008246421813965,
+              "boxMaximumAbsoluteError": 9.289383888244629e-05,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 0,
+              "engineQuery": 0,
+              "iou": 0.9979702095875503,
+              "scoreAbsoluteError": 0.0005481243133544922,
+              "boxMaximumAbsoluteError": 0.0002918839454650879,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 5,
+              "engineQuery": 4,
+              "iou": 0.9963867005789461,
+              "scoreAbsoluteError": 0.0028318166732788086,
+              "boxMaximumAbsoluteError": 0.0004922747611999512,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 1,
+              "engineQuery": 1,
+              "iou": 0.9963850406196587,
+              "scoreAbsoluteError": 0.0001842975616455078,
+              "boxMaximumAbsoluteError": 7.18832015991211e-05,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 4,
+              "engineQuery": 5,
+              "iou": 0.9975745726443914,
+              "scoreAbsoluteError": 0.01189124584197998,
+              "boxMaximumAbsoluteError": 0.00021576881408691406,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 6,
+              "engineQuery": 6,
+              "iou": 0.992639223147129,
+              "scoreAbsoluteError": 0.0012218952178955078,
+              "boxMaximumAbsoluteError": 8.764863014221191e-05,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 7,
+              "engineQuery": 7,
+              "iou": 0.9819664628363984,
+              "scoreAbsoluteError": 0.000821530818939209,
+              "boxMaximumAbsoluteError": 0.00017410516738891602,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 9,
+              "engineQuery": 9,
+              "iou": 0.9944222110590121,
+              "scoreAbsoluteError": 3.325939178466797e-05,
+              "boxMaximumAbsoluteError": 6.37965276837349e-05,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 12,
+              "engineQuery": 12,
+              "iou": 0.9849979231348364,
+              "scoreAbsoluteError": 0.001710653305053711,
+              "boxMaximumAbsoluteError": 6.416440010070801e-05,
+              "passed": true
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "gates": {
+        "confidenceThreshold": 0.35,
+        "sameSelectedDetectionCount": true,
+        "classRestrictedMatching": true,
+        "minimumMatchedIoU": 0.9,
+        "maximumMatchedScoreAbsoluteError": 0.03
+      },
+      "passed": true,
+      "scope": "One repeated real image; finite outputs and class/IoU/score prediction-set agreement, not tensor equality or dataset accuracy",
+      "run": {
+        "command": [
+          "/usr/bin/trtexec",
+          "--loadEngine=/models/rfdetr-small-fp16-b2.engine",
+          "--shapes=input:1x3x512x512",
+          "--loadInputs=input:/state/benchmarks/rfdetr-small-fp16-final-serial/input-b1.bin",
+          "--infStreams=1",
+          "--iterations=1",
+          "--duration=0",
+          "--warmUp=0",
+          "--exportOutput=/state/benchmarks/rfdetr-small-fp16-final-serial/outputs-b1.json"
+        ],
+        "startedUtc": "2026-10-22T04:36:31.703666+00:00",
+        "endedUtc": "2026-10-22T04:36:34.357720+00:00",
+        "wallSeconds": 2.654117702972144,
+        "log": "/state/benchmarks/rfdetr-small-fp16-final-serial/parity-b1.log"
+      },
+      "outputSha256": "2eb9918b0172e56884331cc16abe38097c5c7319367a27695f4ae003c6f5853f",
+      "inputSha256": "2d59da7adf2e06ba41fcfc4c4a76c192fcd6fb46b45fa6d29a8b1427f544e5eb"
+    },
+    {
+      "batch": 2,
+      "finite": true,
+      "rawTensorDiagnostics": {
+        "dets": {
+          "maxAbsoluteError": 1.092604961246252,
+          "meanAbsoluteError": 0.09245423820471235,
+          "p95AbsoluteError": 0.5296668037772163,
+          "elementwiseAllcloseAtol0_002Rtol0_001": false
+        },
+        "labels": {
+          "maxAbsoluteError": 4.479398727416992,
+          "meanAbsoluteError": 0.45190175700045765,
+          "p95AbsoluteError": 1.6415399789810179,
+          "elementwiseAllcloseAtol0_002Rtol0_001": false
+        }
+      },
+      "predictionSetSamples": [
+        {
+          "sampleIndex": 0,
+          "referenceDetections": 9,
+          "engineDetections": 9,
+          "referenceClasses": [
+            "bus",
+            "car",
+            "person"
+          ],
+          "engineClasses": [
+            "bus",
+            "car",
+            "person"
+          ],
+          "matches": [
+            {
+              "class": "bus",
+              "referenceQuery": 2,
+              "engineQuery": 2,
+              "iou": 0.999562589158454,
+              "scoreAbsoluteError": 9.441375732421875e-05,
+              "boxMaximumAbsoluteError": 9.289383888244629e-05,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 0,
+              "engineQuery": 0,
+              "iou": 0.9982897832676476,
+              "scoreAbsoluteError": 0.0007552504539489746,
+              "boxMaximumAbsoluteError": 0.0002015829086303711,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 5,
+              "engineQuery": 4,
+              "iou": 0.9963861287449501,
+              "scoreAbsoluteError": 0.002596616744995117,
+              "boxMaximumAbsoluteError": 0.0004922747611999512,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 1,
+              "engineQuery": 1,
+              "iou": 0.9963850406196587,
+              "scoreAbsoluteError": 0.00012558698654174805,
+              "boxMaximumAbsoluteError": 7.18832015991211e-05,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 4,
+              "engineQuery": 5,
+              "iou": 0.9965755640772205,
+              "scoreAbsoluteError": 0.0074002742767333984,
+              "boxMaximumAbsoluteError": 0.0003167390823364258,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 6,
+              "engineQuery": 6,
+              "iou": 0.9926438924154332,
+              "scoreAbsoluteError": 0.002015352249145508,
+              "boxMaximumAbsoluteError": 8.764863014221191e-05,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 7,
+              "engineQuery": 7,
+              "iou": 0.9819609195806501,
+              "scoreAbsoluteError": 0.002441108226776123,
+              "boxMaximumAbsoluteError": 0.00017410516738891602,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 9,
+              "engineQuery": 9,
+              "iou": 0.9844614179863681,
+              "scoreAbsoluteError": 3.325939178466797e-05,
+              "boxMaximumAbsoluteError": 0.00010822713375091553,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 12,
+              "engineQuery": 12,
+              "iou": 0.9543134183811741,
+              "scoreAbsoluteError": 0.00010332465171813965,
+              "boxMaximumAbsoluteError": 0.00019690394401550293,
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        {
+          "sampleIndex": 1,
+          "referenceDetections": 9,
+          "engineDetections": 9,
+          "referenceClasses": [
+            "bus",
+            "car",
+            "person"
+          ],
+          "engineClasses": [
+            "bus",
+            "car",
+            "person"
+          ],
+          "matches": [
+            {
+              "class": "bus",
+              "referenceQuery": 2,
+              "engineQuery": 2,
+              "iou": 0.999562589158454,
+              "scoreAbsoluteError": 9.441375732421875e-05,
+              "boxMaximumAbsoluteError": 9.289383888244629e-05,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 0,
+              "engineQuery": 0,
+              "iou": 0.9982897832676476,
+              "scoreAbsoluteError": 0.0007552504539489746,
+              "boxMaximumAbsoluteError": 0.0002015829086303711,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 5,
+              "engineQuery": 4,
+              "iou": 0.9963861287449501,
+              "scoreAbsoluteError": 0.002596616744995117,
+              "boxMaximumAbsoluteError": 0.0004922747611999512,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 1,
+              "engineQuery": 1,
+              "iou": 0.9963850406196587,
+              "scoreAbsoluteError": 0.00012558698654174805,
+              "boxMaximumAbsoluteError": 7.18832015991211e-05,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 4,
+              "engineQuery": 5,
+              "iou": 0.9965755640772205,
+              "scoreAbsoluteError": 0.0074002742767333984,
+              "boxMaximumAbsoluteError": 0.0003167390823364258,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 6,
+              "engineQuery": 6,
+              "iou": 0.9926438924154332,
+              "scoreAbsoluteError": 0.002015352249145508,
+              "boxMaximumAbsoluteError": 8.764863014221191e-05,
+              "passed": true
+            },
+            {
+              "class": "car",
+              "referenceQuery": 7,
+              "engineQuery": 7,
+              "iou": 0.9819609195806501,
+              "scoreAbsoluteError": 0.002441108226776123,
+              "boxMaximumAbsoluteError": 0.00017410516738891602,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 9,
+              "engineQuery": 9,
+              "iou": 0.9844614179863681,
+              "scoreAbsoluteError": 3.325939178466797e-05,
+              "boxMaximumAbsoluteError": 0.00010822713375091553,
+              "passed": true
+            },
+            {
+              "class": "person",
+              "referenceQuery": 12,
+              "engineQuery": 12,
+              "iou": 0.9543134183811741,
+              "scoreAbsoluteError": 0.00010332465171813965,
+              "boxMaximumAbsoluteError": 0.00019690394401550293,
+              "passed": true
+            }
+          ],
+          "passed": true
+        }
+      ],
+      "gates": {
+        "confidenceThreshold": 0.35,
+        "sameSelectedDetectionCount": true,
+        "classRestrictedMatching": true,
+        "minimumMatchedIoU": 0.9,
+        "maximumMatchedScoreAbsoluteError": 0.03
+      },
+      "passed": true,
+      "scope": "One repeated real image; finite outputs and class/IoU/score prediction-set agreement, not tensor equality or dataset accuracy",
+      "run": {
+        "command": [
+          "/usr/bin/trtexec",
+          "--loadEngine=/models/rfdetr-small-fp16-b2.engine",
+          "--shapes=input:2x3x512x512",
+          "--loadInputs=input:/state/benchmarks/rfdetr-small-fp16-final-serial/input-b2.bin",
+          "--infStreams=1",
+          "--iterations=1",
+          "--duration=0",
+          "--warmUp=0",
+          "--exportOutput=/state/benchmarks/rfdetr-small-fp16-final-serial/outputs-b2.json"
+        ],
+        "startedUtc": "2026-10-22T04:36:52.234403+00:00",
+        "endedUtc": "2026-10-22T04:36:54.151825+00:00",
+        "wallSeconds": 1.917444711085409,
+        "log": "/state/benchmarks/rfdetr-small-fp16-final-serial/parity-b2.log"
+      },
+      "outputSha256": "fdfe69e2810941f01414d54bc638d13326483328cda330998f802c03f3a2d70a",
+      "inputSha256": "d116e74d3fe623d482aebb3fb4dcf62155a928602adb09b4fdc0c8df495a1ddc"
+    }
+  ],
+  "benchmarks": [
+    {
+      "sampleCount": 2028,
+      "computeMs": {
+        "mean": 4.936032214003945,
+        "p50": 4.64941,
+        "p95": 7.440283499999999,
+        "minimum": 2.24512,
+        "maximum": 9.04492
+      },
+      "latencyMs": {
+        "mean": 5.033978643984221,
+        "p50": 4.74609,
+        "p95": 7.5494605,
+        "minimum": 2.32422,
+        "maximum": 9.13672
+      },
+      "h2dMs": {
+        "mean": 0.08181696479289942,
+        "p50": 0.0732422,
+        "p95": 0.13833004999999987,
+        "minimum": 0.0585938,
+        "maximum": 0.404297
+      },
+      "d2hMs": {
+        "mean": 0.016129412968441812,
+        "p50": 0.015625,
+        "p95": 0.0244141,
+        "minimum": 0.00683594,
+        "maximum": 0.0722656
+      },
+      "batch": 1,
+      "inputShape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "warmupMilliseconds": 5000,
+      "minimumMeasurementSeconds": 10,
+      "dataTransfersEnabled": true,
+      "cudaGraph": false,
+      "inferenceStreams": 1,
+      "run": {
+        "command": [
+          "/usr/bin/trtexec",
+          "--loadEngine=/models/rfdetr-small-fp16-b2.engine",
+          "--shapes=input:1x3x512x512",
+          "--loadInputs=input:/state/benchmarks/rfdetr-small-fp16-final-serial/input-b1.bin",
+          "--infStreams=1",
+          "--warmUp=5000",
+          "--duration=10",
+          "--iterations=1",
+          "--exportTimes=/state/benchmarks/rfdetr-small-fp16-final-serial/timings-b1.json"
+        ],
+        "startedUtc": "2026-10-22T04:36:34.801650+00:00",
+        "endedUtc": "2026-10-22T04:36:52.203025+00:00",
+        "wallSeconds": 17.40140047809109,
+        "log": "/state/benchmarks/rfdetr-small-fp16-final-serial/benchmark-b1.log"
+      },
+      "timingsSha256": "581adfa5743b85dd72fa53cd054631285ac338b723a24b4e29bf565f0c5e3f08",
+      "inputSha256": "2d59da7adf2e06ba41fcfc4c4a76c192fcd6fb46b45fa6d29a8b1427f544e5eb",
+      "inferencesPerSecond": 202.443,
+      "imagesPerSecond": 202.443
+    },
+    {
+      "sampleCount": 1319,
+      "computeMs": {
+        "mean": 7.592471758908264,
+        "p50": 8.24658,
+        "p95": 9.046977,
+        "minimum": 3.33789,
+        "maximum": 12.5645
+      },
+      "latencyMs": {
+        "mean": 7.802466694465503,
+        "p50": 8.46484,
+        "p95": 9.267674,
+        "minimum": 3.51758,
+        "maximum": 12.7793
+      },
+      "h2dMs": {
+        "mean": 0.17622213419257013,
+        "p50": 0.162109,
+        "p95": 0.2563968,
+        "minimum": 0.115234,
+        "maximum": 0.758301
+      },
+      "d2hMs": {
+        "mean": 0.03377285163002275,
+        "p50": 0.0322266,
+        "p95": 0.0458984,
+        "minimum": 0.0117188,
+        "maximum": 0.0756836
+      },
+      "batch": 2,
+      "inputShape": [
+        2,
+        3,
+        512,
+        512
+      ],
+      "warmupMilliseconds": 5000,
+      "minimumMeasurementSeconds": 10,
+      "dataTransfersEnabled": true,
+      "cudaGraph": false,
+      "inferenceStreams": 1,
+      "run": {
+        "command": [
+          "/usr/bin/trtexec",
+          "--loadEngine=/models/rfdetr-small-fp16-b2.engine",
+          "--shapes=input:2x3x512x512",
+          "--loadInputs=input:/state/benchmarks/rfdetr-small-fp16-final-serial/input-b2.bin",
+          "--infStreams=1",
+          "--warmUp=5000",
+          "--duration=10",
+          "--iterations=1",
+          "--exportTimes=/state/benchmarks/rfdetr-small-fp16-final-serial/timings-b2.json"
+        ],
+        "startedUtc": "2026-10-22T04:36:54.180243+00:00",
+        "endedUtc": "2026-10-22T04:37:11.921182+00:00",
+        "wallSeconds": 17.74101667292416,
+        "log": "/state/benchmarks/rfdetr-small-fp16-final-serial/benchmark-b2.log"
+      },
+      "timingsSha256": "7bccae536145747cc9f29e6071a023b79bb958638c1851d0147844a26365a89c",
+      "inputSha256": "d116e74d3fe623d482aebb3fb4dcf62155a928602adb09b4fdc0c8df495a1ddc",
+      "inferencesPerSecond": 131.576,
+      "imagesPerSecond": 263.152
+    }
+  ],
+  "passed": true,
+  "scope": "Standalone engine on one repeated real video frame; excludes decode, preprocessing, tracking, analytics, transport and display; no dataset accuracy or Thor qualification.",
+  "memoryAfterGiB": 40.39373016357422,
+  "operatingStateAfter": "2418 MHz, 76, 57.66 W, [N/A], 94 %",
+  "coordinatedServices": {
+    "cosmosVlm": "loaded healthy idle",
+    "cosmosEmbed": "loaded healthy idle",
+    "languageModel": "stopped for this matched pair",
+    "cityDetector": "stopped",
+    "otherGpuInference": "none requested"
+  }
+}

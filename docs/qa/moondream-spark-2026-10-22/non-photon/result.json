@@ -1,0 +1,416 @@
+{
+  "model": "moondream3-preview",
+  "upstream_revision": "5112966d1a723413b1c9a1e8bea272b72e647b35",
+  "checkpoint_sha256": "699bd3876f9e105440d60a5fe30c26bc33fbdf008f5bd611a3557663b24bd371",
+  "implementation": "official PyTorch forward, BF16 from dequantized cached FP8 weights; custom diagnostic segment loop",
+  "photon_used": false,
+  "normal_positive_masks": "0/3",
+  "conditioned_positive_masks": "2/3 structurally valid; neither visually accurate enough",
+  "blank_controls": "2/2 empty segment; 1/1 empty detect",
+  "peak_cuda_reserved_gib": 18.40234375,
+  "minimum_host_available_gib": 37.64822769165039,
+  "reserve_gib": 20,
+  "cpu_tests": 31,
+  "cases": [
+    {
+      "stage": "query",
+      "case": "person-query-control",
+      "elapsed_s": 3.5371535238809884,
+      "inference_s": 3.5371512840501964,
+      "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+      "answer": "The person is wearing a yellow safety vest, a hard hat, and dark pants. They are standing near a metal ladder and appear to be inspecting or retrieving items from shelves."
+    },
+    {
+      "stage": "detect",
+      "case": "person-detect-control",
+      "elapsed_s": 1.3354078051634133,
+      "inference_s": 1.3354051811620593,
+      "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+      "objects": [
+        {
+          "x_min": 0.3690699674189091,
+          "y_min": 0.30345433950424194,
+          "x_max": 0.4473362825810909,
+          "y_max": 0.6281862854957581
+        }
+      ]
+    },
+    {
+      "stage": "detect",
+      "case": "blank-detect-control",
+      "elapsed_s": 0.8001135410740972,
+      "inference_s": 0.8001117329113185,
+      "image_sha256": "97d19142e8658c1a175c7917b1eccbfea77b0cf1195089dfb7f14b50bb386d48",
+      "objects": []
+    },
+    {
+      "stage": "segment",
+      "case": "person-point-raw",
+      "elapsed_s": 0.9582049269229174,
+      "inference_s": 0.9571216567419469,
+      "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+      "finish_reason": "eos",
+      "output_tokens": 4,
+      "bbox": {
+        "x_min": 0.37501712143421173,
+        "y_min": 0.3101299852132797,
+        "x_max": 0.42967037856578827,
+        "y_max": 0.6156512647867203
+      },
+      "post_bbox": {
+        "greedy_token_id": 0,
+        "eos_probability": 0.9566871523857117,
+        "svg_start_probability": 0.04203389957547188,
+        "M_probability": 6.143577313544313e-11,
+        "top_tokens": [
+          {
+            "id": 0,
+            "probability": 0.9566871523857117
+          },
+          {
+            "id": 10,
+            "probability": 0.04203389957547188
+          },
+          {
+            "id": 5,
+            "probability": 0.0012693137396126986
+          },
+          {
+            "id": 425,
+            "probability": 1.3115790125084459e-06
+          },
+          {
+            "id": 225,
+            "probability": 1.1574643394851591e-06
+          },
+          {
+            "id": 291,
+            "probability": 6.59503314182075e-07
+          },
+          {
+            "id": 373,
+            "probability": 4.5326956410463026e-07
+          },
+          {
+            "id": 359,
+            "probability": 4.2580731474117783e-07
+          }
+        ],
+        "forced_svg_start": false
+      },
+      "mask_status": "bbox_only"
+    },
+    {
+      "stage": "segment",
+      "case": "panel-point-raw",
+      "elapsed_s": 1.2667228300124407,
+      "inference_s": 1.2662417953833938,
+      "image_sha256": "1032983acc2d9544663a3c677aae9287d2771318a4ce5b838f7cf5ca9cbc28d9",
+      "finish_reason": "eos",
+      "output_tokens": 4,
+      "bbox": {
+        "x_min": 0.28922128677368164,
+        "y_min": 0.15104034543037415,
+        "x_max": 0.8514037132263184,
+        "y_max": 0.8352877795696259
+      },
+      "post_bbox": {
+        "greedy_token_id": 0,
+        "eos_probability": 0.9999545812606812,
+        "svg_start_probability": 4.217619634615255e-14,
+        "M_probability": 1.317591591387668e-10,
+        "top_tokens": [
+          {
+            "id": 0,
+            "probability": 0.9999545812606812
+          },
+          {
+            "id": 5,
+            "probability": 4.539786823443137e-05
+          },
+          {
+            "id": 225,
+            "probability": 1.9554793340148535e-08
+          },
+          {
+            "id": 203,
+            "probability": 1.3439799495529314e-08
+          },
+          {
+            "id": 34,
+            "probability": 9.832767489115213e-09
+          },
+          {
+            "id": 32,
+            "probability": 9.23703069588555e-09
+          },
+          {
+            "id": 291,
+            "probability": 2.99882474408264e-09
+          },
+          {
+            "id": 297,
+            "probability": 2.335486914972762e-09
+          }
+        ],
+        "forced_svg_start": false
+      },
+      "mask_status": "bbox_only"
+    },
+    {
+      "stage": "segment",
+      "case": "box-point-raw",
+      "elapsed_s": 20.705301877111197,
+      "inference_s": 20.704209871124476,
+      "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+      "finish_reason": "max_tokens",
+      "output_tokens": 256,
+      "bbox": {
+        "x_min": 0.6278266608715057,
+        "y_min": 0.5155256241559982,
+        "x_max": 0.8116264641284943,
+        "y_max": 0.7500993758440018
+      },
+      "post_bbox": {
+        "greedy_token_id": 5,
+        "eos_probability": 0.34861844778060913,
+        "svg_start_probability": 3.234746845381942e-11,
+        "M_probability": 4.445549350862166e-08,
+        "top_tokens": [
+          {
+            "id": 5,
+            "probability": 0.6513049602508545
+          },
+          {
+            "id": 0,
+            "probability": 0.34861844778060913
+          },
+          {
+            "id": 225,
+            "probability": 4.8270394472638145e-06
+          },
+          {
+            "id": 34,
+            "probability": 3.7593017623294145e-06
+          },
+          {
+            "id": 264,
+            "probability": 2.927747118519619e-06
+          },
+          {
+            "id": 32,
+            "probability": 2.427187610010151e-06
+          },
+          {
+            "id": 645,
+            "probability": 1.890295834527933e-06
+          },
+          {
+            "id": 203,
+            "probability": 1.5671100754843792e-06
+          }
+        ],
+        "forced_svg_start": false
+      },
+      "mask_status": "bbox_only"
+    },
+    {
+      "stage": "segment",
+      "case": "blank-raw",
+      "elapsed_s": 1.1079142256639898,
+      "inference_s": 1.1075275568291545,
+      "image_sha256": "97d19142e8658c1a175c7917b1eccbfea77b0cf1195089dfb7f14b50bb386d48",
+      "finish_reason": "eos",
+      "output_tokens": 1,
+      "bbox": null,
+      "post_bbox": null,
+      "mask_status": "empty_result"
+    },
+    {
+      "stage": "segment",
+      "case": "person-point-conditioned",
+      "elapsed_s": 7.214848498348147,
+      "inference_s": 7.076765439007431,
+      "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+      "finish_reason": "eos",
+      "output_tokens": 84,
+      "bbox": {
+        "x_min": 0.37501712143421173,
+        "y_min": 0.3101299852132797,
+        "x_max": 0.42967037856578827,
+        "y_max": 0.6156512647867203
+      },
+      "post_bbox": {
+        "greedy_token_id": 0,
+        "eos_probability": 0.9566871523857117,
+        "svg_start_probability": 0.04203389957547188,
+        "M_probability": 6.143577313544313e-11,
+        "top_tokens": [
+          {
+            "id": 0,
+            "probability": 0.9566871523857117
+          },
+          {
+            "id": 10,
+            "probability": 0.04203389957547188
+          },
+          {
+            "id": 5,
+            "probability": 0.0012693137396126986
+          },
+          {
+            "id": 425,
+            "probability": 1.3115790125084459e-06
+          },
+          {
+            "id": 225,
+            "probability": 1.1574643394851591e-06
+          },
+          {
+            "id": 291,
+            "probability": 6.59503314182075e-07
+          },
+          {
+            "id": 373,
+            "probability": 4.5326956410463026e-07
+          },
+          {
+            "id": 359,
+            "probability": 4.2580731474117783e-07
+          }
+        ],
+        "forced_svg_start": true
+      },
+      "mask_status": "nonempty_mask",
+      "svg_path_sha256": "5480f52307c6384be720fb5dd65efaa4aec75ef0bbd8dcf56f860d8b73431131"
+    },
+    {
+      "stage": "segment",
+      "case": "panel-point-conditioned",
+      "elapsed_s": 20.772591582033783,
+      "inference_s": 20.77161256596446,
+      "image_sha256": "1032983acc2d9544663a3c677aae9287d2771318a4ce5b838f7cf5ca9cbc28d9",
+      "finish_reason": "max_tokens",
+      "output_tokens": 256,
+      "bbox": {
+        "x_min": 0.28922128677368164,
+        "y_min": 0.15104034543037415,
+        "x_max": 0.8514037132263184,
+        "y_max": 0.8352877795696259
+      },
+      "post_bbox": {
+        "greedy_token_id": 0,
+        "eos_probability": 0.9999545812606812,
+        "svg_start_probability": 4.217619634615255e-14,
+        "M_probability": 1.317591591387668e-10,
+        "top_tokens": [
+          {
+            "id": 0,
+            "probability": 0.9999545812606812
+          },
+          {
+            "id": 5,
+            "probability": 4.539786823443137e-05
+          },
+          {
+            "id": 225,
+            "probability": 1.9554793340148535e-08
+          },
+          {
+            "id": 203,
+            "probability": 1.3439799495529314e-08
+          },
+          {
+            "id": 34,
+            "probability": 9.832767489115213e-09
+          },
+          {
+            "id": 32,
+            "probability": 9.23703069588555e-09
+          },
+          {
+            "id": 291,
+            "probability": 2.99882474408264e-09
+          },
+          {
+            "id": 297,
+            "probability": 2.335486914972762e-09
+          }
+        ],
+        "forced_svg_start": true
+      },
+      "parse_error": "SVG path contains an incomplete command",
+      "mask_status": "bbox_only"
+    },
+    {
+      "stage": "segment",
+      "case": "box-point-conditioned",
+      "elapsed_s": 5.614543534815311,
+      "inference_s": 5.480195122770965,
+      "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+      "finish_reason": "eos",
+      "output_tokens": 61,
+      "bbox": {
+        "x_min": 0.6278266608715057,
+        "y_min": 0.5155256241559982,
+        "x_max": 0.8116264641284943,
+        "y_max": 0.7500993758440018
+      },
+      "post_bbox": {
+        "greedy_token_id": 5,
+        "eos_probability": 0.34861844778060913,
+        "svg_start_probability": 3.234746845381942e-11,
+        "M_probability": 4.445549350862166e-08,
+        "top_tokens": [
+          {
+            "id": 5,
+            "probability": 0.6513049602508545
+          },
+          {
+            "id": 0,
+            "probability": 0.34861844778060913
+          },
+          {
+            "id": 225,
+            "probability": 4.8270394472638145e-06
+          },
+          {
+            "id": 34,
+            "probability": 3.7593017623294145e-06
+          },
+          {
+            "id": 264,
+            "probability": 2.927747118519619e-06
+          },
+          {
+            "id": 32,
+            "probability": 2.427187610010151e-06
+          },
+          {
+            "id": 645,
+            "probability": 1.890295834527933e-06
+          },
+          {
+            "id": 203,
+            "probability": 1.5671100754843792e-06
+          }
+        ],
+        "forced_svg_start": true
+      },
+      "mask_status": "nonempty_mask",
+      "svg_path_sha256": "56d10b85ec86535ccc6bca45dfeef8352e71f630768999ee52106b5ec2073ece"
+    },
+    {
+      "stage": "segment",
+      "case": "blank-conditioned",
+      "elapsed_s": 1.1513900118879974,
+      "inference_s": 1.150826497003436,
+      "image_sha256": "97d19142e8658c1a175c7917b1eccbfea77b0cf1195089dfb7f14b50bb386d48",
+      "finish_reason": "eos",
+      "output_tokens": 1,
+      "bbox": null,
+      "post_bbox": null,
+      "mask_status": "empty_result"
+    }
+  ]
+}

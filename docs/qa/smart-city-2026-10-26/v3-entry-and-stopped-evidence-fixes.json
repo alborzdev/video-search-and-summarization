@@ -1,0 +1,234 @@
+{
+  "schemaVersion": "city.v3-entry-and-stopped-evidence-fixes.v1",
+  "recordedAt": "2026-10-26T08:53:21.958831+00:00",
+  "scope": "Source changes, isolated real-camera replays and CPU tests by next_pipeline_perf. Parent owns live profile/service/UI acceptance. No GPU job/model request/RTSP reader/runtime mutation was performed by this subtask.",
+  "sourceSha256": {
+    "services/analytics/behavior-analytics/apps/city/engine.py": "aff5a638e0cc8dd797230edfdb51ee9989c1945bdb97799bee8cfef834f1ee02",
+    "services/analytics/behavior-analytics/apps/city/mobility.py": "d4bb65c3167ef8813b4e19eff0584041ad64bb9f3305cda381e99a63239d03e0",
+    "services/analytics/behavior-analytics/apps/city/tests/test_stopped_evidence.py": "0afca491de55b91437ff6854d16bb993e0d1e3b719235a465f3ea1ba54947511",
+    "services/analytics/behavior-analytics/apps/city/tests/test_mobility.py": "f97a5417f7616a7def168febcea32bc3b4a1233512d9e54c32d8e098a7092020",
+    "tools/smart-city/isaac_site.py": "0ce1206702bfcfeec98f5f0724cb6093b425f9cda4e811585080f5eb83b9dbe0",
+    "tools/smart-city/isaac_movement_gates.py": "ed82d919a8bda71e26d230e922bacf76afa79d274aec01b21bf7fe17dca49782",
+    "tools/smart-city/tests/test_isaac_movement_gates.py": "20226a7e04eb32e449ae431861fa822005abe4fdae899138f1d4a23f4d6c008b",
+    "tools/smart-city/tests/fixtures/isaac-nb-entry-observed-anchors.json": "4c41bf28dfab61d7879f2d6414b04d6df5fae101d59a14fdfef52449cbf69cac",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityInspector.tsx": "13edc58a16200bfc62ff072f6833bc17ae1e3aa2312abe1d2f9a023dee36e2be",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/presentation.ts": "9179a2883c659977b810d165bf2759faef1a09be2f48763e2be7120e541e51b7",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/types.ts": "8fd5ee44d7c1eaf9917e4a55eaff1f9a78fbdf46f9e76fd61a0a65f1d6e0e82e"
+  },
+  "entry": {
+    "baselineSourceSessionId": "0dd7adc9-3f21-4916-b7dd-411553225ae3",
+    "baselineRows": 3796,
+    "sourceDurationSeconds": 359.559094111,
+    "retainedSubsetSha256": "a5d0eefb86b18687898ccff432768c7429077f27a98d584c8178067eb82e9c61",
+    "beforeGroundEndpointsM": [
+      [
+        -23.62,
+        66.0
+      ],
+      [
+        -20.119999999999997,
+        66.0
+      ]
+    ],
+    "afterGroundEndpointsM": [
+      [
+        -24.37,
+        66.0
+      ],
+      [
+        -20.119999999999997,
+        66.0
+      ]
+    ],
+    "changedField": "cam_sw-northbound-line.geometry.points[0] only",
+    "westExtensionM": 0.75,
+    "preserved": [
+      "Y66 pre-branch location",
+      "east endpoint",
+      "direction",
+      "1s maximum observation gap",
+      "hysteresis/classes/durations",
+      "all other18rules",
+      "site/calibration/profile/tracker/model",
+      "mobility config6 including East crossing selection"
+    ],
+    "isolatedExactEngineReplay": {
+      "baselineEntryCount": 0,
+      "baselineCompletedCount": 0,
+      "candidateEntryCount": 5,
+      "candidateCompletions": [
+        {
+          "kind": "movement",
+          "id": "northbound-through",
+          "class": "bus",
+          "atNs": 1793002960856117443,
+          "travelSeconds": 8.555960888
+        },
+        {
+          "kind": "movement",
+          "id": "northbound-left",
+          "class": "car",
+          "atNs": 1793003231211172112,
+          "travelSeconds": 10.002954779
+        },
+        {
+          "kind": "movement",
+          "id": "northbound-left",
+          "class": "car",
+          "atNs": 1793003239222564778,
+          "travelSeconds": 10.792170444
+        }
+      ],
+      "candidateIncompleteRecords": [
+        {
+          "kind": "incomplete",
+          "id": "northbound-through",
+          "atNs": 1793003058417521221,
+          "reason": "observation-gap-or-class-change"
+        },
+        {
+          "kind": "incomplete",
+          "id": "northbound-left",
+          "atNs": 1793003058417521221,
+          "reason": "observation-gap-or-class-change"
+        },
+        {
+          "kind": "incomplete",
+          "id": "northbound-right",
+          "atNs": 1793003058417521221,
+          "reason": "observation-gap-or-class-change"
+        },
+        {
+          "kind": "incomplete",
+          "id": "northbound-through",
+          "atNs": 1793003250691116110,
+          "reason": "observation-gap-or-class-change"
+        },
+        {
+          "kind": "incomplete",
+          "id": "northbound-left",
+          "atNs": 1793003250691116110,
+          "reason": "observation-gap-or-class-change"
+        },
+        {
+          "kind": "incomplete",
+          "id": "northbound-right",
+          "atNs": 1793003250691116110,
+          "reason": "observation-gap-or-class-change"
+        }
+      ]
+    },
+    "liveAcceptanceOwnedByParent": "Parent reported hot rule426 native acknowledgement19 and2through+1right actual UI journeys; see v3-live-movement-through-right.json/jpg/txt. This is a separate later cohort, not the retained replay.",
+    "coldSetup": "Generator default includes only west0.75m observed-anchor margin; migration recognizes exact old69.6/narrow66/newwide66 generated forms and refuses custom operator geometry.",
+    "controls": "Five retained actual camera-anchor regression pairs:3NB positive,1outsidewest finite segment,1southbound-motion negative. No actor identity or simulator position passed to analytics."
+  },
+  "stoppedEvent": {
+    "actualFailure": {
+      "eventId": "a45d4ec01173e00d0d4a3a003f61039d",
+      "localTrackId": "5527462707671859405",
+      "class": "car",
+      "actualTriggerNs": "1793003343568517444",
+      "actualUnknownNs": "1793003344423428555",
+      "reason": "observation-gap",
+      "previousRealObservationNs": "1793003344124484111",
+      "gapBetweenRealObservationsSeconds": 0.298944444,
+      "missingProcessedSequence": "4306",
+      "nextRealProcessedSequence": "4307",
+      "allObservedGapsAbove1s": [],
+      "scope": "Actual first-NvDCF exported boxes; absent raw detector rectangles mean the specific miss cannot be attributed solely to detector versus tracker."
+    },
+    "rootCause": "Predicted frames cleared real motion samples; reobserved frames required the immediately previous frame to be observed, so speed became unavailable after even one brief miss. The stopped rule then invalidated the incident and required the full4s duration again.",
+    "fix": "Preserve bounded real-only motion samples across <=1s loss; predictions publish no speed and add no sample. Existing rule gap limits, wall freshness and class/session resets remain authoritative. Bounded stop pending retains incident identity, freezes observed duration, and requires a fresh real stopped observation to resume. Longer loss stays unknown and requalifies duration; actual movement/exit uses existing clear hysteresis.",
+    "wire": {
+      "stopEvidenceStatus": [
+        "confirmed",
+        "pending",
+        "clearing",
+        "unknown",
+        "cleared"
+      ],
+      "stopEvidenceAtNs": "Exact current source time only when confirmed",
+      "publicState": "active/unknown/cleared compatibility retained; pending/clearing is separately visible",
+      "ruleMetric": "unknown plus stop-observation-pending during pending",
+      "obstructionAggregation": "Requires real observations for every event track, stopEvidenceStatus=confirmed and stopEvidenceAtNs=current ns. Missing/pending/clearing intervals are excluded; pendingEvidenceEpisodes exposed.",
+      "historical": "Pending/clearing transitions remain in bounded history. Historical duration is unavailable after interrupted proof; future latestMetrics/stopEvidenceAtNs are removed."
+    },
+    "retainedCameraReplay": {
+      "rows": 260,
+      "inputSha256": "939528336d2efdd36a2f1a0ad37111020e86eaad35e18a7715d74001e9fc6d3e",
+      "exactSameActualEventId": "a45d4ec01173e00d0d4a3a003f61039d",
+      "pendingBoundaries": 9,
+      "briefConfirmedRecoveries": 8,
+      "finalState": "unknown",
+      "finalStateReason": "observation-gap",
+      "observedBlockedSeconds": 9.316195222,
+      "limits": "Empty state at subset start; actual6s approach in subset precedes same trigger. Final true loss after release remains unknown; no simulator departure is substituted as a camera clear."
+    }
+  },
+  "checks": [
+    {
+      "check": "full city CPU suite including peer pedestrian changes",
+      "command": "/tmp/vss-city-backend-test-env/bin/pytest -q services/analytics/behavior-analytics/apps/city/tests",
+      "result": "255 passed in2.43s",
+      "exitCode": 0
+    },
+    {
+      "check": "site+movement regressions",
+      "command": "/tmp/vss-city-backend-test-env/bin/pytest -q tools/smart-city/tests/test_isaac_movement_gates.py tools/smart-city/tests/test_isaac_site.py",
+      "result": "25 passed in0.47s",
+      "exitCode": 0
+    },
+    {
+      "check": "fatal Ruff",
+      "result": "E9,F63,F7,F82 pass on changed backend,tools,tests",
+      "exitCode": 0
+    },
+    {
+      "check": "mypy",
+      "command": "/tmp/vss-city-backend-test-env/bin/mypy --follow-imports=skip --ignore-missing-imports tools/smart-city/isaac_site.py tools/smart-city/isaac_movement_gates.py services/analytics/behavior-analytics/apps/city/engine.py services/analytics/behavior-analytics/apps/city/mobility.py",
+      "result": "Success4source files",
+      "exitCode": 0
+    },
+    {
+      "check": "React UI focused",
+      "result": "49passed2suites CityInspector+presentation",
+      "runtime": "Bounded runc CPU2/4GiB, networknone, existing cached73184image, source read-only, NODE_ENV=test",
+      "exitCode": 0
+    },
+    {
+      "check": "strict whole-app TypeScript",
+      "command": "node ../../node_modules/typescript/bin/tsc --noEmit --incremental false",
+      "result": "No diagnostics; actual exit0",
+      "runtime": "Same bounded CPU image/source mount plus canonical VIOS dash read-only mount",
+      "exitCode": 0
+    },
+    {
+      "check": "initial UI test environment attempt",
+      "result": "All34 render tests failed because inherited production NODE_ENV disabled Reactact; formatter15passed. Corrected only test runtime environment toNODE_ENV=test; all49passed.",
+      "exitCode": 1,
+      "resolved": true
+    }
+  ],
+  "independentReview": {
+    "backend": "next_sim_perf read-only no blocker, independently16stopped+motion tests passed",
+    "UI": "next_preview_perf exact-hash static review found no blocker; independent49tests passed1.8s, see pending-evidence-ui-independent-review.json",
+    "combinedFinalBackend": "next_preview_perf independently reports259 city tests pass2.42s on unchanged engineaff5a638/mobilityd4bb65c and finalspatial04425575 after4actual-ingest controls added"
+  },
+  "UI": {
+    "labels": [
+      "Checking evidence",
+      "Checking clearance"
+    ],
+    "confirmedActiveCount": "Excludes stopped pending/clearing; raw API state remains compatible",
+    "details": "Latest observed stopped duration shown, internaldurationBasis hidden",
+    "export": "JSON carries actual evidence fields; CSV keeps rawstate and adds evidence_status",
+    "browser": "Browser skill absent; no local browser app test for unbuilt source, because parent explicitly owns one final package/cutover/browser acceptance. No source-mounted dev switch performed."
+  },
+  "limits": [
+    "No detector/track identity guard was relaxed.",
+    "No attribution of missed real detections to a specific neural model is proven without raw pre-tracker rectangles.",
+    "Class changes/identity losses and true >1s loss remain incomplete/unknown.",
+    "Offline retained replays are not held-out detector accuracy.",
+    "Final live backend/UI performance and scenario acceptance belong to parent after consolidated deployment."
+  ]
+}

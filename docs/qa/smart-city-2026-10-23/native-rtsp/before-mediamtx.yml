@@ -1,0 +1,21 @@
+{
+  "logLevel": "warn",
+  "rtsp": true,
+  "rtspTransports": [
+    "tcp"
+  ],
+  "rtspAddress": "172.17.0.1:18556",
+  "api": false,
+  "metrics": false,
+  "pprof": false,
+  "playback": false,
+  "rtmp": false,
+  "hls": false,
+  "webrtc": false,
+  "srt": false,
+  "moq": false,
+  "paths": {
+    "cam_SW": {},
+    "cam_NE": {}
+  }
+}

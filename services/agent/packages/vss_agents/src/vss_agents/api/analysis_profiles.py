@@ -16,6 +16,7 @@ from dataclasses import dataclass
 import json
 import logging
 import os
+import re
 from typing import Any
 from typing import Literal
 
@@ -31,6 +32,7 @@ logger = logging.getLogger(__name__)
 SEMANTIC_PROFILE_ID = "semantic-search"
 WAREHOUSE_PROFILE_ID = "warehouse-safety"
 TRAFFIC_PROFILE_ID = "traffic-monitoring"
+SMART_CITY_PROFILE_ID = "smart-city"
 DEFAULT_DETECTION_PROFILE_ID = WAREHOUSE_PROFILE_ID
 
 
@@ -124,6 +126,30 @@ ANALYSIS_PROFILES: tuple[AnalysisProfileDefinition, ...] = (
         # this instead of silently overcommitting the appliance.
         max_sources=1,
     ),
+    AnalysisProfileDefinition(
+        id=SMART_CITY_PROFILE_ID,
+        name="Smart City",
+        short_name="Smart City",
+        description=(
+            "RF-DETR detection and CUDA tracking for people, bicycles, motorcycles, cars, buses and trucks; "
+            "calibrated street mapping, crossings, occupancy, dwell, stopped vehicles, queues and wrong-way rules."
+        ),
+        model_id="roboflow/rf-detr",
+        model_label="RF-DETR Small / Medium · DeepStream 9.2",
+        scene_types=("smart city", "intersection", "street", "crosswalk", "bus stop", "traffic"),
+        object_types=("person", "bicycle", "car", "motorcycle", "bus", "truck"),
+        rule_kinds=(
+            "area-entry",
+            "line-crossing",
+            "occupancy-threshold",
+            "dwell",
+            "stopped-in-zone",
+            "queue",
+            "wrong-way",
+        ),
+        resource_tier="medium",
+        max_sources=2,
+    ),
 )
 
 PROFILE_BY_ID = {profile.id: profile for profile in ANALYSIS_PROFILES}
@@ -145,6 +171,8 @@ def analysis_profile_endpoint(warehouse_rtvi_cv_url: str, profile_id: str) -> st
         return warehouse_rtvi_cv_url.rstrip("/")
     if profile_id == TRAFFIC_PROFILE_ID:
         return os.getenv("VSS_TRAFFIC_RTVI_CV_URL", "").rstrip("/")
+    if profile_id == SMART_CITY_PROFILE_ID:
+        return os.getenv("VSS_CITY_RTVI_CV_URL", "").rstrip("/")
     return ""
 
 
@@ -199,6 +227,15 @@ class SourceAnalysisProfileResponse(BaseModel):
 
 def _local_profile_recommendation(source_name: str, intent: str) -> tuple[str, float, str]:
     text = f"{source_name} {intent}".casefold()
+    city_specific = bool(re.search(r"\b(?:bus|buses|queue|queues|wrong-way)\b", text)) or any(
+        term in text for term in ("line crossing", "wrong way")
+    )
+    if any(term in text for term in ("smart city", "smart-city", "city map")):
+        return (
+            SMART_CITY_PROFILE_ID,
+            0.9,
+            "The requested city object classes, map or traffic rules match the Smart City pipeline.",
+        )
     warehouse_terms = {
         "warehouse",
         "forklift",
@@ -221,9 +258,15 @@ def _local_profile_recommendation(source_name: str, intent: str) -> tuple[str, f
         "parking",
         "jaywalk",
         "pedestrian crossing",
+        "bus",
+        "truck",
+        "queue",
+        "line crossing",
+        "wrong way",
+        "wrong-way",
     }
     warehouse_score = sum(term in text for term in warehouse_terms)
-    traffic_score = sum(term in text for term in traffic_terms)
+    traffic_score = sum(term in text for term in traffic_terms if term != "bus") + bool(re.search(r"\bbus(?:es)?\b", text))
     if warehouse_score > traffic_score:
         return (
             WAREHOUSE_PROFILE_ID,
@@ -232,7 +275,7 @@ def _local_profile_recommendation(source_name: str, intent: str) -> tuple[str, f
         )
     if traffic_score > warehouse_score:
         return (
-            TRAFFIC_PROFILE_ID,
+            SMART_CITY_PROFILE_ID if city_specific else TRAFFIC_PROFILE_ID,
             min(0.97, 0.72 + traffic_score * 0.06),
             ("The source description and monitoring intent indicate a roadway or vehicle scene."),
         )
@@ -346,18 +389,18 @@ def create_analysis_profiles_router(warehouse_rtvi_cv_url: str) -> APIRouter:
                 AnalysisProfileResponse(
                     id=profile.id,
                     name=profile.name,
-                    short_name=profile.short_name,
+                    shortName=profile.short_name,
                     description=profile.description,
-                    detection_enabled=profile.detection_enabled,
-                    model_id=profile.model_id,
-                    model_label=profile.model_label,
-                    object_types=list(profile.object_types),
+                    detectionEnabled=profile.detection_enabled,
+                    modelId=profile.model_id,
+                    modelLabel=profile.model_label,
+                    objectTypes=list(profile.object_types),
                     ready=ready,
-                    ready_detail=detail,
-                    resource_tier=profile.resource_tier,
-                    max_sources=profile.max_sources,
-                    rule_kinds=list(profile.rule_kinds),
-                    scene_types=list(profile.scene_types),
+                    readyDetail=detail,
+                    resourceTier=profile.resource_tier,
+                    maxSources=profile.max_sources,
+                    ruleKinds=list(profile.rule_kinds),
+                    sceneTypes=list(profile.scene_types),
                 )
                 for profile, (ready, detail) in zip(ANALYSIS_PROFILES, readiness, strict=True)
             ]
@@ -378,23 +421,23 @@ def create_analysis_profiles_router(warehouse_rtvi_cv_url: str) -> APIRouter:
         async with httpx.AsyncClient(timeout=httpx.Timeout(2.0)) as client:
             ready, detail = await _profile_readiness(client, warehouse_rtvi_cv_url, profile)
         return SourceAnalysisProfileResponse(
-            source_id=source_id,
-            profile_id=profile.id,
+            sourceId=source_id,
+            profileId=profile.id,
             profile=AnalysisProfileResponse(
                 id=profile.id,
                 name=profile.name,
-                short_name=profile.short_name,
+                shortName=profile.short_name,
                 description=profile.description,
-                detection_enabled=profile.detection_enabled,
-                model_id=profile.model_id,
-                model_label=profile.model_label,
-                object_types=list(profile.object_types),
+                detectionEnabled=profile.detection_enabled,
+                modelId=profile.model_id,
+                modelLabel=profile.model_label,
+                objectTypes=list(profile.object_types),
                 ready=ready,
-                ready_detail=detail,
-                resource_tier=profile.resource_tier,
-                max_sources=profile.max_sources,
-                rule_kinds=list(profile.rule_kinds),
-                scene_types=list(profile.scene_types),
+                readyDetail=detail,
+                resourceTier=profile.resource_tier,
+                maxSources=profile.max_sources,
+                ruleKinds=list(profile.rule_kinds),
+                sceneTypes=list(profile.scene_types),
             ),
         )
 
@@ -415,7 +458,7 @@ def create_analysis_profiles_router(warehouse_rtvi_cv_url: str) -> APIRouter:
         profile_id, confidence, reason = recommendation
         alternatives = [profile.id for profile in ANALYSIS_PROFILES if profile.id != profile_id]
         return AnalysisProfileRecommendationResponse(
-            profile_id=profile_id,
+            profileId=profile_id,
             confidence=confidence,
             reason=reason,
             alternatives=alternatives,

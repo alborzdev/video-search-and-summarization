@@ -1,0 +1,265 @@
+{
+  "startedAtNs": "1793028421942675280",
+  "sceneControl": {
+    "state": "completed",
+    "reason": "prepared-presentation-finished",
+    "restored": true,
+    "normalFlowVerified": true,
+    "timings": {
+      "prepareWallSeconds": 1.0414649141021073,
+      "nativePlacementVerifiedModelStep": 586214,
+      "nativePlacementVerifiedTimelineSeconds": 9770.300000026118,
+      "readyWaitWallSeconds": 11.36679367814213,
+      "playToStationaryInZoneWallSeconds": 0.0062380386516451836,
+      "playToNativeVisibleMotionWallSeconds": 1.647847109939903,
+      "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+      "nativeAllQueueBodiesClearWallSeconds": 37.798068061005324,
+      "nativeDepartureVerifiedWallSeconds": 42.81012085499242,
+      "postQueueClearObservationWallSeconds": 5.012044009752572,
+      "postDepartureObservationWallSeconds": 5.012044585775584,
+      "restoredWallSeconds": 55.21862995997071,
+      "playToRestoredWallSeconds": 42.810371703933924,
+      "totalWallSeconds": 55.30213408591226,
+      "normalFlowVerified": true,
+      "playToNormalWallSeconds": 42.893876309972256,
+      "requestedAt": 1793028431.122689,
+      "hostPhase": "closed"
+    },
+    "preparation": {
+      "basis": "scripted scene control; camera analytics are independent",
+      "nativeStarts": [
+        {
+          "character": "Character",
+          "targetM": [
+            -11.2,
+            70.0,
+            0.0
+          ],
+          "snapErrorM": 0.03738691830279897,
+          "nativePathVerified": true
+        },
+        {
+          "character": "Character_01",
+          "targetM": [
+            -39.5,
+            94.5,
+            0.0
+          ],
+          "snapErrorM": 0.012500002048909664,
+          "nativePathVerified": true
+        },
+        {
+          "character": "Character_02",
+          "targetM": [
+            -39.5,
+            62.5,
+            0.0
+          ],
+          "snapErrorM": 0.009999998845160007,
+          "nativePathVerified": true
+        },
+        {
+          "character": "Character_03",
+          "targetM": [
+            -14.5,
+            94.5,
+            0.0
+          ],
+          "snapErrorM": 0.020655172893641254,
+          "nativePathVerified": true
+        },
+        {
+          "character": "Character_04",
+          "targetM": [
+            -14.5,
+            62.5,
+            0.0
+          ],
+          "snapErrorM": 0.04500001296401024,
+          "nativePathVerified": true
+        },
+        {
+          "character": "Character_05",
+          "targetM": [
+            -38.0,
+            90.0,
+            0.0
+          ],
+          "snapErrorM": 0.03999358662094099,
+          "nativePathVerified": true
+        },
+        {
+          "character": "Character_06",
+          "targetM": [
+            10.0,
+            40.0,
+            0.0
+          ],
+          "snapErrorM": 0.04750001057982445,
+          "nativePathVerified": true
+        },
+        {
+          "character": "Character_07",
+          "targetM": [
+            -70.0,
+            90.0,
+            0.0
+          ],
+          "snapErrorM": 0.03999999538064003,
+          "nativePathVerified": true
+        }
+      ],
+      "vehicles": [
+        {
+          "slot": 9,
+          "class": "car",
+          "route": "NB_1",
+          "s": 69.66232525065998,
+          "positionM": [
+            -21.901724546118217,
+            64.50028841397327,
+            -0.202
+          ],
+          "stopS": 70.36232525065998,
+          "binding": "northbound-queue-head",
+          "aid": 1895
+        },
+        {
+          "slot": 4,
+          "class": "car",
+          "route": "NB_1",
+          "s": 63.97772525065997,
+          "positionM": [
+            -22.291171304930003,
+            58.82906814810921,
+            -0.202
+          ],
+          "stopS": null,
+          "binding": null,
+          "aid": 1896
+        },
+        {
+          "slot": 14,
+          "class": "car",
+          "route": "NB_1",
+          "s": 57.96532525065997,
+          "positionM": [
+            -22.700798586043263,
+            52.830638416040344,
+            -0.202
+          ],
+          "stopS": null,
+          "binding": null,
+          "aid": 1897
+        }
+      ],
+      "nativePath": null,
+      "nativeQueueDepartures": [
+        {
+          "aid": 1895,
+          "route": "NB_1",
+          "rearS": 70.74926499721205,
+          "headStopS": 70.36232525065998,
+          "speedMps": 3.2475456234214914,
+          "elapsedPlayWallSeconds": 26.940731738694012
+        },
+        {
+          "aid": 1896,
+          "route": "NB_1",
+          "rearS": 70.72420817597782,
+          "headStopS": 70.36232525065998,
+          "speedMps": 5.659166541772008,
+          "elapsedPlayWallSeconds": 32.82279155077413
+        },
+        {
+          "aid": 1897,
+          "route": "NB_1",
+          "rearS": 70.75502055021555,
+          "headStopS": 70.36232525065998,
+          "speedMps": 7.003248030578081,
+          "elapsedPlayWallSeconds": 37.798068061005324
+        }
+      ],
+      "signalClockFrozen": false,
+      "normalArrivalSchedulePaused": false
+    }
+  },
+  "phases": [
+    {
+      "state": "preparing",
+      "phase": "staging",
+      "hostPhase": "staging",
+      "elapsedWallSeconds": 9.183235018979758
+    },
+    {
+      "state": "preparing",
+      "phase": "settling",
+      "hostPhase": "settling",
+      "elapsedWallSeconds": 11.120383428875357
+    },
+    {
+      "state": "ready",
+      "phase": "ready",
+      "hostPhase": "ready",
+      "elapsedWallSeconds": 14.62107053399086
+    },
+    {
+      "state": "running",
+      "phase": "observing",
+      "hostPhase": "running",
+      "elapsedWallSeconds": 22.12225812021643
+    },
+    {
+      "state": "running",
+      "phase": "clearing",
+      "hostPhase": "running",
+      "elapsedWallSeconds": 46.12631754204631
+    },
+    {
+      "state": "running",
+      "phase": "observing-clearance",
+      "hostPhase": "running",
+      "elapsedWallSeconds": 60.128540818113834
+    },
+    {
+      "state": "completed",
+      "phase": "normal-traffic",
+      "hostPhase": "running",
+      "elapsedWallSeconds": 65.12928564380854
+    },
+    {
+      "state": "completed",
+      "phase": "normal-traffic",
+      "hostPhase": "closed",
+      "elapsedWallSeconds": 66.12942476198077
+    }
+  ],
+  "exactPreviews": 66,
+  "errors": [],
+  "sourceSessions": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": [
+      "f22614d6-4e70-4083-a144-8daf86f6041d"
+    ],
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": [
+      "f0e6c3f3-d81a-4726-94de-3bdc209dddf6"
+    ]
+  },
+  "sourceClockMonotonic": true,
+  "cameraObservedMotion": {
+    "secondsAfterRunningFirstObserved": 1.5002678856253624,
+    "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+    "localTrackId": "12081545383612776449",
+    "anchorDisplacementPx": 6.376766828832373,
+    "basis": "two image-derived track anchors at least 0.5s apart; not a count or physical motion accuracy score"
+  },
+  "preparationAnalyticsSuppressed": true,
+  "sceneControlAndCameraEvidenceAreSeparate": true,
+  "runId": "prepared-2e72c479e39b4c73",
+  "scenarioId": "queue-recovery",
+  "firstRunObservedSeconds": 9.183235018979758,
+  "runningFirstObservedSeconds": 22.12225812021643,
+  "automaticNormalRestorationObserved": true,
+  "observedWallSeconds": 66.26977132214233,
+  "analyticsRunId": "deccbe6255094533926a41eaae1b0ed2",
+  "archivedScopeCount": 3
+}

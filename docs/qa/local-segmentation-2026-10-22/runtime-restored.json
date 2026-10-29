@@ -1,0 +1,11 @@
+{
+  "checked_at": "2026-10-22T18:05:58.295108+00:00",
+  "cosmos_http_status": 200,
+  "cosmos_container_health": "healthy",
+  "memory_guard": "active",
+  "saved_reserve_gib": 20.0,
+  "available_gib": 39.00099563598633,
+  "new_inference_services_left_running": false,
+  "ui_integration_changed": false,
+  "qualification_scope": "Serial image segmentation CLI/Python API. No continuous camera, Thor, or concurrent Cosmos/Moondream qualification."
+}

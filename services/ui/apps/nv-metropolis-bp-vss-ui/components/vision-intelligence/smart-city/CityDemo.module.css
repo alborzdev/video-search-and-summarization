@@ -1,0 +1,1425 @@
+.layout {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 2.65fr) minmax(260px, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  column-gap: 3%;
+  color: #eaf2ed;
+}
+.visual {
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+.diorama {
+  width: 100%;
+  height: 100%;
+  display: block;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 3%,
+    #000 94%,
+    transparent
+  );
+  transition: opacity 1s;
+}
+.framing {
+  transform-origin: 50% 55%;
+  transition: transform 1.5s cubic-bezier(0.22, 0.68, 0.14, 1);
+}
+.sceneImage {
+  transition: opacity 0.7s ease;
+}
+.layout[data-step="1"] .diorama,
+.layout[data-step="12"] .diorama {
+  opacity: 0.16;
+}
+.layout[data-step="2"] .diorama,
+.layout[data-step="9"] .diorama {
+  opacity: 0.25;
+}
+.visualContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 5% 45px;
+  pointer-events: none;
+}
+.visualNote {
+  position: absolute;
+  bottom: 12px;
+  left: 5%;
+  color: #88a391;
+  font-size: 9px;
+}
+.cameraPin {
+  fill: none;
+  stroke: #b8f1d4;
+  stroke-width: 1.8;
+  animation: appear 0.8s both;
+}
+.cameraPin circle {
+  fill: #c4f5dc;
+}
+.cameraPin rect {
+  fill: #0b1c14ed;
+}
+.cameraPin text {
+  fill: #c9f5de;
+  stroke: none;
+  font: 16px var(--ctai-font-sans);
+}
+.zone {
+  fill: #efbd6c25;
+  stroke: #efc27d;
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  animation: drawZone 1.5s both;
+}
+.path,
+.allowed {
+  fill: none;
+  stroke: #b9f1d7;
+  stroke-width: 2.5;
+}
+.path {
+  stroke-dasharray: 1;
+  animation: drawPath 1.8s both;
+}
+.sceneLabel {
+  fill: #d8f5e5;
+  font: 18px var(--ctai-font-sans);
+  paint-order: stroke;
+  stroke: #0c1b13;
+  stroke-width: 5px;
+}
+.person {
+  stroke: #b9f1d7;
+  fill: none;
+  stroke-width: 1.5;
+}
+.person circle {
+  fill: #b9f1d7;
+}
+.countPoint {
+  fill: #a8e4ce15;
+  stroke: #b9f1d7;
+  stroke-width: 1.5;
+  animation: appear 0.7s both;
+}
+.countPoint text {
+  text-anchor: middle;
+  fill: #d9f8e7;
+  stroke: #0b1913;
+  paint-order: stroke;
+  stroke-width: 4;
+  font: 18px var(--ctai-font-sans);
+}
+.copy {
+  align-self: center;
+  min-width: 0;
+  padding: 20px 0;
+}
+.copy header > span {
+  font-size: 10px;
+  letter-spacing: 1.3px;
+  color: #a8e4ce;
+  display: block;
+  margin-bottom: 18px;
+}
+.copy h1 {
+  font-size: clamp(28px, 2.7vw, 45px);
+  font-weight: 500;
+  letter-spacing: -1.4px;
+  line-height: 1.12;
+  margin: 0;
+  text-wrap: balance;
+}
+.copy header p {
+  font-size: 14px;
+  line-height: 1.75;
+  color: #afc4b7;
+  margin: 24px 0 0;
+}
+.detail {
+  border-top: 1px solid #2c4536;
+  padding-top: 22px;
+  margin-top: 26px;
+}
+.detail h2 {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: #d0ead9;
+  margin: 0 0 14px;
+}
+.detail p {
+  color: #a8c0af;
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 0 0 13px;
+}
+.detail small {
+  font-size: 10px;
+  color: #859f8e;
+  line-height: 1.7;
+  display: block;
+}
+.detail a {
+  font-size: 10px;
+  color: #a8cfb9;
+  text-decoration: none;
+  border-bottom: 1px solid #3c5a47;
+  padding-bottom: 3px;
+}
+.detail dl {
+  margin: 12px 0 20px;
+  font-size: 11px;
+}
+.detail dl > div {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #253d2f;
+}
+.detail dt {
+  color: #829f8c;
+}
+.detail dd {
+  margin: 0;
+  color: #c9e0d2;
+  line-height: 1.6;
+}
+.caseControls {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+.caseControls button {
+  background: none;
+  border: 0;
+  color: #b4ddc5;
+  padding: 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+}
+.caseControls button[aria-pressed="true"] {
+  border-bottom: 1px solid #82b49a;
+}
+.introDevice {
+  position: absolute;
+  left: 8%;
+  bottom: 7%;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 15px 27px 15px 12px;
+  border: 1px solid #49654f;
+  background: #0b1b13ec;
+  border-radius: 10px;
+  min-height: 122px;
+}
+.introDevice img {
+  width: 150px;
+  height: 100px;
+  object-fit: contain;
+}
+.introDevice div {
+  display: grid;
+  gap: 10px;
+}
+.introDevice strong {
+  font-size: 22px;
+  font-weight: 500;
+}
+.introDevice span {
+  font-size: 12px;
+  color: #a3c7b0;
+}
+.network {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 70px 1.5fr;
+  align-items: center;
+  gap: 15px;
+}
+.sources {
+  display: grid;
+  gap: 16px;
+}
+.sources > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #395846;
+  border-radius: 7px;
+  background: #0b1d14e8;
+  padding: 15px 13px;
+  animation: rise 0.7s both;
+}
+.sources > div:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.sources > div:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.sources > div:nth-child(4) {
+  animation-delay: 0.45s;
+}
+.sources svg {
+  color: #a9dfc0;
+  flex-shrink: 0;
+}
+.sources span {
+  display: grid;
+  gap: 6px;
+}
+.sources strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.sources small {
+  font-size: 9px;
+  color: #89a792;
+}
+.sources b {
+  margin-left: auto;
+  font-size: 9px;
+  color: #b4ebce;
+  font-weight: 500;
+}
+.networkLink {
+  position: relative;
+  display: grid;
+  gap: 15px;
+  text-align: center;
+}
+.networkLink i {
+  display: block;
+  height: 1px;
+  background: #42624d;
+}
+.networkLink span {
+  font-size: 9px;
+  color: #9abaa5;
+  white-space: nowrap;
+}
+.networkLink i:after {
+  content: "";
+  display: block;
+  width: 15px;
+  height: 3px;
+  margin-top: -1px;
+  background: #b7f0d0;
+  animation: stream 1.6s 4;
+}
+.device {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 10px;
+  animation: deviceIn 1.3s both;
+}
+.device img {
+  width: 100%;
+  max-height: 285px;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 25px #0006);
+}
+.device strong {
+  font-size: 30px;
+  font-weight: 500;
+}
+.device span {
+  font-size: 14px;
+  color: #bddbc8;
+}
+.device small {
+  color: #91b09c;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.upstream {
+  grid-column: 3;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  align-items: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #35533f;
+  color: #b7e7cb;
+  animation: rise 0.8s 1s both;
+}
+.upstream div {
+  display: grid;
+  gap: 7px;
+}
+.upstream strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.upstream span {
+  font-size: 11px;
+  color: #b3cdbd;
+}
+.upstream small {
+  font-size: 9px;
+  color: #83a18e;
+}
+.cameraWall {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 17px;
+}
+.cameraView {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: #0b1b13;
+  border: 1px solid #375a44;
+  border-radius: 7px;
+}
+.cameraView > svg {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.75;
+}
+.cameraView figcaption {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  padding: 11px 13px;
+  gap: 6px 12px;
+  align-items: center;
+}
+.cameraView strong {
+  font-size: 10px;
+  font-weight: 500;
+  color: #b6e7cc;
+}
+.cameraView span {
+  font-size: 11px;
+  color: #d9e9df;
+}
+.cameraView small {
+  grid-column: 2;
+  color: #799986;
+  font-size: 8px;
+}
+.cameraWall > figure {
+  animation: rise 0.8s both;
+}
+.cameraWall > figure:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.cameraWall > figure:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.cameraWall > figure:nth-child(4) {
+  animation-delay: 0.45s;
+}
+.wallCaption {
+  grid-column: 1/-1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 9px;
+  color: #b8d9c6;
+  font-size: 12px;
+}
+.caseSource {
+  position: absolute;
+  top: 8%;
+  left: 7%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0a1a12e8;
+  border: 1px solid #4a6551;
+  padding: 12px 17px;
+  border-radius: 7px;
+  color: #bfeacf;
+  animation: rise 0.7s both;
+}
+.caseSource strong {
+  font-size: 11px;
+  font-weight: 500;
+}
+.caseSource span {
+  font-size: 10px;
+  color: #a1bca9;
+}
+.caseEvent {
+  position: absolute;
+  bottom: 9%;
+  left: 10%;
+  right: 10%;
+  background: #0b1a13ef;
+  border: 1px solid #8a744a80;
+  border-radius: 10px;
+  padding: 21px 25px;
+  box-shadow: 0 20px 70px #020b0750;
+  animation: rise 0.8s 0.6s both;
+}
+.caseEvent > small {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #b59e79;
+  display: block;
+  margin-bottom: 12px;
+}
+.caseEvent > strong {
+  display: block;
+  color: #eed0a0;
+  font-size: 26px;
+  font-weight: 500;
+}
+.caseEvent > div:not(.dwell) {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 17px;
+  color: #b9d7c4;
+}
+.caseEvent span {
+  font-size: 12px;
+  line-height: 1.6;
+  flex: 1;
+}
+.caseEvent b {
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+}
+.caseEvent svg {
+  flex-shrink: 0;
+}
+.dwell {
+  position: relative;
+  margin-top: 17px;
+  padding-top: 8px;
+}
+.dwell:before {
+  content: "";
+  display: block;
+  height: 3px;
+  background: #394331;
+}
+.dwell i {
+  display: block;
+  height: 3px;
+  margin-top: -3px;
+  background: #ecc381;
+  transform-origin: left;
+  animation: fillDwell 3s ease both;
+}
+.dwell small {
+  display: block;
+  margin-top: 8px;
+  font-size: 9px;
+  color: #9cae9d;
+}
+.evidence {
+  background: #0b1b13f5;
+  border: 1px solid #3b5c47;
+  border-radius: 10px;
+  padding: 24px;
+  width: 100%;
+  animation: rise 0.8s both;
+}
+.evidence header {
+  color: #e4f1e9;
+  font-size: 24px;
+  margin-bottom: 23px;
+}
+.evidence > div {
+  display: flex;
+  gap: 12px;
+}
+.evidence article {
+  flex: 1;
+  min-width: 0;
+  animation: rise 0.8s both;
+}
+.evidence article > strong {
+  font-size: 13px;
+  display: block;
+  color: #d4eada;
+  margin: 16px 0 9px;
+  font-weight: 500;
+}
+.evidence article > span {
+  font-size: 10px;
+  color: #9ab6a2;
+  line-height: 1.6;
+}
+.evidence .cameraView figcaption {
+  padding: 9px;
+  grid-template-columns: 1fr;
+}
+.evidence .cameraView small {
+  grid-column: auto;
+}
+.evidence footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 25px;
+  color: #a4cbb3;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.benefits > div + div {
+  margin-top: 17px;
+}
+.benefits strong {
+  color: #c5e7d3;
+  font-size: 15px;
+  font-weight: 500;
+}
+.benefits p {
+  margin-top: 7px;
+}
+.pipeline {
+  grid-column: 1/-1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  border-top: 1px solid #38533f;
+  border-bottom: 1px solid #243d2e;
+  background: #0d1c14;
+  padding: 13px 20px;
+  border-radius: 5px;
+  color: #b2d6c0;
+}
+.cameraIds {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+.cameraIds > svg {
+  margin-right: 5px;
+}
+.cameraIds b {
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 23px;
+  border: 1px solid #34523f;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 500;
+  color: #63816f;
+}
+.cameraIds b[data-active="true"] {
+  border-color: #82b49a;
+  color: #d2f3e0;
+  background: #234232;
+}
+.transport,
+.pipelineDevice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.transport strong,
+.pipelineDevice strong {
+  font-size: 12px;
+  font-weight: 500;
+  color: #c4e9d3;
+}
+.transport small,
+.pipelineDevice small {
+  font-size: 10px;
+  color: #8caa97;
+}
+.transport i {
+  width: 35px;
+  height: 1px;
+  background: #395b45;
+}
+.pipelineResult {
+  color: #bdd7c7;
+  font-size: 12px;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 15px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes deviceIn {
+  from {
+    opacity: 0;
+    scale: 0.9;
+    translate: 0 20px;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+}
+@keyframes stream {
+  from {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(55px);
+    opacity: 0;
+  }
+}
+@keyframes drawZone {
+  from {
+    stroke-dashoffset: 1;
+    fill-opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+  }
+}
+@keyframes drawPath {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fillDwell {
+  from {
+    transform: scaleX(0.05);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (min-width: 1700px) {
+  .copy h1 {
+    font-size: 46px;
+  }
+  .copy header p {
+    font-size: 16px;
+  }
+  .detail p {
+    font-size: 14px;
+  }
+  .detail h2 {
+    font-size: 23px;
+  }
+}
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.9fr) minmax(230px, 1fr);
+    gap: 2%;
+  }
+  .copy h1 {
+    font-size: 30px;
+  }
+  .copy header p {
+    font-size: 12px;
+    margin-top: 17px;
+  }
+  .detail {
+    margin-top: 20px;
+    padding-top: 17px;
+  }
+  .detail h2 {
+    font-size: 17px;
+  }
+  .detail p {
+    font-size: 11px;
+  }
+  .network {
+    gap: 8px;
+    grid-template-columns: 1fr 40px 1.3fr;
+  }
+  .sources > div {
+    padding: 11px 9px;
+    gap: 8px;
+  }
+  .sources small {
+    font-size: 8px;
+  }
+  .sources b {
+    font-size: 8px;
+  }
+  .device strong {
+    font-size: 24px;
+  }
+  .device span {
+    font-size: 12px;
+  }
+  .device small {
+    font-size: 9px;
+  }
+  .pipeline {
+    gap: 12px;
+  }
+  .pipelineDevice small {
+    display: none;
+  }
+  .caseEvent {
+    left: 7%;
+    right: 7%;
+    padding: 17px 20px;
+  }
+  .caseEvent > strong {
+    font-size: 22px;
+  }
+  .caseEvent span,
+  .caseEvent b {
+    font-size: 11px;
+  }
+  .cameraView figcaption {
+    padding: 9px;
+    gap: 5px 8px;
+  }
+  .cameraView span {
+    font-size: 10px;
+  }
+  .introDevice {
+    gap: 15px;
+    padding-right: 18px;
+  }
+  .introDevice img {
+    width: 110px;
+    height: 75px;
+  }
+  .introDevice strong {
+    font-size: 18px;
+  }
+  .introDevice span {
+    font-size: 10px;
+  }
+}
+@media (max-height: 750px) and (min-width: 701px) {
+  .copy {
+    padding: 8px 0;
+  }
+  .copy h1 {
+    font-size: 28px;
+  }
+  .copy header > span {
+    margin-bottom: 12px;
+  }
+  .copy header p {
+    font-size: 11px;
+    line-height: 1.6;
+    margin-top: 13px;
+  }
+  .detail {
+    margin-top: 15px;
+    padding-top: 14px;
+  }
+  .detail h2 {
+    font-size: 16px;
+  }
+  .detail p {
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .detail dl > div {
+    padding: 7px 0;
+  }
+  .caseControls {
+    margin-top: 12px;
+  }
+  .sources {
+    gap: 9px;
+  }
+  .sources > div {
+    padding: 9px;
+  }
+  .device img {
+    max-height: 190px;
+  }
+  .cameraWall {
+    gap: 10px;
+    max-width: 650px;
+  }
+  .visualContent {
+    padding-top: 10px;
+    padding-bottom: 30px;
+  }
+  .caseEvent {
+    bottom: 8%;
+    padding: 15px 20px;
+  }
+  .caseEvent > strong {
+    font-size: 21px;
+  }
+  .caseEvent > div:not(.dwell) {
+    margin-top: 12px;
+  }
+  .pipeline {
+    padding: 10px 15px;
+  }
+  .benefits > div + div {
+    margin-top: 9px;
+  }
+}
+@media (max-width: 700px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: 0;
+  }
+  .copy {
+    display: contents;
+  }
+  .copy header {
+    order: 0;
+    width: 100%;
+    padding: 20px 0 10px;
+  }
+  .copy h1 {
+    font-size: 32px;
+  }
+  .copy header > span {
+    margin-bottom: 12px;
+    font-size: 9px;
+  }
+  .copy header p {
+    font-size: 12px;
+    line-height: 1.7;
+    margin-top: 14px;
+  }
+  .visual {
+    order: 1;
+    height: 370px;
+    min-height: 370px;
+    width: calc(100% + 36px);
+    margin: 0 -18px;
+  }
+  .visualContent {
+    padding: 15px 5% 30px;
+  }
+  .diorama {
+    mask-image: none;
+  }
+  .detail {
+    order: 3;
+    width: 100%;
+    border: 0;
+    padding: 20px 0 5px;
+    margin: 0;
+  }
+  .detail h2 {
+    font-size: 20px;
+  }
+  .detail p {
+    font-size: 13px;
+  }
+  .detail small {
+    font-size: 10px;
+  }
+  .pipeline {
+    order: 2;
+    width: 100%;
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px;
+    padding: 12px;
+  }
+  .cameraIds {
+    justify-content: center;
+  }
+  .transport {
+    justify-content: center;
+  }
+  .transport i,
+  .transport small,
+  .pipeline > svg {
+    display: none;
+  }
+  .pipelineDevice {
+    justify-content: center;
+  }
+  .pipelineDevice small {
+    display: none;
+  }
+  .pipelineResult {
+    font-size: 10px;
+    text-align: center;
+  }
+  .pipelineDevice strong,
+  .transport strong {
+    font-size: 11px;
+  }
+  .introDevice {
+    bottom: 10%;
+    left: 7%;
+    right: 7%;
+    padding: 10px;
+    gap: 13px;
+  }
+  .introDevice img {
+    width: 90px;
+    height: 65px;
+  }
+  .introDevice strong {
+    font-size: 16px;
+  }
+  .introDevice span {
+    font-size: 10px;
+  }
+  .cameraPin text {
+    font-size: 20px;
+  }
+  .network {
+    gap: 8px;
+    grid-template-columns: 1fr 25px 1.2fr;
+  }
+  .sources {
+    gap: 8px;
+  }
+  .sources > div {
+    padding: 9px 7px;
+    gap: 7px;
+  }
+  .sources strong {
+    font-size: 10px;
+  }
+  .sources small {
+    font-size: 7px;
+  }
+  .sources svg {
+    width: 13px;
+  }
+  .sources b {
+    font-size: 7px;
+  }
+  .networkLink span {
+    font-size: 7px;
+    white-space: normal;
+  }
+  .networkLink i:after {
+    width: 9px;
+    animation-name: appear;
+  }
+  .device strong {
+    font-size: 23px;
+  }
+  .device span {
+    font-size: 10px;
+  }
+  .device small {
+    font-size: 8px;
+    line-height: 1.5;
+  }
+  .upstream {
+    margin-top: 10px;
+    padding-top: 12px;
+    gap: 7px;
+  }
+  .upstream strong {
+    font-size: 11px;
+  }
+  .upstream span {
+    font-size: 8px;
+  }
+  .upstream small {
+    font-size: 8px;
+  }
+  .cameraWall {
+    gap: 9px;
+  }
+  .cameraView figcaption {
+    padding: 7px;
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .cameraView small {
+    grid-column: auto;
+    font-size: 7px;
+  }
+  .cameraView strong {
+    font-size: 8px;
+  }
+  .cameraView span {
+    font-size: 9px;
+  }
+  .wallCaption {
+    font-size: 10px;
+    line-height: 1.5;
+    gap: 8px;
+  }
+  .caseSource {
+    top: 6%;
+    left: 6%;
+    padding: 9px 11px;
+    gap: 8px;
+  }
+  .caseSource strong {
+    font-size: 10px;
+  }
+  .caseSource span {
+    font-size: 9px;
+  }
+  .caseEvent {
+    left: 6%;
+    right: 6%;
+    bottom: 10%;
+    padding: 13px 16px;
+  }
+  .caseEvent > strong {
+    font-size: 20px;
+  }
+  .caseEvent > small {
+    font-size: 7px;
+    margin-bottom: 9px;
+  }
+  .caseEvent > div:not(.dwell) {
+    margin-top: 12px;
+    gap: 10px;
+  }
+  .caseEvent span,
+  .caseEvent b {
+    font-size: 10px;
+  }
+  .dwell {
+    margin-top: 10px;
+  }
+  .dwell small {
+    font-size: 8px;
+  }
+  .visualNote {
+    font-size: 8px;
+    bottom: 9px;
+  }
+  .evidence {
+    padding: 13px;
+  }
+  .evidence header {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  .evidence > div {
+    gap: 7px;
+  }
+  .evidence .cameraView figcaption {
+    padding: 6px;
+  }
+  .evidence .cameraView span,
+  .evidence .cameraView small {
+    display: none;
+  }
+  .evidence article > strong {
+    font-size: 10px;
+    line-height: 1.4;
+    margin: 10px 0 7px;
+  }
+  .evidence article > span {
+    font-size: 8px;
+  }
+  .evidence footer {
+    font-size: 9px;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .layout * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Short copy leaves the visual explanation in charge. */
+.copy header p { max-width: 30ch; line-height: 1.6; }
+.detail { padding-top: 18px; margin-top: 22px; }
+.takeaway span { display: block; font-size: 9px; letter-spacing: 1.3px; color: #8fb89f; margin-bottom: 9px; }
+.detail .takeaway { font-size: 15px; color: #d3e4d9; line-height: 1.5; }
+.conceptSteps { display: grid; gap: 17px; }
+.conceptSteps > div { display: flex; align-items: center; gap: 13px; font-size: 13px; color: #bed2c4; }
+.conceptSteps b { font-size: 10px; font-weight: 400; color: #769782; }
+.localCompute { display:flex; align-items:center; gap:18px; padding:6px 0; }
+.localCompute > img { width:120px; height:110px; object-fit:contain; flex-shrink:0; filter:drop-shadow(0 12px 15px #0004); }
+.localCompute > div { min-width:0; }
+.localCompute small { display:block; color:#91b29e; font-size:9px; letter-spacing:1px; margin-bottom:10px; }
+.localCompute strong { display:block; color:#dceee3; font-size:20px; line-height:1.35; font-weight:400; }
+.localCompute span { display:block; color:#a9c9b6; font-size:12px; line-height:1.5; margin-top:9px; }
+@media(min-width:701px) and (max-width:1100px) {
+ .localCompute { gap:12px; }
+ .localCompute > img { width:85px; height:90px; }
+ .localCompute strong { font-size:17px; }
+}
+@media(max-width:700px) {
+ .localCompute { padding:8px 0; }
+ .localCompute > img { width:105px; height:90px; }
+ .localCompute strong { font-size:20px; }
+ .localCompute small { font-size:9px; }
+}
+.caseControls { margin-bottom: 16px; }
+.feedObservations { stroke: #bcebd5; stroke-width: 1.6; fill: none; }
+.feedObservations text { fill: #d2f4df; stroke: #13271b; stroke-width: 3; paint-order: stroke; font-size: 15px; }
+
+.layout[data-step="2"] .diorama, .layout[data-step="4"] .diorama, .layout[data-step="3"] .diorama { opacity:0; }
+.layout[data-step="2"] .visualNote, .layout[data-step="4"] .visualNote, .layout[data-step="3"] .visualNote { display:none; }
+@media(max-width:700px) {
+ .layout[data-step="2"] .visual, .layout[data-step="4"] .visual { height:420px; min-height:420px; }
+ .layout[data-step="3"] .visual { height:480px; min-height:480px; }
+}
+
+.sources h2 { font-size:17px; font-weight:500; margin:0 0 4px; color:#d1eddb; }
+.sources b { font-size:11px; border:1px solid #629678; background:#254434; padding:5px 6px; border-radius:4px; }
+.expansion { padding:13px 6px 0; display:grid; gap:10px; border-top:1px dashed #547560; }
+.expansion > div { display:grid; grid-template-columns:repeat(8,1fr); gap:8px; opacity:.65; }
+.expansion strong { font-size:15px; color:#c2e2cd; }
+.expansion small { font-size:10px; line-height:1.4; }
+.heatControls { pointer-events:auto; position:absolute; top:8%; left:7%; right:7%; display:grid; gap:12px; justify-items:start; }
+.heatControls > div { display:flex; gap:6px; background:#0b2018ed; padding:6px; border:1px solid #567761; border-radius:8px; }
+.heatControls button { border:0; border-radius:5px; background:transparent; color:#a9c4b5; padding:9px 15px; font-size:13px; cursor:pointer; }
+.heatControls button[aria-pressed="true"] { background:#395543; color:#eef7ed; }
+.heatControls > span,.heatControls > small { color:#d4e2d8; background:#0b2018eb; padding:5px 10px; font-size:11px; border-radius:4px; display:flex; align-items:center; gap:10px; }
+.heatControls i { width:90px; height:7px; border-radius:4px; display:inline-block; background:linear-gradient(90deg,#f9d36d20,#ffc95d,#f16a47); }
+.heatmap { animation:appear 1.2s both; }
+.layout[data-step="11"] .caseSource { display:none; }
+.storageHeader { display:flex; align-items:center; gap:22px; }
+.storageHeader img { width:130px; height:90px; object-fit:contain; }
+.storageHeader div { display:grid; gap:10px; }
+.storageHeader small { font-size:10px; letter-spacing:1.5px; color:#a8c6b1; }
+.storageHeader strong { font-size:25px; font-weight:500; }
+@media(max-width:700px) {
+ .layout[data-step="1"] .visual,.layout[data-step="12"] .visual { height:440px; min-height:440px; }
+ .sources h2 { font-size:12px; }
+ .sources b { font-size:8px; padding:3px; }
+ .sources > div { gap:5px; }
+ .sources small { display:none; }
+ .expansion strong { font-size:12px; }
+ .expansion small { display:block; font-size:9px; }
+ .expansion > div { grid-template-columns:repeat(8,1fr); gap:3px; }
+ .expansion > div svg { width:12px; }
+ .heatControls button { padding:7px 10px; font-size:11px; }
+ .heatControls > span,.heatControls > small { font-size:9px; }
+ .storageHeader { gap:12px; }
+ .storageHeader img { width:75px; height:65px; }
+ .storageHeader strong { font-size:19px; }
+ .storageHeader small { font-size:8px; }
+}
+
+/* Keep the event label below the action, leaving the ambulance and crossing visible. */
+.caseEvent { right:auto; left:6%; bottom:6%; width:max-content; max-width:85%; padding:16px 21px; }
+.caseEvent > strong { font-size:23px; }
+.caseEvent > small { margin-bottom:9px; }
+.layout[data-step="8"] .caseEvent { max-width:48%; }
+.layout[data-step="8"] .caseEvent > strong { font-size:21px; }
+@media(max-width:700px) {
+ .caseEvent { padding:12px 15px; }
+ .caseEvent > strong,.layout[data-step="8"] .caseEvent > strong { font-size:17px; }
+ .layout[data-step="8"] .caseEvent { max-width:55%; }
+}
+
+.copy > header { animation:none; }
+
+/* One event, its local computer, and the saved report. */
+.layout[data-step="9"] .diorama,
+.layout[data-step="9"] .visualNote { display:none; }
+.layout[data-step="9"] .detail { display:none; }
+.reportFlow {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 32px minmax(0,1.35fr) 32px minmax(0,.85fr);
+  align-items:center;
+  gap:20px;
+  width:100%;
+  max-width:1100px;
+}
+.reportFlow figure { margin:0; min-width:0; }
+.reportFlow figcaption { text-align:center; margin-top:26px; color:#dcebe2; font-size:18px; font-weight:400; }
+.eventFrame { position:relative; aspect-ratio:1.35; overflow:hidden; border:1px solid #55745f; border-radius:10px; box-shadow:0 18px 45px #0003; }
+.eventFrame > img { width:100%; height:100%; object-fit:cover; object-position:43% 50%; }
+.eventFrame > span { position:absolute; bottom:12px; left:12px; display:grid; place-items:center; width:42px; height:42px; border-radius:50%; color:#e8f4ed; background:#0a1b14dd; border:1px solid #bce4cb66; }
+.saveArrow { width:30px; height:30px; color:#90b69e; margin-top:-45px; stroke-width:1.3; }
+.localArchive { position:relative; }
+.localArchive > img { display:block; width:100%; aspect-ratio:1.15; object-fit:contain; filter:drop-shadow(0 22px 35px #0006); }
+.localArchive figcaption { margin-top:10px; font-size:24px; }
+.localArchive figcaption > span { display:flex; align-items:center; justify-content:center; gap:7px; margin-top:14px; color:#add7bd; font-size:13px; white-space:nowrap; }
+.reportSheet { position:relative; background:#dbe6df; padding:20px 18px 28px; border-radius:5px; box-shadow:8px 8px 0 #345342,16px 16px 0 #193425; transform:rotate(3deg); }
+.reportSheetHeading { display:flex; align-items:center; justify-content:space-between; color:#244434; font-size:16px; margin-bottom:17px; }
+.reportSheet > img { display:block; width:100%; aspect-ratio:1.45; object-fit:cover; border-radius:3px; }
+.reportSheet > i { display:block; height:4px; border-radius:3px; background:#8da496; margin-top:12px; width:94%; }
+.reportSheet > i:last-child { width:58%; }
+.reportPreview figcaption { margin-top:35px; }
+@media(max-width:1100px) and (min-width:701px) {
+  .reportFlow { gap:12px; grid-template-columns:minmax(0,1fr) 20px minmax(0,1.25fr) 20px minmax(0,.85fr); }
+  .saveArrow { width:20px; }
+  .reportFlow figcaption { font-size:14px; }
+  .localArchive figcaption { font-size:20px; }
+  .localArchive figcaption > span { font-size:10px; }
+  .reportSheet { padding:14px 12px 20px; }
+  .reportSheetHeading { font-size:13px; }
+}
+
+.savedRecord,.savedReport { border:1px solid #375a44; border-radius:7px; background:#10251b; padding:18px 14px; min-height:200px; }
+.savedRecord > small,.savedReport > small { font-size:9px; letter-spacing:1px; color:#91b8a0; }
+.savedRecord > div { display:grid; grid-template-columns:auto 1fr; gap:6px 10px; border-bottom:1px solid #31503c; padding:13px 0; }
+.savedRecord b { font-size:13px; font-weight:500; color:#c1ead1; }
+.savedRecord span { font-size:12px; color:#b4cbbb; }
+.savedRecord em { grid-column:1/-1; font-size:9px; font-style:normal; color:#8ba994; }
+.savedReport > strong { display:block; font-size:18px; font-weight:500; color:#d2e8d9; margin:23px 0 10px; }
+.savedReport > span { font-size:12px; line-height:1.5; color:#acc6b5; }
+.savedReport > div { display:grid; gap:8px; margin:17px 0; }
+.savedReport i { width:90%; height:3px; background:#3a5945; border-radius:3px; }
+.savedReport i:last-child { width:60%; }
+.evidence .savedReport footer { margin-top:15px; font-size:10px; gap:5px; }
+@media(max-width:700px) {
+ .savedRecord,.savedReport { padding:12px 8px; min-height:176px; }
+ .savedRecord > small,.savedReport > small { font-size:7px; letter-spacing:0; }
+ .savedRecord > div { gap:3px; padding:9px 0; }
+ .savedRecord b,.savedRecord span { font-size:9px; }
+ .savedRecord em { font-size:7px; }
+ .savedReport > strong { font-size:12px; margin:16px 0 8px; }
+ .savedReport > span { font-size:9px; }
+ .evidence .savedReport footer { font-size:8px; line-height:1.4; }
+ .layout[data-step="9"] .visual { height:410px; min-height:410px; }
+}
+@media(max-width:700px) {
+ .layout[data-step="9"] .visual { height:770px; min-height:770px; }
+ .evidence > div { display:grid; grid-template-columns:1fr; gap:17px; }
+ .evidence article { display:grid; grid-template-columns:1.2fr 1fr; gap:5px 14px; align-items:center; }
+ .evidence article > :first-child { grid-row:1/3; }
+ .evidence article > strong { align-self:end; font-size:14px; margin:0; }
+ .evidence article > span { align-self:start; font-size:11px; }
+ .savedRecord > small,.savedReport > small { font-size:8px; }
+ .savedRecord b,.savedRecord span { font-size:11px; }
+ .savedRecord em { font-size:9px; }
+ .savedReport > strong { font-size:15px; }
+ .savedReport > span { font-size:11px; }
+ .evidence .savedReport footer { font-size:9px; }
+ .evidence footer { font-size:11px; }
+}
+
+@media(max-width:700px) {
+  .layout[data-step="9"] .visual { height:530px; min-height:530px; }
+  .reportFlow { grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr); gap:20px 16px; max-width:370px; }
+  .eventPreview { grid-column:1; grid-row:1; }
+  .saveArrow:nth-child(2) { grid-column:2; grid-row:1; }
+  .localArchive { grid-column:3; grid-row:1; }
+  .saveArrow:nth-child(4) { grid-column:3; grid-row:2; justify-self:center; transform:rotate(90deg); margin:0; }
+  .reportPreview { grid-column:3; grid-row:3; }
+  .reportFlow figcaption { font-size:13px; margin-top:17px; }
+  .localArchive figcaption { font-size:18px; margin-top:5px; }
+  .localArchive figcaption > span { font-size:9px; gap:3px; margin-top:9px; }
+  .localArchive figcaption > span svg { width:12px; }
+  .eventFrame > span { width:30px; height:30px; bottom:8px; left:8px; }
+  .eventFrame > span svg { width:18px; }
+  .reportSheet { padding:13px 12px 18px; box-shadow:5px 5px 0 #345342,10px 10px 0 #193425; }
+  .reportSheetHeading { font-size:13px; margin-bottom:10px; }
+  .reportSheet > i { height:3px; margin-top:8px; }
+}
+
+/* The VSS sequence uses its own visual flow, without the scene or pipeline. */
+.layout[data-step="10"] .diorama,
+.layout[data-step="10"] .visualNote,
+.layout[data-step="10"] .detail { display:none; }
+@media (max-width: 700px) {
+  .layout[data-step="9"] .visual,
+  .layout[data-step="10"] .visual { height:560px; min-height:560px; }
+}
+
+/* Introduce the actual demo host before the deployment architecture. */
+/* Use the same tightly cropped bounds at both ends of the shared transition. */
+.introDevice > svg { width:150px; height:auto; aspect-ratio:716/257; flex-shrink:0; }
+.layout[data-step="1"] .diorama,
+.layout[data-step="1"] .visualNote,
+.layout[data-step="1"] .detail { display:none; }
+@media(max-width:1100px) { .introDevice { min-height:107px; } .introDevice > svg { width:110px; } }
+@media(max-width:700px) {
+ .introDevice { left:5%; right:5%; padding:12px; gap:12px; min-height:91px; }
+ .introDevice > svg { width:95px; }
+ .introDevice strong { font-size:15px; }
+ .introDevice span { font-size:10px; line-height:1.5; }
+ .layout[data-step="1"] .visual { height:510px; min-height:510px; }
+}
+
+/* Match the twin’s aspect ratio in both slides so its shared snapshot scales cleanly. */
+.layout[data-step="0"] .diorama { position:absolute; top:50%; width:100%; height:auto; aspect-ratio:1672/941; transform:translateY(-50%); }
+
+/* Each slide now has one main visual, without the repeated pipeline strip. */
+.layout { grid-template-rows:minmax(0,1fr); }
+.layout[data-step="11"] .diorama,
+.layout[data-step="11"] .visualNote,
+.layout[data-step="11"] .detail,
+.layout[data-step="12"] .diorama,
+.layout[data-step="12"] .visualNote,
+.layout[data-step="12"] .detail { display:none; }
+@media(max-width:700px) {
+ .layout[data-step="11"] .visual { height:550px; min-height:550px; }
+ .layout[data-step="12"] .visual { height:660px; min-height:660px; }
+}
+
+@media(max-width:700px) { .layout[data-step="3"] .visual { height:770px; min-height:770px; } }
+
+/* The closing slide has its own full-width composition. */
+.layout[data-step="12"] { display:block; }
+.layout[data-step="12"] .visual { height:100%; }
+.layout[data-step="12"] .copy { display:none; }
+.layout[data-step="12"] .visualContent { padding:12px 2% 25px; }
+@media(max-width:700px) {
+ .layout[data-step="12"] .visual { height:900px; min-height:900px; }
+ .layout[data-step="12"] .visualContent { padding:25px 5% 30px; }
+}
+
+/* Keep direction cues separate from object bounds and aligned with the lane. */
+.directionGuide > path { fill:none; stroke-width:2; stroke-linecap:round; vector-effect:non-scaling-stroke; }
+.directionGuide rect { fill:#0b1c14ed; rx:4; }
+.directionGuide text { font:16px var(--ctai-font-sans); }
+
+.caseEvent > small { text-transform:uppercase; }
+
+@media(max-height:750px) and (min-width:701px) {
+ .layout[data-step="5"] .detail { margin-top:14px; padding-top:12px; }
+ .layout[data-step="5"] .caseControls { margin-top:10px; margin-bottom:10px; }
+}
+
+.positionHistory path { fill:none; stroke:#f4cd88; stroke-width:1.5; transition:stroke-dashoffset 1s linear; }
+.positionHistory circle { fill:#0b1c14; stroke:#f4cd88; stroke-width:2; }
+.positionHistory text { font:15px var(--ctai-font-sans); fill:#f4cd88; stroke:#0b1c14; stroke-width:4px; paint-order:stroke; }
+.caseEvent .eventThumbnail { float:left; width:72px; height:58px; object-fit:cover; border-radius:5px; margin:0 14px 0 0; }
+.caseEvent .eventIdentity { display:block; font-size:11px; color:#b6c9bc; margin-top:8px; }
+@media(max-width:700px) { .caseEvent .eventThumbnail { width:45px; height:44px; margin-right:10px; } .caseEvent .eventIdentity { font-size:9px; } }
+@media(max-height:750px) and (min-width:701px) {
+ .layout[data-step="6"] .detail,.layout[data-step="7"] .detail { margin-top:14px; padding-top:12px; }
+ .layout[data-step="6"] .caseControls,.layout[data-step="7"] .caseControls { margin-top:10px; margin-bottom:10px; }
+}
+.caseEvent.eventCard { display:grid; grid-template-columns:72px minmax(0,1fr); column-gap:14px; row-gap:5px; width:340px; }
+.eventCard .eventThumbnail { grid-column:1; grid-row:1/4; align-self:center; float:none; margin:0; }
+.eventCard > small,.eventCard > strong,.eventCard .eventIdentity { grid-column:2; margin:0; }
+.eventCard > strong { font-size:21px; line-height:1.3; }
+@media(max-width:700px) { .caseEvent.eventCard { width:290px; grid-template-columns:45px minmax(0,1fr); column-gap:10px; } .eventCard > strong { font-size:17px; } .layout[data-step="8"] .caseEvent.eventCard { max-width:85%; } }
+/* Event cards sit outside the vehicle path, including on short and narrow screens. */
+.layout[data-step="7"] .caseEvent.eventCard { width:270px; }
+@media(max-width:700px) {
+ .layout[data-step="6"] .visual,.layout[data-step="7"] .visual,.layout[data-step="8"] .visual { height:490px; min-height:490px; }
+ .layout[data-step="6"] .diorama,.layout[data-step="7"] .diorama,.layout[data-step="8"] .diorama { height:370px; }
+ .layout[data-step="10"] .visual { height:650px; min-height:650px; }
+}

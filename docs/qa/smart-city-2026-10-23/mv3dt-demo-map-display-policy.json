@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "city.demo-map-display-policy.v1",
+  "recordedAt": "2026-10-23T19:29:26.985580+00:00",
+  "scope": "Experimental map display only; no production qualification or analytical identity change",
+  "method": "mv3dt-demo",
+  "maximumCaptureSkewMs": 150,
+  "maximumPositionDisagreementM": 1,
+  "minimumVisibility": 0.25,
+  "rationale": "The current approximately 8 fps camera views can display adjacent frames about 87 ms apart. The explicitly authorized demo tolerance permits roughly one camera frame.",
+  "otherGuards": [
+    "Observed person detections only",
+    "Exact displayed frame provenance",
+    "Same shared ID, target ID and fusion epoch",
+    "Own current camera calibration and session",
+    "One member per source",
+    "No averaging, proximity alias, count fusion or trail stitching"
+  ],
+  "productionEvaluation": {
+    "maximumCaptureSkewMs": 50,
+    "changed": false,
+    "qualificationClaim": false,
+    "priorFailedGatesRemainFailed": true
+  },
+  "validation": {
+    "command": "Jest --runInBand mapObjects.test.tsx SmartCityWorkspace.test.tsx",
+    "testsPassed": 44,
+    "suitesPassed": 2,
+    "controls": "149/150 ms join;151 ms and150 ms+1ns split. New1.01m group fails;established1.08m group stays with CURRENT representative position;1.51m splits. Member/session/epoch/time/visibility/frame/calibration change clears continuity. Workspace commit is covered."
+  },
+  "files": {
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mapObjects.ts": "529ddb87c95d22d7711afba45c82accabdb96c2a466a37a638d5e6883d5d9447",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/mapObjects.test.tsx": "58d0b607ac2e5bff478d85e9603bc810b89d7608d6f03b2e8a393405e6b10a1c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/SmartCityWorkspace.tsx": "d40472503649a4e1feceb2dba01bdd20632acf5cec147a48cf7bfa451334d503",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/SmartCityWorkspace.test.tsx": "0be1fd9b672cb5bd230ec684fcfe4d32eb841f930a6afed228f57cb941c3c90f"
+  },
+  "deploymentByThisAgent": false,
+  "updatedAt": "2026-10-23T19:40:54.907168+00:00",
+  "establishedGroupSplitDistanceM": 1.5,
+  "distancePolicy": "New groups require <=1 m. An established exact group may persist through current-position jitter up to 1.5 m. A split requires <=1 m to rejoin. No previous position, frame, event or analytical identity is reused.",
+  "continuityKeyFields": [
+    "site id/revision",
+    "fusion epoch/global/target ID",
+    "each member track ID/local ID/source/session/calibration"
+  ]
+}

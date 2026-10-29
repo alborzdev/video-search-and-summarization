@@ -1,0 +1,231 @@
+{
+  "rules": [
+    {
+      "id": "expo-crossing-occupancy",
+      "name": "East crossing",
+      "kind": "occupancy-threshold",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.438282575416031,
+            0.6798724115943104
+          ],
+          [
+            0.3412277619378336,
+            0.8613317158695343
+          ],
+          [
+            0.22078942674709778,
+            0.3908233239519056
+          ],
+          [
+            0.3005342953186761,
+            0.3046779743338234
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 100,
+        "clearAfterMs": 400,
+        "maximumObservationGapMs": 750,
+        "speedBelowMps": 0.6,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 1026,
+      "calibrationRevision": "isaac-live-98b2ae97b267da51"
+    },
+    {
+      "id": "expo-approach-queue",
+      "name": "North approach queue",
+      "kind": "queue",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.273446274078125,
+            0.19656717151807507
+          ],
+          [
+            0.32094344750136694,
+            0.1340967389413918
+          ],
+          [
+            0.24705792256949294,
+            0.015591935548514098
+          ],
+          [
+            0.20182906787708194,
+            0.06202335143568075
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 1500,
+        "clearAfterMs": 400,
+        "maximumObservationGapMs": 750,
+        "speedBelowMps": 0.6,
+        "speedAboveMps": 0.2,
+        "countThreshold": 2,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 1026,
+      "calibrationRevision": "isaac-live-98b2ae97b267da51"
+    },
+    {
+      "id": "expo-junction-blockage",
+      "name": "Junction box",
+      "kind": "stopped-in-zone",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.4798787987895838,
+            0.9005267698419395
+          ],
+          [
+            0.6558025997942089,
+            0.3355171760050923
+          ],
+          [
+            0.4816202537582611,
+            0.11845078692861817
+          ],
+          [
+            0.2884229181889156,
+            0.44630075257850754
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 1800,
+        "clearAfterMs": 400,
+        "maximumObservationGapMs": 750,
+        "speedBelowMps": 0.6,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 1026,
+      "calibrationRevision": "isaac-live-98b2ae97b267da51"
+    },
+    {
+      "id": "expo-emergency-blockage",
+      "name": "Emergency access",
+      "kind": "stopped-in-zone",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.4798787987895838,
+            0.9005267698419395
+          ],
+          [
+            0.6558025997942089,
+            0.3355171760050923
+          ],
+          [
+            0.4816202537582611,
+            0.11845078692861817
+          ],
+          [
+            0.2884229181889156,
+            0.44630075257850754
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 1800,
+        "clearAfterMs": 400,
+        "maximumObservationGapMs": 750,
+        "speedBelowMps": 0.6,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 1026,
+      "calibrationRevision": "isaac-live-98b2ae97b267da51"
+    }
+  ],
+  "revision": 1026,
+  "status": "active",
+  "authority": "city-behavior-analytics",
+  "nativeAnalytics": {
+    "status": "active",
+    "requestedRevision": 1026,
+    "appliedRevision": 1026,
+    "primitives": [
+      {
+        "ruleId": "expo-approach-queue",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_1cd5d60f536876fc",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "expo-junction-blockage",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_69a527b8faf67cd3",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "expo-emergency-blockage",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_1b553544db7d25ff",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "expo-crossing-occupancy",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_22f2e25ac08cb724",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      }
+    ],
+    "eventAuthority": "city-behavior-analytics",
+    "counterEpoch": "8866f50c-76fa-45d7-8cb8-bb15269cfa42",
+    "sourceTimeNs": "1793286615999543389",
+    "error": "",
+    "sourceClockMode": "source-native-sei",
+    "lastAppliedRevision": 1026,
+    "operationalStatus": "fresh"
+  }
+}

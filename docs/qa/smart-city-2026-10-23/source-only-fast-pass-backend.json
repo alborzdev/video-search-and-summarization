@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "city.source-only-fast-pass-backend.v1",
+  "recordedAt": "2026-10-23T16:53:14.353101+00:00",
+  "status": "source-and-cpu-tests-passed-not-deployed",
+  "changes": [
+    "Expose bounded machine-readable evidenceReasons on unknown rule metrics without changing rule transition, observation-gap, prediction or clear semantics.",
+    "Preserve selected-frame evidence reasons in history and exact analyzed previews.",
+    "Filter requested-source events before the 100-event display limit; filter historical store reads by requested source before their limit.",
+    "Skip live history samples lacking mediaTimeSeconds during media-time alignment instead of subtracting None.",
+    "Avoid copying current tracks, metrics and event lists that a historical snapshot immediately replaces.",
+    "Replace per-metric nested rule scans in frame-history capture with a source-rule set; reuse the camera configuration during rule projection.",
+    "Remove duplicate deep copies during exact-preview assembly; the locked public DTO traversal still detaches the full metadata tree before serialization, without dropping metadata.",
+    "Fix small polygon self-intersection validation by comparing each orientation determinant against EPS instead of comparing their product against EPS. Nonzero-area crossed polygons at normalized scale 0.005 are rejected; valid small polygons and endpoint/collinear intersection behavior are preserved."
+  ],
+  "contract": {
+    "field": "metrics[].evidenceReasons",
+    "backwardCompatible": true,
+    "format": "Sorted unique array of bounded reason codes; empty unless status is unknown. Older stored frames may omit the field.",
+    "codes": [
+      "clear-hysteresis",
+      "direction-unavailable",
+      "duration-requalification",
+      "lost-track-capacity",
+      "lost-track-membership",
+      "observation-gap",
+      "projection-unavailable",
+      "source-stale",
+      "speed-unavailable",
+      "waiting-for-fresh-observation"
+    ],
+    "limits": "Reasons identify missing rule evidence, not necessarily a disconnected camera. No reason is inferred from VLM prose, simulator actor state or UI guesses. Multiple actual causes can coexist."
+  },
+  "validation": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q services/analytics/behavior-analytics/apps/city/tests",
+    "passed": 114,
+    "failed": 0,
+    "warnings": 1,
+    "elapsedSeconds": 2.81,
+    "warning": "Existing Starlette/httpx TestClient deprecation",
+    "newRegressions": [
+      "Live media lookup with absent media time",
+      "Requested-camera event filtering before display cap",
+      "Exact preview preserves the captured evidence reasons and does not mutate history",
+      "Small nonzero-area crossed polygon at scale 0.005, both origin and translated 0.4; both failed with prior geometry. Also checks valid small square, touching endpoint and disjoint small edges."
+    ],
+    "extendedRegressions": [
+      "Observed versus predicted gap",
+      "Fresh detection required after wall stall",
+      "Active duration requalification",
+      "Unknown clear hysteresis",
+      "Lost membership survives TTL",
+      "Bounded lost-membership capacity and session reset",
+      "Continuously proven occupancy suppresses irrelevant uncertainty reasons",
+      "Speed unavailable across source gap",
+      "Ground projection unavailable for image-space wrong-way"
+    ],
+    "whitespaceCheck": "git diff --check passed for city backend scope",
+    "geometryBeforeFix": {
+      "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q services/analytics/behavior-analytics/apps/city/tests/test_city.py -k small_nonzero_area_crossed_polygon",
+      "failed": 2,
+      "reason": "The old product-of-determinants test accepted the crossed polygons."
+    }
+  },
+  "review": {
+    "evidenceBoundedness": "At most ten fixed reason strings; no unbounded per-object payload or retained reason history added.",
+    "previewOwnership": "accept holds both engine and preview locks through public_value and JSON encoding; the temporary snapshot references never escape that path. Stored envelopes are immutable bytes.",
+    "uiCompatibility": "Read-only inspection confirmed optional CityMetric.evidenceReasons and publicCityPayload preserve metric reason arrays; source whitelisting does not affect metrics.",
+    "remainingLimits": [
+      "No detector, calibration, model, map accuracy or fusion changes.",
+      "No end-to-end latency improvement measured.",
+      "Lost inside identities can remain unresolved until actual reacquisition or source/session/configuration reset, as before."
+    ]
+  },
+  "changedFileSha256": {
+    "services/analytics/behavior-analytics/apps/city/engine.py": "37c041207591c9ac00a96ffd832d8fd21ba672f8cb95f22ffc1b40cb3091c296",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "e099bb6d7a8b0359239231c24c4453ee14218440177d82c6722c0e68ad2fcdf9",
+    "services/analytics/behavior-analytics/apps/city/tests/test_city.py": "31f4516e04fce9c64920f83faf426dd925cbe732fc38b797c59503b77903e698",
+    "services/analytics/behavior-analytics/apps/city/tests/test_preview.py": "8c3f57542831f111ab2103b0d52bea12f5dcb15d38508feaeedfc1d4b0cfe463",
+    "services/analytics/behavior-analytics/apps/city/geometry.py": "85b2d2d5d919c94a75f59401c6128bf0eb5795d0b8545cc09fd6af7387e0c074"
+  },
+  "runtime": {
+    "deployed": false,
+    "restarted": false,
+    "gpuOrModelRequests": false,
+    "integratedQualification": "deferred; this receipt does not replace the frozen 109-test or previous deployed receipts"
+  },
+  "previousReceiptPreserved": "docs/qa/smart-city-2026-10-23/sprint-backend-final-qa.json",
+  "previousSourceOnlyReceiptPreserved": "docs/qa/smart-city-2026-10-23/source-only-fast-pass-backend-112-tests.json",
+  "geometryBaselineSha256": "35133251487497884d27dd2902de286648d4181a636362d7fef7ee6fff91e237"
+}

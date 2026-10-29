@@ -932,6 +932,77 @@ class TestRestartReconciliation:
     """Durable VST inventory must rehydrate empty in-memory RTVI services."""
 
     @pytest.mark.asyncio
+    @pytest.mark.parametrize("unavailable", ["embed", "vlm", "both"])
+    @pytest.mark.parametrize("independent_indexing", [True, False])
+    async def test_model_inventory_outage_does_not_hide_detector_admission(self, unavailable, independent_indexing):
+        from vss_agents.api.source_control import SourceAnalysisRequest
+        from vss_agents.api.source_control import create_source_control_router
+
+        config = ServiceConfig(
+            vst_internal_url="http://vst:30888",
+            rtvi_cv_base_url="http://rtvi-cv:9000",
+            rtvi_embed_base_url="http://rtvi-embed:8017",
+            rtvi_vlm_base_url="http://rtvi-vlm:8018",
+        )
+        set_source_analysis_profile("sensor-2", "smart-city" if independent_indexing else "warehouse-safety")
+        client = MagicMock()
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+
+        async def inventory(_client, url):
+            if (
+                unavailable == "both"
+                or (unavailable == "embed" and "embed" in url)
+                or (unavailable == "vlm" and "vlm" in url)
+            ):
+                raise httpx.RemoteProtocolError("Server disconnected during model startup")
+            return set()
+
+        router = create_source_control_router(config)
+        resume = next(
+            route.endpoint for route in router.routes if route.path.endswith("/analysis") and "POST" in route.methods
+        )
+        with (
+            patch("vss_agents.api.rtsp_ingest.httpx.AsyncClient", return_value=client),
+            patch(
+                "vss_agents.api.source_control.get_stream_info_by_name",
+                new=AsyncMock(return_value=(True, "OK", "sensor-2", "rtsp://vst/live/sensor-2")),
+            ),
+            patch(
+                "vss_agents.api.rtsp_ingest._detector_inventories",
+                new=AsyncMock(return_value={"http://rtvi-cv:9000": set()}),
+            ),
+            patch("vss_agents.api.rtsp_ingest.detector_endpoint_for_profile", return_value="http://rtvi-cv:9000"),
+            patch("vss_agents.api.rtsp_ingest._registered_stream_ids", new=AsyncMock(side_effect=inventory)),
+            patch("vss_agents.api.rtsp_ingest.add_to_rtvi_cv", new=AsyncMock(return_value=(True, "OK"))) as add_cv,
+            patch(
+                "vss_agents.api.rtsp_ingest.add_to_rtvi_embed", new=AsyncMock(return_value=(True, "OK", "sensor-2"))
+            ) as add_embed,
+            patch(
+                "vss_agents.api.rtsp_ingest.add_to_rtvi_vlm", new=AsyncMock(return_value=(True, "OK", "sensor-2"))
+            ) as add_vlm,
+            patch(
+                "vss_agents.api.rtsp_ingest.start_embedding_generation", new=AsyncMock(return_value=(True, "OK"))
+            ) as start_embed,
+        ):
+            response = await resume("sensor-2", SourceAnalysisRequest(action="resume", name="Camera 2"))
+
+        add_cv.assert_awaited_once()
+        assert response.steps["detection"] is True
+        assert response.indexing_required is not independent_indexing
+        required_semantic_outage = not independent_indexing and unavailable in ("embed", "both")
+        assert response.analysis_active is not required_semantic_outage
+        assert response.state == ("partial" if required_semantic_outage else "active")
+        assert response.steps["caption_resource"] is (unavailable == "embed")
+        if unavailable in ("vlm", "both"):
+            add_vlm.assert_not_awaited()
+        if independent_indexing or unavailable in ("embed", "both"):
+            assert response.steps["embedding"] is False
+            assert response.steps["embedding_resource"] is False
+            add_embed.assert_not_awaited()
+            start_embed.assert_not_awaited()
+
+    @pytest.mark.asyncio
     async def test_reads_real_rtvi_cv_inventory_after_service_restart(self):
         client = MagicMock()
         response = MagicMock()
@@ -951,6 +1022,73 @@ class TestRestartReconciliation:
         assert inventory == {"sensor-1", "sensor-2"}
         client.get.assert_awaited_once_with("http://rtvi-cv:9000/api/v1/stream/get-stream-info")
         response.raise_for_status.assert_called_once_with()
+
+    @pytest.mark.asyncio
+    async def test_retries_failed_registration_without_restarting_healthy_peer(self):
+        config = ServiceConfig(vst_internal_url="http://vst:30888", rtvi_cv_base_url="http://rtvi-cv:9000")
+        response = MagicMock()
+        response.json.return_value = {
+            "stream-info": {
+                "stream-info": [
+                    {"camera_id": "failed-1", "status": "registered-stopped"},
+                    {"camera_id": "healthy-2", "status": "running"},
+                ]
+            }
+        }
+        client = MagicMock(get=AsyncMock(return_value=response))
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        with (
+            patch("vss_agents.api.rtsp_ingest.httpx.AsyncClient", return_value=client),
+            patch(
+                "vss_agents.api.rtsp_ingest.vst_get_streams_info",
+                new=AsyncMock(
+                    return_value={
+                        "failed-1": {"name": "Failed camera", "url": "rtsp://vst/live/failed-1"},
+                        "healthy-2": {"name": "Healthy camera", "url": "rtsp://vst/live/healthy-2"},
+                    }
+                ),
+            ),
+            patch("vss_agents.api.rtsp_ingest.is_source_paused", return_value=False),
+            patch("vss_agents.api.rtsp_ingest._cv_registered_streams", new=set()),
+            patch("vss_agents.api.rtsp_ingest.add_to_rtvi_cv", new=AsyncMock(return_value=(True, "OK"))) as add,
+        ):
+            await reconcile_registered_live_sources(config)
+        add.assert_awaited_once_with(
+            client, config, "failed-1", "Failed camera", "rtsp://vst/live/failed-1", base_url="http://rtvi-cv:9000"
+        )
+
+    @pytest.mark.asyncio
+    async def test_cleans_stopped_previous_profile_registration_without_removing_healthy_peer(self):
+        config = ServiceConfig(vst_internal_url="http://vst:30888", rtvi_cv_base_url="http://rtvi-cv:9000")
+        set_source_analysis_profile("old-1", "semantic-search")
+        response = MagicMock()
+        response.json.return_value = {
+            "stream-info": {
+                "stream-info": [
+                    {"camera_id": "old-1", "status": "registered-stopped"},
+                    {"camera_id": "healthy-other", "status": "running"},
+                ]
+            }
+        }
+        removed = MagicMock(status_code=200)
+        client = MagicMock(get=AsyncMock(return_value=response), post=AsyncMock(return_value=removed))
+        client.__aenter__ = AsyncMock(return_value=client)
+        client.__aexit__ = AsyncMock(return_value=None)
+        with (
+            patch("vss_agents.api.rtsp_ingest.httpx.AsyncClient", return_value=client),
+            patch(
+                "vss_agents.api.rtsp_ingest.vst_get_streams_info",
+                new=AsyncMock(return_value={"old-1": {"name": "Old camera", "url": "rtsp://vst/live/old-1"}}),
+            ),
+            patch("vss_agents.api.rtsp_ingest.is_source_paused", return_value=False),
+            patch("vss_agents.api.rtsp_ingest.add_to_rtvi_cv", new=AsyncMock()) as add,
+        ):
+            await reconcile_registered_live_sources(config)
+        add.assert_not_awaited()
+        client.post.assert_awaited_once()
+        assert client.post.await_args.args == ("http://rtvi-cv:9000/api/v1/stream/remove",)
+        assert client.post.await_args.kwargs["json"]["value"]["camera_id"] == "old-1"
 
     @pytest.mark.asyncio
     async def test_does_not_remove_paused_source_absent_from_detector_inventory(self):

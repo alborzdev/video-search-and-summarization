@@ -1,0 +1,7 @@
+.control { display:flex; flex-direction:column; align-items:flex-end; gap:6px; min-width:180px; max-width:320px; }
+.control button { border:1px solid #4a6867; border-radius:6px; color:#edf7f5; background:#233533; padding:10px 16px; font:inherit; font-size:13px; cursor:pointer; }
+.control button:hover:not(:disabled) { background:#2d4944; border-color:#37d5c1; }
+.control button:disabled { opacity:.5; cursor:default; }
+.control button:focus-visible { outline:2px solid #37d5c1; outline-offset:3px; }
+.control span { color:#a3acb3; font-size:11px; max-width:100%; text-align:right; overflow-wrap:anywhere; }
+@media(max-width:760px) { .control { align-items:flex-start; max-width:100%; } .control span { text-align:left; } }

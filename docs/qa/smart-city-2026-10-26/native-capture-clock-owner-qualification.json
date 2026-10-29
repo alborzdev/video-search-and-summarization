@@ -1,0 +1,145 @@
+{
+  "schemaVersion": "city.native-capture-clock-owner-qualification.v1",
+  "at": "2026-10-26T10:32:18.018014+00:00",
+  "status": "proxy-source-qualified-ui-built-awaiting-root-live-qualification",
+  "sourceSha256": {
+    "services/analytics/behavior-analytics/apps/city/models.py": "d9a26b627addee52bd5ece329f54c033ec0e312f27173453f101f01ddb932293",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "bc5fc567ca9b4fc312a8288ec2ecaf07d27cbaac0c87e2ca9d9eb3767dc445fa",
+    "services/analytics/behavior-analytics/apps/city/native.py": "1bd2030d496cb8750fb0f42ad95a38fa7a03c2f3c24f49781930913db1f8f86b",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "8437eb1b5ce435f2a490a2bd496fc26c34f21f1086794c69973ad3d8908ad8b6",
+    "services/analytics/behavior-analytics/apps/city/tests/test_native_sei_clock.py": "7c3dc8c2122173b39ee6ce2fc5c26f2d6f461b8a854510dcdb63fc01c6063789",
+    "tools/smart-city/mv3dt_demo_profile.py": "4665ec4a8275795d69bf8b403284455e95fffd3a6966956c03f8fe7bb5f08400",
+    "tools/smart-city/isaac_demo.py": "90da1b0be1babca8cf2247d2b38c6abd18f077a5626285c58fac7433eac00b64",
+    "tools/smart-city/soak.py": "c52c5492d9276f1f5cf39cbb597e297e12cac0904b88de2bf3aa05bd5a4b9e62",
+    "tools/smart-city/qualify_questions.py": "d4524bb9e170b2eefd829a989f14991b3a12f16a482a1d50e720bb335bafaba4",
+    "tools/smart-city/tests/test_mv3dt_demo_profile.py": "81e04b3c871b0dd125761f689cff1f9c199daae94f6bebf89ee3c08d6646b0b4",
+    "tools/smart-city/tests/test_isaac_demo.py": "8d607f7b7ee46a79f17ed7f5cb95f5f92cab3d3679f478d088762f07cec5be49",
+    "tools/smart-city/tests/test_soak.py": "37f21ab6f22985efe8875644290fbd114221a524d5853d846e2f13727ec2b5f2",
+    "tools/smart-city/tests/test_qualify_questions.py": "307ce390ffc94f4b603603c11e99d0b8361f3909a1ff640c576bd996a806ca54",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/types.ts": "0585a236af67fff3691ea4bd68cea13b34ecb106b61878469591db4d2b0a8b96",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/sourceClock.ts": "b0e150e50e400e26429523a51fb7b131b0439cfcfc46b4a468025fe08d7f94d0",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mapObjects.ts": "6181b0c012493affeecb5646cbb9d8306371b4d94c4f91f45339a1934b436d86",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/processedPreview.ts": "3dcdd54938d1681d41cf7ad866b37869de088fbcbec1b930d673796a1077fa48",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/sourceClock.test.ts": "391f7d52c9f27c796685ac47591aa774df8301d5856d57ea1260ac5e55f3fc6f",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/mapObjects.test.tsx": "1bd4d0b92aea23fde548d2a5b66631b40058e2ad455271dbe55ef04f03118ca8",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/processedPreview.test.ts": "a9a45c9f31542eeb64508b7d1716e75b6af5a64baf915117a54c3c18dc1e49b9",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/pages/api/vision/city/[...path].ts": "5df46ac4e5ebbfa35970b0aadccc673c454da4372cf0a290a473304aef20f962",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/proxy.test.ts": "1cf8e490f219ad5570416ccc73b3ad8f89d485de67cad661591dd8af14298f74",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/fixtures/native-sei-preview-metadata.json": "a5724526d32a3249fc4c862e990a0c110f2b0ef3171619a7bdce8e4fb8e1a703"
+  },
+  "contract": {
+    "profileField": "sourceClockMode: source-native-sei",
+    "nativeArgument": "--source-native-sei-clock",
+    "genericClockBasis": "source-rtcp",
+    "nativeClockBasis": "source-native-sei",
+    "browserClockVerified": false,
+    "sharedMapWindowMs": 150,
+    "singleCameraStartup": "Only explicitly pinned source/calibration subset; native clock enabled with ordinary NvDCF/no shared IDs until full camera pair.",
+    "clockSemantics": "Native encoded-AU wall-capture handoff timestamp, correlated by exact AU PTS before both trackers; never physical exposure/browser/simulation/RTCP-reconstructed time.",
+    "proof": "Exactly six typed fields: schemaVersion/method/correlation/captureTimeNs/auPtsNs/frameCounter. Native time/PTS/counter advance in session; reset cannot bypass guard.",
+    "mixedBasisOrModelMapJoin": "Rejected; existing calibration/session/visibility/current-frame/position safeguards retained.",
+    "history": "Saved config/events do not replay old observation logs. Old retained RTCP data remains readable under its recorded basis, while current native-only ingestion rejects RTCP."
+  },
+  "qualificationTools": {
+    "soakArguments": [
+      "--expected-source-clock-basis",
+      "source-native-sei",
+      "--trust-native-sei-wall-utc",
+      "--require-processed-preview"
+    ],
+    "questionsArguments": [
+      "--expected-source-clock-basis",
+      "source-native-sei"
+    ],
+    "previewParser": "soak.parse_preview_envelope(body, source_id, site_id) validates native source proof and exact envelope equality; returns actual timestampBasis.",
+    "legacyPrepareMv3dt": "Retains explicit RTCP/recorded-clock evidence contract; cannot qualify native SEI by relabelling."
+  },
+  "checks": {
+    "pythonCombined": {
+      "status": "passed",
+      "count": 467,
+      "subtests": 65,
+      "seconds": 4.55,
+      "warning": "Existing Starlette/httpx test-client deprecation; no environment install/change."
+    },
+    "uiGuardJest": {
+      "status": "passed",
+      "suites": 3,
+      "count": 65,
+      "seconds": 1.169
+    },
+    "strictUiTypecheck": {
+      "status": "passed",
+      "exitCode": 0,
+      "noEmit": true
+    },
+    "fatalRuff": {
+      "status": "passed",
+      "selectors": "E9,F63,F7,F82"
+    },
+    "broadBackendMypy": {
+      "status": "not-clean",
+      "errors": 21,
+      "files": [
+        "models.py",
+        "native.py",
+        "engine.py"
+      ],
+      "scope": "Default annotations on complete selected backend modules, including code outside the clock patch. No claim that complete-module mypy passes; no unrelated cleanup performed."
+    },
+    "manageWiring": {
+      "status": "passed",
+      "count": 56,
+      "seconds": 0.08
+    },
+    "uiProxyAndGuards": {
+      "status": "passed",
+      "suites": 4,
+      "count": 88,
+      "seconds": 1.313,
+      "independentCount": 88,
+      "independentSeconds": 1.482
+    },
+    "nativeNestedPreviewProof": {
+      "status": "passed",
+      "count": 26,
+      "seconds": 0.3
+    }
+  },
+  "uiCandidate": {
+    "packageId": "20261026T102610382036Z",
+    "sourceSha256": "d4aee494f102dc2a60782060735fc22a879b5313cf5f140ea79543868ed0e25f",
+    "status": "built-offline",
+    "activated": false,
+    "layoutBrandingChanged": false,
+    "previousImageId": "sha256:77c06679148cc6cc1e9cb7277fc100261e8a63217b1f49db3096ec3b117931ed",
+    "repair": "Add only native sourceClockMode/sourceClockEvidence to public Next source-field allowlist.",
+    "imageId": "sha256:1d94d0350f90c2e4f120f0295553e6ed06d6b71789579378bf532a634605fc0f",
+    "artifactSha256": "41a60b1f584e4db68d67adf4c79823b8454b3e5f1efbf2f97d04552f2c909f53",
+    "buildTasks": 10,
+    "buildTime": "2m4.333s",
+    "buildReceipt": "native-capture-clock-proxy-ui-build.json"
+  },
+  "nativeCandidateImageId": "sha256:4e6b73d1b19e133680a583d5d2f109e20a6953537adea1165b7a381abf42c3dd",
+  "limits": [
+    "No source/runtime cutover or live map/clock/accuracy/FPS qualification by this agent.",
+    "MV3DT shared person markers remain experimental, global rule/count fusion remains disabled.",
+    "Old October22 soak does not qualify this candidate."
+  ],
+  "goalComplete": false,
+  "previousUiCandidate": {
+    "packageId": "20261026T101539610628Z",
+    "status": "built-offline",
+    "activated": false,
+    "sourceDeltaReceipt": "native-capture-clock-ui-source-delta.json",
+    "changedSourceFiles": 7,
+    "layoutBrandingChanged": false,
+    "sourceSha256": "7388367ea12ee33695ccc6b42d47f4dcb23e5a4960665ab99d66a6ac2e95027b",
+    "imageId": "sha256:77c06679148cc6cc1e9cb7277fc100261e8a63217b1f49db3096ec3b117931ed",
+    "artifactSha256": "5d5423e8ba6d4c2ae18e796fb7a51090015ffd27524d068d43e2753aca43aa58",
+    "buildTasks": 10,
+    "buildTime": "2m2.367s",
+    "buildReceipt": "native-capture-clock-ui-candidate-build.json"
+  },
+  "liveFailure": "Initial77c066 proxy stripped native proof/mode from nested sources; strict preview/map guards correctly refused them. Preserve original failed cohort; no relabelling of its artifact."
+}

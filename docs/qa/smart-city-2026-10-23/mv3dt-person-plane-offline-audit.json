@@ -1,0 +1,574 @@
+{
+  "schemaVersion": "city.mv3dt.offline-audit.v1",
+  "run": ".spark/city/state/native/mv3dt-person-plane/probe-20261023T044318Z",
+  "savedMetricsReproducedExactly": true,
+  "savedChecksReproducedExactly": true,
+  "inputIntegrity": {
+    "verified": true,
+    "sha256": {
+      "package.json": "20f148347e50659a150e375bf4a1dcb8169bb24c20ac1b465519299c7e846a80",
+      "promotion-gates.json": "678d5b6f22b3ec10f05e75e5b88c91f2e5e2cd6bdf22fa0d465509669c12bb7d"
+    }
+  },
+  "passedOriginalGates": false,
+  "originalChecks": {
+    "inputIntegrity": true,
+    "runtimeCompleted": true,
+    "duration": true,
+    "memory": true,
+    "pairedSamples": true,
+    "sourceClockSkew": true,
+    "positionMedian": false,
+    "positionP95": false,
+    "falseMerges": false,
+    "matchedPeople": true,
+    "duplicateReduction": false
+  },
+  "originalMetrics": {
+    "observationCount": 2200,
+    "scoredObservationCount": 1962,
+    "matchedPersonObservations": 7419,
+    "distinctMatchedPeople": 8,
+    "unmatchedEligiblePersonDetections": 812,
+    "clockUnmatchedObservations": 0,
+    "sourceSkewPairs": 981,
+    "sourceClockSkewP95Ms": 0.887359,
+    "personPositionMedianM": 1.224870324791965,
+    "personPositionP95M": 2.3218719371887917,
+    "falseMergedNativeIds": 9,
+    "baselineGroundAnchorMedianM": 0.4424625926751217,
+    "baselineGroundAnchorP95M": 0.9711839182842615,
+    "positionByCamera": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "nativeMedianM": 1.3930977313617938,
+        "nativeP95M": 2.610874504835947,
+        "baselineMedianM": 0.4667531852273188,
+        "baselineP95M": 1.0460266089894392
+      },
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "nativeMedianM": 1.082996272277372,
+        "nativeP95M": 1.913251633312795,
+        "baselineMedianM": 0.42446276665721966,
+        "baselineP95M": 0.855518921235467
+      }
+    },
+    "crossViewOpportunities": 2165,
+    "sameIdCrossViewMatches": 5,
+    "duplicateReductionFraction": 0.0023094688221709007
+  },
+  "groundTruthSha256": "d735b8a72583b6ba42b954bea40d567cf9d70c98339cc05eb51c79e53e2d7ab6",
+  "observationsSha256": "3db19cbc684d97e73e53a7cbbc4c6fe55d7453e58bd1730abfc6be349d6f1579",
+  "configHashesMatchInvocation": {
+    "package.json": true,
+    "camera-0.yml": true,
+    "camera-1.yml": true,
+    "tracker-mv3dt.experimental.yml": true,
+    "promotion-gates.json": true,
+    "pub-sub.yml": true
+  },
+  "cameraOrderMatchesInvocation": true,
+  "timingSensitivityFixedOriginalActorLabelsNativeM": {
+    "-250": {
+      "count": 7419,
+      "median": 1.1965308096733942,
+      "p95": 2.265676823014956,
+      "maximum": 4.115286670659752
+    },
+    "-100": {
+      "count": 7419,
+      "median": 1.2130978355112085,
+      "p95": 2.290263897449077,
+      "maximum": 4.123392140503426
+    },
+    "-50": {
+      "count": 7419,
+      "median": 1.2130978355112085,
+      "p95": 2.290263897449077,
+      "maximum": 4.123392140503426
+    },
+    "0": {
+      "count": 7419,
+      "median": 1.224870324791965,
+      "p95": 2.3218719371887917,
+      "maximum": 4.12894221286737
+    },
+    "50": {
+      "count": 7419,
+      "median": 1.2317124652226488,
+      "p95": 2.326635425027712,
+      "maximum": 4.12894221286737
+    },
+    "100": {
+      "count": 7419,
+      "median": 1.2382164127308968,
+      "p95": 2.3353693379000267,
+      "maximum": 4.134416275400638
+    },
+    "250": {
+      "count": 7419,
+      "median": 1.2663636504357885,
+      "p95": 2.396100156278936,
+      "maximum": 4.146963142896538
+    }
+  },
+  "sourceClock": {
+    "strictlyMonotonicBySource": true,
+    "scoredSourceSessions": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": 1,
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 1
+    },
+    "fusionEpochs": 1,
+    "sourceToNearestGtOffsetMs": {
+      "count": 1962,
+      "median": 36.186599,
+      "p95": 56.717503799999996,
+      "maximum": 71.966146
+    },
+    "pairedSecondViewReuseCount": 0
+  },
+  "imageAssignmentDiagnostics": {
+    "sameFrameDuplicateIdRows": 0,
+    "ambiguousMultipleRoots": 610,
+    "ambiguousMultipleObjects": 350,
+    "assignmentNotNearest": 15,
+    "isolatedByOriginalImageGate": 6618
+  },
+  "identityDiagnostics": {
+    "idLabelCounts": {
+      "4": {
+        "Character_03": 388
+      },
+      "3": {
+        "Character": 247
+      },
+      "2": {
+        "Character_06": 367,
+        "Character_07": 21
+      },
+      "16": {
+        "Character": 434,
+        "Character_07": 1,
+        "Character_06": 213
+      },
+      "11": {
+        "Character_04": 591,
+        "Character_07": 2,
+        "Character": 10
+      },
+      "19": {
+        "Character_03": 154
+      },
+      "21": {
+        "Character_07": 2
+      },
+      "20": {
+        "Character_06": 163,
+        "Character_07": 193
+      },
+      "23": {
+        "Character_02": 8
+      },
+      "24": {
+        "Character_07": 137
+      },
+      "25": {
+        "Character_07": 151,
+        "Character_06": 183
+      },
+      "27": {
+        "Character_05": 196
+      },
+      "28": {
+        "Character_05": 257,
+        "Character_01": 272
+      },
+      "31": {
+        "Character_02": 17
+      },
+      "36": {
+        "Character_02": 50
+      },
+      "38": {
+        "Character_02": 240
+      },
+      "40": {
+        "Character_07": 639,
+        "Character_04": 7
+      },
+      "43": {
+        "Character": 16
+      },
+      "48": {
+        "Character_01": 228,
+        "Character_05": 22
+      },
+      "47": {
+        "Character_02": 124
+      },
+      "44": {
+        "Character_01": 1
+      },
+      "55": {
+        "Character_04": 313
+      },
+      "70": {
+        "Character_03": 13
+      },
+      "71": {
+        "Character": 57,
+        "Character_04": 197
+      },
+      "72": {
+        "Character": 381
+      },
+      "74": {
+        "Character": 6
+      },
+      "75": {
+        "Character_01": 66
+      },
+      "76": {
+        "Character": 346
+      },
+      "77": {
+        "Character_03": 361
+      },
+      "78": {
+        "Character": 5
+      },
+      "83": {
+        "Character_04": 25
+      },
+      "84": {
+        "Character_05": 244
+      },
+      "92": {
+        "Character_03": 40
+      },
+      "96": {
+        "Character_05": 31
+      }
+    },
+    "idsWithMultipleIsolatedLabels": {
+      "16": {
+        "Character": 350,
+        "Character_06": 151
+      },
+      "20": {
+        "Character_06": 140,
+        "Character_07": 136
+      },
+      "25": {
+        "Character_07": 84,
+        "Character_06": 157
+      },
+      "28": {
+        "Character_05": 210,
+        "Character_01": 272
+      },
+      "71": {
+        "Character": 31,
+        "Character_04": 191
+      }
+    },
+    "crossView": {
+      "all": 2165,
+      "same": 5,
+      "isolated": 1831,
+      "isolatedSame": 2
+    },
+    "simultaneousConflictingIdPairs": 30,
+    "simultaneousConflictingIdPairsIsolatedBoth": 22,
+    "isolatedConflictTruthSeparationM": {
+      "count": 22,
+      "median": 2.5852690599529744,
+      "p95": 3.4550495572196036,
+      "maximum": 3.5414880188842606
+    },
+    "isolatedConflictNativeSeparationM": {
+      "count": 22,
+      "median": 0.30047327801344537,
+      "p95": 1.273333531871686,
+      "maximum": 1.3339026025053526
+    },
+    "conflictsById": {
+      "25": 30
+    },
+    "firstIsolatedConflicts": [
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642216031200",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.0604690991072725,
+        "nativeSeparationM": 0.08646791077770151
+      },
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642333618319",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.1034305813024163,
+        "nativeSeparationM": 0.1425744048981047
+      },
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642458694519",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.1479833360476395,
+        "nativeSeparationM": 0.22635048175252556
+      },
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642580054432",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.1904025618142575,
+        "nativeSeparationM": 0.1465689296533205
+      },
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642645125687",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.223868051596155,
+        "nativeSeparationM": 0.17995832097510792
+      },
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642713015581",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.2626176258243222,
+        "nativeSeparationM": 0.1996743145276464
+      },
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642776839156",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.3024725592265116,
+        "nativeSeparationM": 0.20919512701556475
+      },
+      {
+        "id": "25",
+        "actors": [
+          "Character_07",
+          "Character_06"
+        ],
+        "timeNs": "1792730642883351965",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 2.3842231415195685,
+        "nativeSeparationM": 0.2133787535252736
+      }
+    ],
+    "sameIdNativeCrossViewSeparationM": {
+      "count": 35,
+      "median": 0.32427103267458596,
+      "p95": 2.9740585444770504,
+      "maximum": 3.1166833420923417
+    },
+    "observedIdChangesWithin500Ms": {
+      "all": 49,
+      "isolatedBoth": 22
+    },
+    "people": {
+      "Character": {
+        "matches": 1502,
+        "uniqueSdkIds": 9,
+        "isolatedUniqueSdkIds": 8,
+        "positionM": {
+          "count": 1502,
+          "median": 1.061319474387555,
+          "p95": 1.7560264327536468,
+          "maximum": 3.125305850332212
+        },
+        "isolatedPositionM": {
+          "count": 1281,
+          "median": 1.0399590889754178,
+          "p95": 1.7583738723330549,
+          "maximum": 3.125305850332212
+        }
+      },
+      "Character_01": {
+        "matches": 567,
+        "uniqueSdkIds": 4,
+        "isolatedUniqueSdkIds": 4,
+        "positionM": {
+          "count": 567,
+          "median": 1.0120630899347538,
+          "p95": 1.9679567204807793,
+          "maximum": 2.7347798655426594
+        },
+        "isolatedPositionM": {
+          "count": 518,
+          "median": 1.0613419993534388,
+          "p95": 1.9724762921800294,
+          "maximum": 2.7347798655426594
+        }
+      },
+      "Character_02": {
+        "matches": 439,
+        "uniqueSdkIds": 5,
+        "isolatedUniqueSdkIds": 5,
+        "positionM": {
+          "count": 439,
+          "median": 1.4026865989127295,
+          "p95": 2.987563967719,
+          "maximum": 4.12894221286737
+        },
+        "isolatedPositionM": {
+          "count": 439,
+          "median": 1.4026865989127295,
+          "p95": 2.987563967719,
+          "maximum": 4.12894221286737
+        }
+      },
+      "Character_03": {
+        "matches": 956,
+        "uniqueSdkIds": 5,
+        "isolatedUniqueSdkIds": 4,
+        "positionM": {
+          "count": 956,
+          "median": 1.1929556593899533,
+          "p95": 2.163815422407633,
+          "maximum": 3.662109598977702
+        },
+        "isolatedPositionM": {
+          "count": 894,
+          "median": 1.2483430683514163,
+          "p95": 2.1704744421733415,
+          "maximum": 3.662109598977702
+        }
+      },
+      "Character_04": {
+        "matches": 1133,
+        "uniqueSdkIds": 5,
+        "isolatedUniqueSdkIds": 4,
+        "positionM": {
+          "count": 1133,
+          "median": 1.63116931908892,
+          "p95": 2.3113369654475924,
+          "maximum": 3.916563332043891
+        },
+        "isolatedPositionM": {
+          "count": 1073,
+          "median": 1.6448910254113451,
+          "p95": 2.3855113504314462,
+          "maximum": 3.916563332043891
+        }
+      },
+      "Character_05": {
+        "matches": 750,
+        "uniqueSdkIds": 5,
+        "isolatedUniqueSdkIds": 4,
+        "positionM": {
+          "count": 750,
+          "median": 1.3073935723836971,
+          "p95": 1.8692015215636286,
+          "maximum": 2.3572482592185318
+        },
+        "isolatedPositionM": {
+          "count": 681,
+          "median": 1.3277611300076813,
+          "p95": 1.881453258012083,
+          "maximum": 2.3572482592185318
+        }
+      },
+      "Character_06": {
+        "matches": 926,
+        "uniqueSdkIds": 4,
+        "isolatedUniqueSdkIds": 4,
+        "positionM": {
+          "count": 926,
+          "median": 1.0629368513342559,
+          "p95": 1.5697182982821651,
+          "maximum": 1.7820427820508598
+        },
+        "isolatedPositionM": {
+          "count": 780,
+          "median": 1.0745697691267826,
+          "p95": 1.5880962982709654,
+          "maximum": 1.7820427820508598
+        }
+      },
+      "Character_07": {
+        "matches": 1146,
+        "uniqueSdkIds": 8,
+        "isolatedUniqueSdkIds": 5,
+        "positionM": {
+          "count": 1146,
+          "median": 1.223981969576569,
+          "p95": 3.050602626550943,
+          "maximum": 3.620426028182539
+        },
+        "isolatedPositionM": {
+          "count": 952,
+          "median": 1.337863439568903,
+          "p95": 3.1481928676267246,
+          "maximum": 3.620426028182539
+        }
+      }
+    }
+  },
+  "positionDiagnostics": {
+    "nativeImageFootHomographyVsNativeWorldM": {
+      "count": 8231,
+      "median": 0.020800130141563487,
+      "p95": 0.09716313444630369,
+      "maximum": 2.0745543999631884
+    },
+    "nativeWorldVsBboxBottomGroundM": {
+      "count": 8231,
+      "median": 0.9759760656608519,
+      "p95": 2.778594707667909,
+      "maximum": 4.970258866877239
+    },
+    "nativeFootVsMatchedGtPixelPx": {
+      "count": 7419,
+      "median": 13.453044130079453,
+      "p95": 35.88788987182278,
+      "maximum": 61.50223955906696
+    },
+    "isolatedMatchesNativeM": {
+      "count": 6618,
+      "median": 1.2780136845279482,
+      "p95": 2.383217431479639,
+      "maximum": 4.12894221286737
+    },
+    "isolatedMatchesBboxGroundM": {
+      "count": 6618,
+      "median": 0.4448663604032268,
+      "p95": 0.9650326721600611,
+      "maximum": 2.8415827319644875
+    }
+  },
+  "limits": [
+    "Diagnostic subsets do not remove samples from saved promotion gates.",
+    "Isolated means one-to-one under the original image-space distance gate, not independently verified visibility or correct identity.",
+    "Unique SDK IDs per actor and short-gap changes include tracker ID corrections, label error and fragmentation; not HOTA/IDF1.",
+    "GT capture time versus source RTCP is nearest-neighbor matching, not recorded frame-ID evidence."
+  ]
+}

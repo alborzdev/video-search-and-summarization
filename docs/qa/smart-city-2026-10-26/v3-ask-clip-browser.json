@@ -1,0 +1,13 @@
+{
+  "states": [
+    {
+      "currentTime": 5.1104,
+      "duration": 5.1104,
+      "ended": true,
+      "error": null,
+      "paused": true,
+      "readyState": 4
+    }
+  ],
+  "scope": "Real UI question, inspected five-second retained footage, actual browser playback state."
+}

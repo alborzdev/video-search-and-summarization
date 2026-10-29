@@ -1,0 +1,15 @@
+# SPDX-License-Identifier: Apache-2.0
+# CPU compilation happens in the guarded packaging helper, never in BuildKit.
+ARG UI_BASE_IMAGE
+FROM ${UI_BASE_IMAGE}
+USER 0:0
+RUN rm -rf /repo/apps/nv-metropolis-bp-vss-ui
+COPY --chown=65532:65532 --chmod=555 standalone/ /repo/apps/nv-metropolis-bp-vss-ui/
+COPY --chown=65532:65532 --chmod=555 static/ /repo/apps/nv-metropolis-bp-vss-ui/apps/nv-metropolis-bp-vss-ui/.next/static/
+COPY --chown=65532:65532 --chmod=755 public/ /repo/apps/nv-metropolis-bp-vss-ui/apps/nv-metropolis-bp-vss-ui/public/
+COPY --chown=65532:65532 --chmod=555 runtime-node-modules/ /repo/node_modules/
+COPY --chown=65532:65532 --chmod=555 custom-server.js /repo/custom-server.js
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 RUN_APP_NAME=nv-metropolis-bp-vss-ui
+WORKDIR /repo
+USER 65532:65532
+CMD ["node", "custom-server.js"]

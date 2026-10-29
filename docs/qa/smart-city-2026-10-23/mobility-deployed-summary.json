@@ -1,0 +1,83 @@
+{
+  "checkedAt": "2026-10-23T17:57:10.731621+00:00",
+  "qualification": "bounded live health and browser checks, not endurance or measurement accuracy",
+  "url": "http://127.0.0.1:7782/?workspace=smart-city",
+  "uiMode": "isolated source-mounted development profile",
+  "siteId": "isaac-intersection-a",
+  "siteRevision": 63,
+  "ruleRevision": 244,
+  "configRevision": 1,
+  "cameraCount": 2,
+  "liveCameraCount": 2,
+  "nativePrimitives": 12,
+  "nativeStatus": "active",
+  "exactProcessedPreviewsAvailable": true,
+  "configurationIssues": [],
+  "configuredMeasurements": {
+    "turns": 3,
+    "queues": 1,
+    "pedestrianJourneys": 1,
+    "stoppedCrossings": 2
+  },
+  "containers": [
+    {
+      "name": "vss-city-analytics",
+      "image": "sha256:bc667c99fd6b3055c0c925afbcf158f356553070dbf184221ee394b8bbbf3487",
+      "running": true,
+      "startedAt": "2026-10-23T17:55:55.928097112Z",
+      "oomKilled": false
+    },
+    {
+      "name": "vss-city-polish-ui",
+      "image": "sha256:3134f445308c4ccf95d4b28b01b4b9b8e0a1f120957900c17b6f1f1c27d60f8e",
+      "running": true,
+      "startedAt": "2026-10-23T17:45:26.942579061Z",
+      "oomKilled": false
+    }
+  ],
+  "checks": {
+    "backend": "160 passed in 4.29 s",
+    "launcher": "41 passed in 0.05 s",
+    "ui": "108 scoped tests passed across proxy, workspace, map, inspector, camera, geometry and mobility suites",
+    "typescript": "app tsc --noEmit --incremental false passed",
+    "browser": [
+      "two frame-matched live camera panes",
+      "all new map regions also visible in camera overlays",
+      "1-minute report selector",
+      "Queues and Walking topic navigation",
+      "queue map focus",
+      "three map clicks populated metre coordinates; draft closed without saving",
+      "actual downloaded JSON parsed with 2 cameras, 3 movements and configuration1",
+      "final console error sample empty"
+    ]
+  },
+  "browserScreenshot": "/home/sparkdev/.codex/visualizations/2026/10/23/city-mobility/insights-live.png",
+  "limits": [
+    "No new model build or GPU benchmark.",
+    "No long run or final scene count/queue/wait accuracy qualification.",
+    "Rolling measurement history starts after configuration/session changes.",
+    "Camera-local IDs and per-camera source time; no MV3DT fused IDs or simulator actor truth.",
+    "Queue extent is estimated from ground anchors, not full vehicle footprints."
+  ],
+  "sha256": {
+    "services/analytics/behavior-analytics/apps/city/models.py": "09f49debb2ca8f3c705e724c6111b6db899036c1050a58c1c47b906fe3f2305c",
+    "services/analytics/behavior-analytics/apps/city/main.py": "8aade33754f382d39f9629ed54479eac5c227e68bc6c5f4e92b9c8ef69d9a600",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "2e21e29f207d3c85e51d8f247c5f4d584eda30b7b18626333fb37e11c0a14ab0",
+    "services/analytics/behavior-analytics/apps/city/mobility.py": "3c490b3483079104a5f8fb3644840524286b3a644aba695bbd911310672a2529",
+    "services/analytics/behavior-analytics/apps/city/mobility_spatial.py": "fbe783a7381452422571dbeb12936b3b2eba75b1ead1b059a5f6fcefcb0b1e38",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMobilityPanel.tsx": "36448032382fad3aa45f2421ec6586f358d299e4761f76c78352da4eb0ec578c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMobility.module.css": "733a5d6e045c0d0ba38a09e4f17f37e9cb6eb9672dac323955b83015cf7c4563",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/useMobility.ts": "6ab56cc547a04320875036a080342fbb1b2d7fc91b7aea5209841e131c09e501",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mobilityTypes.ts": "82e4a8f019f49ad7f2c3a788de416760f70014d942f5b7b663e8d4ebdb217acf",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityCamera.tsx": "a089058184c5bbf3af6d86530ba5561e69db65109d8096115ebabedd9af88080",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMap.tsx": "5d4e3244c330ffa46c48e216860d3cf568dee874a29873686502954e1f654151",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityInspector.tsx": "413acc66718d863cac60e061a34617d0cd407b7e2d9c9c052de44ddf22a4c687",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/geometry.ts": "15182299733fa0313c89232e7eb83a88300f25537d81b8aa1e0e3f6000120a9c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/types.ts": "457397c1be656f7a18455a8da22e1837e748df71ff1ddc6a26c15f1da13b26f2",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/SmartCity.module.css": "030022ae49f85a0dbd87b8d6d6cbf851c364c802d9197f743655642c06caf576",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/SmartCityWorkspace.tsx": "7d09b5b5248d2404668cd9c17892c299556aec8e1b969592657a2fc2afb09d2a",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/pages/api/vision/city/[...path].ts": "bc15e188d1cbb33f020be7e1a3455b8bc480b4c8b76f7018926860c85e7e83ac",
+    "tools/smart-city/isaac_mobility.py": "88d89a816720950f049e3653efee1f7f7c228d63311754105b369650a99c6e8a",
+    "tools/smart-city/isaac_demo.py": "f61a867071fd6297b89138192b10f7e0bfcc02dfe18d16626bb32a674862a614"
+  }
+}

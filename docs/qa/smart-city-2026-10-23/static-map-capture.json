@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "file": "/home/sparkdev/isaac_city_sim/logs/vss-integration/intersection-static-map.png",
+  "bounds": [
+    -55,
+    45,
+    10,
+    115
+  ],
+  "resolution": [
+    1040,
+    1120
+  ],
+  "actorFree": true,
+  "hiddenDynamicRoots": [
+    "/World/Characters",
+    "/World/SmartCity/Vehicles",
+    "/World/SmartCity/Responders",
+    "/World/SmartCity/Incidents",
+    "/World/Spill"
+  ],
+  "worldGroundZM": -0.2,
+  "pixelToSite": {
+    "xM": "minX + u/widthPixels * (maxX-minX)",
+    "yM": "maxY - v/heightPixels * (maxY-minY)"
+  },
+  "sourceLayersSaved": false,
+  "capturedAt": 1792729507.2567854
+}

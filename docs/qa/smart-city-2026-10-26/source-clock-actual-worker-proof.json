@@ -1,0 +1,398 @@
+{
+  "schemaVersion": "city.actual-worker-reference-clock-proof.v1",
+  "readOnly": true,
+  "clockBasisChanged": false,
+  "muxSettingsChanged": false,
+  "input": "/home/sparkdev/vss/.spark/city/state/live-observations.ndjson",
+  "inputSnapshotBytes": 149262407,
+  "readSegmentStart": 98934833,
+  "readSegmentSha256": "80fad6d43dff478047f8c592c687e951f12e51152a8d44e201076d4935b76b36",
+  "retainedFile": ".spark/city/runtime/source-clock-diagnostic-cohort-20261026/first30-post-rtcp.ndjson",
+  "retainedSha256": "52494bd85f55575f1f07bc695b3abe25f0c2278c82206597255f1bd88369268e",
+  "rows": 634,
+  "sourceSessions": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": "7e7919cb-4f67-4fa1-bb93-e6924ae01bf6",
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "2e62cb27-79bc-4d0a-a980-0884898148ba"
+  },
+  "firstAllStageReferenceNs": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": 1792998285855552110,
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 1792998283399272333
+  },
+  "warmupSecondsAfterBothReferences": 2,
+  "windowStartNs": "1792998287855552110",
+  "windowEndNs": "1792998317855552110",
+  "sourceStatistics": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "sourceSessionId": "7e7919cb-4f67-4fa1-bb93-e6924ae01bf6",
+      "frames": 317,
+      "fromNs": "1792998287956596554",
+      "toNs": "1792998317801374556",
+      "sequenceGaps": 0,
+      "allFourReferenceStagesPresent": 317,
+      "stageStatistics": {
+        "depay": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": 0,
+            "p50": 0,
+            "p95": 1,
+            "max": 1667
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 0.577309,
+            "p50": 1.088824,
+            "p95": 42.439021,
+            "max": 43.790629
+          }
+        },
+        "parsed": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": 0,
+            "p50": 0,
+            "p95": 1,
+            "max": 1667
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 0.614067,
+            "p50": 1.148246,
+            "p95": 42.539301,
+            "max": 43.834843
+          }
+        },
+        "decoded": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": 0,
+            "p50": 0,
+            "p95": 1,
+            "max": 1667
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 3.41321,
+            "p50": 5.218337,
+            "p95": 46.115367,
+            "max": 48.104595
+          }
+        },
+        "beforeMux": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": 0,
+            "p50": 0,
+            "p95": 1,
+            "max": 1667
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 3.858614,
+            "p50": 6.079996,
+            "p95": 47.252516,
+            "max": 49.719844
+          }
+        }
+      },
+      "initialCounters": {
+        "matchedObservations": 54,
+        "unmatchedObservations": 0,
+        "evictedUnconsumedPts": 0,
+        "retiredEvidenceEpochs": 2,
+        "stages": {
+          "depay": {
+            "buffers": 54,
+            "withReference": 22,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "parsed": {
+            "buffers": 54,
+            "withReference": 22,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "decoded": {
+            "buffers": 54,
+            "withReference": 22,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "beforeMux": {
+            "buffers": 54,
+            "withReference": 22,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          }
+        }
+      },
+      "finalCounters": {
+        "matchedObservations": 370,
+        "unmatchedObservations": 0,
+        "evictedUnconsumedPts": 0,
+        "retiredEvidenceEpochs": 2,
+        "stages": {
+          "depay": {
+            "buffers": 370,
+            "withReference": 338,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "parsed": {
+            "buffers": 370,
+            "withReference": 338,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "decoded": {
+            "buffers": 370,
+            "withReference": 338,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "beforeMux": {
+            "buffers": 370,
+            "withReference": 338,
+            "missingReference": 32,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          }
+        }
+      },
+      "effectiveMuxSettings": {
+        "syncInputs": false,
+        "maxLatencyNs": 0,
+        "syncInputsNtpNs": 0
+      }
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "sourceSessionId": "2e62cb27-79bc-4d0a-a980-0884898148ba",
+      "frames": 317,
+      "fromNs": "1792998287942038999",
+      "toNs": "1792998317786779223",
+      "sequenceGaps": 0,
+      "allFourReferenceStagesPresent": 317,
+      "stageStatistics": {
+        "depay": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": -3555,
+            "p50": 1,
+            "p95": 2,
+            "max": 2
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 0.618416,
+            "p50": 1.070739,
+            "p95": 42.402937,
+            "max": 43.080735
+          }
+        },
+        "parsed": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": -3555,
+            "p50": 1,
+            "p95": 2,
+            "max": 2
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 0.652565,
+            "p50": 1.130883,
+            "p95": 42.440366,
+            "max": 43.128774
+          }
+        },
+        "decoded": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": -3555,
+            "p50": 1,
+            "p95": 2,
+            "max": 2
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 3.441391,
+            "p50": 5.425703,
+            "p95": 46.399169,
+            "max": 48.116231
+          }
+        },
+        "beforeMux": {
+          "presentSamples": 317,
+          "referencePresentSamples": 317,
+          "sdkMinusReferenceNs": {
+            "count": 317,
+            "min": -3555,
+            "p50": 1,
+            "p95": 2,
+            "max": 2
+          },
+          "probeWallMinusReferenceMs": {
+            "count": 317,
+            "min": 4.290578,
+            "p50": 7.256921,
+            "p95": 47.005887,
+            "max": 49.488237
+          }
+        }
+      },
+      "initialCounters": {
+        "matchedObservations": 54,
+        "unmatchedObservations": 0,
+        "evictedUnconsumedPts": 0,
+        "retiredEvidenceEpochs": 2,
+        "stages": {
+          "depay": {
+            "buffers": 54,
+            "withReference": 45,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "parsed": {
+            "buffers": 54,
+            "withReference": 45,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "decoded": {
+            "buffers": 54,
+            "withReference": 45,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "beforeMux": {
+            "buffers": 54,
+            "withReference": 45,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          }
+        }
+      },
+      "finalCounters": {
+        "matchedObservations": 370,
+        "unmatchedObservations": 0,
+        "evictedUnconsumedPts": 0,
+        "retiredEvidenceEpochs": 2,
+        "stages": {
+          "depay": {
+            "buffers": 370,
+            "withReference": 361,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "parsed": {
+            "buffers": 370,
+            "withReference": 361,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "decoded": {
+            "buffers": 370,
+            "withReference": 361,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          },
+          "beforeMux": {
+            "buffers": 370,
+            "withReference": 361,
+            "missingReference": 9,
+            "unsupportedReference": 0,
+            "multipleReferences": 0,
+            "duplicatePts": 0
+          }
+        }
+      },
+      "effectiveMuxSettings": {
+        "syncInputs": false,
+        "maxLatencyNs": 0,
+        "syncInputsNtpNs": 0
+      }
+    }
+  },
+  "latestOutputUpdateSkewMs": {
+    "count": 633,
+    "min": 13.834554,
+    "p50": 38.776779,
+    "p95": 138.012332,
+    "max": 297.546443
+  },
+  "latestOutputUpdatesWithin150ms": 608,
+  "nonoverlappingAdjacentOutputPairSkewMs": {
+    "count": 313,
+    "min": 13.834554,
+    "p50": 14.556776,
+    "p95": 37.875779,
+    "max": 271.103891
+  },
+  "nonoverlappingAdjacentPairsWithin150ms": 312,
+  "sourceTimeMinusRawPtsNs": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "count": 317,
+      "min": 1792998282331970022,
+      "p50": 1792998282331971465,
+      "p95": 1792998282331976355,
+      "max": 1792998282331976355
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "count": 317,
+      "min": 1792998282331733860,
+      "p50": 1792998282331739750,
+      "p95": 1792998282331744306,
+      "max": 1792998282331744306
+    }
+  },
+  "interpretation": "Current SDK NTP agrees with real same-buffer RTCP reference; earlier450ms cause cannot be reconstructed from an uninstrumented epoch. Current restart may already have removed the persistent selection offset. Compare mux trial as robustness A/B, not a confirmed existing mapping fix.",
+  "limits": [
+    "Independent sources are not physical exposure synchronization proof.",
+    "Output order approximates delivery pairing; actualbrowser presentation is separate.",
+    "Do not attribute historic wrong mapping without historic same-buffer reference evidence."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "kind": "actual-native-H264-decode",
+  "configuration": "960x540-sync-bounce1-small-viewport-analysis-paused",
+  "sources": [
+    {
+      "camera": "cam_SW",
+      "width": 960,
+      "height": 540,
+      "receivedFrames": 48,
+      "intervalSeconds": 2.6224894640035927,
+      "receivedFps": 17.921902316529426,
+      "mediaSeconds": 2.651644444444445,
+      "mediaFps": 17.724849988267234,
+      "uniqueDecodedImages": 1,
+      "minimumMeanLuma": 0.0,
+      "minimumLumaStandardDeviation": 0.0,
+      "image": "540p-sync-cam_SW.jpg",
+      "nonblankImages": false
+    },
+    {
+      "camera": "cam_NE",
+      "width": 960,
+      "height": 540,
+      "receivedFrames": 48,
+      "intervalSeconds": 2.6246674973517656,
+      "receivedFps": 17.907030146646008,
+      "mediaSeconds": 2.651733333333333,
+      "mediaFps": 17.724255832662916,
+      "uniqueDecodedImages": 1,
+      "minimumMeanLuma": 0.0,
+      "minimumLumaStandardDeviation": 0.0,
+      "image": "540p-sync-cam_NE.jpg",
+      "nonblankImages": false
+    }
+  ],
+  "passed": false
+}

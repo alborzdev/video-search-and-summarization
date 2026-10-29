@@ -1,0 +1,83 @@
+# Smart City UI correctness and polish review
+
+This receipt covers the October 22 source cleanup and visual polish after the earlier qualified Smart City build. The final source validation passed **152 tests across 20 suites**, and the main application TypeScript check passed. Runtime deployment and browser evidence for this new build are recorded separately by the runtime owner. Earlier browser screenshots and endurance receipts remain evidence of their stated build and session.
+
+## Fixed correctness and performance issues
+
+| Issue | Final behavior | Regression coverage |
+| --- | --- | --- |
+| Normal playback updates repeatedly cancelled slow historical requests, so a response could be starved when service latency exceeded the update interval. | Each replay/camera queue completes one request while retaining only the newest pending frame. Starts retain the 85 ms minimum interval. Explicit seeks cancel obsolete work immediately. A five-second deadline prevents hung work from stranding the queue. | Slow responses, pending-frame coalescing, force-seek cancellation, late completion, timeout recovery, independent cameras and unmount cleanup. |
+| A failed static `Promise.all` read left its sibling reads running after the shared deadline was cleared. Timeout failure also did not schedule the intended automatic retry. | A failed configuration read aborts sibling reads before bounded backoff. Timeout retry follows the same recovery path. Superseded generations remain rejected. | Early failure aborts all three reads; a timed-out initial configuration recovers without a manual refresh. |
+| A malformed HTTP 200 JSON response could be returned as if it were valid city data. | Unreadable JSON and primitive payloads fail explicitly; cancellation is checked again after reading the response body. | Invalid JSON, null/number/string payloads and cancellation during body resolution. |
+| A late rule-save response could replace the next configuration's rules. | Refresh/unmount cancels the pending browser save. Generation/controller checks reject late responses. Saves have a ten-second deadline; timeout copy explains that the service might already have accepted the write and asks for a refresh before retrying. Cancelled saves do not install an unrelated error in a replacement workspace. | Deferred old save, configuration refresh, abort, unchanged replacement rules and clean saving/error state. |
+| Reports could accept a late old-site body; a same-site revision change could clear history without reloading it. | Report state is pinned to site/revision/mode/source identity and synchronously hidden outside that context. Requests have generation/abort checks after body reading and a ten-second deadline. Exports include the history load time and per-source frame provenance for displayed metrics. | Late body after site replacement, revision reload while Reports remains open, bounded loading failure and export availability. |
+| Selecting an older saved event could leave Now empty because it was absent from the rolling snapshot. | Selection retains the actual event object, prefers a refreshed event when available, and resets with the playback configuration. | Workspace saved-event selection and configuration reset. |
+| A transient analyzed-preview timeout could add an unnecessary one-second wait, forcing a raw WebRTC fallback before the last valid pair expired. | Valid retained pairs retry at the existing display interval. The independent two-second stale bound remains enforced. A cancelled body cannot start a new image decode. | Transient timeout recovery before expiry and cancellation after body reading. |
+| Raw capture timestamps could trigger unnecessary history reads before browser/source clock correspondence was verified. A mixed processed/raw map could also accept retained raw observations from an unverified second source. | Raw history lookup requires `browserClockVerified`; the map merger checks this flag separately for each raw source. Exact native image/metadata pairing remains independent of physical-clock verification. | Unverified preview suppresses lookup/boxes; mixed-source map rejects the unverified raw observations and makes no all-camera frame-match claim. |
+| Inherited JavaScript object keys such as `constructor` could pass the proxy route lookup. | Only own properties of the explicit city route table are accepted; unknown operations return 404 without an upstream request. | `constructor`, `__proto__` and `toString`. |
+
+The changes retain exact preview image/metadata identity, site/calibration/session generation checks, stale/unobserved-track suppression and credential redaction. No browser-side spatial fusion, global identity assignment or map positions were added. The preview presentation counter now updates its React diagnostic state at most once per second instead of adding another state update per presented image; exact frame delivery to the shared map is unchanged.
+
+## Visual and interaction polish
+
+The accepted composition and CT AI Labs branding remain: two camera panes above the map, Now/Ask/Reports at the right, Manrope, dark surfaces and teal with amber for active conditions. Changes clarify the existing workspace rather than add a new dashboard:
+
+- Watching rows make the real current measure prominent and retain distinct waiting/unavailable states.
+- Camera labels use compact class/ID tags with overlap avoidance, while full class and identity remain accessible through selection and the inspector. Long source and event text can wrap or truncate without widening the layout.
+- An uncalibrated map presents a clear calibration prompt and offers no unusable zoom controls. It does not invent a street plan or projected objects.
+- Live mode uses a concise analysis-status footer. Recorded/fixture mode keeps the real shared playback controls; an inactive scrubber no longer occupies the live view.
+- Map dragging uses the SVG's letterboxed scale, stops after lost pointer capture, and resets its view when site identity/bounds change. Reset and zoom controls remain available for calibrated sites.
+- Camera/map object buttons support Space and Enter; Space prevents page scrolling and camera selection does not interfere with rule drawing.
+- Now/Ask/Reports use roving tab focus, unique tab/panel relationships, ArrowLeft/ArrowRight wrap and Home/End navigation. Focus-visible and reduced-motion treatments remain scoped to Smart City.
+
+Source review also confirmed that editing an existing rule preserves its disabled state and custom conditions, including its configured speed threshold, rather than silently replacing those settings with defaults.
+
+## Validation and review
+
+The runtime owner reported the final **152 tests / 20 suites passed** and the canonical-DASH-bound main TypeScript check passed. `git diff --check` was clean. The scoped Jest selection is reproducible from `services/ui/apps/nv-metropolis-bp-vss-ui`:
+
+```sh
+node ../../node_modules/jest/bin/jest.js --runInBand --cacheDirectory=/tmp/city-jest \
+  components/vision-intelligence/smart-city/__tests__ \
+  __tests__/utils/workspaceRoute.test.ts \
+  __tests__/api/vision/city/proxy.test.ts \
+  components/vision-intelligence/__tests__/VisionIntelligenceApp.test.tsx \
+  components/vision-intelligence/__tests__/VisionStreamCanvas.test.tsx
+node ../../node_modules/typescript/bin/tsc --noEmit --incremental false
+```
+
+Tests/typecheck were admitted and run by the runtime owner with the saved 20 GiB host reserve retained, using bounded CPU-only containers and the canonical Video I/O DASH source. The UI logic reviewer did not run services, containers, builds, browser actions, GPU jobs or visual-analyst requests during this cleanup. Test command output is an execution receipt; this note does not invent a separate machine-readable Jest log.
+
+An independent read-only reviewer inspected the request queue, city hook, report lifecycle, analyzed-preview hook and city proxy. That review identified the sibling-configuration-request cleanup gap above; it was fixed and covered. No additional actionable finding remained in that scoped review. A separate read-only pass checked the root-owned workspace, camera, map and CSS edits for interaction regressions. The final accessibility cases cover unique tab relationships, keyboard focus/wrap behavior, uncalibrated map controls, person/vehicle Space selection, reset behavior, letterboxed pan and lost pointer capture.
+
+The immutable production package `.spark/smart-city-ui/20261022T141159952818Z` was built successfully with source SHA-256 `166d32b44e5e9be9597895f667310780ce469f8b6d71b9725cd1c666549a34c0` and image ID `sha256:066c450ffe1a5f557dc306cd835bd4237ae351334291dca9acc80666195e8fce`. Its private manifest records the offline dependency provenance and bounded build. Packaging success alone does not qualify browser behavior; the subsequent rendered review is recorded below.
+
+## Limits
+
+Unit tests and TypeScript do not establish live detector speed, physical source-clock precision, model answer accuracy, final Isaac city calibration or Thor performance. The test streams are independent recorded RTSP replays; they do not become an overlapping, calibrated intersection through this polish pass. Live Ask retains its explicit five-second request and source/window-pinned, user-triggered evidence action. The source-only review did not perform a real Ask, export, screenshot capture or endurance run. The runtime owner's subsequent browser evidence is identified below; see [the existing fidelity ledger](ui-fidelity.md) for earlier build-qualified evidence.
+
+## Post-deployment screenshot review
+
+After deployment, the UI reviewer inspected these actual captures with `view_image`: [desktop](polish-desktop.jpg), [laptop](polish-laptop.jpg), [mobile](polish-mobile.jpg) and [Ask with evidence](polish-ask-evidence.jpg). They were compared with the supplied concept `/home/sparkdev/.codex/generated_images/01a1618e-624e-7dc3-bb6f-9d028074488c/exec-fe88de02-d1ff-4e3b-b2c5-8988a5861d06.png`. No browser actions or UI changes were performed during this read-only review.
+
+No blocking clipping, unreadable primary content or misleading data state was found in those captures. Desktop/laptop preserve the intended two-camera/map/inspector composition. Camera containment preserves real image geometry; its letterboxing, actual registered source names and the existing repository icons intentionally differ from the concept. The active occupancy measure is prominent, long rule names wrap, and the map explicitly requests calibration while identifying camera-local tracking. Mobile stacks the camera panes, map and inspector without forcing the desktop columns into a narrow view. The full-page mobile image includes the fixed navigation at the capture viewport boundary; the static image alone does not demonstrate a persistent content-clipping defect. The Ask capture keeps answer text readable and shows the analyzed source, actual observed interval and returned clip separately from the current camera view.
+
+The runtime owner's [production receipt](polish-ui-production.json) pins the immutable package and screenshot hashes. It records document widths matching 1920-, 1366- and 390-pixel viewports, both cameras using `exact-processed-frame`, keyboard tab navigation, saved-event detail retention, rule-editor open/close, and no production-origin console errors. Its actual five-second question/evidence check delivered a 1920×1080 clip with duration **5.1472 seconds**, ready state 4 and no video error; changing the next camera cleared the clip without relabelling the completed answer. Those are runtime-owner receipts, rather than new interactions by the screenshot reviewer. They qualify delivery/provenance/layout, not generated-answer factual accuracy or a new endurance result.
+
+## Browser bitmap ownership follow-up
+
+The `14:11` package `20261022T141159952818Z`, its **152 tests / 20 suites**, screenshots and browser receipt above are the historical baseline. The runtime owner preserved its successful 20-minute qualification separately. A subsequent ownership correction changes the source; that earlier package/runtime result does not qualify the new candidate. The replacement package `20261022T150135382138Z` built all ten tasks and is deployed only in the isolated UI. Its [package/browser receipt](polish-bitmap-ui.json) records the new source/image identities, desktop/mobile and presentation-mode screenshots, matching previews and Reports interaction. The new endurance and browser-memory measurements are recorded separately.
+
+During the earlier monitor, host available memory declined while the monitored service containers remained nearly steady. The user confirmed Smart City was open in Firefox and then closed that tab; the OS-attributed Firefox allocation fell afterward. This associates the allocation with the open demo page. It does **not** establish which browser/application allocation caused the growth, nor prove that the specific cleanup bug below caused the observed Firefox memory curve. Proportional/shared memory must not be counted twice by adding process RSS values.
+
+Source review found a concrete bitmap ownership gap in `useProcessedPreview`: decoded images were stored through React state, but their cleanup owner existed only after that state committed in a layout effect. If React batched several completed decodes, an intermediate state could be skipped and its bitmap would never enter the cleanup effect. Unmounting before a pending state committed had the same gap. The gap also existed in the earlier pre-polish preview implementation; it was not introduced by the visual polish.
+
+Two deterministic CPU regressions reproduced the old behavior: three completed decodes are batched before a React commit, or batched before unmount. On the old source, the two new controls failed because a skipped bitmap's `close()` count stayed zero; all eight previous hook controls passed. The correction gives decoded pixels an owner immediately. A pending ref owns a bitmap until commit, superseded uncommitted bitmaps close synchronously, and layout commit transfers the surviving pair to committed ownership. The currently presented bitmap stays open until replacement or unmount cleanup, and the final pending bitmap stays open while awaiting presentation. Effect cleanup disposes pending states even if React never commits them. Existing source/configuration/session cancellation and late-decode rejection remain in force.
+
+`CityProcessedPreview` now changes canvas width/height only when dimensions differ, avoiding an unnecessary backing-store reset for every frame. It also refuses a pair already marked released before drawing. A successful draw still precedes the presentation callback; failed/released draws cannot update shared map observations. The correction does not alter source-frame identity, model inference, image geometry or the preview rate limit.
+
+The final focused CPU run passed **22 tests / 3 suites** (execution session `21675`). These cases include skipped-state and batched-unmount disposal, preservation of both currently presented and next-to-present bitmaps, StrictMode effect cleanup/replay, an old held decode resolving after a surviving source generation presents, exactly-once unmount cleanup, canvas dimension reuse, draw-before-presentation ordering and released/failed draw rejection. These 22 tests overlap the full suite; their totals are not added together. The runtime owner's final full scoped run passed **158 tests / 21 suites** (session `15526`), and the main canonical-DASH-bound TypeScript `--noEmit` check passed (session `21652`). Whitespace checks were clean.
+
+An independent read-only lifecycle review inspected the final patch, including StrictMode, source/configuration changes, expiry, interrupted/uncommitted states, canvas presentation and delayed decode/unmount. It found no remaining blocking ownership gap in those paths. The focused tests ran in a CPU-only `runc` container with no network, a 768 MiB memory/swap ceiling, one CPU and a 512 MiB Node heap after fresh saved-reserve admission. No model jobs, runtime restarts or browser actions were performed by the UI fixer/reviewer. No further UI source edits or retests were made during this documentation update.
+
+`createImageBitmap` work itself is not cancelled by the request's abort signal; an obsolete decoded result is closed when its promise resolves. Browser canvas/native resource release and a sustained memory plateau require the new browser run. The source regressions prove this cleanup correction, not a browser memory reduction or Firefox root cause.

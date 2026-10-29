@@ -1,0 +1,147 @@
+{
+  "schemaVersion": "city.coco-road-evaluation.v1",
+  "model": "rfdetr-medium",
+  "onnx": "/models/rfdetr-medium/rfdetr-medium.onnx",
+  "onnxSha256": "79744e2f198ffde5132bceb3a4f4c63a9647f2699a221e009e03f97b317535b9",
+  "subsetManifestSha256": "900ab9789a74be6653d8c74519e64349bd5ba37c1104bdd685e40a5f72ea7830",
+  "groundTruthSha256": "af585b52cdb0ccc13c6dbf2e46fbc0f9d61176fbafbb51962b8b03b4e522c188",
+  "predictionsSha256": "7bd1d12d6fda1abdd457cb4b973f023bdd2d79a5d7d8330c67ff680fb233838c",
+  "evaluatorSourceSha256": "dfb299739c9c69c6ecb628e8f45c74d38f2bf3be02bad63efb5f1936d79a4e38",
+  "provider": [
+    "CPUExecutionProvider"
+  ],
+  "cpuThreads": 4,
+  "precision": "FP32 ONNX CPU",
+  "inputResolution": [
+    576,
+    576
+  ],
+  "minimumScore": 0.001,
+  "preprocess": "RGB float tensor; direct bilinear resize, antialias=false; per-channel ImageNet normalization",
+  "postprocess": "Sigmoid; global query x sparse-COCO-class top300; keep six road categories; no NMS",
+  "imageCount": 100,
+  "predictionCount": 15595,
+  "sixRoadClasses": {
+    "metrics": {
+      "AP": 0.5774999302880187,
+      "AP50": 0.7986302858510477,
+      "AP75": 0.6420759008067722,
+      "APsmall": 0.3477516268209877,
+      "APmedium": 0.6294777786873937,
+      "APlarge": 0.804274956666215,
+      "AR1": 0.30306183007109905,
+      "AR10": 0.6429632185456935,
+      "AR100": 0.7190935915840864,
+      "ARsmall": 0.5015956619076851,
+      "ARmedium": 0.7863977684852824,
+      "ARlarge": 0.8978202510586812
+    },
+    "perClass": {
+      "person": {
+        "AP": 0.5770098305673461
+      },
+      "bicycle": {
+        "AP": 0.36878315264384665
+      },
+      "car": {
+        "AP": 0.606592857966148
+      },
+      "motorcycle": {
+        "AP": 0.5646707408172351
+      },
+      "bus": {
+        "AP": 0.8161422816190501
+      },
+      "truck": {
+        "AP": 0.5318007181144859
+      }
+    },
+    "maxDets": [
+      1,
+      10,
+      100
+    ],
+    "iouThresholds": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "imageCount": 100,
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8
+    ]
+  },
+  "coarseRoadClasses": {
+    "metrics": {
+      "AP": 0.566899645413404,
+      "AP50": 0.8148481451865123,
+      "AP75": 0.6211372029258222,
+      "APsmall": 0.3490957436316937,
+      "APmedium": 0.6615790868576177,
+      "APlarge": 0.8068962527448578,
+      "AR1": 0.19755993856725818,
+      "AR10": 0.5808359123451491,
+      "AR100": 0.6893351375575149,
+      "ARsmall": 0.4810599531467359,
+      "ARmedium": 0.7844659811187071,
+      "ARlarge": 0.8940981826377364
+    },
+    "perClass": {
+      "person": {
+        "AP": 0.5770098305673461
+      },
+      "two-wheeler": {
+        "AP": 0.4737859602820423
+      },
+      "vehicle": {
+        "AP": 0.6499031453908236
+      }
+    },
+    "maxDets": [
+      1,
+      10,
+      100
+    ],
+    "iouThresholds": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "imageCount": 100,
+    "categories": [
+      1,
+      2,
+      3
+    ]
+  },
+  "coarsePolicy": "Person; bicycle/motorcycle upcast to two-wheeler; car/bus/truck upcast to vehicle; competing same-query class labels within a coarse class collapse to maximum score.",
+  "crowdPolicy": "Crowds never qualify an anchor image; official crowd annotations retained and ignored by standard COCOeval matching.",
+  "ortVersion": "1.24.4",
+  "gpuUsed": false,
+  "wallSeconds": 49.60248868120834,
+  "cpuInferenceSeconds": {
+    "mean": 0.46603641655761746,
+    "p50": 0.44748615636490285,
+    "p95": 0.6437581847421825
+  },
+  "scope": "Deterministic class-stratified 100-image COCO validation proxy using official GT and pycocotools. Not full COCO, elevated-camera/night/event accuracy, TensorRT precision accuracy or final-city qualification."
+}

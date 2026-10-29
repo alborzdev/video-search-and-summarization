@@ -98,7 +98,7 @@ export async function readSparkCapacity(): Promise<NonNullable<WorkloadAdmission
     const age = (Date.now() - Math.floor(payload.sampledAt * 1000)) / 1000;
     if (payload.hardwareProfile !== "DGX-SPARK" || payload.guardActive !== true ||
         !Number.isFinite(age) || age < 0 || age > 5 ||
-        !Number.isFinite(payload.availableGiB) || !Number.isFinite(payload.reserveGiB) || payload.reserveGiB < 20) return unknown;
+        !Number.isFinite(payload.availableGiB) || !Number.isFinite(payload.reserveGiB) || payload.reserveGiB <= 0) return unknown;
     return { state: "fresh", guardActive: true, availableGiB: payload.availableGiB, reserveGiB: payload.reserveGiB };
   } catch { return unknown; }
 }

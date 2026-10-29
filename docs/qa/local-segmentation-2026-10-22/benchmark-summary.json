@@ -1,0 +1,3371 @@
+{
+  "schema_version": 1,
+  "created_date": "2026-10-22",
+  "hardware_context": "Local DGX Spark/GB10; source logs identify cuda:0 but contain no standalone GPU hardware inventory",
+  "scope": "Single-image prompt-to-mask comparison; no Moondream grounding, network service, camera decode or continuous video included",
+  "method": {
+    "warmups_per_prompt_case": 2,
+    "timed_repetitions_per_prompt_case": 10,
+    "separate_cached_embedding_repetitions_per_prompt_case": 10,
+    "dtype": "FP32 model weights, BF16 CUDA autocast",
+    "image_encoder_compiled": false,
+    "postprocessing_stability_fallback": false,
+    "hole_and_sprinkle_cleanup": false,
+    "point_multimask": true,
+    "box_multimask": false,
+    "p95_interpretation": "Recorded p95_observed is the maximum of ten observations because benchmark uses sorted[min(n-1,int(0.95*n))]. It is not a robust population p95 estimate."
+  },
+  "models": {
+    "sam2.1-tiny": {
+      "run_dir": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny",
+      "exit": {
+        "returncode": 0,
+        "stop_reason": null,
+        "elapsed_s": 12.22363815503195,
+        "run_dir": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny"
+      },
+      "settings": {
+        "child": false,
+        "model": "sam2.1-tiny",
+        "cases": ".spark/local-segmentation/fixtures/fixtures.json",
+        "warmups": 2,
+        "repeats": 10,
+        "timeout": 600
+      },
+      "source_files": {
+        "settings.json": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/settings.json",
+          "sha256": "c482c5a61df625ef3ff0e33b8626ace0bb0916911a464a1b73b91bbaafc53987"
+        },
+        "exit.json": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/exit.json",
+          "sha256": "9d1c6deef22be185d8f4552ecd1f41223fc836774a627a09ade86aa1f748542e"
+        },
+        "cases.json": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/cases.json",
+          "sha256": "05a164757916c78a0d02bbdf6cdca580b7561e98f0b76214212b5a69043d55c4"
+        },
+        "inference.jsonl": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/inference.jsonl",
+          "sha256": "e2822337e05be80cafb6b141e481c33ce55494568e6de8f4ad828289ad946b16"
+        },
+        "inference.stderr": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/inference.stderr",
+          "sha256": "8365800420300037740ce2965b6d0cbd86fe170ed521b316946652d4d1502ba6"
+        },
+        "memory.jsonl": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/memory.jsonl",
+          "sha256": "c217a2786bd2f7a3696e81b5286e23de87b4d715028efc57c466fdb41b717506"
+        }
+      },
+      "receipt_sha256_canonical_json": "0d87b6b478b2d4911a86e46e4022c3f5ebecbf67793120b4dff3c34e7b9840fe",
+      "model_receipt": {
+        "name": "sam2.1-tiny",
+        "device": "cuda:0",
+        "source_repository": "facebookresearch/sam2",
+        "source_revision": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+        "source_sha256": {
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "LICENSE_cctorch": "687d4f65ffe399358b170e22572564a16689e496f85a79dc5385fccf6bbc9558",
+          "pyproject.toml": "c58230f78769620dcd11d15824d491b049be8f542eeb875d2e8091be797ec3f3",
+          "sam2/__init__.py": "b87ca1e95cd54b81766e8c74acf0e937952639529e40d2b4088693286f49419e",
+          "sam2/automatic_mask_generator.py": "66df266dbe14412305ae3398f0ec1bb21b303a93216b102d767e6c4ee5d4c3d7",
+          "sam2/benchmark.py": "9b7a3506b88842ec09031fb7cd0fc1d3fed82e137ce06dbca10495e6c180dda9",
+          "sam2/build_sam.py": "856d64d71e44407401297b551884fb4cd1aba8082de0ff5fc60fac3dd42f094d",
+          "sam2/configs/sam2.1/sam2.1_hiera_b+.yaml": "37d6c56b07a7f8d08baaa314315c60dc3aabe2edc66cd92bac6d1ed50038e788",
+          "sam2/configs/sam2.1/sam2.1_hiera_l.yaml": "1dbd6cb6dfebeaf588c7006ee222c6efbfa9049a7ad472a3cdfb2f5d919e8107",
+          "sam2/configs/sam2.1/sam2.1_hiera_s.yaml": "0f36b91e86e58d06c87e42997166212468b88b98b60e4d816d5e4d4d088b6f55",
+          "sam2/configs/sam2.1/sam2.1_hiera_t.yaml": "f932eac1c6241e910031b2f000a81cd9f8a8d4896e2277ab5ffb721f378b188d",
+          "sam2/configs/sam2.1_training/sam2.1_hiera_b+_MOSE_finetune.yaml": "d96919e157527116c3a80c6ec961151bda98e5eb988ae4dd85be6e7efbd2b51f",
+          "sam2/configs/sam2/sam2_hiera_b+.yaml": "644d1a9aaa7e14183802246dee4f43627e067d77dd89f1f40d83657db18d038b",
+          "sam2/configs/sam2/sam2_hiera_l.yaml": "0ee9f2037fd98489212bb0b78a56f33ac82eb177cf5e52c88be3714cb84eea26",
+          "sam2/configs/sam2/sam2_hiera_s.yaml": "20e0ade957a4ab5e8138c93c346a8d8965c0b00d1a05fa0e79ce477985904188",
+          "sam2/configs/sam2/sam2_hiera_t.yaml": "33399c73cd13bbc3d0c1cea843fa2fc255fdb20139fe07f042743e046ac46b6b",
+          "sam2/modeling/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/backbones/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/backbones/hieradet.py": "03785581ca304d0451ae0df7a08ee0bf1e1dbe66fad285066e6b9ffc0d88d64f",
+          "sam2/modeling/backbones/image_encoder.py": "16eaad232220386f510ca8dfab8655e63699977149a4daf9ce9c6f374e6777a9",
+          "sam2/modeling/backbones/utils.py": "c4a0657db2a92bda2a7ff116cd4017f6b1c59af6408093d8874eb08a0df476ad",
+          "sam2/modeling/memory_attention.py": "07358cb7f58ec3788e88ff4e6415f8a9d628a3963529d6e2c915494a5347c8e2",
+          "sam2/modeling/memory_encoder.py": "73f7089ae5fdacdfcaaf3deca1ca6d9f84d89e7deb9cf97589622a9ef17ba42f",
+          "sam2/modeling/position_encoding.py": "b51404718c0d38f381293c8e5e00a15d129651b7f09b1158002d8974a30967b5",
+          "sam2/modeling/sam/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/sam/mask_decoder.py": "ca3523c58365574faddf1bfb54f374e4b4beba05127185ea2b17d22b916e099a",
+          "sam2/modeling/sam/prompt_encoder.py": "4965ccb4a4504aa4d7246b2ad66ffeacd2626415c86a261dc1c65ffd8ae1d40d",
+          "sam2/modeling/sam/transformer.py": "cda19052331e775190ce8b1159efcb828a4632d931a6d8bd4d47109f121782f1",
+          "sam2/modeling/sam2_base.py": "69a46b44e8625f509791352bd09beaafe589cd7d872721384e63d37f9fdc6e41",
+          "sam2/modeling/sam2_utils.py": "e35bbf13bc2e544a0272cd3f9539af38a752676ac3cd744be31cd8220afee804",
+          "sam2/sam2_hiera_b+.yaml": "212887bd5b1d90c07a3439a911593ec6ec8a586cce0b12799f1ebec38bbe401d",
+          "sam2/sam2_hiera_l.yaml": "0e313563f8f467c382c81192a0e2aff4624dda2b23218f1a78df30ebe4b4eb1a",
+          "sam2/sam2_hiera_s.yaml": "6fff1ab952d4ff7bc4bf8bb480f6283bcf12a763057f5bb697b25151a20f7608",
+          "sam2/sam2_hiera_t.yaml": "4ba0a249a1da9a6cc4070d47894808f206f67249d0c6fda21c6280af692dd77e",
+          "sam2/sam2_image_predictor.py": "f13e5f9d94e5c8d9d2c3622dab20c8f334c089ef2ee5ea8e199da7d332b029ba",
+          "sam2/sam2_video_predictor.py": "912555920a77f72ded07839efa33fcceecc79f3523abbec783f0be46ee2c55c2",
+          "sam2/sam2_video_predictor_legacy.py": "e0c054112f21bfa63620f2026c8bb2e0f4e284b138d09426a08d39f2e882c3f2",
+          "sam2/utils/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/utils/amg.py": "b7b33090e2af72e04dbb815c8f32aff41a4ed1abf9668f62b59f1bdd640ca5d8",
+          "sam2/utils/misc.py": "01600c01c161cd079d7106fb1d4da845cf91aa31ab2bcecaf8cb151b6d6d20a2",
+          "sam2/utils/transforms.py": "ba3a64f4600c62f209206a6df3b40e3fcf133edae32fad658831bb0c2a6d1146",
+          "setup.py": "9ca49a33def161d2cafa56ddef744178fa56d3219242bd8b69909904c2e63dff"
+        },
+        "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+        "checkpoint_path": "/home/sparkdev/vss/.spark/local-segmentation/weights/sam2.1_hiera_tiny.pt",
+        "checkpoint_bytes": 156008466,
+        "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+        "versions": {
+          "torch": "2.13.0",
+          "torchvision": "0.28.0",
+          "hydra-core": "1.3.2",
+          "omegaconf": "2.3.1",
+          "iopath": "0.1.10",
+          "timm": "1.0.15"
+        },
+        "load_ms": 786.6769852116704,
+        "parameter_count": 38962498,
+        "parameter_dtypes": [
+          "torch.float32"
+        ],
+        "autocast": "bfloat16",
+        "strict_checkpoint_load": true,
+        "forward_modified": false,
+        "backbone_pretrained_download_suppressed": false,
+        "compile_image_encoder": false,
+        "postprocessing_stability_fallback": false,
+        "hole_and_sprinkle_cleanup": false,
+        "reserve_gib": 20
+      },
+      "counts": {
+        "mask_prompt_cases": 9,
+        "scored_prompt_cases": 6,
+        "distinct_annotated_targets": 3,
+        "manual_qualitative_prompt_cases": 3,
+        "skipped_cases": 1,
+        "timed_full_image_calls": 90,
+        "timed_cached_prompt_calls": 90
+      },
+      "load": {
+        "outer_seconds_including_imports_checks": 2.032318750862032,
+        "model_build_ms_from_receipt": 786.6769852116704
+      },
+      "memory": {
+        "cuda_allocator_max_observed_allocated_gib": 0.32296133041381836,
+        "cuda_allocator_peak_reserved_gib": 0.63671875,
+        "system_min_mem_available_gib": 56.19950485229492,
+        "system_memory_samples": 61,
+        "reserve_gib": 20,
+        "caveat": "CUDA allocator counters are not whole-process/unified-memory footprint; max observed allocated is not a sampled peak-allocated counter."
+      },
+      "ranges_over_prompt_cases": {
+        "full_image_median_ms": [
+          39.30507553741336,
+          80.69080021232367
+        ],
+        "full_image_observed_max_ms": 91.14838903769851,
+        "cached_prompt_median_ms": [
+          3.4946389496326447,
+          19.947737455368042
+        ]
+      },
+      "skipped": [
+        {
+          "stage": "skipped",
+          "available_gib": 56.21366500854492,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "blank-control",
+          "reason": "No point or box; requires separate grounding/presence decision"
+        }
+      ],
+      "fixtures": [
+        {
+          "id": "refcocom-person-left",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.jpg",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.gt.png",
+          "expression": "person on left",
+          "category": "person",
+          "expect_present": true,
+          "quality_scope": "annotated_target",
+          "oracle_box": [
+            0.026,
+            0.0,
+            0.398,
+            0.891156462585034
+          ],
+          "oracle_point": [
+            0.237,
+            0.141156462585034
+          ],
+          "oracle_negative_point": [
+            0.691,
+            0.5017006802721088
+          ],
+          "oracle_prompts": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.oracle-prompts.json",
+          "prompt_source": "oracle_ground_truth",
+          "oracle_end_to_end": false,
+          "image_size": [
+            500,
+            294
+          ],
+          "annotation": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.annotation.json",
+          "provenance": {
+            "dataset": "moondream/refcoco-m",
+            "revision": "45686f0eb7980ed4b70d3d5480a198775a26b4c1",
+            "split": "validation",
+            "row_index": 0,
+            "image_id": 458827,
+            "sample_id": 424581,
+            "file_name": "COCO_train2014_000000458827.jpg",
+            "source": "public datasets-server cached JPEG, same revision and dimensions as annotation",
+            "rows_endpoint": "https://datasets-server.huggingface.co/rows?dataset=moondream%2Frefcoco-m&config=default&split=validation&offset=0&length=25",
+            "image_sha256": "1b0ddcd3566525eb3b5b1601a6611189e766771534f4bef43c32d7126cd227d1",
+            "gt_sha256": "c23b1021094d035bf4e4e9d2ab323cb342fe8ca8d2d3d59f973d12f77ebea379",
+            "annotation_sha256": "2e8cb391cbc2acbe5610dd65778ab87a13536237a57393536f0cfd30204576b1"
+          },
+          "gt_overlay": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.gt-overlay.png"
+        },
+        {
+          "id": "refcocom-cat-real",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.jpg",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.gt.png",
+          "expression": "real cat",
+          "category": "cat",
+          "expect_present": true,
+          "quality_scope": "annotated_target",
+          "oracle_box": [
+            0.0,
+            0.018475750577367205,
+            0.6171875,
+            1.0
+          ],
+          "oracle_point": [
+            0.21640625,
+            0.7586605080831409
+          ],
+          "oracle_negative_point": [
+            0.73671875,
+            0.39838337182448036
+          ],
+          "oracle_prompts": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.oracle-prompts.json",
+          "prompt_source": "oracle_ground_truth",
+          "oracle_end_to_end": false,
+          "image_size": [
+            640,
+            433
+          ],
+          "annotation": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.annotation.json",
+          "provenance": {
+            "dataset": "moondream/refcoco-m",
+            "revision": "45686f0eb7980ed4b70d3d5480a198775a26b4c1",
+            "split": "validation",
+            "row_index": 3,
+            "image_id": 360719,
+            "sample_id": 48340,
+            "file_name": "COCO_train2014_000000360719.jpg",
+            "source": "public datasets-server cached JPEG, same revision and dimensions as annotation",
+            "rows_endpoint": "https://datasets-server.huggingface.co/rows?dataset=moondream%2Frefcoco-m&config=default&split=validation&offset=0&length=25",
+            "image_sha256": "a404a9c69c7a0010a94c114f307d60dae54598e6aa2cd08df98af12b3397120d",
+            "gt_sha256": "6d8775afae52b834a5515712635342e1000f7eb9344171c35d0b562f3863dc2f",
+            "annotation_sha256": "e15a3e2e18a6f748ff1a394377e50330fca8f0b93d6fdba196f111999a26e55b"
+          },
+          "gt_overlay": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.gt-overlay.png"
+        },
+        {
+          "id": "refcocom-airplane-front",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.jpg",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.gt.png",
+          "expression": "plane in front",
+          "category": "airplane",
+          "expect_present": true,
+          "quality_scope": "annotated_target",
+          "oracle_box": [
+            0.0,
+            0.4217687074829932,
+            1.0,
+            0.8956916099773242
+          ],
+          "oracle_point": [
+            0.68046875,
+            0.6882086167800453
+          ],
+          "oracle_negative_point": [
+            0.34921875,
+            0.2619047619047619
+          ],
+          "oracle_prompts": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.oracle-prompts.json",
+          "prompt_source": "oracle_ground_truth",
+          "oracle_end_to_end": false,
+          "image_size": [
+            640,
+            441
+          ],
+          "annotation": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.annotation.json",
+          "provenance": {
+            "dataset": "moondream/refcoco-m",
+            "revision": "45686f0eb7980ed4b70d3d5480a198775a26b4c1",
+            "split": "validation",
+            "row_index": 15,
+            "image_id": 524925,
+            "sample_id": 159353,
+            "file_name": "COCO_train2014_000000524925.jpg",
+            "source": "public datasets-server cached JPEG, same revision and dimensions as annotation",
+            "rows_endpoint": "https://datasets-server.huggingface.co/rows?dataset=moondream%2Frefcoco-m&config=default&split=validation&offset=0&length=25",
+            "image_sha256": "f724f225a5f83e67f5088f8c9f7de6ff24bf7363de29f3bd8342406949d28302",
+            "gt_sha256": "70922363c1257d2af63c7ff0a195836cf6066d53c56d39bc2ce8611a8f56413f",
+            "annotation_sha256": "453b927470d917de01d507784449147235edc9d3082bb0cd67dcfc033bfd4124"
+          },
+          "gt_overlay": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.gt-overlay.png"
+        },
+        {
+          "id": "blank-control",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/blank-control.png",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/blank-control.gt.png",
+          "expression": "person",
+          "expect_present": false,
+          "quality_scope": "synthetic_negative",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": [
+            0.5,
+            0.5
+          ],
+          "image_size": [
+            1024,
+            576
+          ],
+          "prompt_source": "none",
+          "provenance": {
+            "source": "/home/sparkdev/vss/.spark/moondream-photon/blank-control.png",
+            "kind": "verified uniform white synthetic image",
+            "image_sha256": "97d19142e8658c1a175c7917b1eccbfea77b0cf1195089dfb7f14b50bb386d48",
+            "gt_sha256": "58ba8be143e919f99a3d41c8c25111e7672754fb39ae72f5580638e5625f1028"
+          },
+          "note": "Promptable segmenters require an explicit carried/incorrect prompt to test absence; supplying no prompt is not an absence test."
+        },
+        {
+          "id": "warehouse-person",
+          "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+          "gt_mask": null,
+          "expression": "person",
+          "expect_present": true,
+          "quality_scope": "qualitative_only",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": null,
+          "manual_point": [
+            0.41,
+            0.46
+          ],
+          "prompt_source": "manual",
+          "image_size": [
+            640,
+            360
+          ],
+          "provenance": {
+            "source": "existing local qualitative image",
+            "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194"
+          },
+          "note": "No ground-truth annotation; manual hint is not an oracle and cannot establish accuracy."
+        },
+        {
+          "id": "warehouse-box",
+          "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+          "gt_mask": null,
+          "expression": "cardboard box",
+          "expect_present": true,
+          "quality_scope": "qualitative_only",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": null,
+          "manual_point": [
+            0.73,
+            0.59
+          ],
+          "prompt_source": "manual",
+          "image_size": [
+            640,
+            360
+          ],
+          "provenance": {
+            "source": "existing local qualitative image",
+            "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194"
+          },
+          "note": "No ground-truth annotation; manual hint is not an oracle and cannot establish accuracy."
+        },
+        {
+          "id": "panel",
+          "image": "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png",
+          "gt_mask": null,
+          "expression": "metal panel",
+          "expect_present": true,
+          "quality_scope": "qualitative_only",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": null,
+          "manual_point": [
+            0.57,
+            0.49
+          ],
+          "prompt_source": "manual",
+          "image_size": [
+            1672,
+            941
+          ],
+          "provenance": {
+            "source": "existing local qualitative image",
+            "image_sha256": "1032983acc2d9544663a3c677aae9287d2771318a4ce5b838f7cf5ca9cbc28d9"
+          },
+          "note": "No ground-truth annotation; manual hint is not an oracle and cannot establish accuracy."
+        }
+      ],
+      "cases": [
+        {
+          "stage": "mask",
+          "available_gib": 56.296260833740234,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "refcocom-person-left",
+          "prompt_type": "box",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.026,
+            0.0,
+            0.398,
+            0.891156462585034
+          ],
+          "image_size": [
+            500,
+            294
+          ],
+          "image_sha256": "1b0ddcd3566525eb3b5b1601a6611189e766771534f4bef43c32d7126cd227d1",
+          "score": 0.9765625,
+          "candidate_count": 1,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              294,
+              500
+            ],
+            "predicted_pixels": 20380,
+            "predicted_fraction": 0.13863945578231293,
+            "predicted_bbox_xyxy_pixels": [
+              12,
+              0,
+              207,
+              264
+            ],
+            "positive_points_covered": [],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 19897,
+            "intersection_pixels": 19870,
+            "union_pixels": 20407,
+            "iou": 0.9736855000735042,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 19870,
+            "false_positive_pixels": 510,
+            "false_negative_pixels": 27,
+            "true_negative_pixels": 126593,
+            "precision": 0.9749754661432777,
+            "recall": 0.9986430115092727,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              84.70707572996616,
+              85.56776400655508,
+              85.23221267387271,
+              88.81539478898048,
+              82.80245400965214,
+              44.00510573759675,
+              42.5607543438673,
+              40.718147065490484,
+              41.7928178794682,
+              44.50896196067333
+            ],
+            "median": 63.655707985162735,
+            "p95_observed": 88.81539478898048,
+            "min": 40.718147065490484,
+            "max": 88.81539478898048
+          },
+          "encode_ms": {
+            "samples": [
+              59.81316417455673,
+              65.93457097187638,
+              64.1276752576232,
+              68.09597834944725,
+              66.03575497865677,
+              34.28486920893192,
+              38.13449898734689,
+              36.17694787681103,
+              33.49272487685084,
+              35.233716014772654
+            ],
+            "median": 48.97383158095181,
+            "p95_observed": 68.09597834944725,
+            "min": 33.49272487685084,
+            "max": 68.09597834944725
+          },
+          "decode_ms": {
+            "samples": [
+              23.09874491766095,
+              18.66223383694887,
+              19.7737542912364,
+              19.958761986345053,
+              15.942363068461418,
+              8.983324747532606,
+              3.6814548075199127,
+              3.7535512819886208,
+              7.39457318559289,
+              8.368557784706354
+            ],
+            "median": 12.462843907997012,
+            "p95_observed": 23.09874491766095,
+            "min": 3.6814548075199127,
+            "max": 23.09874491766095
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              4.194238223135471,
+              3.4291353076696396,
+              7.832365110516548,
+              3.559247124940157,
+              3.6006709560751915,
+              3.7413109093904495,
+              5.029070191085339,
+              7.897438015788794,
+              3.7539671175181866,
+              3.979597706347704
+            ],
+            "median": 3.8667824119329453,
+            "p95_observed": 7.897438015788794,
+            "min": 3.4291353076696396,
+            "max": 7.897438015788794
+          },
+          "unique_mask_hashes": [
+            "2ade9d63b7c86d27a035999d3e564073c30668a1ef86519d915d5c24c9231883"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-person-left-box-oracle_ground_truth-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-person-left-box-oracle_ground_truth-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.32177734375,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "refcocom-person-left",
+          "prompt_type": "point",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.237,
+            0.141156462585034
+          ],
+          "image_size": [
+            500,
+            294
+          ],
+          "image_sha256": "1b0ddcd3566525eb3b5b1601a6611189e766771534f4bef43c32d7126cd227d1",
+          "score": 0.96875,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              294,
+              500
+            ],
+            "predicted_pixels": 20519,
+            "predicted_fraction": 0.13958503401360545,
+            "predicted_bbox_xyxy_pixels": [
+              12,
+              0,
+              207,
+              264
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 19897,
+            "intersection_pixels": 19877,
+            "union_pixels": 20539,
+            "iou": 0.9677686352792249,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 19877,
+            "false_positive_pixels": 642,
+            "false_negative_pixels": 20,
+            "true_negative_pixels": 126461,
+            "precision": 0.9687119255324333,
+            "recall": 0.9989948233402021,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [
+              true
+            ],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              37.370868027210236,
+              41.191954631358385,
+              39.440883323550224,
+              42.432257905602455,
+              42.71929897367954,
+              37.70626010373235,
+              40.93408212065697,
+              38.84419612586498,
+              42.93654579669237,
+              42.50457929447293
+            ],
+            "median": 41.063018376007676,
+            "p95_observed": 42.93654579669237,
+            "min": 37.370868027210236,
+            "max": 42.93654579669237
+          },
+          "encode_ms": {
+            "samples": [
+              33.28190930187702,
+              36.64373233914375,
+              35.179044120013714,
+              35.4757490567863,
+              37.98560379073024,
+              33.30146102234721,
+              36.12477332353592,
+              33.10453426092863,
+              34.91622908040881,
+              34.64930085465312
+            ],
+            "median": 35.04763660021126,
+            "p95_observed": 37.98560379073024,
+            "min": 33.10453426092863,
+            "max": 37.98560379073024
+          },
+          "decode_ms": {
+            "samples": [
+              3.3619189634919167,
+              3.8261590525507927,
+              3.4492630511522293,
+              6.253614090383053,
+              3.9891512133181095,
+              3.626622725278139,
+              3.9670229889452457,
+              5.0258697010576725,
+              7.245788816362619,
+              6.941725965589285
+            ],
+            "median": 3.9780871011316776,
+            "p95_observed": 7.245788816362619,
+            "min": 3.3619189634919167,
+            "max": 7.245788816362619
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              4.274926148355007,
+              4.280814900994301,
+              4.365614149719477,
+              7.061854004859924,
+              4.46460722014308,
+              4.5052459463477135,
+              3.3791190944612026,
+              2.9272311367094517,
+              3.2451990991830826,
+              3.1287670135498047
+            ],
+            "median": 4.277870524674654,
+            "p95_observed": 7.061854004859924,
+            "min": 2.9272311367094517,
+            "max": 7.061854004859924
+          },
+          "unique_mask_hashes": [
+            "55e52b38fccd272be5f147c858a0be5d0b901e4388a864007461ce2fd5f73b33"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-person-left-point-oracle_ground_truth-1.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-person-left-point-oracle_ground_truth-1.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.288936614990234,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "refcocom-cat-real",
+          "prompt_type": "box",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.0,
+            0.018475750577367205,
+            0.6171875,
+            1.0
+          ],
+          "image_size": [
+            640,
+            433
+          ],
+          "image_sha256": "a404a9c69c7a0010a94c114f307d60dae54598e6aa2cd08df98af12b3397120d",
+          "score": 0.98046875,
+          "candidate_count": 1,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              433,
+              640
+            ],
+            "predicted_pixels": 90849,
+            "predicted_fraction": 0.327832707852194,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              6,
+              395,
+              433
+            ],
+            "positive_points_covered": [],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 91151,
+            "intersection_pixels": 90327,
+            "union_pixels": 91673,
+            "iou": 0.9853173780720604,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 90327,
+            "false_positive_pixels": 522,
+            "false_negative_pixels": 824,
+            "true_negative_pixels": 185447,
+            "precision": 0.9942542020275402,
+            "recall": 0.9909600552928657,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              41.63481900468469,
+              39.25113985314965,
+              39.49497872963548,
+              39.572914596647024,
+              39.549604058265686,
+              41.855841875076294,
+              43.157281819731,
+              39.51312368735671,
+              39.97296281158924,
+              42.39753866568208
+            ],
+            "median": 39.77293870411813,
+            "p95_observed": 43.157281819731,
+            "min": 39.25113985314965,
+            "max": 43.157281819731
+          },
+          "encode_ms": {
+            "samples": [
+              35.19448405131698,
+              34.72224483266473,
+              34.571541007608175,
+              35.32874118536711,
+              34.230581019073725,
+              35.35541193559766,
+              38.501571863889694,
+              34.98794138431549,
+              35.68129986524582,
+              34.78123713284731
+            ],
+            "median": 35.091212717816234,
+            "p95_observed": 38.501571863889694,
+            "min": 34.230581019073725,
+            "max": 38.501571863889694
+          },
+          "decode_ms": {
+            "samples": [
+              5.440062843263149,
+              3.691390622407198,
+              3.8890703581273556,
+              3.3654067665338516,
+              4.393038805574179,
+              5.507150199264288,
+              3.598175011575222,
+              3.651455044746399,
+              3.417055122554302,
+              6.80150231346488
+            ],
+            "median": 3.7902304902672768,
+            "p95_observed": 6.80150231346488,
+            "min": 3.3654067665338516,
+            "max": 6.80150231346488
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              5.8644297532737255,
+              3.3238232135772705,
+              3.4955348819494247,
+              8.947772905230522,
+              3.4937430173158646,
+              3.2904469408094883,
+              3.381247166544199,
+              3.162479028105736,
+              4.221070092171431,
+              3.8993428461253643
+            ],
+            "median": 3.4946389496326447,
+            "p95_observed": 8.947772905230522,
+            "min": 3.162479028105736,
+            "max": 8.947772905230522
+          },
+          "unique_mask_hashes": [
+            "2f0daf6408613f648fde8c5c9cede66d9db1129989a760708f4f975977885091"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-cat-real-box-oracle_ground_truth-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-cat-real-box-oracle_ground_truth-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.292091369628906,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "refcocom-cat-real",
+          "prompt_type": "point",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.21640625,
+            0.7586605080831409
+          ],
+          "image_size": [
+            640,
+            433
+          ],
+          "image_sha256": "a404a9c69c7a0010a94c114f307d60dae54598e6aa2cd08df98af12b3397120d",
+          "score": 0.94921875,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              433,
+              640
+            ],
+            "predicted_pixels": 92645,
+            "predicted_fraction": 0.3343136547344111,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              5,
+              436,
+              433
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 91151,
+            "intersection_pixels": 90939,
+            "union_pixels": 92857,
+            "iou": 0.9793445836070517,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 90939,
+            "false_positive_pixels": 1706,
+            "false_negative_pixels": 212,
+            "true_negative_pixels": 184263,
+            "precision": 0.9815856225376437,
+            "recall": 0.9976741889831159,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [
+              true
+            ],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              43.94819401204586,
+              40.15209898352623,
+              42.6105628721416,
+              38.870819844305515,
+              46.393376775085926,
+              40.86123500019312,
+              40.09419493377209,
+              42.41299536079168,
+              37.80178027227521,
+              40.616930928081274
+            ],
+            "median": 40.7390829641372,
+            "p95_observed": 46.393376775085926,
+            "min": 37.80178027227521,
+            "max": 46.393376775085926
+          },
+          "encode_ms": {
+            "samples": [
+              38.01787598058581,
+              35.24843696504831,
+              37.25934820249677,
+              34.101493190974,
+              34.13461381569505,
+              35.18541296944022,
+              33.27962104231119,
+              37.66650008037686,
+              32.92594105005264,
+              32.23251784220338
+            ],
+            "median": 34.660013392567635,
+            "p95_observed": 38.01787598058581,
+            "min": 32.23251784220338,
+            "max": 38.01787598058581
+          },
+          "decode_ms": {
+            "samples": [
+              4.781133960932493,
+              3.838061820715666,
+              4.130911082029343,
+              3.7394710816442966,
+              11.257803998887539,
+              4.678093828260899,
+              5.8378856629133224,
+              3.7933746352791786,
+              3.7541273050010204,
+              7.31238117441535
+            ],
+            "median": 4.404502455145121,
+            "p95_observed": 11.257803998887539,
+            "min": 3.7394710816442966,
+            "max": 11.257803998887539
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              5.480541847646236,
+              6.982318125665188,
+              4.301166627556086,
+              3.387551289051771,
+              3.441230859607458,
+              3.4754551015794277,
+              3.8849739357829094,
+              4.519919399172068,
+              2.9732310213148594,
+              2.8803828172385693
+            ],
+            "median": 3.6802145186811686,
+            "p95_observed": 6.982318125665188,
+            "min": 2.8803828172385693,
+            "max": 6.982318125665188
+          },
+          "unique_mask_hashes": [
+            "4829f4091f6d837e7d3e03ba766d7df1f5888c9e4ec400691f93c10d5780fed7"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-cat-real-point-oracle_ground_truth-1.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-cat-real-point-oracle_ground_truth-1.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.23465347290039,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "refcocom-airplane-front",
+          "prompt_type": "box",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.0,
+            0.4217687074829932,
+            1.0,
+            0.8956916099773242
+          ],
+          "image_size": [
+            640,
+            441
+          ],
+          "image_sha256": "f724f225a5f83e67f5088f8c9f7de6ff24bf7363de29f3bd8342406949d28302",
+          "score": 0.98046875,
+          "candidate_count": 1,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              441,
+              640
+            ],
+            "predicted_pixels": 75438,
+            "predicted_fraction": 0.2672831632653061,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              186,
+              640,
+              392
+            ],
+            "positive_points_covered": [],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 75094,
+            "intersection_pixels": 74410,
+            "union_pixels": 76122,
+            "iou": 0.9775097869209952,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 74410,
+            "false_positive_pixels": 1028,
+            "false_negative_pixels": 684,
+            "true_negative_pixels": 206118,
+            "precision": 0.9863729155067738,
+            "recall": 0.9908914160918316,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              41.48477129638195,
+              42.927282862365246,
+              41.90630605444312,
+              40.88150802999735,
+              37.52616373822093,
+              50.50171259790659,
+              87.67870906740427,
+              87.73410134017467,
+              84.91480629891157,
+              88.26574916020036
+            ],
+            "median": 46.71449773013592,
+            "p95_observed": 88.26574916020036,
+            "min": 37.52616373822093,
+            "max": 88.26574916020036
+          },
+          "encode_ms": {
+            "samples": [
+              33.01616571843624,
+              36.20459698140621,
+              37.361941300332546,
+              36.13269329071045,
+              32.847972586750984,
+              32.957573886960745,
+              64.52826783061028,
+              62.53095716238022,
+              63.70052369311452,
+              66.82796264067292
+            ],
+            "median": 36.78326914086938,
+            "p95_observed": 66.82796264067292,
+            "min": 32.847972586750984,
+            "max": 66.82796264067292
+          },
+          "decode_ms": {
+            "samples": [
+              7.502845022827387,
+              5.688655190169811,
+              3.5902392119169235,
+              3.8416627794504166,
+              3.5886550322175026,
+              15.088730957359076,
+              21.18002623319626,
+              23.416792973876,
+              20.085626281797886,
+              19.96492175385356
+            ],
+            "median": 11.295787990093231,
+            "p95_observed": 23.416792973876,
+            "min": 3.5886550322175026,
+            "max": 23.416792973876
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              20.545112900435925,
+              25.179625023156404,
+              17.302666325122118,
+              17.74807507172227,
+              20.32308094203472,
+              24.23005737364292,
+              19.572393968701363,
+              19.01183370500803,
+              20.781097933650017,
+              14.21481091529131
+            ],
+            "median": 19.947737455368042,
+            "p95_observed": 25.179625023156404,
+            "min": 14.21481091529131,
+            "max": 25.179625023156404
+          },
+          "unique_mask_hashes": [
+            "443a9e90cb8dce9db8bc5bdaec26ced1b232615b640d841d7e9e36fd199d3fde"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-airplane-front-box-oracle_ground_truth-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-airplane-front-box-oracle_ground_truth-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.213294982910156,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "refcocom-airplane-front",
+          "prompt_type": "point",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.68046875,
+            0.6882086167800453
+          ],
+          "image_size": [
+            640,
+            441
+          ],
+          "image_sha256": "f724f225a5f83e67f5088f8c9f7de6ff24bf7363de29f3bd8342406949d28302",
+          "score": 0.953125,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              441,
+              640
+            ],
+            "predicted_pixels": 73741,
+            "predicted_fraction": 0.2612705498866213,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              187,
+              640,
+              391
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 75094,
+            "intersection_pixels": 73082,
+            "union_pixels": 75753,
+            "iou": 0.9647406703364884,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 73082,
+            "false_positive_pixels": 659,
+            "false_negative_pixels": 2012,
+            "true_negative_pixels": 206487,
+            "precision": 0.9910633162012992,
+            "recall": 0.9732069140011186,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [
+              true
+            ],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              38.85902790352702,
+              40.35339504480362,
+              37.558325100690126,
+              39.751123171299696,
+              44.5369309745729,
+              38.389795925468206,
+              38.54355588555336,
+              38.73024508357048,
+              41.4024512283504,
+              40.88546009734273
+            ],
+            "median": 39.30507553741336,
+            "p95_observed": 44.5369309745729,
+            "min": 37.558325100690126,
+            "max": 44.5369309745729
+          },
+          "encode_ms": {
+            "samples": [
+              34.274629317224026,
+              34.710085950791836,
+              32.67443785443902,
+              33.98982994258404,
+              39.862739853560925,
+              33.71581295505166,
+              33.9984861202538,
+              34.334822092205286,
+              34.59946205839515,
+              36.050661001354456
+            ],
+            "median": 34.304725704714656,
+            "p95_observed": 39.862739853560925,
+            "min": 32.67443785443902,
+            "max": 39.862739853560925
+          },
+          "decode_ms": {
+            "samples": [
+              3.5971510224044323,
+              4.485437646508217,
+              3.8132150657474995,
+              4.766685888171196,
+              3.650542814284563,
+              3.7448150105774403,
+              3.588639199733734,
+              3.3942069858312607,
+              5.8254217728972435,
+              3.875007387250662
+            ],
+            "median": 3.77901503816247,
+            "p95_observed": 5.8254217728972435,
+            "min": 3.3942069858312607,
+            "max": 5.8254217728972435
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              5.905022844672203,
+              4.035182762891054,
+              2.97820707783103,
+              3.0494388192892075,
+              7.248206064105034,
+              4.1115181520581245,
+              3.9052311331033707,
+              3.6071990616619587,
+              3.4786229953169823,
+              5.591949913650751
+            ],
+            "median": 3.9702069479972124,
+            "p95_observed": 7.248206064105034,
+            "min": 2.97820707783103,
+            "max": 7.248206064105034
+          },
+          "unique_mask_hashes": [
+            "08cedef6a1f46d94c9efdeaebab1602d3f73614827d68a7e8358d0ecdee56bd4"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-airplane-front-point-oracle_ground_truth-1.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/refcocom-airplane-front-point-oracle_ground_truth-1.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.219322204589844,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "warehouse-person",
+          "prompt_type": "point",
+          "prompt_source": "manual",
+          "prompt": [
+            0.41,
+            0.46
+          ],
+          "image_size": [
+            640,
+            360
+          ],
+          "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+          "score": 0.890625,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "manual",
+            "oracle_conditioned": false,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              360,
+              640
+            ],
+            "predicted_pixels": 2426,
+            "predicted_fraction": 0.010529513888888889,
+            "predicted_bbox_xyxy_pixels": [
+              242,
+              111,
+              279,
+              222
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "qualitative_only",
+            "iou": null
+          },
+          "full_image_ms": {
+            "samples": [
+              38.487299811095,
+              39.32709200307727,
+              39.508996065706015,
+              43.654419016093016,
+              44.255634769797325,
+              45.94904184341431,
+              44.281522277742624,
+              44.74262706935406,
+              39.387109223753214,
+              39.626115933060646
+            ],
+            "median": 41.64026747457683,
+            "p95_observed": 45.94904184341431,
+            "min": 38.487299811095,
+            "max": 45.94904184341431
+          },
+          "encode_ms": {
+            "samples": [
+              33.827126026153564,
+              34.30925402790308,
+              34.55261420458555,
+              36.886884830892086,
+              38.287156261503696,
+              41.69605206698179,
+              35.29171785339713,
+              37.35400503501296,
+              34.069414250552654,
+              34.41751003265381
+            ],
+            "median": 34.92216602899134,
+            "p95_observed": 41.69605206698179,
+            "min": 33.827126026153564,
+            "max": 41.69605206698179
+          },
+          "decode_ms": {
+            "samples": [
+              3.7003508768975735,
+              3.9308457635343075,
+              3.9722220972180367,
+              5.826990120112896,
+              5.041311029344797,
+              3.3098068088293076,
+              7.958637084811926,
+              6.435790099203587,
+              4.338255152106285,
+              4.211855120956898
+            ],
+            "median": 4.275055136531591,
+            "p95_observed": 7.958637084811926,
+            "min": 3.3098068088293076,
+            "max": 7.958637084811926
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              8.426140993833542,
+              4.607262555509806,
+              3.67575790733099,
+              4.889470990747213,
+              9.257277008146048,
+              5.348927341401577,
+              6.098765879869461,
+              4.550638142973185,
+              7.731550373136997,
+              7.005102001130581
+            ],
+            "median": 5.723846610635519,
+            "p95_observed": 9.257277008146048,
+            "min": 3.67575790733099,
+            "max": 9.257277008146048
+          },
+          "unique_mask_hashes": [
+            "ec1d06bc096e3ff0288ca1cb0ac36ecfdb71259382fe29f7b0865efe7216ceab"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/warehouse-person-point-manual-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/warehouse-person-point-manual-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.315277099609375,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "warehouse-box",
+          "prompt_type": "point",
+          "prompt_source": "manual",
+          "prompt": [
+            0.73,
+            0.59
+          ],
+          "image_size": [
+            640,
+            360
+          ],
+          "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+          "score": 0.70703125,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "manual",
+            "oracle_conditioned": false,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              360,
+              640
+            ],
+            "predicted_pixels": 11508,
+            "predicted_fraction": 0.04994791666666667,
+            "predicted_bbox_xyxy_pixels": [
+              405,
+              188,
+              609,
+              270
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "qualitative_only",
+            "iou": null
+          },
+          "full_image_ms": {
+            "samples": [
+              40.942179039120674,
+              40.95154022797942,
+              38.43450080603361,
+              66.68953225016594,
+              79.58410400897264,
+              87.53299806267023,
+              87.91405381634831,
+              84.4995272345841,
+              91.14838903769851,
+              81.79749641567469
+            ],
+            "median": 80.69080021232367,
+            "p95_observed": 91.14838903769851,
+            "min": 38.43450080603361,
+            "max": 91.14838903769851
+          },
+          "encode_ms": {
+            "samples": [
+              36.414997186511755,
+              35.273557994514704,
+              32.98122202977538,
+              40.53368419408798,
+              58.690238278359175,
+              66.96788361296058,
+              64.96572494506836,
+              66.75729202106595,
+              66.20833184570074,
+              62.895565293729305
+            ],
+            "median": 60.79290178604424,
+            "p95_observed": 66.96788361296058,
+            "min": 32.98122202977538,
+            "max": 66.96788361296058
+          },
+          "decode_ms": {
+            "samples": [
+              3.6022551357746124,
+              4.617517814040184,
+              4.513870924711227,
+              25.008120108395815,
+              19.728345796465874,
+              19.464601762592793,
+              21.94980112835765,
+              16.689146868884563,
+              23.89084082096815,
+              17.488874960690737
+            ],
+            "median": 18.476738361641765,
+            "p95_observed": 25.008120108395815,
+            "min": 3.6022551357746124,
+            "max": 25.008120108395815
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              27.009063865989447,
+              20.213802345097065,
+              17.21140183508396,
+              12.390268966555595,
+              6.476877722889185,
+              4.119039047509432,
+              3.9118067361414433,
+              4.276046063750982,
+              4.137806594371796,
+              3.7581748329102993
+            ],
+            "median": 5.376461893320084,
+            "p95_observed": 27.009063865989447,
+            "min": 3.7581748329102993,
+            "max": 27.009063865989447
+          },
+          "unique_mask_hashes": [
+            "79bf196fbe7e3d3031f1ef122d7598744c970e730041e0f3978b36d7e6c85389"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/warehouse-box-point-manual-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/warehouse-box-point-manual-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.26192092895508,
+          "cuda_allocated_gib": 0.32296133041381836,
+          "cuda_reserved_gib": 0.63671875,
+          "cuda_peak_reserved_gib": 0.63671875,
+          "case": "panel",
+          "prompt_type": "point",
+          "prompt_source": "manual",
+          "prompt": [
+            0.57,
+            0.49
+          ],
+          "image_size": [
+            1672,
+            941
+          ],
+          "image_sha256": "1032983acc2d9544663a3c677aae9287d2771318a4ce5b838f7cf5ca9cbc28d9",
+          "score": 0.96875,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "manual",
+            "oracle_conditioned": false,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              941,
+              1672
+            ],
+            "predicted_pixels": 314958,
+            "predicted_fraction": 0.20018279444142187,
+            "predicted_bbox_xyxy_pixels": [
+              153,
+              138,
+              1426,
+              914
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "qualitative_only",
+            "iou": null
+          },
+          "full_image_ms": {
+            "samples": [
+              43.61555492505431,
+              44.098658952862024,
+              48.212642315775156,
+              44.60133193060756,
+              44.99381082132459,
+              46.74582602456212,
+              46.21897917240858,
+              46.9625792466104,
+              45.89257901534438,
+              47.272402327507734
+            ],
+            "median": 46.05577909387648,
+            "p95_observed": 48.212642315775156,
+            "min": 43.61555492505431,
+            "max": 48.212642315775156
+          },
+          "encode_ms": {
+            "samples": [
+              34.657590091228485,
+              36.06093395501375,
+              39.1091569326818,
+              36.83766908943653,
+              35.83875810727477,
+              39.65014824643731,
+              37.652852945029736,
+              37.04491723328829,
+              37.703237030655146,
+              35.53853323683143
+            ],
+            "median": 36.94129316136241,
+            "p95_observed": 39.65014824643731,
+            "min": 34.657590091228485,
+            "max": 39.65014824643731
+          },
+          "decode_ms": {
+            "samples": [
+              4.379933699965477,
+              5.144285969436169,
+              6.161630153656006,
+              4.877118859440088,
+              6.359199061989784,
+              4.105567000806332,
+              5.768958013504744,
+              6.712702102959156,
+              4.946830682456493,
+              8.73591797426343
+            ],
+            "median": 5.456621991470456,
+            "p95_observed": 8.73591797426343,
+            "min": 4.105567000806332,
+            "max": 8.73591797426343
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              6.020109634846449,
+              5.565742962062359,
+              140.57768695056438,
+              4.6521262265741825,
+              4.481486976146698,
+              4.59892675280571,
+              5.233006086200476,
+              6.16174191236496,
+              4.527502693235874,
+              7.502957712858915
+            ],
+            "median": 5.399374524131417,
+            "p95_observed": 140.57768695056438,
+            "min": 4.481486976146698,
+            "max": 140.57768695056438
+          },
+          "unique_mask_hashes": [
+            "d9b0acdc87a027247d5efc905a0baa393b3992f8f2df0dfeff758e3c225c57ac"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/panel-point-manual-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175146Z-sam2.1-tiny/panel-point-manual-0.overlay.png"
+        }
+      ],
+      "stderr": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torchvision/transforms/functional.py:154: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)\n  img = torch.from_numpy(pic.transpose((2, 0, 1))).contiguous()\n"
+    },
+    "edgetam": {
+      "run_dir": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam",
+      "exit": {
+        "returncode": 0,
+        "stop_reason": null,
+        "elapsed_s": 10.617517760023475,
+        "run_dir": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam"
+      },
+      "settings": {
+        "child": false,
+        "model": "edgetam",
+        "cases": ".spark/local-segmentation/fixtures/fixtures.json",
+        "warmups": 2,
+        "repeats": 10,
+        "timeout": 600
+      },
+      "source_files": {
+        "settings.json": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/settings.json",
+          "sha256": "b5a02becf42a6423c92459c1d258d60a0ab0540c6ab2c131514165ef80e3a6c5"
+        },
+        "exit.json": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/exit.json",
+          "sha256": "04e656acaf626ee7e5cc5a385dfa32f6b65d77a5cee4ac2288746c3eb4ef0d13"
+        },
+        "cases.json": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/cases.json",
+          "sha256": "05a164757916c78a0d02bbdf6cdca580b7561e98f0b76214212b5a69043d55c4"
+        },
+        "inference.jsonl": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/inference.jsonl",
+          "sha256": "45f9fb851003b50b67c67e901a7164c26ffd78d1daac13c2d60c8e5bb8a070d2"
+        },
+        "inference.stderr": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/inference.stderr",
+          "sha256": "8365800420300037740ce2965b6d0cbd86fe170ed521b316946652d4d1502ba6"
+        },
+        "memory.jsonl": {
+          "path": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/memory.jsonl",
+          "sha256": "2bc61c5209c484f43837e459f5be0b86f79fa958c3cb14a35408c9c14b2267c6"
+        }
+      },
+      "receipt_sha256_canonical_json": "aee7211e1faaa6bf9ac5fca7bde8584c66937dbaecae3a825ce1232b470fe17a",
+      "model_receipt": {
+        "name": "edgetam",
+        "device": "cuda:0",
+        "source_repository": "facebookresearch/EdgeTAM",
+        "source_revision": "7711e012a30a2402c4eaab637bdb00a521302c91",
+        "source_sha256": {
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "pyproject.toml": "75ec021a26918f6a715e4776d53f79786aa5663c639d1a57501f65102c8a493b",
+          "sam2/__init__.py": "b87ca1e95cd54b81766e8c74acf0e937952639529e40d2b4088693286f49419e",
+          "sam2/automatic_mask_generator.py": "66df266dbe14412305ae3398f0ec1bb21b303a93216b102d767e6c4ee5d4c3d7",
+          "sam2/build_sam.py": "36406726bf6320445927900e1ad1e6336f337eebb0ba724662fad7dbf2e17cb5",
+          "sam2/configs/edgetam.yaml": "25c2fda8490e7684f924abba130775487ca6eccee87b1d9cf92ddccf2436afe1",
+          "sam2/configs/sam2.1/sam2.1_hiera_b+.yaml": "e73f9e9547b305040552ee943ebd3a34cee5727a76fc2ab88b87f7b28b430754",
+          "sam2/configs/sam2.1/sam2.1_hiera_l.yaml": "545e4325aa5c19a1615d43c946b07276ed4c57214eacf1437e38fa3d9374f636",
+          "sam2/configs/sam2.1/sam2.1_hiera_s.yaml": "632e5cd0104f5ab6cd4f9d2dfd80a8e7240e481ad7960a13cad2ae3504b88dbd",
+          "sam2/configs/sam2.1/sam2.1_hiera_t.yaml": "43e114f609a1af7efede061f5c186119d498acd31f118f300c07acf57d4a5eca",
+          "sam2/configs/sam2.1_training/sam2.1_hiera_b+_MOSE_finetune.yaml": "98988ae8b7b70b97d8c7f7be4df3c25335b395ab2953cbaecff06d864c3b20a1",
+          "sam2/configs/sam2/sam2_hiera_b+.yaml": "bfc8204754ae5686d7618cc4b10e6b62ce04de1b0132d1af6465cfe54d12955b",
+          "sam2/configs/sam2/sam2_hiera_l.yaml": "60585839767537de53e9eaf574fd6fd904a339b4ed8f9824b6f1b629806261ba",
+          "sam2/configs/sam2/sam2_hiera_s.yaml": "4e32b6bae4788c68c1ea7b0984ade5d68b819b94102e540b3f7d32e866708d41",
+          "sam2/configs/sam2/sam2_hiera_t.yaml": "4902dbe10270628d58cd7dc238074ec5b6bd3c9c4cddd8b85b037383fcf94dda",
+          "sam2/edgetam.yaml": "25c2fda8490e7684f924abba130775487ca6eccee87b1d9cf92ddccf2436afe1",
+          "sam2/modeling/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/backbones/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/backbones/hieradet.py": "03785581ca304d0451ae0df7a08ee0bf1e1dbe66fad285066e6b9ffc0d88d64f",
+          "sam2/modeling/backbones/image_encoder.py": "16eaad232220386f510ca8dfab8655e63699977149a4daf9ce9c6f374e6777a9",
+          "sam2/modeling/backbones/timm.py": "e4900a13189d0568e53a0bec609da993b4a03c1885538ff87ec1e3f7138a27bd",
+          "sam2/modeling/backbones/utils.py": "84bd48cda1ad468fb8c231d0c2eb83ad53386633d6e63ddaa6ed929c5521bdba",
+          "sam2/modeling/memory_attention.py": "1c5f4636cef88a1418f04a2c0c992976a5bd3f16c28973f71e017b34cb81060d",
+          "sam2/modeling/memory_encoder.py": "73f7089ae5fdacdfcaaf3deca1ca6d9f84d89e7deb9cf97589622a9ef17ba42f",
+          "sam2/modeling/perceiver.py": "15e5d74ccf14f11b5e44dde4a30edee6597b22746a7e46a8efc6e0e2c7e54e73",
+          "sam2/modeling/position_encoding.py": "ccf4f4245e805f24de0db727c09cc8049c98274e7de81881daf5125bf82fe0d2",
+          "sam2/modeling/sam/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/sam/mask_decoder.py": "ca3523c58365574faddf1bfb54f374e4b4beba05127185ea2b17d22b916e099a",
+          "sam2/modeling/sam/prompt_encoder.py": "486596f5ba976cb9ced3836d65f1793dae586be2180567a451098f96c45ae401",
+          "sam2/modeling/sam/transformer.py": "7a15ee01c0673ad03843dbae422deb1c74f10edc582cd739001ae2729ed6295b",
+          "sam2/modeling/sam2_base.py": "cbf4a59d14a46ea544acf9af3c61c4a5ad629462c01ff861b3bc7b6070faa669",
+          "sam2/modeling/sam2_utils.py": "e35bbf13bc2e544a0272cd3f9539af38a752676ac3cd744be31cd8220afee804",
+          "sam2/sam2_hiera_b+.yaml": "212887bd5b1d90c07a3439a911593ec6ec8a586cce0b12799f1ebec38bbe401d",
+          "sam2/sam2_hiera_l.yaml": "0e313563f8f467c382c81192a0e2aff4624dda2b23218f1a78df30ebe4b4eb1a",
+          "sam2/sam2_hiera_s.yaml": "6fff1ab952d4ff7bc4bf8bb480f6283bcf12a763057f5bb697b25151a20f7608",
+          "sam2/sam2_hiera_t.yaml": "4ba0a249a1da9a6cc4070d47894808f206f67249d0c6fda21c6280af692dd77e",
+          "sam2/sam2_image_predictor.py": "f13e5f9d94e5c8d9d2c3622dab20c8f334c089ef2ee5ea8e199da7d332b029ba",
+          "sam2/sam2_video_predictor.py": "ea88564e2ce17df7971ca8b3320c2648f7530aa0b43d42f4ca288f12c336dbd6",
+          "sam2/utils/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/utils/amg.py": "b7b33090e2af72e04dbb815c8f32aff41a4ed1abf9668f62b59f1bdd640ca5d8",
+          "sam2/utils/misc.py": "01600c01c161cd079d7106fb1d4da845cf91aa31ab2bcecaf8cb151b6d6d20a2",
+          "sam2/utils/transforms.py": "ba3a64f4600c62f209206a6df3b40e3fcf133edae32fad658831bb0c2a6d1146",
+          "setup.py": "bb56f8448ee08dcd729660b7205dcc2147ff817140a21f6d94222731d2d977fd"
+        },
+        "checkpoint_sha256": "ed2d4850b8792c239689b043c47046ec239b6e808a3d9b6ae676c803fd8780df",
+        "checkpoint_path": "/home/sparkdev/vss/.spark/local-segmentation/weights/edgetam.pt",
+        "checkpoint_bytes": 56116523,
+        "config": "configs/edgetam.yaml",
+        "versions": {
+          "torch": "2.13.0",
+          "torchvision": "0.28.0",
+          "hydra-core": "1.3.2",
+          "omegaconf": "2.3.1",
+          "iopath": "0.1.10",
+          "timm": "1.0.15"
+        },
+        "load_ms": 587.3194979503751,
+        "parameter_count": 13895794,
+        "parameter_dtypes": [
+          "torch.float32"
+        ],
+        "autocast": "bfloat16",
+        "strict_checkpoint_load": true,
+        "forward_modified": false,
+        "backbone_pretrained_download_suppressed": true,
+        "compile_image_encoder": false,
+        "postprocessing_stability_fallback": false,
+        "hole_and_sprinkle_cleanup": false,
+        "reserve_gib": 20
+      },
+      "counts": {
+        "mask_prompt_cases": 9,
+        "scored_prompt_cases": 6,
+        "distinct_annotated_targets": 3,
+        "manual_qualitative_prompt_cases": 3,
+        "skipped_cases": 1,
+        "timed_full_image_calls": 90,
+        "timed_cached_prompt_calls": 90
+      },
+      "load": {
+        "outer_seconds_including_imports_checks": 1.8921197676099837,
+        "model_build_ms_from_receipt": 587.3194979503751
+      },
+      "memory": {
+        "cuda_allocator_max_observed_allocated_gib": 0.17612075805664062,
+        "cuda_allocator_peak_reserved_gib": 0.419921875,
+        "system_min_mem_available_gib": 56.283233642578125,
+        "system_memory_samples": 53,
+        "reserve_gib": 20,
+        "caveat": "CUDA allocator counters are not whole-process/unified-memory footprint; max observed allocated is not a sampled peak-allocated counter."
+      },
+      "ranges_over_prompt_cases": {
+        "full_image_median_ms": [
+          24.04763479717076,
+          31.03293781168759
+        ],
+        "full_image_observed_max_ms": 168.37855894118547,
+        "cached_prompt_median_ms": [
+          4.3326872400939465,
+          5.9673108626157045
+        ]
+      },
+      "skipped": [
+        {
+          "stage": "skipped",
+          "available_gib": 56.343929290771484,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "blank-control",
+          "reason": "No point or box; requires separate grounding/presence decision"
+        }
+      ],
+      "fixtures": [
+        {
+          "id": "refcocom-person-left",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.jpg",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.gt.png",
+          "expression": "person on left",
+          "category": "person",
+          "expect_present": true,
+          "quality_scope": "annotated_target",
+          "oracle_box": [
+            0.026,
+            0.0,
+            0.398,
+            0.891156462585034
+          ],
+          "oracle_point": [
+            0.237,
+            0.141156462585034
+          ],
+          "oracle_negative_point": [
+            0.691,
+            0.5017006802721088
+          ],
+          "oracle_prompts": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.oracle-prompts.json",
+          "prompt_source": "oracle_ground_truth",
+          "oracle_end_to_end": false,
+          "image_size": [
+            500,
+            294
+          ],
+          "annotation": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.annotation.json",
+          "provenance": {
+            "dataset": "moondream/refcoco-m",
+            "revision": "45686f0eb7980ed4b70d3d5480a198775a26b4c1",
+            "split": "validation",
+            "row_index": 0,
+            "image_id": 458827,
+            "sample_id": 424581,
+            "file_name": "COCO_train2014_000000458827.jpg",
+            "source": "public datasets-server cached JPEG, same revision and dimensions as annotation",
+            "rows_endpoint": "https://datasets-server.huggingface.co/rows?dataset=moondream%2Frefcoco-m&config=default&split=validation&offset=0&length=25",
+            "image_sha256": "1b0ddcd3566525eb3b5b1601a6611189e766771534f4bef43c32d7126cd227d1",
+            "gt_sha256": "c23b1021094d035bf4e4e9d2ab323cb342fe8ca8d2d3d59f973d12f77ebea379",
+            "annotation_sha256": "2e8cb391cbc2acbe5610dd65778ab87a13536237a57393536f0cfd30204576b1"
+          },
+          "gt_overlay": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-person-left.gt-overlay.png"
+        },
+        {
+          "id": "refcocom-cat-real",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.jpg",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.gt.png",
+          "expression": "real cat",
+          "category": "cat",
+          "expect_present": true,
+          "quality_scope": "annotated_target",
+          "oracle_box": [
+            0.0,
+            0.018475750577367205,
+            0.6171875,
+            1.0
+          ],
+          "oracle_point": [
+            0.21640625,
+            0.7586605080831409
+          ],
+          "oracle_negative_point": [
+            0.73671875,
+            0.39838337182448036
+          ],
+          "oracle_prompts": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.oracle-prompts.json",
+          "prompt_source": "oracle_ground_truth",
+          "oracle_end_to_end": false,
+          "image_size": [
+            640,
+            433
+          ],
+          "annotation": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.annotation.json",
+          "provenance": {
+            "dataset": "moondream/refcoco-m",
+            "revision": "45686f0eb7980ed4b70d3d5480a198775a26b4c1",
+            "split": "validation",
+            "row_index": 3,
+            "image_id": 360719,
+            "sample_id": 48340,
+            "file_name": "COCO_train2014_000000360719.jpg",
+            "source": "public datasets-server cached JPEG, same revision and dimensions as annotation",
+            "rows_endpoint": "https://datasets-server.huggingface.co/rows?dataset=moondream%2Frefcoco-m&config=default&split=validation&offset=0&length=25",
+            "image_sha256": "a404a9c69c7a0010a94c114f307d60dae54598e6aa2cd08df98af12b3397120d",
+            "gt_sha256": "6d8775afae52b834a5515712635342e1000f7eb9344171c35d0b562f3863dc2f",
+            "annotation_sha256": "e15a3e2e18a6f748ff1a394377e50330fca8f0b93d6fdba196f111999a26e55b"
+          },
+          "gt_overlay": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-cat-real.gt-overlay.png"
+        },
+        {
+          "id": "refcocom-airplane-front",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.jpg",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.gt.png",
+          "expression": "plane in front",
+          "category": "airplane",
+          "expect_present": true,
+          "quality_scope": "annotated_target",
+          "oracle_box": [
+            0.0,
+            0.4217687074829932,
+            1.0,
+            0.8956916099773242
+          ],
+          "oracle_point": [
+            0.68046875,
+            0.6882086167800453
+          ],
+          "oracle_negative_point": [
+            0.34921875,
+            0.2619047619047619
+          ],
+          "oracle_prompts": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.oracle-prompts.json",
+          "prompt_source": "oracle_ground_truth",
+          "oracle_end_to_end": false,
+          "image_size": [
+            640,
+            441
+          ],
+          "annotation": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.annotation.json",
+          "provenance": {
+            "dataset": "moondream/refcoco-m",
+            "revision": "45686f0eb7980ed4b70d3d5480a198775a26b4c1",
+            "split": "validation",
+            "row_index": 15,
+            "image_id": 524925,
+            "sample_id": 159353,
+            "file_name": "COCO_train2014_000000524925.jpg",
+            "source": "public datasets-server cached JPEG, same revision and dimensions as annotation",
+            "rows_endpoint": "https://datasets-server.huggingface.co/rows?dataset=moondream%2Frefcoco-m&config=default&split=validation&offset=0&length=25",
+            "image_sha256": "f724f225a5f83e67f5088f8c9f7de6ff24bf7363de29f3bd8342406949d28302",
+            "gt_sha256": "70922363c1257d2af63c7ff0a195836cf6066d53c56d39bc2ce8611a8f56413f",
+            "annotation_sha256": "453b927470d917de01d507784449147235edc9d3082bb0cd67dcfc033bfd4124"
+          },
+          "gt_overlay": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.gt-overlay.png"
+        },
+        {
+          "id": "blank-control",
+          "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/blank-control.png",
+          "gt_mask": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/blank-control.gt.png",
+          "expression": "person",
+          "expect_present": false,
+          "quality_scope": "synthetic_negative",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": [
+            0.5,
+            0.5
+          ],
+          "image_size": [
+            1024,
+            576
+          ],
+          "prompt_source": "none",
+          "provenance": {
+            "source": "/home/sparkdev/vss/.spark/moondream-photon/blank-control.png",
+            "kind": "verified uniform white synthetic image",
+            "image_sha256": "97d19142e8658c1a175c7917b1eccbfea77b0cf1195089dfb7f14b50bb386d48",
+            "gt_sha256": "58ba8be143e919f99a3d41c8c25111e7672754fb39ae72f5580638e5625f1028"
+          },
+          "note": "Promptable segmenters require an explicit carried/incorrect prompt to test absence; supplying no prompt is not an absence test."
+        },
+        {
+          "id": "warehouse-person",
+          "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+          "gt_mask": null,
+          "expression": "person",
+          "expect_present": true,
+          "quality_scope": "qualitative_only",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": null,
+          "manual_point": [
+            0.41,
+            0.46
+          ],
+          "prompt_source": "manual",
+          "image_size": [
+            640,
+            360
+          ],
+          "provenance": {
+            "source": "existing local qualitative image",
+            "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194"
+          },
+          "note": "No ground-truth annotation; manual hint is not an oracle and cannot establish accuracy."
+        },
+        {
+          "id": "warehouse-box",
+          "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+          "gt_mask": null,
+          "expression": "cardboard box",
+          "expect_present": true,
+          "quality_scope": "qualitative_only",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": null,
+          "manual_point": [
+            0.73,
+            0.59
+          ],
+          "prompt_source": "manual",
+          "image_size": [
+            640,
+            360
+          ],
+          "provenance": {
+            "source": "existing local qualitative image",
+            "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194"
+          },
+          "note": "No ground-truth annotation; manual hint is not an oracle and cannot establish accuracy."
+        },
+        {
+          "id": "panel",
+          "image": "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png",
+          "gt_mask": null,
+          "expression": "metal panel",
+          "expect_present": true,
+          "quality_scope": "qualitative_only",
+          "oracle_box": null,
+          "oracle_point": null,
+          "oracle_negative_point": null,
+          "manual_point": [
+            0.57,
+            0.49
+          ],
+          "prompt_source": "manual",
+          "image_size": [
+            1672,
+            941
+          ],
+          "provenance": {
+            "source": "existing local qualitative image",
+            "image_sha256": "1032983acc2d9544663a3c677aae9287d2771318a4ce5b838f7cf5ca9cbc28d9"
+          },
+          "note": "No ground-truth annotation; manual hint is not an oracle and cannot establish accuracy."
+        }
+      ],
+      "cases": [
+        {
+          "stage": "mask",
+          "available_gib": 56.51980972290039,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "refcocom-person-left",
+          "prompt_type": "box",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.026,
+            0.0,
+            0.398,
+            0.891156462585034
+          ],
+          "image_size": [
+            500,
+            294
+          ],
+          "image_sha256": "1b0ddcd3566525eb3b5b1601a6611189e766771534f4bef43c32d7126cd227d1",
+          "score": 0.95703125,
+          "candidate_count": 1,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              294,
+              500
+            ],
+            "predicted_pixels": 20276,
+            "predicted_fraction": 0.13793197278911565,
+            "predicted_bbox_xyxy_pixels": [
+              12,
+              0,
+              205,
+              262
+            ],
+            "positive_points_covered": [],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 19897,
+            "intersection_pixels": 19802,
+            "union_pixels": 20371,
+            "iou": 0.972068136075794,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 19802,
+            "false_positive_pixels": 474,
+            "false_negative_pixels": 95,
+            "true_negative_pixels": 126629,
+            "precision": 0.9766226080094693,
+            "recall": 0.9952254108659597,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              24.854891002178192,
+              24.2622341029346,
+              25.94853937625885,
+              18.79033213481307,
+              23.940409999340773,
+              20.386491902172565,
+              24.04757821932435,
+              28.84309785440564,
+              40.00491928309202,
+              24.179467000067234
+            ],
+            "median": 24.220850551500916,
+            "p95_observed": 40.00491928309202,
+            "min": 18.79033213481307,
+            "max": 40.00491928309202
+          },
+          "encode_ms": {
+            "samples": [
+              17.1548118814826,
+              15.344828367233276,
+              16.69521303847432,
+              14.492540154606104,
+              16.3252130150795,
+              16.1085887812078,
+              18.756634555757046,
+              22.46497105807066,
+              24.494010023772717,
+              18.131275661289692
+            ],
+            "median": 16.92501245997846,
+            "p95_observed": 24.494010023772717,
+            "min": 14.492540154606104,
+            "max": 24.494010023772717
+          },
+          "decode_ms": {
+            "samples": [
+              6.584894843399525,
+              7.884686347097158,
+              8.420574013143778,
+              3.5472800955176353,
+              6.859469693154097,
+              3.5675670951604843,
+              4.574607126414776,
+              5.607742816209793,
+              14.670572709292173,
+              5.169566720724106
+            ],
+            "median": 6.096318829804659,
+            "p95_observed": 14.670572709292173,
+            "min": 3.5472800955176353,
+            "max": 14.670572709292173
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              7.671501953154802,
+              8.98249400779605,
+              5.6992629542946815,
+              4.762446973472834,
+              3.1922226771712303,
+              3.0947509221732616,
+              4.043678753077984,
+              4.273743834346533,
+              4.39163064584136,
+              4.230414982885122
+            ],
+            "median": 4.3326872400939465,
+            "p95_observed": 8.98249400779605,
+            "min": 3.0947509221732616,
+            "max": 8.98249400779605
+          },
+          "unique_mask_hashes": [
+            "4e57e064fc1bd163fcaa259f3660927759891b9cf54b190de06d41ef2557abeb"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-person-left-box-oracle_ground_truth-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-person-left-box-oracle_ground_truth-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.48927307128906,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "refcocom-person-left",
+          "prompt_type": "point",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.237,
+            0.141156462585034
+          ],
+          "image_size": [
+            500,
+            294
+          ],
+          "image_sha256": "1b0ddcd3566525eb3b5b1601a6611189e766771534f4bef43c32d7126cd227d1",
+          "score": 0.9609375,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              294,
+              500
+            ],
+            "predicted_pixels": 20404,
+            "predicted_fraction": 0.1388027210884354,
+            "predicted_bbox_xyxy_pixels": [
+              12,
+              0,
+              206,
+              262
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 19897,
+            "intersection_pixels": 19840,
+            "union_pixels": 20461,
+            "iou": 0.969649577244514,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 19840,
+            "false_positive_pixels": 564,
+            "false_negative_pixels": 57,
+            "true_negative_pixels": 126539,
+            "precision": 0.9723583611056655,
+            "recall": 0.9971352465195759,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [
+              true
+            ],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              22.615578956902027,
+              23.310298565775156,
+              27.802105993032455,
+              27.47428184375167,
+              23.812427185475826,
+              20.714731886982918,
+              26.357706170529127,
+              28.068665880709887,
+              25.177946779876947,
+              21.969066932797432
+            ],
+            "median": 24.495186982676387,
+            "p95_observed": 28.068665880709887,
+            "min": 20.714731886982918,
+            "max": 28.068665880709887
+          },
+          "encode_ms": {
+            "samples": [
+              17.38062035292387,
+              18.032779917120934,
+              19.112091977149248,
+              20.779676269739866,
+              15.709165018051863,
+              16.218525357544422,
+              19.33258678764105,
+              21.648074965924025,
+              16.71741995960474,
+              17.32151722535491
+            ],
+            "median": 17.706700135022402,
+            "p95_observed": 21.648074965924025,
+            "min": 15.709165018051863,
+            "max": 21.648074965924025
+          },
+          "decode_ms": {
+            "samples": [
+              4.2744469828903675,
+              4.455806687474251,
+              7.847822271287441,
+              5.755533929914236,
+              7.258462253957987,
+              3.6923829466104507,
+              6.144399289041758,
+              5.530286580324173,
+              7.577455136924982,
+              3.8407030515372753
+            ],
+            "median": 5.6429102551192045,
+            "p95_observed": 7.847822271287441,
+            "min": 3.6923829466104507,
+            "max": 7.847822271287441
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              3.8432632572948933,
+              8.697150275111198,
+              5.80273475497961,
+              5.30830305069685,
+              3.994879312813282,
+              8.304285816848278,
+              5.9001753106713295,
+              4.221199080348015,
+              3.2599670812487602,
+              3.7198388017714024
+            ],
+            "median": 4.764751065522432,
+            "p95_observed": 8.697150275111198,
+            "min": 3.2599670812487602,
+            "max": 8.697150275111198
+          },
+          "unique_mask_hashes": [
+            "10ee24bfcc0bbda1a80a62405f51c3f16d5d1b66ba04e9701b4813799c94eaa2"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-person-left-point-oracle_ground_truth-1.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-person-left-point-oracle_ground_truth-1.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.47359848022461,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "refcocom-cat-real",
+          "prompt_type": "box",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.0,
+            0.018475750577367205,
+            0.6171875,
+            1.0
+          ],
+          "image_size": [
+            640,
+            433
+          ],
+          "image_sha256": "a404a9c69c7a0010a94c114f307d60dae54598e6aa2cd08df98af12b3397120d",
+          "score": 0.9609375,
+          "candidate_count": 1,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              433,
+              640
+            ],
+            "predicted_pixels": 89920,
+            "predicted_fraction": 0.3244803695150115,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              7,
+              395,
+              433
+            ],
+            "positive_points_covered": [],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 91151,
+            "intersection_pixels": 89589,
+            "union_pixels": 91482,
+            "iou": 0.9793074047353578,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 89589,
+            "false_positive_pixels": 331,
+            "false_negative_pixels": 1562,
+            "true_negative_pixels": 185638,
+            "precision": 0.9963189501779359,
+            "recall": 0.9828635999605051,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              25.769417639821768,
+              26.438427157700062,
+              22.272314876317978,
+              29.130168724805117,
+              24.4897548109293,
+              21.874635014683008,
+              24.584874976426363,
+              34.373993054032326,
+              31.47645713761449,
+              28.210201766341925
+            ],
+            "median": 26.103922398760915,
+            "p95_observed": 34.373993054032326,
+            "min": 21.874635014683008,
+            "max": 34.373993054032326
+          },
+          "encode_ms": {
+            "samples": [
+              19.133595749735832,
+              16.858236864209175,
+              17.348701134324074,
+              17.72825187072158,
+              18.223787657916546,
+              16.4192127995193,
+              18.088268116116524,
+              20.08086023852229,
+              22.057002875953913,
+              20.330138970166445
+            ],
+            "median": 18.156027887016535,
+            "p95_observed": 22.057002875953913,
+            "min": 16.4192127995193,
+            "max": 22.057002875953913
+          },
+          "decode_ms": {
+            "samples": [
+              5.696061998605728,
+              8.497503120452166,
+              3.779358696192503,
+              10.302621871232986,
+              5.325727164745331,
+              4.534814972430468,
+              5.535695236176252,
+              13.222669251263142,
+              8.379325736314058,
+              6.83340709656477
+            ],
+            "median": 6.264734547585249,
+            "p95_observed": 13.222669251263142,
+            "min": 3.779358696192503,
+            "max": 13.222669251263142
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              4.130286630243063,
+              4.843230824917555,
+              8.637518156319857,
+              7.276509888470173,
+              11.575854383409023,
+              6.043966859579086,
+              5.086591001600027,
+              4.206063225865364,
+              5.035951267927885,
+              5.131070036441088
+            ],
+            "median": 5.108830519020557,
+            "p95_observed": 11.575854383409023,
+            "min": 4.130286630243063,
+            "max": 11.575854383409023
+          },
+          "unique_mask_hashes": [
+            "4d815135244a44d0dd43ff8ee6cd022c0bcfdf65b827975f9bb1dd2b4a5cfcd8"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-cat-real-box-oracle_ground_truth-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-cat-real-box-oracle_ground_truth-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.4599494934082,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "refcocom-cat-real",
+          "prompt_type": "point",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.21640625,
+            0.7586605080831409
+          ],
+          "image_size": [
+            640,
+            433
+          ],
+          "image_sha256": "a404a9c69c7a0010a94c114f307d60dae54598e6aa2cd08df98af12b3397120d",
+          "score": 0.953125,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              433,
+              640
+            ],
+            "predicted_pixels": 88357,
+            "predicted_fraction": 0.31884021362586606,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              6,
+              438,
+              433
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 91151,
+            "intersection_pixels": 87803,
+            "union_pixels": 91705,
+            "iou": 0.9574505206913473,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 87803,
+            "false_positive_pixels": 554,
+            "false_negative_pixels": 3348,
+            "true_negative_pixels": 185415,
+            "precision": 0.9937299817784669,
+            "recall": 0.9632697392239251,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [
+              true
+            ],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              21.684267092496157,
+              30.098265036940575,
+              20.837323740124702,
+              25.351401884108782,
+              21.855467930436134,
+              24.643609765917063,
+              23.451659828424454,
+              25.151785928756,
+              21.539852023124695,
+              26.923818048089743
+            ],
+            "median": 24.04763479717076,
+            "p95_observed": 30.098265036940575,
+            "min": 20.837323740124702,
+            "max": 30.098265036940575
+          },
+          "encode_ms": {
+            "samples": [
+              16.722941305488348,
+              18.117628060281277,
+              16.112829092890024,
+              15.675436239689589,
+              17.264844849705696,
+              16.501980368047953,
+              16.928541008383036,
+              16.440269071608782,
+              16.791501082479954,
+              19.398058764636517
+            ],
+            "median": 16.75722119398415,
+            "p95_observed": 19.398058764636517,
+            "min": 15.675436239689589,
+            "max": 19.398058764636517
+          },
+          "decode_ms": {
+            "samples": [
+              3.979054745286703,
+              10.896540712565184,
+              3.764334600418806,
+              8.59486311674118,
+              3.598127979785204,
+              7.127022836357355,
+              5.489118862897158,
+              7.660110015422106,
+              3.7595359608531,
+              6.398847326636314
+            ],
+            "median": 5.943983094766736,
+            "p95_observed": 10.896540712565184,
+            "min": 3.598127979785204,
+            "max": 10.896540712565184
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              10.78175799921155,
+              5.798798985779285,
+              5.114702042192221,
+              4.068383947014809,
+              4.968750290572643,
+              4.913744051009417,
+              3.7334072403609753,
+              3.6930707283318043,
+              9.139053989201784,
+              5.995151121169329
+            ],
+            "median": 5.041726166382432,
+            "p95_observed": 10.78175799921155,
+            "min": 3.6930707283318043,
+            "max": 10.78175799921155
+          },
+          "unique_mask_hashes": [
+            "498318b5e579d9489a6153a07be481cd9558a6c5ede4d3b30522c477fca6713e"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-cat-real-point-oracle_ground_truth-1.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-cat-real-point-oracle_ground_truth-1.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.35594177246094,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "refcocom-airplane-front",
+          "prompt_type": "box",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.0,
+            0.4217687074829932,
+            1.0,
+            0.8956916099773242
+          ],
+          "image_size": [
+            640,
+            441
+          ],
+          "image_sha256": "f724f225a5f83e67f5088f8c9f7de6ff24bf7363de29f3bd8342406949d28302",
+          "score": 0.90625,
+          "candidate_count": 1,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              441,
+              640
+            ],
+            "predicted_pixels": 84240,
+            "predicted_fraction": 0.29846938775510207,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              176,
+              640,
+              399
+            ],
+            "positive_points_covered": [],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 75094,
+            "intersection_pixels": 73713,
+            "union_pixels": 85621,
+            "iou": 0.8609219700774343,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 73713,
+            "false_positive_pixels": 10527,
+            "false_negative_pixels": 1381,
+            "true_negative_pixels": 196619,
+            "precision": 0.8750356125356126,
+            "recall": 0.9816097158228354,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              84.64815840125084,
+              94.90383695811033,
+              87.66102185472846,
+              23.98548275232315,
+              29.381609987467527,
+              23.09212274849415,
+              25.9122671559453,
+              25.660777930170298,
+              31.234969850629568,
+              23.804588243365288
+            ],
+            "median": 27.646938571706414,
+            "p95_observed": 94.90383695811033,
+            "min": 23.09212274849415,
+            "max": 94.90383695811033
+          },
+          "encode_ms": {
+            "samples": [
+              37.391799967736006,
+              34.58914486691356,
+              33.912920858711004,
+              17.370651941746473,
+              18.926779739558697,
+              18.135515972971916,
+              16.036700922995806,
+              16.56948495656252,
+              20.014795940369368,
+              18.944780342280865
+            ],
+            "median": 18.93578004091978,
+            "p95_observed": 37.391799967736006,
+            "min": 16.036700922995806,
+            "max": 37.391799967736006
+          },
+          "decode_ms": {
+            "samples": [
+              43.90706308186054,
+              57.24593997001648,
+              52.50606872141361,
+              5.536702927201986,
+              9.33385407552123,
+              3.893311135470867,
+              8.867823053151369,
+              7.845118176192045,
+              9.887502063065767,
+              3.740208223462105
+            ],
+            "median": 9.1008385643363,
+            "p95_observed": 57.24593997001648,
+            "min": 3.740208223462105,
+            "max": 57.24593997001648
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              8.455374743789434,
+              6.651661824434996,
+              4.385422915220261,
+              4.359232261776924,
+              3.1574228778481483,
+              3.250814974308014,
+              3.6737588234245777,
+              7.411982864141464,
+              6.628109607845545,
+              4.272015765309334
+            ],
+            "median": 4.372327588498592,
+            "p95_observed": 8.455374743789434,
+            "min": 3.1574228778481483,
+            "max": 8.455374743789434
+          },
+          "unique_mask_hashes": [
+            "7a1aca08ad0abd4fdaf77309630a931befcf2f55025ac51f7e90a212a4a24b31"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-airplane-front-box-oracle_ground_truth-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-airplane-front-box-oracle_ground_truth-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.343929290771484,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "refcocom-airplane-front",
+          "prompt_type": "point",
+          "prompt_source": "oracle_ground_truth",
+          "prompt": [
+            0.68046875,
+            0.6882086167800453
+          ],
+          "image_size": [
+            640,
+            441
+          ],
+          "image_sha256": "f724f225a5f83e67f5088f8c9f7de6ff24bf7363de29f3bd8342406949d28302",
+          "score": 0.796875,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "oracle_ground_truth",
+            "oracle_conditioned": true,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              441,
+              640
+            ],
+            "predicted_pixels": 82938,
+            "predicted_fraction": 0.2938562925170068,
+            "predicted_bbox_xyxy_pixels": [
+              0,
+              137,
+              640,
+              410
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "annotated_target",
+            "ground_truth_pixels": 75094,
+            "intersection_pixels": 73655,
+            "union_pixels": 84377,
+            "iou": 0.8729274565343637,
+            "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+            "true_positive_pixels": 73655,
+            "false_positive_pixels": 9283,
+            "false_negative_pixels": 1439,
+            "true_negative_pixels": 197863,
+            "precision": 0.8880730183992862,
+            "recall": 0.9808373505206808,
+            "negative_image_false_positive_fraction": null,
+            "ground_truth_positive_points_valid": [
+              true
+            ],
+            "ground_truth_negative_points_invalid": []
+          },
+          "full_image_ms": {
+            "samples": [
+              21.83684380725026,
+              27.229194063693285,
+              24.904618971049786,
+              28.180971276015043,
+              22.67815498635173,
+              28.426489792764187,
+              24.924939032644033,
+              26.28869889304042,
+              22.31425093486905,
+              24.393835105001926
+            ],
+            "median": 24.91477900184691,
+            "p95_observed": 28.426489792764187,
+            "min": 21.83684380725026,
+            "max": 28.426489792764187
+          },
+          "encode_ms": {
+            "samples": [
+              16.846220940351486,
+              19.319867715239525,
+              18.02599709481001,
+              17.608876805752516,
+              17.792221158742905,
+              21.26509975641966,
+              17.875724006444216,
+              19.999580457806587,
+              17.7581082098186,
+              18.229147884994745
+            ],
+            "median": 17.950860550627112,
+            "p95_observed": 21.26509975641966,
+            "min": 16.846220940351486,
+            "max": 21.26509975641966
+          },
+          "decode_ms": {
+            "samples": [
+              4.002143163233995,
+              6.904526147991419,
+              5.7586380280554295,
+              9.379246272146702,
+              3.8374708965420723,
+              6.161694880574942,
+              5.951502826064825,
+              5.2721272222697735,
+              3.5540792159736156,
+              5.141742993146181
+            ],
+            "median": 5.5153826251626015,
+            "p95_observed": 9.379246272146702,
+            "min": 3.5540792159736156,
+            "max": 9.379246272146702
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              3.6526392214000225,
+              3.9251362904906273,
+              3.4530069679021835,
+              7.26719805970788,
+              5.434142891317606,
+              6.20417483150959,
+              8.337197825312614,
+              5.446495022624731,
+              5.466190632432699,
+              3.2550706528127193
+            ],
+            "median": 5.4403189569711685,
+            "p95_observed": 8.337197825312614,
+            "min": 3.2550706528127193,
+            "max": 8.337197825312614
+          },
+          "unique_mask_hashes": [
+            "d4829000e2f91f2e5507b6834f78f4e03306ee5e6214e4854e178e6ddaffefee"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-airplane-front-point-oracle_ground_truth-1.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/refcocom-airplane-front-point-oracle_ground_truth-1.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.39262008666992,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "warehouse-person",
+          "prompt_type": "point",
+          "prompt_source": "manual",
+          "prompt": [
+            0.41,
+            0.46
+          ],
+          "image_size": [
+            640,
+            360
+          ],
+          "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+          "score": 0.71875,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "manual",
+            "oracle_conditioned": false,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              360,
+              640
+            ],
+            "predicted_pixels": 2420,
+            "predicted_fraction": 0.010503472222222223,
+            "predicted_bbox_xyxy_pixels": [
+              242,
+              112,
+              282,
+              223
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "qualitative_only",
+            "iou": null
+          },
+          "full_image_ms": {
+            "samples": [
+              24.89290665835142,
+              31.577656976878643,
+              27.961642015725374,
+              21.776588167995214,
+              23.18905061110854,
+              23.355835117399693,
+              25.597082916647196,
+              20.443084184080362,
+              24.31687479838729,
+              24.755898863077164
+            ],
+            "median": 24.536386830732226,
+            "p95_observed": 31.577656976878643,
+            "min": 20.443084184080362,
+            "max": 31.577656976878643
+          },
+          "encode_ms": {
+            "samples": [
+              16.11978793516755,
+              24.238300044089556,
+              19.039900042116642,
+              16.37993287295103,
+              16.92460384219885,
+              15.102668665349483,
+              15.789228957146406,
+              15.703484881669283,
+              15.753101091831923,
+              16.062605194747448
+            ],
+            "median": 16.0911965649575,
+            "p95_observed": 24.238300044089556,
+            "min": 15.102668665349483,
+            "max": 24.238300044089556
+          },
+          "decode_ms": {
+            "samples": [
+              7.71107105538249,
+              6.160207092761993,
+              7.812893949449062,
+              4.335151053965092,
+              5.31577505171299,
+              7.306365761905909,
+              8.89506982639432,
+              3.8626394234597683,
+              7.642702199518681,
+              7.744654081761837
+            ],
+            "median": 7.474533980712295,
+            "p95_observed": 8.89506982639432,
+            "min": 3.8626394234597683,
+            "max": 8.89506982639432
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              4.829966928809881,
+              4.900175146758556,
+              4.539119079709053,
+              8.76343809068203,
+              5.267423111945391,
+              4.696014802902937,
+              3.7115351296961308,
+              3.711968194693327,
+              4.006366711109877,
+              4.127759020775557
+            ],
+            "median": 4.617566941305995,
+            "p95_observed": 8.76343809068203,
+            "min": 3.7115351296961308,
+            "max": 8.76343809068203
+          },
+          "unique_mask_hashes": [
+            "05cb307a9c7b835deab6fe61f0df5ef6899a641e27ea13dcab7ff6432bdfb57b"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/warehouse-person-point-manual-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/warehouse-person-point-manual-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.42181396484375,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "warehouse-box",
+          "prompt_type": "point",
+          "prompt_source": "manual",
+          "prompt": [
+            0.73,
+            0.59
+          ],
+          "image_size": [
+            640,
+            360
+          ],
+          "image_sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+          "score": 0.328125,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "manual",
+            "oracle_conditioned": false,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              360,
+              640
+            ],
+            "predicted_pixels": 10769,
+            "predicted_fraction": 0.04674045138888889,
+            "predicted_bbox_xyxy_pixels": [
+              405,
+              182,
+              579,
+              270
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "qualitative_only",
+            "iou": null
+          },
+          "full_image_ms": {
+            "samples": [
+              25.990537833422422,
+              22.928716149181128,
+              23.902523331344128,
+              25.12657130137086,
+              25.708633940666914,
+              21.602380089461803,
+              23.796922992914915,
+              26.935706846415997,
+              25.01762704923749,
+              21.933914627879858
+            ],
+            "median": 24.46007519029081,
+            "p95_observed": 26.935706846415997,
+            "min": 21.602380089461803,
+            "max": 26.935706846415997
+          },
+          "encode_ms": {
+            "samples": [
+              16.521291807293892,
+              18.388699740171432,
+              17.696235794574022,
+              19.064043648540974,
+              17.337053082883358,
+              17.048925161361694,
+              17.276988364756107,
+              20.452859811484814,
+              18.263516016304493,
+              16.828523948788643
+            ],
+            "median": 17.51664443872869,
+            "p95_observed": 20.452859811484814,
+            "min": 16.521291807293892,
+            "max": 20.452859811484814
+          },
+          "decode_ms": {
+            "samples": [
+              8.509085979312658,
+              3.684351686388254,
+              5.3941430523991585,
+              5.125663243234158,
+              7.316269911825657,
+              3.5785590298473835,
+              5.49305509775877,
+              5.497199017554522,
+              5.690942984074354,
+              4.056783858686686
+            ],
+            "median": 5.443599075078964,
+            "p95_observed": 8.509085979312658,
+            "min": 3.5785590298473835,
+            "max": 8.509085979312658
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              3.633231855928898,
+              7.257981691509485,
+              6.370127201080322,
+              4.264110699295998,
+              5.973087158054113,
+              4.224575124680996,
+              4.377358593046665,
+              10.037198197096586,
+              5.660367198288441,
+              4.2906710878014565
+            ],
+            "median": 5.018862895667553,
+            "p95_observed": 10.037198197096586,
+            "min": 3.633231855928898,
+            "max": 10.037198197096586
+          },
+          "unique_mask_hashes": [
+            "cec75e7fa0c41d30be0f3ec6203a7bc53c25527a76c214af08966ff51abb6df0"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/warehouse-box-point-manual-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/warehouse-box-point-manual-0.overlay.png"
+        },
+        {
+          "stage": "mask",
+          "available_gib": 56.30668258666992,
+          "cuda_allocated_gib": 0.17612075805664062,
+          "cuda_reserved_gib": 0.419921875,
+          "cuda_peak_reserved_gib": 0.419921875,
+          "case": "panel",
+          "prompt_type": "point",
+          "prompt_source": "manual",
+          "prompt": [
+            0.57,
+            0.49
+          ],
+          "image_size": [
+            1672,
+            941
+          ],
+          "image_sha256": "1032983acc2d9544663a3c677aae9287d2771318a4ce5b838f7cf5ca9cbc28d9",
+          "score": 0.84765625,
+          "candidate_count": 3,
+          "metrics": {
+            "prompt_source": "manual",
+            "oracle_conditioned": false,
+            "end_to_end_validated": false,
+            "image_size_hw": [
+              941,
+              1672
+            ],
+            "predicted_pixels": 311334,
+            "predicted_fraction": 0.19787943193894308,
+            "predicted_bbox_xyxy_pixels": [
+              478,
+              139,
+              1425,
+              786
+            ],
+            "positive_points_covered": [
+              true
+            ],
+            "negative_points_incorrectly_covered": [],
+            "point_constraints_satisfied": true,
+            "quality_scope": "qualitative_only",
+            "iou": null
+          },
+          "full_image_ms": {
+            "samples": [
+              29.853657819330692,
+              29.728409834206104,
+              32.09013771265745,
+              26.927707251161337,
+              32.44711412116885,
+              167.5037113018334,
+              31.042777933180332,
+              31.023097690194845,
+              29.72562611103058,
+              168.37855894118547
+            ],
+            "median": 31.03293781168759,
+            "p95_observed": 168.37855894118547,
+            "min": 26.927707251161337,
+            "max": 168.37855894118547
+          },
+          "encode_ms": {
+            "samples": [
+              20.062541123479605,
+              19.681516103446484,
+              21.85124345123768,
+              19.192940089851618,
+              22.539067082107067,
+              23.93375476822257,
+              18.697755876928568,
+              22.31644419953227,
+              20.8393563516438,
+              22.135292179882526
+            ],
+            "median": 21.34529990144074,
+            "p95_observed": 23.93375476822257,
+            "min": 18.697755876928568,
+            "max": 23.93375476822257
+          },
+          "decode_ms": {
+            "samples": [
+              5.35644730553031,
+              7.102109957486391,
+              7.061806973069906,
+              4.464175086468458,
+              6.805951241403818,
+              140.64589235931635,
+              9.309054352343082,
+              5.842335056513548,
+              6.062303204089403,
+              143.50229082629085
+            ],
+            "median": 6.933879107236862,
+            "p95_observed": 143.50229082629085,
+            "min": 4.464175086468458,
+            "max": 143.50229082629085
+          },
+          "cached_image_prompt_ms": {
+            "samples": [
+              6.409135181456804,
+              5.424350965768099,
+              10.880270041525364,
+              6.905934307724237,
+              5.968446843326092,
+              5.7350387796759605,
+              4.761614836752415,
+              5.966174881905317,
+              4.993183072656393,
+              9.024189785122871
+            ],
+            "median": 5.9673108626157045,
+            "p95_observed": 10.880270041525364,
+            "min": 4.761614836752415,
+            "max": 10.880270041525364
+          },
+          "unique_mask_hashes": [
+            "aa7c62770866461d80bd0ad6d508d5aaa5c2e3b7210bf54f4102fe6cfa4b876c"
+          ],
+          "mask": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/panel-point-manual-0.mask.png",
+          "overlay": "/home/sparkdev/vss/.spark/local-segmentation/runs/20261022T175205Z-edgetam/panel-point-manual-0.overlay.png"
+        }
+      ],
+      "stderr": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torchvision/transforms/functional.py:154: UserWarning: The given NumPy array is not writable, and PyTorch does not support non-writable tensors. This means writing to this tensor will result in undefined behavior. You may want to copy the array to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_numpy.cpp:213.)\n  img = torch.from_numpy(pic.transpose((2, 0, 1))).contiguous()\n"
+    }
+  },
+  "paired_comparison": [
+    {
+      "case": "refcocom-person-left",
+      "prompt_type": "box",
+      "prompt_source": "oracle_ground_truth",
+      "quality_scope": "annotated_target",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 63.655707985162735,
+        "observed_max_ms": 88.81539478898048,
+        "iou": 0.9736855000735042
+      },
+      "edgetam": {
+        "median_full_image_ms": 24.220850551500916,
+        "observed_max_ms": 40.00491928309202,
+        "iou": 0.972068136075794
+      },
+      "sam_median_divided_by_edge_median": 2.628136772067987
+    },
+    {
+      "case": "refcocom-person-left",
+      "prompt_type": "point",
+      "prompt_source": "oracle_ground_truth",
+      "quality_scope": "annotated_target",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 41.063018376007676,
+        "observed_max_ms": 42.93654579669237,
+        "iou": 0.9677686352792249
+      },
+      "edgetam": {
+        "median_full_image_ms": 24.495186982676387,
+        "observed_max_ms": 28.068665880709887,
+        "iou": 0.969649577244514
+      },
+      "sam_median_divided_by_edge_median": 1.6763708889035416
+    },
+    {
+      "case": "refcocom-cat-real",
+      "prompt_type": "box",
+      "prompt_source": "oracle_ground_truth",
+      "quality_scope": "annotated_target",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 39.77293870411813,
+        "observed_max_ms": 43.157281819731,
+        "iou": 0.9853173780720604
+      },
+      "edgetam": {
+        "median_full_image_ms": 26.103922398760915,
+        "observed_max_ms": 34.373993054032326,
+        "iou": 0.9793074047353578
+      },
+      "sam_median_divided_by_edge_median": 1.523638405621603
+    },
+    {
+      "case": "refcocom-cat-real",
+      "prompt_type": "point",
+      "prompt_source": "oracle_ground_truth",
+      "quality_scope": "annotated_target",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 40.7390829641372,
+        "observed_max_ms": 46.393376775085926,
+        "iou": 0.9793445836070517
+      },
+      "edgetam": {
+        "median_full_image_ms": 24.04763479717076,
+        "observed_max_ms": 30.098265036940575,
+        "iou": 0.9574505206913473
+      },
+      "sam_median_divided_by_edge_median": 1.694099370177154
+    },
+    {
+      "case": "refcocom-airplane-front",
+      "prompt_type": "box",
+      "prompt_source": "oracle_ground_truth",
+      "quality_scope": "annotated_target",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 46.71449773013592,
+        "observed_max_ms": 88.26574916020036,
+        "iou": 0.9775097869209952
+      },
+      "edgetam": {
+        "median_full_image_ms": 27.646938571706414,
+        "observed_max_ms": 94.90383695811033,
+        "iou": 0.8609219700774343
+      },
+      "sam_median_divided_by_edge_median": 1.6896806714774215
+    },
+    {
+      "case": "refcocom-airplane-front",
+      "prompt_type": "point",
+      "prompt_source": "oracle_ground_truth",
+      "quality_scope": "annotated_target",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 39.30507553741336,
+        "observed_max_ms": 44.5369309745729,
+        "iou": 0.9647406703364884
+      },
+      "edgetam": {
+        "median_full_image_ms": 24.91477900184691,
+        "observed_max_ms": 28.426489792764187,
+        "iou": 0.8729274565343637
+      },
+      "sam_median_divided_by_edge_median": 1.577580741715578
+    },
+    {
+      "case": "warehouse-person",
+      "prompt_type": "point",
+      "prompt_source": "manual",
+      "quality_scope": "qualitative_only",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 41.64026747457683,
+        "observed_max_ms": 45.94904184341431,
+        "iou": null
+      },
+      "edgetam": {
+        "median_full_image_ms": 24.536386830732226,
+        "observed_max_ms": 31.577656976878643,
+        "iou": null
+      },
+      "sam_median_divided_by_edge_median": 1.6970822868842985
+    },
+    {
+      "case": "warehouse-box",
+      "prompt_type": "point",
+      "prompt_source": "manual",
+      "quality_scope": "qualitative_only",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 80.69080021232367,
+        "observed_max_ms": 91.14838903769851,
+        "iou": null
+      },
+      "edgetam": {
+        "median_full_image_ms": 24.46007519029081,
+        "observed_max_ms": 26.935706846415997,
+        "iou": null
+      },
+      "sam_median_divided_by_edge_median": 3.298877848272237
+    },
+    {
+      "case": "panel",
+      "prompt_type": "point",
+      "prompt_source": "manual",
+      "quality_scope": "qualitative_only",
+      "same_image_and_prompt": true,
+      "sam2.1-tiny": {
+        "median_full_image_ms": 46.05577909387648,
+        "observed_max_ms": 48.212642315775156,
+        "iou": null
+      },
+      "edgetam": {
+        "median_full_image_ms": 31.03293781168759,
+        "observed_max_ms": 168.37855894118547,
+        "iou": null
+      },
+      "sam_median_divided_by_edge_median": 1.4840934291606451
+    }
+  ],
+  "conclusions": {
+    "provisional_quality_default": "sam2.1-tiny",
+    "speed_option": "edgetam",
+    "basis": "EdgeTAM was faster for all nine prompt-case medians, but lost substantially on both aircraft mask prompts. Tiny sample does not establish general accuracy or production latency.",
+    "end_to_end_grounding_validated": false,
+    "negative_control_validated": false,
+    "thor_tested": false,
+    "warning": "Both runs report a non-writable NumPy input warning; do not call these warning-free qualification receipts.",
+    "adapter_provenance_limit": "Logs preserve official source and checkpoint hashes but do not record the application adapter/benchmark file hashes. Do not attribute later application-source changes to these completed runs."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "city.pending-evidence-ui-independent-review.v1",
+  "scope": "Read-only source review and isolated CPU tests; no application runtime mutation or UI build.",
+  "source": [
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityInspector.tsx",
+      "sha256": "13edc58a16200bfc62ff072f6833bc17ae1e3aa2312abe1d2f9a023dee36e2be"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/presentation.ts",
+      "sha256": "9179a2883c659977b810d165bf2759faef1a09be2f48763e2be7120e541e51b7"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/types.ts",
+      "sha256": "8fd5ee44d7c1eaf9917e4a55eaff1f9a78fbdf46f9e76fd61a0a65f1d6e0e82e"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/CityInspector.test.tsx",
+      "sha256": "9fbcb62551922d9b6cc20777b485a5e87808f4e08ce378aabbe69b372c911c7a"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/presentation.test.ts",
+      "sha256": "a425debd126d04db0ead9c8621185c75e92f7e4a913678c15abbb3cf8ee10b66"
+    }
+  ],
+  "result": "no-blocker",
+  "checks": [
+    "Pending labels apply only to active stopped-in-zone events with pending or clearing stop evidence.",
+    "Confirmed active count excludes pending proof, while raw saved event state and evidence_status remain exported.",
+    "Current event selection resolves the shownSnapshot record before historical fallback; existing mode/source filters are unchanged.",
+    "Latest metrics are rendered for stopped events only; historical backend strips latestMetrics before frame-time replay.",
+    "Internal pedestrian exit-candidate-recovered outcome is not published as a frontend enum.",
+    "Existing qualityReasons render as text; no HTML injection path added."
+  ],
+  "independentTests": {
+    "suites": 2,
+    "passed": 49,
+    "failed": 0,
+    "durationSeconds": 1.8,
+    "environment": "Existing cached UI image73184\u2026; read-only source mount, network none, no GPU, runtime runc, 4GiB/2CPU cap; NODE_ENV=test.",
+    "command": "node ../../node_modules/jest/bin/jest.js --runInBand --cacheDirectory=/tmp/city-jest components/vision-intelligence/smart-city/__tests__/CityInspector.test.tsx components/vision-intelligence/smart-city/__tests__/presentation.test.ts"
+  }
+}

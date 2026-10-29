@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "checks": {
+    "backendControllerCalibrationAndDiagnosticCandidateTests": 108,
+    "staticMapUiTests": 6,
+    "cityProfileTests": 6,
+    "nativeConversionTests": 8,
+    "appTypeScript": "passed",
+    "frozenUiBuild": "10 tasks passed in 109.412 seconds",
+    "launcherAndAffectedControllerSelection": "37 passed, includes 2 new launcher tests; overlaps the 108-test selection"
+  },
+  "limits": "Selections overlap prior checks. Experimental association is test tooling only, not enabled in production."
+}

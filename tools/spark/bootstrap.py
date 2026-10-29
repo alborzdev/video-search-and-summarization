@@ -6,6 +6,7 @@ Target qualification is recorded separately; rendering is not deployment proof.
 """
 import argparse
 import hashlib
+import importlib.util
 import ipaddress
 import json
 import math
@@ -24,8 +25,20 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parents[2]
 STATE = ROOT / '.spark'
-sys.path.insert(0, str(ROOT / 'tools/runtime'))
+# Shared helpers must not shadow this device's ui.py in desktop/offline startup.
+sys.path.append(str(ROOT / 'tools/runtime'))
 import vss33
+try:
+    import local_vision
+except ModuleNotFoundError as error:
+    # Thor imports this file's pure shared helpers by absolute path. Resolve
+    # only this sibling module without adding Spark's ui.py to Thor's imports.
+    if error.name != 'local_vision':
+        raise
+    local_spec = importlib.util.spec_from_file_location('local_vision', Path(__file__).with_name('local_vision.py'))
+    local_vision = importlib.util.module_from_spec(local_spec)
+    sys.modules['local_vision'] = local_vision
+    local_spec.loader.exec_module(local_vision)
 # Same pinned aarch64 wheel as services/agent/uv.lock. Desktop startup never
 # downloads it: technical setup stages it before taking the machine offline.
 CODEC_WHEEL_NAME = 'opencv_python_headless-4.13.0.92-cp37-abi3-manylinux_2_28_aarch64.whl'
@@ -36,13 +49,25 @@ CODEC_WHEEL_URL = 'https://files.pythonhosted.org/packages/8f/b4/b7bcbf7c8746658
 # API identity exposed by the pinned Spark NIM, distinct from its image name.
 LLM = 'nvidia/nemotron-nano-9b-v2'
 VLM = 'nim_nvidia_cosmos3-nano-reasoner_bf16-final'
+VLM_NVFP4_VERSION = 'modelopt-nvfp4-full-quantize-final_format_fix'
+
+
+def vlm_model_choice(saved=None, precision=None):
+    """Keep the explicitly selected Spark checkpoint across future renders."""
+    precision = (saved or {}).get('vlm_precision', 'bf16') if precision is None else precision
+    if not isinstance(precision, str) or precision not in ('bf16', 'nvfp4'):
+        raise RuntimeError('Spark VLM precision must be bf16 or nvfp4.')
+    version = 'bf16-final' if precision == 'bf16' else VLM_NVFP4_VERSION
+    return {
+        'precision': precision,
+        'name': 'nim_nvidia_cosmos3-nano-reasoner_' + version,
+        'source': 'ngc:nim/nvidia/cosmos3-nano-reasoner:' + version,
+    }
+
+
 PROFILE = vss33.PROFILE
 DEFAULT_RESERVE_GIB = 48
-# Initial peak estimates; record target measurements before tuning these.
-MODEL_STARTUP_HEADROOM_GIB = {'spark-llm': 24, 'rtvi-embed': 20, 'rtvi-vlm': 24}
-# The first GB10 engine build lowered MemAvailable by about 5.6 GiB. Allow
-# 6 GiB before startup; the user's runtime reserve itself remains unchanged.
-DETECTOR_STARTUP_HEADROOM_GIB = 6
+# Startup admission uses the saved reserve only (operator request, 2026-10-28).
 DETECTOR_HEALTH_PROBE = (
     "import json,urllib.request; "
     "response=urllib.request.urlopen('http://127.0.0.1:9000/api/v1/health/get-dsready-state',timeout=3); "
@@ -106,7 +131,7 @@ def memory_reserve():
 
 
 def model_admission_gib(service):
-    return memory_reserve() + MODEL_STARTUP_HEADROOM_GIB[service]
+    return memory_reserve()
 
 
 def private_write(path, value):
@@ -128,7 +153,7 @@ def compose(*args):
     return ['docker', 'compose', '--project-name', 'vss-spark', '-f', STATE / 'compose.json', *args]
 
 
-def booth_runtime_safety(graph, state=None, hardware='DGX-SPARK'):
+def booth_runtime_safety(graph, state=None, hardware='DGX-SPARK', local_vision_enabled=None):
     """Upgrade a cached graph without rerendering models or addresses."""
     state = STATE if state is None else Path(state)
     for name in ('vss-agent', 'vss-va-mcp'):
@@ -185,6 +210,8 @@ def booth_runtime_safety(graph, state=None, hardware='DGX-SPARK'):
             HISTORY_METADATA_TOKEN=token)
         if hardware == 'DGX-SPARK':
             ui_service['environment']['SPARK_CAPACITY_URL'] = 'http://127.0.0.1:8102/capacity'
+    if hardware == 'DGX-SPARK':
+        local_vision.configure_graph(graph, enabled=local_vision_enabled, state=state)
     return graph
 
 
@@ -208,11 +235,18 @@ def doctor():
 
 
 def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org', reserve_gib=None, cached_models=None, detector_enabled=None,
-           adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None, vios_streamprocessing_image=None):
+           adaptive_evs=None, rtvi_vlm_image=None, demo_profile=None, vios_streamprocessing_image=None,
+           vlm_precision=None, local_vision_enabled=None):
     saved_path = STATE / 'settings.json'
     saved = json.loads(saved_path.read_text()) if saved_path.exists() else {}
+    local_vision_enabled = local_vision.selected(saved if local_vision_enabled is None else
+                                               {'local_vision_enabled': local_vision_enabled})
     options = vss33.runtime_options(saved, adaptive_evs, rtvi_vlm_image, demo_profile,
                                   vios_streamprocessing_image, hardware='DGX-SPARK')
+    model_choice = vlm_model_choice(saved, vlm_precision)
+    if model_choice['precision'] == 'nvfp4' and vss33.runtime_version(options['rtvi_vlm_image']).split('.')[:2] != ['3', '3']:
+        raise RuntimeError('Nano NVFP4 requires an explicitly selected compatible 3.3 Spark VLM engine.')
+    vlm_name = model_choice['name']
     reserve = memory_reserve() if reserve_gib is None else validate_reserve(reserve_gib)
     if cached_models is None:
         settings_path = STATE / 'settings.json'
@@ -248,11 +282,11 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
         VSS_APPS_DIR=str(ROOT / 'deploy/docker'), VSS_REPO_ROOT=str(ROOT), VSS_DATA_DIR=str(data),
         HOST_IP=host_ip, EXTERNAL_IP=host_ip, THOR_LOCAL_MODEL_BIND_HOST=gateway,
         LLM_NAME=LLM, LLM_BASE_URL='http://127.0.0.1:30081', LLM_MODEL_TYPE='openai',
-        VLM_MODE='local_shared', VLM_NAME=VLM, VLM_MODEL_TYPE='rtvi', VLM_BASE_URL='http://127.0.0.1:8018',
+        VLM_MODE='local_shared', VLM_NAME=vlm_name, VLM_MODEL_TYPE='rtvi', VLM_BASE_URL='http://127.0.0.1:8018',
         RTVI_VLM_IMAGE_TAG='3.2.1-sbsa', RTVI_VLM_BASE_IMAGE='nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1-sbsa',
         RTVI_EMBED_TAG='3.2.1-sbsa', RTVI_EMBED_BASE_IMAGE='nvcr.io/nvidia/vss-core/vss-rt-embed:3.2.1-sbsa',
         RTVI_VLM_BASE_URL='http://127.0.0.1:8018', RTVI_VLM_ENDPOINT='', RTVI_VLM_MODEL_TO_USE='cosmos-reason3',
-        RTVI_VLM_MODEL_PATH='/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final' if cached_models else 'ngc:nim/nvidia/cosmos3-nano-reasoner:bf16-final',
+        RTVI_VLM_MODEL_PATH='/opt/nvidia/rtvi/.rtvi/ngc_model_cache/' + vlm_name if cached_models else model_choice['source'],
         RTVI_VLLM_GPU_MEMORY_UTILIZATION='0.30', RTVI_VLLM_MAX_NUM_SEQS='1', RTVI_VLM_MAX_MODEL_LEN='16384',
         RTVI_VLM_MAX_GENERATION_TOKENS='4096', RTVI_EMBED_BATCH_SIZE='2',
         RTVI_EMBED_KAFKA_ENABLED='true', RTVI_EMBED_KAFKA_TOPIC='mdx-embed',
@@ -402,7 +436,7 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
         services['vss-ui']['environment']['RTVI_CV_HEALTH_URL'] = 'http://127.0.0.1:9000/api/v1/health/get-dsready-state'
     services['alert-bridge']['environment']['ALERT_ALWAYS_ON_ENABLED'] = 'false'
     services['lvs-server']['environment'].update(LVS_LLM_BASE_URL='http://127.0.0.1:30081/v1', LVS_LLM_MODEL_NAME=LLM,
-        VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME=VLM, VIA_VLM_ENDPOINT='http://127.0.0.1:8018/v1/', LVS_EMB_DIMENSIONS='768')
+        VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME=vlm_name, VIA_VLM_ENDPOINT='http://127.0.0.1:8018/v1/', LVS_EMB_DIMENSIONS='768')
     # All startup is explicit during qualification. Never replay a live source at boot.
     for name, service in services.items():
         service.pop('profiles', None)
@@ -441,13 +475,13 @@ def render(host_ip, data_dir, gateway, npm_registry='https://registry.npmjs.org'
     # Continuous video/model logs need a bound for long booth sessions. This
     # applies on the next explicit recreation, without deleting recordings.
     vss33.prepare_literal_build_contexts(services, ROOT, STATE, names=('lvs-server',))
-    booth_runtime_safety(graph)
+    booth_runtime_safety(graph, local_vision_enabled=local_vision_enabled)
     # Compose config already escapes shell dollars as $$; preserve those pairs.
     # Escape only new singleton dollars, except the deferred download credential.
     encoded = re.sub(r'(?<!\$)\$(?!\$)', lambda _: '$$', json.dumps(graph, indent=2))
     encoded = encoded.replace('$${NGC_API_KEY:-}', '${NGC_API_KEY:-}')
     private_write(STATE / 'compose.json', encoded + '\n')
-    private_write(STATE / 'settings.json', json.dumps({'host_ip': host_ip, 'data_dir': str(data), 'gateway': gateway, 'npm_registry': npm_registry, 'reserve_gib': reserve, 'cached_models': cached_models, 'detector_enabled': detector_enabled, **options}, indent=2))
+    private_write(STATE / 'settings.json', json.dumps({'host_ip': host_ip, 'data_dir': str(data), 'gateway': gateway, 'npm_registry': npm_registry, 'reserve_gib': reserve, 'cached_models': cached_models, 'detector_enabled': detector_enabled, 'vlm_precision': model_choice['precision'], 'local_vision_enabled': local_vision_enabled, **options}, indent=2))
     run(compose('config', '--quiet'), env=clean_env)
     print(f'Rendered {len(services)} services to {STATE}/compose.json (unqualified Spark candidate).')
 
@@ -593,6 +627,12 @@ def up():
     import history_metadata
     history_metadata.ensure_bridge()
     graph = json.loads((STATE / 'compose.json').read_text())
+    # Adopt selected host-worker UI wiring on cached starts too. Existing model
+    # images, budgets and cache choices are untouched.
+    original = json.dumps(graph, sort_keys=True)
+    local_vision.configure_graph(graph, state=STATE)
+    if json.dumps(graph, sort_keys=True) != original:
+        private_write(STATE / 'compose.json', json.dumps(graph, indent=2) + '\n')
     models = ['spark-llm', 'rtvi-embed', 'rtvi-vlm']
     detectors = ['spark-perception'] if 'spark-perception' in graph['services'] else []
     late = ['vss-agent', 'vss-ui', 'vss-haproxy-ingress', 'lvs-server', 'alert-bridge', 'vss-va-mcp']
@@ -603,16 +643,25 @@ def up():
         if service in models:
             required = model_admission_gib(service)
             if available() < required:
-                raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} ({memory_reserve():g} reserve + {MODEL_STARTUP_HEADROOM_GIB[service]:g} startup headroom).')
+                raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} (saved reserve).')
         if service in detectors:
-            required = memory_reserve() + DETECTOR_STARTUP_HEADROOM_GIB
+            required = memory_reserve()
             if available() < required:
-                raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} ({memory_reserve():g} reserve + {DETECTOR_STARTUP_HEADROOM_GIB:g} startup headroom).')
+                raise RuntimeError(f'Admission refused before {service}: {available():.1f} GiB available; need {required:g} (saved reserve).')
         run(compose('up', '-d', '--no-deps', '--no-build', '--pull', 'never', service))
         await_service(service, service in one_shots)
         if service in models:
             reclaim_model_file_cache(service)
-    verify()
+    local_started = local_vision.ensure_service(state=STATE)
+    try:
+        verify()
+    except BaseException:
+        if local_started:
+            try:
+                local_vision.stop_service()
+            except (OSError, RuntimeError, subprocess.SubprocessError):
+                pass
+        raise
 
 
 def reclaim_model_file_cache(service):
@@ -651,7 +700,10 @@ def await_service(service, one_shot=False):
     while time.monotonic() < deadline:
         reserve = memory_reserve()
         if available() < reserve:
-            run(compose('stop'), stdout=subprocess.DEVNULL, timeout=120)
+            try:
+                local_vision.stop_service()
+            finally:
+                run(compose('stop'), stdout=subprocess.DEVNULL, timeout=120)
             raise RuntimeError(f'{reserve:g} GiB reserve crossed; candidate stack stopped.')
         cid = run(compose('ps', '-a', '-q', service), capture_output=True, text=True, timeout=15).stdout.strip()
         if cid:
@@ -709,6 +761,11 @@ def verify():
     graph_path = STATE / 'compose.json'
     if graph_path.exists() and 'spark-perception' in json.loads(graph_path.read_text()).get('services', {}):
         probes['detector'] = 'http://127.0.0.1:9000/api/v1/health/get-dsready-state'
+    if local_vision.selected(state=STATE):
+        try:
+            local_vision.ready_snapshot()
+        except (OSError, ValueError, RuntimeError):
+            failures.append('local-vision model readiness')
     for name, url in probes.items():
         try:
             with urllib.request.urlopen(url, timeout=15) as response:
@@ -731,7 +788,7 @@ def verify():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=['doctor', 'render', 'stage', 'stage-detector', 'up', 'verify', 'stop', 'install-guard'])
+    parser.add_argument('command', choices=['doctor', 'render', 'stage', 'stage-detector', 'up', 'verify', 'stop', 'down', 'install-guard'])
     parser.add_argument('--host-ip')
     parser.add_argument('--gateway', default='172.17.0.1')
     parser.add_argument('--data-dir', default=str(STATE / 'data'))
@@ -739,8 +796,10 @@ def main():
     parser.add_argument('--reserve-gib', type=float, help='Runtime memory reserve; render preserves the saved value when omitted')
     parser.add_argument('--cached-models', action=argparse.BooleanOptionalAction, default=None, help='Cache-only model startup without download credentials; render preserves the saved mode when omitted')
     parser.add_argument('--detector', action=argparse.BooleanOptionalAction, dest='detector_enabled', default=None, help='Enable the single-source Spark detection/tracking worker; render preserves the saved mode when omitted')
+    parser.add_argument('--local-vision', action=argparse.BooleanOptionalAction, dest='local_vision_enabled', default=None, help='Start the staged local Moondream2 + SAM2 Tiny worker with VSS; omitted flags preserve the saved selection')
     parser.add_argument('--adaptive-evs', action=argparse.BooleanOptionalAction, default=None, help='Enable EVS++ only with a separately staged compatible 3.3 RT-VLM image')
     parser.add_argument('--rtvi-vlm-image', help='Explicit compatible RT-VLM image; omit to preserve the saved selection')
+    parser.add_argument('--vlm-precision', choices=['bf16', 'nvfp4'], help='Spark Nano checkpoint precision; omitted flags preserve the saved choice. NVFP4 requires the compatible 3.3 engine.')
     parser.add_argument('--vios-streamprocessing-image', help='Reviewed Spark source-fixed VIOS image; omit to preserve the saved selection, or use an empty string to restore cached 3.2.1')
     parser.add_argument('--demo-profile', choices=['all', 'clips'], help='all retains live analytics; clips omits live alert candidates and keeps the CPU embedding relay needed for search')
     args = parser.parse_args()
@@ -748,15 +807,21 @@ def main():
         if not args.host_ip:
             parser.error('render requires --host-ip <Spark LAN IPv4>')
         render(args.host_ip, args.data_dir, args.gateway, args.npm_registry, args.reserve_gib, args.cached_models, args.detector_enabled,
-               args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile, args.vios_streamprocessing_image)
+               args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile, args.vios_streamprocessing_image,
+               vlm_precision=args.vlm_precision, local_vision_enabled=args.local_vision_enabled)
     elif any(value is not None for value in (args.reserve_gib, args.cached_models, args.detector_enabled,
                                              args.adaptive_evs, args.rtvi_vlm_image, args.demo_profile,
-                                             args.vios_streamprocessing_image)):
+                                             args.vios_streamprocessing_image, args.vlm_precision, args.local_vision_enabled)):
         parser.error('Runtime configuration flags apply only to render; restart the guard after changing its reserve')
-    elif args.command == 'stop':
-        run(compose('stop'))
+    elif args.command in ('stop', 'down'):
         import history_metadata
-        history_metadata.stop_bridge()
+        try:
+            run(compose('stop'))
+        finally:
+            try:
+                local_vision.stop_service()
+            finally:
+                history_metadata.stop_bridge()
     else:
         globals()[args.command.replace('-', '_')]()
 

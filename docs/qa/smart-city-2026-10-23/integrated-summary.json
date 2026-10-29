@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "siteId": "isaac-intersection-a",
+  "startedAt": "2026-10-23T05:07:31.732712+00:00",
+  "finishedAt": "2026-10-23T05:17:31.842650+00:00",
+  "pipelineSeconds": 600.1099423281848,
+  "simulatorSeconds": 600.0000951802358,
+  "pipelineSamples": 115,
+  "simulatorSamples": 101,
+  "frames": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "frames": 5152,
+      "uniquePts": 5152,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 609397604525,
+      "lastNs": 1792732651363757909,
+      "lastSequence": 5178,
+      "session": "64e0dc6b-d52b-4e9a-abc6-ac13870da9d5",
+      "lastBasis": "source-rtcp"
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "frames": 5152,
+      "uniquePts": 5152,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 609398751310,
+      "lastNs": 1792732651365662650,
+      "lastSequence": 5178,
+      "session": "bec3d44f-cd41-4ab9-8ab8-ede52e7cdd21",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "observationCount": 10304,
+  "minimumAvailableGiB": 24.70119857788086,
+  "minimumDiskFreeGiB": 16.478939056396484,
+  "minimumRollingCameraFps": {
+    "cam_SW": 7.775461434854897,
+    "cam_NE": 7.775461434854897
+  },
+  "simTimeAdvancedSeconds": 234.0000000000868,
+  "streamProductCounts": [
+    2
+  ],
+  "maximumPendingFrames": 0,
+  "recordingsReadyOnEverySample": true,
+  "exactPreviewReads": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": 115,
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 115
+  },
+  "workerImageId": "sha256:403f58f44856eafe5ce6d1a42308203ed4d923bab91cf7a073aceb3a6a2a868e",
+  "uiImageId": "sha256:3134f445308c4ccf95d4b28b01b4b9b8e0a1f120957900c17b6f1f1c27d60f8e",
+  "engineSha256": "9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+  "fusionEnabled": false,
+  "manualAsks": "Both SW and NE real UI questions and 1280x720 evidence clips observed inside this monitored interval. See live-ask-browser.json and live-ask-northeast.json. Monitor itself scheduled no questions.",
+  "sampleHashes": {
+    "pipeline": "c88972886629fd78004dbb9d169edf5f54a4a90f6af3328b694dbb416ec73844",
+    "simulator": "30274b910625da0a296bb6872324dcc9cca235bdd2e90de71caa46ff99d4a3d8"
+  },
+  "scope": "Local two-camera Spark functional stability, geometry/preview/event plumbing and real Ask integration. Not production detection accuracy, MV3DT/identity fusion, historical-event clips or Thor qualification."
+}

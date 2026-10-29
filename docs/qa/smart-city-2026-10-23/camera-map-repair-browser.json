@@ -1,0 +1,29 @@
+{
+  "url": "http://127.0.0.1:7782/?workspace=smart-city",
+  "checkedAt": "2026-10-23T14:17:00Z",
+  "mode": "source-mounted development; actual live Isaac cameras",
+  "checks": {
+    "bothExactPreviews": true,
+    "mapTrackSelectionShowsCameraLocalIdentity": true,
+    "mapZoomAndReset": true,
+    "sixSavedRulesInEditor": true,
+    "editorClosedWithoutSaving": true,
+    "reportsShowsSavedEventsAndRuleMeasures": true,
+    "askCameraSelector": true,
+    "newVlmRequestInThisRun": false,
+    "desktopPresentation": true,
+    "desktopNoHorizontalOverflow": true,
+    "laptopNoHorizontalOverflow": true,
+    "mobileNoHorizontalOverflow": true,
+    "consoleErrorsSinceQualificationStart": [],
+    "mobilePresentationNavigationHidden": true
+  },
+  "screenshotsDirectory": "/home/sparkdev/.codex/visualizations/2026/10/23/city-repair",
+  "limits": [
+    "Full booth-day endurance is not covered.",
+    "No new VLM question was submitted during the repair monitor. Both actual five-second footage windows are continuously checked by its companion."
+  ],
+  "notes": [
+    "Changing the viewport exits browser fullscreen; Presentation Mode was enabled again before checking the mobile presentation layout."
+  ]
+}

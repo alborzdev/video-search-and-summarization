@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "failure": null,
+  "requestedSeconds": 60,
+  "wallSeconds": 60.000078812241554,
+  "samples": 10,
+  "minimumAvailableGiB": 21.765140533447266,
+  "minimumDiskFreeGiB": 73.27783584594727,
+  "minimumRollingFps": {
+    "cam_SW": 11.156602616429483,
+    "cam_NE": 11.156602616429483
+  },
+  "criteria": {
+    "twoStreamRenderProducts": true,
+    "backend": "native",
+    "memoryFloorGiB": null,
+    "diskFloorGiB": 14,
+    "minimumCameraFps": 5,
+    "counterBasis": "native-server-handoffs",
+    "maximumQueuedFramesPerCamera": null,
+    "queueBoundStatus": "unavailable-native-api"
+  },
+  "sourceSha256": "4a43f78d570842d08c77c95a7178ed163c5b22cb2d555695dc54a331aff440b2",
+  "scope": "Actual simulator lifecycle and writer progress plus recorded footage; native encoder queues are unavailable. Not cross-camera identity accuracy or decoded inference throughput."
+}

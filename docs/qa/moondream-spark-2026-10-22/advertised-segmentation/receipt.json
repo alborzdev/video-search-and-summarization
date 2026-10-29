@@ -1,0 +1,52 @@
+{
+  "checked_at_utc": "2026-10-22T17:35:03.547796+00:00",
+  "cosmos_state": "running",
+  "cosmos_health": "healthy",
+  "readiness_http": 200,
+  "guard_active": true,
+  "service_changes_this_turn": false,
+  "gpu_runs_this_turn": false,
+  "outbound_support_message_sent": false,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "1bcf87608eb50cb2cc710b846039b04c7887338b9d057dea10ef1535dbf9614f"
+    },
+    {
+      "path": "entrypoint-audit.json",
+      "sha256": "9dad769d56b9afe4de4654a95283050147c3a707a30fa96e6586a6f4b8708161"
+    },
+    {
+      "path": "entrypoint-audit.md",
+      "sha256": "51dda577071be16929e24e325c07e813a89afd2b521bba800f94c364e956a214"
+    },
+    {
+      "path": "entrypoint-audit.py",
+      "sha256": "efc73cb4bb7a75d0fa68db4c8d5f6940b835dedde45dfb784a91567a657b4413"
+    },
+    {
+      "path": "protocol-audit.json",
+      "sha256": "18db001004c5234f2b17c2ab6ea2f8daed567d3100166c79b3208894c228821a"
+    },
+    {
+      "path": "protocol-audit.md",
+      "sha256": "cdfab802d3fb67749a2f449ad1abeb81a15f2b47c49657322f764b697b0bc3ab"
+    },
+    {
+      "path": "protocol-audit.py",
+      "sha256": "10e3f155d15be9c2f9af8d65578542363e05348eeab7e1a4ba755c2d3c3774af"
+    },
+    {
+      "path": "upstream-evidence.json",
+      "sha256": "b52cba18398751b8f5c61e1183706d65b70fd6d7bfdaa0239a604084cc9c87b7"
+    },
+    {
+      "path": "upstream-evidence.md",
+      "sha256": "0c70e2b5897b1be16289fc53ac5cb679ebe0dd662626bb7ade08fa4f2b86c204"
+    },
+    {
+      "path": "vendor-request.md",
+      "sha256": "0448373c5ea736245f7478547c45fad94abc4f4b6581ad57e56852cf1d20cb33"
+    }
+  ]
+}

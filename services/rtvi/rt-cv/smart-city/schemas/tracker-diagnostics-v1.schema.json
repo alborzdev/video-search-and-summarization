@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bounded raw SDK tracker diagnostics; no analytics authority",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "sdkFrameNumber", "sdkNtpTimestampNs", "sdkBufPtsNs", "sourceImageSize", "processingImageSize", "trackerImageSize", "bboxSpace", "rawObjectCount", "exportedObjectCount", "truncated", "objects"],
+  "properties": {
+    "schemaVersion": {"const": "city.tracker-diagnostics.v1"},
+    "sdkFrameNumber": {"$ref": "#/$defs/uintString"},
+    "sdkNtpTimestampNs": {"anyOf": [{"$ref": "#/$defs/uintString"}, {"type": "null"}]},
+    "sdkBufPtsNs": {"$ref": "#/$defs/uintString"},
+    "sourceImageSize": {"$ref": "#/$defs/imageSize"},
+    "processingImageSize": {"$ref": "#/$defs/imageSize"},
+    "trackerImageSize": {"const": [640, 384]},
+    "bboxSpace": {"const": "source-image-pixels-unclipped"},
+    "rawObjectCount": {"type": "integer", "minimum": 0},
+    "exportedObjectCount": {"type": "integer", "minimum": 0, "maximum": 256},
+    "truncated": {"type": "boolean"},
+    "objects": {"type": "array", "maxItems": 256, "items": {"$ref": "#/$defs/object"}}
+  },
+  "$defs": {
+    "uintString": {"type": "string", "pattern": "^[0-9]{1,20}$"},
+    "imageSize": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 1}},
+    "point": {"anyOf": [{"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}}, {"type": "null"}]},
+    "box": {"anyOf": [{"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "number"}}, {"type": "null"}]},
+    "object": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sdkTargetId", "sdkClassId", "detectorObservedThisFrame", "idRejectedAsAmbiguous", "detectorBboxPx", "trackerBboxPx", "rectBboxPx", "nativeWorldFootM", "nativeImageFootPx", "nativeVisibility"],
+      "properties": {
+        "sdkTargetId": {"$ref": "#/$defs/uintString"},
+        "sdkClassId": {"type": "integer"},
+        "detectorObservedThisFrame": {"type": "boolean"},
+        "idRejectedAsAmbiguous": {"type": "boolean"},
+        "detectorBboxPx": {"$ref": "#/$defs/box"},
+        "trackerBboxPx": {"$ref": "#/$defs/box"},
+        "rectBboxPx": {"$ref": "#/$defs/box"},
+        "nativeWorldFootM": {"$ref": "#/$defs/point"},
+        "nativeImageFootPx": {"$ref": "#/$defs/point"},
+        "nativeVisibility": {"anyOf": [{"type": "number", "minimum": 0, "maximum": 1}, {"type": "null"}]}
+      }
+    }
+  }
+}

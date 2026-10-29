@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "city.artifacts.v1",
+  "recordedAt": "2026-10-22",
+  "modelPackage": "rfdetr==1.11.2",
+  "packageSource": "https://github.com/roboflow/rf-detr/tree/1.11.2",
+  "classes": [
+    "person",
+    "bicycle",
+    "car",
+    "motorcycle",
+    "bus",
+    "truck"
+  ],
+  "cocoSlots": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    8
+  ],
+  "deepstreamBaseSpark": "ghcr.io/nvidia/deepstream:9.2-triton-sbsa-dgx-spark@sha256:87014f626496737dc888eb80d5de9baf5a37c834033cabfbbcc50139c7183251",
+  "analyticsBase": "python:3.12-slim@sha256:cb33f7f771ecec2ef1225cf39b159591a040391bd73e4c01f00fdfc4c47611d2",
+  "tracker": "NvDCF CUDA; no PVA or ReID in baseline",
+  "models": {
+    "small": {
+      "role": "tested lower-cost baseline; generic default without saved device selection",
+      "checkpointUrl": "https://storage.googleapis.com/rfdetr/small_coco/checkpoint_best_regular.pth",
+      "checkpointSha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+      "onnxSha256": "fff3ff4ec1a3dbf32b588cfc939a1a4b2c6b0b33755fdd6a7192f85892a3944f",
+      "resolution": 512,
+      "opset": 17,
+      "inputName": "input",
+      "inputDtype": "float32",
+      "outputNames": [
+        "dets",
+        "labels"
+      ],
+      "dynamicBatch": [
+        1,
+        2
+      ],
+      "normalization": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      },
+      "outputContract": {
+        "dets": "normalized-cxcywh",
+        "labels": "raw-sigmoid-logits-sparse-coco"
+      },
+      "sparkObservedEngineSha256": "e3f1143477f5320b45e1dfdb840ed39c1655179ef6444c77581aeaa73b07dc0c",
+      "engineTransferPolicy": "Build on target; verify its own build and inference receipt. Never copy Spark engines to Thor."
+    },
+    "medium": {
+      "role": "explicitly selected Spark detector; Thor runtime remains unqualified",
+      "checkpointUrl": "https://storage.googleapis.com/rfdetr/medium_coco/checkpoint_best_regular.pth",
+      "checkpointSha256": "749ff6071828aaffac63e204c4f4135ed3d6cdae4d702e086c360edc3b5768c8",
+      "onnxSha256": "79744e2f198ffde5132bceb3a4f4c63a9647f2699a221e009e03f97b317535b9",
+      "resolution": 576,
+      "opset": 17,
+      "inputName": "input",
+      "inputDtype": "float32",
+      "outputNames": [
+        "dets",
+        "labels"
+      ],
+      "dynamicBatch": [
+        1,
+        2
+      ],
+      "normalization": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      },
+      "outputContract": {
+        "dets": "normalized-cxcywh",
+        "labels": "raw-sigmoid-logits-sparse-coco"
+      },
+      "sparkObservedEngineSha256": "9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+      "engineTransferPolicy": "Build on target; verify its own build and inference receipt. Never copy Spark engines to Thor."
+    },
+    "large": {
+      "role": "Explicit Spark RF-DETR Large 2026 comparison candidate; native performance trial, not final-scene accuracy qualification",
+      "checkpointUrl": "https://storage.googleapis.com/rfdetr/rf-detr-large-2026.pth",
+      "checkpointSha256": "0f4e20e19a99c0f8a62b5685f57f6c8b5c371c59081feda6752a0561a79ccf38",
+      "onnxSha256": "158503ef9885c77084b796296da2aeefb5e24f6a61a025e67e9afdb1b4b94030",
+      "resolution": 704,
+      "opset": 17,
+      "inputName": "input",
+      "inputDtype": "float32",
+      "outputNames": [
+        "dets",
+        "labels"
+      ],
+      "dynamicBatch": [
+        1,
+        2
+      ],
+      "normalization": {
+        "mean": [
+          0.485,
+          0.456,
+          0.406
+        ],
+        "std": [
+          0.229,
+          0.224,
+          0.225
+        ]
+      },
+      "outputContract": {
+        "dets": "normalized-cxcywh",
+        "labels": "raw-sigmoid-logits-sparse-coco"
+      },
+      "sparkObservedEngineSha256": "4434b077b3602ae2c3d9e950e5c36fc718de07b7c8444a9a4fbc7e4451b90ff6",
+      "engineTransferPolicy": "Build on target; verify its own build and inference receipt. Never copy Spark engines to Thor."
+    }
+  },
+  "qualification": "Spark Small/Medium artifacts passed the paired 100-image road-user FP16 quality comparison and serial engine timing; selected Medium also passed two-hour two-source RTSP replay with exact previews and seven sparse sequential questions. Not full COCO, final-city, sustained visitor-rate Ask, MV3DT or Thor runtime qualification.",
+  "trafficCamNetTransformer": {
+    "model": "nvidia/tao/trafficcamnet_transformer_lite:deployable_resnet18_v2.0",
+    "onnxSha256": "869a317494552773e424ae2228135b3c111052804e22100cb43c0cb2639293c4",
+    "sparkObservedEngineSha256": "da6600934e5b06f94ba6e7d67e8e6d72e24aec4d346f1eb510f6eb580112fd7b",
+    "role": "Explicit experimental Spark simulation detector; person, car and coarse two-wheeler, not six-class qualified.",
+    "modelCardUrl": "https://catalog.ngc.nvidia.com/orgs/nvidia/tao/models/trafficcamnet_transformer_lite/-"
+  }
+}

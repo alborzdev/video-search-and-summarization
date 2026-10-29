@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "city.native-sei-current-map-pairs.v1",
+  "sources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "sourceSessionId": "6e116200-8ef5-4bba-81d5-e9d7fa69a344",
+      "timestampBasis": "source-native-sei",
+      "lastSourceTimeNs": "1793010832720644277",
+      "sourceClockEvidence": {
+        "schemaVersion": "city.source-native-sei.v1",
+        "method": "isaac-native-sei-wall-capture",
+        "correlation": "exact-au-pts",
+        "captureTimeNs": "1793010832720644277",
+        "auPtsNs": "103456804746",
+        "frameCounter": "84117"
+      }
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sourceSessionId": "b446ec1c-b2f8-4660-a675-609c40bd48ef",
+      "timestampBasis": "source-native-sei",
+      "lastSourceTimeNs": "1793010832720968821",
+      "sourceClockEvidence": {
+        "schemaVersion": "city.source-native-sei.v1",
+        "method": "isaac-native-sei-wall-capture",
+        "correlation": "exact-au-pts",
+        "captureTimeNs": "1793010832720968821",
+        "auPtsNs": "103456871365",
+        "frameCounter": "84117"
+      }
+    }
+  ],
+  "pairedTargets": [],
+  "scope": "Actual current-frame hints, separate from actual rendered shared-marker screenshot; no actor IDs or global counts."
+}

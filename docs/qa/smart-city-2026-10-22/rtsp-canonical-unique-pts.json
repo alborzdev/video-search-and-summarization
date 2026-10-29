@@ -1,0 +1,27 @@
+{
+  "capturedAt": "2026-10-22T05:07:47.518911+00:00",
+  "mediaQualification": "CPU-derived canonical single-slice recorded-video RTSP replay",
+  "method": "CPUdecode both streams, discard first2s, collect through8s; no GPU",
+  "sources": [
+    {
+      "source": "canonical-original-pedestrian",
+      "frames": 61,
+      "wallSeconds": 5.959376161918044,
+      "uniquePts": 61,
+      "ptsSeconds": 6.000000000000001,
+      "ptsStepCounts": {
+        "0.1": 60
+      }
+    },
+    {
+      "source": "canonical-VIOS-pedestrian",
+      "frames": 61,
+      "wallSeconds": 5.959765617270023,
+      "uniquePts": 61,
+      "ptsSeconds": 5.999999999999999,
+      "ptsStepCounts": {
+        "0.1": 60
+      }
+    }
+  ]
+}

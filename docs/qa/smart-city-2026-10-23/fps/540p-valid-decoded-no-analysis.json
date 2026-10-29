@@ -1,0 +1,38 @@
+{
+  "kind": "actual-native-H264-decode",
+  "configuration": "540p-valid-decoded-no-analysis",
+  "sources": [
+    {
+      "camera": "cam_SW",
+      "width": 960,
+      "height": 540,
+      "receivedFrames": 48,
+      "intervalSeconds": 2.9699852792546153,
+      "receivedFps": 15.824994261182233,
+      "mediaSeconds": 3.0002333333333335,
+      "mediaFps": 15.665448242914438,
+      "uniqueDecodedImages": 48,
+      "minimumMeanLuma": 142.94862461419754,
+      "minimumLumaStandardDeviation": 46.485662518152814,
+      "image": "540p-valid-decoded-no-analysis-cam_SW.jpg",
+      "nonblankImages": true
+    },
+    {
+      "camera": "cam_NE",
+      "width": 960,
+      "height": 540,
+      "receivedFrames": 48,
+      "intervalSeconds": 2.9736871193163097,
+      "receivedFps": 15.805294274135312,
+      "mediaSeconds": 3.000122222222222,
+      "mediaFps": 15.666028421064327,
+      "uniqueDecodedImages": 48,
+      "minimumMeanLuma": 142.41174575617285,
+      "minimumLumaStandardDeviation": 44.97599180270759,
+      "image": "540p-valid-decoded-no-analysis-cam_NE.jpg",
+      "nonblankImages": true
+    }
+  ],
+  "passed": true,
+  "scope": "Two extra readers during this short decoded-image probe; use separate native/observation measurements for representative combined rates."
+}

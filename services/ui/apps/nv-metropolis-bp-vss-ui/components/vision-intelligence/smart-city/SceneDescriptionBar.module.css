@@ -1,0 +1,9 @@
+.bar { display:flex; align-items:center; gap:16px; min-width:0; padding:15px 18px; min-height:96px; }
+.bar .button { flex:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid #45655e; border-radius:7px; background:#243b35; color:#b9efdf; padding:10px 13px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.bar .button:hover:not(:disabled) { background:#2e4a41; border-color:#71bda6; }
+.bar .button:focus-visible { outline:2px solid #80e3c3; outline-offset:3px; }
+.bar .button:disabled { cursor:default; opacity:.6; }
+.copy { flex:1; min-width:0; }
+.copy p { margin:0; color:#e4ecef; font-size:13px; line-height:1.55; overflow-wrap:anywhere; }
+.copy small { display:block; margin-top:5px; color:#96a9ad; font-size:10px; line-height:1.4; }
+@media(max-width:1150px) { .bar { align-items:flex-start; flex-direction:column; gap:10px; padding:13px 15px; } }

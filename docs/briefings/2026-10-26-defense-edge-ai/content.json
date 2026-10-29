@@ -1,0 +1,67 @@
+{
+  "title": "Vision AI for Defense",
+  "subtitle": "From camera views to useful insights",
+  "intro": "Use Isaac Sim to create realistic environments with drone, fixed and vehicle-mounted cameras. Bring the camera views into VSS to show what edge AI can help an operator see, understand and review.",
+  "scenarios": [
+    {
+      "title": "Drone inspection and search",
+      "subtitle": "Find something. Take a closer look. Record the finding.",
+      "bullets": [
+        "Use Pegasus in Isaac Sim to create camera-equipped drones that fly through an airfield or facility.",
+        "Find people, loose objects or surface issues. Select an object for the AI to describe or outline with segmentation.",
+        "In VSS, move from a survey view to a closer image, then collect the findings in an inspection report."
+      ],
+      "image": "vss-drone-inspection.png",
+      "caption": "Actual VSS Defense screen, in Design preview: a first-pass observation beside a closer inspection image.",
+      "example": "Example: a drone spots a loose object on the apron. The operator opens a closer view and adds the finding to a report."
+    },
+    {
+      "title": "Site security",
+      "subtitle": "See activity across cameras. Bring the relevant event forward.",
+      "bullets": [
+        "Place cameras around an air base, including hangars, gates and storage areas.",
+        "Detect and track people across camera views. Define areas that trigger an alert when someone enters, crosses a boundary or stays too long.",
+        "In VSS, open the alert, follow the event sequence and review the supporting images or video."
+      ],
+      "image": "vss-site-security.png",
+      "caption": "Actual VSS Defense screen, in Design preview: a person crosses a storage-area boundary and the event is ready for review.",
+      "example": "Example: a person enters a defined storage zone. VSS shows the camera, the boundary and the sequence of events."
+    },
+    {
+      "title": "Vehicle awareness",
+      "subtitle": "Bring the views around a vehicle into one clear display.",
+      "bullets": [
+        "Attach front, rear and side cameras to a vehicle in Isaac Sim.",
+        "Detect people, vehicles and obstacles around it. Bring the relevant camera view forward when something needs attention.",
+        "In VSS, show the surrounding camera views together, with visual cues that help the driver understand where to look."
+      ],
+      "image": "vss-vehicle-awareness.png",
+      "caption": "Actual VSS Defense screen, in Design preview: rear and side views beside a camera-position diagram.",
+      "example": "Example: a person walks behind the vehicle. The rear view highlights the person while the side views keep the surroundings visible."
+    },
+    {
+      "title": "Aircraft exterior inspection",
+      "bullets": [
+        "Fly a camera around an aircraft and highlight visible panel, seal or coating issues for closer review.",
+        "In VSS, browse the inspection images and open each highlighted area for the maintenance team."
+      ],
+      "image": "aircraft-inspection.png",
+      "caption": "Scenario illustration: a drone camera inspects the aircraft exterior."
+    },
+    {
+      "title": "Border security",
+      "bullets": [
+        "Use fixed or drone cameras to monitor remote border areas and access roads. Detect people and vehicles, track movement and flag crossings of a defined boundary.",
+        "In VSS, bring the relevant camera view and alert forward, then show the event sequence and supporting images for operator review."
+      ],
+      "image": "border-security.png",
+      "caption": "Scenario illustration: a camera monitors people and vehicle activity along a remote border access road."
+    }
+  ],
+  "vss_intro": "VSS \u2014 Video Search and Summarization \u2014 brings the camera views and AI results into one operator workspace.",
+  "vss_bullets": [
+    "Watch the views and see detections, tracks and area alerts.",
+    "Select a finding to inspect its image, description or segmentation outline.",
+    "Ask about the footage and review an answer or summary with supporting images or clips."
+  ]
+}

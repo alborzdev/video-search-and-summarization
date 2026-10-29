@@ -1,0 +1,54 @@
+{
+  "status": "withdrawn-after-live-trial-and-installed-source-inspection",
+  "supersededBy": "docs/qa/smart-city-2026-10-23/fps/inference-interval-rejected.json",
+  "historicalOnly": "The proposed cadence semantics below were not effective in the active preprocessed-tensor path. The option and overlay helper have been removed. Preserve the earlier CPU-test record as historical evidence only.",
+  "schemaVersion": "city.inference-interval.source-controls.v1",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "tests": {
+    "passed": 79,
+    "seconds": 0.14,
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/test_manage.py tools/smart-city/tests/test_runtime_inference.py"
+  },
+  "setting": {
+    "file": ".spark/city/state/runtime-tuning.json",
+    "key": "inferenceInterval",
+    "default": 0,
+    "allowedIntegers": [
+      0,
+      1,
+      2
+    ],
+    "rejectsBooleans": true,
+    "recordedSessions": "unchanged; ignore live tuning"
+  },
+  "semantics": {
+    "interval0": "Use the baseline generated config; inference on every input batch.",
+    "interval1": "Run inference, then skip one consecutive input batch.",
+    "interval2": "Run inference, then skip two consecutive input batches.",
+    "tracker": "No pipeline stage removal or input-frame dropping; downstream NvDCF/MV3DT remains on the decoded-frame path.",
+    "engine": "Same qualified engine, ONNX paths and model revision; this does not qualify the new scheduling policy.",
+    "overlay": "Hash-checked copies of the five generated config files; infer.ini changes only interval and its local labels path; the baseline remains unchanged.",
+    "identity": "Content-addressed overlay manifest records base file hashes, its own hashes and runtimeInference. The live worker log records runtime settings without source URLs."
+  },
+  "operatorTrial": {
+    "instruction": "Preserve other runtime-tuning keys and explicitly set inferenceInterval to 1 for a controlled live trial. Root owns source-scoped restart and evaluation.",
+    "rollback": "Remove inferenceInterval or set it to 0, then perform the same source-scoped worker restart. Baseline generated files need no repair.",
+    "rebuildRequired": false
+  },
+  "artifactSha256": {
+    "tools/smart-city/manage.py": "2c06a0cd45585c5e15d51a6dee5569e14eabeb2f53dd452495c31e8db9fa3cc5",
+    "tools/smart-city/test_manage.py": "e222c0418d4bc131fc1740a1114c41383b72001fba3de45f5e2b6fc51f97229d",
+    "tools/smart-city/runtime_inference.py": "a267cbd6baa6473159b2e78fbd097858faa74d796a5092687ea9f7390e18860f",
+    "tools/smart-city/tests/test_runtime_inference.py": "064975ac14e4dbdc61b791fecdea1db675e29eca26d856d593c3e0c0a74cfc15"
+  },
+  "limits": [
+    "Only short CPU controls using temporary fixtures and mocked launch were run. No actual live config overlay was generated, model request issued, worker restarted or image built by this agent.",
+    "Intervals are nvinfer batch skips, not a measured per-camera FPS guarantee. Uneven mux batches and upstream source cadence can affect per-camera observation rate.",
+    "The fixed detector tensor/preprocess size and downstream tracker cost remain. No speedup is claimed before useful decoded-image and tracking checks.",
+    "The current native observedThisFrame flag uses detector confidence. A live interval trial must verify skipped batches are marked prediction rather than detector observations; current-event/map freshness must remain honest.",
+    "Earlier asynchronous-rendering 18.18/13.63 FPS counters came from black decoded images and are rejected working-demo benchmarks. They establish no useful rendering ceiling; synchronous 540p requires fresh image and tracking verification.",
+    "Existing 20 GiB VSS reserve and runtime guard are unchanged. The separately disabled Isaac 23 GiB floor is unaffected."
+  ],
+  "reference": "https://docs.nvidia.com/deepstream/text/DS_plugin_gst-nvinfer"
+}

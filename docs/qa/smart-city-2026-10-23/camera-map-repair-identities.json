@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-23T14:17:05.387919+00:00",
+  "sourceSha256": {
+    "services/vios/src/framework/stream_monitor/stream_monitor.cpp": "0795ab80708686d38dabd6ea0fc2be1d806ec6569837ea8ccf4be5dea394f049",
+    "services/vios/src/framework/stream_monitor/stream_errors.h": "6f058af1e027d3bd11e172db7729e4d57831f37269c96099f686819472b533c9",
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "6d07ecfcf52e12e71a7e3d4b1e052d33bc507b2d71827d9319b70957b731ac37",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/SmartCity.module.css": "c0d144ec8127e5dac02499b9ef86d5e7cc1f7220a71a8a7992fe3aee49b8a140",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityLivePreview.tsx": "bf53fcc67d095d119c44b1740ead1e2632656ceecb615af41c29cb5ba4868257",
+    "tools/smart-city/isaac_demo.py": "77e7b6d9bff5ef7a98aec36ed4b9f65a1b01fb040c0672524b156fd4fa7bf664"
+  },
+  "containers": [
+    {
+      "name": "/vss-vios-streamprocessing",
+      "id": "b3719960807367565e37ad00e05c2277e4551738f97953f99103ec1b69a6e051",
+      "image": "sha256:d62ba73ca2cfc26b6dfbd7d76bb35e90f173e9cdfad85a9ca1472cbff46761c2",
+      "startedAt": "2026-10-23T13:59:18.725747908Z",
+      "status": "running",
+      "oomKilled": false,
+      "restartCount": 0
+    },
+    {
+      "name": "/vss-city-detector",
+      "id": "21a5f083069dd8f9aaab890265f9f1b74789f23081a10f96a0940b47537d65e5",
+      "image": "sha256:25f2f400ba19cc4f618d8c82ed2d338b1599baa95d3d289f5436827d0f51fc6c",
+      "startedAt": "2026-10-23T14:07:57.290563355Z",
+      "status": "running",
+      "oomKilled": false,
+      "restartCount": 0
+    },
+    {
+      "name": "/vss-city-polish-ui",
+      "id": "8478d14796a6300ecef42d67be13b05bd22081b3e4ef218c3ae50e80f1909809",
+      "image": "sha256:3134f445308c4ccf95d4b28b01b4b9b8e0a1f120957900c17b6f1f1c27d60f8e",
+      "startedAt": "2026-10-23T14:02:54.666159401Z",
+      "status": "running",
+      "oomKilled": false,
+      "restartCount": 0
+    },
+    {
+      "name": "/vss-city-polish-ingress",
+      "id": "e4a1c2bb9b468b1734506f09c92cc3ad3511974033714009e849393b3d1cdaed",
+      "image": "sha256:d84eb36e91830bcaa67b23cfde1909850b99f11eb60da3abd185bd0daf3f75bb",
+      "startedAt": "2026-10-22T14:30:57.879750392Z",
+      "status": "running",
+      "oomKilled": false,
+      "restartCount": 0
+    },
+    {
+      "name": "/vss-agent-ui",
+      "id": "398fe2e495134fb4d805db92942da148658aaf7994f68a5e4ee1e39f29c94809",
+      "image": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+      "startedAt": "2026-10-22T19:56:31.606041615Z",
+      "status": "running",
+      "oomKilled": false,
+      "restartCount": 0
+    }
+  ],
+  "nativeFiles": {
+    "vss-vios-streamprocessing": "7c18860aaea726e5f1c637e8ca65f109ef5f53cd3f331355b55316e14ad2ccf9  /home/vst/vst_release/prebuilts/aarch64/libstream_monitor.so",
+    "vss-city-detector": "3700527022f64a877008768bea44f43612660ec2b8b88a9b6922c7029de53041  /opt/city/city-worker"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "city.live-ask-browser.v1",
+  "reviewedAt": "2026-10-26T05:58:11.818228+00:00",
+  "origin": "http://127.0.0.1:7782/?workspace=smart-city",
+  "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+  "question": "Describe the traffic movement and any person crossing in this short clip. Do not guess exact totals.",
+  "answerReturned": true,
+  "observedInterval": {
+    "start": "2026-10-26T05:54:56Z",
+    "end": "2026-10-26T05:55:01Z"
+  },
+  "evidencePlayback": {
+    "durationSeconds": 5.0624,
+    "readyState": 4,
+    "initialPaused": true,
+    "playedToEnd": true,
+    "finalCurrentTimeSeconds": 5.0624,
+    "mediaError": null
+  },
+  "uiImageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+  "screenshot": "production-ask-evidence.jpg",
+  "routingReceipt": "ask-media-routing.json",
+  "limits": [
+    "Operational answer/evidence playback check, not a semantic accuracy benchmark.",
+    "Generated prose remains separate from structured counts and alerts.",
+    "No request latency was measured in this browser walkthrough.",
+    "This request followed the bounded normal tracking cohort; it was not part of the no-question cohort."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "captured_files": {
+    "tools/moondream/check_gpu.py": "d9cb6f5ff9e76137857364fcfc6700b98be8e0302cb0e6845092697934a1e60c",
+    "tools/moondream/compare_checkpoint_samples.py": "cb00c74e7c46b5b71fb83b87b12f533b27763bffc4378f57c4ce1aea5a63b77f",
+    "tools/moondream/decode_diagnostics.py": "a764d99cf760e8f21c1c1a74489c3aa7311e6c9929cd54f2d5004dbc80d292d3",
+    "tools/moondream/gb10_compat.py": "bf4e934ad13a1d0f014597928ff320d0e60e8880f24e548101bdd471a535925b",
+    "tools/moondream/mask_artifacts.py": "8e5f66090cb20d1963fae1e8964e42a87937f2ccdc3c05498eac6c08a27df109",
+    "tools/moondream/measure.py": "d0586508efdf8ef1fb59967d135c7c54b0f8a9ee57a081fa86c0e958e1c26a3e",
+    "tools/moondream/probe.py": "0d325a257ce2c88461f95d91b60b86fe7c525591f8f0a22e0157f2b2bf5f578f",
+    "tools/moondream/test_decode_diagnostics.py": "dfb2fdf713f4d1847d665e3fc835418a69c649ee2e2511973d7da8e4ddb325c0",
+    "tools/moondream/test_gb10_compat.py": "bb1228ef3cf18b79e01252576e5d3953f86198cd19978fddd11a912bc75561fc",
+    "tools/moondream/test_mask_artifacts.py": "ab3b1d65d3f6ba0409a1a7ea15147820450a49526a75cfc3c9375372ee430062",
+    "tools/moondream/test_trace_segment.py": "f902b7d67c039353f56ee4fb9788c20055a1341a7f80294ed1ec3c6ef75cd20d",
+    "tools/moondream/trace_segment.py": "daef5fed2f3d18f1a1b7a9f4d96cbf11ca3f57ea2dd9fa1f2a36a57ad82d3b54"
+  },
+  "test_command": "CUDA_VISIBLE_DEVICES='' .spark/moondream-photon/venv/bin/python -m unittest discover -s tools/moondream -p 'test_*.py' -v",
+  "test_count": 20,
+  "tests_passed": true,
+  "test_log": "cpu-tests.txt",
+  "note": "GPU model results are separate; these tests cover compatibility math, mask rendering, tracing and diagnostic hooks."
+}

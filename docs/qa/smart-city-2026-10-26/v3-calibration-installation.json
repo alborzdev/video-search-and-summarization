@@ -1,0 +1,18 @@
+{
+  "profileSha256": "55a3297a5c9fc5d2cdf158f71cba18adfb1669b1e7bc6c90676132bef91b2ba2",
+  "imageId": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+  "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+  "siteRevision": 149,
+  "rulesRevision": 421,
+  "ruleCount": 19,
+  "mobilityRevision": 6,
+  "pins": 8,
+  "sourcesRemainPaused": true,
+  "installerReceiptCorrection": "Temporary installer expected mobility revision at response root; actual authoritative field is config.revision. API/config writes completed before receipt error and were reverified, not repeated.",
+  "scope": "Actual v3 native scene opened and identical camera-geometry calibration installed. Final scenario/performance acceptance is separate.",
+  "actorFreeMapSha256": "c4d14670c7be4dea04b4d29f9bd3e252681c11ff00da92568456781c261e1a70",
+  "uiMapPublicationVerified": false,
+  "sourceClockDiagnostics": false,
+  "muxSyncInputs": false,
+  "mv3dtAuthority": "Experimental guarded shared person display; local camera rules/counts remain authoritative."
+}

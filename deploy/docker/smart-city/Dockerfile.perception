@@ -1,0 +1,16 @@
+# Spark image is pinned to the image actually used for the initial native tests.
+# Override CITY_DS_IMAGE for a separately qualified Thor build on that device.
+ARG CITY_DS_IMAGE=ghcr.io/nvidia/deepstream:9.2-triton-sbsa-dgx-spark@sha256:87014f626496737dc888eb80d5de9baf5a37c834033cabfbbcc50139c7183251
+FROM ${CITY_DS_IMAGE}
+USER root
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends gstreamer1.0-libav \
+ && apt-get install -y --reinstall --no-install-recommends libvpx9 libmp3lame0 libx264-164 libx265-199 libmpg123-0t64 \
+ && rm -rf /var/lib/apt/lists/*
+COPY services/rtvi/rt-cv/smart-city /opt/city
+COPY deploy/docker/smart-city/perception-entrypoint.sh /opt/city/entrypoint.sh
+WORKDIR /opt/city
+RUN make clean && make -j2 && make test
+ENV GST_REGISTRY=/tmp/vss-city-gstreamer-registry.bin CUDA_CACHE_PATH=/tmp/vss-city-cuda-cache
+USER 1000:1000
+ENTRYPOINT ["/bin/sh", "/opt/city/entrypoint.sh"]

@@ -1,0 +1,36 @@
+{
+  "test": "native-GStreamer-segment-media-timeline",
+  "exitCode": 0,
+  "frames": 30,
+  "wallSeconds": 5.516260115429759,
+  "sources": {
+    "traffic-cam-1": {
+      "firstMediaTimeSeconds": 0,
+      "firstRawSourcePtsNs": "66666666",
+      "image": {
+        "width": 1920,
+        "height": 1080
+      },
+      "frames": 15,
+      "basis": "gstreamer-segment-stream-time"
+    },
+    "pedestrian-cam-2": {
+      "firstMediaTimeSeconds": 0,
+      "firstRawSourcePtsNs": "200000000",
+      "image": {
+        "width": 768,
+        "height": 576
+      },
+      "frames": 15,
+      "basis": "gstreamer-segment-stream-time"
+    }
+  },
+  "publisher": {
+    "enqueued": 30,
+    "published": 30,
+    "peakQueue": 2,
+    "backpressureWaits": 0,
+    "failed": false
+  },
+  "scope": "Actual MP4 edit-list mapping against decoded source segments; browser-frame overlay check remains integrated follow-up"
+}

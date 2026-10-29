@@ -1,0 +1,13 @@
+{
+  "checked_at_utc": "2026-10-22T17:15:12.818971+00:00",
+  "cosmos_state": "running",
+  "cosmos_health": "healthy",
+  "cosmos_started_at": "2026-10-22T17:12:34.294919651Z",
+  "readiness": {
+    "status": 200,
+    "body": "{\"object\":\"health.response\",\"message\":\"Service is ready.\"}"
+  },
+  "guard_active": true,
+  "reserve_gib": 20.0,
+  "available_gib": 39.4255256652832
+}

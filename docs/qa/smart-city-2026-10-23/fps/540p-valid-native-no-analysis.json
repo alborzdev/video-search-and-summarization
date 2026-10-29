@@ -1,0 +1,95 @@
+{
+  "kind": "native-server-handoffs",
+  "configuration": "960x540-sync-normal-bounces-half-GUI-gantry-not-yet-disabled-analysis-paused",
+  "seconds": 15.019515004940331,
+  "nativeFps": {
+    "cam_SW": 16.778171593231225,
+    "cam_NE": 16.778171593231225
+  },
+  "simSecondsPerWallSecond": 0.5592723864410091,
+  "validImageEvidence": "540p-bounce3-sw.jpg",
+  "settings": {
+    "settings": {
+      "/app/runLoops/main/rateLimitEnabled": true,
+      "/app/runLoops/main/rateLimitFrequency": 60.0,
+      "/rtx/rendermode": "RealTimePathTracing",
+      "/rtx/post/dlss/execMode": 0,
+      "/rtx/pathtracing/cached/enabled": true,
+      "/rtx/reflections/enabled": true,
+      "/rtx/translucency/enabled": true,
+      "/rtx/indirectDiffuse/enabled": true,
+      "/rtx/directLighting/sampledLighting/enabled": true,
+      "/rtx/shadows/enabled": true,
+      "/plugins/carb.tasking.plugin/threadCount": 16,
+      "/persistent/physics/numThreads": 8,
+      "/app/asyncRendering": false,
+      "/physics/fabricUpdateTransformations": null,
+      "/rtx/rtpt/cached/enabled": true,
+      "/rtx/rtpt/lightcache/cached/enabled": true,
+      "/rtx/rtpt/maxBounces": 3,
+      "/rtx/rtpt/maxSpecularAndTransmissionBounces": 3,
+      "/rtx/rtpt/rtCompatibility": false
+    },
+    "viewport": {
+      "renderProduct": "/Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0",
+      "resolution": [
+        640,
+        360
+      ],
+      "resolutionScale": 0.5,
+      "updatesEnabled": true,
+      "frameInfo": {
+        "view": [
+          -0.7071067811865476,
+          -0.40824828396775364,
+          0.577350273783069,
+          -0.0,
+          0.7071067811865477,
+          -0.4082482839677537,
+          0.5773502737830688,
+          0.0,
+          3.220567470717909e-17,
+          0.8164965874238355,
+          0.5773502600027395,
+          -0.0,
+          -5.556750754866373e-16,
+          -9.744164031211255e-08,
+          -8.660254037844386,
+          1.0
+        ],
+        "projection": [
+          1.732050852618065,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          3.0792015157654484,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          9.999999786482582e-10,
+          -1.0,
+          0.0,
+          0.0,
+          0.009999999786482581,
+          0.0
+        ],
+        "fps": 15.111567497253418,
+        "resolution": [
+          640,
+          360
+        ],
+        "progression": 1,
+        "frame_number": 7600,
+        "subframe_count": 1,
+        "status": 0,
+        "device_mask": 1,
+        "metadata": "<omni.kit.renderer_capture._renderer_capture.Metadata object at 0xfc9b210677b0>",
+        "viewport_handle": 0
+      }
+    },
+    "updateNumber": 3833
+  },
+  "diagnosisCorrection": "The full experience re-enabled gantry despite CLI disable requests. Actual runtime disable occurred only at21:12UTC; this sample precedes it."
+}

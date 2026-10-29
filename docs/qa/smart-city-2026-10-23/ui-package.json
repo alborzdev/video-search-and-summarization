@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "20261023T045540479675Z",
+  "sourceSha256": "de77293e2ae5ee380115b68f66d13e7142e943a13d0f16ce59a85674328da65f",
+  "lockSha256": "b937110179a40d8e7cb22ba570481ae759759ac2f746b450e925dcd652e40daa",
+  "dockerfileSha256": "be7b24d67daa4585a51b138f6272bc859ad170126b8096201b4c5322a7dd50bf",
+  "baseImageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+  "baseReference": "vss-spark-vss-ui:source",
+  "fallbackReference": "vss-spark-vss-ui:pre-city-0510e98cab54",
+  "builderImageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+  "nodeVersion": "22.22.3",
+  "memoryGiB": 4,
+  "cpus": 2,
+  "maximumSeconds": 1200,
+  "status": "built",
+  "dependencyMode": "reuse-installed",
+  "reusedDependencies": {
+    "installedLockSha256": "55b0cbb7ff371ba3b10787e2fa8ab58633a244c4560393341f83d3972c84b8aa",
+    "installedManifestsSha256": "e735f5987f50d7ba60a09d96357930c6681f782d87f2f42a48c5216bf089c602",
+    "installedPackageCount": 2108,
+    "absentOptionalPackageCount": 79,
+    "dependencyRoots": [
+      "apps/nemo-agent-toolkit-ui/node_modules",
+      "apps/nv-metropolis-bp-vss-ui/node_modules",
+      "node_modules",
+      "packages/common/node_modules",
+      "packages/nemo-agent-toolkit-ui/node_modules",
+      "packages/nv-metropolis-bp-vss-ui/alerts/node_modules",
+      "packages/nv-metropolis-bp-vss-ui/all/node_modules",
+      "packages/nv-metropolis-bp-vss-ui/dashboard/node_modules",
+      "packages/nv-metropolis-bp-vss-ui/map/node_modules",
+      "packages/nv-metropolis-bp-vss-ui/search/node_modules",
+      "packages/nv-metropolis-bp-vss-ui/video-management/node_modules"
+    ],
+    "dependencyTreeSha256": "55eabe10c588c158c43cdd577805b881ee171a356c2768d8be125a4686c55567",
+    "provenance": "existing-tested-unpacked-installation; tarball integrity metadata compared, not recomputed"
+  },
+  "imageId": "sha256:3134f445308c4ccf95d4b28b01b4b9b8e0a1f120957900c17b6f1f1c27d60f8e",
+  "imageReference": "vss-spark-vss-ui:smart-city-de77293e2ae5-20261023t045540479675z",
+  "artifactSha256": "9026f85ff97ccce6b60d47f62865e0f219317d2824177ec7229e5945eb75d7c4"
+}

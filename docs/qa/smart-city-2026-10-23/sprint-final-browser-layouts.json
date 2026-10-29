@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "city.browser-layout-check.v1",
+  "checkedAt": "2026-10-23T16:21:00Z",
+  "url": "http://127.0.0.1:7782/?workspace=smart-city",
+  "imageId": "sha256:9650f8d01d2ade21157bc5e1559c17aafa80007580759c8ae784ead60e55531a",
+  "checks": {
+    "twoFreshExactFramePreviews": true,
+    "matchingModelRevisionSuffix": "postprocess=one-city-class-per-query-v1",
+    "sourceLocalIdsDeclared": true,
+    "consoleWarningsOrErrorsObserved": 0,
+    "desktopHorizontalOverflow": false,
+    "laptopHorizontalOverflow": false,
+    "mobileHorizontalOverflow": false,
+    "mobileButtonsOverflow": false,
+    "liveQuestionRenderedAnswer": "pending until scheduled qualification questions finish"
+  },
+  "viewports": [
+    {
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "width": 1366,
+      "height": 768
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "clientWidth": 375
+    }
+  ],
+  "limitations": [
+    "DOM attributes and visual snapshots confirm tested frames; not measured browser end-to-end latency.",
+    "Map legend contrast is lower over pale map imagery on laptop/mobile; booth desktop legend is below the image."
+  ],
+  "files": {
+    "final-desktop.png": {
+      "path": "/home/sparkdev/.codex/visualizations/2026/10/23/city-sprint/final-desktop.png",
+      "sha256": "e628e984875b3c2612e115ac0139715bbe2960b6668006dcbc16e44cf1fab069"
+    },
+    "final-laptop.png": {
+      "path": "/home/sparkdev/.codex/visualizations/2026/10/23/city-sprint/final-laptop.png",
+      "sha256": "0a491f98d65e425e49408f9908c5236bcc7176f01b8f0bc38950a55fdb0e19f8"
+    },
+    "final-mobile.png": {
+      "path": "/home/sparkdev/.codex/visualizations/2026/10/23/city-sprint/final-mobile.png",
+      "sha256": "96e5d395d0ff16446935a80dd3ad13fdc5d79147bc97469f31959d9bad0c8013"
+    },
+    "final-live-frame-telemetry.json": {
+      "path": "/home/sparkdev/.codex/visualizations/2026/10/23/city-sprint/final-live-frame-telemetry.json",
+      "sha256": "df776c04b69641dfde11314c905e79b282a6a46e1c59c4d82e5c897021b467af"
+    }
+  }
+}

@@ -1,0 +1,1934 @@
+.scroll {
+  --mint: #a8e4ce;
+  --amber: #e5b976;
+  --muted: #9daea8;
+  --nav-height: 56px;
+  background: #08100f;
+  color: #eef4f0;
+  font-family: var(--ctai-font-sans);
+  height: calc(100dvh - var(--vi-header-height, 78px));
+  overflow: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #345043 #08100f;
+  overflow-anchor: none;
+}
+.scroll * {
+  box-sizing: border-box;
+}
+.scroll button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+.scroll button:focus-visible,
+.scroll:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+.scroll button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.scroll img {
+  max-width: 100%;
+}
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 4%;
+  background: #08100ffa;
+  border-bottom: 1px solid #2b3c36;
+}
+.nav:after {
+  content: "";
+  height: 2px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--mint);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+  transition: transform 0.5s ease;
+}
+.nav button {
+  font-size: 11px;
+  white-space: nowrap;
+  padding: 18px 0;
+  color: var(--muted);
+}
+.nav .play {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #466555;
+  border-radius: 5px;
+  padding: 8px 12px;
+  color: #d3e9df;
+}
+.nav .play[aria-pressed="true"] {
+  background: var(--mint);
+  color: #08100f;
+}
+.chapters {
+  display: flex;
+  justify-content: center;
+  gap: 27px;
+  flex: 1;
+}
+.chapters button[aria-current] {
+  color: var(--mint);
+}
+.nav .exit {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--mint);
+}
+.rail {
+  position: relative;
+  overflow-anchor: none;
+}
+.stage {
+  position: sticky;
+  top: var(--nav-height);
+  height: var(--step-height);
+  padding: 26px 4% 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  overflow-anchor: none;
+}
+.controls {
+  border-top: 1px solid #2c4134;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 45px;
+  flex-shrink: 0;
+}
+.controls > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  padding: 10px 0;
+  color: #bdd9c6;
+}
+.controls > button:last-child {
+  margin-left: auto;
+}
+.controls > span {
+  font-size: 10px;
+  color: #9bb09f;
+  font-variant-numeric: tabular-nums;
+}
+.dots {
+  display: flex;
+  gap: 9px;
+  margin-left: auto;
+}
+.dots button {
+  width: 14px;
+  height: 28px;
+  position: relative;
+  padding: 0;
+}
+.dots button:before {
+  position: absolute;
+  content: "";
+  width: 5px;
+  height: 5px;
+  background: #3c5a46;
+  top: 12px;
+  left: 5px;
+  border-radius: 50%;
+}
+.dots button[aria-current]:before {
+  background: var(--mint);
+  box-shadow: 0 0 0 4px #a8e4ce0f;
+}
+.disclosure {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 21px;
+  font-size: 9px;
+  color: #7f9988;
+  flex-shrink: 0;
+}
+.disclosure button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  color: #9ab9a5;
+  padding: 4px 0;
+}
+/* Mission briefing: camera evidence is the main surface; the compute path stays visible. */
+.scroll {
+  --mint: #b7d9c7;
+  --amber: #ecc58d;
+  background: #101715;
+  color: #f1f2e9;
+}
+.nav {
+  background: #101715f5;
+  padding: 0 3%;
+}
+.stage {
+  padding: 20px 3% 8px;
+  gap: 0;
+}
+.sceneMain {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+.eyebrow {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a9b9ad;
+}
+.hero {
+  position: relative;
+  height: 100%;
+  min-height: 330px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #202b25;
+}
+.heroImage,
+.heroShade {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  object-fit: cover;
+}
+.heroShade {
+  background: linear-gradient(
+      90deg,
+      rgba(6, 17, 15, 0.87),
+      rgba(6, 17, 15, 0.28) 65%,
+      rgba(6, 17, 15, 0.02)
+    ),
+    linear-gradient(0deg, rgba(6, 17, 15, 0.92), transparent 48%);
+}
+.heroCopy {
+  position: relative;
+  padding: 5% 5.5% 0;
+  z-index: 1;
+}
+.heroCopy h1 {
+  white-space: pre-line;
+  font-size: clamp(36px, 4.2vw, 75px);
+  font-weight: 450;
+  line-height: 1.06;
+  letter-spacing: -0.048em;
+  margin: 24px 0 18px;
+  max-width: 900px;
+}
+.heroCopy p {
+  font-size: clamp(13px, 1.15vw, 20px);
+  color: #d0d8ce;
+  margin: 0 0 24px;
+}
+.scroll .primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #d6e8d8;
+  color: #18281d;
+  padding: 13px 19px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 550;
+}
+.heroMissions {
+  position: absolute;
+  bottom: 32px;
+  left: 5.5%;
+  right: 5.5%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+.heroMissions button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  border-top: 1px solid #9db39b66;
+  padding: 18px 0 0;
+}
+.heroMissions button > svg:last-child {
+  margin-left: auto;
+}
+.heroMissions small {
+  display: block;
+  font-size: 10px;
+  color: #b4c3b4;
+  margin-bottom: 7px;
+}
+.heroMissions strong {
+  font-size: 17px;
+  font-weight: 450;
+}
+.imageCredit {
+  position: absolute;
+  right: 16px;
+  bottom: 8px;
+  font-size: 8px;
+  color: #b2bbab;
+}
+.missionScene,
+.edgeScene {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.headline {
+  position: relative;
+  padding: 1px 0 20px;
+  flex-shrink: 0;
+  animation: appear 0.55s ease both;
+}
+.headline h1 {
+  font-weight: 450;
+  letter-spacing: -0.045em;
+  font-size: clamp(29px, 2.8vw, 50px);
+  line-height: 1.07;
+  white-space: pre-line;
+  margin: 12px 0 10px;
+}
+.headline p {
+  margin: 0;
+  color: #b8c3b9;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.missionLayout,
+.edgeLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 2.65fr) minmax(240px, 1fr);
+  gap: 26px;
+  flex: 1;
+  min-height: 0;
+}
+.cameraArea {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  background: #0b110f;
+  border: 1px solid #354139;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.cameraToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 35px;
+  gap: 8px;
+  padding: 0 13px;
+  background: #17201b;
+  flex-shrink: 0;
+}
+.cameraToolbar > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #b9c9bd;
+}
+.cameraToolbar button {
+  padding: 8px 10px;
+  font-size: 10px;
+  color: #a1b0a4;
+  border-bottom: 2px solid transparent;
+}
+.cameraToolbar button[aria-pressed="true"] {
+  color: #e7f3e8;
+  border-bottom-color: #c1dec6;
+}
+.cameraImage {
+  position: relative;
+  aspect-ratio: 16/9;
+  min-height: 0;
+  flex: 1;
+  width: 100%;
+  align-self: center;
+  overflow: hidden;
+}
+.cameraImage > img:first-child {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+/* Keep overlays registered to the uncropped camera image at every stage size. */
+.cameraImage {
+  flex: none;
+  max-height: calc(100% - 70px);
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+}
+.overlay,
+.mask {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  animation: appear 0.45s ease;
+}
+.overlay rect {
+  fill: #ecc58d0d;
+  stroke: var(--amber);
+  stroke-width: 3;
+}
+.overlay text {
+  fill: #ffe2b5;
+  font-size: 19px;
+  letter-spacing: 1.5px;
+  paint-order: stroke;
+  stroke: #162017;
+  stroke-width: 4px;
+}
+.overlay .zone {
+  fill: #c3dfb719;
+  stroke: #c3dfb7;
+  stroke-width: 3;
+  stroke-dasharray: 14 8;
+}
+.imageBadge {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  padding: 6px 8px;
+  font-size: 8px;
+  letter-spacing: 0.07em;
+  color: #d2e0d1;
+  background: #12241cd6;
+  border-radius: 2px;
+}
+.sceneBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  color: #8c9a8f;
+  font-size: 10px;
+  flex: 1;
+  min-height: 34px;
+  max-height: 44px;
+}
+.sceneBottom i {
+  height: 1px;
+  background: #465447;
+  flex: 1;
+}
+.sceneBottom .current {
+  color: #e2e9d9;
+}
+.sceneBottom .done {
+  color: #b8d4bc;
+}
+.sceneBottom button {
+  color: var(--amber);
+  font-size: 10px;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.resultRail {
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 0 0;
+  animation: appear 0.55s ease both;
+}
+.statusPill {
+  align-self: flex-start;
+  border: 1px solid #79684a;
+  background: #e3ba6f0b;
+  color: #e6c894;
+  border-radius: 3px;
+  font-size: 10px;
+  padding: 6px 9px;
+  margin-top: 20px;
+}
+.resultRail h2 {
+  font-weight: 450;
+  font-size: clamp(24px, 2.1vw, 37px);
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  margin: 15px 0 12px;
+}
+.resultRail > p {
+  font-size: 12px;
+  line-height: 1.7;
+  margin: 0 0 20px;
+  color: #b4c0b5;
+}
+.resultFacts {
+  margin: 0;
+}
+.resultFacts > div {
+  padding: 13px 0;
+  border-top: 1px solid #344136;
+}
+.resultFacts dt {
+  font-size: 8px;
+  color: #8d9f91;
+  letter-spacing: 0.12em;
+  margin-bottom: 7px;
+}
+.resultFacts dd {
+  margin: 0;
+  font-size: 11px;
+  color: #d5dfd2;
+  line-height: 1.5;
+}
+.resultStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #c3dbc5;
+  font-size: 10px;
+  line-height: 1.5;
+  padding: 14px 0;
+  border-top: 1px solid #344136;
+}
+.sourceNote {
+  margin-top: auto;
+  border-top: 1px solid #344136;
+  color: #a5b8a8;
+  font-size: 10px;
+  padding-top: 12px;
+}
+.sourceNote summary {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+}
+.sourceNote summary:before {
+  content: "+";
+  font-size: 15px;
+}
+.sourceNote[open] summary:before {
+  content: "−";
+}
+.sourceNote > div {
+  padding: 10px 12px;
+  background: #202b22;
+  border: 1px solid #3c4e3e;
+  border-radius: 3px;
+}
+.sourceNote small {
+  font-size: 9px;
+  color: #c5ceb8;
+}
+.sourceNote strong {
+  display: block;
+  font-size: 12px;
+  line-height: 1.5;
+  margin: 10px 0;
+  font-weight: 500;
+  color: #eef0df;
+}
+.sourceNote p {
+  line-height: 1.7;
+  font-size: 11px;
+}
+.sourceNote a {
+  color: #cee5cb;
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+  padding: 5px 0;
+}
+.tryModel {
+  padding: 12px 0;
+  border-top: 1px solid #344136;
+}
+.tryModel button {
+  color: #d3e8ca;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  padding: 6px 0;
+}
+.tryModel small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.5;
+  color: #92a595;
+  margin-top: 5px;
+}
+.hardwareFlow {
+  display: grid;
+  grid-template-columns: 1fr 24px 1.6fr 24px 1fr;
+  gap: 24px;
+  align-items: center;
+  margin: 20px auto 0;
+  padding: 15px 22px;
+  background: #1c261f;
+  border: 1px solid #40523f;
+  border-radius: 4px;
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 1800px;
+}
+.hardwareFlow small {
+  color: #99ae9a;
+  font-size: 8px;
+  letter-spacing: 0.13em;
+  display: block;
+  margin-bottom: 8px;
+}
+.hardwareFlow strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #e6ebda;
+}
+.hardwareFlow span {
+  color: #b0bdad;
+  font-size: 10px;
+  display: block;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.flowInput {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.flowInput svg {
+  color: #a2bba4;
+  flex-shrink: 0;
+}
+.flowCompute {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.flowCompute img {
+  width: 100px;
+  height: 70px;
+  object-fit: contain;
+}
+.flowArrow {
+  color: #a3b99f;
+}
+.insight {
+  min-height: 34px;
+  font-size: 9px;
+  color: #94a292;
+  text-align: center;
+  padding: 10px 0;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+.controls {
+  min-height: 38px;
+}
+.disclosure {
+  min-height: 18px;
+  font-size: 8px;
+}
+.localSystem {
+  border: 1px solid #587456;
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: radial-gradient(ellipse at center, #52674322, transparent 80%);
+}
+.cameraStrip {
+  display: flex;
+  gap: 14px;
+  margin-top: 14px;
+}
+.cameraStrip > div {
+  width: 33.333%;
+  border: 1px solid #3c4c3c;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cameraStrip img {
+  width: 100%;
+  aspect-ratio: 2.5;
+  object-fit: cover;
+  display: block;
+}
+.cameraStrip span {
+  display: block;
+  font-size: 10px;
+  padding: 8px;
+  color: #c4d2bc;
+}
+.edgeHardware {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  padding: 16px 20px;
+}
+.edgeHardware > img {
+  width: 30%;
+  max-height: 170px;
+  object-fit: contain;
+}
+.edgeHardware h2 {
+  font-size: clamp(24px, 2.5vw, 44px);
+  font-weight: 450;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin: 12px 0;
+}
+.edgeHardware p {
+  font-size: 11px;
+  color: #a9bba5;
+}
+.localStates {
+  display: flex;
+  justify-content: space-around;
+  gap: 12px;
+  padding: 13px 0 0;
+  border-top: 1px solid #41593d;
+}
+.localStates span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #cee5c6;
+}
+.edgeLayout .resultRail > svg {
+  margin-top: 22px;
+  color: #b1c2a3;
+}
+.edgeLayout .resultRail .primary {
+  margin: 6px 0 20px;
+}
+.resultRail ul {
+  margin: 0 0 24px;
+  padding-left: 17px;
+  font-size: 12px;
+  line-height: 1.8;
+  color: #b6c3b0;
+}
+.buildSystem {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid #3d4e3c;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.buildTabs {
+  display: flex;
+  flex-shrink: 0;
+  background: #1a241d;
+}
+.buildTabs button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 13px 8px;
+  color: #9aaf97;
+  font-size: 11px;
+  border-bottom: 2px solid transparent;
+}
+.buildTabs button[aria-pressed="true"] {
+  border-color: #c6ddba;
+  color: #e6eddb;
+  background: #c7dfb90b;
+}
+.buildPicture {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+.buildBackground,
+.buildScrim {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.buildScrim {
+  background: linear-gradient(90deg, #101d12e6, #101d1280);
+}
+.buildPicture > div:last-child {
+  position: relative;
+  padding: 25px 5%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.buildPicture > div:last-child > img {
+  width: 36%;
+  max-height: 190px;
+  object-fit: contain;
+  object-position: left;
+  margin: 15px 0;
+  filter: drop-shadow(0 10px 15px #0008);
+}
+.buildPicture h2 {
+  font-size: clamp(25px, 2.6vw, 45px);
+  font-weight: 450;
+  margin: 0 0 12px;
+  letter-spacing: -0.04em;
+}
+.buildPicture p {
+  font-size: 13px;
+  color: #d3ddca;
+  margin: 0;
+}
+.unavailable {
+  height: 100%;
+  min-height: 180px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #1b211c;
+  color: #cfbf9f;
+}
+.unavailable h2 {
+  font-size: 22px;
+  font-weight: 450;
+  margin: 15px 0 10px;
+}
+.unavailable p {
+  font-size: 12px;
+}
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (min-width: 1600px) {
+  .stage {
+    padding-top: 28px;
+  }
+  .headline {
+    padding-bottom: 25px;
+  }
+  .headline h1 {
+    margin-top: 15px;
+  }
+  .headline p {
+    font-size: 16px;
+  }
+  .resultRail > p {
+    font-size: 15px;
+  }
+  .resultFacts dd {
+    font-size: 13px;
+  }
+  .resultFacts dt {
+    font-size: 9px;
+  }
+  .resultRail {
+    padding-top: 12px;
+  }
+  .hardwareFlow {
+    padding: 22px 28px;
+    margin-top: 26px;
+  }
+  .hardwareFlow strong {
+    font-size: 17px;
+  }
+  .hardwareFlow span {
+    font-size: 12px;
+  }
+  .hardwareFlow small {
+    font-size: 9px;
+  }
+  .flowCompute img {
+    width: 125px;
+    height: 85px;
+  }
+  .heroMissions strong {
+    font-size: 22px;
+  }
+  .heroMissions small {
+    font-size: 12px;
+  }
+}
+@media (max-height: 800px) and (min-width: 901px) {
+  .stage {
+    padding-top: 12px;
+  }
+  .headline h1 {
+    white-space: normal;
+    font-size: 31px;
+    margin: 8px 0;
+  }
+  .headline {
+    padding-bottom: 12px;
+  }
+  .headline p {
+    font-size: 11px;
+  }
+  .hardwareFlow {
+    margin-top: 12px;
+    padding: 10px 15px;
+    gap: 16px;
+  }
+  .flowCompute img {
+    height: 50px;
+    width: 75px;
+  }
+  .hardwareFlow strong {
+    font-size: 12px;
+  }
+  .hardwareFlow span {
+    font-size: 9px;
+  }
+  .resultRail h2 {
+    font-size: 24px;
+    margin: 10px 0;
+  }
+  .statusPill {
+    margin-top: 12px;
+  }
+  .resultRail > p {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+  .resultFacts > div {
+    padding: 9px 0;
+  }
+  .heroCopy {
+    padding-top: 4%;
+  }
+  .heroCopy h1 {
+    font-size: 45px;
+    margin: 18px 0;
+  }
+  .heroCopy p {
+    margin-bottom: 18px;
+  }
+  .heroMissions {
+    bottom: 28px;
+  }
+  .heroMissions button {
+    padding-top: 12px;
+  }
+  .edgeHardware > img {
+    max-height: 110px;
+  }
+  .cameraStrip img {
+    aspect-ratio: 3.5;
+  }
+  .buildPicture > div:last-child > img {
+    max-height: 130px;
+  }
+}
+@media (max-width: 1100px) {
+  .nav {
+    gap: 12px;
+  }
+  .chapters {
+    gap: 15px;
+  }
+  .nav button {
+    font-size: 10px;
+  }
+  .hardwareFlow {
+    gap: 12px;
+    padding: 12px;
+  }
+  .hardwareFlow strong {
+    font-size: 12px;
+  }
+  .hardwareFlow span {
+    font-size: 9px;
+  }
+  .flowCompute img {
+    width: 70px;
+  }
+  .missionLayout,
+  .edgeLayout {
+    gap: 18px;
+    grid-template-columns: minmax(0, 2fr) minmax(210px, 1fr);
+  }
+  .heroMissions {
+    gap: 18px;
+  }
+  .heroMissions strong {
+    font-size: 14px;
+  }
+}
+@media (max-width: 900px) {
+  .scroll {
+    height: calc(
+      100dvh - var(--vi-header-height, 78px) - var(--bottom-nav, 76px)
+    );
+  }
+  .stage {
+    overflow-y: auto;
+  }
+  .sceneMain {
+    flex: none;
+  }
+  .hero {
+    height: 500px;
+  }
+  .missionLayout,
+  .edgeLayout {
+    grid-template-columns: 1fr;
+  }
+  .cameraImage {
+    height: auto;
+    width: 100%;
+    max-height: none;
+  }
+  .resultRail {
+    overflow: visible;
+    padding-top: 12px;
+  }
+  .resultRail > p {
+    max-width: 650px;
+  }
+  .resultFacts {
+    display: flex;
+    gap: 25px;
+  }
+  .resultFacts > div {
+    flex: 1;
+  }
+  .sourceNote {
+    margin-top: 10px;
+  }
+  .hardwareFlow {
+    grid-template-columns: 1fr 20px 1.6fr;
+  }
+  .flowOutput,
+  .hardwareFlow > svg:nth-of-type(2) {
+    display: none;
+  }
+  .buildPicture {
+    min-height: 330px;
+  }
+  .heroCopy h1 {
+    font-size: 45px;
+  }
+  .heroMissions {
+    left: 5%;
+    right: 5%;
+  }
+  .heroMissions > button {
+    gap: 8px;
+  }
+  .heroMissions > button > svg:first-child {
+    display: none;
+  }
+  .headline h1 {
+    font-size: 35px;
+  }
+}
+@media (max-width: 600px) {
+  .nav {
+    flex-wrap: wrap;
+    padding: 8px 16px;
+    gap: 8px;
+  }
+  .chapters {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .chapters button {
+    padding: 7px 0;
+  }
+  .nav .exit {
+    margin-left: auto;
+    padding: 5px 0;
+    font-size: 9px;
+  }
+  .nav .play {
+    padding: 6px 8px;
+  }
+  .stage {
+    padding: 14px 16px 10px;
+  }
+  .hero {
+    height: 530px;
+  }
+  .heroCopy {
+    padding: 30px 23px 0;
+  }
+  .heroCopy h1 {
+    font-size: 35px;
+    margin: 24px 0 18px;
+  }
+  .heroCopy p {
+    line-height: 1.6;
+    max-width: 240px;
+  }
+  .heroMissions {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    bottom: 30px;
+    left: 23px;
+    right: 23px;
+  }
+  .heroMissions button {
+    padding-top: 10px;
+  }
+  .heroMissions small {
+    margin-bottom: 4px;
+    font-size: 9px;
+  }
+  .heroMissions strong {
+    font-size: 15px;
+  }
+  .heroMissions > button > svg:first-child {
+    display: block;
+  }
+  .heroShade {
+    background: linear-gradient(90deg, #06110fe6, #06110f88),
+      linear-gradient(0deg, #06110f, transparent);
+  }
+  .headline h1 {
+    font-size: 31px;
+  }
+  .headline p {
+    font-size: 12px;
+  }
+  .cameraToolbar {
+    padding: 0 8px;
+  }
+  .cameraToolbar > span {
+    font-size: 7px;
+    gap: 5px;
+  }
+  .cameraToolbar button {
+    font-size: 9px;
+    padding: 8px 6px;
+  }
+  .sceneBottom {
+    padding: 10px 8px;
+    font-size: 8px;
+    gap: 7px;
+  }
+  .sceneBottom button {
+    font-size: 8px;
+  }
+  .imageBadge {
+    font-size: 6px;
+    bottom: 6px;
+    left: 6px;
+  }
+  .hardwareFlow {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 18px;
+  }
+  .flowOutput {
+    display: block;
+  }
+  .hardwareFlow > svg {
+    display: none;
+  }
+  .flowInput {
+    border-bottom: 1px solid #354934;
+    padding-bottom: 12px;
+  }
+  .flowCompute {
+    border-bottom: 1px solid #354934;
+    padding-bottom: 12px;
+  }
+  .hardwareFlow strong {
+    font-size: 14px;
+  }
+  .hardwareFlow span {
+    font-size: 10px;
+  }
+  .hardwareFlow small {
+    font-size: 8px;
+  }
+  .flowCompute img {
+    width: 80px;
+    height: 60px;
+  }
+  .flowOutput {
+    padding-left: 40px;
+  }
+  .insight {
+    font-size: 9px;
+    padding: 14px 0;
+  }
+  .controls {
+    gap: 8px;
+  }
+  .controls > button {
+    font-size: 9px;
+    gap: 5px;
+  }
+  .dots {
+    gap: 1px;
+  }
+  .dots button {
+    width: 10px;
+  }
+  .controls > span {
+    font-size: 8px;
+  }
+  .disclosure {
+    font-size: 7px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .disclosure button {
+    font-size: 8px;
+    white-space: nowrap;
+  }
+  .localSystem {
+    padding: 14px;
+  }
+  .cameraStrip {
+    gap: 7px;
+  }
+  .cameraStrip span {
+    font-size: 8px;
+    padding: 6px;
+  }
+  .edgeHardware {
+    padding: 20px 0;
+    gap: 15px;
+  }
+  .edgeHardware h2 {
+    font-size: 24px;
+  }
+  .edgeHardware p {
+    font-size: 9px;
+    line-height: 1.6;
+  }
+  .localStates {
+    gap: 8px;
+  }
+  .localStates span {
+    font-size: 8px;
+    gap: 4px;
+  }
+  .buildTabs button {
+    font-size: 9px;
+    gap: 5px;
+    padding: 10px 6px;
+  }
+  .buildTabs svg {
+    width: 13px;
+  }
+  .buildPicture {
+    min-height: 290px;
+  }
+  .buildPicture > div:last-child > img {
+    width: 50%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (min-width: 901px) and (max-width: 1599px) {
+  .headline h1 {
+    white-space: normal;
+    font-size: 36px;
+    margin: 10px 0;
+  }
+  .headline {
+    padding-bottom: 18px;
+  }
+  .hardwareFlow {
+    padding: 10px 18px;
+    margin-top: 16px;
+  }
+  .flowCompute img {
+    height: 60px;
+  }
+  .resultRail > p {
+    margin-bottom: 12px;
+  }
+  .statusPill {
+    margin-top: 14px;
+  }
+  .resultFacts > div {
+    padding: 10px 0;
+  }
+  .sourceNote {
+    padding-top: 8px;
+  }
+}
+@media (min-width: 1600px) {
+  .sceneMain,
+  .hardwareFlow {
+    max-width: 1480px;
+  }
+  .headline h1 {
+    white-space: normal;
+    margin: 12px 0;
+  }
+  .headline {
+    padding-bottom: 20px;
+  }
+  .hardwareFlow {
+    padding: 15px 24px;
+    margin-top: 20px;
+  }
+  .flowCompute img {
+    height: 70px;
+    width: 110px;
+  }
+  .missionLayout,
+  .edgeLayout {
+    grid-template-columns: minmax(0, 2.4fr) minmax(300px, 1fr);
+  }
+}
+/* One persistent world connects every observation, camera and result. */
+.spatialStory {
+  height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 2.5fr) minmax(265px, 1fr);
+  gap: 30px;
+  min-height: 0;
+}
+.spatialVisual {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+.worldLabel {
+  position: absolute;
+  z-index: 2;
+  top: 5px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #93ac99;
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+.worldLabel span:last-child {
+  letter-spacing: 0;
+  color: #7d9082;
+}
+.world {
+  width: 100%;
+  height: calc(100% - 50px);
+  overflow: hidden;
+  display: block;
+}
+.worldFraming {
+  transform-origin: 836px 470.5px;
+  transform: translate(var(--world-x, 0px), var(--world-y, 0px))
+    scale(var(--world-scale, 1));
+  transition: transform 900ms cubic-bezier(0.22, 0.68, 0.25, 1);
+}
+.worldPin {
+  cursor: default;
+  outline: none;
+  opacity: 0.35;
+  transition: opacity 0.5s;
+}
+.worldPin[data-selected="true"],
+.worldPin:hover,
+.worldPin:focus-visible {
+  opacity: 1;
+}
+.worldPin circle {
+  fill: #162a20;
+  stroke: #d2e9c4;
+  stroke-width: 2.4;
+}
+.worldPin .pinHalo {
+  fill: #9bc69f16;
+  stroke: #9bc69f66;
+  stroke-width: 1.3;
+}
+.worldPin path {
+  fill: none;
+  stroke: #cce6bf;
+  stroke-width: 1.5;
+}
+.worldPin rect {
+  fill: #12251eef;
+  stroke: #8eb78c;
+  stroke-width: 1;
+}
+.worldPin text {
+  fill: #e0eed3;
+  font-size: 17px;
+  letter-spacing: 0.5px;
+}
+.worldPin:focus-visible rect {
+  stroke: #fff;
+  stroke-width: 4;
+}
+.worldSight,
+.worldNetwork {
+  opacity: 0;
+  transition: opacity 0.6s;
+  pointer-events: none;
+}
+.worldSight[data-visible="true"],
+.worldNetwork[data-visible="true"] {
+  opacity: 1;
+}
+.worldSight path {
+  fill: #c3dfb719;
+  stroke: #c8e0bb;
+  stroke-width: 2;
+}
+.worldSight .sightLine {
+  fill: none;
+  stroke-dasharray: 8 9;
+}
+.worldNetwork path {
+  stroke: #c8e0bb;
+  stroke-width: 2.5;
+  stroke-dasharray: 9 9;
+  fill: none;
+  animation: signalFlow 4s linear infinite;
+}
+.worldNetwork circle {
+  fill: #b8d4ab;
+  stroke: #edf9d8;
+  stroke-width: 3;
+}
+.worldNetwork text {
+  fill: #d9e7cd;
+  font-size: 20px;
+  paint-order: stroke;
+  stroke: #102319;
+  stroke-width: 5px;
+}
+.cameraPortal {
+  position: absolute;
+  z-index: 3;
+  width: 48%;
+  bottom: 57px;
+  right: 12px;
+  border: 1px solid #91ae8d;
+  border-radius: 5px;
+  background: #101b15;
+  overflow: hidden;
+  box-shadow: 0 18px 42px #0005;
+  opacity: 0;
+  transform: translateY(25px) scale(0.94);
+  transform-origin: bottom right;
+  transition: width 0.9s cubic-bezier(0.22, 0.68, 0.25, 1), opacity 0.5s,
+    transform 0.8s;
+  pointer-events: none;
+}
+.cameraPortal[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.cameraPortal[data-expanded="true"] {
+  width: 72%;
+}
+.portalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 8px 10px;
+  min-height: 34px;
+}
+.portalHeader > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  color: #d5e1cb;
+}
+.portalHeader > div {
+  display: flex;
+  gap: 2px;
+}
+.portalHeader button {
+  padding: 4px 6px;
+  font-size: 9px;
+  border-bottom: 1px solid transparent;
+}
+.portalHeader button[aria-pressed="true"] {
+  color: #c4e1b4;
+  border-color: #b2cf9f;
+}
+.portalImage {
+  position: relative;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+}
+.portalImage > img:first-child {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+.portalImage .mask {
+  animation: none;
+}
+.portalImage .imageBadge {
+  font-size: 6px;
+  bottom: 6px;
+  left: 6px;
+}
+.portalImage .unavailable {
+  min-height: 0;
+}
+.portalImage .unavailable h2 {
+  font-size: 18px;
+}
+.portalImage .unavailable p {
+  font-size: 10px;
+}
+.portalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 11px;
+  font-size: 8px;
+  color: #a9bc9f;
+}
+.portalFooter button {
+  font-size: 9px;
+  color: #ecc58d;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.storyTrail {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 43px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #304335;
+}
+.storyTrail button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #7f9582;
+  border-bottom: 2px solid transparent;
+  padding: 9px 5px;
+}
+.storyTrail button > span {
+  font-size: 8px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+}
+.storyTrail button[data-reached="true"] {
+  color: #c4d9b7;
+}
+.storyTrail button[data-current="true"] {
+  border-color: #c4d9b7;
+}
+.worldCompute {
+  position: absolute;
+  z-index: 4;
+  left: 6%;
+  right: 6%;
+  bottom: 67px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 23px;
+  background: #13241cec;
+  border: 1px solid #728d68;
+  border-radius: 5px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s, transform 0.8s;
+  pointer-events: none;
+}
+.worldCompute[data-visible="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+.worldCompute img {
+  width: 24%;
+  max-height: 120px;
+  object-fit: contain;
+}
+.worldCompute small {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: #9eb994;
+}
+.worldCompute h2 {
+  font-size: clamp(21px, 2vw, 33px);
+  letter-spacing: -0.035em;
+  font-weight: 450;
+  margin: 9px 0;
+}
+.worldCompute p {
+  font-size: 11px;
+  color: #b5c8a9;
+  margin: 0;
+}
+.spatialCopy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  overflow: auto;
+  padding: 14px 2px 8px 0;
+}
+.spatialHeading {
+  animation: appear 0.5s ease both;
+}
+.spatialHeading h1 {
+  font-size: clamp(30px, 2.7vw, 46px);
+  font-weight: 450;
+  line-height: 1.09;
+  letter-spacing: -0.04em;
+  white-space: pre-line;
+  margin: 20px 0 18px;
+}
+.spatialHeading p {
+  color: #b1c1b1;
+  font-size: 13px;
+  line-height: 1.7;
+  margin: 0 0 25px;
+}
+.spatialResult {
+  border-top: 1px solid #344a37;
+  padding-top: 19px;
+}
+.spatialResult > small {
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  color: #95ae95;
+}
+.spatialResult h2 {
+  font-size: 17px;
+  font-weight: 450;
+  color: #e0ead7;
+  line-height: 1.4;
+  margin: 10px 0;
+}
+.spatialResult > p {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #9db09d;
+  margin: 12px 0 17px;
+}
+.spatialResult .primary {
+  font-size: 11px;
+  padding: 11px 14px;
+}
+.spatialCopy .sourceNote {
+  margin-top: 20px;
+  flex-shrink: 0;
+}
+.spatialResult .modelReceipt {
+  color: #c2d8b4;
+}
+.spatialResult .localStates {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  padding: 10px 0;
+  border: 0;
+}
+.spatialResult .localStates span {
+  font-size: 10px;
+}
+.scroll .linkToggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  padding: 10px 12px;
+  border: 1px solid #718767;
+  color: #d4e3c8;
+  border-radius: 3px;
+}
+.deploymentChoices {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+.deploymentChoices button {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 8px;
+  font-size: 11px;
+  color: #95aa93;
+  border-bottom: 1px solid #344a37;
+}
+.deploymentChoices button svg:last-child {
+  margin-left: auto;
+}
+.deploymentChoices button[aria-pressed="true"] {
+  color: #e1efce;
+  background: #c4d9b709;
+}
+@keyframes signalFlow {
+  to {
+    stroke-dashoffset: -72;
+  }
+}
+@media (min-width: 1600px) {
+  .spatialStory {
+    gap: 40px;
+  }
+  .spatialHeading p {
+    font-size: 16px;
+  }
+  .spatialResult h2 {
+    font-size: 21px;
+  }
+  .spatialResult > p {
+    font-size: 14px;
+  }
+  .portalHeader > span {
+    font-size: 11px;
+  }
+  .portalHeader button {
+    font-size: 10px;
+  }
+  .portalFooter {
+    font-size: 9px;
+  }
+  .storyTrail button {
+    font-size: 12px;
+  }
+}
+@media (max-height: 800px) and (min-width: 901px) {
+  .spatialHeading h1 {
+    font-size: 30px;
+    margin: 13px 0;
+  }
+  .spatialHeading p {
+    font-size: 12px;
+    margin-bottom: 15px;
+  }
+  .spatialResult {
+    padding-top: 13px;
+  }
+  .spatialResult h2 {
+    font-size: 15px;
+  }
+  .spatialResult > p {
+    font-size: 10px;
+    margin: 9px 0 12px;
+  }
+  .spatialCopy .sourceNote {
+    margin-top: 12px;
+  }
+  .cameraPortal[data-expanded="true"] {
+    width: 65%;
+  }
+}
+@media (max-width: 1100px) and (min-width: 901px) {
+  .spatialStory {
+    grid-template-columns: minmax(0, 2fr) minmax(235px, 1fr);
+    gap: 20px;
+  }
+  .cameraPortal {
+    width: 60%;
+  }
+  .cameraPortal[data-expanded="true"] {
+    width: 86%;
+  }
+  .portalHeader > span {
+    font-size: 8px;
+  }
+  .spatialHeading h1 {
+    font-size: 30px;
+  }
+  .storyTrail button {
+    font-size: 8px;
+  }
+}
+@media (max-width: 900px) {
+  .spatialStory {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: auto;
+  }
+  .spatialVisual {
+    height: 480px;
+    flex: none;
+  }
+  .spatialCopy {
+    overflow: visible;
+    padding: 0;
+  }
+  .spatialHeading h1 {
+    white-space: normal;
+    font-size: 34px;
+  }
+  .spatialHeading p {
+    max-width: 650px;
+  }
+  .cameraPortal {
+    width: 43%;
+  }
+  .cameraPortal[data-expanded="true"] {
+    width: 60%;
+  }
+  .worldCompute {
+    bottom: 65px;
+  }
+}
+@media (max-width: 600px) {
+  .spatialVisual {
+    height: 350px;
+    margin: 0 -10px;
+  }
+  .worldLabel {
+    font-size: 6px;
+    top: 0;
+    left: 10px;
+    right: 10px;
+  }
+  .worldLabel span:last-child {
+    max-width: 130px;
+    text-align: right;
+  }
+  .cameraPortal {
+    width: 60%;
+    bottom: 49px;
+    right: 8px;
+  }
+  .cameraPortal[data-expanded="true"] {
+    width: 83%;
+  }
+  .portalHeader {
+    padding: 6px;
+    flex-wrap: wrap;
+    gap: 3px;
+  }
+  .portalHeader > span {
+    font-size: 8px;
+  }
+  .portalHeader button {
+    font-size: 8px;
+    padding: 4px;
+  }
+  .portalFooter {
+    font-size: 7px;
+    padding: 7px;
+  }
+  .portalFooter button {
+    font-size: 7px;
+  }
+  .portalImage .imageBadge {
+    font-size: 5px;
+  }
+  .storyTrail {
+    gap: 3px;
+  }
+  .storyTrail button {
+    font-size: 8px;
+    gap: 4px;
+  }
+  .spatialHeading h1 {
+    font-size: 32px;
+    margin: 14px 0;
+  }
+  .spatialHeading p {
+    font-size: 13px;
+    margin-bottom: 18px;
+  }
+  .worldCompute {
+    padding: 14px;
+    gap: 14px;
+    left: 3%;
+    right: 3%;
+    bottom: 57px;
+  }
+  .worldCompute h2 {
+    font-size: 20px;
+  }
+  .worldCompute small {
+    font-size: 6px;
+  }
+  .worldCompute p {
+    font-size: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .worldFraming,
+  .cameraPortal,
+  .worldCompute {
+    transition: none !important;
+  }
+  .worldNetwork path {
+    animation: none !important;
+  }
+}
+
+.spatialCopy {
+  justify-content: safe center;
+}
+.spatialHeading h1 {
+  font-size: clamp(28px, 2.35vw, 42px);
+}

@@ -1,0 +1,12 @@
+{
+  "returncode": 3,
+  "child_returncode": 0,
+  "missing_or_failed_tasks": [],
+  "empty_mask_cases": [
+    "panel",
+    "person",
+    "blank"
+  ],
+  "elapsed_s": 87.13908607605845,
+  "log": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T155702Z-moondream3.1-9B-A2B-gb10/inference.jsonl"
+}

@@ -2,6 +2,12 @@
 # model identity are supplied by the independent Spark environment.
 base: ../thor-local/official-edge/config_edge.yml
 
+functions:
+  vst_video_url:
+    # Spark's CPU VIOS image crashes while constructing an overlay export.
+    # Fresh VLM inspection uses the validated retained clip without overlays.
+    overlay_config: false
+
 general:
   front_end:
     streaming_ingest:

@@ -1,0 +1,20 @@
+{
+  "valid_mask": false,
+  "quality_validated": false,
+  "image_size": [
+    1024,
+    576
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.28922128677368164,
+    "y_min": 0.15104034543037415,
+    "x_max": 0.8514037132263184,
+    "y_max": 0.8352877795696259
+  },
+  "artifacts": {
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference/masks/panel-point-conditioned.mask.json"
+  },
+  "status": "bbox_only"
+}

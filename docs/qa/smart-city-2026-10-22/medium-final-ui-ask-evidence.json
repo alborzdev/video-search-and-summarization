@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "city.final-ui-evidence-qa.v1",
+  "operationalPassed": true,
+  "uiPackage": "20261022T073106035307Z",
+  "uiSourceSha256": "7cc24b10bab0ebfb6cb4b8aa216d73fb645058f3b00ef72c81dfec9001e13b5b",
+  "uiArtifactSha256": "48ff08c42f68afbfd676b7304100b253239d14cba127f16f1b06a681e65adb3f",
+  "uiImageId": "sha256:1b2db6c3e4e800c1f734ef696af75e68f63f73d06040ad18383231b74b284c8f",
+  "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+  "observedWindow": {
+    "startTime": "2026-10-22T07:39:27.496000Z",
+    "endTime": "2026-10-22T07:39:32.496000Z"
+  },
+  "browser": {
+    "origin": "http://127.0.0.1:7777",
+    "explicitLoadButton": true,
+    "metadataReadyState": 4,
+    "durationSeconds": 5.1128,
+    "width": 1920,
+    "height": 1080,
+    "playbackObserved": true,
+    "observedPlaybackTimeSeconds": 0.08547,
+    "playbackError": null,
+    "realLinkDownloadSucceeded": true
+  },
+  "media": {
+    "frames": 151,
+    "width": 1920,
+    "height": 1080,
+    "firstPts": 0.0,
+    "lastPts": 5.0328,
+    "bytes": 6284001,
+    "sha256": "34490c1699baada6f2002e8fbff640d7f2479af127058040b7d3f1f90cf1e192"
+  },
+  "semanticReview": {
+    "method": "Human-style visual inspection of decoded frames0/75/145; not a scored benchmark",
+    "broadTrafficMotionSupported": true,
+    "limitations": [
+      "Answer called both foreground people seated; one is standing/leaning with a raised leg.",
+      "Fine vehicle-type descriptions are unreliable and passing vehicles or background pedestrians can be omitted.",
+      "Do not use generated prose as the authoritative source for counts or rule events."
+    ],
+    "semanticAccuracyPassed": false
+  },
+  "limits": [
+    "Browser clip is5.1128s for a requested5s interval, with151 decoded frames due to export boundary rounding.",
+    "This qualifies rendered controls and retained evidence, not final-camera timing or event accuracy.",
+    "No automatic clip export is implied by this manual explicit-click check."
+  ]
+}

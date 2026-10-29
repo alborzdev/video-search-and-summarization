@@ -1,0 +1,1117 @@
+{
+  "checked_at": "2026-10-22T20:07:53.193429+00:00",
+  "service": {
+    "status": 200,
+    "body": {
+      "ready": true,
+      "status": "ready",
+      "model": "moondream2",
+      "segmenter": "sam2.1-tiny",
+      "runtime": "photon",
+      "busy": false,
+      "uptime_s": 168.213,
+      "warmup_ms": 30418.278040830046
+    }
+  },
+  "ui_proxy": {
+    "status": 200,
+    "body": {
+      "ready": true,
+      "status": "ready",
+      "model": "moondream2",
+      "segmenter": "sam2.1-tiny",
+      "runtime": "photon",
+      "busy": false
+    }
+  },
+  "cosmos": {
+    "status": 200,
+    "body": {
+      "object": "health.response",
+      "message": "Service is ready."
+    }
+  },
+  "guard_active": "active",
+  "worker_systemd": "MainPID=3500495\nMemoryCurrent=2497261568\nMemoryPeak=2647961600\nActiveState=active\nActiveEnterTimestamp=Thu 2026-10-22 16:05:04 EDT\n",
+  "saved_reserve_gib": 20.0,
+  "automatic_vss_start_selected": true,
+  "boot_unchanged": true,
+  "memory": {
+    "first_available_gib": 39.63672637939453,
+    "minimum_available_gib": 31.348949432373047,
+    "last_available_gib": 32.288333892822266,
+    "samples": 511,
+    "sampled_from": "2026-10-22T19:53:36.527167+00:00",
+    "sampled_to": "2026-10-22T20:02:06.758363+00:00",
+    "final_available_gib": 32.42267990112305
+  },
+  "cpu_tests": {
+    "passed": 138,
+    "log": "/home/sparkdev/vss/.spark/local-segmentation/service-qualification-20261022/cpu-tests.log"
+  },
+  "ui_tests": {
+    "passed": 30,
+    "suites": 6,
+    "log": "/home/sparkdev/vss/.spark/local-segmentation/service-qualification-20261022/ui-tests.log"
+  },
+  "typescript": "passed --noEmit --incremental false",
+  "browser": {
+    "engine": "Codex in-app browser through CUA",
+    "defense": {
+      "action": "Drone inspection / Inspect / Local vision / Use displayed image / metal panel / Segment",
+      "request_ms": 678,
+      "grounding_ms": 588,
+      "mask_ms": 56,
+      "source": "Illustration \u00b7 Closer view"
+    },
+    "smart_city": {
+      "action": "Local vision / Camera frame1 / Use displayed image / car / Segment",
+      "request_ms": 695,
+      "grounding_ms": 598,
+      "mask_ms": 61,
+      "source": "recorded RTSP replay analyzed preview"
+    },
+    "describe_request_ms": 3901,
+    "console_errors": [],
+    "viewport_scope": "Desktop; screenshot dimensions recorded per file.",
+    "screenshot_dimensions": {
+      "vss-defense.jpg": [
+        1425,
+        891
+      ],
+      "vss-smart-city.jpg": [
+        1440,
+        900
+      ]
+    },
+    "final_defense_after_guard_restart": {
+      "request_ms": 711,
+      "grounding_ms": 591,
+      "mask_ms": 84,
+      "status": "1 mask returned"
+    }
+  },
+  "http_qualification": [
+    {
+      "http_status": 200,
+      "elapsed_ms": 355.11225182563066,
+      "response": {
+        "operation": "segment",
+        "model": "moondream2",
+        "object": "person on left",
+        "status": "ok",
+        "image": {
+          "width": 500,
+          "height": 294,
+          "rgb_sha256": "18fee5058e39b94c28660aa6ce65a503ae1e4b260eb74cef6eaf0679c51715a2"
+        },
+        "timings_ms": {
+          "preprocess": 0.506063923239708,
+          "moondream_load": 0.0,
+          "describe": 0.0,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 292.69477305933833,
+          "segmenter_load": 0.0,
+          "image_encode": 48.55527589097619,
+          "mask_decode": 7.06453388556838,
+          "total": 350.1409189775586
+        },
+        "segmenter_name": "sam2.1-tiny",
+        "grounded_by": "point",
+        "presence_mode": "off",
+        "presence": null,
+        "raw_grounding": {
+          "points": [
+            {
+              "x": 0.240234375,
+              "y": 0.0927734375
+            }
+          ]
+        },
+        "segmenter_used": true,
+        "grounding_settings": {
+          "max_objects": 3
+        },
+        "grounding_generation_limit": 3,
+        "grounding_returned_at_limit": false,
+        "rejected_grounding": [],
+        "valid_grounding_count": 1,
+        "truncated": false,
+        "image_encoding": {
+          "encode_ms": 47.646635212004185,
+          "image_shape": [
+            294,
+            500
+          ],
+          "batch_size": 1
+        },
+        "objects": [
+          {
+            "source_index": 0,
+            "grounding": {
+              "x": 0.240234375,
+              "y": 0.0927734375
+            },
+            "point": [
+              0.240234375,
+              0.0927734375
+            ],
+            "mask_metadata": {
+              "score": 0.9765625,
+              "score_kind": "uncalibrated_predicted_mask_iou",
+              "candidate_scores": [
+                0.9765625,
+                0.16796875,
+                0.443359375
+              ],
+              "selected_candidate": 0,
+              "candidate_count": 3,
+              "mask_area": 20508,
+              "mask_fraction": 0.13951020408163264,
+              "decode_ms": 6.622485816478729
+            },
+            "mask_encoding": "PNG grayscale: 0 background, 255 foreground"
+          }
+        ],
+        "input_image": {
+          "source_width": 500,
+          "source_height": 294,
+          "format": "JPEG",
+          "encoded_bytes": 28478,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 500,
+          "height": 294,
+          "resized": false,
+          "inference_width": 500,
+          "inference_height": 294
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 2.396082039922476,
+          "total": 353.8884902372956
+        },
+        "process_phase": "resident_reuse"
+      },
+      "metrics": {
+        "prompt_source": "moondream_predicted",
+        "oracle_conditioned": false,
+        "end_to_end_validated": false,
+        "image_size_hw": [
+          294,
+          500
+        ],
+        "predicted_pixels": 20508,
+        "predicted_fraction": 0.13951020408163264,
+        "predicted_bbox_xyxy_pixels": [
+          12,
+          0,
+          207,
+          264
+        ],
+        "positive_points_covered": [],
+        "negative_points_incorrectly_covered": [],
+        "point_constraints_satisfied": true,
+        "quality_scope": "annotated_target",
+        "ground_truth_pixels": 19897,
+        "intersection_pixels": 19876,
+        "union_pixels": 20529,
+        "iou": 0.9681913390812996,
+        "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+        "true_positive_pixels": 19876,
+        "false_positive_pixels": 632,
+        "false_negative_pixels": 21,
+        "true_negative_pixels": 126471,
+        "precision": 0.9691827579481178,
+        "recall": 0.9989445645072121,
+        "negative_image_false_positive_fraction": null,
+        "ground_truth_positive_points_valid": [],
+        "ground_truth_negative_points_invalid": []
+      },
+      "case": "refcocom-person-left"
+    },
+    {
+      "http_status": 200,
+      "elapsed_ms": 674.3879760615528,
+      "response": {
+        "operation": "segment",
+        "model": "moondream2",
+        "object": "real cat",
+        "status": "ok",
+        "image": {
+          "width": 640,
+          "height": 433,
+          "rgb_sha256": "27ce8281b4a26837655a865f656de4a473c063b537e4832da4ac03a3927b08f6"
+        },
+        "timings_ms": {
+          "preprocess": 0.49329735338687897,
+          "moondream_load": 0.0,
+          "describe": 0.0,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 612.4165607616305,
+          "segmenter_load": 0.0,
+          "image_encode": 42.40392614156008,
+          "mask_decode": 13.214923907071352,
+          "total": 669.3544359877706
+        },
+        "segmenter_name": "sam2.1-tiny",
+        "grounded_by": "point",
+        "presence_mode": "off",
+        "presence": null,
+        "raw_grounding": {
+          "points": [
+            {
+              "x": 0.287109375,
+              "y": 0.515625
+            }
+          ]
+        },
+        "segmenter_used": true,
+        "grounding_settings": {
+          "max_objects": 3
+        },
+        "grounding_generation_limit": 3,
+        "grounding_returned_at_limit": false,
+        "rejected_grounding": [],
+        "valid_grounding_count": 1,
+        "truncated": false,
+        "image_encoding": {
+          "encode_ms": 41.6097491979599,
+          "image_shape": [
+            433,
+            640
+          ],
+          "batch_size": 1
+        },
+        "objects": [
+          {
+            "source_index": 0,
+            "grounding": {
+              "x": 0.287109375,
+              "y": 0.515625
+            },
+            "point": [
+              0.287109375,
+              0.515625
+            ],
+            "mask_metadata": {
+              "score": 0.9296875,
+              "score_kind": "uncalibrated_predicted_mask_iou",
+              "candidate_scores": [
+                0.765625,
+                0.8125,
+                0.9296875
+              ],
+              "selected_candidate": 2,
+              "candidate_count": 3,
+              "mask_area": 92868,
+              "mask_fraction": 0.33511836027713626,
+              "decode_ms": 12.659292202442884
+            },
+            "mask_encoding": "PNG grayscale: 0 background, 255 foreground"
+          }
+        ],
+        "input_image": {
+          "source_width": 640,
+          "source_height": 433,
+          "format": "JPEG",
+          "encoded_bytes": 63785,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 640,
+          "height": 433,
+          "resized": false,
+          "inference_width": 640,
+          "inference_height": 433
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 2.310577780008316,
+          "total": 673.2338150031865
+        },
+        "process_phase": "resident_reuse"
+      },
+      "metrics": {
+        "prompt_source": "moondream_predicted",
+        "oracle_conditioned": false,
+        "end_to_end_validated": false,
+        "image_size_hw": [
+          433,
+          640
+        ],
+        "predicted_pixels": 92868,
+        "predicted_fraction": 0.33511836027713626,
+        "predicted_bbox_xyxy_pixels": [
+          0,
+          6,
+          452,
+          433
+        ],
+        "positive_points_covered": [],
+        "negative_points_incorrectly_covered": [],
+        "point_constraints_satisfied": true,
+        "quality_scope": "annotated_target",
+        "ground_truth_pixels": 91151,
+        "intersection_pixels": 90991,
+        "union_pixels": 93028,
+        "iou": 0.9781033667282969,
+        "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+        "true_positive_pixels": 90991,
+        "false_positive_pixels": 1877,
+        "false_negative_pixels": 160,
+        "true_negative_pixels": 184092,
+        "precision": 0.9797885170349313,
+        "recall": 0.9982446709306535,
+        "negative_image_false_positive_fraction": null,
+        "ground_truth_positive_points_valid": [],
+        "ground_truth_negative_points_invalid": []
+      },
+      "case": "refcocom-cat-real"
+    },
+    {
+      "http_status": 200,
+      "elapsed_ms": 983.2019959576428,
+      "response": {
+        "operation": "segment",
+        "model": "moondream2",
+        "object": "plane in front",
+        "status": "ok",
+        "image": {
+          "width": 640,
+          "height": 441,
+          "rgb_sha256": "992acf8fce85f0fb21941def82ecbb2db98342a7490797ec6a08a8634a4ff494"
+        },
+        "timings_ms": {
+          "preprocess": 0.7978887297213078,
+          "moondream_load": 0.0,
+          "describe": 0.0,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 926.0251438245177,
+          "segmenter_load": 0.0,
+          "image_encode": 44.329254887998104,
+          "mask_decode": 5.909269209951162,
+          "total": 978.1250148080289
+        },
+        "segmenter_name": "sam2.1-tiny",
+        "grounded_by": "point",
+        "presence_mode": "off",
+        "presence": null,
+        "raw_grounding": {
+          "points": [
+            {
+              "x": 0.63671875,
+              "y": 0.64453125
+            }
+          ]
+        },
+        "segmenter_used": true,
+        "grounding_settings": {
+          "max_objects": 3
+        },
+        "grounding_generation_limit": 3,
+        "grounding_returned_at_limit": false,
+        "rejected_grounding": [],
+        "valid_grounding_count": 1,
+        "truncated": false,
+        "image_encoding": {
+          "encode_ms": 43.85989531874657,
+          "image_shape": [
+            441,
+            640
+          ],
+          "batch_size": 1
+        },
+        "objects": [
+          {
+            "source_index": 0,
+            "grounding": {
+              "x": 0.63671875,
+              "y": 0.64453125
+            },
+            "point": [
+              0.63671875,
+              0.64453125
+            ],
+            "mask_metadata": {
+              "score": 0.94921875,
+              "score_kind": "uncalibrated_predicted_mask_iou",
+              "candidate_scores": [
+                0.91796875,
+                0.5390625,
+                0.94921875
+              ],
+              "selected_candidate": 2,
+              "candidate_count": 3,
+              "mask_area": 73495,
+              "mask_fraction": 0.26039895124716556,
+              "decode_ms": 5.416420754045248
+            },
+            "mask_encoding": "PNG grayscale: 0 background, 255 foreground"
+          }
+        ],
+        "input_image": {
+          "source_width": 640,
+          "source_height": 441,
+          "format": "JPEG",
+          "encoded_bytes": 51401,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 640,
+          "height": 441,
+          "resized": false,
+          "inference_width": 640,
+          "inference_height": 441
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 2.064066007733345,
+          "total": 981.6690660081804
+        },
+        "process_phase": "resident_reuse"
+      },
+      "metrics": {
+        "prompt_source": "moondream_predicted",
+        "oracle_conditioned": false,
+        "end_to_end_validated": false,
+        "image_size_hw": [
+          441,
+          640
+        ],
+        "predicted_pixels": 73495,
+        "predicted_fraction": 0.26039895124716556,
+        "predicted_bbox_xyxy_pixels": [
+          0,
+          187,
+          640,
+          391
+        ],
+        "positive_points_covered": [],
+        "negative_points_incorrectly_covered": [],
+        "point_constraints_satisfied": true,
+        "quality_scope": "annotated_target",
+        "ground_truth_pixels": 75094,
+        "intersection_pixels": 72879,
+        "union_pixels": 75710,
+        "iou": 0.9626073173953242,
+        "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+        "true_positive_pixels": 72879,
+        "false_positive_pixels": 616,
+        "false_negative_pixels": 2215,
+        "true_negative_pixels": 206530,
+        "precision": 0.9916184774474454,
+        "recall": 0.9705036354435774,
+        "negative_image_false_positive_fraction": null,
+        "ground_truth_positive_points_valid": [],
+        "ground_truth_negative_points_invalid": []
+      },
+      "case": "refcocom-airplane-front"
+    },
+    {
+      "http_status": 200,
+      "elapsed_ms": 525.8912839926779,
+      "response": {
+        "operation": "segment",
+        "model": "moondream2",
+        "object": "person",
+        "status": "no_detections",
+        "image": {
+          "width": 1024,
+          "height": 576,
+          "rgb_sha256": "c2d08aee47c53dc84cbe71d8d96a0a7ad13eca4c7433219318094f893d2008aa"
+        },
+        "timings_ms": {
+          "preprocess": 1.6464660875499249,
+          "moondream_load": 0.0,
+          "describe": 0.0,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 517.0996598899364,
+          "segmenter_load": 0.0,
+          "image_encode": 0.0,
+          "mask_decode": 0.0,
+          "total": 519.0767818130553
+        },
+        "segmenter_name": "sam2.1-tiny",
+        "grounded_by": "point",
+        "presence_mode": "off",
+        "presence": null,
+        "raw_grounding": {
+          "points": []
+        },
+        "segmenter_used": false,
+        "grounding_settings": {
+          "max_objects": 3
+        },
+        "grounding_generation_limit": 3,
+        "grounding_returned_at_limit": false,
+        "rejected_grounding": [],
+        "valid_grounding_count": 0,
+        "truncated": false,
+        "objects": [],
+        "input_image": {
+          "source_width": 1024,
+          "source_height": 576,
+          "format": "PNG",
+          "encoded_bytes": 3038,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 1024,
+          "height": 576,
+          "resized": false,
+          "inference_width": 1024,
+          "inference_height": 576
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 5.252100992947817,
+          "total": 524.3907552212477
+        },
+        "process_phase": "resident_reuse"
+      },
+      "metrics": {
+        "prompt_source": "moondream_predicted",
+        "oracle_conditioned": false,
+        "end_to_end_validated": false,
+        "image_size_hw": [
+          576,
+          1024
+        ],
+        "predicted_pixels": 0,
+        "predicted_fraction": 0.0,
+        "predicted_bbox_xyxy_pixels": null,
+        "positive_points_covered": [],
+        "negative_points_incorrectly_covered": [],
+        "point_constraints_satisfied": true,
+        "quality_scope": "annotated_target",
+        "ground_truth_pixels": 0,
+        "intersection_pixels": 0,
+        "union_pixels": 0,
+        "iou": 1.0,
+        "empty_union_policy": "IoU=1 only when both masks are empty; inspect false-positive area separately",
+        "true_positive_pixels": 0,
+        "false_positive_pixels": 0,
+        "false_negative_pixels": 0,
+        "true_negative_pixels": 589824,
+        "precision": null,
+        "recall": null,
+        "negative_image_false_positive_fraction": 0.0,
+        "ground_truth_positive_points_valid": [],
+        "ground_truth_negative_points_invalid": []
+      },
+      "case": "blank-control"
+    },
+    {
+      "http_status": 200,
+      "elapsed_ms": 333.6688890121877,
+      "response": {
+        "operation": "detect",
+        "model": "moondream2",
+        "object": "person on left",
+        "status": "ok",
+        "image": {
+          "width": 500,
+          "height": 294,
+          "rgb_sha256": "18fee5058e39b94c28660aa6ce65a503ae1e4b260eb74cef6eaf0679c51715a2"
+        },
+        "timings_ms": {
+          "preprocess": 0.2683359198272228,
+          "moondream_load": 0.0,
+          "describe": 0.0,
+          "presence": 0.0,
+          "detect": 330.7599746622145,
+          "point": 0.0,
+          "segmenter_load": 0.0,
+          "image_encode": 0.0,
+          "mask_decode": 0.0,
+          "total": 331.5132390707731
+        },
+        "raw_grounding": {
+          "objects": [
+            {
+              "x_min": 0.0205078125,
+              "y_min": 0.0,
+              "x_max": 0.4033203125,
+              "y_max": 0.88671875
+            }
+          ]
+        },
+        "grounding_settings": {
+          "max_objects": 3
+        },
+        "grounding_generation_limit": 3,
+        "grounding_returned_at_limit": false,
+        "rejected_grounding": [],
+        "valid_grounding_count": 1,
+        "truncated": false,
+        "objects": [
+          {
+            "source_index": 0,
+            "grounding": {
+              "x_min": 0.0205078125,
+              "y_min": 0.0,
+              "x_max": 0.4033203125,
+              "y_max": 0.88671875
+            },
+            "box": [
+              0.0205078125,
+              0.0,
+              0.4033203125,
+              0.88671875
+            ]
+          }
+        ],
+        "input_image": {
+          "source_width": 500,
+          "source_height": 294,
+          "format": "JPEG",
+          "encoded_bytes": 28478,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 500,
+          "height": 294,
+          "resized": false,
+          "inference_width": 500,
+          "inference_height": 294
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 0.7146252319216728,
+          "total": 332.2542798705399
+        },
+        "process_phase": "resident_reuse"
+      },
+      "case": "person-detect"
+    },
+    {
+      "http_status": 200,
+      "elapsed_ms": 301.729389000684,
+      "response": {
+        "operation": "point",
+        "model": "moondream2",
+        "object": "person on left",
+        "status": "ok",
+        "image": {
+          "width": 500,
+          "height": 294,
+          "rgb_sha256": "18fee5058e39b94c28660aa6ce65a503ae1e4b260eb74cef6eaf0679c51715a2"
+        },
+        "timings_ms": {
+          "preprocess": 0.392720103263855,
+          "moondream_load": 0.0,
+          "describe": 0.0,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 298.03888918831944,
+          "segmenter_load": 0.0,
+          "image_encode": 0.0,
+          "mask_decode": 0.0,
+          "total": 298.8802338950336
+        },
+        "raw_grounding": {
+          "points": [
+            {
+              "x": 0.240234375,
+              "y": 0.0927734375
+            }
+          ]
+        },
+        "grounding_settings": {
+          "max_objects": 3
+        },
+        "grounding_generation_limit": 3,
+        "grounding_returned_at_limit": false,
+        "rejected_grounding": [],
+        "valid_grounding_count": 1,
+        "truncated": false,
+        "points": [
+          {
+            "source_index": 0,
+            "grounding": {
+              "x": 0.240234375,
+              "y": 0.0927734375
+            },
+            "point": [
+              0.240234375,
+              0.0927734375
+            ]
+          }
+        ],
+        "objects": [],
+        "input_image": {
+          "source_width": 500,
+          "source_height": 294,
+          "format": "JPEG",
+          "encoded_bytes": 28478,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 500,
+          "height": 294,
+          "resized": false,
+          "inference_width": 500,
+          "inference_height": 294
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 1.3672327622771263,
+          "total": 300.27564289048314
+        },
+        "process_phase": "resident_reuse"
+      },
+      "case": "person-point"
+    },
+    {
+      "http_status": 200,
+      "elapsed_ms": 4479.303206782788,
+      "response": {
+        "operation": "describe",
+        "model": "moondream2",
+        "object": null,
+        "status": "ok",
+        "image": {
+          "width": 500,
+          "height": 294,
+          "rgb_sha256": "18fee5058e39b94c28660aa6ce65a503ae1e4b260eb74cef6eaf0679c51715a2"
+        },
+        "timings_ms": {
+          "preprocess": 0.39424002170562744,
+          "moondream_load": 0.0,
+          "describe": 4475.792852696031,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 0.0,
+          "segmenter_load": 0.0,
+          "image_encode": 0.0,
+          "mask_decode": 0.0,
+          "total": 4476.584997028112
+        },
+        "description": "Two skateboarders are performing tricks on a sidewalk, showcasing their skills. They are both wearing skateboarding attire, including skateboards and shoes. The skateboarder on the left is wearing black pants and shoes with red laces, while the skateboarder on the right is wearing blue jeans and shoes with black laces. \n\nIn the background, there are several parked cars and a black fence, providing a contrast to the skateboarding activity in the foreground. The sidewalk is wide and paved, offering ample space for the skateboarders to",
+        "raw_response": {
+          "answer": "Two skateboarders are performing tricks on a sidewalk, showcasing their skills. They are both wearing skateboarding attire, including skateboards and shoes. The skateboarder on the left is wearing black pants and shoes with red laces, while the skateboarder on the right is wearing blue jeans and shoes with black laces. \n\nIn the background, there are several parked cars and a black fence, providing a contrast to the skateboarding activity in the foreground. The sidewalk is wide and paved, offering ample space for the skateboarders to"
+        },
+        "objects": [],
+        "input_image": {
+          "source_width": 500,
+          "source_height": 294,
+          "format": "JPEG",
+          "encoded_bytes": 28478,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 500,
+          "height": 294,
+          "resized": false,
+          "inference_width": 500,
+          "inference_height": 294
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 1.2933448888361454,
+          "total": 4477.90715796873
+        },
+        "process_phase": "resident_reuse"
+      },
+      "case": "person-describe"
+    },
+    {
+      "case": "busy-rejection",
+      "http_status": 429,
+      "elapsed_ms": 1.0182890109717846,
+      "response": {
+        "error": "The local inference worker is busy"
+      }
+    },
+    {
+      "case": "responsive-health-during-inference",
+      "http_status": 200,
+      "elapsed_ms": 1.0150889866054058,
+      "response": {
+        "ready": true,
+        "status": "ready",
+        "model": "moondream2",
+        "segmenter": "sam2.1-tiny",
+        "runtime": "photon",
+        "busy": true,
+        "uptime_s": 45.37,
+        "warmup_ms": 28750.961089972407
+      }
+    },
+    {
+      "case": "busy-worker-finished",
+      "http_status": 200,
+      "elapsed_ms": 3182.1494633331895,
+      "response": {
+        "operation": "describe",
+        "model": "moondream2",
+        "object": null,
+        "status": "ok",
+        "image": {
+          "width": 500,
+          "height": 294,
+          "rgb_sha256": "18fee5058e39b94c28660aa6ce65a503ae1e4b260eb74cef6eaf0679c51715a2"
+        },
+        "timings_ms": {
+          "preprocess": 0.4188958555459976,
+          "moondream_load": 0.0,
+          "describe": 3177.92777903378,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 0.0,
+          "segmenter_load": 0.0,
+          "image_encode": 0.0,
+          "mask_decode": 0.0,
+          "total": 3178.582196123898
+        },
+        "description": "Two skateboarders are performing tricks on a sidewalk, enjoying their time outdoors. They are both wearing skateboarding gear, including skateboards and shoes. The skateboarder on the left is wearing a black and white outfit, while the skateboarder on the right is dressed in blue jeans. Both skateboarders are skillfully balancing on their skateboards, showcasing their talent and athleticism.",
+        "raw_response": {
+          "answer": "Two skateboarders are performing tricks on a sidewalk, enjoying their time outdoors. They are both wearing skateboarding gear, including skateboards and shoes. The skateboarder on the left is wearing a black and white outfit, while the skateboarder on the right is dressed in blue jeans. Both skateboarders are skillfully balancing on their skateboards, showcasing their talent and athleticism."
+        },
+        "objects": [],
+        "input_image": {
+          "source_width": 500,
+          "source_height": 294,
+          "format": "JPEG",
+          "encoded_bytes": 28478,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 500,
+          "height": 294,
+          "resized": false,
+          "inference_width": 500,
+          "inference_height": 294
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 1.4972491189837456,
+          "total": 3180.10424496606
+        },
+        "process_phase": "resident_reuse"
+      }
+    },
+    {
+      "case": "unauthenticated",
+      "http_status": 401,
+      "elapsed_ms": 1.89672177657485,
+      "response": {
+        "error": "Invalid model token"
+      }
+    },
+    {
+      "case": "cosmos-concurrent",
+      "http_status": 200,
+      "elapsed_ms": 2972.736671101302,
+      "response": {
+        "id": "3cc98893-b215-4ba2-bab4-dbdf514c1b42",
+        "object": "chat.completion",
+        "created": 1792699196,
+        "model": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "choices": [
+          {
+            "index": 0,
+            "message": {
+              "role": "assistant",
+              "content": "A person wearing a black jacket is partially visible on the left side of the frame, while another individual dressed in light-colored clothing stands on the right. Both are positioned behind a large dark surface that dominates most of the foreground.",
+              "reasoning_description": null
+            },
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 11,
+          "completion_tokens": 46,
+          "total_tokens": 57
+        }
+      }
+    },
+    {
+      "case": "segment-concurrent",
+      "http_status": 200,
+      "elapsed_ms": 1331.857476849109,
+      "response": {
+        "operation": "segment",
+        "model": "moondream2",
+        "object": "plane in front",
+        "status": "ok",
+        "image": {
+          "width": 640,
+          "height": 441,
+          "rgb_sha256": "992acf8fce85f0fb21941def82ecbb2db98342a7490797ec6a08a8634a4ff494"
+        },
+        "timings_ms": {
+          "preprocess": 0.6859051063656807,
+          "moondream_load": 0.0,
+          "describe": 0.0,
+          "presence": 0.0,
+          "detect": 0.0,
+          "point": 1231.4191311597824,
+          "segmenter_load": 0.0,
+          "image_encode": 66.87137158587575,
+          "mask_decode": 25.549767073243856,
+          "total": 1325.87531208992
+        },
+        "segmenter_name": "sam2.1-tiny",
+        "grounded_by": "point",
+        "presence_mode": "off",
+        "presence": null,
+        "raw_grounding": {
+          "points": [
+            {
+              "x": 0.63671875,
+              "y": 0.64453125
+            }
+          ]
+        },
+        "segmenter_used": true,
+        "grounding_settings": {
+          "max_objects": 3
+        },
+        "grounding_generation_limit": 3,
+        "grounding_returned_at_limit": false,
+        "rejected_grounding": [],
+        "valid_grounding_count": 1,
+        "truncated": false,
+        "image_encoding": {
+          "encode_ms": 65.25759492069483,
+          "image_shape": [
+            441,
+            640
+          ],
+          "batch_size": 1
+        },
+        "objects": [
+          {
+            "source_index": 0,
+            "grounding": {
+              "x": 0.63671875,
+              "y": 0.64453125
+            },
+            "point": [
+              0.63671875,
+              0.64453125
+            ],
+            "mask_metadata": {
+              "score": 0.94921875,
+              "score_kind": "uncalibrated_predicted_mask_iou",
+              "candidate_scores": [
+                0.91796875,
+                0.5390625,
+                0.94921875
+              ],
+              "selected_candidate": 2,
+              "candidate_count": 3,
+              "mask_area": 73495,
+              "mask_fraction": 0.26039895124716556,
+              "decode_ms": 24.78343015536666
+            },
+            "mask_encoding": "PNG grayscale: 0 background, 255 foreground"
+          }
+        ],
+        "input_image": {
+          "source_width": 640,
+          "source_height": 441,
+          "format": "JPEG",
+          "encoded_bytes": 51401,
+          "max_dimension": 1024,
+          "exif_transposed": true,
+          "width": 640,
+          "height": 441,
+          "resized": false,
+          "inference_width": 640,
+          "inference_height": 441
+        },
+        "model_identity": {
+          "moondream": "moondream2",
+          "segmenter": "sam2.1-tiny",
+          "runtime": "photon",
+          "device": "cuda",
+          "gb10_compat": false
+        },
+        "accuracy_evaluated": false,
+        "service_timings_ms": {
+          "image_prepare": 2.7417619712650776,
+          "total": 1330.2750908769667
+        },
+        "process_phase": "resident_reuse"
+      }
+    }
+  ],
+  "source_sha256": {
+    "tools/segmentation/server.py": "03aa766322813d9711b37c91c45499f8ce6688aa927cc262f6ece1fff7c106a3",
+    "tools/spark/local_vision.py": "537b96cd26f280d57939856a16fb962334bb6ec8f86750a4d600d2087108c2e7",
+    "tools/spark/bootstrap.py": "2d34dad85ea0fd5a275c7b04c8f6c0660a40d05314ef66791c1a7482cdb9d387",
+    "tools/spark/desktop.py": "9f3f3b8777e04c15db8c3c7707da05f9ce771008f2010eb122cfe6c76b7a64c4",
+    "tools/spark/guard.py": "4d3f33ad0a8e18d5c26742fdf5e7846d17d2ced6a747b7c5f42cd03395b1d1b4",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/pages/api/vision/local-model.ts": "48285bbcf44ea323a4479f964b6443d818071ef5e2d30d8e8bb250651a3ad95a",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/LocalVisionInspector.tsx": "1a7f4e40465baea395fbf6170a93b9eb0d4a443bf34a3ab01b556b58c747ca10"
+  },
+  "screenshots": {
+    "vss-defense.jpg": "3edc71cbaf2786857e960df234bf1b525d31f8a273fa495923d69500d5efde45",
+    "vss-smart-city.jpg": "2418bd8f79fc6a6a109f1e0844311e6d8d12337914e655dd52f98a77dbdd8650"
+  },
+  "scope": "One-at-a-time requested-image inference, max1024 side, fixed MD2 point+SAM2 Tiny. Includes one overlapping Cosmos request. No cold restart of entire Docker stack or continuous-stream/Thor qualification.",
+  "vss_runtime_verify": {
+    "time": 1792699713.5747483,
+    "commit": "96538737a954cd3d16a02e30b440c934b75bb6f3",
+    "available_gib": 32.18684768676758,
+    "reserve_gib": 20.0,
+    "failed_probes": [],
+    "qualification": "health only; browser and real clip/RTSP inference still required"
+  }
+}

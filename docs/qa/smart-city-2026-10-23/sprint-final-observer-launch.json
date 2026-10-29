@@ -1,0 +1,76 @@
+{
+  "at": "2026-10-23T16:26:15.467736+00:00",
+  "supervision": "Detached user-systemd transient units,2300s upper bound for2100s checks",
+  "runtimeUnchanged": true,
+  "observers": [
+    {
+      "unit": "vss-city-sprint-soak-20261023t1626z",
+      "script": "soak.py",
+      "arguments": [
+        "--site-id",
+        "isaac-intersection-a",
+        "--source-id",
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "--source-id",
+        "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "--vss-origin",
+        "http://127.0.0.1:7782",
+        "--observations",
+        "/home/sparkdev/vss/.spark/city/state/live-observations.ndjson",
+        "--output-dir",
+        "/home/sparkdev/vss/.spark/city/runtime/sprint-final-systemd-soak-20261023T1626Z",
+        "--duration-seconds",
+        "2100",
+        "--sample-every-seconds",
+        "5",
+        "--container",
+        "vss-city-polish-ui",
+        "--container",
+        "vss-city-polish-ingress",
+        "--container",
+        "vss-agent-ui",
+        "--ask-every-seconds",
+        "900",
+        "--ask-timeout-seconds",
+        "55",
+        "--pause-on-failure",
+        "--require-processed-preview"
+      ],
+      "log": "/home/sparkdev/vss/.spark/city/runtime/sprint-final-systemd-soak-20261023T1626Z.log"
+    },
+    {
+      "unit": "vss-city-sprint-isaac-20261023t1626z",
+      "script": "isaac_health.py",
+      "arguments": [
+        "--seconds",
+        "2100",
+        "--output",
+        "/home/sparkdev/vss/.spark/city/runtime/sprint-final-systemd-isaac-20261023T1626Z"
+      ],
+      "log": "/home/sparkdev/vss/.spark/city/runtime/sprint-final-systemd-isaac-20261023T1626Z.log"
+    },
+    {
+      "unit": "vss-city-sprint-preview-20261023t1626z",
+      "script": "audit_preview_duplicates.py",
+      "arguments": [
+        "--site-id",
+        "isaac-intersection-a",
+        "--source-id",
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "--source-id",
+        "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "--vss-origin",
+        "http://127.0.0.1:7782",
+        "--expected-model-revision",
+        "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "--duration-seconds",
+        "2100",
+        "--sample-every-seconds",
+        "10",
+        "--output-dir",
+        "/home/sparkdev/vss/.spark/city/runtime/sprint-final-systemd-preview-20261023T1626Z"
+      ],
+      "log": "/home/sparkdev/vss/.spark/city/runtime/sprint-final-systemd-preview-20261023T1626Z.log"
+    }
+  ]
+}

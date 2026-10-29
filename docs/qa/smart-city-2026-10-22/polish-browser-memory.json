@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "city.browser-memory-observation.v1",
+  "recordedAt": "2026-10-22T15:35:25.601082+00:00",
+  "durationSeconds": 1200.0370606663637,
+  "sampleCount": 81,
+  "intervalSeconds": 15,
+  "hostMinimumAvailableGiB": 40.247955322265625,
+  "sampledInAppRenderer": {
+    "name": "ChatGPT",
+    "firstPssMiB": 1460.1923828125,
+    "finalPssMiB": 1680.9326171875,
+    "minimumPssMiB": 1375.9501953125,
+    "maximumPssMiB": 1833.2392578125,
+    "lastTenMinutesMinimumPssMiB": 1554.5205078125,
+    "lastTenMinutesMaximumPssMiB": 1808.8916015625
+  },
+  "firefoxProcessesObserved": false,
+  "firefoxRetest": "Not performed: user confirmed original tab was closed; reopening was not confirmed and Firefox processes were absent in these samples. Browser tools exposed only in-app browser/MCP Apps.",
+  "beforeFixObservation": {
+    "at": "2026-10-22T14:49:22.953628+00:00",
+    "firefoxParentPssMiB": 6685.990234375,
+    "firefoxContentPssMiB": 6179.16796875,
+    "combinedProportionalSharedMiB": 12036.3076171875,
+    "interpretation": "Do not sum RSS as unique memory. User-confirmed tab closure was followed by release of the large shared allocation. The concrete bitmap cleanup gap and canvas allocation churn were independently reproduced/reviewed; no isolated causality claim."
+  },
+  "sampleSha256": "f51036b29aaeb86dcbfd60752ee4256334ed59a58a8e45ace1bd9f5b6fde6de6",
+  "samplerSha256": "d3e5eba02881fda1d904da7e36070a110abba08617be289d542ec2a4fdfbaad9",
+  "limits": [
+    "One sampled in-app renderer process, not a per-tab JavaScript heap or all-browser measurement.",
+    "Viewport changes, screenshots and other desktop activity can affect this process.",
+    "Twenty minutes does not establish a whole-day plateau or prove absence of all memory leaks."
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "city.controller-startup-wait-repair.v1",
+  "createdAt": "2026-10-23T16:15:09.798473+00:00",
+  "status": "cpu-validated",
+  "originalFailure": {
+    "logPath": ".spark/city/runtime/sprint-final-recovery-start-20261023.log",
+    "logSha256": "17d74a2b5b05c67fe2022a8f9c3f1a432fd7f39ff636fd96baf63d8135a493f8",
+    "summary": "Controller restart returned before the HTTP service was serving; initial Agent pause reported partial with detection cleanup false and strict launcher checks rejected it."
+  },
+  "changes": [
+    "Wait for the existing local controller before the first source mutation; no service start or restart is attempted.",
+    "Require readiness, a consistent two-source capacity/inventory restricted to the two saved identities, and exact OpenAPI application title.",
+    "Use a 60-second polling window and five-second timeout per GET; a final in-flight health/identity request can extend wall time beyond the polling deadline.",
+    "Keep the fully-ready idempotent path before controller admission checks.",
+    "Keep controller wait outside the mutation/rollback block, so a serving timeout does not pause sources or stop Isaac."
+  ],
+  "validation": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_isaac_demo.py tools/smart-city/tests/test_controller_probe.py tools/smart-city/test_controller.py",
+    "passed": 77
+  },
+  "sourceSha256": {
+    "tools/smart-city/isaac_demo.py": "a7f4444416fcddbfd6164ae761aa2596c470477848ca3f639ec5dfce3efd9b1e",
+    "tools/smart-city/tests/test_isaac_demo.py": "69b434a13d018aa6e5b40194c0d4139fd5e57530d743ca31360b76bc6f216516"
+  },
+  "limits": [
+    "No source or runtime changes performed by this agent.",
+    "The original failed recovery log is preserved; runtime startup and soak verification belong to a fresh run."
+  ]
+}

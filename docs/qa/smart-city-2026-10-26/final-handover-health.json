@@ -1,0 +1,9 @@
+{
+  "atNs": "1793011614254788700",
+  "ready": true,
+  "sourceSessionsUnchanged": true,
+  "normalFlowRestored": true,
+  "liveSources": 2,
+  "ruleCount": 19,
+  "scope": "Final read-only handover check; no new soak or model call."
+}

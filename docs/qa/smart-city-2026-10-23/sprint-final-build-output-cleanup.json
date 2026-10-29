@@ -1,0 +1,5 @@
+{
+  "removed": ".spark/smart-city-ui/20261023T155304362915Z/workspace/apps/nv-metropolis-bp-vss-ui/.next",
+  "reason": "Generated compilation output after successful immutable image packaging. Frozen source, complete artifact context, logs, manifests and image remain.",
+  "at": "2026-10-23T15:58:43.425645+00:00"
+}

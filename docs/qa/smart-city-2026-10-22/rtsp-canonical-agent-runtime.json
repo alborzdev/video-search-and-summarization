@@ -1,0 +1,210 @@
+{
+  "capturedAt": "2026-10-22T05:11:13.881915+00:00",
+  "phase": "two-canonical-RTSP-sources-36s-plus10s-clock",
+  "reserveGiB": 20,
+  "minimumAvailableGiB": 23.55792999267578,
+  "samples": [
+    {
+      "elapsedSeconds": 0,
+      "availableGiB": 24.143978118896484
+    },
+    {
+      "elapsedSeconds": 1,
+      "availableGiB": 24.08312225341797
+    },
+    {
+      "elapsedSeconds": 2,
+      "availableGiB": 24.045215606689453
+    },
+    {
+      "elapsedSeconds": 3,
+      "availableGiB": 24.047378540039062
+    },
+    {
+      "elapsedSeconds": 4,
+      "availableGiB": 24.398818969726562
+    },
+    {
+      "elapsedSeconds": 5,
+      "availableGiB": 25.054946899414062
+    },
+    {
+      "elapsedSeconds": 6,
+      "availableGiB": 25.047893524169922
+    },
+    {
+      "elapsedSeconds": 7,
+      "availableGiB": 25.275650024414062
+    },
+    {
+      "elapsedSeconds": 8,
+      "availableGiB": 25.137794494628906
+    },
+    {
+      "elapsedSeconds": 9,
+      "availableGiB": 25.16832733154297
+    },
+    {
+      "elapsedSeconds": 10,
+      "availableGiB": 25.177608489990234
+    },
+    {
+      "elapsedSeconds": 11,
+      "availableGiB": 24.962265014648438
+    },
+    {
+      "elapsedSeconds": 12,
+      "availableGiB": 24.685562133789062
+    },
+    {
+      "elapsedSeconds": 13,
+      "availableGiB": 24.32364273071289
+    },
+    {
+      "elapsedSeconds": 14,
+      "availableGiB": 23.978744506835938
+    },
+    {
+      "elapsedSeconds": 15,
+      "availableGiB": 23.728500366210938
+    },
+    {
+      "elapsedSeconds": 16,
+      "availableGiB": 23.608482360839844
+    },
+    {
+      "elapsedSeconds": 17,
+      "availableGiB": 23.62249755859375
+    },
+    {
+      "elapsedSeconds": 18,
+      "availableGiB": 23.601238250732422
+    },
+    {
+      "elapsedSeconds": 19,
+      "availableGiB": 23.65515899658203
+    },
+    {
+      "elapsedSeconds": 20,
+      "availableGiB": 23.64670181274414
+    },
+    {
+      "elapsedSeconds": 21,
+      "availableGiB": 23.55792999267578
+    },
+    {
+      "elapsedSeconds": 22,
+      "availableGiB": 23.719390869140625
+    },
+    {
+      "elapsedSeconds": 23,
+      "availableGiB": 23.723800659179688
+    },
+    {
+      "elapsedSeconds": 24,
+      "availableGiB": 23.788558959960938
+    },
+    {
+      "elapsedSeconds": 25,
+      "availableGiB": 23.768997192382812
+    },
+    {
+      "elapsedSeconds": 26,
+      "availableGiB": 23.792743682861328
+    },
+    {
+      "elapsedSeconds": 27,
+      "availableGiB": 23.78722381591797
+    },
+    {
+      "elapsedSeconds": 28,
+      "availableGiB": 23.817428588867188
+    },
+    {
+      "elapsedSeconds": 29,
+      "availableGiB": 23.79074478149414
+    },
+    {
+      "elapsedSeconds": 30,
+      "availableGiB": 23.76433563232422
+    },
+    {
+      "elapsedSeconds": 31,
+      "availableGiB": 23.816532135009766
+    },
+    {
+      "elapsedSeconds": 32,
+      "availableGiB": 23.788158416748047
+    },
+    {
+      "elapsedSeconds": 33,
+      "availableGiB": 23.696651458740234
+    },
+    {
+      "elapsedSeconds": 34,
+      "availableGiB": 23.801666259765625
+    },
+    {
+      "elapsedSeconds": 35,
+      "availableGiB": 23.79790496826172
+    }
+  ],
+  "clockProgress": [
+    {
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallSeconds": 10.037426948547363,
+      "clockAdvanceSeconds": 9.033896986,
+      "sourceClockAgeSeconds": 4.375799179077148,
+      "sourceClockProgressRatio": 0.9056664872965009,
+      "sourceClockStatus": "unverified-source-rtcp",
+      "timestampBasis": "source-rtcp",
+      "sessionChanged": false
+    },
+    {
+      "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "wallSeconds": 10.037426948547363,
+      "clockAdvanceSeconds": 9.999951931,
+      "sourceClockAgeSeconds": 0.2784297466278076,
+      "sourceClockProgressRatio": 1.0012333425694533,
+      "sourceClockStatus": "unverified-source-rtcp",
+      "timestampBasis": "source-rtcp",
+      "sessionChanged": false
+    }
+  ],
+  "nativeAnalytics": {
+    "status": "active",
+    "requestedRevision": 29,
+    "appliedRevision": 29,
+    "primitives": [
+      {
+        "ruleId": "rtsp-pedestrian-image-occupancy",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_9759f7135a55ecd8",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      }
+    ],
+    "eventAuthority": "city-behavior-analytics",
+    "counterEpoch": "75319098-c2c7-4efe-9931-578debeb8284",
+    "sourceTimeNs": "1792645836733755192",
+    "error": "",
+    "lastAppliedRevision": 29,
+    "operationalStatus": "fresh"
+  },
+  "trackCount": 108,
+  "metrics": [
+    {
+      "ruleId": "rtsp-pedestrian-image-occupancy",
+      "totalCrossings": 0,
+      "count": 7,
+      "occupancy": 7,
+      "activeEventCount": 1,
+      "oldestDwellMs": 20800.025255,
+      "status": "active",
+      "timestamp": "2026-10-22T05:11:13.569893Z"
+    }
+  ],
+  "eventCount": 2,
+  "mediaQualification": "Two independent recorded-video RTSP replays; pedestrian derived single-slice fixture; no shared calibration or fusion.",
+  "sourceClockQualification": "Native source-rtcp progress only; browser mapping still unverified."
+}

@@ -1,0 +1,835 @@
+{
+  "date": "2026-10-21",
+  "purpose": "Operator-selected Cosmos3 Nano NVFP4 switch on DGX Spark",
+  "artifact": {
+    "artifact_id": "ngc:nim/nvidia/cosmos3-nano-reasoner:modelopt-nvfp4-full-quantize-final_format_fix",
+    "files": [
+      {
+        "path": ".quant_summary.txt",
+        "size": 220607,
+        "sha256": "24376be31a7e09557a15d28306791a45bd4c68c50f5b533eadc0170aac5e2d0d"
+      },
+      {
+        "path": "chat_template.jinja",
+        "size": 5292,
+        "sha256": "3636d0f0bd6bef02654cdffdc447b79cb2cef8ab02cc75267345946291a489e4"
+      },
+      {
+        "path": "chat_template.json",
+        "size": 5499,
+        "sha256": "5c72a170d2a4a1a3bc5adad2e689ae28138a9700e5b8c96c0266331e86c0acce"
+      },
+      {
+        "path": "config.json",
+        "size": 2782,
+        "sha256": "b6798f992baa1b0976a87192907c16d80c8fef453a3407d5cb1d1afd1f0253fc"
+      },
+      {
+        "path": "generation_config.json",
+        "size": 269,
+        "sha256": "8469742d1fce0de951c8909b26a2c0c0d8490837ce476efb114da9e0cefc4d44"
+      },
+      {
+        "path": "hf_quant_config.json",
+        "size": 315,
+        "sha256": "877ede269cf91259e0f7c53c79e37397d8252a39c840a8ffe1625c570831be58"
+      },
+      {
+        "path": "merges.txt",
+        "size": 1671839,
+        "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+      },
+      {
+        "path": "model.safetensors",
+        "size": 7549893192,
+        "sha256": "abf4de6d1e4c37d2515f6721bb541cf5037e84fe5d689ef612b6861c67e2dbba"
+      },
+      {
+        "path": "preprocessor_config.json",
+        "size": 390,
+        "sha256": "27225450ac9c6529872ee1924fcb0962ff5634834f817040f444118116f4e516"
+      },
+      {
+        "path": "processor_config.json",
+        "size": 1191,
+        "sha256": "d89ef49ce9cd37fbf510158e13c1ef063d9286411c1ec9049932dbe0487143b1"
+      },
+      {
+        "path": "tokenizer.json",
+        "size": 7032403,
+        "sha256": "a5d85b6dcc535e6b93115a9ef287e6132fdbf30270da6218194ba742261173c7"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "size": 10868,
+        "sha256": "c2da771801886ad9ae98181793ffd3dfb7f1af30f6f7c6a4e15d7dbba52e2399"
+      },
+      {
+        "path": "video_preprocessor_config.json",
+        "size": 385,
+        "sha256": "7768af27c1fafa9cc9011c1dc20067e03f8915e03b63504550e11d5066986d13"
+      },
+      {
+        "path": "vocab.json",
+        "size": 2776833,
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    ]
+  },
+  "staging_verified": true,
+  "deployment": {
+    "precision": "nvfp4",
+    "started_at_epoch": 1792616298.5942903,
+    "events": [
+      {
+        "time": 1792616299.4282286,
+        "message": "Starting final nvfp4 selection with saved EVS configuration",
+        "available_gib": 48.635887145996094
+      },
+      {
+        "time": 1792616397.5037382,
+        "message": "Running final clip inference checks",
+        "available_gib": 49.31696701049805
+      },
+      {
+        "time": 1792616425.5945477,
+        "message": "Refreshing model consumers",
+        "available_gib": 48.38348388671875
+      },
+      {
+        "time": 1792616466.321887,
+        "message": "Saved model and app consumers refreshed",
+        "available_gib": 49.71920394897461
+      }
+    ],
+    "completed": true,
+    "semantic_qualification": "See measured answers; completion does not imply all accuracy controls passed.",
+    "affected_services": [
+      "alert-bridge",
+      "lvs-server",
+      "rtvi-vlm",
+      "vss-agent",
+      "vss-ui"
+    ],
+    "completed_at_epoch": 1792616466.3269205
+  },
+  "arms": {
+    "bf16-before": {
+      "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.5",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLLM_CUDAGRAPH_MODE": null,
+        "VLLM_ATTENTION_BACKEND": ""
+      },
+      "completed": true,
+      "cases": {
+        "raw20-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.843,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "YES",
+          "answers": [
+            "YES"
+          ]
+        },
+        "raw20-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.913,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "original-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.576,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "YES",
+          "answers": [
+            "YES"
+          ]
+        },
+        "original-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.581,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "scene-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 1.763,
+          "protocol_passes": 3,
+          "semantic_passes": null,
+          "expected": null,
+          "answers": [
+            "A cardboard box is moving on a blue conveyor belt."
+          ]
+        },
+        "json20-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 2.676,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout all frames.\"}"
+          ]
+        },
+        "json20-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 2.926,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout the entire sequence of frames.\"}"
+          ]
+        },
+        "final-image": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.435,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "No"
+          ]
+        }
+      }
+    },
+    "nvfp4": {
+      "model": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.5",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLLM_CUDAGRAPH_MODE": null,
+        "VLLM_ATTENTION_BACKEND": ""
+      },
+      "completed": true,
+      "cases": {
+        "raw20-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.672,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "NO"
+          ]
+        },
+        "raw20-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.745,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "original-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.386,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "YES",
+          "answers": [
+            "YES"
+          ]
+        },
+        "original-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.37,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "scene-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 1.154,
+          "protocol_passes": 3,
+          "semantic_passes": null,
+          "expected": null,
+          "answers": [
+            "A brown belt of a conveyor is moving on a blue metal structure."
+          ]
+        },
+        "json20-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 1.793,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is visible throughout the sequence, but no box appears on it during any of the frames.\"}"
+          ]
+        },
+        "json20-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 1.495,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout the entire sequence of frames.\"}"
+          ]
+        },
+        "final-image": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.257,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "No"
+          ]
+        }
+      }
+    },
+    "nvfp4-no-evs": {
+      "model": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "VIA_EVS_SESSION": "false",
+        "VLM_VIDEO_PRUNING_RATE": "",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLLM_CUDAGRAPH_MODE": null,
+        "VLLM_ATTENTION_BACKEND": ""
+      },
+      "completed": true,
+      "cases": {
+        "raw20-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.833,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "YES",
+          "answers": [
+            "YES"
+          ]
+        },
+        "raw20-empty": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.92,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "original-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.369,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "YES",
+          "answers": [
+            "YES"
+          ]
+        },
+        "original-empty": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.344,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "scene-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 1.327,
+          "protocol_passes": 1,
+          "semantic_passes": null,
+          "expected": null,
+          "answers": [
+            "A curved conveyor belt with blue metal frames and gray surface is shown."
+          ]
+        },
+        "json20-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 2.967,
+          "protocol_passes": 1,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "{\"prediction_answer\": \"YES\", \"reasoning\": \"In the frames of the video, there is a clear presence of a box on the conveyor belt towards the end of the sequence. The box appears to be moving along the conveyor system, indicating that it has been placed onto the belt for transport. This movement is"
+          ]
+        },
+        "json20-empty": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 1.785,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "NO",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout all frames; no objects are present.\"}"
+          ]
+        },
+        "final-image": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.221,
+          "protocol_passes": 1,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "No"
+          ]
+        }
+      }
+    },
+    "nvfp4-evs-quarter": {
+      "model": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.25",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLLM_CUDAGRAPH_MODE": null,
+        "VLLM_ATTENTION_BACKEND": ""
+      },
+      "completed": true,
+      "cases": {
+        "raw20-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.642,
+          "protocol_passes": 1,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "NO"
+          ]
+        },
+        "raw20-empty": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.726,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "original-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.407,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "YES",
+          "answers": [
+            "YES"
+          ]
+        },
+        "original-empty": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.407,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "scene-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 1.198,
+          "protocol_passes": 1,
+          "semantic_passes": null,
+          "expected": null,
+          "answers": [
+            "A brown belt of a conveyor is moving on a blue metal structure."
+          ]
+        },
+        "json20-positive": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 1.815,
+          "protocol_passes": 1,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is visible throughout the sequence, but no box appears on it during any of the frames.\"}"
+          ]
+        },
+        "json20-empty": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 1.489,
+          "protocol_passes": 1,
+          "semantic_passes": 1,
+          "expected": "NO",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout the entire sequence of frames.\"}"
+          ]
+        },
+        "final-image": {
+          "timed_repeats": 1,
+          "excluded_warmups": 1,
+          "median_seconds": 0.257,
+          "protocol_passes": 1,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "No"
+          ]
+        }
+      }
+    },
+    "final-nvfp4": {
+      "model": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "runtime": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "VLM_MODEL_TO_USE": "cosmos-reason3",
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.5",
+        "VLLM_ENFORCE_EAGER": "true",
+        "VLLM_CUDAGRAPH_MODE": null,
+        "VLLM_ATTENTION_BACKEND": ""
+      },
+      "completed": true,
+      "cases": {
+        "raw20-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.656,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "NO"
+          ]
+        },
+        "raw20-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.735,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "original-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.387,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "YES",
+          "answers": [
+            "YES"
+          ]
+        },
+        "original-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.382,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "NO"
+          ]
+        },
+        "scene-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 1.166,
+          "protocol_passes": 3,
+          "semantic_passes": null,
+          "expected": null,
+          "answers": [
+            "A brown belt of a conveyor is moving on a blue metal structure."
+          ]
+        },
+        "json20-positive": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 1.783,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is visible throughout the sequence, but no box appears on it during any of the frames.\"}"
+          ]
+        },
+        "json20-empty": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 1.507,
+          "protocol_passes": 3,
+          "semantic_passes": 3,
+          "expected": "NO",
+          "answers": [
+            "{\"prediction_answer\": \"NO\", \"reasoning\": \"The conveyor belt is empty throughout the entire sequence of frames.\"}"
+          ]
+        },
+        "final-image": {
+          "timed_repeats": 3,
+          "excluded_warmups": 1,
+          "median_seconds": 0.256,
+          "protocol_passes": 3,
+          "semantic_passes": 0,
+          "expected": "YES",
+          "answers": [
+            "No"
+          ]
+        }
+      }
+    }
+  },
+  "app_smoke": {
+    "status": 200,
+    "elapsed_seconds": 5.33970040967688,
+    "request": {
+      "query": "Describe the visible conveyor scene in this clip.",
+      "question": "Describe the visible conveyor scene in this clip.",
+      "evidence": [
+        {
+          "client_id": "nvfp4-switch-20261021",
+          "sensor_id": "af991bb7-5dc5-49c1-8590-b8f10ad9f887",
+          "source_name": "Vss33 Validation 20261020 Blue Conveyor",
+          "start_time": "2025-01-01T00:00:00Z",
+          "end_time": "2025-01-01T00:00:07.534Z",
+          "match_type": "manual_review",
+          "search_description": "Existing recorded conveyor clip; fresh model integration smoke check."
+        }
+      ]
+    },
+    "body": {
+      "status": "complete",
+      "query": "Describe the visible conveyor scene in this clip.",
+      "question": "Describe the visible conveyor scene in this clip.",
+      "summary": "A curved conveyor belt with blue metal supports moves steadily across a dark tiled floor. A brown cardboard box labeled \"FRAGILE\" appears on the right side of the conveyor towards the end of the sequence.",
+      "observations": [
+        {
+          "text": "A curved conveyor belt with blue metal supports moves steadily across a dark tiled floor. A brown cardboard box labeled \"FRAGILE\" appears on the right side of the conveyor towards the end of the sequence.",
+          "evidence_ids": [
+            "E1"
+          ]
+        }
+      ],
+      "interpretations": [],
+      "timeline": [
+        {
+          "evidence_id": "E1",
+          "source_name": "Vss33 Validation 20261020 Blue Conveyor",
+          "start_time": "2025-01-01T00:00:00Z",
+          "end_time": "2025-01-01T00:00:07.534000Z",
+          "label": "Visual inspection"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "E1",
+          "client_id": "nvfp4-switch-20261021",
+          "source_name": "Vss33 Validation 20261020 Blue Conveyor",
+          "start_time": "2025-01-01T00:00:00Z",
+          "end_time": "2025-01-01T00:00:07.534000Z",
+          "observation": "A curved conveyor belt with blue metal supports moves steadily across a dark tiled floor. A brown cardboard box labeled \"FRAGILE\" appears on the right side of the conveyor towards the end of the sequence.",
+          "match_type": "manual_review",
+          "inspection_source": "fresh_cosmos_inspection"
+        }
+      ],
+      "suggested_questions": [
+        "What changes during this clip?",
+        "Where are the visible people and objects relative to each other?"
+      ],
+      "warning": null,
+      "timings_ms": {
+        "inspection": 5271.7,
+        "synthesis": 0,
+        "total": 5271.7
+      }
+    }
+  },
+  "clip_export_fix": {
+    "trigger": "Fresh ISO evidence inspection requested an overlay export on the Spark CPU VIOS image.",
+    "original_exit_code": 139,
+    "fix": "Spark config overrides functions.vst_video_url.overlay_config=false so inference uses the validated retained clip.",
+    "config": "deploy/docker/spark/config.yml",
+    "thor_configuration_changed": false,
+    "streamprocessor_budgets_unchanged": true
+  },
+  "saved_selection": {
+    "vlm_precision": "nvfp4",
+    "reserve_gib": 20.0,
+    "adaptive_evs": true,
+    "cached_models": true,
+    "rtvi_vlm_image": "vss-rtvi-vlm:3.3-sbsa-codecs"
+  },
+  "runtime_consumers": {
+    "vss-rtvi-vlm": {
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "state": "running",
+      "health": "healthy",
+      "selected_environment": {
+        "MODEL_PATH": "/opt/nvidia/rtvi/.rtvi/ngc_model_cache/nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.5",
+        "VLLM_KV_CACHE_MEMORY_BYTES": "4294967296",
+        "VLLM_MAX_NUM_SEQS": "1",
+        "RTVI_VLLM_NATIVE_CONV3D": "true"
+      }
+    },
+    "vss-lvs": {
+      "image_id": "sha256:4c30970fc6245307362f6dfad3f400606265d3605f3241b9b406b9d34c808d06",
+      "state": "running",
+      "health": "healthy",
+      "selected_environment": {
+        "VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix"
+      }
+    },
+    "vss-agent": {
+      "image_id": "sha256:165dfe62fea62e2716716f66dfab3f5059fe5eccce57df47dcc4f5e8ac170efe",
+      "state": "running",
+      "health": "healthy",
+      "selected_environment": {
+        "VLM_NAME": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix"
+      }
+    },
+    "vss-agent-ui": {
+      "image_id": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+      "state": "running",
+      "health": null,
+      "selected_environment": {
+        "LVS_VLM_MODEL": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix"
+      }
+    },
+    "vss-alert-bridge": {
+      "image_id": "sha256:0cffca4b53e5cac6ff7797dc53d6b88075795aeb26b502ac8af8abb0e95338e2",
+      "state": "running",
+      "health": null,
+      "selected_environment": {
+        "VLM_NAME": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix"
+      }
+    },
+    "vss-vios-streamprocessing": {
+      "image_id": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+      "state": "running",
+      "health": "healthy",
+      "selected_environment": {}
+    }
+  },
+  "active_models": {
+    "object": "list",
+    "data": [
+      {
+        "id": "nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix",
+        "created": 1792616308,
+        "object": "model",
+        "owned_by": "custom",
+        "api_type": "internal"
+      }
+    ],
+    "audio_support": false
+  },
+  "vlm_readiness": {
+    "healthy": true,
+    "timestamp": 1792616616.3753982,
+    "uptime_seconds": 307.5859913825989,
+    "checks": [
+      {
+        "healthy": true,
+        "message": "Decoder process 0 GPU 0 is running",
+        "component": "decoder_process_0",
+        "timestamp": 1792616616.3753803
+      },
+      {
+        "healthy": true,
+        "message": "VLM process 0 is running",
+        "component": "vlm_process_0",
+        "timestamp": 1792616616.3753953
+      }
+    ],
+    "admission": {
+      "mode": "off",
+      "active_cost": 0.0,
+      "target_cost": 2.0,
+      "max_cost": 2.0,
+      "pending_file_chunks": 0,
+      "ready_file_requests": 0
+    }
+  },
+  "guard_active": true,
+  "guard_status": {
+    "time": 1792616615.990273,
+    "floor_gib": 20.0,
+    "available_gib": 48.94683837890625
+  },
+  "limitations": [
+    "NVFP4 with EVS missed the brief box in all timed 20-frame positive controls; BF16 with EVS detected it.",
+    "NVFP4 without EVS restored the plain-text 20-frame positive verdict; 25% pruning did not.",
+    "Both checkpoints failed the positive JSON and still-image controls with these exact prompts and limits. NVFP4 without EVS started a correct positive JSON answer but exceeded the 64-token limit, leaving invalid JSON.",
+    "NVFP4 scene descriptions omitted the box mentioned by BF16.",
+    "Latency uses three timed requests per final case, with one excluded warmup. No broad accuracy, throughput, live-ingestion or training-contention qualification.",
+    "Vision tower and output head retain their original precision; language weights/activations use NVFP4. Runtime selected FP8 KV cache within the unchanged four-GiB budget.",
+    "BF16 cache is retained for rollback. Thor configuration is unchanged."
+  ],
+  "code_checks": {
+    "spark_bootstrap_tests": 28,
+    "spark_desktop_tests": 42,
+    "spark_ui_tests": 6,
+    "runtime_dispatch_tests": 5,
+    "diff_check": "passed"
+  },
+  "completed_at_epoch": 1792616616.381748
+}

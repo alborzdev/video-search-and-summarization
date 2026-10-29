@@ -1,0 +1,125 @@
+{
+  "stage": "/home/sparkdev/isaac_city_sim/stages/smart_city_pilot.usda",
+  "playing": true,
+  "simTime": 1834.1666666656558,
+  "loaded": true,
+  "error": null,
+  "loading": false,
+  "streaming": true,
+  "streamBusy": false,
+  "streams": {
+    "h264_setups": 3,
+    "max_h264_setups_per_run": 4,
+    "nvenc_budget_left": 1,
+    "generation": 4,
+    "n_cameras": 2,
+    "attached": true,
+    "backend": "native",
+    "urls": [
+      {
+        "cam": "cam_SW",
+        "port": 18560,
+        "mount": "/cam_SW",
+        "url_local": "rtsp://127.0.0.1:18560/cam_SW"
+      },
+      {
+        "cam": "cam_NE",
+        "port": 18561,
+        "mount": "/cam_NE",
+        "url_local": "rtsp://127.0.0.1:18561/cam_NE"
+      }
+    ],
+    "base_dir": null,
+    "cameras": [
+      {
+        "id": "cam_SW",
+        "prim_path": "/World/SmartCity/Cameras/cam_SW",
+        "render_product": "/Render/OmniverseKit/HydraTextures/Replicator",
+        "port": 18560,
+        "mount": "/cam_SW",
+        "url_local": "rtsp://127.0.0.1:18560/cam_SW"
+      },
+      {
+        "id": "cam_NE",
+        "prim_path": "/World/SmartCity/Cameras/cam_NE",
+        "render_product": "/Render/OmniverseKit/HydraTextures/Replicator_01",
+        "port": 18561,
+        "mount": "/cam_NE",
+        "url_local": "rtsp://127.0.0.1:18561/cam_NE"
+      }
+    ],
+    "rings": {},
+    "streams": {
+      "cam_SW": {
+        "cam": "cam_SW",
+        "port": 18560,
+        "mount": "/cam_SW",
+        "encoding": "h264",
+        "frames": 8384,
+        "pushed": 8318,
+        "failed": false,
+        "server": true,
+        "server_starts": 1,
+        "capture_timestamp_basis": "wall-capture",
+        "last_capture_ns": 1792787744476747495,
+        "push_rejected": 66,
+        "client_connected": true,
+        "first_error": null,
+        "swizzled": 0,
+        "swizzle_error": null,
+        "swizzle_ms": null,
+        "attached": true
+      },
+      "cam_NE": {
+        "cam": "cam_NE",
+        "port": 18561,
+        "mount": "/cam_NE",
+        "encoding": "h264",
+        "frames": 8384,
+        "pushed": 8381,
+        "failed": false,
+        "server": true,
+        "server_starts": 1,
+        "capture_timestamp_basis": "wall-capture",
+        "last_capture_ns": 1792787744476019383,
+        "push_rejected": 3,
+        "client_connected": true,
+        "first_error": null,
+        "swizzled": 0,
+        "swizzle_error": null,
+        "swizzle_ms": null,
+        "attached": true
+      }
+    },
+    "native_cfg": {
+      "base_port": 18560,
+      "port_step": 1,
+      "encoding": "h264",
+      "fps": 15,
+      "gop": 15,
+      "max_h264_setups_per_run": 4
+    },
+    "saved_settings": {
+      "iframeinterval": 60,
+      "framerate": 60.0
+    }
+  },
+  "log": [
+    "!!! streaming health gate FAILED: RTSP mounts not responding after 20s",
+    "=== streaming: start ===",
+    "    RTSP backend requested: native",
+    "      [stream] native cam_SW port=18560 mount=/cam_SW rp=/Render/OmniverseKit/HydraTextures/Replicator",
+    "      [stream] native cam_NE port=18561 mount=/cam_NE rp=/Render/OmniverseKit/HydraTextures/Replicator_01",
+    "      [stream] render_products=2 writers=2 attached=2/2 venc={'iframeinterval': 15, 'framerate': 15.0} (saved {'iframeinterval': 60, 'framerate': 60.0}) timeline_playing=True",
+    "      [stream] VERDICT = PASS",
+    "      [stream] now wait ~3 s of wall clock and run with STREAM_MODE=verify for the frame-advance gate",
+    "    camera stream registry snapshot: {'h264_setups': 3, 'max_h264_setups_per_run': 4, 'nvenc_budget_left': 1, 'generation': 4, 'n_cameras': 2, 'attached': True, 'backend': 'native', 'urls': [{'cam': 'cam_SW', 'port': 18560, 'mount': '/cam_SW', 'url_local': 'rtsp://127.0.0.1:18560/cam_SW'}, {'cam': 'cam_NE', 'port': 18561, 'mount': '/cam_NE', 'url_local': 'rtsp://127.0.0.1:18561/cam_NE'}], 'base_dir': None, 'cameras': [{'id': 'cam_SW', 'prim_path': '/World/SmartCity/Cameras/cam_SW', 'render_product': '/Render/OmniverseKit/HydraTextures/Replicator', 'port': 18560, 'mount': '/cam_SW', 'url_local': 'rtsp://127.0.0.1:18560/cam_SW'}, {'id': 'cam_NE', 'prim_path': '/World/SmartCity/Cameras/cam_NE', 'render_product': '/Render/OmniverseKit/HydraTextures/Replicator_01', 'port': 18561, 'mount': '/cam_NE', 'url_local': 'rtsp://127.0.0.1:18561/cam_NE'}], 'rings': {}, 'streams': {'cam_SW': {'cam': 'cam_SW', 'port': 18560, 'mount': '/cam_SW', 'encoding': 'h264', 'frames': 0, 'pushed': 0, 'failed': False, 'server': False, 'server_starts': 0, 'capture_timestamp_basis': 'wall-capture', 'last_capture_ns': 0, 'push_rejected': 0, 'client_connected': None, 'first_error': None, 'swizzled': 0, 'swizzle_error': None, 'swizzle_ms': None, 'attached': True}, 'cam_NE': {'cam': 'cam_NE', 'port': 18561, 'mount': '/cam_NE', 'encoding': 'h264', 'frames': 0, 'pushed': 0, 'failed': False, 'server': False, 'server_starts': 0, 'capture_timestamp_basis': 'wall-capture', 'last_capture_ns': 0, 'push_rejected': 0, 'client_connected': None, 'first_error': None, 'swizzled': 0, 'swizzle_error': None, 'swizzle_ms': None, 'attached': True}}, 'native_cfg': {'base_port': 18560, 'port_step': 1, 'encoding': 'h264', 'fps': 15, 'gop': 15, 'max_h264_setups_per_run': 4}, 'saved_settings': {'iframeinterval': 60, 'framerate': 60.0}}",
+    "    native backend: in-Kit RTSP servers, no host streamer process",
+    "    health gate: waiting up to 20s for 2/2 mounts",
+    "    DESCRIBE 200: cam_SW@18560 after 0.1s",
+    "    DESCRIBE 200: cam_NE@18561 after 0.1s",
+    "streaming UP (native):",
+    "      rtsp://10.88.8.122:18560/cam_SW",
+    "      rtsp://10.88.8.122:18561/cam_NE"
+  ]
+}

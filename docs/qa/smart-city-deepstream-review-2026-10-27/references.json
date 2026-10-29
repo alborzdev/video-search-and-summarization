@@ -1,0 +1,60 @@
+{
+  "reviewedAtUtc": "2026-10-27T15:35:30.282127+00:00",
+  "scope": "Documentation, code and existing/current status review; no new GPU benchmark or runtime tuning.",
+  "skillReferences": [
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-audit-config/references/design_review.md",
+      "sha256": "b0ad43b3f3a5e86a1beb12772a8a476eb0e9705d7b00b9c11e7b755afbaa2666"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-audit-config/references/rules.md",
+      "sha256": "b8156ae4aa897bc4ace14154753b876d561605824fcf92e3a39306384af27f08"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-audit-config/SKILL.md",
+      "sha256": "572e742f862564deff28c3811e196dde45447293398d09b5d8af7854fb27710e"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-dev/references/best_practices.md",
+      "sha256": "c3be7ff91c9c021c0a6387fb33cafde6e54e21be6f98b757dae11a4756ee4b09"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-dev/references/tracker_config.md",
+      "sha256": "851c8db55915bce6fec18502e840e82bc512e45c641a681f4f6694f2909f4613"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-dev/SKILL.md",
+      "sha256": "8d49cda5b235c359c9279a104e924a5d0e2d3743af8314199376bd92b9f50507"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-inspect-rtsp/SKILL.md",
+      "sha256": "b742369ea222a2579b22c22f386e156e5cc9273b23c246830498ca3e8d867fd3"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-inspect-stack/SKILL.md",
+      "sha256": "b7879415bfa826326407f18f79faa8784ea921ac3b40eea06b35ddf7906c0845"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-profile-pipeline/references/config-derivation-rules.md",
+      "sha256": "b76cfcd57c7d9446e15dbb1037f9b53836975fae1cf56c08ea255a33661c7bb0"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-profile-pipeline/SKILL.md",
+      "sha256": "7d6193940e5508cc0246791634222465b5fde6e06b9402777caac61e770812ca"
+    },
+    {
+      "url": "https://github.com/NVIDIA/DeepStream/blob/main/skills/deepstream-run-mv3dt/SKILL.md",
+      "sha256": "59bcaeffec5f8e258187b2e4c1a605f51ed443c6c6167828e066bffbeda8ecb5"
+    }
+  ],
+  "sdkDocs": [
+    "https://docs.nvidia.com/deepstream/text/DS_Performance",
+    "https://docs.nvidia.com/deepstream/text/DS_troubleshooting",
+    "https://docs.nvidia.com/deepstream/text/DS_plugin_gst-nvinfer",
+    "https://docs.nvidia.com/deepstream/text/DS_plugin_gst-nvtracker",
+    "https://docs.nvidia.com/deepstream/text/DS_plugin_gst-nvstreammux",
+    "https://docs.nvidia.com/deepstream/text/DS_plugin_gst-nvurisrcbin",
+    "https://docs.nvidia.com/deepstream/text/DS_plugin_gst-nvdspreprocess",
+    "https://docs.nvidia.com/deepstream/text/DS_RestServer"
+  ]
+}

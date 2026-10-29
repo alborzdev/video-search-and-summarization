@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "city.pedestrian-entry-reapproach-independent-review.v1",
+  "disposition": "no-blocker-for-bounded-live-retry",
+  "scope": "Read-only source review and CPU-only focused controls. No runtime, model, scene, service or rule changes by reviewer.",
+  "actualFailure": {
+    "receipt": "pedestrian-free-endpoint-first-live.json",
+    "trace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-free-endpoint-final-v3-ui.ndjson",
+    "traceSha256": "1beabc0e8b2bc55f465f6767185464968f00d3654c835656d386c83d511b2897",
+    "runId": "0e7c5b62f64f4b18:000001",
+    "elapsedWallSeconds": 41.34408915089443,
+    "restored": true,
+    "reason": "pedestrian-native-action-refused",
+    "phase": "waiting",
+    "entryArrivalVerified": true,
+    "atEntry": false,
+    "fixedEntryM": [
+      -11.2,
+      88.4,
+      0
+    ],
+    "lastPositionM": [
+      -11.047933578491211,
+      88.08696746826172,
+      0.037641871720552444
+    ],
+    "authoritativeArrivalToleranceM": 0.35
+  },
+  "reviewedSource": {
+    "/home/sparkdev/isaac_city_sim/scripts/people/people_controller.py": "836ed862cde8ac7303411c91050b7cefbf3ca666a6a003a49c40dac57b7be111",
+    "/home/sparkdev/isaac_city_sim/scripts/scenarios/runtime.py": "0cf9ee6852079547d94361066bbadbe020c677207056c7b6877e452629778098"
+  },
+  "reviewedTests": {
+    "/home/sparkdev/isaac_city_sim/scripts/people/test_owned_cohort.py": "33f146e935a2d4d95f53b69d91e2698422e94025e8b64647e771a115541a11a2",
+    "/home/sparkdev/isaac_city_sim/scripts/scenarios/test_waiting_points.py": "7891028f67dc9e08a261dbc9f18d329f89053fc3baafdc308bedf9cd395c9e14",
+    "/home/sparkdev/isaac_city_sim/scripts/scenarios/test_director.py": "320b24951a97b28c4a57b70be3c2a657a8f4956e20f704020615f1d7217dae2e"
+  },
+  "checks": [
+    "Re-approach uses the original fixed entry, owner, original normal program and crossing request timestamp; no endpoint retarget.",
+    "Recovery is allowed only within 1.0m XY / 0.15m Z of that entry, outside roadway and painted crossing. This bound defines safe recovery eligibility, not arrival.",
+    "An actual native full-path proof and a real accepted nonnegative native task ID are required; repeated polls reuse the task instead of issuing new commands.",
+    "Both immutable selected endpoints are rechecked for current body clearance before Runtime asks for recovery; occupancy stays pending without a new task.",
+    "A bounded curb request retains its next-cohort reservation during recovery, so normal-first walkers may wait. Owned crossing is separately refused until the actor is in waiting phase at the actual original 0.35m entry tolerance, with verified arrival.",
+    "Existing WALK, native path, shared cohort, actor/session/epoch, restoration and whole-body exit guards remain.",
+    "Pending recovery cannot reset the Director's original latched signal-wait budget or overall finite deadline.",
+    "Rejected or failed native commands, clock rollback, generation/epoch change and explicit cancellation fail closed and restore the original program."
+  ],
+  "independentTests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/people -p test_owned_cohort.py -q",
+      "cwd": "/home/sparkdev/isaac_city_sim",
+      "passed": 14,
+      "elapsedSeconds": 6.79,
+      "exitCode": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest scripts.scenarios.test_waiting_points -k drift -q",
+      "cwd": "/home/sparkdev/isaac_city_sim",
+      "passed": 1,
+      "elapsedSeconds": 0.021,
+      "exitCode": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest scripts.scenarios.test_waiting_points -k crowded_same_entry -q",
+      "cwd": "/home/sparkdev/isaac_city_sim",
+      "passed": 1,
+      "elapsedSeconds": 0.021,
+      "exitCode": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest scripts.scenarios.test_director -k same_entry_reapproach -q",
+      "cwd": "/home/sparkdev/isaac_city_sim",
+      "passed": 1,
+      "elapsedSeconds": 0.001,
+      "exitCode": 0
+    }
+  ],
+  "remainingLimit": "CPU controls establish the source contract. Successful dynamic avoidance, timely same-entry recovery and complete native/AI episode still require the parent's bounded live retry; no live-pass claim is made here."
+}

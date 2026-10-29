@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-26T05:27:33.001294Z",
+  "action": "Root-authorized atomic sync of only the isolated UI public map; previous asset archived",
+  "source": "services/ui/apps/nv-metropolis-bp-vss-ui/public/smart-city/isaac-intersection-a-map.png",
+  "destination": ".spark/city/ui-public/smart-city/isaac-intersection-a-map.png",
+  "archive": ".spark/city/runtime/map-public-sync-20261026T052733Z/isaac-intersection-a-map.previous.png",
+  "sourceSha256": "b5e8efb8f7491d21da0c6fe1d1ccb80413dc604fa28f0d1586263b209b6430a1",
+  "previousSha256": "c2b7eb6281bf96ff9fada03ed84acf048d7d68041d56c2f78aca1c58d966d2ef",
+  "destinationSha256": "b5e8efb8f7491d21da0c6fe1d1ccb80413dc604fa28f0d1586263b209b6430a1",
+  "dimensions": [
+    1040,
+    1120
+  ],
+  "sourceProvenance": "Parent agent confirmed new actor-free static v2 scene capture with same calibrated footprint; this action only copies the reviewed PNG",
+  "scope": "No build, restart, GPU job, scene change, or model request",
+  "servedReadOnlyChecks": [
+    {
+      "port": 7782,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "sha256": "b5e8efb8f7491d21da0c6fe1d1ccb80413dc604fa28f0d1586263b209b6430a1",
+      "matchesSource": true
+    },
+    {
+      "port": 7781,
+      "httpStatus": 200,
+      "contentType": "image/png",
+      "sha256": "b5e8efb8f7491d21da0c6fe1d1ccb80413dc604fa28f0d1586263b209b6430a1",
+      "matchesSource": true
+    }
+  ],
+  "permissions": {
+    "sourceMode": "0o600",
+    "previousMode": "0o664",
+    "destinationMode": "0o664",
+    "reason": "Preserve previous runtime-readable destination mode rather than restrictive source capture mode"
+  },
+  "resolvedCopyIssue": "Initial copy inherited source0600; restored the previous mounted asset mode, then verified served bytes."
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "city.native-sei-live-ask-browser.v1",
+  "at": "2026-10-26T10:37:13.783Z",
+  "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+  "question": "Describe the road users visible in the last five seconds. Keep the answer short.",
+  "panel": "ASK THIS SCENE\n\nAsk the local visual analyst about current footage from the selected camera.\n\nCamera\nSouthwest corner\nNortheast corner\n\nCurrent footage only. Source clock time is unverified.\n\nDescribe the road users visible in the last five seconds. Keep the answer short.\nPedestrians cross the street on marked crosswalks while vehicles move along the roads. A pedestrian wearing a yellow vest walks across the intersection. Another pedestrian in a purple shirt and yellow hard hat stands near the sidewalk with others nearby. A blue car drives through the intersection.\n\nAnalyzed source: isaac-intersection-southwest.\n\nVSS source: 997d3a69-e052-45a4-a1ce-be1b046670c4\nObserved video · Oct 26, 06:35:27 AM EDT – Oct 26, 06:35:32 AM EDT\nOpen inspected clip\n\nThis clip is the returned observation interval from isaac-intersection-southwest, not the current camera frame.\n\nView site report",
+  "videos": [
+    {
+      "currentTime": 5.0304,
+      "duration": 5.0304,
+      "ended": true,
+      "error": null,
+      "paused": true,
+      "readyState": 4,
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "windowEnd": "2026-10-26T10:35:32.599000Z",
+      "windowStart": "2026-10-26T10:35:27.599000Z"
+    }
+  ],
+  "limits": [
+    "Real question and retained evidence playback; no VLM accuracy score. Structured events/counts remain authoritative."
+  ],
+  "passed": true
+}

@@ -1,0 +1,23 @@
+Browser tab: 5, Title: "Vision Intelligence", URL: "http://127.0.0.1:7782/?workspace=smart-city&story=smart-city".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 317-319, 321-323, 331, 337-338, 354-356, 358-360, 362-363
+~				351 progress indicator Description: Scripted scenario phase progress, Value: 3.5504724979400635
+~					353 text 12  s  phase  remaining
+~				119 text Frame matched · analyzed preview · 4 tracked
++					413 container
++						414 checkbox Description: truck …6224, Value: 0
++						415 text T…6224
++						416 text V…6253
++					417 container
++						418 checkbox Description: person …6281, Value: 0
++						419 text P…6281
++					420 container
++						421 checkbox Description: car …6282, Value: 0
++						422 text V…6282
+~				162 text Frame matched · analyzed preview · 7 tracked
++				423 checkbox Description: truck …6224 · Northeast corner on map, Value: 0
++				424 checkbox Description: Shared person · 2 views · Southwest corner + Northeast corner on map, Value: 0
+~					185 text 8 map objects
+~						406 text 2 earlier tracks unresolved · 2 lost in this window.  Counts include currently observed objects only; zero does not confirm an empty area. 2  incomplete 1  left approach area 0  returned
+~					265 text Received  6:33:35 AM  · configuration  6
+The focused UI element is 63 button (collapsed) People wait, cross, and clear, Secondary Actions: Expand

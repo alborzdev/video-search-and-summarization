@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "city.gateway-restart-persistence.v1",
+  "verifiedAt": "2026-10-22T04:42:35.372114+00:00",
+  "gatewayContainerStartedAt": "2026-10-22T04:34:08.477379448Z",
+  "siteId": "recorded-traffic-tests",
+  "mode": "recorded-inference",
+  "serviceHealth": "ok",
+  "setupRequired": false,
+  "awaitingObservations": true,
+  "nativeOperationalStatus": "awaiting-observations",
+  "requestedMediaTimeSeconds": 1,
+  "clockAligned": true,
+  "trackCount": 18,
+  "sources": [
+    {
+      "id": "9821cf71-2e77-44e3-8655-7c1ddbe47681",
+      "status": "replay",
+      "currentStatus": "awaiting-observations",
+      "mediaTimeSeconds": 1.0,
+      "rawSourcePtsNs": "1066666666",
+      "mediaTimeBasis": "gstreamer-segment-stream-time",
+      "lastSourceTimeNs": "1792643300966437260",
+      "currentLastSourceTimeNs": null,
+      "alignmentSkewSeconds": 0.0
+    },
+    {
+      "id": "b6e98271-cb65-4c3f-b6c7-d0b890a2a533",
+      "status": "replay",
+      "currentStatus": "awaiting-observations",
+      "mediaTimeSeconds": 1.0,
+      "rawSourcePtsNs": "1200000000",
+      "mediaTimeBasis": "gstreamer-segment-stream-time",
+      "lastSourceTimeNs": "1792643300966437260",
+      "currentLastSourceTimeNs": null,
+      "alignmentSkewSeconds": 0.0
+    }
+  ],
+  "qualification": "Recorded observations retained through a gateway restart; static map is uncalibrated and these are independent recordings."
+}

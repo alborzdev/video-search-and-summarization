@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "city.v3-identical-calibration-preflight.v1",
+  "validatedAtUtc": "2026-10-26T08:20:48.117130+00:00",
+  "runtimeChangedByThisPreparation": false,
+  "serviceLifecycleChangedByThisPreparation": false,
+  "reviewDirectory": "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/review-migration-v3",
+  "summary": {
+    "schemaVersion": "city.isaac-identical-calibration.v1",
+    "candidateOnly": true,
+    "runtimeChanged": false,
+    "geometryExactlyEqual": true,
+    "allowedExportChanges": [
+      "stage",
+      "calibrationRevision"
+    ],
+    "previousStage": "/home/sparkdev/isaac_city_sim/stages/neighborhood/smart_city_expo.usda",
+    "newStage": "/home/sparkdev/isaac_city_sim/stages/neighborhood/pedestrian-pocket-v3/smart_city_expo_pedestrian.usda",
+    "previousCalibrationRevision": "isaac-live-e8b0fd8728666cd5",
+    "newCalibrationRevision": "isaac-live-045c84fe5fda7a15",
+    "cameraOrder": [
+      "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+    ],
+    "rulesPreserved": 19,
+    "mobilityPreserved": true,
+    "mobilityCounts": {
+      "movements": 3,
+      "crossings": 2,
+      "queues": 1,
+      "curbs": 1
+    },
+    "previousImageId": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+    "imageId": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+    "snapshotPrefix": "native/mv3dt-demo/intersection-pedestrian-pocket-v3-20261026/",
+    "trackerTuningAndTopicsPreserved": true,
+    "sourceArchiveState": "paused",
+    "runtimeQualified": false,
+    "transportClockQualified": false,
+    "productionQualified": false,
+    "pinnedFileCount": 8
+  },
+  "actualPreflight": {
+    "reviewValidated": true,
+    "fullOutputHashesMatched": true,
+    "frozenInputHashesMatched": true,
+    "actualUnchangedLoaderPassedInTemporaryTree": true,
+    "bothNativeTrackerArgumentsMatched": true,
+    "newGatewayAllowlistMatched": true,
+    "immutableImageIdResolvedLocally": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+    "desiredSourcesRemainPaused": true,
+    "eastCardsAndAllMobilityPreserved": true,
+    "clockControlsPreserved": {
+      "sourceClockDiagnostics": false,
+      "muxSyncInputs": false,
+      "muxMaxLatencyNs": 0,
+      "muxSyncInputsNtpNs": 0
+    }
+  },
+  "activeProfileSha256": "55a3297a5c9fc5d2cdf158f71cba18adfb1669b1e7bc6c90676132bef91b2ba2",
+  "reviewReceiptSha256": "f769aa4172d695fd931ff8f3f5ce8fec126c6db2967b55e8eda6e01de3ec6f58",
+  "plan": {
+    "path": "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/ROOT-INSTALL-V3.md",
+    "sha256": "926ff7eba35480b8a37d1bba1f6e1a253fe196bb6b49e20e40d02a7801af8e84"
+  },
+  "checker": {
+    "path": "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/check-reviewed-v3.py",
+    "sha256": "781c98b0384789eb29e56497574f21c7d797c8154ddd27ed90650a9c8149649d",
+    "syntax": "python3 -m py_compile passed",
+    "actualInvocation": "python3 check-reviewed-v3.py --review review-migration-v3 --check-input-preconditions; exit0"
+  },
+  "rootNextStep": "Review and install; no API PUT, profile/archive install, gateway recreate or source resume was executed by this agent.",
+  "limits": [
+    "Fresh v3 source sessions, source clocks, exact previews, native rule acknowledgement, map HTTP content and finite scenarios still need actual integrated acceptance.",
+    "Do not treat historical manifest preparation/accuracy/clock records as new v3 qualification.",
+    "Use fresh API optimistic revisions after pause; preserve all19 rules and East config; do not overwrite operator changes."
+  ]
+}

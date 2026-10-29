@@ -1,0 +1,15 @@
+{
+  "valid_mask": false,
+  "quality_validated": false,
+  "image_size": [
+    1024,
+    576
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": null,
+  "artifacts": {
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T163013Z-moondream3-preview-gb10/masks/blank.mask.json"
+  },
+  "status": "empty_result"
+}

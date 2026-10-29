@@ -183,16 +183,16 @@ export function evaluateWorkloadAdmission(
   if (isVeryHeavy && facts.runtime === "spark") {
     const capacity = facts.sparkCapacity;
     if (!capacity || capacity.state !== "fresh" || !capacity.guardActive ||
-        capacity.reserveGiB === null || !Number.isFinite(capacity.reserveGiB) || capacity.reserveGiB < 20 ||
+        capacity.reserveGiB === null || !Number.isFinite(capacity.reserveGiB) || capacity.reserveGiB <= 0 ||
         capacity.availableGiB === null || !Number.isFinite(capacity.availableGiB)) {
       return result(workload, facts, "block", "SPARK_CAPACITY_REQUIRED",
         "Fresh Spark memory capacity and an active reserve guard are required for this history workload.",
         "Restore the local Spark capacity probe and memory guard, then try again.");
     }
-    if (capacity.availableGiB < capacity.reserveGiB + 8) {
+    if (capacity.availableGiB < capacity.reserveGiB) {
       return result(workload, facts, "block", "SPARK_HEADROOM_REQUIRED",
-        "Spark needs 8 GiB of available memory above its saved reserve for bounded history inference.",
-        "Wait for memory headroom to recover before building history.");
+        "Spark needs its saved memory reserve available for history inference.",
+        "Wait for available memory to reach the saved reserve before building history.");
     }
   }
 

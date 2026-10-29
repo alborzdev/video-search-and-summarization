@@ -1,0 +1,228 @@
+{
+  "torch_imported": false,
+  "cached_tokenizer": "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--moondream--starmie-v1/blobs/b34d2539188d02eda1a1a23a1ec575349fb12518",
+  "bytes": 3694206,
+  "sha256": "0512fdcac4a5f9e7746cbefce4a468dc93bf0f93f11e701b84f8b31bff199e9c",
+  "git_blob_sha1": "b34d2539188d02eda1a1a23a1ec575349fb12518",
+  "vocab_size": 51200,
+  "post_processor": null,
+  "padding": null,
+  "truncation": null,
+  "samples": [
+    {
+      "text": "segment",
+      "ids": [
+        17374
+      ],
+      "tokens": [
+        "segment"
+      ],
+      "roundtrip": "segment"
+    },
+    {
+      "text": "detect",
+      "ids": [
+        7235,
+        476
+      ],
+      "tokens": [
+        "det",
+        "ect"
+      ],
+      "roundtrip": "detect"
+    },
+    {
+      "text": "metal panel",
+      "ids": [
+        37014,
+        11107
+      ],
+      "tokens": [
+        "metal",
+        "\u0120panel"
+      ],
+      "roundtrip": "metal panel"
+    },
+    {
+      "text": " metal panel",
+      "ids": [
+        4774,
+        11107
+      ],
+      "tokens": [
+        "\u0120metal",
+        "\u0120panel"
+      ],
+      "roundtrip": " metal panel"
+    },
+    {
+      "text": "person",
+      "ids": [
+        5974
+      ],
+      "tokens": [
+        "person"
+      ],
+      "roundtrip": "person"
+    },
+    {
+      "text": " person",
+      "ids": [
+        1102
+      ],
+      "tokens": [
+        "\u0120person"
+      ],
+      "roundtrip": " person"
+    },
+    {
+      "text": "M",
+      "ids": [
+        65
+      ],
+      "tokens": [
+        "M"
+      ],
+      "roundtrip": "M"
+    },
+    {
+      "text": "L",
+      "ids": [
+        64
+      ],
+      "tokens": [
+        "L"
+      ],
+      "roundtrip": "L"
+    },
+    {
+      "text": "C",
+      "ids": [
+        55
+      ],
+      "tokens": [
+        "C"
+      ],
+      "roundtrip": "C"
+    },
+    {
+      "text": "M 0 0 L 960 0 L 960 960 Z",
+      "ids": [
+        65,
+        225,
+        36,
+        225,
+        36,
+        449,
+        225,
+        7292,
+        225,
+        36,
+        449,
+        225,
+        7292,
+        225,
+        7292,
+        1189
+      ],
+      "tokens": [
+        "M",
+        "\u0120",
+        "0",
+        "\u0120",
+        "0",
+        "\u0120L",
+        "\u0120",
+        "960",
+        "\u0120",
+        "0",
+        "\u0120L",
+        "\u0120",
+        "960",
+        "\u0120",
+        "960",
+        "\u0120Z"
+      ],
+      "roundtrip": "M 0 0 L 960 0 L 960 960 Z"
+    }
+  ],
+  "sources": {
+    "moondream/starmie-v1": {
+      "revision": "35192e10a54e36eabe0a7cc57a2c1aab371cafc5",
+      "files": {
+        "tokenizer.json": {
+          "blobId": "b34d2539188d02eda1a1a23a1ec575349fb12518",
+          "size": 3694206
+        },
+        "tokenizer_config.json": {
+          "blobId": "919a21693fb19df30efdc21b4408e5bb2b5dbc1a",
+          "size": 3981
+        }
+      }
+    },
+    "vikhyatk/moondream2": {
+      "revision": "5d6c926f44e26b07957b0dd315bbedcb4c17a5fe",
+      "files": {
+        "config.py": {
+          "blobId": "9856d6b19f1821e0e28f4cf264de3d55cd796f76",
+          "size": 2647
+        },
+        "moondream.py": {
+          "blobId": "d8121971e38fca68e3dbaa90c21b94a0f4dc9647",
+          "size": 35491
+        },
+        "tokenizer.json": {
+          "blobId": "c1148447551675ea739c440ee3e247df9f354d8f",
+          "size": 2114924
+        },
+        "tokenizer_config.json": {
+          "blobId": "5145e0895f2fe7f1ccb3eb9da69ec74ec9c680db",
+          "size": 7339
+        }
+      },
+      "runtime_tokenizer_source": [
+        {
+          "line": 89,
+          "text": "self.tokenizer = Tokenizer.from_pretrained(\"moondream/starmie-v1\")"
+        }
+      ]
+    },
+    "moondream/moondream3-preview": {
+      "revision": "5112966d1a723413b1c9a1e8bea272b72e647b35",
+      "files": {
+        "config.py": {
+          "blobId": "544b7888aac53c261dcb9ce057dc7b8ed0038c2d",
+          "size": 2834
+        },
+        "moondream.py": {
+          "blobId": "5acc1785b31d62f271f47cdb218752f32c3947fc",
+          "size": 39247
+        }
+      },
+      "runtime_tokenizer_source": [
+        {
+          "line": 103,
+          "text": "self.tokenizer = Tokenizer.from_pretrained(\"moondream/starmie-v1\")"
+        }
+      ]
+    }
+  },
+  "svg_roundtrip": {
+    "path": "M 0 0 L 1 0 L 1 1 Z",
+    "tokens": [
+      "M",
+      "0",
+      "0",
+      "L",
+      "960",
+      "0",
+      "L",
+      "960",
+      "960",
+      "Z"
+    ],
+    "expected": "M 0 0 L 1 0 L 1 1 Z",
+    "matches": true
+  },
+  "torch_imported_after": false
+}

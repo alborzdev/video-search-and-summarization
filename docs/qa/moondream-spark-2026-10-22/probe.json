@@ -1,0 +1,67 @@
+{
+  "available_gib_before": 38.80862808227539,
+  "reserve_gib": 20.0,
+  "weights_loaded": false,
+  "packages": {
+    "moondream": "2.6.1",
+    "kestrel": "0.9.1",
+    "kestrel-kernels": "0.7.4",
+    "kestrel-native": "0.1.8",
+    "torch": "2.13.0"
+  },
+  "cuda_runtime": "13.0",
+  "gpu": "NVIDIA GB10",
+  "capability": [
+    12,
+    1
+  ],
+  "torch_cuda_matmul": 2048.0,
+  "registered_models": [
+    "Qwen/Qwen3-ASR-0.6B",
+    "Qwen/Qwen3-ASR-1.7B",
+    "Qwen/Qwen3-ForcedAligner-0.6B-hf",
+    "Qwen/Qwen3-TTS-12Hz-0.6B-CustomVoice",
+    "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+    "Qwen/Qwen3.5-0.8B",
+    "Qwen/Qwen3.5-0.8B-Base",
+    "Qwen/Qwen3.5-27B",
+    "Qwen/Qwen3.5-27B-FP8",
+    "Qwen/Qwen3.5-2B",
+    "Qwen/Qwen3.5-2B-Base",
+    "Qwen/Qwen3.5-35B-A3B",
+    "Qwen/Qwen3.5-35B-A3B-Base",
+    "Qwen/Qwen3.5-4B",
+    "Qwen/Qwen3.5-4B-Base",
+    "Qwen/Qwen3.5-9B",
+    "Qwen/Qwen3.5-9B-Base",
+    "Qwen/Qwen3.6-27B",
+    "Qwen/Qwen3.6-27B-FP8",
+    "Qwen/Qwen3.6-35B-A3B",
+    "Qwen/Qwen3.6-35B-A3B-FP8",
+    "Qwen/Qwen3.8-27B",
+    "Qwen/Qwen3.8-27B-FP8",
+    "google/gemma-4-26B-A4B",
+    "google/gemma-4-26B-A4B-it",
+    "google/gemma-4-31B",
+    "google/gemma-4-31B-it",
+    "google/gemma-4-E2B",
+    "google/gemma-4-E2B-it",
+    "google/gemma-4-E4B",
+    "google/gemma-4-E4B-it",
+    "hexgrad/Kokoro-82M",
+    "moondream/parakeet-redux",
+    "moondream/parakeet-ultra",
+    "moondream2",
+    "moondream3-preview",
+    "moondream3.1-9B-A2B",
+    "nvidia/parakeet-tdt-0.6b-v3",
+    "openai/whisper-large-v3-turbo"
+  ],
+  "photon_rmsnorm": {
+    "shape": [
+      1,
+      2048
+    ],
+    "finite": true
+  }
+}

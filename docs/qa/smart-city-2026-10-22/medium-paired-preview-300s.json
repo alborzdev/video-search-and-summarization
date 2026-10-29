@@ -1,0 +1,204 @@
+{
+  "schemaVersion": "city.soak-result.v1",
+  "siteId": "recorded-traffic-tests",
+  "sourceIds": [
+    "291399aa-a062-43b6-badc-48c34bc08237",
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9"
+  ],
+  "startedAt": "2026-10-22T07:06:47.146313+00:00",
+  "finishedAt": "2026-10-22T07:11:47.146958+00:00",
+  "requestedSeconds": 300.0,
+  "wallSeconds": 300.0006536147557,
+  "sampleCount": 57,
+  "passed": true,
+  "failure": null,
+  "minimumAvailableGiB": 24.572280883789062,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 8860,
+      "uniquePts": 8858,
+      "duplicatePts": 2,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 340083782565,
+      "lastNs": 1792653102244117472,
+      "lastSequence": 9956,
+      "session": "5d3673ae-b0a2-40e3-8e08-b78f4e0c2f9d",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 2954,
+      "uniquePts": 2954,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 340220075622,
+      "lastNs": 1792653102409325008,
+      "lastSequence": 3328,
+      "session": "05d1c5d5-edba-4d92-ba7d-ae238f40c6c6",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "lastMetrics": {
+    "sources": {
+      "291399aa-a062-43b6-badc-48c34bc08237": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792653102244117472",
+        "sessionId": "5d3673ae-b0a2-40e3-8e08-b78f4e0c2f9d",
+        "clockToWallRatio": 1.0012850114251444,
+        "trustedSourceAgeSeconds": 0.23731350898742676,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 951,
+        "windowDuplicateFraction": 0.0,
+        "frames": 8860,
+        "uniquePts": 8858
+      },
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792653102409325008",
+        "sessionId": "05d1c5d5-edba-4d92-ba7d-ae238f40c6c6",
+        "clockToWallRatio": 1.0006773080565847,
+        "trustedSourceAgeSeconds": 0.07210588455200195,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 317,
+        "windowDuplicateFraction": 0.0,
+        "frames": 2954,
+        "uniquePts": 2954
+      }
+    },
+    "minimumAvailableGiB": 24.572280883789062,
+    "nativeActive": true,
+    "nativeRevision": 61,
+    "warmedUp": true,
+    "processedPreview": {
+      "ready": true,
+      "acceptedFrames": 8679,
+      "nativeDeliveryAgeSeconds": 0.07903242111206055,
+      "sources": {
+        "291399aa-a062-43b6-badc-48c34bc08237": {
+          "available": true,
+          "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+          "sessionId": "5d3673ae-b0a2-40e3-8e08-b78f4e0c2f9d",
+          "sourceSessionId": "5d3673ae-b0a2-40e3-8e08-b78f4e0c2f9d",
+          "sequence": "9962",
+          "sourceTimeNs": "1792653102444277111",
+          "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+          "width": 1920,
+          "height": 1080,
+          "jpegWidth": 1920,
+          "jpegHeight": 1080,
+          "envelopeBytes": 261234,
+          "jpegBytes": 154224,
+          "envelopeSha256": "3c45aaa85082047d736a792d33136a71f8a76cbf403ae86a7692f54cf02470ef",
+          "jpegSha256": "7335a578eb807c214030e34b5fefded2b17bb332f73ac092092697ceaa5f6136",
+          "fetchedAtMonotonic": 3080953.843299762,
+          "nativeCounters": {
+            "selected": 5049,
+            "encoded": 5049,
+            "published": 5040,
+            "rateDropped": 5152,
+            "sourceQueueOverruns": 0,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "geometryMismatch": 0,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 9,
+            "postFailed": 0,
+            "pendingDropped": 0
+          },
+          "identityStalledForSeconds": 0.0,
+          "publishedStalledForSeconds": 0.0,
+          "successfulFetches": 57
+        },
+        "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+          "available": true,
+          "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+          "sessionId": "05d1c5d5-edba-4d92-ba7d-ae238f40c6c6",
+          "sourceSessionId": "05d1c5d5-edba-4d92-ba7d-ae238f40c6c6",
+          "sequence": "3330",
+          "sourceTimeNs": "1792653102609323972",
+          "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+          "width": 768,
+          "height": 576,
+          "jpegWidth": 768,
+          "jpegHeight": 576,
+          "envelopeBytes": 68873,
+          "jpegBytes": 50075,
+          "envelopeSha256": "4db8e29eb00f261c869b388c3617e77268df501dd3e7a47fe2caf67555f028c0",
+          "jpegSha256": "6dd80aba3271731fbe8f779aba6cbfd66e6632962d38290c5ed9bc67b89f8db4",
+          "fetchedAtMonotonic": 3080953.850109413,
+          "nativeCounters": {
+            "selected": 3122,
+            "encoded": 3122,
+            "published": 3122,
+            "rateDropped": 279,
+            "sourceQueueOverruns": 0,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "geometryMismatch": 0,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 0,
+            "postFailed": 0,
+            "pendingDropped": 0
+          },
+          "identityStalledForSeconds": 0.0,
+          "publishedStalledForSeconds": 0.0,
+          "successfulFetches": 57
+        }
+      },
+      "epochResetsDuringWarmup": 0
+    }
+  },
+  "maximumTrustedSourceAgeSeconds": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.33960533142089844,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.21063446998596191
+  },
+  "maximumDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.001059322033898305,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "maximumPostWarmupDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.001059322033898305,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "lastClockToWallRatios": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 1.0012850114251444,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 1.0006773080565847
+  },
+  "requireProcessedPreview": true,
+  "askEnabled": false,
+  "scheduledAskCount": 0,
+  "asks": [],
+  "pauseOnFailure": false,
+  "pauseReceipts": [],
+  "samplesFile": ".spark/city/runtime/medium-paired-ui-300s-20261022T0707Z/samples.ndjson",
+  "samplesSha256": "e928598ba55ae4e05188a6d679b8c0ebed8e77e8732119b48fb043a5cd2e9dea",
+  "monitorSourceSha256": "5c3e7f645605518e34e1e3f4044b5322d550c1dd9178d8eb5bf9a6ec0fbb3aff",
+  "criteria": {
+    "minimumReserveGiB": 20,
+    "warmupSeconds": 15,
+    "sampleEverySeconds": 5,
+    "processedPreview": {
+      "required": true,
+      "fetchEverySeconds": 5,
+      "requestTimeoutSeconds": 3,
+      "maximumEnvelopeBytes": 2621444,
+      "staleSeconds": 5
+    },
+    "clockWindowSeconds": 30,
+    "clockRatioBounds": [
+      0.9,
+      1.1
+    ],
+    "maximumDuplicateFraction": 0.05,
+    "trustSourceRtcpUtc": true,
+    "maximumSourceAgeSeconds": 5
+  },
+  "scope": "Concurrent pipeline stability and optional real UI Ask qualification; not engine latency, semantic event accuracy, browser-frame latency or final-city/MV3DT qualification."
+}

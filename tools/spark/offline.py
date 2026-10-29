@@ -56,10 +56,15 @@ def required(path):
         raise RuntimeError('Missing cached file: ' + str(path))
 def model(root, files):
     root = Path(root)
-    for name in files + ['config.json', 'model.safetensors.index.json']:
+    for name in files + ['config.json']:
         required(root / name)
-    index = json.loads((root / 'model.safetensors.index.json').read_text())
-    shards = set(index.get('weight_map', {}).values())
+    index_path = root / 'model.safetensors.index.json'
+    if index_path.is_file():
+        index = json.loads(index_path.read_text())
+        shards = set(index.get('weight_map', {}).values())
+    else:
+        required(root / 'model.safetensors')
+        shards = {'model.safetensors'}
     if not shards:
         raise RuntimeError('Empty model weight map: ' + str(root))
     for name in shards:
@@ -85,7 +90,8 @@ for name in ['video_embeddings/1/cosmos_embed1_video_NVIDIA_GB10_2_fp16.engine',
              'text_embeddings/1/cosmos_embed1_text_NVIDIA_GB10_2_fp16.engine']:
     required(Path('/triton/cosmos-embed1-448p-anomaly-detection') / name)
 for name in ['rtdetr_warehouse_v1.0.2.fp16.onnx', 'rtdetr_warehouse_v1.0.2.fp16.onnx_b1_gpu0_fp16.engine']:
-    required(Path('/detector') / name)
+    if Path('/detector').is_dir():
+        required(Path('/detector') / name)
 print('All pinned model files and GB10 engines are cached.')
 '''
 
@@ -98,6 +104,20 @@ if manifest.get('package_set_sha256') != 'ed28389b37a2d74a484251e874b4a131e9eb2a
 for name in ('libavcodec.so.60', 'libavformat.so.60', 'libavutil.so.58'):
     ctypes.CDLL(name)
 print('Cached VST codec manifest and libav loading passed without networking.')
+'''
+
+# The native VIOS 3.3 image is C++ only. Check its actual dynamic libraries;
+# assuming Python exists made every cached desktop start fail on that image.
+VST_NATIVE_CODEC_CHECK = r'''
+set -eu
+test "$(cat /usr/share/vss-thor/vios-codecs/package-set.sha256)" = ed28389b37a2d74a484251e874b4a131e9eb2a8350b4013ba0c209154bfdf3b4
+for name in libavcodec.so.60 libavformat.so.60 libavutil.so.58; do
+    library=/usr/lib/aarch64-linux-gnu/$name
+    test -s "$library"
+    dependencies=$(ldd "$library")
+    if printf '%s\n' "$dependencies" | grep -q 'not found'; then exit 1; fi
+done
+echo 'Cached native VIOS codec libraries passed without networking.'
 '''
 
 
@@ -115,8 +135,8 @@ def local_gateway(settings):
     return gateway
 
 
-def validate_graph(settings, graph):
-    if not settings.get('cached_models') or not settings.get('detector_enabled'):
+def validate_graph(settings, graph, *, city=False):
+    if not settings.get('cached_models') or (not city and not settings.get('detector_enabled')):
         raise RuntimeError('This desktop setup requires cached models and the warehouse detector enabled.')
     for name in ('spark-llm', 'rtvi-embed', 'rtvi-vlm'):
         env = graph['services'][name]['environment']
@@ -169,13 +189,27 @@ def cache_mount(graph, service, target, destination):
     return ['-v', f'{source}:{destination}:ro']
 
 
-def preflight(progress):
+def selected_cache_check(settings):
+    choice = b.vlm_model_choice(settings)
+    code = CACHE_CHECK.replace('/rtvi/' + b.VLM, '/rtvi/' + choice['name'])
+    if choice['precision'] == 'nvfp4':
+        quant_path = '/rtvi/' + choice['name'] + '/hf_quant_config.json'
+        code += (
+            '\nquant_path = Path(' + repr(quant_path) + ')\n'
+            'required(quant_path)\n'
+            'if json.loads(quant_path.read_text()).get("quantization", {}).get("quant_algo") != "NVFP4":\n'
+            '    raise RuntimeError("Selected Nano checkpoint is not NVFP4")\n'
+        )
+    return code
+
+
+def preflight(progress, *, city=False):
     settings, graph = load()
     # Normalize older cached graphs before validation, without starting services
     # or changing models, budgets, source identity, or local addresses.
     before = json.dumps(graph, sort_keys=True)
     b.booth_runtime_safety(graph)
-    validate_graph(settings, graph)
+    validate_graph(settings, graph, city=city)
     codec = verify_codec_cache()
     if json.dumps(graph, sort_keys=True) != before:
         b.private_write(b.STATE / 'compose.json', json.dumps(graph, indent=2) + '\n')
@@ -185,10 +219,11 @@ def preflight(progress):
     b.run(['docker', 'image', 'inspect', *images], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=30)
     ui.validate_dependencies()  # Never run npm install from a desktop shortcut.
     progress('Checking cached video-storage codecs with networking disabled…')
+    native_vios = settings.get('vios_streamprocessing_image') == 'vss-vios-streamprocessing:3.3-native'
     b.run(['docker', 'run', '--rm', '--pull', 'never', '--network', 'none', '--runtime', 'runc',
            '--memory', '256m', '--memory-swap', '256m', '--cpus', '1',
-           '--entrypoint', 'python3', graph['services']['streamprocessing-ms']['image'],
-           '-c', VST_CODEC_CHECK], timeout=45)
+           '--entrypoint', '/bin/sh' if native_vios else 'python3', graph['services']['streamprocessing-ms']['image'],
+           '-c', VST_NATIVE_CODEC_CHECK if native_vios else VST_CODEC_CHECK], timeout=45)
     missing = [str(path) for path in b.data_roots(graph, Path(settings['data_dir'])) if not path.is_dir()]
     if missing:
         raise RuntimeError('Required data folders are missing. Technical setup is required; no sudo prompts are used by this launcher.')
@@ -203,11 +238,15 @@ def preflight(progress):
         ('rtvi-embed', '/tmp/triton_model_repo', '/triton'),
         ('spark-perception', '/opt/storage', '/detector'),
     ]:
+        if service == 'spark-perception' and city and not settings.get('detector_enabled'):
+            continue
         mounts += cache_mount(graph, service, target, destination)
+    # Check the selected checkpoint, including the single-file NVFP4 artifact.
+    cache_check = selected_cache_check(settings)
     # This check has no network, GPU allocation, dependency installer or image pull.
     b.run(['docker', 'run', '--rm', '--pull', 'never', '--network', 'none', '--runtime', 'runc',
            '--memory', '256m', '--memory-swap', '256m', '--cpus', '1', '--user', '0:0',
-           *mounts, '--entrypoint', 'python3', graph['services']['rtvi-embed']['image'], '-c', CACHE_CHECK], timeout=45)
+           *mounts, '--entrypoint', 'python3', graph['services']['rtvi-embed']['image'], '-c', cache_check], timeout=45)
     progress('Checking the video decoder with networking disabled…')
     b.run(['docker', 'run', '--rm', '--pull', 'never', '--network', 'none', '--runtime', 'runc',
            '--memory', '512m', '--memory-swap', '512m', '--cpus', '1',
@@ -297,7 +336,10 @@ def prepare(settings, progress, execute):
         b.private_write(origin, json.dumps(settings, indent=2))
     original = json.loads(origin.read_text())
     progress('Preparing stable local addresses. Stopping VSS for configuration…')
-    execute(b.compose('stop', '-t', '10'), 'Stopping VSS for local configuration')
+    try:
+        execute(b.compose('stop', '-t', '10'), 'Stopping VSS for local configuration')
+    finally:
+        b.local_vision.stop_service()
     b.render(gateway, settings['data_dir'], gateway, settings['npm_registry'],
              reserve_gib=settings['reserve_gib'], cached_models=True, detector_enabled=True)
     graph = json.loads(graph_path.read_text())

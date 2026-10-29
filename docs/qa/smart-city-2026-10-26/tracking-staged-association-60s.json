@@ -1,0 +1,220 @@
+{
+  "schemaVersion": "city.staged-tracking-association-audit.v1",
+  "readOnly": true,
+  "file": ".spark/city/runtime/staged-tracking-normal-cohort-20261026/first60-observations.ndjson",
+  "sha256": "bacb7722e2dafa57a5857c4aca81343cbf38421a8d1c2a109abf831e9febfb0b",
+  "sourceStatistics": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "counts": {
+        "personSamples": 3270,
+        "observedSamples": 3270,
+        "native3D": 3152,
+        "nativeFiniteWithin100kmGuard": 3152,
+        "localProvenanceMatches": 3152,
+        "lowVisibilityNative": 291,
+        "hint": 2861,
+        "duplicateIdCount": 0,
+        "omittedObjectCount": 0,
+        "rejectedMapObjectCount": 0,
+        "duplicateLocalIdCount": 0,
+        "capacityExceeded": 0
+      },
+      "nativeMissingSamples": 118,
+      "missingCauseLimit": "No explicit stamp-missing counter is exported. Missing optional native3D cannot be separated into second-stage tentative/missing-output/current-stamp/projection causes without a new diagnostic.",
+      "sameConsecutiveLocalIdWithChangedGlobalHint": 29,
+      "localIdsWithMultipleGlobalHints": 7,
+      "correctionExamples": [
+        {
+          "ns": "1792996328697200360",
+          "localTrackId": "2896516065997619217",
+          "before": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:3",
+          "after": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:20"
+        },
+        {
+          "ns": "1792996328750511471",
+          "localTrackId": "2896516065997619217",
+          "before": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:20",
+          "after": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:3"
+        },
+        {
+          "ns": "1792996328993667027",
+          "localTrackId": "2896516065997619217",
+          "before": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:3",
+          "after": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:20"
+        }
+      ],
+      "nativeWorldVersusFirstLocalHomographyDistanceM": {
+        "count": 3152,
+        "min": 0.08267551986893999,
+        "median": 0.44164919024472143,
+        "p95": 1.1920894305800982,
+        "max": 3.3372749029504436
+      },
+      "sourceMinusRawPtsNs": {
+        "min": 1792996295333358464,
+        "max": 1792996295333358464
+      }
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "counts": {
+        "duplicateIdCount": 0,
+        "omittedObjectCount": 0,
+        "rejectedMapObjectCount": 0,
+        "duplicateLocalIdCount": 0,
+        "capacityExceeded": 0,
+        "personSamples": 442,
+        "observedSamples": 442,
+        "native3D": 434,
+        "nativeFiniteWithin100kmGuard": 434,
+        "localProvenanceMatches": 434,
+        "lowVisibilityNative": 5,
+        "hint": 429
+      },
+      "nativeMissingSamples": 8,
+      "missingCauseLimit": "No explicit stamp-missing counter is exported. Missing optional native3D cannot be separated into second-stage tentative/missing-output/current-stamp/projection causes without a new diagnostic.",
+      "sameConsecutiveLocalIdWithChangedGlobalHint": 1,
+      "localIdsWithMultipleGlobalHints": 1,
+      "correctionExamples": [
+        {
+          "ns": "1792996342191112444",
+          "localTrackId": "2896516065997619230",
+          "before": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:26",
+          "after": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:5"
+        }
+      ],
+      "nativeWorldVersusFirstLocalHomographyDistanceM": {
+        "count": 427,
+        "min": 0.2210040600923997,
+        "median": 0.3106623853491495,
+        "p95": 0.5410544701228319,
+        "max": 1.3316084062222904
+      },
+      "sourceMinusRawPtsNs": {
+        "min": 1792996295332962804,
+        "max": 1792996295332972472
+      }
+    }
+  },
+  "nearestTimestampPairs": {
+    "framesWithin150ms": 599,
+    "pairsWithEligibleHintsInBothViews": 353,
+    "sameGlobalIdPairs": 291,
+    "sameGlobalIdObjectOpportunities": 291,
+    "sameGlobalIdAndLocalHomographiesWithin1m": 209,
+    "sameGlobalIdAndNativeWorldWithin1m": 258,
+    "uniquePeerFrames": 491,
+    "peerFrameReuses": 108
+  },
+  "nearestTimestampSkewMs": {
+    "count": 599,
+    "min": 0.414864,
+    "median": 24.779419,
+    "p95": 70.976137,
+    "max": 113.667974
+  },
+  "sameGlobalIdHomographyDistanceM": {
+    "count": 291,
+    "min": 0.11274495110256554,
+    "median": 0.8989094843375122,
+    "p95": 1.2125279776470428,
+    "max": 1.6141395685422943
+  },
+  "sameGlobalIdNativeWorldDistanceM": {
+    "count": 291,
+    "min": 0.013626885405700886,
+    "median": 0.6089797344566479,
+    "p95": 1.0804689686691482,
+    "max": 1.3826604043261725
+  },
+  "pairExamples": [
+    {
+      "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:5",
+      "skewMs": 3.399027,
+      "homographyDistanceM": 1.6141395685422943,
+      "nativeWorldDistanceM": 0.2805714697910111,
+      "sourceTimesNs": [
+        "1792996342531644804",
+        "1792996342528245777"
+      ],
+      "localTrackIds": [
+        "2896516065997619208",
+        "2896516065997619230"
+      ]
+    },
+    {
+      "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:5",
+      "skewMs": 1.53236,
+      "homographyDistanceM": 1.30175608167106,
+      "nativeWorldDistanceM": 0.3355923699311963,
+      "sourceTimesNs": [
+        "1792996342752811471",
+        "1792996342751279111"
+      ],
+      "localTrackIds": [
+        "2896516065997619208",
+        "2896516065997619230"
+      ]
+    },
+    {
+      "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:5",
+      "skewMs": 66.634307,
+      "homographyDistanceM": 1.0792560417011048,
+      "nativeWorldDistanceM": 0.28621822508011313,
+      "sourceTimesNs": [
+        "1792996342867122582",
+        "1792996342933756889"
+      ],
+      "localTrackIds": [
+        "2896516065997619208",
+        "2896516065997619230"
+      ]
+    },
+    {
+      "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:5",
+      "skewMs": 38.834307,
+      "homographyDistanceM": 0.9096031266666221,
+      "nativeWorldDistanceM": 0.21807822560248724,
+      "sourceTimesNs": [
+        "1792996342981033693",
+        "1792996343019868000"
+      ],
+      "localTrackIds": [
+        "2896516065997619208",
+        "2896516065997619230"
+      ]
+    },
+    {
+      "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:5",
+      "skewMs": 43.900973,
+      "homographyDistanceM": 0.7206894514326019,
+      "nativeWorldDistanceM": 0.28541745649285494,
+      "sourceTimesNs": [
+        "1792996343093978138",
+        "1792996343137879111"
+      ],
+      "localTrackIds": [
+        "2896516065997619208",
+        "2896516065997619230"
+      ]
+    }
+  ],
+  "nativeOutputLatestPairApproximation": {
+    "outputUpdatesWithSharedNativeHint": 584,
+    "updatesWithin150ms": 4,
+    "sharedHintUpdatesWithin150ms": 4
+  },
+  "nativeOutputLatestPairSkewMs": {
+    "count": 1198,
+    "min": 7.152915,
+    "median": 452.639249,
+    "p95": 564.705916,
+    "max": 665.820915
+  },
+  "limits": [
+    "Separate live cohorts, not identical inputs or GT accuracy.",
+    "Nearest timestamp pairing uses retained history, not the actual browser presentation; peer reuse reported.",
+    "Native output ordering is only a delivery approximation. Actual exact-preview envelopes are captured separately.",
+    "Missing native optional evidence reason counters are not available in the current worker.",
+    "Finite SDK world guard applies only to exported native evidence, not all raw rejected metadata."
+  ]
+}

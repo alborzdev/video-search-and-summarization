@@ -1,0 +1,30 @@
+{
+  "siteId": "isaac-intersection-a",
+  "mode": "live",
+  "analyticsScope": {
+    "epoch": "61dc74d1-4615-4e15-9604-331a439f7209",
+    "kind": "scenario",
+    "runId": "adbdc02e3e404b91998f93381efd1947",
+    "scenarioId": "crossing-occupancy",
+    "startedAt": "2026-10-29T15:10:19.536253+00:00",
+    "suppressed": false
+  },
+  "measurements": [
+    {
+      "ruleId": "expo-crossing-occupancy",
+      "name": "East crossing",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sessionId": "05186510-2f06-4880-93f5-e08d06ac7299",
+      "count": 4,
+      "peakCount": 4,
+      "occupiedSeconds": 5.401989215999999,
+      "continuousSeconds": 5.401989215999999,
+      "hasGaps": false,
+      "savedEventIds": [
+        "aeb4570e70c044107bcdec7071ef5218"
+      ],
+      "status": "occupied",
+      "asOfSourceTimeNs": "1793286628268173623"
+    }
+  ]
+}

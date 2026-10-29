@@ -1,0 +1,22 @@
+Browser tab: 5, Title: "Vision Intelligence", URL: "http://127.0.0.1:7782/?workspace=smart-city&story=smart-city".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 420-425, 429-431, 435-438, 441-442, 444-445
++					523 container
++						524 checkbox Description: person …6448, Value: 0
++						525 text P…6448
+~				119 text Frame matched · analyzed preview · 5 tracked
++					526 container
++						527 checkbox Description: car …6445, Value: 0
++						528 text V…6445
++					529 checkbox Description: person …6449, Value: 0
++					530 container
++						531 checkbox Description: person …6450, Value: 0
++						532 text P…6450
+~				162 text Frame matched · analyzed preview · 4 tracked
++				533 checkbox Description: car …6445 · Northeast corner on map, Value: 0
++				534 checkbox Description: Shared person · 2 views · Southwest corner + Northeast corner on map, Value: 0
++				535 checkbox Description: person …6448 · Southwest corner on map, Value: 0
++				536 checkbox Description: person …6449 · Northeast corner on map, Value: 0
++				537 checkbox Description: person …6450 · Northeast corner on map, Value: 0
+~					520 text Received  6:39:29 AM  · configuration  6
+The focused UI element is 466 checkbox Movements, Value: 1

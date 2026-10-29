@@ -1,0 +1,527 @@
+{
+  "started_at": "2026-10-21T14:35:44.210242+00:00",
+  "completed_at": "2026-10-21T14:50:33.250441+00:00",
+  "commit": "96538737a954cd3d16a02e30b440c934b75bb6f3",
+  "scope": "Sequential isolated VLM clip inference during existing ACT training; EVS on/off/on.",
+  "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+  "conditions": {
+    "frames": 20,
+    "width": 512,
+    "height": 512,
+    "max_tokens": 64,
+    "temperature": 0,
+    "seed": 42,
+    "stream": false,
+    "timed_repeats_per_case_per_arm": 5,
+    "warmups_per_case_per_arm": 1,
+    "transport": "inline MP4 via loopback; curl client wall time including payload serialization"
+  },
+  "raw_receipt_sha256": "1f4361ff4248801775871920918b74072b8eb24c479cc749d2d1faa938718fe5",
+  "hardware": "NVIDIA GB10, 580.142",
+  "timing_definition": "Client wall time to complete nonstream answer, including inline MP4 transfer, serialization, decoding, vision encoding, EVS, language inference and response. Excludes service startup and per-case warmup.",
+  "cases": [
+    {
+      "name": "raw20-positive",
+      "expected": "YES",
+      "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+      "bytes": 2611191,
+      "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+      "request_redacted": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "video_url",
+                "video_url": {
+                  "url": "data:video/mp4;base64,[2611191 bytes omitted]"
+                }
+              },
+              {
+                "type": "text",
+                "text": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only."
+              }
+            ]
+          }
+        ],
+        "max_tokens": 64,
+        "temperature": 0,
+        "seed": 42,
+        "chunk_duration": 0,
+        "enable_audio": false,
+        "enable_reasoning": false,
+        "num_frames_per_second_or_fixed_frames_chunk": 20,
+        "use_fps_for_chunking": false,
+        "vlm_input_width": 512,
+        "vlm_input_height": 512,
+        "stream": false
+      }
+    },
+    {
+      "name": "raw20-empty",
+      "expected": "NO",
+      "path": "artifacts/demo-boundary-probe-2026-09-28/clips/4.mp4",
+      "bytes": 2211450,
+      "sha256": "c1c037998ff3ce4a3ee2b605829ae1398d5ad87a57bb30585091385835b026a4",
+      "request_redacted": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "video_url",
+                "video_url": {
+                  "url": "data:video/mp4;base64,[2211450 bytes omitted]"
+                }
+              },
+              {
+                "type": "text",
+                "text": "Does any frame in this video show a box on the conveyor belt? Answer YES if at least one frame shows a box, otherwise NO. Answer YES or NO only."
+              }
+            ]
+          }
+        ],
+        "max_tokens": 64,
+        "temperature": 0,
+        "seed": 42,
+        "chunk_duration": 0,
+        "enable_audio": false,
+        "enable_reasoning": false,
+        "num_frames_per_second_or_fixed_frames_chunk": 20,
+        "use_fps_for_chunking": false,
+        "vlm_input_width": 512,
+        "vlm_input_height": 512,
+        "stream": false
+      }
+    },
+    {
+      "name": "scene-positive",
+      "expected": null,
+      "path": "artifacts/demo-boundary-probe-2026-09-28/clips/0.mp4",
+      "bytes": 2611191,
+      "sha256": "7f7b830cf11bc0af9168d99b7ddf7cbdd591f039e7ec589b773199514274f15b",
+      "request_redacted": {
+        "model": "nim_nvidia_cosmos3-nano-reasoner_bf16-final",
+        "messages": [
+          {
+            "role": "user",
+            "content": [
+              {
+                "type": "video_url",
+                "video_url": {
+                  "url": "data:video/mp4;base64,[2611191 bytes omitted]"
+                }
+              },
+              {
+                "type": "text",
+                "text": "Describe the visible conveyor scene in one short sentence. Mention only objects you can see."
+              }
+            ]
+          }
+        ],
+        "max_tokens": 64,
+        "temperature": 0,
+        "seed": 42,
+        "chunk_duration": 0,
+        "enable_audio": false,
+        "enable_reasoning": false,
+        "num_frames_per_second_or_fixed_frames_chunk": 20,
+        "use_fps_for_chunking": false,
+        "vlm_input_width": 512,
+        "vlm_input_height": 512,
+        "stream": false
+      }
+    }
+  ],
+  "arms": [
+    {
+      "label": "on-before",
+      "started_at": "2026-10-21T14:35:44.380090+00:00",
+      "completed_at": "2026-10-21T14:36:43.026257+00:00",
+      "runtime": {
+        "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+        "image_tag": "vss-rtvi-vlm:3.3-sbsa-codecs",
+        "env": {
+          "VIA_EVS_SESSION": "true",
+          "VLM_VIDEO_PRUNING_RATE": "0.5",
+          "VIA_EVS_TOKEN_BUDGET": "1",
+          "VIA_EVS_MAX_SESSIONS": "1",
+          "VLLM_EVS_SIMILARITY_THRESHOLD": "0.4",
+          "RTVI_VLLM_NATIVE_CONV3D": "true"
+        },
+        "id": "49729bfc7488a41c4663360267e5fc7a7badbd94406ffc9e7445b83150fbf8a5",
+        "status": "running",
+        "health": "healthy"
+      },
+      "min_available_gib": 23.648876190185547,
+      "act_cpu_percent_during_inference": 103.76,
+      "cases": [
+        {
+          "name": "raw20-positive",
+          "timed_seconds": [
+            2.608,
+            2.548,
+            2.688,
+            2.55,
+            2.592
+          ],
+          "median_seconds": 2.592,
+          "answers": {
+            "YES": 5
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "binary_correct": 5,
+          "warmup_seconds_excluded": [
+            2.735
+          ]
+        },
+        {
+          "name": "raw20-empty",
+          "timed_seconds": [
+            2.58,
+            2.579,
+            2.522,
+            2.605,
+            2.671
+          ],
+          "median_seconds": 2.58,
+          "answers": {
+            "NO": 5
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "binary_correct": 5,
+          "warmup_seconds_excluded": [
+            2.588
+          ]
+        },
+        {
+          "name": "scene-positive",
+          "timed_seconds": [
+            4.46,
+            4.555,
+            4.618,
+            4.48,
+            4.502
+          ],
+          "median_seconds": 4.502,
+          "answers": {
+            "A cardboard box is moving on a blue conveyor belt.": 5
+          },
+          "completion_tokens": [
+            12,
+            12,
+            12,
+            12,
+            12
+          ],
+          "binary_correct": null,
+          "warmup_seconds_excluded": [
+            4.448
+          ]
+        }
+      ]
+    },
+    {
+      "label": "off",
+      "started_at": "2026-10-21T14:42:22.616722+00:00",
+      "completed_at": "2026-10-21T14:43:34.327568+00:00",
+      "runtime": {
+        "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+        "image_tag": "vss-rtvi-vlm:3.3-sbsa-codecs",
+        "env": {
+          "VIA_EVS_SESSION": "false",
+          "VLM_VIDEO_PRUNING_RATE": "",
+          "VIA_EVS_TOKEN_BUDGET": "1",
+          "VIA_EVS_MAX_SESSIONS": "1",
+          "VLLM_EVS_SIMILARITY_THRESHOLD": "0.4",
+          "RTVI_VLLM_NATIVE_CONV3D": "true"
+        },
+        "id": "2f8354353458b7c2bc83bf5831389570a673a12807cbd811a75c63fe8274c3f9",
+        "status": "running",
+        "health": "healthy"
+      },
+      "min_available_gib": 23.945049285888672,
+      "act_cpu_percent_during_inference": 103.12,
+      "cases": [
+        {
+          "name": "raw20-positive",
+          "timed_seconds": [
+            3.357,
+            3.509,
+            3.314,
+            3.465,
+            3.286
+          ],
+          "median_seconds": 3.357,
+          "answers": {
+            "YES": 5
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "binary_correct": 5,
+          "warmup_seconds_excluded": [
+            3.379
+          ]
+        },
+        {
+          "name": "raw20-empty",
+          "timed_seconds": [
+            3.309,
+            3.554,
+            3.388,
+            3.431,
+            3.392
+          ],
+          "median_seconds": 3.392,
+          "answers": {
+            "NO": 5
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "binary_correct": 5,
+          "warmup_seconds_excluded": [
+            3.453
+          ]
+        },
+        {
+          "name": "scene-positive",
+          "timed_seconds": [
+            4.982,
+            5.053,
+            5.14,
+            5.142,
+            5.053
+          ],
+          "median_seconds": 5.053,
+          "answers": {
+            "A box is moving on a curved conveyor belt.": 5
+          },
+          "completion_tokens": [
+            11,
+            11,
+            11,
+            11,
+            11
+          ],
+          "binary_correct": null,
+          "warmup_seconds_excluded": [
+            5.164
+          ]
+        }
+      ]
+    },
+    {
+      "label": "on-after",
+      "started_at": "2026-10-21T14:49:34.496241+00:00",
+      "completed_at": "2026-10-21T14:50:33.167218+00:00",
+      "runtime": {
+        "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+        "image_tag": "vss-rtvi-vlm:3.3-sbsa-codecs",
+        "env": {
+          "VIA_EVS_SESSION": "true",
+          "VLM_VIDEO_PRUNING_RATE": "0.5",
+          "VIA_EVS_TOKEN_BUDGET": "1",
+          "VIA_EVS_MAX_SESSIONS": "1",
+          "VLLM_EVS_SIMILARITY_THRESHOLD": "0.4",
+          "RTVI_VLLM_NATIVE_CONV3D": "true"
+        },
+        "id": "e354610e0a07ef61a6fbf3f9a2782b1a98d37f1c53917b97b7124afff44c198c",
+        "status": "running",
+        "health": "healthy"
+      },
+      "min_available_gib": 23.754207611083984,
+      "act_cpu_percent_during_inference": 103.83,
+      "cases": [
+        {
+          "name": "raw20-positive",
+          "timed_seconds": [
+            2.595,
+            2.548,
+            2.577,
+            2.578,
+            2.554
+          ],
+          "median_seconds": 2.577,
+          "answers": {
+            "YES": 5
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "binary_correct": 5,
+          "warmup_seconds_excluded": [
+            2.74
+          ]
+        },
+        {
+          "name": "raw20-empty",
+          "timed_seconds": [
+            2.504,
+            2.545,
+            2.58,
+            2.534,
+            2.561
+          ],
+          "median_seconds": 2.545,
+          "answers": {
+            "NO": 5
+          },
+          "completion_tokens": [
+            2,
+            2,
+            2,
+            2,
+            2
+          ],
+          "binary_correct": 5,
+          "warmup_seconds_excluded": [
+            2.635
+          ]
+        },
+        {
+          "name": "scene-positive",
+          "timed_seconds": [
+            4.539,
+            4.606,
+            4.59,
+            4.567,
+            4.584
+          ],
+          "median_seconds": 4.584,
+          "answers": {
+            "A cardboard box is moving on a blue conveyor belt.": 5
+          },
+          "completion_tokens": [
+            12,
+            12,
+            12,
+            12,
+            12
+          ],
+          "binary_correct": null,
+          "warmup_seconds_excluded": [
+            4.381
+          ]
+        }
+      ]
+    }
+  ],
+  "comparison": [
+    {
+      "case": "raw20-positive",
+      "on_median_seconds": 2.5774999999999997,
+      "off_median_seconds": 3.357,
+      "seconds_saved": 0.7795000000000005,
+      "wait_reduction_percent": 23.220137027107548,
+      "response_speed_ratio": 1.302424830261882,
+      "on_before_median_seconds": 2.592,
+      "on_after_median_seconds": 2.577,
+      "on_range_seconds": [
+        2.548,
+        2.688
+      ],
+      "off_range_seconds": [
+        3.286,
+        3.509
+      ]
+    },
+    {
+      "case": "raw20-empty",
+      "on_median_seconds": 2.5700000000000003,
+      "off_median_seconds": 3.392,
+      "seconds_saved": 0.8219999999999996,
+      "wait_reduction_percent": 24.23349056603773,
+      "response_speed_ratio": 1.3198443579766534,
+      "on_before_median_seconds": 2.58,
+      "on_after_median_seconds": 2.545,
+      "on_range_seconds": [
+        2.504,
+        2.671
+      ],
+      "off_range_seconds": [
+        3.309,
+        3.554
+      ]
+    },
+    {
+      "case": "scene-positive",
+      "on_median_seconds": 4.561,
+      "off_median_seconds": 5.053,
+      "seconds_saved": 0.492,
+      "wait_reduction_percent": 9.736790025727293,
+      "response_speed_ratio": 1.1078710809033108,
+      "on_before_median_seconds": 4.502,
+      "on_after_median_seconds": 4.584,
+      "on_range_seconds": [
+        4.46,
+        4.618
+      ],
+      "off_range_seconds": [
+        4.982,
+        5.142
+      ]
+    }
+  ],
+  "checks": {
+    "timed_protocol_successes": 45,
+    "timed_requests": 45,
+    "timed_binary_correct": 30,
+    "timed_binary_requests": 30,
+    "scene_accuracy_automatically_graded": false,
+    "saved_configuration_unchanged": true,
+    "act_same_process": true,
+    "same_boot": true,
+    "only_two_evs_environment_settings_changed": true,
+    "final_runtime": {
+      "image_id": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "image_tag": "vss-rtvi-vlm:3.3-sbsa-codecs",
+      "env": {
+        "VIA_EVS_SESSION": "true",
+        "VLM_VIDEO_PRUNING_RATE": "0.5",
+        "VIA_EVS_TOKEN_BUDGET": "1",
+        "VIA_EVS_MAX_SESSIONS": "1",
+        "VLLM_EVS_SIMILARITY_THRESHOLD": "0.4",
+        "RTVI_VLLM_NATIVE_CONV3D": "true"
+      },
+      "id": "e354610e0a07ef61a6fbf3f9a2782b1a98d37f1c53917b97b7124afff44c198c",
+      "status": "running",
+      "health": "healthy"
+    }
+  },
+  "limits": [
+    "Two short conveyor clips; one model, device and resolution during active ACT training.",
+    "No general model speed, throughput, memory reduction, accuracy or engine TTFT claim.",
+    "Single video chunk per request; cross-chunk temporal history and live RTSP were not benchmarked.",
+    "Scene answers differ: EVS emits 12 output tokens, OFF emits 11; binary answers are identical at 2 tokens.",
+    "API prompt_tokens excludes visual tokens and cannot quantify visual-token pruning.",
+    "Memory minima cover sampled inference phases; startup protection uses the unchanged active 20 GiB guard."
+  ]
+}

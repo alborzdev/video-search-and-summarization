@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "city.native-sei-hint-candidate-build.v1",
+  "candidateOnly": true,
+  "liveActivated": false,
+  "baseImageId": "sha256:54b13c71248e47a066aa8761f73c303289f5675a5278f55ec6c9ca4d62aa5d02",
+  "imageTag": "vss-city-perception:native-sei-clock-hints-20261026",
+  "imageId": "sha256:4e6b73d1b19e133680a583d5d2f109e20a6953537adea1165b7a381abf42c3dd",
+  "workerBinarySha256": "2b72911de4beb8c34bedadbf270bf708678e2a45424d29054b5371d3fdecb085",
+  "sourceManifest": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/build/source-manifest.json",
+  "sourceManifestSha256": "4c43d59d4aee13bad541fe78a429bd4af798189317cc3a85a05d8acd96d9c3b9",
+  "changedFiles": {
+    "src/tracker_3d.hpp": "66525c36e87b830b30666d67f5d6bc6415fef7e76c589c2a1f8eeaeebf515f1a",
+    "src/city_worker.cpp": "f5f5f64b7cfeba315d0b8e9e500a4295aa5a14f4ec0b41306904845ab5e6794e",
+    "tests/test_native_capture_clock.cpp": "33ab872a7ce0f0ddc03821c02d441ec7c964ddbbe2bd0ddda69fe1d1bffeefd4"
+  },
+  "causeReceipt": "native-sei-hint-gate-failure.json",
+  "change": "Accept source-native-sei only with separate native_capture_qualified proof boolean, supplied only after strict current AU/frame authority is consumed. Existing RTCP and all person/mode/observed/3D/visibility/epoch/ID guards remain.",
+  "cpuTests": {
+    "exitCode": 0,
+    "elapsedSeconds": 17.096,
+    "nativeGroups": 20,
+    "actualWireAUs": 360,
+    "stagedTracking": "passed",
+    "existingStandaloneTracker3DControls": "passed",
+    "log": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/final-cpu-tests.log",
+    "independentlyRepeated": true,
+    "runtime": "runc",
+    "network": "none",
+    "gpuDecode": false,
+    "gpuTrackersExecuted": false
+  },
+  "initialFixtureFailure": {
+    "log": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/compile-and-tests.log",
+    "reason": "Positive synthetic person fixture did not set bInferDone, so existing observed-evidence guard correctly suppressed its hint. Fixture corrected to actual completed-inference state; production guards unchanged."
+  },
+  "copyOnlyBuild": {
+    "exitCode": 0,
+    "elapsedSeconds": 26.922,
+    "log": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/image-build.log",
+    "modelOrTensorRtBuild": false,
+    "dependencyInstall": false
+  },
+  "packagedSmoke": {
+    "exitCode": 0,
+    "binaryMatches": true,
+    "log": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/packaged-cpu-smoke.log",
+    "runtime": "runc",
+    "network": "none"
+  },
+  "limits": [
+    "Root must activate explicitly reviewed new image profile and qualify actual previews, capture clocks and map markers.",
+    "No identity-accuracy or long-run stability claim from CPU metadata tests."
+  ]
+}

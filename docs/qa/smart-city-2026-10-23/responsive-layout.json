@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-23T05:15:19.487Z",
+  "laptop": {
+    "exactPreviewCount": 2,
+    "horizontalOverflow": false,
+    "map": {
+      "bottom": 840,
+      "height": 303.96875,
+      "left": 16,
+      "right": 1007.5,
+      "top": 536.03125,
+      "width": 991.5,
+      "x": 16,
+      "y": 536.03125
+    },
+    "viewport": [
+      1366,
+      900
+    ]
+  },
+  "phone": {
+    "exactPreviewCount": 2,
+    "horizontalOverflow": false,
+    "viewport": [
+      390,
+      844
+    ]
+  },
+  "reportDownload": "Click completed, but the in-app download event timed out; browser download remains unverified."
+}

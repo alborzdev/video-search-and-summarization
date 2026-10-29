@@ -1,0 +1,14 @@
+{
+  "child": false,
+  "compat": true,
+  "tasks": "segment",
+  "image": null,
+  "model": "moondream3-preview",
+  "model_path": null,
+  "cases": ".spark/moondream-photon/preview-spatial-cases.json",
+  "object": "metal panel",
+  "probe_md2_segment": false,
+  "trace_segment": true,
+  "prompt": "Describe the object lying on the concrete.",
+  "timeout": 600
+}

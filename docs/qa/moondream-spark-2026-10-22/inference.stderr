@@ -1,0 +1,104 @@
+MOONDREAM_API_KEY is not set. Finetune inference is disabled. Set MOONDREAM_API_KEY to enable finetune inference.
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py:458: UserWarning: KV scales found in checkpoint but FP8 KV cache currently requires SM80/SM86/SM87/SM89/SM90/SM100/SM110/SM120 decode kernels; falling back to standard KV cache.
+  return spec.runtime(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for tau_tail_apply_into (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for rotary_embedding (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for reshape_and_cache_flash (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/flash_attn/cute/fallback.py:622: RuntimeWarning: kestrel-kernels: falling back to torch attention for flash_attn_fwd (arch=sm121, variant=paged, mask=causal).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/topk/dispatch.py:82: RuntimeWarning: kestrel-kernels: no topk cubin bundle for the current CUDA architecture; using PyTorch fallback.
+  warn_fallback_once(
+Failed to admit request 0: FP8 MoE is not supported by the padded compatibility runtime; CUDA FP8 requires a tuned compact or warpgemv CuTe config. Email contact@moondream.ai with your GPU model and the model you are trying to run if support is missing.
+Traceback (most recent call last):
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/scheduler/scheduler.py", line 2276, in _launch_prefill_step
+    logits = self.runtime.launch_prepared_batch(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/runtime.py", line 2213, in launch_prepared_batch
+    hidden, logits = self._prefill_impl(
+                     ^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/runtime.py", line 2433, in _prefill_impl
+    hidden = text_decoder(
+             ^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/text.py", line 261, in text_decoder
+    mlp_out = moe_mlp(
+              ^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/layers.py", line 171, in moe_mlp
+    mlp_out = fused_mlp(
+              ^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1446, in _fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/moe.py", line 137, in forward
+    handle = self._get_moe_handle(
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/moe.py", line 97, in _get_moe_handle
+    return runtime.prepare(
+           ^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/moe/dispatch.py", line 68, in prepare
+    handle = _prepare_fresh(spec, capacity, device=device)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/moe/dispatch.py", line 195, in _prepare_fresh
+    raise ValueError(FP8_MOE_REQUIRES_COMPACT_CONFIG)
+ValueError: FP8 MoE is not supported by the padded compatibility runtime; CUDA FP8 requires a tuned compact or warpgemv CuTe config. Email contact@moondream.ai with your GPU model and the model you are trying to run if support is missing.
+Warmup query pipeline failed
+Traceback (most recent call last):
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 500, in _warmup_query_pipeline
+    await self.query(
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 677, in query
+    return await self._run_skill(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 579, in _run_skill
+    return await submission
+           ^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 625, in submit
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: FP8 MoE is not supported by the padded compatibility runtime; CUDA FP8 requires a tuned compact or warpgemv CuTe config. Email contact@moondream.ai with your GPU model and the model you are trying to run if support is missing.
+Traceback (most recent call last):
+  File "/home/sparkdev/vss/tools/moondream/measure.py", line 84, in <module>
+    if args.child:child()
+                  ^^^^^^^
+  File "/home/sparkdev/vss/tools/moondream/measure.py", line 29, in child
+    with md.photon(MODEL, model_path=(STATE/'model-path.txt').read_text().strip(), tokenizer_path=(STATE/'tokenizer-path.txt').read_text().strip(), device='cuda', max_batch_size=1, kv_cache_pages=4096, enable_cuda_graphs=False, enable_prefix_cache=False) as model:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/moondream/__init__.py", line 29, in photon
+    return PhotonClient(
+           ^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/moondream/photon_client.py", line 481, in __init__
+    ) = _get_or_create_engine(base_model, runtime_config, api_key=api_key)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/moondream/photon_client.py", line 416, in _get_or_create_engine
+    ).result()
+      ^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 333, in create
+    await engine._ensure_started()
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 1216, in _ensure_started
+    await asyncio.shield(self._init_task)
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 400, in _initialize
+    await self._warmup_query_pipeline()
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 500, in _warmup_query_pipeline
+    await self.query(
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 677, in query
+    return await self._run_skill(
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 579, in _run_skill
+    return await submission
+           ^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 625, in submit
+    return await asyncio.shield(future)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: FP8 MoE is not supported by the padded compatibility runtime; CUDA FP8 requires a tuned compact or warpgemv CuTe config. Email contact@moondream.ai with your GPU model and the model you are trying to run if support is missing.

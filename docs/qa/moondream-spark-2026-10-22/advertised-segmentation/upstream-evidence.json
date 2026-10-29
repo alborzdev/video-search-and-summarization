@@ -1,0 +1,495 @@
+{
+  "checked_utc": "2026-10-22T17:31:22.937269+00:00",
+  "scope": "Primary-source documentation, publisher wheels and public model metadata; no GPU execution, package installation, large weight download, access request, or external message.",
+  "conclusion": "No current authoritative release manifest specifies a reproducible segmentation checkpoint/runtime tuple matching the advertised local quickstart. Publisher defaults are verified below; public documentation conflicts. An upstream supported-H100 release test already reported bbox-only output.",
+  "packages": [
+    {
+      "name": "moondream",
+      "version": "2.0.0",
+      "metadata_url": "https://pypi.org/pypi/moondream/2.0.0/json",
+      "wheel_url": "https://files.pythonhosted.org/packages/ad/9a/33981a7cb89e6b21397eac2a214f0a22b8a871e56449451dd16b441d39c3/moondream-2.0.0-py3-none-any.whl",
+      "wheel_sha256": "335ecd977c08216d41a5eb4776eab6f905e41545312c93ad2cec655c51f3af25",
+      "publisher_sha256": "335ecd977c08216d41a5eb4776eab6f905e41545312c93ad2cec655c51f3af25",
+      "published_utc": "2026-08-03T08:45:41.355116Z",
+      "bytes": 107136,
+      "relevant_files": {},
+      "seg_model_filename_references": [],
+      "kestrel_dependencies": [
+        "kestrel (==0.5.0)"
+      ]
+    },
+    {
+      "name": "moondream",
+      "version": "2.6.1",
+      "metadata_url": "https://pypi.org/pypi/moondream/2.6.1/json",
+      "wheel_url": "https://files.pythonhosted.org/packages/9a/20/39e0dfb6520a9f282a8c8cb47415f91dc2c76b3b768669801513005619d4/moondream-2.6.1-py3-none-any.whl",
+      "wheel_sha256": "73adcfa8bd701a78f589b8e4b56696fbd305486c3d9bf8856f9bbb759f7d0ff4",
+      "publisher_sha256": "73adcfa8bd701a78f589b8e4b56696fbd305486c3d9bf8856f9bbb759f7d0ff4",
+      "published_utc": "2026-09-30T00:46:21.277848Z",
+      "bytes": 111272,
+      "relevant_files": {},
+      "seg_model_filename_references": [],
+      "kestrel_dependencies": [
+        "kestrel (==0.9.1)"
+      ]
+    },
+    {
+      "name": "kestrel",
+      "version": "0.5.0",
+      "metadata_url": "https://pypi.org/pypi/kestrel/0.5.0/json",
+      "wheel_url": "https://files.pythonhosted.org/packages/3c/f0/643e30ee29084e014feaeb960b68d313fccec85691bbaf9a09c265b7ccdc/kestrel-0.5.0-py3-none-any.whl",
+      "wheel_sha256": "96d14534b55bd28f0c41de78261fbcc4e2cfcb9fede7eb44c18ae23991c7e302",
+      "publisher_sha256": "96d14534b55bd28f0c41de78261fbcc4e2cfcb9fede7eb44c18ae23991c7e302",
+      "published_utc": "2026-08-03T06:23:05.898818Z",
+      "bytes": 338729,
+      "relevant_files": {
+        "kestrel/model_download.py": {
+          "sha256": "8eea22a1138fb89a2498c01ee1b5b36a58f7bb9d5dbafb13a29145e497e42c39"
+        },
+        "kestrel/models/moondream/skills/segment.py": {
+          "sha256": "a932a20b45fd79b37a03009feeec9cb254c57820d53cf4061cf5282f10c24af1"
+        }
+      },
+      "seg_model_filename_references": [],
+      "kestrel_dependencies": [
+        "kestrel-native==0.1.6",
+        "kestrel-kernels==0.4.9"
+      ],
+      "registry_source_file": "kestrel/models/moondream/__init__.py",
+      "default_files": [
+        {
+          "model": "moondream2",
+          "repo": "vikhyatk/moondream2",
+          "filename": "model.safetensors"
+        },
+        {
+          "model": "moondream3-preview",
+          "repo": "moondream/moondream3-preview",
+          "filename": "model_fp8.pt"
+        },
+        {
+          "model": "moondream3.1-9B-A2B",
+          "repo": "moondream/moondream3.1-9B-A2B",
+          "filename": "model.safetensors"
+        }
+      ]
+    },
+    {
+      "name": "kestrel",
+      "version": "0.9.1",
+      "metadata_url": "https://pypi.org/pypi/kestrel/0.9.1/json",
+      "wheel_url": "https://files.pythonhosted.org/packages/98/ff/8f779728d192ba3a09d8e063193d180597372f223a2c1f9bcf37c26c21ac/kestrel-0.9.1-py3-none-any.whl",
+      "wheel_sha256": "80640639279b18b2da61b08c06c550f8eaab6596d6d15978fd56f76707462cb7",
+      "publisher_sha256": "80640639279b18b2da61b08c06c550f8eaab6596d6d15978fd56f76707462cb7",
+      "published_utc": "2026-09-30T00:39:48.455029Z",
+      "bytes": 647466,
+      "relevant_files": {
+        "kestrel/model_download.py": {
+          "sha256": "0b7218da1dc7cbac1de5da614b4eeacd2637166728bb735691ab654643153764"
+        },
+        "kestrel/models/moondream/registration.py": {
+          "sha256": "33753186800694ef9978fc2725bc5fdcdb2b0afd4bfb11e282c09830a897018f"
+        },
+        "kestrel/models/moondream/skills/segment.py": {
+          "sha256": "a932a20b45fd79b37a03009feeec9cb254c57820d53cf4061cf5282f10c24af1"
+        }
+      },
+      "seg_model_filename_references": [],
+      "kestrel_dependencies": [
+        "kestrel-native==0.1.8",
+        "kestrel-kernels==0.7.4"
+      ],
+      "registry_source_file": "kestrel/models/moondream/registration.py",
+      "default_files": [
+        {
+          "model": "moondream2",
+          "repo": "vikhyatk/moondream2",
+          "filename": "model.safetensors"
+        },
+        {
+          "model": "moondream3-preview",
+          "repo": "moondream/moondream3-preview",
+          "filename": "model_fp8.pt"
+        },
+        {
+          "model": "moondream3.1-9B-A2B",
+          "repo": "moondream/moondream3.1-9B-A2B",
+          "filename": "model.safetensors"
+        }
+      ]
+    },
+    {
+      "name": "kestrel",
+      "version": "0.9.2",
+      "metadata_url": "https://pypi.org/pypi/kestrel/0.9.2/json",
+      "wheel_url": "https://files.pythonhosted.org/packages/b9/94/e513896f7880389f392a73264e481909a8ab21c6d84985811e4a60435af9/kestrel-0.9.2-py3-none-any.whl",
+      "wheel_sha256": "9f86bb606a6d889d97b7e42f82cec1c83d377a75acc9f8cd2b19a5054ac6693e",
+      "publisher_sha256": "9f86bb606a6d889d97b7e42f82cec1c83d377a75acc9f8cd2b19a5054ac6693e",
+      "published_utc": "2026-09-30T17:37:22.522846Z",
+      "bytes": 666889,
+      "relevant_files": {
+        "kestrel/model_download.py": {
+          "sha256": "0b7218da1dc7cbac1de5da614b4eeacd2637166728bb735691ab654643153764"
+        },
+        "kestrel/models/moondream/registration.py": {
+          "sha256": "33753186800694ef9978fc2725bc5fdcdb2b0afd4bfb11e282c09830a897018f"
+        },
+        "kestrel/models/moondream/skills/segment.py": {
+          "sha256": "a932a20b45fd79b37a03009feeec9cb254c57820d53cf4061cf5282f10c24af1"
+        }
+      },
+      "seg_model_filename_references": [],
+      "kestrel_dependencies": [
+        "kestrel-native==0.1.9",
+        "kestrel-kernels==0.7.5"
+      ],
+      "registry_source_file": "kestrel/models/moondream/registration.py",
+      "default_files": [
+        {
+          "model": "moondream2",
+          "repo": "vikhyatk/moondream2",
+          "filename": "model.safetensors"
+        },
+        {
+          "model": "moondream3-preview",
+          "repo": "moondream/moondream3-preview",
+          "filename": "model_fp8.pt"
+        },
+        {
+          "model": "moondream3.1-9B-A2B",
+          "repo": "moondream/moondream3.1-9B-A2B",
+          "filename": "model.safetensors"
+        }
+      ]
+    }
+  ],
+  "model_inventory": [
+    {
+      "author": "moondream",
+      "url": "https://huggingface.co/api/models?author=moondream&limit=1000&full=true",
+      "count": 13,
+      "models": [
+        {
+          "id": "moondream/parakeet-redux",
+          "revision": "2bf128600aac4b16946f7ed8372e56117fe5e23b",
+          "last_modified": "2026-09-23T00:03:52.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/moondream3.1-9B-A2B",
+          "revision": "1da27e6c2d2f9118de14560df456881dc62d91f3",
+          "last_modified": "2026-07-08T07:13:02.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/parakeet-ultra",
+          "revision": "73175eb7aeb0d82f1e2a6b53b3aabc10a90bcd0b",
+          "last_modified": "2026-09-23T00:03:54.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/moondream3-preview",
+          "revision": "5112966d1a723413b1c9a1e8bea272b72e647b35",
+          "last_modified": "2026-04-09T22:55:40.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/moondream2-gguf",
+          "revision": "66f21bff432b523f311e72d4e34cf1925ae75210",
+          "last_modified": "2024-04-25T20:53:35.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/ft-detect-skus-coreml",
+          "revision": "865619ca0ad2c9b6c74ec750396d3faa644988d5",
+          "last_modified": "2025-03-18T00:01:10.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/moondream-next",
+          "revision": "a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913",
+          "last_modified": "2026-06-29T18:01:23.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/moondream-2b-2025-04-14",
+          "revision": "4cc8251f75e40c392c7a612df374edff4aa6b7de",
+          "last_modified": "2025-05-21T03:59:40.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/starmie-v1",
+          "revision": "35192e10a54e36eabe0a7cc57a2c1aab371cafc5",
+          "last_modified": "2025-05-25T21:33:20.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/moondream-2b-2025-04-14-4bit",
+          "revision": "a89c59223ef8b5bb7826780728eeec172727ca84",
+          "last_modified": "2025-05-22T00:16:27.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/SegHeadRefiner",
+          "revision": "d3664cf8d8501b37d9ed8cd222e6d4e876c88621",
+          "last_modified": "2026-03-10T01:30:00.000Z",
+          "gated": "manual"
+        },
+        {
+          "id": "moondream/md3p-int4",
+          "revision": "c6e79eb75a7d33e5a10eaad335b21a6a2fbf7358",
+          "last_modified": "2025-12-19T21:20:11.000Z",
+          "gated": false
+        },
+        {
+          "id": "moondream/tracking",
+          "revision": "fa63cc3e1c5d5f61a2b82e2700846a7e5d0ae63e",
+          "last_modified": "2026-04-19T01:41:09.000Z",
+          "gated": false
+        }
+      ]
+    },
+    {
+      "author": "vikhyatk",
+      "url": "https://huggingface.co/api/models?author=vikhyatk&limit=1000&full=true",
+      "count": 6,
+      "models": [
+        {
+          "id": "vikhyatk/moondream2",
+          "revision": "5d6c926f44e26b07957b0dd315bbedcb4c17a5fe",
+          "last_modified": "2026-09-23T19:31:05.000Z",
+          "gated": false
+        },
+        {
+          "id": "vikhyatk/moondream0",
+          "revision": "c875d938535a26218a62d8a4c21818f3622dba6c",
+          "last_modified": "2023-12-30T00:25:24.000Z",
+          "gated": false
+        },
+        {
+          "id": "vikhyatk/moondream1",
+          "revision": "f6e9da68e8f1b78b8f3ee10905d56826db7a5802",
+          "last_modified": "2024-02-07T02:57:53.000Z",
+          "gated": false
+        },
+        {
+          "id": "vikhyatk/moondream-next",
+          "revision": "1fdf7871dc596a89f73491db95543870727b5dce",
+          "last_modified": "2026-01-10T01:45:49.000Z",
+          "gated": "manual"
+        },
+        {
+          "id": "vikhyatk/textvqa_val",
+          "revision": "0ac51e5f8635211d21272bf684d4300489a1be45",
+          "last_modified": "2025-01-07T23:58:41.000Z",
+          "gated": false
+        },
+        {
+          "id": "vikhyatk/mystery-ckpts",
+          "revision": "9846be0734a2781d377599f72bcfe3cab04cf5f6",
+          "last_modified": "2025-05-18T11:59:56.000Z",
+          "gated": false
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "url": "https://docs.moondream.ai/running-locally/",
+      "finding": "Current local quickstart initializes md.photon(\"moondream3.1-9B-A2B\") then invokes segment(image,\"person\"); base models need no API key and weights download from HF."
+    },
+    {
+      "url": "https://moondream.ai/photon/updates",
+      "finding": "August 3, 2026 Photon2.0 capability entry advertises MD3 segmentation on H100, without a distinct segmentation checkpoint ID."
+    },
+    {
+      "url": "https://moondream.ai/photon/support",
+      "finding": "Current production table includes Segment for MD2 and MD3 on named hardware, contradicting MD2 public runtime template and separate-weights note."
+    },
+    {
+      "url": "https://moondream.ai/skills/segment",
+      "finding": "Current FAQ says downloadable segmentation is not yet available; describes a cloud-only preview."
+    },
+    {
+      "url": "https://moondream.ai/blog/segmenting-update-2026-03-10",
+      "finding": "March10 update describes improved Cloud segmentation and promises a local release later that week. It supplies no downloadable filename/revision."
+    },
+    {
+      "url": "https://github.com/m87-labs/kestrel#segment",
+      "finding": "Current engine README specifies MD3 and separate segmentation weights; contact Moondream for access. It does not name a versioned segment checkpoint."
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3.1-9B-A2B/commit/1da27e6c2d2f9118de14560df456881dc62d91f3",
+      "finding": "Maintainer July8 commit explicitly removes segment from public3.1 model skills."
+    },
+    {
+      "url": "https://github.com/m87-labs/kestrel/blob/v0.9.2/kestrel/models/moondream/registration.py",
+      "finding": "Default public checkpoint mappings match0.9.1. No gated seg-model auto-selection."
+    },
+    {
+      "url": "https://github.com/m87-labs/kestrel/blob/main/CHANGELOG.md",
+      "finding": "Standalone0.9.2 adds RF-DETR/DINOv2 and newer kernels/native; no documented MD3 segmentation checkpoint or stopping change."
+    },
+    {
+      "url": "https://github.com/m87-labs/kestrel/blob/88e1785a0210916ca2d28356900750a7ad200650/README.md#downloading-checkpoint",
+      "finding": "Original segmentation-era runtime used manually approved vikhyatk/moondream-next model.pt at d7af1649689208e30e657a8ad52017346e137c39."
+    },
+    {
+      "url": "https://huggingface.co/moondream/md3p-int4",
+      "finding": "Card identifies this as an MLX int4 quantization of public Preview, not a separately documented Photon segmentation release."
+    },
+    {
+      "url": "https://huggingface.co/moondream/tracking",
+      "finding": "Repository has only a 388MB safetensors payload, no model card/config/API. Bounded45008-byte header inspection shows a400-tensor SSM/ViT architecture; it is not the registered MD3 VLM checkpoint. No claim of a supported segment workflow can be established."
+    },
+    {
+      "url": "https://docs.moondream.ai/skills/segment/",
+      "finding": "Cloud endpoint lists public-facing3.1/Preview model IDs. Those logical API IDs do not establish equality with downloadable local checkpoint bytes."
+    }
+  ],
+  "checkpoint_files": [
+    {
+      "repo": "moondream/moondream3-preview",
+      "url": "https://huggingface.co/api/models/moondream/moondream3-preview?blobs=true",
+      "revision": "5112966d1a723413b1c9a1e8bea272b72e647b35",
+      "gated": false,
+      "last_modified": "2026-04-09T22:55:40.000Z",
+      "files": [
+        {
+          "filename": "model_fp8.pt",
+          "size": 10505451019,
+          "sha256": "699bd3876f9e105440d60a5fe30c26bc33fbdf008f5bd611a3557663b24bd371"
+        }
+      ]
+    },
+    {
+      "repo": "moondream/moondream3.1-9B-A2B",
+      "url": "https://huggingface.co/api/models/moondream/moondream3.1-9B-A2B?blobs=true",
+      "revision": "1da27e6c2d2f9118de14560df456881dc62d91f3",
+      "gated": false,
+      "last_modified": "2026-07-08T07:13:02.000Z",
+      "files": [
+        {
+          "filename": "model.safetensors",
+          "size": 10505269576,
+          "sha256": "26dde16af961d3a486c7b86b9a34fc8487be7917f7e62324b751400ef4d391b4"
+        }
+      ]
+    },
+    {
+      "repo": "moondream/moondream-next",
+      "url": "https://huggingface.co/api/models/moondream/moondream-next?blobs=true",
+      "revision": "a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913",
+      "gated": false,
+      "last_modified": "2026-06-29T18:01:23.000Z",
+      "files": [
+        {
+          "filename": "model.pt",
+          "size": 10505451019,
+          "sha256": "e1acbd3f5eb8a1e74c7500b8a85051483de0406fa847eae35d53ce4032bb6ac7"
+        },
+        {
+          "filename": "model.safetensors",
+          "size": 10505269576,
+          "sha256": "26dde16af961d3a486c7b86b9a34fc8487be7917f7e62324b751400ef4d391b4"
+        }
+      ]
+    },
+    {
+      "repo": "vikhyatk/moondream-next",
+      "url": "https://huggingface.co/api/models/vikhyatk/moondream-next?blobs=true",
+      "revision": "1fdf7871dc596a89f73491db95543870727b5dce",
+      "gated": "manual",
+      "last_modified": "2026-01-10T01:45:49.000Z",
+      "files": [
+        {
+          "filename": "model.pt",
+          "size": 18537534275,
+          "sha256": "832139204d45696fe785dcc4af8e7f0e7b220ddf1599e92d9c0a0da2998e92d0"
+        },
+        {
+          "filename": "model_fp8.pt",
+          "size": 10505451019,
+          "sha256": "699bd3876f9e105440d60a5fe30c26bc33fbdf008f5bd611a3557663b24bd371"
+        },
+        {
+          "filename": "seg-model.pt",
+          "size": 18537525163,
+          "sha256": "935745c0f6f6938360af88397d952992e4141768f1c2ee0030bd990763468712"
+        }
+      ]
+    },
+    {
+      "repo": "moondream/SegHeadRefiner",
+      "url": "https://huggingface.co/api/models/moondream/SegHeadRefiner?blobs=true",
+      "revision": "d3664cf8d8501b37d9ed8cd222e6d4e876c88621",
+      "gated": "manual",
+      "last_modified": "2026-03-10T01:30:00.000Z",
+      "files": [
+        {
+          "filename": "model.pt",
+          "size": 37035667,
+          "sha256": "71c687133d4e4becc0515821e2d9a8f4a7406358d73d6de4ceb5cb772e42aa25"
+        }
+      ]
+    },
+    {
+      "repo": "moondream/md3p-int4",
+      "url": "https://huggingface.co/api/models/moondream/md3p-int4?blobs=true",
+      "revision": "c6e79eb75a7d33e5a10eaad335b21a6a2fbf7358",
+      "gated": false,
+      "last_modified": "2025-12-19T21:20:11.000Z",
+      "files": [
+        {
+          "filename": "model.safetensors",
+          "size": 6961043417,
+          "sha256": "bd9197e2c82d0e1f46ef732d6ebe361e7587dd96936b7f5eb627e79eb6ec979f"
+        }
+      ]
+    },
+    {
+      "repo": "moondream/tracking",
+      "url": "https://huggingface.co/api/models/moondream/tracking?blobs=true",
+      "revision": "fa63cc3e1c5d5f61a2b82e2700846a7e5d0ae63e",
+      "gated": false,
+      "last_modified": "2026-04-19T01:41:09.000Z",
+      "files": [
+        {
+          "filename": "model.safetensors",
+          "size": 388450778,
+          "sha256": "2ab0448028f570190d2c00deeadf4266c79569ccad24eb177902347d09f9b67a"
+        }
+      ]
+    }
+  ],
+  "upstream_bbox_only_test": {
+    "url": "https://github.com/m87-labs/moondream-python/pull/15",
+    "title": "Release Moondream 2.0 with Kestrel 0.5",
+    "author": "vikhyat",
+    "merged_by": "vikhyat",
+    "merged_at": "2026-08-03T08:27:50Z",
+    "commit": "72f8d6bcbcb526730b39bfd4f6487f882d0b6221",
+    "hardware": "H100",
+    "sdk": "2.0.0",
+    "kestrel": "0.5.0",
+    "kernels": "0.4.9",
+    "native": "0.1.6",
+    "execution": "AOT-only installed-wheel smoke",
+    "quote": "The selected MD3 segmentation smoke prompt returned a bbox and no SVG tokens in the raw Kestrel skill result.",
+    "body_sha256": "5b05e667ae28337cf21dc4ebe3b05eec745477351b866ca2f703322321418d80",
+    "limitation": "The image, object prompt and exact MD3 checkpoint path are not specified in the PR body. This proves an upstream occurrence, not that every default request fails."
+  },
+  "gated_access": {
+    "status": "Existing stored HF credential received403 GatedRepoError for seg-model.pt and SegHeadRefiner/model.pt in earlier checks during this session.",
+    "retested_now": false,
+    "access_requested": false,
+    "license_acceptance": false,
+    "caveat": "The old18.5GB seg-model.pt is a candidate, not an authenticated current deployment manifest. Latest Kestrel MD3 loader requires FP8 expert scales, so compatibility is not established."
+  },
+  "unresolved": [
+    "Exact supported local segmentation checkpoint repository, filename, revision and hash.",
+    "Whether Cloud segmentation uses a dedicated base checkpoint, an adapter, request routing or a different decoder configuration.",
+    "Exact compatible Photon/Kestrel version and refiner revision for that checkpoint.",
+    "A known-good local example with image, prompt, spatial references and expected SVG output."
+  ]
+}

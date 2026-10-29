@@ -1,0 +1,19 @@
+MOONDREAM_API_KEY is not set. Finetune inference is disabled. Set MOONDREAM_API_KEY to enable finetune inference.
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for rotary_embedding (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for reshape_and_cache_flash (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/flash_attn/cute/fallback.py:622: RuntimeWarning: kestrel-kernels: falling back to torch attention for flash_attn_fwd (arch=sm121, variant=paged, mask=causal).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:104: RuntimeWarning: kestrel-kernels: using PyTorch fallback for top_p_sampling_from_probs.
+  warn_fallback_once(kernel_key, message)
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/flash_attn/cute/fallback.py:622: RuntimeWarning: kestrel-kernels: falling back to torch attention for flash_attn_fwd (arch=sm121, variant=dense, mask=none).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/flash_attn/cute/fallback.py:622: RuntimeWarning: kestrel-kernels: falling back to torch attention for flash_attn_fwd (arch=sm121, variant=paged, mask=block_bidirectional).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:104: RuntimeWarning: kestrel-kernels: using PyTorch fallback for build_paged_kv_metadata (no CuTe cubin bundle available for this device/runtime).
+  warn_fallback_once(kernel_key, message)
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/sampling/dispatch.py:1109: RuntimeWarning: kestrel-kernels: greedy tail failed at runtime; using the equivalent PyTorch fallback path.
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/sampling/dispatch.py:1127: RuntimeWarning: kestrel-kernels: native CUDA greedy tail is unavailable; using the equivalent PyTorch fallback path.
+  warn_fallback_once(

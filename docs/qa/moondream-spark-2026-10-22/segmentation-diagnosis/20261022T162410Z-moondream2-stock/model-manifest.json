@@ -1,0 +1,335 @@
+{
+  "_id": "65e60cda4b2e0f45e49dc03d",
+  "id": "vikhyatk/moondream2",
+  "private": false,
+  "pipeline_tag": "image-text-to-text",
+  "library_name": "transformers",
+  "tags": [
+    "transformers",
+    "safetensors",
+    "moondream1",
+    "text-generation",
+    "image-text-to-text",
+    "custom_code",
+    "doi:10.57967/hf/6762",
+    "license:apache-2.0",
+    "eval-results",
+    "endpoints_compatible",
+    "region:us"
+  ],
+  "downloads": 2320743,
+  "likes": 1446,
+  "modelId": "vikhyatk/moondream2",
+  "author": "vikhyatk",
+  "sha": "5d6c926f44e26b07957b0dd315bbedcb4c17a5fe",
+  "lastModified": "2026-09-23T19:31:05.000Z",
+  "gated": false,
+  "disabled": false,
+  "widgetData": [
+    {
+      "text": "Hi, what can you help me with?"
+    },
+    {
+      "text": "What is 84 * 3 / 2?"
+    },
+    {
+      "text": "Tell me an interesting fact about the universe!"
+    },
+    {
+      "text": "Explain quantum computing in simple terms."
+    }
+  ],
+  "model-index": null,
+  "config": {
+    "architectures": [
+      "HfMoondream"
+    ],
+    "auto_map": {
+      "AutoConfig": "hf_moondream.HfConfig",
+      "AutoModelForCausalLM": "hf_moondream.HfMoondream"
+    },
+    "model_type": "moondream1",
+    "tokenizer_config": {
+      "bos_token": "<|endoftext|>",
+      "eos_token": "<|endoftext|>",
+      "unk_token": "<|endoftext|>"
+    }
+  },
+  "cardData": {
+    "license": "apache-2.0",
+    "pipeline_tag": "image-text-to-text",
+    "new_version": "moondream/moondream3-preview"
+  },
+  "transformersInfo": {
+    "auto_model": "AutoModelForCausalLM",
+    "custom_class": "hf_moondream.HfMoondream",
+    "pipeline_tag": "text-generation"
+  },
+  "siblings": [
+    {
+      "rfilename": ".gitattributes",
+      "blobId": "e007792f9bd0ac4e989fcbbce7de419c6001d0e6",
+      "size": 1649
+    },
+    {
+      "rfilename": "README.md",
+      "blobId": "a184097686475f15bedb9a860891208f083d9ac9",
+      "size": 4445
+    },
+    {
+      "rfilename": "added_tokens.json",
+      "blobId": "7debb4784a7d53328d4d021fc46314bec4af3833",
+      "size": 1080
+    },
+    {
+      "rfilename": "config.json",
+      "blobId": "595955a88c97a629afa97f7001ca548bff992561",
+      "size": 277
+    },
+    {
+      "rfilename": "config.py",
+      "blobId": "9856d6b19f1821e0e28f4cf264de3d55cd796f76",
+      "size": 2647
+    },
+    {
+      "rfilename": "configuration_moondream.py",
+      "blobId": "4b1f9051605c296344c271b6d21c1e2e412a99e8",
+      "size": 3343
+    },
+    {
+      "rfilename": "fourier_features.py",
+      "blobId": "b93162eb8252d2d937a69f17971c76b8be87aedd",
+      "size": 558
+    },
+    {
+      "rfilename": "generation_config.json",
+      "blobId": "529f4671aff0ac82e201a14349eb86a1f75048e0",
+      "size": 69
+    },
+    {
+      "rfilename": "handler.py",
+      "blobId": "c8d1fb92080a3c9031dbd04e084eda50a1e0fbc5",
+      "size": 2101
+    },
+    {
+      "rfilename": "hf_moondream.py",
+      "blobId": "4bd6972fcf8dbcda998538379dc7bf5c9f5ff69e",
+      "size": 6559
+    },
+    {
+      "rfilename": "image_crops.py",
+      "blobId": "1aa2f1e51953eced347b47830080fe2b5211b3d7",
+      "size": 8145
+    },
+    {
+      "rfilename": "layers.py",
+      "blobId": "6fee6e8fa4487a13bac9e34c7d19ff1eeaccf7d9",
+      "size": 4558
+    },
+    {
+      "rfilename": "lora.py",
+      "blobId": "b6fc4b91c90cbfc20ff1313be0f6b697d219e08e",
+      "size": 2299
+    },
+    {
+      "rfilename": "merges.txt",
+      "blobId": "226b0752cac7789c48f0cb3ec53eda48b7be36cc",
+      "size": 456318
+    },
+    {
+      "rfilename": "model.safetensors",
+      "blobId": "9e81e6151613084794ba7f2e20d710058406c8af",
+      "size": 3854538968,
+      "lfs": {
+        "sha256": "70a7d94c0c8349eb58ed2d9e636ef2d0916960f321ecabeac6354b8ba3d7403f",
+        "size": 3854538968,
+        "pointerSize": 135
+      }
+    },
+    {
+      "rfilename": "moondream.py",
+      "blobId": "d8121971e38fca68e3dbaa90c21b94a0f4dc9647",
+      "size": 35491
+    },
+    {
+      "rfilename": "region.py",
+      "blobId": "9224e2c246ff05e559db3df36b1b27840be6fb95",
+      "size": 4545
+    },
+    {
+      "rfilename": "region_model.py",
+      "blobId": "6ac7b4364eba1fdd1d3981e4669aed01a2b0cec4",
+      "size": 1331
+    },
+    {
+      "rfilename": "requirements.txt",
+      "blobId": "ed78945ccd526abc22bae8959164529e1827cf0c",
+      "size": 42
+    },
+    {
+      "rfilename": "rope.py",
+      "blobId": "737fa0805b07524adc8abf8b52ce529c48222947",
+      "size": 1573
+    },
+    {
+      "rfilename": "special_tokens_map.json",
+      "blobId": "0204ed10c186a4c7c68f55dff8f26087a45898d6",
+      "size": 99
+    },
+    {
+      "rfilename": "text.py",
+      "blobId": "07cbafd4f7d235b8e639622494b35ad2e2b96de4",
+      "size": 6851
+    },
+    {
+      "rfilename": "tokenizer.json",
+      "blobId": "c1148447551675ea739c440ee3e247df9f354d8f",
+      "size": 2114924
+    },
+    {
+      "rfilename": "tokenizer_config.json",
+      "blobId": "5145e0895f2fe7f1ccb3eb9da69ec74ec9c680db",
+      "size": 7339
+    },
+    {
+      "rfilename": "utils.py",
+      "blobId": "a4627a1eb94097bbb1349cf7daf1852a481c46d8",
+      "size": 1415
+    },
+    {
+      "rfilename": "versions.txt",
+      "blobId": "4991388ef39fe6daed2e291db36fa6990d80e68a",
+      "size": 131
+    },
+    {
+      "rfilename": "vision.py",
+      "blobId": "de1aa5e8935061c59f5f59f4ebeb2a52e22b0e6f",
+      "size": 5087
+    },
+    {
+      "rfilename": "vision_encoder.py",
+      "blobId": "98dd65a59581dac66a3601da9aadd1534f019006",
+      "size": 10214
+    },
+    {
+      "rfilename": "vocab.json",
+      "blobId": "84ef7fb594b5c0979e48bdeddb60a0adef33df0b",
+      "size": 798156
+    },
+    {
+      "rfilename": "weights.py",
+      "blobId": "79a615cb016070e8f7e13857c702cce94b18d1bc",
+      "size": 9709
+    }
+  ],
+  "spaces": [
+    "fastgpu/vram-and-gpu-cost-calculator",
+    "vikhyatk/moondream1",
+    "sergiopaniego/vlm_object_understanding",
+    "fffiloni/soft-video-understanding",
+    "reach-vb/2025-ai-timeline",
+    "vikhyatk/contemplative-moondream",
+    "radames/Candle-Moondream-2",
+    "moondream/video-redaction",
+    "fffiloni/music-to-outfit",
+    "Csplk/moondream2-batch-processing",
+    "suayptalha/QwQ-32B-Preview-Vision",
+    "dwb2023/omniscience",
+    "BoltzmannEntropy/vlms",
+    "moondream/content-moderation",
+    "fffiloni/Image-to-Fragrance",
+    "build-small-hackathon/open-to-work-musical",
+    "emanforhelp/model-pulse",
+    "andito/moondream-05",
+    "ModularityAI/AskMoondream",
+    "neonwatty/meme_search",
+    "MrOvkill/moondream-2-multi-interrogation",
+    "dwb2023/model_explorer2",
+    "ItzRoBeerT/pigeon-avatar",
+    "akshit-g/SeeForMe-Live",
+    "makululinux/censor",
+    "ManishThota/Build",
+    "PeepDaSlan9/B2BMGMT_Candle-Moondream-2",
+    "dwb2023/model_explorer4",
+    "Ahmed007/Modarb-AI",
+    "yeshavyas27/moondream-finetuned-demo",
+    "John6666/moondream2-cpu",
+    "ParsaKhaz/promptable-content-moderation",
+    "amogneandualem/amogne-vlm-LLM",
+    "dhwaneet2319/oculus-vision-ai",
+    "kshitijthakkar/daggr-content-pipeline",
+    "kshitijthakkar/daggr-multimodal-pipeline",
+    "kshitijthakkar/daggr-ecommerce-pipeline",
+    "MariyaM552/Pine",
+    "akashsinghal/video-frames-to-text-llm",
+    "amfamf/Yemen-Medical-AI",
+    "ProfessorCEO/Kora-AI",
+    "build-small-hackathon/InsureChat",
+    "jkorstad/forge-visuals",
+    "build-small-hackathon/Indian-Banking-Email-Intelligence",
+    "mmrech/vlm_object_understanding",
+    "jkorstad/daggr-studio",
+    "Omnibus/moondream2",
+    "Kartik2503/ImageToText",
+    "fcole/moondream",
+    "stdgy/mdrm2",
+    "Greatmonkey/image_to_text",
+    "ChrisMofus/BestStoryTeller",
+    "dwb2023/moondream2",
+    "Ivana123/Bakalarska_Praca",
+    "d-delaurier/myAssistant_moondream_v2",
+    "emilios/moondream2",
+    "awacke1/Image-Text-to-Text-with-Moondream2",
+    "rdezwart/FoodIdentifier",
+    "muhtasham/agent",
+    "jbilcke-hf/ai-tube-model-moondream2",
+    "AkashMnd/moondream2",
+    "hypno-ai/moondream2",
+    "Ahmed007/modarb_API",
+    "Yakshaving/moondream2",
+    "jo2456654545/segment",
+    "jo2456654545/detection",
+    "lucy1118/storytelling-backup",
+    "AWeirdDev/moondream-inference",
+    "LukeJacob2023/moondream-webui",
+    "sajid1085/image-text-conv-first",
+    "0xmrmasry/Modarb-AI",
+    "pllara/vikhyatk-moondream2",
+    "Ledenav/vikhyatk-moondream2",
+    "Aleko514/vikhyatk-moondream2",
+    "mvgr/medadviser",
+    "volumetrader/Iris",
+    "akshit-g/SeeForMe-Life",
+    "akshit-g/SeeForMe-Video",
+    "akshit-g/SeeForMe-Image",
+    "eybro/Iris",
+    "lord-reso/scene-understanding",
+    "ParsaKhaz/redact-video-demo",
+    "MrCool552/Icicle",
+    "techdrizzdev/ui_model_eval",
+    "Jamari/promptable-content-moderation",
+    "munnae/moondreambc220",
+    "GF-John/moondream-pointer",
+    "Agents-MCP-Hackathon/moondream-pointer",
+    "nomri/Tadashi-TDS-TA",
+    "ObiJuanCodenobi/vlm_Object_tracking",
+    "sayantan47/Image-Captioner-using-Moondream-2",
+    "AU2003USD2024/ai-street-crossing-assistant",
+    "chalrie987/vision-moondream",
+    "ilyas02828/Object_Detection",
+    "Csplk/lanumba",
+    "jo2004/moondream",
+    "Prosper324/voltron-qwen-1",
+    "KarthiEz/gemmasign",
+    "gabotoxf/analizador-xiro",
+    "evanpetersen919/cv-location-classifier"
+  ],
+  "createdAt": "2024-03-04T18:03:06.000Z",
+  "safetensors": {
+    "parameters": {
+      "BF16": 1927237104
+    },
+    "total": 1927237104
+  },
+  "usedStorage": 129574926217
+}

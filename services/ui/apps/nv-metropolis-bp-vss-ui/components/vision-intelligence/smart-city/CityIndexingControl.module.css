@@ -1,0 +1,96 @@
+/* SPDX-License-Identifier: MIT */
+.trigger { display:inline-flex; align-items:center; gap:7px; padding:6px 10px; border:1px solid #30433b; border-radius:5px; background:transparent; color:#cedbd4; font:inherit; font-size:12px; cursor:pointer; }
+.panel { position:fixed; z-index:1300; width:min(420px,calc(100vw - 24px)); max-height:calc(100dvh - 100px); overflow:auto; border:1px solid #34463d; border-radius:9px; padding:19px; color:#edf3ef; background:#111b17; box-shadow:0 18px 65px #0009; font:13px/1.5 'Manrope Variable',Manrope,sans-serif; }
+.panel * { box-sizing:border-box; }
+.panel p,.panel h3 { margin:0; }
+.panel button,.panel input,.panel select { font:inherit; }
+.panel button { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:7px 10px; border:1px solid #35473d; border-radius:5px; color:#dce8df; background:transparent; cursor:pointer; white-space:nowrap; }
+.panel button:hover { background:#26382e; }
+.panel button:disabled,.trigger:disabled { opacity:.45; cursor:not-allowed; }
+.panel button:focus-visible,.panel input:focus-visible,.panel select:focus-visible,.trigger:focus-visible { outline:2px solid #9fd6b7; outline-offset:3px; }
+.panel header { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:17px; }
+.panel header strong { font-size:15px; font-weight:650; }
+.panel header p { color:#9fafA3; font-size:12px; margin-top:3px; }
+.panel header button { padding:4px; border-color:transparent; }
+.camera { display:grid; gap:5px; color:#adbdb1; font-size:11px; }
+.camera select { width:100%; padding:9px; border:1px solid #34463d; border-radius:5px; background:#0c1510; color:#e5eee8; font-size:12px; }
+.captureState { display:flex; align-items:center; gap:8px; margin-top:16px; }
+.captureState strong { flex:1; font-size:12px; font-weight:550; }
+.captureState button { border:0; padding:4px; }
+.dot { width:6px; height:6px; background:#85968b; border-radius:50%; }
+.dot[data-active=true] { background:#a8dbb9; }
+.session { display:grid; gap:3px; margin:11px 0; padding:12px 13px; border-left:2px solid #7ba78b; border-radius:2px; background:#18261d; }
+.session>span { color:#adc0b1; font-size:11px; }
+.session strong { font-size:15px; font-variant-numeric:tabular-nums; font-weight:550; }
+.session small { color:#9eb2a4; font-size:10px; }
+.actions { display:flex; gap:8px; margin-top:12px; }
+.panel .primary { color:#d9f2df; border-color:#557b62; background:#294234; }
+.note,.warning { margin-top:11px!important; color:#a2b3a8; font-size:11px; line-height:1.6; }
+.warning { color:#e0c08b; }
+.search { display:grid; gap:7px; padding-top:17px; margin-top:18px; border-top:1px solid #2d3c33; }
+.search>label { font-size:12px; font-weight:550; }
+.search>div { display:flex; gap:6px; }
+.search input { min-width:0; width:100%; padding:8px 9px; border:1px solid #35463c; border-radius:5px; background:#0b140e; color:#e9f0e9; font-size:12px; }
+.search input::placeholder { color:#7f9587; }
+.search small,.results small { font-size:10px; color:#9cae9f; }
+.results { display:grid; gap:9px; margin-top:17px; }
+.resultsHeading { display:grid; gap:2px; margin-bottom:2px; }
+.resultsHeading strong { font-size:12px; font-weight:550; }
+.results article { display:flex; gap:11px; padding:10px 0; border-top:1px solid #293b2f; }
+.results img { width:102px; height:62px; object-fit:cover; border-radius:4px; background:#07100a; }
+.results article>div { min-width:0; }
+.results article strong { font-size:11px; font-variant-numeric:tabular-nums; font-weight:500; }
+.results article p { margin-top:3px; color:#a6b9ab; font-size:10px; overflow-wrap:anywhere; }
+.results article button { padding:3px 0; border:0; color:#bbdec5; font-size:10px; }
+.panel footer { margin-top:17px; padding-top:12px; border-top:1px solid #2b3c30; color:#92a799; font-size:10px; line-height:1.6; }
+@media(max-width:500px) { .panel { padding:16px; max-height:calc(100dvh - 90px); } .search>div { flex-wrap:wrap; } .search>div button { width:100%; } }
+
+/* The full Search screen uses these same bounded-capture controls in the page. */
+.inline { display:contents; color:#edf1f3; font:14px/1.5 Arial,Helvetica,sans-serif; }
+.inline header { display:none; }
+.inline .controls { grid-column:1/-1; grid-row:1; display:flex; align-items:center; gap:14px 22px; flex-wrap:wrap; padding:17px 19px; border:1px solid #343a3e; border-radius:7px; background:#1b1e20; }
+.inline .camera { min-width:205px; color:#a4adb3; font-size:12px; }
+.inline .camera select { color:#edf1f3; border-color:#3a4146; background:#191b1d; font-size:13px; }
+.inline .captureState { margin:0; min-width:170px; }
+.inline .captureState strong { font-size:13px; font-weight:500; }
+.inline .dot[data-active=true] { background:#37d5c1; }
+.inline .session { margin:0; padding:0 20px; background:transparent; border-left:1px solid #3b4247; border-radius:0; }
+.inline .session>span,.inline .session small { color:#a4adb3; font-size:11px; }
+.inline .session strong { font-size:16px; }
+.inline .actions { margin:0 0 0 auto; }
+.inline button { color:#cdd5da; border-color:#3b4247; border-radius:5px; font-size:13px; padding:9px 12px; }
+.inline button:hover { background:#2b3135; }
+.inline button:focus-visible,.inline input:focus-visible,.inline select:focus-visible { outline-color:#37d5c1; }
+.inline .primary { background:#37d5c1; border-color:#37d5c1; color:#102623; }
+.inline .primary:hover { background:#62e2d2; }
+.inline .note,.inline .warning { flex-basis:100%; margin:0!important; color:#9ca8b0; font-size:12px; }
+.inline .warning { color:#e2c291; }
+.inline .search { grid-column:1/-1; grid-row:2; border:0; margin:0; padding:5px 0; }
+.inline .search>label { font-size:16px; font-weight:500; margin-bottom:3px; }
+.inline .search>div { gap:10px; }
+.inline .search input { background:#1b1e20; border-color:#3b4247; color:#edf1f3; padding:13px 15px; font-size:15px; }
+.inline .search input::placeholder { color:#8f9ba3; }
+.inline .search small,.inline .results small { color:#9ca8b0; font-size:12px; }
+.inline .search button { padding:12px 24px; }
+.inline .results { grid-column:1; grid-row:3; display:flex; flex-direction:column; align-self:start; gap:0; margin:0; border:1px solid #343a3e; border-radius:7px; overflow:hidden; }
+.inline .resultsHeading { padding:18px; margin:0; border-bottom:1px solid #343a3e; }
+.inline .resultsHeading strong { font-size:16px; font-weight:500; }
+.inline .results article { padding:18px; gap:16px; border-color:#343a3e; }
+.inline .results article[data-selected=true] { background:#20312f; box-shadow:inset 3px 0 #37d5c1; }
+.emptyResults { min-height:280px; padding:35px 30px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; text-align:center; color:#98a7b0; }
+.emptyResults strong { font-size:17px; color:#ced6dc; font-weight:500; }
+.emptyResults p { font-size:13px; max-width:310px; line-height:1.7; }
+.inline .results article:first-of-type { border-top:0; }
+.inline .results img { width:140px; height:88px; border-radius:5px; background:#101214; }
+.inline .results article strong { font-size:14px; }
+.inline .results article p { font-size:13px; color:#aeb9c0; line-height:1.6; }
+.inline .results article button { color:#70dfcf; font-size:13px; margin-top:6px; }
+.inline .results>small { padding:10px 18px; }
+.inline footer { grid-column:1/-1; grid-row:4; margin:0; padding:13px 0 0; border-color:#343a3e; font-size:12px; color:#929fa7; }
+@media(max-width:1150px) { .inline .controls { gap:12px; } .inline .session { padding:0 12px; } .inline .results img { width:100px; height:68px; } }
+@media(max-width:760px) { .inline .controls { display:grid; grid-template-columns:1fr; } .inline .session { border:0; padding:0; } .inline .actions { margin:0; } .inline .search>div { flex-wrap:wrap; } .inline .results { flex:none; } }
+
+.search .queryExamples { display:flex; flex-wrap:wrap; gap:8px; }
+.search .queryExamples button { white-space:normal; text-align:left; padding:7px 10px; font-size:13px; color:#aebbc3; }
+.inline .queryExamples button { background:transparent; }
+@media(min-width:761px) { .inline .results { min-height:0; height:100%; overflow:auto; } .inline .resultsHeading { position:sticky; top:0; background:#1b1e20; z-index:1; } }

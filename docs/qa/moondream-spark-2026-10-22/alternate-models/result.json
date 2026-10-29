@@ -1,0 +1,228 @@
+{
+  "goal_complete": false,
+  "segmentation_models_substituted": false,
+  "scope": "Moondream-only local Photon on GB10",
+  "reserve_gib": 20,
+  "runs": [
+    {
+      "run": "20261022T155702Z-moondream3.1-9B-A2B-gb10",
+      "min_available_gib": 39.15120315551758,
+      "peak_cuda_reserved_gib": 17.349609375,
+      "results": [
+        {
+          "task": "segment",
+          "case": "panel",
+          "latency_s": 1.6959034213796258,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "person",
+          "latency_s": 1.6076302491128445,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "blank",
+          "latency_s": 1.90534328809008,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": null
+        }
+      ]
+    },
+    {
+      "run": "20261022T160007Z-moondream3-preview-gb10",
+      "min_available_gib": 36.27753448486328,
+      "peak_cuda_reserved_gib": 17.349609375,
+      "results": [
+        {
+          "task": "query",
+          "case": "panel",
+          "latency_s": 7.178664029110223,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "detect",
+          "case": "panel",
+          "latency_s": 1.8126515629701316,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "panel",
+          "latency_s": 1.9038216611370444,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": "bbox_only"
+        },
+        {
+          "task": "query",
+          "case": "person",
+          "latency_s": 4.1541409571655095,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "detect",
+          "case": "person",
+          "latency_s": 1.5436327289789915,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "person",
+          "latency_s": 1.1351558528840542,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": "bbox_only"
+        },
+        {
+          "task": "query",
+          "case": "blank",
+          "latency_s": 2.255249327979982,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "detect",
+          "case": "blank",
+          "latency_s": 1.5252801291644573,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "blank",
+          "latency_s": 1.1231802152469754,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": "empty_result"
+        }
+      ]
+    },
+    {
+      "run": "20261022T160342Z-moondream2-stock",
+      "min_available_gib": 54.27907943725586,
+      "peak_cuda_reserved_gib": 4.447265625,
+      "results": [
+        {
+          "task": "query",
+          "case": "panel",
+          "latency_s": 2.047196015715599,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "detect",
+          "case": "panel",
+          "latency_s": 0.9887148989364505,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "panel",
+          "latency_s": 0.11627306183800101,
+          "error": "ValueError('Model does not include a segment template')",
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "query",
+          "case": "person",
+          "latency_s": 1.8974850219674408,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "detect",
+          "case": "person",
+          "latency_s": 0.4833129970356822,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "person",
+          "latency_s": 0.03504009498283267,
+          "error": "ValueError('Model does not include a segment template')",
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "query",
+          "case": "blank",
+          "latency_s": 0.9129934580996633,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "detect",
+          "case": "blank",
+          "latency_s": 0.620421651750803,
+          "error": null,
+          "finish_reason": null,
+          "mask_status": null
+        },
+        {
+          "task": "segment",
+          "case": "blank",
+          "latency_s": 0.012363000772893429,
+          "error": "ValueError('Model does not include a segment template')",
+          "finish_reason": null,
+          "mask_status": null
+        }
+      ]
+    },
+    {
+      "run": "20261022T160459Z-moondream2-stock",
+      "min_available_gib": 54.416778564453125,
+      "peak_cuda_reserved_gib": 4.447265625,
+      "results": [
+        {
+          "task": "segment",
+          "case": "panel",
+          "latency_s": 0.7944142813794315,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": "bbox_only"
+        },
+        {
+          "task": "segment",
+          "case": "person",
+          "latency_s": 0.3494554846547544,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": "bbox_only"
+        },
+        {
+          "task": "segment",
+          "case": "blank",
+          "latency_s": 0.6160580352880061,
+          "error": null,
+          "finish_reason": "stop",
+          "mask_status": "bbox_only"
+        }
+      ]
+    }
+  ]
+}

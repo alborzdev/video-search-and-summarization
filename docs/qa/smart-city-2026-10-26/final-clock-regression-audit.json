@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "city.final-clock-regression-audit.v1",
+  "readOnly": true,
+  "newCameraReaders": false,
+  "runtimeChanged": false,
+  "createdAtUtc": "2026-10-26T09:47:51.788389+00:00",
+  "inputSnapshot": {
+    "path": ".spark/city/state/live-observations.ndjson",
+    "prefixBytes": 68075801,
+    "segmentStartBytes": 66076502,
+    "segmentSha256": "93ddf8d0552e3eca8bbdbdbcd7e8fad7e5aa6f50ff4dc4f45f2f51fa53f46254",
+    "retainedFile": ".spark/city/runtime/pedestrian-pocket-live-20261026/final-performance/clock-audit-raw-tail.ndjson",
+    "retainedSha256": "93ddf8d0552e3eca8bbdbdbcd7e8fad7e5aa6f50ff4dc4f45f2f51fa53f46254"
+  },
+  "sources": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "sourceSessionId": "106e2481-c699-4a22-bd6b-9d37930a5867",
+      "rows": 189,
+      "firstSequence": "37025",
+      "lastSequence": "37213",
+      "firstSourceTimeNs": "1793008052688833333",
+      "lastSourceTimeNs": "1793008071611528667",
+      "sourceTimeMinusRawPtsNs": {
+        "min": 1793004630011078244,
+        "median": 1793004630011080355,
+        "max": 1793004630011082910
+      }
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "sourceSessionId": "206ee1d2-c3ef-43b7-a010-dabaea6085c3",
+      "rows": 188,
+      "firstSequence": "37057",
+      "lastSequence": "37244",
+      "firstSourceTimeNs": "1793008053447167398",
+      "lastSourceTimeNs": "1793008072208689620",
+      "sourceTimeMinusRawPtsNs": {
+        "min": 1793004630011184661,
+        "median": 1793004630011184640,
+        "max": 1793004630011184661
+      }
+    }
+  },
+  "recentOutputOrder": {
+    "pairs": 376,
+    "neMinusSwNtpMs": {
+      "min": 332.592175,
+      "median": 597.1432305000001,
+      "max": 1066.34773
+    },
+    "neMinusSwRawPtsMs": {
+      "min": 332.487869,
+      "median": 597.037869,
+      "max": 1066.243424
+    },
+    "neMinusSwSourceFrameCounterValues": [
+      -5,
+      -4,
+      -3
+    ]
+  },
+  "retainedFinalPerformanceClockAges": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "samples": 11,
+      "reportedSourceClockAgeMs": {
+        "min": 60.49656867980957,
+        "median": 113.55805397033691,
+        "max": 178.9708137512207
+      },
+      "sampleEndWallMinusSourceMs": {
+        "min": 91.230644,
+        "median": 174.145358,
+        "max": 287.877189
+      }
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "samples": 11,
+      "reportedSourceClockAgeMs": {
+        "min": -536.531925201416,
+        "median": -483.501672744751,
+        "max": -374.25827980041504
+      },
+      "sampleEndWallMinusSourceMs": {
+        "min": -505.815308,
+        "median": -422.95615,
+        "max": -246.941765
+      }
+    }
+  },
+  "conclusions": [
+    "NE source timestamp is persistently in the future relative to the same-host wall sample; ordinary delayed selection of real past exposures cannot explain this by itself.",
+    "Current SDK NTP minus PTS mappings have nearly equal running-time anchors; the inter-source skew already exists in PTS. This does not prove the independent RTCP reference or native SEI agrees in the current epoch.",
+    "Prior encoded origin/VIOS and same-buffer SDK-reference proofs used different server/worker sessions. They cannot certify this current epoch or rule out a renewed per-start anchor problem.",
+    "Native producer currently captures its monotonic epoch and wall timestamp before lazily calling Server.start. A slow start can create an origin anchor risk; current-epoch native SEI versus RTCP is required before assigning cause.",
+    "Keep the strict150ms map guard and local tracking. No subtraction, synthetic shared ID or successful-current-fusion claim."
+  ],
+  "nextBoundedProof": "With root coordination, encoded-only no-decode 10s capture of both current native origins and current VIOS analysis-input paths; compare same native SEI frame_num+publish_sim_time_ns across cams, SEI capture wall versus per-packet GstReference RTCP. Do not restart producer/worker before preserving this bad epoch. If origins are wrong, start Server before first captured epoch. If origins and VIOS independent clients are correct, instrument same current worker reference/SEI before mux in a controlled next candidate; do not call an ordinary restart a fix.",
+  "limits": [
+    "SourceFrameId is decoder-local counter, not native SEI render-frame identity.",
+    "Output-order pair statistics are latest available observations, not simultaneous exposure proof.",
+    "Native lazy-start ordering is a concrete risk and candidate repair, not the proven current cause."
+  ]
+}

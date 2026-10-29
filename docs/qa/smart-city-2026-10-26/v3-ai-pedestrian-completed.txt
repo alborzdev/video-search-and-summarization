@@ -1,0 +1,74 @@
+TRAFFIC ENGINEERING
+Intersection insights
+
+Movement demand, crossing service, queues and curb access. Measured on this device.
+
+1 min
+5 min
+15 min
+
+Per-camera video time · no combined camera total
+
+Observed video time
+2 cameras
+Movements
+Crossing access
+Queues
+Walking
+Curb access
+Pedestrian service
+Observed journeys
+East crossing · south to north
+Southwest corner
+Observing
+—
+median time before crossing · 0 valid samples
+Observed in approach area
+0
+Currently observed crossing
+0
+Completed crossings
+1
+P95 time before crossing
+—
+0 incomplete
+0 left approach area
+0 returned
+
+1 journeys began with a person already in the approach area. Their arrival time is unknown; they are excluded from full entry-to-crossing samples. Median minimum time before crossing: ≥ 1.8 min.
+
+Completed means an observed far-side exit. Approach time includes observed walking or waiting, measured in source video time. Signal delay is not measured.
+
+Show on map
+East crossing · north to south
+Southwest corner
+Observing
+—
+median time before crossing · 0 valid samples
+Observed in approach area
+≥ 2
+Currently observed crossing
+0
+Completed crossings
+0
+P95 time before crossing
+—
+
+1 earlier tracks unresolved · 2 lost in this window. Counts include currently observed objects only; zero does not confirm an empty area.
+
+2 incomplete
+0 left approach area
+1 returned
+Walking evidence
+
+Completed means an observed far-side exit. Approach time includes observed walking or waiting, measured in source video time. Signal delay is not measured.
+
+Show on map
+Take the measurements with you
+
+Camera-scoped report with the selected window, coverage and configuration.
+
+Export CSV
+JSON
+Received 4:53:50 AM · configuration 6
+How to read these measures

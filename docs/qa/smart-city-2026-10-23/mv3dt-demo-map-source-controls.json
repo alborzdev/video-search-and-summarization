@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "city.mv3dt.demo-map-source-controls.v1",
+  "date": "2026-10-23",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "productionQualified": false,
+  "analyticsGlobalFusionEnabled": false,
+  "tests": {
+    "passed": 122,
+    "durationSeconds": 1.76,
+    "scope": [
+      "test_map_demo.py",
+      "test_city.py",
+      "test_preview.py"
+    ]
+  },
+  "authorization": {
+    "enabledEnvironment": "CITY_MV3DT_DEMO_ENABLED=true",
+    "siteEnvironment": "CITY_MV3DT_DEMO_SITE_ID",
+    "calibrationEnvironment": "CITY_MV3DT_DEMO_CAMERA_CALIBRATIONS",
+    "exactPairRequired": true
+  },
+  "identityScope": "Experimental map hint only; camera-local track IDs/events/counts unchanged",
+  "positionScope": "Camera-local class homography; SDK native positions not used for map coordinates",
+  "fields": {
+    "method": "mv3dt-demo",
+    "globalTrackId": "mv3dt-demo:<fusionEpoch>:<targetId>",
+    "targetId": "raw SDK ID string",
+    "fusionEpoch": "shared live worker epoch",
+    "calibrationRevision": "exact approved camera revision",
+    "visibility": "0.25..1",
+    "sourceClockBasis": "source-rtcp"
+  },
+  "files": {
+    "services/analytics/behavior-analytics/apps/city/models.py": "4108f28ff0909399dcfd407c3615cb7a8754b8162713b9bc68e146c7389b81fc",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "4ae1c2aa05fa7e58bdd5640a2670582d44694b8b40fc3ed29cf94c508af752ef",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "7c9ff73d49a4dbd472a74b9b656702091cb6623648909c6ca51093868ad42baf",
+    "services/analytics/behavior-analytics/apps/city/tests/test_map_demo.py": "127aa86b6aeac24af23f93d49ddeeb9fba1b4278fb9ecd74463730a2a38c2c4f",
+    "docs/smart-city-mv3dt-demo-map.md": "70501f9ef674f1f8b82ab0b8b417f0f518590cbf515ee05f4c91866b9d866173",
+    "docs/qa/smart-city-2026-10-23/mv3dt-demo-map-guard-offline-estimate.json": "6ed9eef27ccaab851f99dab17e008514ff68cb2b4190b514375cf21c3b96d21a",
+    "docs/qa/smart-city-2026-10-23/mv3dt-demo-map-guard-replay.py": "05c8e61fb881af476c8e38818145d8e558ec704afd63ffc32b617b14636fd13c"
+  }
+}

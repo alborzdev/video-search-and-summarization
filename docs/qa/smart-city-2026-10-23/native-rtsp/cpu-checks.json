@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "at": "2026-10-23T20:29:35.627403+00:00",
+  "cityCpuTests": 22,
+  "vssCpuTests": 99,
+  "vssSeconds": 0.08,
+  "focusedRuff": "passed",
+  "noInstalls": true,
+  "commands": [
+    "python3 scripts/rtsp/test_native_capture_clock.py",
+    "python3 scripts/rtsp/test_native_stream_profile.py",
+    "python3 scripts/rtsp/test_vss_profile.py",
+    "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_isaac_demo.py tools/smart-city/tests/test_isaac_health.py tools/smart-city/tests/test_isaac_site.py tools/smart-city/tests/test_mv3dt_demo_profile.py"
+  ],
+  "sourceSha256": {
+    "/home/sparkdev/isaac_city_sim/scripts/rtsp/test_native_capture_clock.py": "4e0be2dd229c454e00f5580c9368e3040c71a9edf992edaf76a2f6db6ffcf86a",
+    "/home/sparkdev/isaac_city_sim/scripts/rtsp/test_native_stream_profile.py": "7885d510cb6e10b256f30629cc8e52f78b2ff1a6a9520fdceeb75b44625ea1d0",
+    "/home/sparkdev/isaac_city_sim/scripts/rtsp/test_vss_profile.py": "3076bc283d51dce12c80d8f6c02ddd4ecf11b831c1e53529f9ca05ad263f4cf1",
+    "/home/sparkdev/vss/tools/smart-city/isaac_demo.py": "55c1ce04d09838b6d8d5290c10a5987fb0285f55587b66b97560bd0c13fed9c2",
+    "/home/sparkdev/vss/tools/smart-city/isaac_health.py": "4a43f78d570842d08c77c95a7178ed163c5b22cb2d555695dc54a331aff440b2"
+  }
+}

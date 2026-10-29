@@ -1,0 +1,684 @@
+{
+  "file": ".spark/city/runtime/stable-id-normal-cohort-20261026T055345Z/existing-first60-observations.ndjson",
+  "snapshotBytes": 8674065,
+  "rows": 1868,
+  "malformedOrPartialLinesSkipped": 0,
+  "diagnosticRows": 0,
+  "bySource": {
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "sessionId": "db6f5863-e491-445b-bd19-d4035f997d17",
+      "fromUtc": "2026-10-26T05:51:50.874011+00:00",
+      "toUtc": "2026-10-26T05:52:50.822927+00:00",
+      "durationSeconds": 59.948915999,
+      "frames": 934,
+      "sourceFrameGaps": 0,
+      "sourceEpochReasonRows": 0,
+      "uniqueIdsByClass": {
+        "car": 16,
+        "person": 17,
+        "truck": 5,
+        "bus": 2,
+        "motorcycle": 2
+      },
+      "personIdNumericRange": [
+        14,
+        92
+      ],
+      "personFrameCounts": {
+        "min": 0,
+        "p25": 2,
+        "median": 3,
+        "p75": 4,
+        "p95": 5,
+        "max": 6
+      },
+      "observedPersonFrameCounts": {
+        "min": 0,
+        "p25": 2,
+        "median": 3,
+        "p75": 4,
+        "p95": 5,
+        "max": 6
+      },
+      "predictedPersonFrameCounts": {
+        "min": 0,
+        "p25": 0,
+        "median": 0,
+        "p75": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "personObservationSpansSeconds": {
+        "min": 0.114011111,
+        "p25": 2.214233334,
+        "median": 11.157915444,
+        "p75": 16.627845777,
+        "p95": 26.63758111,
+        "max": 38.209599222
+      },
+      "personObservedSamplesPerId": {
+        "min": 3,
+        "p25": 25,
+        "median": 129,
+        "p75": 241,
+        "p95": 412,
+        "max": 459
+      },
+      "personIdsAtMost1Second": 1,
+      "personIdsAtLeast10Seconds": 9,
+      "personIdsAtLeast30Seconds": 1,
+      "personIdsWithReappearanceGaps": 13,
+      "sameIdReappearanceGapSeconds": {
+        "min": 0.098333333,
+        "p25": 0.114344444,
+        "median": 0.166677777,
+        "p75": 0.234077778,
+        "p95": 0.649488889,
+        "max": 2.457888889
+      },
+      "observedSameIdGapSeconds": {
+        "min": 0.044644444,
+        "p25": 0.053744445,
+        "median": 0.057333334,
+        "p75": 0.063077777,
+        "p95": 0.125377778,
+        "max": 2.457888889
+      },
+      "ambiguousFrames": 0,
+      "ambiguousOmittedObjects": 0,
+      "ambiguityCapacityExceededFrames": 0,
+      "duplicateIdCountTotal": 0,
+      "sameIdDifferentClassCount": 0,
+      "highIouAdjacentReplacements": {
+        "iouAtLeast0.5": 0,
+        "iouAtLeast0.8": 0,
+        "toLowerId": 0,
+        "newPreviouslyPresentPeer": 0,
+        "iouAtLeast0.8AndNewPreviouslyPresentPeer": 0
+      },
+      "replacementExamples": [],
+      "longestPersonTracks": [
+        {
+          "id": "37",
+          "firstNs": 1792993916743782112,
+          "lastNs": 1792993954953381334,
+          "firstSeq": 192,
+          "lastSeq": 798,
+          "samples": 459,
+          "observedSamples": 459,
+          "gaps": 63,
+          "durationSeconds": 38.209599222,
+          "leftCensored": false,
+          "rightCensored": false
+        },
+        {
+          "id": "29",
+          "firstNs": 1792993910874011112,
+          "lastNs": 1792993937511592222,
+          "firstSeq": 109,
+          "lastSeq": 520,
+          "samples": 412,
+          "observedSamples": 412,
+          "gaps": 0,
+          "durationSeconds": 26.63758111,
+          "leftCensored": true,
+          "rightCensored": false
+        },
+        {
+          "id": "39",
+          "firstNs": 1792993918484615445,
+          "lastNs": 1792993938292892222,
+          "firstSeq": 221,
+          "lastSeq": 533,
+          "samples": 146,
+          "observedSamples": 146,
+          "gaps": 48,
+          "durationSeconds": 19.808276777,
+          "leftCensored": false,
+          "rightCensored": false
+        },
+        {
+          "id": "19",
+          "firstNs": 1792993910874011112,
+          "lastNs": 1792993929897565778,
+          "firstSeq": 109,
+          "lastSeq": 403,
+          "samples": 285,
+          "observedSamples": 285,
+          "gaps": 6,
+          "durationSeconds": 19.023554666,
+          "leftCensored": true,
+          "rightCensored": false
+        },
+        {
+          "id": "67",
+          "firstNs": 1792993954195081334,
+          "lastNs": 1792993970822927111,
+          "firstSeq": 785,
+          "lastSeq": 1042,
+          "samples": 243,
+          "observedSamples": 243,
+          "gaps": 14,
+          "durationSeconds": 16.627845777,
+          "leftCensored": false,
+          "rightCensored": true
+        },
+        {
+          "id": "69",
+          "firstNs": 1792993954714581334,
+          "lastNs": 1792993970822927111,
+          "firstSeq": 794,
+          "lastSeq": 1042,
+          "samples": 187,
+          "observedSamples": 187,
+          "gaps": 23,
+          "durationSeconds": 16.108345777,
+          "leftCensored": false,
+          "rightCensored": true
+        },
+        {
+          "id": "46",
+          "firstNs": 1792993928176321333,
+          "lastNs": 1792993943442234223,
+          "firstSeq": 376,
+          "lastSeq": 616,
+          "samples": 241,
+          "observedSamples": 241,
+          "gaps": 0,
+          "durationSeconds": 15.26591289,
+          "leftCensored": false,
+          "rightCensored": false
+        },
+        {
+          "id": "77",
+          "firstNs": 1792993957155592445,
+          "lastNs": 1792993970822927111,
+          "firstSeq": 831,
+          "lastSeq": 1042,
+          "samples": 129,
+          "observedSamples": 129,
+          "gaps": 20,
+          "durationSeconds": 13.667334666,
+          "leftCensored": false,
+          "rightCensored": true
+        }
+      ],
+      "oneSampleExamples": [],
+      "firstSourceTimeNs": "1792993910874011112",
+      "lastSourceTimeNs": "1792993970822927111",
+      "windowCensoring": {
+        "leftCensoredIds": 3,
+        "rightCensoredIds": 5,
+        "bothCensoredIds": 0,
+        "uncensoredWithinWindowIds": 9,
+        "meaning": "An ID present at the first/last sampled frame may have begun earlier/continued later; observation spans are not physical track lifetimes."
+      },
+      "uncensoredWithinWindowObservationSpansSeconds": {
+        "min": 0.114011111,
+        "p25": 1.548744445,
+        "median": 2.214233334,
+        "p75": 15.26591289,
+        "p95": 38.209599222,
+        "max": 38.209599222
+      },
+      "newPersonIdsExcludingLeftCensoredPerMinute": 14.011929757228836,
+      "adjacentReplacementsIouAtLeast0.8PerMinute": 0.0,
+      "observedPersonSamples": 2514
+    },
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "sessionId": "e60a996b-36aa-4e2a-a2bd-7c3582986fef",
+      "fromUtc": "2026-10-26T05:51:50.888573+00:00",
+      "toUtc": "2026-10-26T05:52:50.837486+00:00",
+      "durationSeconds": 59.948913001,
+      "frames": 934,
+      "sourceFrameGaps": 0,
+      "sourceEpochReasonRows": 0,
+      "uniqueIdsByClass": {
+        "truck": 6,
+        "car": 13,
+        "person": 20,
+        "bus": 2,
+        "motorcycle": 2
+      },
+      "personIdNumericRange": [
+        11,
+        93
+      ],
+      "personFrameCounts": {
+        "min": 0,
+        "p25": 3,
+        "median": 4,
+        "p75": 5,
+        "p95": 6,
+        "max": 7
+      },
+      "observedPersonFrameCounts": {
+        "min": 0,
+        "p25": 3,
+        "median": 4,
+        "p75": 5,
+        "p95": 6,
+        "max": 7
+      },
+      "predictedPersonFrameCounts": {
+        "min": 0,
+        "p25": 0,
+        "median": 0,
+        "p75": 0,
+        "p95": 0,
+        "max": 1
+      },
+      "personObservationSpansSeconds": {
+        "min": 0.542933333,
+        "p25": 2.683522222,
+        "median": 10.236872555,
+        "p75": 23.485655557,
+        "p95": 36.512984557,
+        "max": 59.893346334
+      },
+      "personObservedSamplesPerId": {
+        "min": 4,
+        "p25": 43,
+        "median": 135,
+        "p75": 279,
+        "p95": 487,
+        "max": 808
+      },
+      "personIdsAtMost1Second": 2,
+      "personIdsAtLeast10Seconds": 10,
+      "personIdsAtLeast30Seconds": 4,
+      "personIdsWithReappearanceGaps": 18,
+      "sameIdReappearanceGapSeconds": {
+        "min": 0.096955555,
+        "p25": 0.116877777,
+        "median": 0.179422222,
+        "p75": 0.344955556,
+        "p95": 0.93133589,
+        "max": 2.057119443
+      },
+      "observedSameIdGapSeconds": {
+        "min": 0.044655556,
+        "p25": 0.054288889,
+        "median": 0.057844444,
+        "p75": 0.062933333,
+        "p95": 0.1268,
+        "max": 2.057119443
+      },
+      "ambiguousFrames": 0,
+      "ambiguousOmittedObjects": 0,
+      "ambiguityCapacityExceededFrames": 0,
+      "duplicateIdCountTotal": 0,
+      "sameIdDifferentClassCount": 0,
+      "highIouAdjacentReplacements": {
+        "iouAtLeast0.5": 8,
+        "iouAtLeast0.8": 3,
+        "toLowerId": 5,
+        "newPreviouslyPresentPeer": 0,
+        "iouAtLeast0.8AndNewPreviouslyPresentPeer": 0
+      },
+      "replacementExamples": [
+        {
+          "ns": 1792993966698397334,
+          "sequence": 940,
+          "oldId": "60",
+          "newId": "54",
+          "iou": 0.9578388064228865,
+          "toLowerId": true,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.664540291,
+          "newConfidence": 0.633410275,
+          "oldBox": [
+            732.978516,
+            121.198425,
+            13.4179688,
+            22.7252197
+          ],
+          "newBox": [
+            733.223877,
+            121.264343,
+            12.9272461,
+            22.5933838
+          ],
+          "frameGapSeconds": 0.061666667,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        },
+        {
+          "ns": 1792993952337486222,
+          "sequence": 721,
+          "oldId": "60",
+          "newId": "54",
+          "iou": 0.9319680922059144,
+          "toLowerId": true,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.459076136,
+          "newConfidence": 0.43686229,
+          "oldBox": [
+            792.46582,
+            110.898743,
+            18.1933594,
+            20.7806396
+          ],
+          "newBox": [
+            793.051758,
+            110.717468,
+            17.9589844,
+            20.7476807
+          ],
+          "frameGapSeconds": 0.060155556,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        },
+        {
+          "ns": 1792993954378919555,
+          "sequence": 752,
+          "oldId": "60",
+          "newId": "54",
+          "iou": 0.8894022031218405,
+          "toLowerId": true,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.377540678,
+          "newConfidence": 0.428233385,
+          "oldBox": [
+            789.65332,
+            111.253052,
+            22.8808594,
+            23.7634277
+          ],
+          "newBox": [
+            791.572266,
+            110.824585,
+            20.9179688,
+            24.4885254
+          ],
+          "frameGapSeconds": 0.0565,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        },
+        {
+          "ns": 1792993964219844334,
+          "sequence": 905,
+          "oldId": "60",
+          "newId": "54",
+          "iou": 0.7406335596733937,
+          "toLowerId": true,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.622459352,
+          "newConfidence": 0.597373009,
+          "oldBox": [
+            774.807129,
+            113.832092,
+            15.0732422,
+            21.5057373
+          ],
+          "newBox": [
+            777.198486,
+            113.543701,
+            12.1655273,
+            20.2368164
+          ],
+          "frameGapSeconds": 0.053977778,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        },
+        {
+          "ns": 1792993914045039889,
+          "sequence": 117,
+          "oldId": "11",
+          "newId": "33",
+          "iou": 0.7189611718446728,
+          "toLowerId": false,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.410165489,
+          "newConfidence": 0.39887467,
+          "oldBox": [
+            598.414307,
+            118.536987,
+            13.4838867,
+            35.5627441
+          ],
+          "newBox": [
+            599.637451,
+            125.219421,
+            11.9750977,
+            28.7896729
+          ],
+          "frameGapSeconds": 0.055322223,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        },
+        {
+          "ns": 1792993950913508444,
+          "sequence": 698,
+          "oldId": "54",
+          "newId": "60",
+          "iou": 0.648011079514358,
+          "toLowerId": false,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.350421399,
+          "newConfidence": 0.385374635,
+          "oldBox": [
+            792.070312,
+            110.9729,
+            18.046875,
+            20.6323242
+          ],
+          "newBox": [
+            790.72998,
+            112.29126,
+            15.1025391,
+            20.1049805
+          ],
+          "frameGapSeconds": 0.0542,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        },
+        {
+          "ns": 1792993913989717666,
+          "sequence": 116,
+          "oldId": "33",
+          "newId": "11",
+          "iou": 0.6141894769447319,
+          "toLowerId": true,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.397938401,
+          "newConfidence": 0.410165489,
+          "oldBox": [
+            600.893555,
+            125.079346,
+            12.2753906,
+            28.8061523
+          ],
+          "newBox": [
+            598.414307,
+            118.536987,
+            13.4838867,
+            35.5627441
+          ],
+          "frameGapSeconds": 0.055655555,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        },
+        {
+          "ns": 1792993952977030666,
+          "sequence": 731,
+          "oldId": "54",
+          "newId": "60",
+          "iou": 0.5031254211880355,
+          "toLowerId": false,
+          "newPreviouslyPresentPeer": false,
+          "oldConfidence": 0.364777595,
+          "newConfidence": 0.354880095,
+          "oldBox": [
+            794.509277,
+            110.305481,
+            16.9189453,
+            21.7034912
+          ],
+          "newBox": [
+            790.458984,
+            112.052307,
+            15.6445312,
+            20.7147217
+          ],
+          "frameGapSeconds": 0.062366666,
+          "currentAmbiguousOmissions": 0,
+          "previousAmbiguousOmissions": 0
+        }
+      ],
+      "longestPersonTracks": [
+        {
+          "id": "27",
+          "firstNs": 1792993910888573222,
+          "lastNs": 1792993970781919556,
+          "firstSeq": 73,
+          "lastSeq": 1005,
+          "samples": 808,
+          "observedSamples": 808,
+          "gaps": 27,
+          "durationSeconds": 59.893346334,
+          "leftCensored": true,
+          "rightCensored": false
+        },
+        {
+          "id": "50",
+          "firstNs": 1792993934324501666,
+          "lastNs": 1792993970837486223,
+          "firstSeq": 433,
+          "lastSeq": 1006,
+          "samples": 433,
+          "observedSamples": 433,
+          "gaps": 51,
+          "durationSeconds": 36.512984557,
+          "leftCensored": false,
+          "rightCensored": true
+        },
+        {
+          "id": "42",
+          "firstNs": 1792993923091706889,
+          "lastNs": 1792993958889566556,
+          "firstSeq": 263,
+          "lastSeq": 822,
+          "samples": 433,
+          "observedSamples": 433,
+          "gaps": 29,
+          "durationSeconds": 35.797859667,
+          "leftCensored": false,
+          "rightCensored": false
+        },
+        {
+          "id": "11",
+          "firstNs": 1792993910888573222,
+          "lastNs": 1792993944398933445,
+          "firstSeq": 73,
+          "lastSeq": 595,
+          "samples": 487,
+          "observedSamples": 487,
+          "gaps": 5,
+          "durationSeconds": 33.510360223,
+          "leftCensored": true,
+          "rightCensored": false
+        },
+        {
+          "id": "54",
+          "firstNs": 1792993941486855668,
+          "lastNs": 1792993970837486223,
+          "firstSeq": 550,
+          "lastSeq": 1006,
+          "samples": 279,
+          "observedSamples": 279,
+          "gaps": 41,
+          "durationSeconds": 29.350630555,
+          "leftCensored": false,
+          "rightCensored": true
+        },
+        {
+          "id": "61",
+          "firstNs": 1792993947351830666,
+          "lastNs": 1792993970837486223,
+          "firstSeq": 643,
+          "lastSeq": 1006,
+          "samples": 286,
+          "observedSamples": 285,
+          "gaps": 22,
+          "durationSeconds": 23.485655557,
+          "leftCensored": false,
+          "rightCensored": true
+        },
+        {
+          "id": "60",
+          "firstNs": 1792993947185786222,
+          "lastNs": 1792993967387586223,
+          "firstSeq": 640,
+          "lastSeq": 950,
+          "samples": 203,
+          "observedSamples": 203,
+          "gaps": 25,
+          "durationSeconds": 20.201800001,
+          "leftCensored": false,
+          "rightCensored": false
+        },
+        {
+          "id": "13",
+          "firstNs": 1792993910888573222,
+          "lastNs": 1792993922436762445,
+          "firstSeq": 73,
+          "lastSeq": 251,
+          "samples": 162,
+          "observedSamples": 162,
+          "gaps": 5,
+          "durationSeconds": 11.548189223,
+          "leftCensored": true,
+          "rightCensored": false
+        }
+      ],
+      "oneSampleExamples": [],
+      "firstSourceTimeNs": "1792993910888573222",
+      "lastSourceTimeNs": "1792993970837486223",
+      "windowCensoring": {
+        "leftCensoredIds": 5,
+        "rightCensoredIds": 5,
+        "bothCensoredIds": 0,
+        "uncensoredWithinWindowIds": 10,
+        "meaning": "An ID present at the first/last sampled frame may have begun earlier/continued later; observation spans are not physical track lifetimes."
+      },
+      "uncensoredWithinWindowObservationSpansSeconds": {
+        "min": 0.542933333,
+        "p25": 1.161822223,
+        "median": 1.948322223,
+        "p75": 10.236872555,
+        "p95": 35.797859667,
+        "max": 35.797859667
+      },
+      "newPersonIdsExcludingLeftCensoredPerMinute": 15.0127826335231,
+      "adjacentReplacementsIouAtLeast0.8PerMinute": 3.00255652670462,
+      "observedPersonSamples": 3795
+    }
+  },
+  "crossClassSdkIds": {},
+  "sourceSegment": {
+    "byteStart": 0,
+    "byteEndExclusive": 8674065,
+    "sha256": "544dfe59cb28aa21e1b3cf2c515260671308495e1d6b61a90b6391ecb0dd0272",
+    "rawRows": 1868,
+    "inputFileBytesAtStart": 8674065,
+    "maximumBytes": 100663296
+  },
+  "selection": {
+    "requestedStartNs": null,
+    "requestedEndNs": null,
+    "latestSourceSessionOnly": true,
+    "sourceSessionCountsBeforeSelection": {
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 1,
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": 1
+    },
+    "olderSessionRowsExcluded": 0
+  },
+  "limits": [
+    "SDK ID sighting spans are bounded-window observations, not physical person lifetimes.",
+    "Numeric counter range includes other classes and is not a person count.",
+    "High-IoU adjacent replacements are continuity diagnostics, not physical identity labels or production alias records.",
+    "Peer-preexisting IDs are consistent with late SDK adoption/correction but do not prove every cause.",
+    "No source-frame decoding, inference, GT matching, gap-threshold change, or operational ID merging occurs."
+  ]
+}

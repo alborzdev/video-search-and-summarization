@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "city.resolution-migration.source-controls.v1",
+  "candidateOnly": true,
+  "runtimeChanged": false,
+  "servicesRestarted": false,
+  "gpuWorkRun": false,
+  "modelsBuilt": false,
+  "tests": {
+    "passed": 13,
+    "seconds": 0.06,
+    "scope": "Proportional 960x540 and640x360; unchanged pose/optics/planes; all rule settings and mobility links; pinned file integrity; tracker projection equivalence; no input writes"
+  },
+  "existingSnapshotCheck": {
+    "label": "CPU-only resized fixture; no fresh export claimed",
+    "rulesPreserved": 14,
+    "movements": 3,
+    "queues": 1,
+    "crossings": 2,
+    "curbs": 1,
+    "candidateWritten": false
+  },
+  "artifactSha256": {
+    "tools/smart-city/isaac_resolution.py": "52bea05a7ae7c7a6f84f3c0bf916dd1fdc0ab47f7f724da0065dac5ddc6dd279",
+    "tools/smart-city/tests/test_isaac_resolution.py": "a6077c27997e6f529d2030bef370244107bfdd9b74aeb48558c77f598e503d1e"
+  },
+  "limits": [
+    "The actual fresh static export is required for a candidate used at cutover.",
+    "Root owns stream resolution, candidate review/application, profile install, gateway recreation and ordered source resume.",
+    "Source-time histories reset. Existing failed MV3DT qualification is not changed.",
+    "No 30 FPS or live540p performance claim follows from CPU checks."
+  ]
+}

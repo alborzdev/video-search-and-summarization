@@ -1,0 +1,767 @@
+{
+  "rules": [
+    {
+      "id": "cam_sw-pedestrian-crossing",
+      "name": "South crossing \u00b7 person present",
+      "kind": "area-entry",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.9828317277836713,
+            1.0
+          ],
+          [
+            1.0,
+            0.9609662741965181
+          ],
+          [
+            1.0,
+            0.6325564531477987
+          ],
+          [
+            0.9102650822477513,
+            0.5637261852743827
+          ],
+          [
+            0.5235619969897942,
+            1.0
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 200,
+        "clearAfterMs": 700,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b"
+    },
+    {
+      "id": "cam_sw-blocked-crossing",
+      "name": "South crossing \u00b7 stopped vehicle",
+      "kind": "stopped-in-zone",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.9828317277836713,
+            1.0
+          ],
+          [
+            1.0,
+            0.9609662741965181
+          ],
+          [
+            1.0,
+            0.6325564531477987
+          ],
+          [
+            0.9102650822477513,
+            0.5637261852743827
+          ],
+          [
+            0.5235619969897942,
+            1.0
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 4000,
+        "clearAfterMs": 1000,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.35,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b"
+    },
+    {
+      "id": "cam_sw-northbound-line",
+      "name": "Northbound vehicles \u00b7 crossing count",
+      "kind": "line-crossing",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle",
+        "bicycle"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.7379049446974,
+            0.68617273400781
+          ],
+          [
+            0.8202546154416686,
+            0.601770924117771
+          ]
+        ],
+        "direction": [
+          -0.03507620413100767,
+          -0.03651162269498782
+        ]
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b"
+    },
+    {
+      "id": "mobility-isaac-north-exit",
+      "name": "Northbound \u00b7 north gate",
+      "kind": "line-crossing",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle",
+        "bicycle"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -23.4,
+            94.0
+          ],
+          [
+            -19.9,
+            94.0
+          ]
+        ],
+        "direction": [
+          0.0,
+          1.0
+        ]
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-west-exit",
+      "name": "Westbound \u00b7 exit gate",
+      "kind": "line-crossing",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle",
+        "bicycle"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -32.0,
+            77.6965635483871
+          ],
+          [
+            -32.0,
+            81.1965635483871
+          ]
+        ],
+        "direction": [
+          -1.0,
+          0.0
+        ]
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-east-exit",
+      "name": "Eastbound \u00b7 exit gate",
+      "kind": "line-crossing",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle",
+        "bicycle"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -7.499999999999999,
+            75.83376851248642
+          ],
+          [
+            -7.499999999999999,
+            79.33376851248642
+          ]
+        ],
+        "direction": [
+          1.0,
+          0.0
+        ]
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-north-curbside-lane",
+      "name": "North arm \u00b7 curbside lane",
+      "kind": "occupancy-threshold",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -23.4,
+            96.0
+          ],
+          [
+            -19.9,
+            96.0
+          ],
+          [
+            -19.9,
+            106.0
+          ],
+          [
+            -23.4,
+            106.0
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 10000,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "cam_ne-pedestrian-crossing",
+      "name": "North crossing \u00b7 person present",
+      "kind": "area-entry",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            1.0,
+            0.4765403315621106
+          ],
+          [
+            0.9918025711766563,
+            0.4717365614666686
+          ],
+          [
+            0.5517189899316676,
+            0.9682336159439691
+          ],
+          [
+            0.564898798933901,
+            1.0
+          ],
+          [
+            0.9828317277836668,
+            1.0
+          ],
+          [
+            1.0,
+            0.9609662741965085
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 200,
+        "clearAfterMs": 700,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b"
+    },
+    {
+      "id": "cam_ne-blocked-crossing",
+      "name": "North crossing \u00b7 stopped vehicle",
+      "kind": "stopped-in-zone",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            1.0,
+            0.4765403315621106
+          ],
+          [
+            0.9918025711766563,
+            0.4717365614666686
+          ],
+          [
+            0.5517189899316676,
+            0.9682336159439691
+          ],
+          [
+            0.564898798933901,
+            1.0
+          ],
+          [
+            0.9828317277836668,
+            1.0
+          ],
+          [
+            1.0,
+            0.9609662741965085
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 4000,
+        "clearAfterMs": 1000,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.35,
+        "speedAboveMps": 0.2,
+        "countThreshold": 1,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b"
+    },
+    {
+      "id": "cam_ne-intersection-occupancy",
+      "name": "Intersection \u00b7 vehicle occupancy",
+      "kind": "occupancy-threshold",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle",
+        "bicycle"
+      ],
+      "geometry": {
+        "space": "image-normalized",
+        "points": [
+          [
+            0.5748851198071241,
+            0.25133091052070466
+          ],
+          [
+            0.20156598195852768,
+            0.372757273064517
+          ],
+          [
+            0.30065458530412065,
+            1.0
+          ],
+          [
+            0.5235619969897869,
+            1.0
+          ],
+          [
+            0.9653800470568091,
+            0.5015461384571273
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 1500,
+        "clearAfterMs": 1000,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 3,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b"
+    },
+    {
+      "id": "mobility-isaac-northbound-queue",
+      "name": "Northbound approach \u00b7 queue",
+      "kind": "queue",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "car",
+        "bus",
+        "truck",
+        "motorcycle",
+        "bicycle"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -24.64410029498525,
+            50.0
+          ],
+          [
+            -21.14410029498525,
+            50.0
+          ],
+          [
+            -20.2,
+            63.8
+          ],
+          [
+            -23.7,
+            63.8
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 1500,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.35,
+        "speedAboveMps": 0.2,
+        "countThreshold": 2,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-south-waiting-west",
+      "name": "South crossing \u00b7 west waiting area",
+      "kind": "occupancy-threshold",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -39.5,
+            64.8
+          ],
+          [
+            -35.5,
+            64.8
+          ],
+          [
+            -35.5,
+            68.8
+          ],
+          [
+            -39.5,
+            68.8
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 10000,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-south-crossing-measurement",
+      "name": "South crossing \u00b7 pedestrian corridor",
+      "kind": "occupancy-threshold",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -35.5,
+            63.3
+          ],
+          [
+            -16.9,
+            63.3
+          ],
+          [
+            -16.9,
+            70.3
+          ],
+          [
+            -35.5,
+            70.3
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 10000,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-south-waiting-east",
+      "name": "South crossing \u00b7 east approach area",
+      "kind": "occupancy-threshold",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -16.9,
+            60.8
+          ],
+          [
+            -12.899999999999999,
+            60.8
+          ],
+          [
+            -12.899999999999999,
+            70.3
+          ],
+          [
+            -16.9,
+            70.3
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 10000,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 288,
+      "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+      "purpose": "mobility-measurement"
+    }
+  ],
+  "revision": 288,
+  "status": "active",
+  "authority": "city-behavior-analytics",
+  "nativeAnalytics": {
+    "status": "active",
+    "requestedRevision": 288,
+    "appliedRevision": 288,
+    "primitives": [
+      {
+        "ruleId": "cam_sw-pedestrian-crossing",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_c47a8de677f26b7f",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "cam_sw-blocked-crossing",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_a559dd0e91c5de06",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "cam_sw-northbound-line",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_5a0caf467f01fa2e",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "mobility-isaac-north-exit",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      },
+      {
+        "ruleId": "mobility-isaac-west-exit",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      },
+      {
+        "ruleId": "mobility-isaac-east-exit",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      },
+      {
+        "ruleId": "mobility-isaac-north-curbside-lane",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      },
+      {
+        "ruleId": "cam_ne-pedestrian-crossing",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_c11e6442062e2a0a",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "cam_ne-blocked-crossing",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_1d1607eeab2e1d0d",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "cam_ne-intersection-occupancy",
+        "primitiveStatus": "compiled",
+        "nativeLabel": "city_581d42acb63e6870",
+        "nativeClassFilter": "all",
+        "eventAuthority": "city-behavior-analytics"
+      },
+      {
+        "ruleId": "mobility-isaac-northbound-queue",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      },
+      {
+        "ruleId": "mobility-isaac-south-waiting-west",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      },
+      {
+        "ruleId": "mobility-isaac-south-crossing-measurement",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      },
+      {
+        "ruleId": "mobility-isaac-south-waiting-east",
+        "primitiveStatus": "backend-only",
+        "reason": "world geometry requires independent inverse-projection validation"
+      }
+    ],
+    "eventAuthority": "city-behavior-analytics",
+    "counterEpoch": "b036d82a-7840-4841-a79a-e07fc9031848",
+    "sourceTimeNs": "1792787012651323343",
+    "error": "",
+    "lastAppliedRevision": 288,
+    "operationalStatus": "fresh"
+  }
+}

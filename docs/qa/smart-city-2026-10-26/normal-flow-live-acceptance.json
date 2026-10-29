@@ -1,0 +1,245 @@
+{
+  "schemaVersion": "city.normal-flow-live-acceptance.v1",
+  "at": "2026-10-26T07:05:05.352868+00:00",
+  "scope": "Read-only native normal-flow integration observation; not camera accuracy, full-cycle fairness or FPS qualification",
+  "source": {
+    "summaryFile": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/normal-flow-recovery-final-180s-summary.json",
+    "rawFile": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/normal-flow-recovery-final-180s.ndjson",
+    "rawSha256": "12edd4c6999bdae62252a27c316d18d65ba293a624754e2c37c136e450111ac8"
+  },
+  "rows": 46,
+  "elapsedWallSeconds": 180.16775762615725,
+  "elapsedSimSeconds": 67.69999999993843,
+  "maximumScenarioStops": 0,
+  "maximumGeometryWaitsPerSample": 0,
+  "admissions": [
+    {
+      "character": "Character",
+      "taskId": "3102",
+      "startedSim": 3550.033333330762,
+      "alreadyActiveAtCaptureStart": false,
+      "crosswalk": "XW_E",
+      "targetM": [
+        -11.2,
+        70.0,
+        0.0
+      ],
+      "pc": 12,
+      "signal": "walk",
+      "cohortKey": [
+        71,
+        0,
+        "ped_cross_EW"
+      ],
+      "windowSIM": 24.96666666923784,
+      "requiredSIM": 18.816928352091537,
+      "nativePathVerified": true,
+      "wholeStripVerified": true,
+      "firstSeenWall": 128.05024568829685,
+      "completed": true,
+      "firstFarSideContinuationWall": 172.0297190011479,
+      "firstFarSideContinuationM": [
+        -11.574,
+        70.116,
+        0.024
+      ],
+      "closestSampledExitDistanceM": 0.39231110104099826
+    },
+    {
+      "character": "Character_02",
+      "taskId": "3097",
+      "startedSim": 3525.033333330785,
+      "alreadyActiveAtCaptureStart": false,
+      "crosswalk": "XW_S",
+      "targetM": [
+        -37.5,
+        66.8,
+        0.0
+      ],
+      "pc": 9,
+      "signal": "walk",
+      "cohortKey": [
+        70,
+        3,
+        "ped_cross_NS"
+      ],
+      "windowSIM": 24.9666666692151,
+      "requiredSIM": 23.0092890029625,
+      "nativePathVerified": true,
+      "wholeStripVerified": true,
+      "firstSeenWall": 64.1212238529697,
+      "completed": true,
+      "firstFarSideContinuationWall": 116.0297995111905,
+      "firstFarSideContinuationM": [
+        -37.357,
+        66.811,
+        0.03
+      ],
+      "closestSampledExitDistanceM": 0.14652644812456356
+    },
+    {
+      "character": "Character_04",
+      "taskId": "3094",
+      "startedSim": 3500.0333333308076,
+      "alreadyActiveAtCaptureStart": true,
+      "crosswalk": "XW_E",
+      "targetM": [
+        -11.2,
+        70.0,
+        0.0
+      ],
+      "pc": 21,
+      "signal": "walk",
+      "cohortKey": [
+        70,
+        0,
+        "ped_cross_EW"
+      ],
+      "windowSIM": 24.966666669192364,
+      "requiredSIM": 19.02179119950899,
+      "nativePathVerified": true,
+      "wholeStripVerified": true,
+      "firstSeenWall": 0.07441993802785873,
+      "completed": true,
+      "firstFarSideContinuationWall": 52.053597919177264,
+      "firstFarSideContinuationM": [
+        -12.142,
+        69.878,
+        0.031
+      ],
+      "closestSampledExitDistanceM": 0.06313477647065882
+    }
+  ],
+  "nativeAlignmentResults": [
+    {
+      "character": "Character_06",
+      "mode": "entry",
+      "targetM": [
+        -11.2,
+        88.4,
+        0.0
+      ],
+      "positionM": [
+        -11.341829299926758,
+        88.30074310302734,
+        0.03654851019382477
+      ],
+      "crosswalkId": "XW_E",
+      "nativePathMetres": 1.6768989977672004,
+      "basis": "native same-side end-cap plan; no new road entry",
+      "clearingExistingRoadway": false,
+      "pc": 14,
+      "startedSim": 3564.533333330749,
+      "taskId": "3108",
+      "outcome": "observed-arrival",
+      "simTime": 3566.166666664081,
+      "nativeStatus": "SUCCEEDED"
+    },
+    {
+      "character": "Character_07",
+      "mode": "entry",
+      "targetM": [
+        -36.5,
+        89.4,
+        0.0
+      ],
+      "positionM": [
+        -36.49235153198242,
+        89.39702606201172,
+        0.034983616322278976
+      ],
+      "crosswalkId": "XW_W",
+      "nativePathMetres": 0.7619408840229447,
+      "basis": "native same-side end-cap plan; no new road entry",
+      "clearingExistingRoadway": false,
+      "pc": 6,
+      "startedSim": 3555.0333333307576,
+      "taskId": "3105",
+      "outcome": "observed-arrival",
+      "simTime": 3555.86666666409,
+      "nativeStatus": "SUCCEEDED"
+    }
+  ],
+  "peopleCounterDelta": {
+    "Character": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    },
+    "Character_01": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    },
+    "Character_02": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    },
+    "Character_03": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    },
+    "Character_04": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    },
+    "Character_05": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    },
+    "Character_06": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    },
+    "Character_07": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 0
+    }
+  },
+  "retainedInitialCounters": {
+    "Character": {
+      "fails": 1,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 1
+    },
+    "Character_05": {
+      "fails": 1,
+      "rejects": 0,
+      "timeouts": 0,
+      "nearGoalNativeArrivals": 1
+    },
+    "Character_06": {
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 1,
+      "nearGoalNativeArrivals": 0
+    }
+  },
+  "vehicles": {
+    "uniqueIds": 22,
+    "idsObservedAdvancing": 22
+  },
+  "limits": [
+    "4-second host sampling can miss the exact native endpoint instant; direct completion transitions are enforced by the deployed native-success/actual-distance check and are followed by actual far-side sidewalk movement.",
+    "Only two new cohort admissions occur within this window; a third was already active at capture start.",
+    "One normal crossing per group/cycle can leave valid curb waits through this finite window.",
+    "Initial counters are retained separately; zero new failures does not mean zero total failures.",
+    "Root may change perception load during this observation; no actor/timeline/scenario action was performed by this capture."
+  ],
+  "sourceControllerSha256": "e63c1afb86764b35833dcf8948f7702d1f53188be454dabe017bd1f20b8aaa15"
+}

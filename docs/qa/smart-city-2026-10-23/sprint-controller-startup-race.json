@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "outcome": "startup-readiness-race",
+  "reason": "The launcher ran immediately after the controller service restart and correctly rejected an unconfirmed detector pause. The controller became ready immediately afterward; a fresh full start was initiated.",
+  "guardBehavior": "Strict service confirmation worked; no partial demo was reported ready.",
+  "nextAction": "Bounded controller-readiness wait before source controls; no admission threshold weakened.",
+  "rawLog": ".spark/city/runtime/sprint-final-recovery-start-20261023.log"
+}

@@ -1,0 +1,173 @@
+{
+  "evidence_files": [
+    {
+      "path": "20261022T171000Z-preview-pytorch-reference/cases.json",
+      "bytes": 3765,
+      "sha256": "ecc3cb8620edcbe96f03f04e2ab2cc26e88195b9d933dfd804450b60571ea0da"
+    },
+    {
+      "path": "20261022T171000Z-preview-pytorch-reference/exit.json",
+      "bytes": 547,
+      "sha256": "7937ffe64f3698b7fb964abfa86146df43c8d7ded9ea317f8c4476b96e3a07e8"
+    },
+    {
+      "path": "20261022T171000Z-preview-pytorch-reference/inference.jsonl",
+      "bytes": 6216,
+      "sha256": "f4152f67dd5e9b91a6f6dc8064b23b53252fba870b6431ce5ee918cf9ed18375"
+    },
+    {
+      "path": "20261022T171000Z-preview-pytorch-reference/inference.stderr",
+      "bytes": 1081,
+      "sha256": "941c047f21c6bf72e185f4cd0df5d357523f76156cabf8015b664367d25ad846"
+    },
+    {
+      "path": "20261022T171000Z-preview-pytorch-reference/load-receipt.json",
+      "bytes": 12173,
+      "sha256": "2e3520303b71406e979bcb836648e66db9f0f4b725823f3300a16818938e7121"
+    },
+    {
+      "path": "20261022T171000Z-preview-pytorch-reference/memory.jsonl",
+      "bytes": 9209,
+      "sha256": "f9802ff1fc3e279fd5483ce229bc39b8737edfe2e919a69f6befce33221ce4ce"
+    },
+    {
+      "path": "20261022T171000Z-preview-pytorch-reference/settings.json",
+      "bytes": 98,
+      "sha256": "1d73ceabc41b5e4479e031bde6e5d8b121c06ae77092ec01d6cbe2e58d80379b"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/cases.json",
+      "bytes": 3765,
+      "sha256": "ecc3cb8620edcbe96f03f04e2ab2cc26e88195b9d933dfd804450b60571ea0da"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/exit.json",
+      "bytes": 696,
+      "sha256": "fd40f39c962b0b9e3268c6fa28ce2c87fd3d42a27b2dbdd9adee93e7ad7095ec"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/inference.jsonl",
+      "bytes": 130606,
+      "sha256": "3327c4024028541491cf3dd35ca23a3a1d10f34017026a3631a60a2f244d45b7"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/inference.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/load-receipt.json",
+      "bytes": 12174,
+      "sha256": "c41244fd34d53abf4404bdb4437622e689ade91dee32efb373399699b517a9ab"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/blank-conditioned.mask.json",
+      "bytes": 382,
+      "sha256": "8c9add7e20b5cda8b9cd546e8f52db5aac27b6a835ac7f8d78b24216812553ea"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/blank-raw.mask.json",
+      "bytes": 374,
+      "sha256": "c2b24ff00fd1f8699c108a3b1761999f7cb965c727b9cc72188dd8abb298a124"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.mask.json",
+      "bytes": 1126,
+      "sha256": "a3fca5e973acc2555bf4d165dab9a87349b80eedb33408efd792e736631f7b56"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.mask.png",
+      "bytes": 1014,
+      "sha256": "a0356b3b27862aa22a0ee30eb8c8eecfbe568687c96f648d886f1d4b3cb8b8ad"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.mask.svg",
+      "bytes": 677,
+      "sha256": "02354d1b32a36fbd052b9be508c5f82b1ac1c22dc0ad2e124b521adb33ad866b"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/box-point-conditioned.overlay.png",
+      "bytes": 287655,
+      "sha256": "32bde1b1c19aa3d369235fc255afce7c225d2659635e10c301031ed8596c7375"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/box-point-raw.mask.json",
+      "bytes": 506,
+      "sha256": "53b4dff5c25846d1044747b179b9ce58580cadca13946cd6650d7bd2673c94f8"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/panel-point-conditioned.mask.json",
+      "bytes": 519,
+      "sha256": "9a6ea577bbaadeb64e68864ce12a3650b9801f5fd8882a7288d2883f312b43b1"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/panel-point-raw.mask.json",
+      "bytes": 511,
+      "sha256": "24f0b3ec531804bd0ade4d2c90726b4ffadbdb16df1e274011fc2461f2d0d6d2"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/person-point-conditioned.mask.json",
+      "bytes": 1142,
+      "sha256": "2d7178e60565bb4a585cdf1b7088ff7153191c243e5ae5d332863f27857cc2d7"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/person-point-conditioned.mask.png",
+      "bytes": 961,
+      "sha256": "1f4e44bf9c84d2e13762440e422f32b8d8631c87335a97eb90bdce20d7393105"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/person-point-conditioned.mask.svg",
+      "bytes": 908,
+      "sha256": "8eb115ea21838f70303266df661808b17a226abe75a6646f4014ff29e5afcfd9"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/person-point-conditioned.overlay.png",
+      "bytes": 287750,
+      "sha256": "05035323ef027c9da20415561a4485b608ccee6ad172f4478dcc060f7cb1aa28"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/masks/person-point-raw.mask.json",
+      "bytes": 511,
+      "sha256": "3b5302532828f077f0698bf4341282fd261f90f17d8083d7b3cf6e1c7b03857b"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/memory.jsonl",
+      "bytes": 30966,
+      "sha256": "62329273a401c1c3acd02d0783de91dbb0e098968d180cb367d86bbb98101e45"
+    },
+    {
+      "path": "20261022T171044Z-preview-pytorch-reference/settings.json",
+      "bytes": 98,
+      "sha256": "1d73ceabc41b5e4479e031bde6e5d8b121c06ae77092ec01d6cbe2e58d80379b"
+    }
+  ],
+  "source_files": [
+    {
+      "path": "tools/moondream/reference_loader.py",
+      "sha256": "f4964a6718ed0dadd3e77de0ab72c07f465c0aa10dd5511c8b8165e00d0979e9"
+    },
+    {
+      "path": "tools/moondream/reference_decode.py",
+      "sha256": "1a9da1c48794c1f833f33dea203d5e3816672c37ffe2a0eb7eb7fe62c1ca0b93"
+    },
+    {
+      "path": "tools/moondream/measure_reference.py",
+      "sha256": "0d1b2c5ae77ca51e36d58f581eebd953f7245c4e389a2ce0b9d58cb7135ebde5"
+    },
+    {
+      "path": "tools/moondream/test_reference_loader.py",
+      "sha256": "8d38534ed9e6fd8278fcedc375fd5299f9d8aca3f001184fb84a4826a455a82d"
+    },
+    {
+      "path": "tools/moondream/test_reference_decode.py",
+      "sha256": "1de75e94073931c6bae09647252b316b7f68417a99793fb482bed6b35be48ec7"
+    },
+    {
+      "path": "tools/moondream/mask_artifacts.py",
+      "sha256": "8e5f66090cb20d1963fae1e8964e42a87937f2ccdc3c05498eac6c08a27df109"
+    }
+  ],
+  "failed_run": "20261022T171000Z-preview-pytorch-reference: harness invoked query outside inference_mode against inference-mode KV buffers; no model result, corrected then all11cases reran",
+  "completed_run": "20261022T171044Z-preview-pytorch-reference",
+  "cpu_tests_passed": 31
+}

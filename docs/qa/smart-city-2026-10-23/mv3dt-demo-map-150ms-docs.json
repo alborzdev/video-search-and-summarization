@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "city.mv3dt.demo-map-docs.v1",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "productionQualified": false,
+  "displayPairWindowMs": 150,
+  "productionPairWindowMs": 50,
+  "maximumMapDisagreementM": 1,
+  "validation": {
+    "operatorPythonBlocksParsed": 3,
+    "offlineReplaySyntaxParsed": true,
+    "offlineEstimateWallSeconds": 0.238,
+    "newRuntimeOrInferenceChecksRun": false
+  },
+  "artifactSha256": {
+    "docs/smart-city-mv3dt-demo-map.md": "bdb474c3614f639786cc726dce5c4bc55b568df8cfdc6a1141f0c2e3f94beceb",
+    "docs/qa/smart-city-2026-10-23/mv3dt-demo-map-guard-150ms-replay.py": "74207b8b7c1404fc70ca32d123a0875ed32a0c586d519214acba46583b2af8e8",
+    "docs/qa/smart-city-2026-10-23/mv3dt-demo-map-guard-150ms-offline-estimate.json": "784023de1a6f40269017b192b18bd75fd4385962c1461a2e6f18079c5afaabc8"
+  },
+  "limits": [
+    "122 backend/preview controls remain source evidence, not deployment qualification.",
+    "Camera-scoped analytics are not count-accuracy qualification; SDK ID correction can reset temporal history.",
+    "Native duplicate-ID repair deployment is owned by the root task; this documentation pass did not deploy it.",
+    "The saved 50ms estimate and production gates are unchanged.",
+    "Operator commands were inspected and syntax-checked, not executed in this documentation pass."
+  ]
+}

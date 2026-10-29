@@ -1,0 +1,443 @@
+{
+  "timestamp_utc": "2026-10-22T17:32:48.440143+00:00",
+  "scope": "Read-only code, distribution metadata, and primary-source HTTP metadata; no GPU, Torch import, model load, service change, installation, or cloud inference",
+  "packages": {
+    "moondream": {
+      "version": "2.6.1",
+      "console_scripts": []
+    },
+    "kestrel": {
+      "version": "0.9.1",
+      "console_scripts": []
+    }
+  },
+  "registered_moondream_models": [
+    {
+      "name": "moondream2",
+      "repo_id": "vikhyatk/moondream2",
+      "filename": "model.safetensors",
+      "checkpoint_format": "md2",
+      "tokenizer_id": "moondream/starmie-v1",
+      "default_config": "DEFAULT_MOONDREAM2_CONFIG",
+      "skills_factory": "build_skill_registry",
+      "revision": null,
+      "segment_template": null,
+      "bos_id": 0,
+      "eos_id": 0,
+      "coord_id": 5,
+      "size_id": 6
+    },
+    {
+      "name": "moondream3-preview",
+      "repo_id": "moondream/moondream3-preview",
+      "filename": "model_fp8.pt",
+      "checkpoint_format": "md3",
+      "tokenizer_id": "moondream/starmie-v1",
+      "default_config": "DEFAULT_MOONDREAM3_CONFIG",
+      "skills_factory": "build_skill_registry",
+      "revision": null,
+      "segment_template": {
+        "prefix": [
+          1,
+          17374,
+          2
+        ],
+        "suffix": [
+          3
+        ]
+      },
+      "bos_id": 0,
+      "eos_id": 0,
+      "coord_id": 5,
+      "size_id": 6
+    },
+    {
+      "name": "moondream3.1-9B-A2B",
+      "repo_id": "moondream/moondream3.1-9B-A2B",
+      "filename": "model.safetensors",
+      "checkpoint_format": "md3",
+      "tokenizer_id": "moondream/starmie-v1",
+      "default_config": "DEFAULT_MOONDREAM3_CONFIG",
+      "skills_factory": "build_skill_registry",
+      "revision": null,
+      "segment_template": {
+        "prefix": [
+          1,
+          17374,
+          2
+        ],
+        "suffix": [
+          3
+        ]
+      },
+      "bos_id": 0,
+      "eos_id": 0,
+      "coord_id": 5,
+      "size_id": 6
+    }
+  ],
+  "optional_refinement_dependencies": {
+    "cv2": false,
+    "resvg": false,
+    "potrace": false,
+    "PIL": true
+  },
+  "local_source": {
+    "sdk_factory": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/moondream/__init__.py",
+      "sha256": "274003e0cb870b79131f3c1ae6443b6ad24fa10d414926e760ae826a3b3b0101",
+      "locations": {
+        "def photon(": [
+          20
+        ],
+        "return PhotonClient(": [
+          29
+        ],
+        "if local:": [
+          57
+        ],
+        "return photon(model": [
+          60
+        ]
+      }
+    },
+    "sdk_client": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/moondream/photon_client.py",
+      "sha256": "1949e816bdb88bf448f407751b9981866377e59fd3752d935b430263ddf82935",
+      "locations": {
+        "def _parse_model(": [
+          77
+        ],
+        "RuntimeConfig(": [
+          409
+        ],
+        "InferenceEngine.create(": [
+          415
+        ],
+        "def segment(": [
+          845
+        ],
+        "settings=self._settings(settings)": [
+          822,
+          839,
+          861,
+          870
+        ]
+      }
+    },
+    "runtime_config": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/config.py",
+      "sha256": "df3f95b5d247659779f4078fde902d76d94c5268285d7d38f336d92bad764247",
+      "locations": {
+        "model_path:": [
+          160,
+          181
+        ],
+        "ensure_model_weights(self.model)": [
+          229
+        ]
+      }
+    },
+    "download": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/model_download.py",
+      "sha256": "0b7218da1dc7cbac1de5da614b4eeacd2637166728bb735691ab654643153764",
+      "locations": {
+        "spec = get_spec(model)": [
+          33,
+          69
+        ],
+        "hf_hub_download(repo_id": [
+          50
+        ]
+      }
+    },
+    "registry": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/registration.py",
+      "sha256": "33753186800694ef9978fc2725bc5fdcdb2b0afd4bfb11e282c09830a897018f",
+      "locations": {
+        "ModelSpec(": [
+          27,
+          39,
+          51
+        ],
+        "filename=": [
+          30,
+          42,
+          54
+        ],
+        "skills=": [
+          35,
+          47,
+          59
+        ]
+      }
+    },
+    "prompt_config": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/config.py",
+      "sha256": "ebcec23098c6939e794df8e86d8c5f44ba6248ac922dfd9667a9b8f93078d78a",
+      "locations": {
+        "\"segment\":": [
+          70,
+          220,
+          279
+        ],
+        "MD2 doesn't support segment": [
+          279
+        ]
+      }
+    },
+    "runtime": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/runtime.py",
+      "sha256": "c371ec2046b4e60813179456d16c5d767e8a7a0693ecd691692b46f019f33753",
+      "locations": {
+        "deepcopy(self._spec.default_config)": [
+          520
+        ],
+        "self.seg_refiner =": [
+          811
+        ],
+        "if self._vision_backend is None and _HAS_SEG_DEPS": [
+          813
+        ],
+        "return self.skills().names()": [
+          1047
+        ]
+      }
+    },
+    "skills": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/skills/__init__.py",
+      "sha256": "90983ad4a94c3be324fd9bbf96ee2fbf318e1e3775f49ec5957ac2445c303336",
+      "locations": {
+        "def build_skill_registry(": [
+          25
+        ],
+        "SegmentSkill(),": [
+          41
+        ]
+      }
+    },
+    "segment": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/skills/segment.py",
+      "sha256": "a932a20b45fd79b37a03009feeec9cb254c57820d53cf4061cf5282f10c24af1",
+      "locations": {
+        "Model does not include a segment template": [
+          94
+        ],
+        "if svg_path and bbox": [
+          188
+        ],
+        "runtime.seg_refiner(": [
+          189
+        ]
+      }
+    },
+    "refiner": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/seg_refiner.py",
+      "sha256": "b62c18e61fbff82d1cd173e3d867dd7dc1904517d4d029f2f430b8d58b1528e7",
+      "locations": {
+        "_HAS_SEG_DEPS = False": [
+          22
+        ],
+        "repo_id=\"moondream/SegHeadRefiner\"": [
+          283
+        ],
+        "token=os.environ.get(\"HF_TOKEN\")": [
+          285
+        ],
+        "if coarse_mask.sum() == 0:": [
+          366
+        ]
+      }
+    },
+    "introspection": {
+      "path": "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/handle.py",
+      "sha256": "5f783aca77905c39e64d55f7f7abe49040811bd57a7a3beaaf2db66332145092",
+      "locations": {
+        "def tasks(": [
+          50
+        ],
+        "def supports(": [
+          54
+        ],
+        "return task in self.tasks": [
+          55
+        ]
+      }
+    }
+  },
+  "upstream": {
+    "revision": "8e6fb899bb8a076f3235b6a5ab832a78c031c77b",
+    "date": "2026-09-30T17:34:23Z",
+    "files": {
+      "README.md": {
+        "sha256": "89dfa33550367d3dd508fef8ab9fb048fec3b121b164d22efec77a7188ef0ddd",
+        "bytes": 17331,
+        "locations": {
+          "separate model weights": [
+            319
+          ]
+        },
+        "segmentation_note": "Note: Segmentation requires Moondream 3 and separate model weights. Contact [moondream.ai](https://moondream.ai) for access."
+      },
+      "triton_server/README.md": {
+        "sha256": "54f7d10076649464b69122ac6d5c5d74aadaea068d2459105a0bb28ec59a3e03",
+        "bytes": 6098,
+        "locations": {
+          "KESTREL_MODEL_PATH": [
+            41,
+            52
+          ]
+        }
+      },
+      "triton_server/model_repository/moondream/1/engine_singleton.py": {
+        "sha256": "9403af27a4fa645b96523a28132ba33092947ef6e66e48c8f1221cb4f4311ff2",
+        "bytes": 3468,
+        "locations": {
+          "KESTREL_MODEL_PATH": [
+            55
+          ],
+          "RuntimeConfig(**kwargs)": [
+            67
+          ]
+        }
+      },
+      "triton_server/model_repository/moondream/1/model.py": {
+        "sha256": "2c96bb289424bac4802e60b3ebe355d97e4b69cda71c06a183821f0213f9fd07",
+        "bytes": 16055,
+        "locations": {
+          "skill == \"": [
+            182,
+            184,
+            186,
+            188
+          ],
+          "Unknown skill:": [
+            191
+          ]
+        }
+      },
+      "kestrel/models/moondream/registration.py": {
+        "sha256": "33753186800694ef9978fc2725bc5fdcdb2b0afd4bfb11e282c09830a897018f",
+        "bytes": 2329,
+        "locations": {
+          "filename=": [
+            30,
+            42,
+            54
+          ]
+        },
+        "byte_identical_to_installed": true
+      },
+      "kestrel/models/moondream/config.py": {
+        "sha256": "ebcec23098c6939e794df8e86d8c5f44ba6248ac922dfd9667a9b8f93078d78a",
+        "bytes": 11612,
+        "locations": {
+          "\"segment\":": [
+            70,
+            220,
+            279
+          ]
+        },
+        "byte_identical_to_installed": true
+      }
+    }
+  },
+  "refiner_repository": {
+    "id": "moondream/SegHeadRefiner",
+    "sha": "d3664cf8d8501b37d9ed8cd222e6d4e876c88621",
+    "private": false,
+    "gated": "manual",
+    "lastModified": "2026-03-10T01:30:00.000Z",
+    "usedStorage": 185178335,
+    "siblings": [
+      {
+        "rfilename": ".gitattributes"
+      },
+      {
+        "rfilename": "model.pt"
+      }
+    ]
+  },
+  "upstream_segmentation_smoke": {
+    "url": "https://github.com/m87-labs/moondream-python/pull/15",
+    "title": "Release Moondream 2.0 with Kestrel 0.5",
+    "merged_at": "2026-08-03T08:27:50Z",
+    "merge_commit_sha": "72f8d6bcbcb526730b39bfd4f6487f882d0b6221",
+    "body_sha256": "5b05e667ae28337cf21dc4ebe3b05eec745477351b866ca2f703322321418d80",
+    "selected_prompt_report": "The selected MD3 segmentation smoke prompt returned a bbox and no SVG tokens in the raw Kestrel skill result.",
+    "selected_prompt_report_present_in_body": true,
+    "scope": "One selected H100 smoke prompt; not a universal failure claim or identification of every tested checkpoint/prompt."
+  },
+  "refiner_activation": {
+    "construction_condition": "_vision_backend is None and _HAS_SEG_DEPS",
+    "dependency_condition": "cv2, PIL.Image, and resvg.render/usvg import successfully",
+    "current_environment_constructs_refiner": false,
+    "current_disabled_reason": "cv2 and resvg are not installed",
+    "invocation_condition": "nonempty svg_path, bbox, no parse_error, source image, and runtime.seg_refiner is not None",
+    "weights": "moondream/SegHeadRefiner/model.pt",
+    "automatic_default_segmentation_adapter": null
+  },
+  "findings": {
+    "sdk_and_legacy_local_factory_same_engine": true,
+    "standard_photon_serve_console_entrypoint_found": false,
+    "triton_example_selects_different_hidden_checkpoint": false,
+    "triton_example_dispatches_segment": false,
+    "automatic_segment_specific_adapter_found": false,
+    "runtime_reads_prompt_config_from_registry_not_hf_config": true,
+    "md2_shared_registry_advertises_segment_but_template_is_none": true,
+    "refiner_runs_only_after_nonempty_svg": true,
+    "missing_refiner_explains_empty_svg_before_refinement": false,
+    "separate_weights_note_proves_different_base_checkpoint": false,
+    "separate_weights_note_limitation": "README does not distinguish another base checkpoint from the gated refinement head; no public alternate base ID is identified by this audit."
+  },
+  "network": {
+    "total_response_bytes": 143145,
+    "requests": [
+      {
+        "url": "https://api.github.com/repos/m87-labs/kestrel/commits/main",
+        "bytes": 66764,
+        "sha256": "97e7976c1b501c9580a6572c657041f981e06f3e5c3e7c8a2e3278479ed4794b"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/m87-labs/kestrel/8e6fb899bb8a076f3235b6a5ab832a78c031c77b/README.md",
+        "bytes": 17331,
+        "sha256": "89dfa33550367d3dd508fef8ab9fb048fec3b121b164d22efec77a7188ef0ddd"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/m87-labs/kestrel/8e6fb899bb8a076f3235b6a5ab832a78c031c77b/triton_server/README.md",
+        "bytes": 6098,
+        "sha256": "54f7d10076649464b69122ac6d5c5d74aadaea068d2459105a0bb28ec59a3e03"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/m87-labs/kestrel/8e6fb899bb8a076f3235b6a5ab832a78c031c77b/triton_server/model_repository/moondream/1/engine_singleton.py",
+        "bytes": 3468,
+        "sha256": "9403af27a4fa645b96523a28132ba33092947ef6e66e48c8f1221cb4f4311ff2"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/m87-labs/kestrel/8e6fb899bb8a076f3235b6a5ab832a78c031c77b/triton_server/model_repository/moondream/1/model.py",
+        "bytes": 16055,
+        "sha256": "2c96bb289424bac4802e60b3ebe355d97e4b69cda71c06a183821f0213f9fd07"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/m87-labs/kestrel/8e6fb899bb8a076f3235b6a5ab832a78c031c77b/kestrel/models/moondream/registration.py",
+        "bytes": 2329,
+        "sha256": "33753186800694ef9978fc2725bc5fdcdb2b0afd4bfb11e282c09830a897018f"
+      },
+      {
+        "url": "https://raw.githubusercontent.com/m87-labs/kestrel/8e6fb899bb8a076f3235b6a5ab832a78c031c77b/kestrel/models/moondream/config.py",
+        "bytes": 11612,
+        "sha256": "ebcec23098c6939e794df8e86d8c5f44ba6248ac922dfd9667a9b8f93078d78a"
+      },
+      {
+        "url": "https://huggingface.co/api/models/moondream/SegHeadRefiner",
+        "bytes": 466,
+        "sha256": "bdf48b305059c20610821db890207eec88d3a769959de4aa25fc6b6190f596d9"
+      },
+      {
+        "url": "https://api.github.com/repos/m87-labs/moondream-python/pulls/15",
+        "bytes": 19022,
+        "sha256": "789debae0dd043a7d23f34b4643e9b96a7c4575788065fe55c6bc1562f470e4b"
+      }
+    ]
+  }
+}

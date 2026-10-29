@@ -1,0 +1,1088 @@
+[
+  {
+    "wallSecond": 16.978789342101663,
+    "phase": "ready",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.641377449035645,
+          70.1988525390625,
+          0.037329383194446564
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.64980697631836,
+          68.39997100830078,
+          0.02139214240014553
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.400168418884277,
+          71.29991912841797,
+          0.03496161475777626
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.399812698364258,
+          69.60001373291016,
+          0.036433786153793335
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 18.196816019248217,
+    "phase": "settling",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.608254432678223,
+          70.1943588256836,
+          0.03733687102794647
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.649698257446289,
+          68.39995574951172,
+          0.020833738148212433
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.400056838989258,
+          71.29991912841797,
+          0.0344296433031559
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.39970874786377,
+          69.60001373291016,
+          0.03587925434112549
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 19.341782183852047,
+    "phase": "settling",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.60237979888916,
+          70.19840240478516,
+          0.0373375304043293
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.649914741516113,
+          68.39995574951172,
+          0.02238106168806553
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.400275230407715,
+          71.29991912841797,
+          0.035873908549547195
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.399933815002441,
+          69.60001373291016,
+          0.03733774647116661
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 20.524747521150857,
+    "phase": "settling",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.580171585083008,
+          70.19368743896484,
+          0.03733730688691139
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.64962387084961,
+          68.39995574951172,
+          0.02079104818403721
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.399991035461426,
+          71.29991912841797,
+          0.0343550443649292
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.399646759033203,
+          69.60001373291016,
+          0.035818882286548615
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 21.67083582188934,
+    "phase": "person-waiting",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.576835632324219,
+          70.2039794921875,
+          0.03733687102794647
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.652676582336426,
+          68.39984893798828,
+          0.02180103026330471
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.400238990783691,
+          71.29991912841797,
+          0.035928383469581604
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.408543586730957,
+          69.59698486328125,
+          0.036480966955423355
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 22.917474321089685,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.583606719970703,
+          70.6617202758789,
+          0.03696393221616745
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.665539741516113,
+          68.40393829345703,
+          0.021800508722662926
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.434121131896973,
+          71.75643157958984,
+          0.03587373346090317
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.419787406921387,
+          69.59520721435547,
+          0.03648064285516739
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 24.09804061288014,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.599812507629395,
+          71.84578704833984,
+          0.03694375604391098
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.713916778564453,
+          68.4180908203125,
+          0.021801183000206947
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.421648979187012,
+          72.846435546875,
+          0.03579765185713768
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.418801307678223,
+          69.60286712646484,
+          0.036479756236076355
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 25.285023746080697,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.53780746459961,
+          72.71668243408203,
+          0.03687456622719765
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.688047409057617,
+          69.06676483154297,
+          0.02557014860212803
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.448957443237305,
+          73.88176727294922,
+          0.03568759933114052
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.479976654052734,
+          70.18274688720703,
+          0.034734658896923065
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 26.461962482891977,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.630088806152344,
+          73.55017852783203,
+          0.036972180008888245
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.66364574432373,
+          70.06693267822266,
+          0.03734394162893295
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.440242767333984,
+          74.78741455078125,
+          0.035473305732011795
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.43049430847168,
+          71.11903381347656,
+          0.03498842194676399
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 27.824463067110628,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.602323532104492,
+          74.64328002929688,
+          0.036371078342199326
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.577454566955566,
+          71.11254119873047,
+          0.03735175356268883
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.399553298950195,
+          75.81366729736328,
+          0.036019083112478256
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.495075225830078,
+          72.35979461669922,
+          0.03472607210278511
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 29.04555215127766,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.556435585021973,
+          75.64212036132812,
+          0.020102443173527718
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.571475982666016,
+          72.18562316894531,
+          0.03737097606062889
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.46584415435791,
+          76.75975799560547,
+          0.03750363364815712
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.562735557556152,
+          73.331787109375,
+          0.034659117460250854
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 30.254432993009686,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.601114273071289,
+          76.53803253173828,
+          0.03749626874923706
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.593865394592285,
+          73.0818099975586,
+          0.03724076971411705
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.40994930267334,
+          77.65215301513672,
+          0.037496168166399
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.50287914276123,
+          74.2334213256836,
+          0.03486456349492073
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 31.386004052124918,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.613900184631348,
+          77.4334487915039,
+          0.03749609738588333
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.536295890808105,
+          73.93152618408203,
+          0.037255480885505676
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.357823371887207,
+          78.51396942138672,
+          0.03749636188149452
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.4719820022583,
+          75.14871978759766,
+          0.03438807278871536
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 32.587857141159475,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.587663650512695,
+          78.35218811035156,
+          0.037495408207178116
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.660134315490723,
+          74.89647674560547,
+          0.03650856763124466
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.420994758605957,
+          79.44854736328125,
+          0.0374961793422699
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.489893913269043,
+          76.08547973632812,
+          0.036875221878290176
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 33.79811329906806,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.652527809143066,
+          79.4415512084961,
+          0.03750353306531906
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.676106452941895,
+          75.99589538574219,
+          0.028340160846710205
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.475772857666016,
+          80.54966735839844,
+          0.03750188648700714
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.491461753845215,
+          77.11653137207031,
+          0.037495892494916916
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 35.10433879029006,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.65401554107666,
+          80.37580871582031,
+          0.03750348463654518
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.599363327026367,
+          76.91600036621094,
+          0.03749673813581467
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.453186988830566,
+          81.4471435546875,
+          0.03750208392739296
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.430025100708008,
+          78.05011749267578,
+          0.037496279925107956
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 36.25096781598404,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.604762077331543,
+          81.33424377441406,
+          0.0374971441924572
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.623153686523438,
+          77.90497589111328,
+          0.037503037601709366
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.527315139770508,
+          82.4627914428711,
+          0.03749389201402664
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.468153953552246,
+          79.07012176513672,
+          0.03749551996588707
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 37.42769082589075,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.607569694519043,
+          82.19754028320312,
+          0.037502679973840714
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.52772045135498,
+          78.70903015136719,
+          0.037495654076337814
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.595672607421875,
+          83.20415496826172,
+          0.037495408207178116
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.465018272399902,
+          79.90917205810547,
+          0.03749489039182663
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 38.801570693962276,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.661173820495605,
+          83.14594268798828,
+          0.0374949686229229
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.503679275512695,
+          79.75662994384766,
+          0.0375017412006855
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.398515701293945,
+          83.5038070678711,
+          0.03750423714518547
+        ],
+        "nativeStatus": null
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.437172889709473,
+          80.95172119140625,
+          0.0375039167702198
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 39.97190441517159,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.642074584960938,
+          83.49644470214844,
+          0.03750171512365341
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.594338417053223,
+          80.62764739990234,
+          0.03750258684158325
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.386958122253418,
+          84.1508560180664,
+          0.03740694746375084
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.50495433807373,
+          81.82569885253906,
+          0.03749573603272438
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 41.15805035922676,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.651140213012695,
+          84.10039520263672,
+          0.025840213522315025
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.595211029052734,
+          81.63623046875,
+          0.03749620169401169
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -11.149145126342773,
+          85.31452178955078,
+          0.03747517988085747
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.551301002502441,
+          82.78688049316406,
+          0.03749563917517662
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 42.35172015428543,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.600287437438965,
+          85.1675796508789,
+          0.03705228865146637
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.579779624938965,
+          82.51427459716797,
+          0.037497855722904205
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -10.954526901245117,
+          86.33930206298828,
+          0.03750275820493698
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.471699714660645,
+          83.3702621459961,
+          0.037498075515031815
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 43.53118271287531,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.62138843536377,
+          86.47834777832031,
+          0.037100836634635925
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.658161163330078,
+          83.18701171875,
+          0.03749416768550873
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_04",
+        "positionM": [
+          -10.793757438659668,
+          87.21023559570312,
+          0.03749376907944679
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -11.33945369720459,
+          83.64435577392578,
+          0.03749572113156319
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 44.93367655109614,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character_05",
+        "positionM": [
+          -12.606359481811523,
+          87.1600570678711,
+          0.03696345165371895
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character",
+        "positionM": [
+          -12.648862838745117,
+          83.54772186279297,
+          0.03630191832780838
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -10.925686836242676,
+          84.57830047607422,
+          0.03749622404575348
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 46.136659872252494,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character",
+        "positionM": [
+          -12.373209953308105,
+          84.57767486572266,
+          0.025831395760178566
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -10.542625427246094,
+          85.60708618164062,
+          0.037503086030483246
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 47.34573432104662,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character",
+        "positionM": [
+          -12.058816909790039,
+          85.83441162109375,
+          0.027014557272195816
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -10.207864761352539,
+          86.6626968383789,
+          0.03750166669487953
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 48.54758337326348,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character",
+        "positionM": [
+          -11.856715202331543,
+          86.82343292236328,
+          0.020496610552072525
+        ],
+        "nativeStatus": "RUNNING"
+      },
+      {
+        "name": "Character_06",
+        "positionM": [
+          -9.891708374023438,
+          87.37705993652344,
+          0.03749380633234978
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  },
+  {
+    "wallSecond": 49.75268826726824,
+    "phase": "crossing",
+    "people": [
+      {
+        "name": "Character",
+        "positionM": [
+          -11.682727813720703,
+          87.37345886230469,
+          0.0289675984531641
+        ],
+        "nativeStatus": "RUNNING"
+      }
+    ]
+  }
+]

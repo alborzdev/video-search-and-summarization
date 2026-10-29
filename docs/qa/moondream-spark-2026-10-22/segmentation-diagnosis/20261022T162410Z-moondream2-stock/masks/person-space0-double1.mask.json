@@ -1,0 +1,20 @@
+{
+  "valid_mask": false,
+  "quality_validated": false,
+  "image_size": [
+    640,
+    360
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.3758544921875,
+    "x_max": 0.4327392578125,
+    "y_min": 0.3095703125,
+    "y_max": 0.6162109375
+  },
+  "artifacts": {
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T162410Z-moondream2-stock/masks/person-space0-double1.mask.json"
+  },
+  "status": "bbox_only"
+}

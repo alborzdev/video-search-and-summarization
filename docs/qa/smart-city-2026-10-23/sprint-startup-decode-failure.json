@@ -1,0 +1,13 @@
+{
+  "status": "failed-start-preserved",
+  "at": "2026-10-23T16:01:10Z",
+  "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+  "controllerStatus": 422,
+  "controllerDetail": "Registered source CPU decode probe failed",
+  "agentHTTPStatus": 200,
+  "agentAnalysisState": "partial",
+  "launcherOriginalBehavior": "Ignored partial response, then timed out waiting for two-camera health. Paused both sources and stopped the Isaac instance it had started.",
+  "rawLauncherLogSha256": "a7c6f4b6ceedec995720197be44b5e3fc836499d624eccd893822f664d4c3f87",
+  "transportCauseConfirmed": false,
+  "fixStatus": "Pending bounded probe retry/TCP and strict partial-response validation; no changed ready threshold."
+}

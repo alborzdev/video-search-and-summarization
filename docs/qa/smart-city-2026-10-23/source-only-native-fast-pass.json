@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "city.source-only-native-fast-pass.v1",
+  "recordedAt": "2026-10-23T16:45:42.343967+00:00",
+  "status": "source-and-scoped-cpu-checks-passed-not-built-or-deployed",
+  "fixes": [
+    {
+      "problem": "std::stoul parsed a wider integer then narrowed it into unsigned CLI fields; 4294967296 became zero on this platform and could turn a finite frame budget into unlimited inference. Trailing junk was accepted.",
+      "change": "Use from_chars directly into unsigned for --frames, --width, --height and --publisher-queue-size, require complete consumption and report the option name. Existing valid values, zero-as-unlimited frame mode and domain checks are preserved."
+    },
+    {
+      "problem": "A realtime callback could reach submit after the sender observed stopping with an empty queue and exited, leaving an enqueued observation without a publisher.",
+      "change": "Check stopping/failed under the submission mutex before enqueue for every input mode. Previously enqueued records still drain under the existing sender behavior."
+    }
+  ],
+  "checks": [
+    {
+      "name": "strict CLI parser",
+      "command": "g++ -O2 -std=c++17 -Wall -Wextra -Isrc tests/test_tuning.cpp -o /tmp/vss-city-fast-unsigned-test; /tmp/vss-city-fast-unsigned-test",
+      "status": "passed",
+      "scope": "CPU only; explicit zero, UINT_MAX, malformed/negative/overflow values and existing mux bounds."
+    },
+    {
+      "name": "exact submit function",
+      "reproducer": "docs/qa/smart-city-2026-10-23/source-only-native-submit-harness.cpp",
+      "command": "g++ -O2 -std=c++17 -Wall -Wextra docs/qa/smart-city-2026-10-23/source-only-native-submit-harness.cpp -o /tmp/vss-city-submit-fast-test; /tmp/vss-city-submit-fast-test",
+      "before": "failed: frame enqueued after stop/failure",
+      "after": "passed",
+      "scope": "Exact source function extracted into a minimal CPU App. Validates late stop/failure rejection, successful enqueue and unchanged live queue-capacity failure. Not the full native binary or a stress/race qualification."
+    },
+    {
+      "name": "existing decoder core",
+      "command": "g++ -O2 -std=c++17 -Wall -Wextra -Isrc tests/test_core.cpp -o /tmp/vss-city-fast-core-test; /tmp/vss-city-fast-core-test",
+      "status": "passed",
+      "scope": "CPU only; reference global top-k, sparse categories, per-query deduplication, distinct overlapping queries, clipping and numerical controls. No detector inference."
+    },
+    {
+      "name": "git diff --check",
+      "status": "passed",
+      "scope": "services/rtvi/rt-cv/smart-city"
+    }
+  ],
+  "pending": [
+    "Full native worker compilation and production test_frame_limit.cpp require the pinned SDK build environment. Host lacks DeepStream and GStreamer development headers; no container/build/deployment was started.",
+    "Live interruption/restart and transport qualification are deferred."
+  ],
+  "readOnlyFindings": [
+    {
+      "area": "post acceptance receipts",
+      "file": "services/rtvi/rt-cv/smart-city/src/city_worker.cpp",
+      "detail": "Two g_regex_match_simple calls compile patterns per accepted observation. Receipt checks search matching fields rather than validating top-level JSON and frame identity. Current trusted gateway behavior remains compatible; no false acceptance was observed. A structured receipt decoder needs separate bounded tests before changing transport."
+    },
+    {
+      "area": "recorded source media clock cache",
+      "file": "services/rtvi/rt-cv/smart-city/src/city_worker.cpp",
+      "detail": "The map uses PTS as its sole key and overwrites an existing entry. Repeated PTS before consumption can collide. This path is bypassed for current RTSP inputs; retain as a recorded-file edge case requiring a duplicate-PTS fixture."
+    },
+    {
+      "area": "preview transport scheduling",
+      "file": "services/rtvi/rt-cv/smart-city/src/city_worker.cpp",
+      "detail": "A single sender services both cameras, with a 500 ms per-request timeout; a slow preview request can delay the other camera. One pending JPEG per source remains bounded, obsolete frames are replaced, and observation publication has its own sender. No runtime throughput claim or scheduling change was made."
+    }
+  ],
+  "unchanged": "RF-DETR engines, weights, parser selection policy, class thresholds, tracker configuration, model revision policy, queue limits, GPU preprocessing and operational runtime are unchanged.",
+  "changedFileSha256": {
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "d96dac57027d9cd76e65d52eda84bad278c9ca44d9329ce733bd60a639cc6f59",
+    "services/rtvi/rt-cv/smart-city/src/runtime_tuning.hpp": "25e85465fbf84924edd8d60e1eccd25974e5903c042c2f3f59c12b92407bfa6c",
+    "services/rtvi/rt-cv/smart-city/tests/test_tuning.cpp": "1ecca4b3d3b79927be42e44957b63dc545cb6d8e19d5a958938bb81086a876ab",
+    "services/rtvi/rt-cv/smart-city/tests/test_frame_limit.cpp": "8f0c25741b3be589434b7d71090b47b95a7679f7d59b5318aa0e5010a7ae63bf"
+  },
+  "harnessSha256": "c6a51cef92855dc2f460dd85117ae4190ee0d7f0f4824581d08432d2663fc892",
+  "runtime": {
+    "deployed": false,
+    "restarted": false,
+    "gpuOrModelRequests": false,
+    "nativeBinaryRebuilt": false
+  }
+}

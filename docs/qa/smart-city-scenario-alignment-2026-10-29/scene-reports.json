@@ -1,0 +1,725 @@
+[
+  {
+    "epoch": "fc6d1493-0c2d-4a80-9e69-dfe220d8052e",
+    "kind": "scenario",
+    "runId": "d1afeaab5bff445d84a8ceebc99ad17e",
+    "scenarioId": "crossing-occupancy",
+    "startedAt": "2026-10-29T15:05:07.114812+00:00",
+    "endedAt": "2026-10-29T15:05:42.049216+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793286341949934167",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793286341950352936"
+    },
+    "metrics": [
+      {
+        "ruleId": "expo-approach-queue",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:05:41.949934Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-junction-blockage",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:05:41.949934Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-emergency-blockage",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:05:41.949934Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-crossing-occupancy",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:05:41.950353Z",
+        "evidenceReasons": []
+      }
+    ],
+    "showcase": [
+      {
+        "ruleId": "expo-crossing-occupancy",
+        "name": "East crossing",
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "sessionId": "05186510-2f06-4880-93f5-e08d06ac7299",
+        "count": 0,
+        "peakCount": 4,
+        "occupiedSeconds": 18.56487304900001,
+        "continuousSeconds": 0.0,
+        "hasGaps": false,
+        "savedEventIds": [
+          "5b172a5a1863c7aea6de273da774dea8"
+        ],
+        "status": "clear",
+        "asOfSourceTimeNs": "1793286341950352936"
+      }
+    ],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 449,
+      "mode": "live",
+      "configRevision": 8,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 8,
+        "movements": [],
+        "crossings": [],
+        "queues": [],
+        "curbs": []
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": "1793286041949934167",
+          "windowEndNs": "1793286341949934167",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 34.786760178,
+          "windowSeconds": 300,
+          "coverageRatio": 0.11595586726000001,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": "1793286041950352936",
+          "windowEndNs": "1793286341950352936",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 34.786768898,
+          "windowSeconds": 300,
+          "coverageRatio": 0.11595589632666665,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [],
+      "movements": [],
+      "obstructions": [
+        {
+          "ruleId": "expo-junction-blockage",
+          "name": "Junction box",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "expo-emergency-blockage",
+          "name": "Emergency access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    },
+    "mobilitySnapshotBasis": "last-observed-before-boundary",
+    "observationEnd": {
+      "reason": "scenario-boundary",
+      "activeEventState": "unknown"
+    }
+  },
+  {
+    "epoch": "d8709070-320f-4585-a5e1-d18b221d9b18",
+    "kind": "scenario",
+    "runId": "92846af323094deca8214a407139a723",
+    "scenarioId": "queue-blockage",
+    "startedAt": "2026-10-29T15:06:40.000478+00:00",
+    "endedAt": "2026-10-29T15:06:59.327088+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793286419226772084",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793286419227277205"
+    },
+    "metrics": [
+      {
+        "ruleId": "expo-approach-queue",
+        "totalCrossings": 0,
+        "count": 2,
+        "occupancy": 2,
+        "activeEventCount": 1,
+        "oldestDwellMs": 19212.827166,
+        "status": "active",
+        "timestamp": "2026-10-29T15:06:59.226772Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-junction-blockage",
+        "totalCrossings": 0,
+        "count": 3,
+        "occupancy": 3,
+        "activeEventCount": 1,
+        "oldestDwellMs": 19212.827166,
+        "status": "active",
+        "timestamp": "2026-10-29T15:06:59.226772Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-emergency-blockage",
+        "totalCrossings": 0,
+        "count": 3,
+        "occupancy": 3,
+        "activeEventCount": 1,
+        "oldestDwellMs": 19212.827166,
+        "status": "active",
+        "timestamp": "2026-10-29T15:06:59.226772Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-crossing-occupancy",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:06:59.227277Z",
+        "evidenceReasons": []
+      }
+    ],
+    "showcase": [
+      {
+        "ruleId": "expo-approach-queue",
+        "name": "North approach queue",
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sessionId": "3f2b9bcc-aac3-4ee4-bd29-b257b055189d",
+        "count": 2,
+        "peakCount": 2,
+        "occupiedSeconds": 19.09910418500001,
+        "continuousSeconds": 19.09910418500001,
+        "hasGaps": false,
+        "savedEventIds": [
+          "cce86d00121ecb8a1c04aa93cee89088"
+        ],
+        "status": "occupied",
+        "asOfSourceTimeNs": "1793286419226772084"
+      },
+      {
+        "ruleId": "expo-junction-blockage",
+        "name": "Junction box",
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sessionId": "3f2b9bcc-aac3-4ee4-bd29-b257b055189d",
+        "count": 1,
+        "peakCount": 5,
+        "occupiedSeconds": 17.264823643000007,
+        "continuousSeconds": 17.264823643000007,
+        "hasGaps": false,
+        "savedEventIds": [
+          "cb3568b12898ae9741a973f663f7d842",
+          "0eb479686fc589ad2204e879700c24fe",
+          "dbe4c680addbdfc25cebb0e0ccf7a046",
+          "a676b65dc578fab9631786f126c2a8d6",
+          "8345f77e79028fcd960e11ce3ae33912"
+        ],
+        "status": "occupied",
+        "asOfSourceTimeNs": "1793286419226772084"
+      }
+    ],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 449,
+      "mode": "live",
+      "configRevision": 9,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 9,
+        "movements": [],
+        "crossings": [],
+        "queues": [],
+        "curbs": []
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": "1793286119226772084",
+          "windowEndNs": "1793286419226772084",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 19.212827166,
+          "windowSeconds": 300,
+          "coverageRatio": 0.06404275722,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": "1793286119227277205",
+          "windowEndNs": "1793286419227277205",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 19.212968414,
+          "windowSeconds": 300,
+          "coverageRatio": 0.06404322804666666,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [],
+      "movements": [],
+      "obstructions": [
+        {
+          "ruleId": "expo-junction-blockage",
+          "name": "Junction box",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 5,
+          "completedEpisodes": 4,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 1,
+          "pendingEvidenceEpisodes": 1,
+          "blockedSeconds": 17.201887584,
+          "longestObservedEpisodeSeconds": 17.201887584,
+          "eventIds": [
+            "cb3568b12898ae9741a973f663f7d842",
+            "0eb479686fc589ad2204e879700c24fe",
+            "dbe4c680addbdfc25cebb0e0ccf7a046",
+            "a676b65dc578fab9631786f126c2a8d6",
+            "8345f77e79028fcd960e11ce3ae33912"
+          ],
+          "status": "partial"
+        },
+        {
+          "ruleId": "expo-emergency-blockage",
+          "name": "Emergency access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 5,
+          "completedEpisodes": 4,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 1,
+          "pendingEvidenceEpisodes": 1,
+          "blockedSeconds": 17.201887584,
+          "longestObservedEpisodeSeconds": 17.201887584,
+          "eventIds": [
+            "4d2ec6976f02a1e12ccb15c0cadf15aa",
+            "bbfbbf54776e9742bef594947305afea",
+            "3e86b1d11665dc7cbda702925617476c",
+            "b75e7cc16595e42db20b07603bc2f2a3",
+            "8fac6192790387570be9c767ce889a2e"
+          ],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    },
+    "mobilitySnapshotBasis": "last-observed-before-boundary",
+    "observationEnd": {
+      "reason": "scenario-boundary",
+      "activeEventState": "unknown"
+    }
+  },
+  {
+    "epoch": "e616008f-8628-45d3-8052-2513743004f0",
+    "kind": "scenario",
+    "runId": "473109bac14e49cd975bc30286937d12",
+    "scenarioId": "emergency-access",
+    "startedAt": "2026-10-29T15:07:24.675765+00:00",
+    "endedAt": "2026-10-29T15:08:21.425975+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793286501378639434",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793286501330530694"
+    },
+    "metrics": [
+      {
+        "ruleId": "expo-approach-queue",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:08:21.378639Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-junction-blockage",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:08:21.378639Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-emergency-blockage",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:08:21.378639Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-crossing-occupancy",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:08:21.330531Z",
+        "evidenceReasons": []
+      }
+    ],
+    "showcase": [
+      {
+        "ruleId": "expo-emergency-blockage",
+        "name": "Emergency access",
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sessionId": "3f2b9bcc-aac3-4ee4-bd29-b257b055189d",
+        "count": 0,
+        "peakCount": 6,
+        "occupiedSeconds": 39.20425207400002,
+        "continuousSeconds": 0.0,
+        "hasGaps": true,
+        "savedEventIds": [
+          "f5aaab3d5fc7b06f8017eeb6d12e1f2d",
+          "c7c9029b8a554ff227cdf08743053e87",
+          "93b38a07cf806c8fae4904a9e31df490",
+          "5d80d92bcd68f70da614af752ae15a71",
+          "63855c7a1bcfa5724f5119bdb1564e43",
+          "3a30c9d9caa0961bcc0be245c5fc0d39"
+        ],
+        "status": "clear",
+        "asOfSourceTimeNs": "1793286501378639434"
+      }
+    ],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 449,
+      "mode": "live",
+      "configRevision": 9,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 9,
+        "movements": [],
+        "crossings": [],
+        "queues": [],
+        "curbs": []
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": "1793286201378639434",
+          "windowEndNs": "1793286501378639434",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 56.705704746,
+          "windowSeconds": 300,
+          "coverageRatio": 0.18901901582,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": "1793286201330530694",
+          "windowEndNs": "1793286501330530694",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 56.657180581,
+          "windowSeconds": 300,
+          "coverageRatio": 0.18885726860333332,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [],
+      "movements": [],
+      "obstructions": [
+        {
+          "ruleId": "expo-junction-blockage",
+          "name": "Junction box",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 6,
+          "completedEpisodes": 6,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 38.786845301,
+          "longestObservedEpisodeSeconds": 38.786845301,
+          "eventIds": [
+            "714351ae1ff3cf7e72fb511b0083e622",
+            "903f4a29c4c4048c6f7505c385e84280",
+            "79adb36c709c15134e496a1994260c86",
+            "5ba680c4e9fbaa259cce2b9ee61270e8",
+            "a11386d961a09ee310bb5faf3c9c2ff8",
+            "21df524866ddf47d2c7e8d142ffc0e1b"
+          ],
+          "status": "partial"
+        },
+        {
+          "ruleId": "expo-emergency-blockage",
+          "name": "Emergency access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 6,
+          "completedEpisodes": 6,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 38.786845301,
+          "longestObservedEpisodeSeconds": 38.786845301,
+          "eventIds": [
+            "f5aaab3d5fc7b06f8017eeb6d12e1f2d",
+            "c7c9029b8a554ff227cdf08743053e87",
+            "93b38a07cf806c8fae4904a9e31df490",
+            "5d80d92bcd68f70da614af752ae15a71",
+            "63855c7a1bcfa5724f5119bdb1564e43",
+            "3a30c9d9caa0961bcc0be245c5fc0d39"
+          ],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    },
+    "mobilitySnapshotBasis": "last-observed-before-boundary",
+    "observationEnd": {
+      "reason": "scenario-boundary",
+      "activeEventState": "unknown"
+    }
+  },
+  {
+    "epoch": "651d47fa-0e8f-446b-8a74-98a17678c543",
+    "kind": "scenario",
+    "runId": "d262efb0f53e4ab684535d28c253374b",
+    "scenarioId": "crossing-occupancy",
+    "startedAt": "2026-10-29T15:08:50.281851+00:00",
+    "endedAt": "2026-10-29T15:09:24.336958+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793286564275729940",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793286564276117125"
+    },
+    "metrics": [
+      {
+        "ruleId": "expo-crossing-occupancy",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:09:24.276117Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-approach-queue",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:09:24.275730Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-junction-blockage",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:09:24.275730Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "expo-emergency-blockage",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-29T15:09:24.275730Z",
+        "evidenceReasons": []
+      }
+    ],
+    "showcase": [
+      {
+        "ruleId": "expo-crossing-occupancy",
+        "name": "East crossing",
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "sessionId": "05186510-2f06-4880-93f5-e08d06ac7299",
+        "count": 0,
+        "peakCount": 4,
+        "occupiedSeconds": 17.971187976000003,
+        "continuousSeconds": 0.0,
+        "hasGaps": false,
+        "savedEventIds": [
+          "4bda250eaab3ca5419ccd8a45608fda6"
+        ],
+        "status": "clear",
+        "asOfSourceTimeNs": "1793286564276117125"
+      }
+    ],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 449,
+      "mode": "live",
+      "configRevision": 9,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 9,
+        "movements": [],
+        "crossings": [],
+        "queues": [],
+        "curbs": []
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": "1793286264275729940",
+          "windowEndNs": "1793286564275729940",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 34.000804546,
+          "windowSeconds": 300,
+          "coverageRatio": 0.11333601515333333,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": "1793286264276117125",
+          "windowEndNs": "1793286564276117125",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 34.000831074,
+          "windowSeconds": 300,
+          "coverageRatio": 0.11333610357999999,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [],
+      "movements": [],
+      "obstructions": [
+        {
+          "ruleId": "expo-junction-blockage",
+          "name": "Junction box",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "expo-emergency-blockage",
+          "name": "Emergency access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    },
+    "mobilitySnapshotBasis": "last-observed-before-boundary",
+    "observationEnd": {
+      "reason": "scenario-boundary",
+      "activeEventState": "unknown"
+    }
+  }
+]

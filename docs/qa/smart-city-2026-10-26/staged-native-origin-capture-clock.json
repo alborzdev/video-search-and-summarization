@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "city.native-sei-versus-origin-rtcp.v1",
+  "capture": ".spark/city/media/staged-native-origin-clock-10s-20261026",
+  "status": "complete",
+  "decodeUsed": false,
+  "sourceStatistics": {
+    "cam_SW": {
+      "packets": 131,
+      "referencedNativeSeiPackets": 131,
+      "originRtcpMinusNativeCaptureWallMs": {
+        "count": 131,
+        "min": 14.9373,
+        "p50": 14.9467,
+        "p90": 14.9515,
+        "max": 14.9529
+      },
+      "receiveMinusNativeCaptureWallMs": {
+        "count": 131,
+        "min": 15.534,
+        "p50": 15.7836,
+        "p90": 16.1912,
+        "max": 180.3792
+      },
+      "examples": [
+        {
+          "index": 0,
+          "nativeSei": {
+            "timestamp": 1792996782898343667,
+            "frame_num": 88191,
+            "publish_sim_time_ns": 3086033333333,
+            "timestamp_basis": "wall-capture"
+          },
+          "originRtcpUnixNs": "1792996782913296332",
+          "rtcpMinusNativeCaptureWallMs": 14.952665
+        },
+        {
+          "index": 1,
+          "nativeSei": {
+            "timestamp": 1792996782952466325,
+            "frame_num": 88192,
+            "publish_sim_time_ns": 3086066666666,
+            "timestamp_basis": "wall-capture"
+          },
+          "originRtcpUnixNs": "1792996782967418554",
+          "rtcpMinusNativeCaptureWallMs": 14.952229
+        },
+        {
+          "index": 2,
+          "nativeSei": {
+            "timestamp": 1792996783008419352,
+            "frame_num": 88193,
+            "publish_sim_time_ns": 3086100000000,
+            "timestamp_basis": "wall-capture"
+          },
+          "originRtcpUnixNs": "1792996783023362999",
+          "rtcpMinusNativeCaptureWallMs": 14.943647
+        }
+      ]
+    },
+    "cam_NE": {
+      "packets": 131,
+      "referencedNativeSeiPackets": 65,
+      "originRtcpMinusNativeCaptureWallMs": {
+        "count": 65,
+        "min": -14.7949,
+        "p50": -14.7885,
+        "p90": -14.785,
+        "max": -14.7836
+      },
+      "receiveMinusNativeCaptureWallMs": {
+        "count": 131,
+        "min": 0.5873,
+        "p50": 0.8984,
+        "p90": 1.091,
+        "max": 198.124
+      },
+      "examples": [
+        {
+          "index": 66,
+          "nativeSei": {
+            "timestamp": 1792996787764622627,
+            "frame_num": 88257,
+            "publish_sim_time_ns": 3088233333333,
+            "timestamp_basis": "wall-capture"
+          },
+          "originRtcpUnixNs": "1792996787749830110",
+          "rtcpMinusNativeCaptureWallMs": -14.792517
+        },
+        {
+          "index": 67,
+          "nativeSei": {
+            "timestamp": 1792996787820169262,
+            "frame_num": 88258,
+            "publish_sim_time_ns": 3088266666666,
+            "timestamp_basis": "wall-capture"
+          },
+          "originRtcpUnixNs": "1792996787805385665",
+          "rtcpMinusNativeCaptureWallMs": -14.783597
+        },
+        {
+          "index": 68,
+          "nativeSei": {
+            "timestamp": 1792996787940219917,
+            "frame_num": 88259,
+            "publish_sim_time_ns": 3088300000000,
+            "timestamp_basis": "wall-capture"
+          },
+          "originRtcpUnixNs": "1792996787925430110",
+          "rtcpMinusNativeCaptureWallMs": -14.789807
+        }
+      ]
+    }
+  },
+  "sameRenderFrame": {
+    "sourceOrder": [
+      "cam_NE",
+      "cam_SW"
+    ],
+    "basis": "Exact same SEI frame_num AND publish_sim_time_ns, unique in both sources.",
+    "matchedRenderTicks": 131,
+    "secondMinusFirstNativeHandoffMs": {
+      "count": 131,
+      "min": -0.9337,
+      "p50": -0.3457,
+      "p90": -0.3069,
+      "max": -0.2975
+    },
+    "secondMinusFirstReceiveMs": {
+      "count": 131,
+      "min": -18.062,
+      "p50": 14.5127,
+      "p90": 14.9779,
+      "max": 16.2698
+    },
+    "secondMinusFirstReferenceMs": {
+      "count": 65,
+      "min": 28.8421,
+      "p50": 29.3977,
+      "p90": 29.431,
+      "max": 29.4421
+    }
+  },
+  "inputFileSha256": {
+    ".spark/city/media/staged-native-origin-clock-10s-20261026/cam_NE.mkv": "51a96f6412f9628b0a0a69f69ce08c7dd741baa51a21fc9d589f80e279b6029b",
+    ".spark/city/media/staged-native-origin-clock-10s-20261026/cam_NE.timing.ndjson": "62b7a0d4d0e5683f27cc43d3a2a48e28aa27a9b63047124620c7483cbca51627",
+    ".spark/city/media/staged-native-origin-clock-10s-20261026/cam_SW.mkv": "b8360df8c658788dcc96f5e3fc98070737db1ec539f03ad35be2cc1ec12c048b",
+    ".spark/city/media/staged-native-origin-clock-10s-20261026/cam_SW.timing.ndjson": "3f81e41f94c4683228e2fc8786c94dc67aec70d5ef72b9a114f4c0a5e1d52f28",
+    ".spark/city/media/staged-native-origin-clock-10s-20261026/capture.json": "79b3bbd902f33c6bfb442b8fe1475cc40372330aa6f083b912320fcdf878a130"
+  }
+}

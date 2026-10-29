@@ -1,0 +1,118 @@
+{
+  "schemaVersion": "city.soak-result.v1",
+  "siteId": "recorded-traffic-tests",
+  "sourceIds": [
+    "291399aa-a062-43b6-badc-48c34bc08237",
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9"
+  ],
+  "startedAt": "2026-10-22T05:23:35.110045+00:00",
+  "finishedAt": "2026-10-22T05:28:35.110343+00:00",
+  "requestedSeconds": 300.0,
+  "wallSeconds": 300.0003091515973,
+  "sampleCount": 57,
+  "passed": true,
+  "failure": null,
+  "minimumAvailableGiB": 22.69512176513672,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 8870,
+      "uniquePts": 8619,
+      "duplicatePts": 251,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 1,
+      "clockRollbacks": 0,
+      "lastPts": 302215801727,
+      "lastNs": 1792646910566073377,
+      "lastSequence": 8841,
+      "session": "84c3db1d-78a4-4b17-8557-d8dd39d0e197",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 2956,
+      "uniquePts": 2956,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 302051816157,
+      "lastNs": 1792646910509317180,
+      "lastSequence": 2989,
+      "session": "1dfc9692-8faa-4af6-8aec-2ef78e784a8f",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "lastMetrics": {
+    "sources": {
+      "291399aa-a062-43b6-badc-48c34bc08237": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792646910566073377",
+        "sessionId": "84c3db1d-78a4-4b17-8557-d8dd39d0e197",
+        "clockToWallRatio": 1.0004219886728352,
+        "trustedSourceAgeSeconds": 0.26651477813720703,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 951,
+        "windowDuplicateFraction": 0.03680336487907466,
+        "frames": 8870,
+        "uniquePts": 8619
+      },
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792646910509317180",
+        "sessionId": "1dfc9692-8faa-4af6-8aec-2ef78e784a8f",
+        "clockToWallRatio": 0.9928455046796026,
+        "trustedSourceAgeSeconds": 0.3232710361480713,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 316,
+        "windowDuplicateFraction": 0.0,
+        "frames": 2956,
+        "uniquePts": 2956
+      }
+    },
+    "minimumAvailableGiB": 22.69512176513672,
+    "nativeActive": true,
+    "nativeRevision": 37,
+    "warmedUp": true
+  },
+  "maximumTrustedSourceAgeSeconds": {
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.3232710361480713,
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.44118380546569824
+  },
+  "maximumDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.050955414012738856,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "lastClockToWallRatios": {
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.9928455046796026,
+    "291399aa-a062-43b6-badc-48c34bc08237": 1.0004219886728352
+  },
+  "askEnabled": false,
+  "scheduledAskCount": 0,
+  "asks": [],
+  "pauseOnFailure": false,
+  "pauseReceipts": [],
+  "samplesFile": "private runtime/mux-10000-qualification/samples.ndjson",
+  "samplesSha256": "098a1b030bc760c0e9c88cc33ee5df564792401e8f3b75830b58fff5cc024956",
+  "monitorSourceSha256": "a4cc1aa97a8ec236d7a781470f8c65717ae6f0c48704b57011ac597cf6e19959",
+  "criteria": {
+    "minimumReserveGiB": 20,
+    "warmupSeconds": 15,
+    "sampleEverySeconds": 5,
+    "clockWindowSeconds": 30,
+    "clockRatioBounds": [
+      0.9,
+      1.1
+    ],
+    "maximumDuplicateFraction": 0.05,
+    "trustSourceRtcpUtc": true,
+    "maximumSourceAgeSeconds": 5
+  },
+  "scope": "Concurrent pipeline stability and optional real UI Ask qualification; not engine latency, semantic event accuracy, browser-frame latency or final-city/MV3DT qualification.",
+  "modelSize": "small",
+  "muxTimeoutUs": 10000,
+  "imageId": "sha256:39bf601b9c9174737656c509ca8b00da06ca35b8cf6c00b16d2f327e48df26a7",
+  "context": "Both actual Agent RTSP sources; canonical pedestrian derivative; all existing LLM/VLM/Embed services loaded; VIOS original 2CPU/2GiB; no Ask during this bounded baseline. Maximum duplicate fraction includes initial warmup; passing checks enforce post-warmup windows."
+}

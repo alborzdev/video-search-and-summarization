@@ -1,0 +1,8 @@
+{
+  "child": false,
+  "compat": true,
+  "tasks": "query,detect",
+  "image": "/home/sparkdev/vss/.spark/moondream-photon/blank-control.png",
+  "prompt": "Describe what is visible in this image.",
+  "timeout": 300
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "action": "pause",
+    "analysisActive": false,
+    "detectionEnabled": true,
+    "analysisProfileId": "smart-city",
+    "message": "Live analysis paused; retained and indexed evidence was preserved",
+    "name": "isaac-intersection-southwest",
+    "sensorId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+    "state": "paused",
+    "steps": {
+      "embedding": true,
+      "detection": true
+    }
+  },
+  {
+    "action": "pause",
+    "analysisActive": false,
+    "detectionEnabled": true,
+    "analysisProfileId": "smart-city",
+    "message": "Live analysis paused; retained and indexed evidence was preserved",
+    "name": "isaac-intersection-northeast",
+    "sensorId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+    "state": "paused",
+    "steps": {
+      "embedding": true,
+      "detection": true
+    }
+  }
+]

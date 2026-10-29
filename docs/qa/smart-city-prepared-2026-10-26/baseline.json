@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-26T14:34:36.960955+00:00",
+  "baselineOnly": true,
+  "nativeImage": "sha256:4e6b73d1b19e133680a583d5d2f109e20a6953537adea1165b7a381abf42c3dd",
+  "uiImage": "sha256:1d94d0350f90c2e4f120f0295553e6ed06d6b71789579378bf532a634605fc0f",
+  "sceneState": {
+    "runId": "2227daf39a19476d:000005",
+    "state": "cancelled",
+    "restored": true,
+    "normalFlowVerified": true
+  },
+  "siteId": "isaac-intersection-a",
+  "rulesRevision": 450,
+  "ruleCount": 19,
+  "guard": {
+    "time": 1793025276.4689686,
+    "available_gib": 40.26862716674805,
+    "floor_gib": 20.0
+  },
+  "privateBaselineDirectory": "/home/sparkdev/vss/.spark/city/runtime/prepared-20261026"
+}

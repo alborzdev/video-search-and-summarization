@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "city.polish-bitmap-ui.v1",
+  "recordedAt": "2026-10-22T15:17:45.212497+00:00",
+  "package": {
+    "createdAt": "20261022T150135382138Z",
+    "sourceSha256": "28474f847c0ce59c45641d6678cec1808a4fed8d6b181db0c76e481f2cb1e9ed",
+    "lockSha256": "b937110179a40d8e7cb22ba570481ae759759ac2f746b450e925dcd652e40daa",
+    "imageId": "sha256:dbf42268586b4979015a0ba15f2fc81cb41aec27a350c4b93785a9cfa3254a04",
+    "imageReference": "vss-spark-vss-ui:smart-city-28474f847c0c-20261022t150135382138z",
+    "artifactSha256": "2c189ef196075ebdca90c1d1fca47dd5ba5cdb3ee74d7b25754b0819ced5da61",
+    "baseImageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+    "dependencyMode": "reuse-installed"
+  },
+  "sourceTests": {
+    "tests": 158,
+    "suites": 21,
+    "typeScriptNoEmit": true,
+    "focusedLifecycleTests": 22,
+    "focusedLifecycleSuites": 3,
+    "focusedTestsOverlapFullSelection": true,
+    "newRegressionControlsFailedOnPreviousSource": 2,
+    "smartCityFilesMatchSnapshot": 35
+  },
+  "browser": {
+    "origin": "http://127.0.0.1:7782",
+    "desktopViewport": [
+      1920,
+      1080
+    ],
+    "desktopDocumentWidth": 1920,
+    "mobileViewport": [
+      390,
+      844
+    ],
+    "mobileDocumentWidth": 375,
+    "mobileDocumentHasHorizontalOverflow": false,
+    "bothPreviewsExactAndAligned": true,
+    "reportsTabOpened": true,
+    "presentationModeEntered": true,
+    "consoleErrorsOrWarningsObserved": 0,
+    "viewportOverrideReset": true,
+    "downloadVerification": "Previous JSON export click did not yield an inspectable download through browser automation. No new download claim.",
+    "finalBothPreviewsExactAndAligned": true
+  },
+  "screenshots": [
+    {
+      "file": "polish-bitmap-desktop-full.jpg",
+      "sha256": "d13b468823d57629848262637daa4da9fd5182d17df7be3dcccc3e745b7654c9"
+    },
+    {
+      "file": "polish-bitmap-mobile.jpg",
+      "sha256": "203b065604b2d2d992075f49c6f1abcf1e6ab433e10baa3e578db8f20d0b1258"
+    },
+    {
+      "file": "polish-bitmap-presentation.jpg",
+      "sha256": "25e1e3e124f9352bd16763c8f88e8321c851a8c257396ec4a8822e2f8dc149b4"
+    },
+    {
+      "file": "polish-bitmap-final-presentation.jpg",
+      "sha256": "2679a39fffa1b6b712a7fce9a42a9bf0ce51f3957d674ecd305f463f909fbf32"
+    }
+  ],
+  "lifecycleFix": "Own pending decoded ImageBitmaps before React commit; release skipped states and cancelled generations, preserve committed pixels through presentation; reject released pairs at draw boundary. Canvas backing dimensions change only on geometry changes.",
+  "runtimeReceipt": "polish-bitmap-managed-1200s.json",
+  "browserMemoryScope": "Twenty-minute in-app renderer observations saved separately; Firefox retest not performed.",
+  "limits": [
+    "Native createImageBitmap already in flight cannot be aborted; output from a cancelled generation is closed on resolution.",
+    "Map remains uncalibrated for unrelated recordings. No cross-camera identities fabricated.",
+    "Unit tests prove the ownership bug and fix; they do not isolate all previous Firefox allocation growth.",
+    "No Thor or all-day runtime qualification."
+  ],
+  "runtimeSummary": "polish-bitmap-runtime-summary.json",
+  "browserMemoryReceipt": "polish-browser-memory.json",
+  "packageBuild": {
+    "tasksPassed": 10,
+    "tasksTotal": 10,
+    "wallSeconds": 119.543
+  }
+}

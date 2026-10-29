@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "city.native-sei-pedestrian-camera-continuity.v1",
+  "recordedAt": "2026-10-26T10:42:21.776527+00:00",
+  "scope": "Read-only bounded observation-tail and saved UI/native trace analysis. No source/runtime/model/GPU/threshold changes.",
+  "runId": "2227daf39a19476d:000003",
+  "trace": {
+    "path": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-native-sei-pedestrian-final-ui.ndjson",
+    "sha256": "56bd512d168046b47a3f671c72788739277623615734ed30b5d472a20778a59c",
+    "observerRows": 18
+  },
+  "nativeResult": {
+    "state": "completed",
+    "elapsedWallSeconds": 42.70988465193659,
+    "arrivalStatus": "SUCCEEDED",
+    "positionM": [
+      -11.204948425292969,
+      69.9933090209961,
+      0.03738503158092499
+    ],
+    "endpointArrivalVerified": true,
+    "restored": true
+  },
+  "cameraResult": {
+    "measurementId": "east-crossing-north-south",
+    "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+    "sourceSessionId": "6e116200-8ef5-4bba-81d5-e9d7fa69a344",
+    "localTrackId": "14111885434996916236",
+    "completedCountFirstObserved": 0,
+    "completedCountFinal": 0,
+    "incompleteCountFirstObserved": 3,
+    "incompleteCountFinal": 3,
+    "classification": "Native episode passed; camera completed0 is correct under the1second continuity rule. Three incomplete visits were already present in the first observer row and remained unchanged; they are not three new incomplete crossings caused by this episode.",
+    "identity": "Same local handle follows the North-to-South path before/after holes; no alternate near-path fresh person or duplicate/ambiguous local-ID suppression was found in the two critical windows. Native optionalSDKtarget changes are separate from this stable local journey."
+  },
+  "boundedExtraction": {
+    "source": "/home/sparkdev/vss/.spark/city/state/live-observations.ndjson",
+    "sizeAtRead": 103698819,
+    "readStartOffset": 36589955,
+    "readBytes": 67108245,
+    "readBoundBytes": 67108864,
+    "earliestReadNs": "1793010393047792121",
+    "requestedStartNs": "1793010800021672448",
+    "requestedEndNs": "1793010868656389120",
+    "windowCoversStart": true,
+    "rows": 1482,
+    "rowsBySource": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": 741,
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 741
+    },
+    "sha256": "7aadcd2e7745be8b46cc97e071744c028e21681d17313648dd8a59f4242120a2",
+    "runId": "2227daf39a19476d:000003"
+  },
+  "evidenceGaps": [
+    {
+      "beforeNs": "1793010810098640075",
+      "afterNs": "1793010814478779972",
+      "gapMs": 4380.139897,
+      "beforeElapsedWallSeconds": -1.923032,
+      "afterElapsedWallSeconds": 2.457107,
+      "beforePositionM": [
+        -11.593996348888759,
+        88.2421240502866
+      ],
+      "afterPositionM": [
+        -11.186608053593806,
+        87.72333603489565
+      ],
+      "beforeConfidence": 0.360714197,
+      "afterConfidence": 0.56985265
+    },
+    {
+      "beforeNs": "1793010817210992033",
+      "afterNs": "1793010818514410233",
+      "gapMs": 1303.4182,
+      "beforeElapsedWallSeconds": 5.18932,
+      "afterElapsedWallSeconds": 6.492738,
+      "beforePositionM": [
+        -11.005100343481992,
+        87.0617598213911
+      ],
+      "afterPositionM": [
+        -10.98307444082465,
+        87.08511817936079
+      ],
+      "beforeConfidence": 0.496093839,
+      "afterConfidence": 0.381219566
+    },
+    {
+      "beforeNs": "1793010822977385796",
+      "afterNs": "1793010824114375981",
+      "gapMs": 1136.990185,
+      "beforeElapsedWallSeconds": 10.955713,
+      "afterElapsedWallSeconds": 12.092703,
+      "beforePositionM": [
+        -10.783345876585859,
+        86.62744652715506
+      ],
+      "afterPositionM": [
+        -10.414112119186703,
+        86.06966629496978
+      ],
+      "beforeConfidence": 0.377540678,
+      "afterConfidence": 0.414898843
+    },
+    {
+      "beforeNs": "1793010839629305086",
+      "afterNs": "1793010841500055406",
+      "gapMs": 1870.75032,
+      "beforeElapsedWallSeconds": 27.607633,
+      "afterElapsedWallSeconds": 29.478383,
+      "beforePositionM": [
+        -11.588374120753967,
+        77.57859324664872
+      ],
+      "afterPositionM": [
+        -11.48822199334537,
+        76.25197198363608
+      ],
+      "beforeConfidence": 0.353539795,
+      "afterConfidence": 0.501953065
+    }
+  ],
+  "criticalTransitions": [
+    {
+      "elapsedWallSeconds": 12.017664,
+      "sourceTimeNs": "1793010824039336665",
+      "sequence": "894",
+      "phase": null,
+      "journey": null,
+      "lossCounted": null,
+      "positionM": null
+    },
+    {
+      "elapsedWallSeconds": 12.092703,
+      "sourceTimeNs": "1793010824114375981",
+      "sequence": "895",
+      "phase": "crossing",
+      "journey": false,
+      "lossCounted": true,
+      "positionM": [
+        -10.414112119186699,
+        86.06966629496978
+      ]
+    },
+    {
+      "elapsedWallSeconds": 28.785882,
+      "sourceTimeNs": "1793010840807554167",
+      "sequence": "1089",
+      "phase": null,
+      "journey": null,
+      "lossCounted": null,
+      "positionM": null
+    },
+    {
+      "elapsedWallSeconds": 29.478383,
+      "sourceTimeNs": "1793010841500055406",
+      "sequence": "1098",
+      "phase": "crossing",
+      "journey": false,
+      "lossCounted": true,
+      "positionM": [
+        -11.488221993345366,
+        76.25197198363607
+      ]
+    },
+    {
+      "elapsedWallSeconds": 37.226048,
+      "sourceTimeNs": "1793010849247720967",
+      "sequence": "1191",
+      "phase": "outside",
+      "journey": false,
+      "lossCounted": false,
+      "positionM": [
+        -11.329745342866905,
+        71.93658757958892
+      ]
+    }
+  ],
+  "diagnosis": {
+    "entry": "Last observed waiting-side pointY86.627 at10.955713s, then16 delivered camera frames contain no fresh near-path person. Same handle returns at12.092703s insidecrossingY86.070 after1136.990185ms. Oldwaitingstate expires at12.017664s, before reappearance; that first-seen crossing hasjourney=false.",
+    "middle": "After sameID atY77.579/27.607633s,23 subsequent delivered frames have no fresh near-path person untilY76.252/29.478383s:1870.750320ms. This independently breaks a full-camera journey.",
+    "exit": "SameID remains observed down to the far landing, but retained journey=false; actualfar-side exit at37.226048s cannot retrospectively repair entry/middle gaps. Counting it would infer through missingevidence.",
+    "frameStream": "Camera frames continue in both critical windows. MaximumSWsourceframe gap in retained window488.279935ms; all nativeambiguity/capacity counters zero. This is target-specific fresh observation loss, not a whole-camera outage or outputambiguity guard.",
+    "causeLimit": "Metadata proves missing fresh detector/tracker output, not physical pixel occlusion. Target is small nearentry (about9\u201311pxwide/26\u201330pxhigh) and adjacent confidence values are near the configured threshold. No claim that a specific occluder or PGIE-vs-NvDCF cause was visually proved."
+  },
+  "offlineReplay": {
+    "sourceSha256": "04425575ac5f799a66a6244e62ea709effde329e6913406ee9c48c6e555986bc",
+    "helper": "/home/sparkdev/vss/.spark/city/runtime/native-sei-pedestrian-final-audit-20261026/replay.py",
+    "helperSha256": "daf20331519723c22c4d7e1314a48d9b1af4864fa313fedacea8c0d0d5fe3042",
+    "result": "Unchanged MobilitySpatial on actual retained frames/actualsavedrules+calibration reproduces completed0/incomplete3 and the two state expirations. Targetpositions use the same class homography/valid-ground checks; no simulatorGT identity or position is fed to analytics.",
+    "maximumObservationGapMs": 1000
+  },
+  "disposition": "No counter/state-machine defect found for this episode. Retain as visible evidence-continuity limit of the prototype. Preserve earlier successful camera crossing as a separate input/epoch/run; do not describe it as this run.",
+  "limits": [
+    "This bounded trace is not a model accuracy benchmark or proof that all failures are diagnosed.",
+    "Nativearrival and camera completedcrossing are independent acceptance results.",
+    "No gap/ROI/confidence/identity guard was relaxed and no missed count was fabricated."
+  ]
+}

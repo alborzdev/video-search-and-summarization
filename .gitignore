@@ -86,3 +86,11 @@ deploy/helm/**/charts/*.tgz
 
 # Local upgrade/build scratch; never contains application source.
 /work/
+
+# Raw rehearsal telemetry and sampled frames stay on the development host.
+# Keep source, summaries, configuration receipts and final screenshots in Git.
+/docs/qa/**/trace.ndjson
+/docs/qa/**/segment-trace.jsonl
+/docs/qa/**/memory.jsonl
+/docs/qa/smart-city-prepared-2026-10-26/*/[0-9][0-9][0-9][0-9][0-9][0-9]-????????.jpg
+/docs/qa/smart-city-prepared-2026-10-26/*/[0-9][0-9][0-9][0-9][0-9][0-9]-????????.json

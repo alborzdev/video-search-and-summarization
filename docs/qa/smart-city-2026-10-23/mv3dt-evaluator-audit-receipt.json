@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "city.mv3dt.evaluator-audit-receipt.v1",
+  "date": "2026-10-23",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "gpuWork": false,
+  "originalGatesRelaxed": false,
+  "tests": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_mv3dt_evaluator.py",
+    "passed": 14,
+    "durationSeconds": 0.03
+  },
+  "savedDataReplay": {
+    "durationSeconds": 1.054,
+    "originalMetricsReproduced": true,
+    "originalGateOutcomesReproduced": true,
+    "bothRunsStillFailed": true
+  },
+  "files": {
+    "tools/smart-city/evaluate_mv3dt_probe.py": "eaa20b58e401bc6602924c2b7c515ec36700802d370443b81a997617059a03f7",
+    "tools/smart-city/tests/test_mv3dt_evaluator.py": "2d3c297b1377a1a0d32a681016c162a91e66428d9b5b6713e2ed94fc25ee7e30",
+    "docs/smart-city-mv3dt-offline-audit-2026-10-23.md": "5234be2ae096613dedf6609bc5e668ce54473c507bd9e54f743f5a2b8774552d",
+    "docs/qa/smart-city-2026-10-23/mv3dt-audit-replay.py": "37dd3a38e0e1b79c43917331309f8a50b57e675203027a72c86b9bcb0fab6591",
+    "docs/qa/smart-city-2026-10-23/mv3dt-road-plane-offline-audit.json": "1906c517b5e90bc1295dd83a5d0965e4f06b2cdde75979652eb2d4c35e5a1815",
+    "docs/qa/smart-city-2026-10-23/mv3dt-person-plane-offline-audit.json": "83db3104d2bc358c166e088c25d5feb2c7f53f12f44d6a3ce7b18258843af2a7"
+  },
+  "limits": [
+    "Image matching is not independent visibility annotation.",
+    "Ground truth remains offline-only.",
+    "No new runtime qualification.",
+    "No camera, tracker or native model deployment."
+  ]
+}

@@ -1,0 +1,163 @@
+{
+  "schemaVersion": "city.curb-scenario-browser.v1",
+  "at": "2026-10-26T06:23:33.269805+00:00",
+  "startMethod": "Actual production browser Run a scenario / A stopped car blocks curb access / Start this scenario",
+  "runtimeEvidence": {
+    "file": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-curb-signal-gated-ui.ndjson",
+    "sha256": "08be3e8eaa3941583c1c9c794cfff1ad5f5eea37a5c67630beb789a91915ee6a",
+    "samples": 25,
+    "runId": "53305c6c1f9e4710:000001",
+    "state": "completed",
+    "elapsedWallSeconds": 52.172110265120864,
+    "holdConfirmed": true,
+    "restored": true,
+    "normalFlowVerified": true,
+    "runtime": {
+      "controllerCurrent": true,
+      "extraVehiclesActive": 1,
+      "stops": [],
+      "departuresPending": 0,
+      "walkerFailures": [],
+      "bindingBasis": "survey-reference; verify against current VSS ROIs"
+    }
+  },
+  "cameraAnalytics": {
+    "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+    "maximumObservedOccupancy": 1,
+    "maximumConfirmedStoppedCount": 1,
+    "maximumPersistentOccupancyCount": 1,
+    "first": {
+      "id": "north-curbside-access",
+      "name": "North arm \u00b7 curbside access",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "ruleId": "mobility-isaac-north-curbside-lane",
+      "zoneRuleId": "mobility-isaac-north-curbside-lane",
+      "role": "general",
+      "asOfSourceTimeNs": "1792995702352063890",
+      "windowMinutes": 5,
+      "timeBasis": "source-time",
+      "status": "unknown",
+      "occupancy": null,
+      "observedOccupancy": 0,
+      "occupancyIsLowerBound": true,
+      "pendingTrackCount": 0,
+      "lostTrackCount": 2,
+      "byClass": {},
+      "longestActiveObservedDwellMs": null,
+      "persistentOccupancyCount": null,
+      "persistentByClass": {},
+      "stoppedCount": null,
+      "stoppedByClass": {},
+      "activeVisits": [],
+      "qualityReasons": [
+        "Interrupted visits remain unresolved within the 15-minute evidence horizon."
+      ],
+      "arrivalCount": 8,
+      "departureCount": 6,
+      "turnoverCount": 6,
+      "completedVisitCount": 6,
+      "incompleteVisitCount": 3,
+      "partialVisitCount": 1,
+      "occupiedSeconds": 11.475365111,
+      "observedStoppedSeconds": 0.0,
+      "stoppedEvidenceSeconds": 11.148687334,
+      "completedDwellP50Ms": 2017.944444,
+      "completedDwellP95Ms": 2349.16944425
+    },
+    "lastAtScenarioCompletion": {
+      "id": "north-curbside-access",
+      "name": "North arm \u00b7 curbside access",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "ruleId": "mobility-isaac-north-curbside-lane",
+      "zoneRuleId": "mobility-isaac-north-curbside-lane",
+      "role": "general",
+      "asOfSourceTimeNs": "1792995752944445112",
+      "windowMinutes": 5,
+      "timeBasis": "source-time",
+      "status": "active",
+      "occupancy": 1,
+      "observedOccupancy": 1,
+      "occupancyIsLowerBound": true,
+      "pendingTrackCount": 0,
+      "lostTrackCount": 3,
+      "byClass": {
+        "car": 1
+      },
+      "longestActiveObservedDwellMs": 27390.729335,
+      "persistentOccupancyCount": 1,
+      "persistentByClass": {
+        "car": 1
+      },
+      "stoppedCount": 0,
+      "stoppedByClass": {},
+      "activeVisits": [
+        {
+          "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:e60a996b-36aa-4e2a-a2bd-7c3582986fef:1425",
+          "class": "car",
+          "observedDwellMs": 27390.729335,
+          "partial": false,
+          "stopped": false
+        }
+      ],
+      "qualityReasons": [
+        "Interrupted visits remain unresolved within the 15-minute evidence horizon."
+      ],
+      "arrivalCount": 9,
+      "departureCount": 6,
+      "turnoverCount": 6,
+      "completedVisitCount": 6,
+      "incompleteVisitCount": 5,
+      "partialVisitCount": 3,
+      "occupiedSeconds": 38.866094446,
+      "observedStoppedSeconds": 18.953461667,
+      "stoppedEvidenceSeconds": 38.358772224,
+      "completedDwellP50Ms": 2017.944444,
+      "completedDwellP95Ms": 2349.16944425
+    },
+    "laterRead": {
+      "id": "north-curbside-access",
+      "name": "North arm \u00b7 curbside access",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "ruleId": "mobility-isaac-north-curbside-lane",
+      "zoneRuleId": "mobility-isaac-north-curbside-lane",
+      "role": "general",
+      "asOfSourceTimeNs": "1792995813225131667",
+      "windowMinutes": 5,
+      "timeBasis": "source-time",
+      "status": "unknown",
+      "occupancy": null,
+      "observedOccupancy": 0,
+      "occupancyIsLowerBound": true,
+      "pendingTrackCount": 0,
+      "lostTrackCount": 3,
+      "byClass": {},
+      "longestActiveObservedDwellMs": null,
+      "persistentOccupancyCount": null,
+      "persistentByClass": {},
+      "stoppedCount": null,
+      "stoppedByClass": {},
+      "activeVisits": [],
+      "qualityReasons": [
+        "Interrupted visits remain unresolved within the 15-minute evidence horizon."
+      ],
+      "arrivalCount": 9,
+      "departureCount": 7,
+      "turnoverCount": 7,
+      "completedVisitCount": 7,
+      "incompleteVisitCount": 5,
+      "partialVisitCount": 3,
+      "occupiedSeconds": 42.341503778,
+      "observedStoppedSeconds": 18.953461667,
+      "stoppedEvidenceSeconds": 41.834181556,
+      "completedDwellP50Ms": 2252.477777,
+      "completedDwellP95Ms": 20786.179534399984
+    }
+  },
+  "screenshot": "curb-stop-active.jpg",
+  "limits": [
+    "Staged actor receipts are simulator ground truth; occupancy/dwell/stopped results are independent image analytics.",
+    "Dwell is observed zone presence, not a legal parking or loading-purpose finding.",
+    "Retained interrupted visits can keep current total unknown/lower-bound; departure requires observed evidence.",
+    "This run used the continuity-only flags-off native profile, before the staged-tracker candidate."
+  ]
+}

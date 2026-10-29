@@ -1,0 +1,46 @@
+{
+  "720p-baseline": {
+    "sourceProfile": "/home/sparkdev/isaac_city_sim/logs/vss-integration/performance/720p-baseline/profile.json",
+    "instrumented": true,
+    "scope": "Python main thread only; includes waiting in native calls; profiling adds overhead.",
+    "seconds": 14.929326612036675,
+    "nativeFps": {
+      "cam_SW": 9.511480570430646,
+      "cam_NE": 9.511480570430646
+    },
+    "gpuMedianMs": null,
+    "pythonGantrySync": [
+      {
+        "file": "/home/sparkdev/isaacsim-6.1.0/exts/isaacsim.robot_setup.virtual_gantry/isaacsim/robot_setup/virtual_gantry/_runtime.py",
+        "line": 251,
+        "function": "_sync",
+        "primitiveCalls": 20,
+        "calls": 20,
+        "ownSeconds": 0.89523602,
+        "cumulativeSeconds": 0.8952861320000001
+      }
+    ]
+  },
+  "720p-gpu-baseline": {
+    "sourceProfile": "/home/sparkdev/isaac_city_sim/logs/vss-integration/performance/720p-gpu-baseline/profile.json",
+    "instrumented": true,
+    "scope": "Python main thread only; includes waiting in native calls; profiling adds overhead.",
+    "seconds": 14.912815387360752,
+    "nativeFps": {
+      "cam_SW": 9.52201152576133,
+      "cam_NE": 9.52201152576133
+    },
+    "gpuMedianMs": 33.637024,
+    "pythonGantrySync": [
+      {
+        "file": "/home/sparkdev/isaacsim-6.1.0/exts/isaacsim.robot_setup.virtual_gantry/isaacsim/robot_setup/virtual_gantry/_runtime.py",
+        "line": 251,
+        "function": "_sync",
+        "primitiveCalls": 20,
+        "calls": 20,
+        "ownSeconds": 0.9277417720000001,
+        "cumulativeSeconds": 0.9277917720000001
+      }
+    ]
+  }
+}

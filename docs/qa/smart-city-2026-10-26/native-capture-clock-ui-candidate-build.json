@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "city.native-capture-clock-ui-candidate-build.v1",
+  "at": "2026-10-26T10:20:59.070642+00:00",
+  "status": "built-offline-not-activated",
+  "packageId": "20261026T101539610628Z",
+  "imageId": "sha256:77c06679148cc6cc1e9cb7277fc100261e8a63217b1f49db3096ec3b117931ed",
+  "imageReference": "vss-spark-vss-ui:smart-city-7388367ea12e-20261026t101539610628z",
+  "sourceSha256": "7388367ea12ee33695ccc6b42d47f4dcb23e5a4960665ab99d66a6ac2e95027b",
+  "artifactSha256": "5d5423e8ba6d4c2ae18e796fb7a51090015ffd27524d068d43e2753aca43aa58",
+  "manifestSha256": "eb33994a863adc3422d89867b3e0d39a82c7d2cf46592087ed8277c66c332a32",
+  "buildLogSha256": "b15a4a24450d531a87bc4402d3872ded3895eaad44afa36087a1bd4ee7da0c38",
+  "imageLogSha256": "f178f6dbd93838bb28f6a75f1154e5b4cc55f2b5ea925c2eea8c8d61c820f6fe",
+  "buildTasks": {
+    "passed": 10,
+    "total": 10,
+    "elapsed": "2m2.367s"
+  },
+  "dependencyMode": "reuse-installed",
+  "environment": {
+    "cpuOnly": true,
+    "networkDuringCompile": "none",
+    "cpus": 2,
+    "memoryGiB": 4,
+    "NVIDIA_VISIBLE_DEVICES": "void",
+    "installsPerformed": false
+  },
+  "sourceDelta": "native-capture-clock-ui-source-delta.json",
+  "clockGuardQualification": "native-capture-clock-owner-qualification.json",
+  "scope": "Fresh immutable UI artifact. No running UI/service recreated, no GPU/model/Kit/actor actions, no live browser/clock/FPS qualification. Accepted branding/layout and unrelated source inputs unchanged.",
+  "activationTarget": "Root controls only isolatedcity-polish-ui image pin; helper sharedvss-ui overlay remains unmodified.",
+  "runtimeActivated": false,
+  "goalComplete": false
+}

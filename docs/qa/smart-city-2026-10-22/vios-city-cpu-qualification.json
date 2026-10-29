@@ -1,0 +1,220 @@
+{
+  "baseline": {
+    "capturedAt": "2026-10-22T05:14:20.519763+00:00",
+    "phase": "baseline2CPU",
+    "cpuStat": {
+      "usage_usec": 503080402,
+      "user_usec": 470355386,
+      "system_usec": 32725016,
+      "nice_usec": 0,
+      "core_sched.force_idle_usec": 0,
+      "nr_periods": 4196,
+      "nr_throttled": 2379,
+      "throttled_usec": 2202058928,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "nanoCpus": 2000000000,
+    "memoryBytes": 2147483648,
+    "memorySwapBytes": 2147483648,
+    "sources": [
+      {
+        "id": "291399aa-a062-43b6-badc-48c34bc08237",
+        "sourceClockAgeSeconds": 19.388433694839478,
+        "sourceClockProgressRatio": 0.9248661253557886,
+        "sourceClockStatus": "delayed-or-unsynchronized",
+        "lastSourceTimeNs": "1792646040589597621"
+      },
+      {
+        "id": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+        "sourceClockAgeSeconds": 0.20821619033813477,
+        "sourceClockProgressRatio": 1.0035213518961803,
+        "sourceClockStatus": "unverified-source-rtcp",
+        "lastSourceTimeNs": "1792646059769830487"
+      }
+    ]
+  },
+  "experiment": {
+    "capturedAt": "2026-10-22T05:14:52.232045+00:00",
+    "phase": "4CPU-31seconds",
+    "nanoCpus": 4000000000,
+    "memoryBytes": 2147483648,
+    "memorySwapBytes": 2147483648,
+    "sources": [
+      {
+        "id": "291399aa-a062-43b6-badc-48c34bc08237",
+        "sourceClockAgeSeconds": 22.562186002731323,
+        "sourceClockProgressRatio": 0.8983321156219718,
+        "sourceClockStatus": "delayed-or-unsynchronized",
+        "lastSourceTimeNs": "1792646069355301884",
+        "wallSeconds": 31.076528787612915,
+        "sourceAdvanceSeconds": 27.868813289
+      },
+      {
+        "id": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+        "sourceClockAgeSeconds": 0.14773011207580566,
+        "sourceClockProgressRatio": 1.0051637156900686,
+        "sourceClockStatus": "unverified-source-rtcp",
+        "lastSourceTimeNs": "1792646091769767265",
+        "wallSeconds": 31.076528787612915,
+        "sourceAdvanceSeconds": 31.099943055
+      }
+    ],
+    "cpuStat": {
+      "usage_usec": 629749861,
+      "user_usec": 590579399,
+      "system_usec": 39170461,
+      "nice_usec": 0,
+      "core_sched.force_idle_usec": 0,
+      "nr_periods": 4513,
+      "nr_throttled": 2695,
+      "throttled_usec": 2448204611,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    },
+    "minimumAvailableGiB": 23.37029266357422,
+    "samples": [
+      {
+        "elapsedSeconds": 0,
+        "availableGiB": 23.654876708984375
+      },
+      {
+        "elapsedSeconds": 1,
+        "availableGiB": 23.563858032226562
+      },
+      {
+        "elapsedSeconds": 2,
+        "availableGiB": 23.43030548095703
+      },
+      {
+        "elapsedSeconds": 3,
+        "availableGiB": 23.52927017211914
+      },
+      {
+        "elapsedSeconds": 4,
+        "availableGiB": 23.488262176513672
+      },
+      {
+        "elapsedSeconds": 5,
+        "availableGiB": 23.518165588378906
+      },
+      {
+        "elapsedSeconds": 6,
+        "availableGiB": 23.55278778076172
+      },
+      {
+        "elapsedSeconds": 7,
+        "availableGiB": 23.59270477294922
+      },
+      {
+        "elapsedSeconds": 8,
+        "availableGiB": 23.578632354736328
+      },
+      {
+        "elapsedSeconds": 9,
+        "availableGiB": 23.613285064697266
+      },
+      {
+        "elapsedSeconds": 10,
+        "availableGiB": 23.60678482055664
+      },
+      {
+        "elapsedSeconds": 11,
+        "availableGiB": 23.611968994140625
+      },
+      {
+        "elapsedSeconds": 12,
+        "availableGiB": 23.567481994628906
+      },
+      {
+        "elapsedSeconds": 13,
+        "availableGiB": 23.607769012451172
+      },
+      {
+        "elapsedSeconds": 14,
+        "availableGiB": 23.538097381591797
+      },
+      {
+        "elapsedSeconds": 15,
+        "availableGiB": 23.477340698242188
+      },
+      {
+        "elapsedSeconds": 16,
+        "availableGiB": 23.37029266357422
+      },
+      {
+        "elapsedSeconds": 17,
+        "availableGiB": 23.457534790039062
+      },
+      {
+        "elapsedSeconds": 18,
+        "availableGiB": 23.38930892944336
+      },
+      {
+        "elapsedSeconds": 19,
+        "availableGiB": 23.455612182617188
+      },
+      {
+        "elapsedSeconds": 20,
+        "availableGiB": 23.48206329345703
+      },
+      {
+        "elapsedSeconds": 21,
+        "availableGiB": 23.481464385986328
+      },
+      {
+        "elapsedSeconds": 22,
+        "availableGiB": 23.42169189453125
+      },
+      {
+        "elapsedSeconds": 23,
+        "availableGiB": 23.472766876220703
+      },
+      {
+        "elapsedSeconds": 24,
+        "availableGiB": 23.541412353515625
+      },
+      {
+        "elapsedSeconds": 25,
+        "availableGiB": 23.47439193725586
+      },
+      {
+        "elapsedSeconds": 26,
+        "availableGiB": 23.49448013305664
+      },
+      {
+        "elapsedSeconds": 27,
+        "availableGiB": 23.48836898803711
+      },
+      {
+        "elapsedSeconds": 28,
+        "availableGiB": 23.460403442382812
+      },
+      {
+        "elapsedSeconds": 29,
+        "availableGiB": 23.417022705078125
+      },
+      {
+        "elapsedSeconds": 30,
+        "availableGiB": 23.390888214111328
+      }
+    ],
+    "cpuStatDelta": {
+      "usage_usec": 126669459,
+      "user_usec": 120224013,
+      "system_usec": 6445445,
+      "nice_usec": 0,
+      "core_sched.force_idle_usec": 0,
+      "nr_periods": 317,
+      "nr_throttled": 316,
+      "throttled_usec": 246145683,
+      "nr_bursts": 0,
+      "burst_usec": 0
+    }
+  },
+  "decision": "Restore2CPU:4CPUdidnotimprovetrafficclockprogressorage;notqualifiedforpromotion.",
+  "restoredAt": "2026-10-22T05:15:15.267935+00:00",
+  "finalCpuQuota": 2,
+  "memoryBytes": 2147483648,
+  "baseConfigurationChanged": false
+}

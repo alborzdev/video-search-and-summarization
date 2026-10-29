@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "city.native-capture-clock-independent-source-review.v1",
+  "reviewedAt": "2026-10-26T10:23:02.479346+00:00",
+  "reviewer": "next_sim_perf",
+  "result": "no-blocking-findings-on-reviewed-core-source",
+  "scope": "Read-only independent source review and CPU controls. No live Kit/pipeline/service/actor/GPU/model requests; no edits to peer-owned implementation. Root owns final immutable-profile activation and integrated qualification.",
+  "sourceSha256": {
+    "services/rtvi/rt-cv/smart-city/src/native_capture_clock.hpp": "4336400c12d5902486597d831f0f8d36855fac900b55226c713902855b4e1a9e",
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "582aa08b7cec94b2ddab0ff796128a88cdd29722d61aa1e12e4bdca4ef1f1463",
+    "services/rtvi/rt-cv/smart-city/tests/test_native_capture_clock.cpp": "276aa63b2f09c929c902c04dfd480e49b75b589a6f9b29c2d06e768398594f63",
+    "services/rtvi/rt-cv/smart-city/Makefile": "f18a4fd853b7aa87df1962ad2d6fbf42b0742dbeead27d953983b7779c0ef453",
+    "services/analytics/behavior-analytics/apps/city/models.py": "d9a26b627addee52bd5ece329f54c033ec0e312f27173453f101f01ddb932293",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "bc5fc567ca9b4fc312a8288ec2ecaf07d27cbaac0c87e2ca9d9eb3767dc445fa",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "8437eb1b5ce435f2a490a2bd496fc26c34f21f1086794c69973ad3d8908ad8b6",
+    "services/analytics/behavior-analytics/apps/city/tests/test_native_sei_clock.py": "e2be6132ebdf61eb2364a6b46c00124d885d23ae58abe1c878380736957e3781",
+    "tools/smart-city/mv3dt_demo_profile.py": "4665ec4a8275795d69bf8b403284455e95fffd3a6966956c03f8fe7bb5f08400",
+    "tools/smart-city/tests/test_mv3dt_demo_profile.py": "81e04b3c871b0dd125761f689cff1f9c199daae94f6bebf89ee3c08d6646b0b4",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/sourceClock.ts": "b0e150e50e400e26429523a51fb7b131b0439cfcfc46b4a468025fe08d7f94d0",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mapObjects.ts": "6181b0c012493affeecb5646cbb9d8306371b4d94c4f91f45339a1934b436d86",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/processedPreview.ts": "3dcdd54938d1681d41cf7ad866b37869de088fbcbec1b930d673796a1077fa48",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/types.ts": "0585a236af67fff3691ea4bd68cea13b34ecb106b61878469591db4d2b0a8b96",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/sourceClock.test.ts": "391f7d52c9f27c796685ac47591aa774df8301d5856d57ea1260ac5e55f3fc6f",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/mapObjects.test.tsx": "1bd4d0b92aea23fde548d2a5b66631b40058e2ad455271dbe55ef04f03118ca8",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/processedPreview.test.ts": "a9a45c9f31542eeb64508b7d1716e75b6af5a64baf915117a54c3c18dc1e49b9"
+  },
+  "independentTests": [
+    {
+      "test": "native-capture-clock-test NATIVE_CAPTURE_FIXTURES=/wire",
+      "source": "immutable .spark/city/runtime/native-capture-clock-candidate-20261026/build",
+      "controlGroups": 19,
+      "actualEncodedWireAUsAccepted": 360,
+      "exitCode": 0,
+      "environment": "runc; pinned f68fc7202b48 SDKimage;2CPU/4GiB; readonly source/root/tmpfs; no network; NVIDIA_VISIBLE_DEVICES=void; no image decode/GPU"
+    },
+    {
+      "command": "PYTHONPATH=services/analytics/behavior-analytics /tmp/vss-city-backend-test-env/bin/python -m pytest -q services/analytics/behavior-analytics/apps/city/tests/test_native_sei_clock.py tools/smart-city/tests/test_mv3dt_demo_profile.py",
+      "count": 57,
+      "seconds": 0.35,
+      "exitCode": 0,
+      "warning": "Existing Starlette/httpx deprecation; no install/change made."
+    },
+    {
+      "test": "Jest sourceClock.test.ts +mapObjects.test.tsx +processedPreview.test.ts",
+      "suites": 3,
+      "count": 65,
+      "seconds": 1.247,
+      "exitCode": 0,
+      "imageId": "sha256:6781e5ed19f647257e78e45c9af8a62d3741437e244d6f7900cea72b6a0b8c66",
+      "environment": "runc;2CPU/4GiB; readonly source/root/tmpfs; no network/NVIDIAdevices; no live UI/build"
+    }
+  ],
+  "installedSdkProof": "installed-sdk-native-tracker-clock-input.json",
+  "packagedCandidateEvidence": "native-capture-clock-candidate-build.json",
+  "reviewedContracts": {
+    "payload": "Explicit current Isaac UUID and exact five-field existing producer format; no invented producer schemaVersion. Strict integer fields/UTC consistency, duplicate keys/UUIDs, VCL AU, bounds and native RBSP validation. publish_sim_time_ns is diagnostic only.",
+    "exactIdentity": "Per-source exact encoded AU PTS\u2192decoded PTS\u2192beforeMux PTS\u2192NvDsFrame.buf_pts. No nearest-time/counter alias.512bounded cache and highwater remain aftertake; duplicate/missing/old epoch fails closed.",
+    "clockAuthority": "After mux, before preprocessing/inference/BOTH trackerstages, actual capture ns replaces nonzero frame.ntp_timestamp; original buf_pts stays intact. Installed nvtracker uses that NTP in actual NvMOT timeMeta. Same capture ns is exported and bound to exact preview. Original SDK mapper NTP remains diagnostic evidence.",
+    "admission": "Default absent mode remains genericRTCP. Explicit pinned Spark/Isaac nativeprofile only; validated onecamera uses nativeclock with ordinary NvDCF and noSharedIDs, then full orderedpair permits staged MV3DT. Gateway native mode rejects RTCP fallback even during singlecamera admission.",
+    "epochs": "Source capture time, frame counter and PTS must advance; reconnect/discontinuity/segment/flush/reset ambiguities require fresh managed worker/session rather than clock offsets or source basis substitution.",
+    "mapGuards": "Actual source evidence+model/currentframe/session/calibration required; grouping includes clock basis so mixedRTCP/native observations cannotjoin. Original person-only SDKidentity, visibility,150ms capture window,1mjoin/1.5msplit distance and epoch guards retained. NoGT/heuristic IDs or class promotion.",
+    "browser": "Native clock is encoded-frame handoff walltime, not independent physical exposure or browser latency verification. browserClockVerified remains false."
+  },
+  "issuesResolvedDuringReview": [
+    "Native SEI trailing bits/trailing junk and forbidden NALbit now checked.",
+    "Diagnostics retain ORIGINAL SDK mapper NTP after capture authority is applied.",
+    "Singlecamera sequential startup explicitly retains native clock authority, while map sharing still needs complete pinnedpair.",
+    "Mixedbasis joins rejected; no broad generic-clock guard relaxation."
+  ],
+  "remainingLimits": [
+    "CPU controls and actual encoded payload acceptance do not establish live decode/pad order, throughput, image age or long-run reliability.",
+    "Final candidate must show exact native clock evidence in real single and paired worker output before acceptance.",
+    "Source/physical exposure and browser latency remain unverified; current camera rendering is asynchronous even when handoff stamps are close.",
+    "Existing native vehicle fusion is not qualified; person map joining remains guarded experimental display only.",
+    "Soak/question helper opt-ins and broad frontend TSC/package checks are owned by next_preview_perf and not covered by the core hashes/tests listed here."
+  ],
+  "finalDeltaReview": {
+    "changedReviewedFiles": [
+      "services/analytics/behavior-analytics/apps/city/tests/test_native_sei_clock.py",
+      "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mapObjects.ts",
+      "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/processedPreview.ts",
+      "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/mapObjects.test.tsx",
+      "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/processedPreview.test.ts"
+    ],
+    "runtimeDelta": "Native map group key also includes modelRevision, preventing two individually valid different-model sources from sharing a marker. Native exact-preview envelope refuses empty modelRevision. Both strengthen existing guards; genericRTCP path unchanged.",
+    "testDelta": "Added different-model/empty-model frontend controls and actual restart-with-retained-RTCP-history/events/no-reingest backend control.",
+    "finalOwnerQualification": "native-capture-clock-owner-qualification.json",
+    "parentActivationScript": {
+      "path": "/tmp/deploy_city_native_sei.py",
+      "sha256": "32fff81a333e4a844c5256cc48f6bd0273623eec487484443165bcf42ac532d6",
+      "readOnlyReview": "No blocking success-path finding: immutable candidate/UI inputs, idle restored scene, scoped pauses, pinned profile load, gateway then UI, sequential1-to-pair resume, exact new source sessions, preserved map/rules/mobility and unchangedstage/publisher checks.",
+      "failureDisposition": "Exception pauses owned sources and saves failure/backups; does NOT automatically restore old profile/UI/gateway compose. Root must perform reviewed manual rollback/recovery if needed. No independent deployment run."
+    }
+  },
+  "integrationFollowup": {
+    "status": "Both downstream source/CPU repairs independently reviewed without blocker; actual finalimages qualification is owner work",
+    "actualClock": "Parent actual54b13 candidate showed native source proof/age about.2s and paired handoff clock about.3ms. This is parent-owned runtime evidence, not an independent collection.",
+    "omissions": [
+      "UI API nested sources allowlist stripped sourceClockMode/sourceClockEvidence; component-only preview/map tests did not exercise proxy delivery.",
+      "Existing C++ demo_global_identity RTCP-only clock guard suppressed optional global IDs despite native rawSDKsharedtarget. Native clock parsing/stamping tests did not assert person object global-ID export."
+    ],
+    "owners": "next_preview_perf owns proxy/test/immutable UI; next_pipeline_perf owns explicit qualified-native identity guard/export regression/new image. No fixes/runtime actions by this reviewer.",
+    "priorReviewScope": "Earlier no-blocker result applies to listed source snapshots and CPU component boundaries, not a claim that live downstream person-map association was qualified.",
+    "followupReceipt": "native-capture-clock-downstream-independent-review.json"
+  }
+}

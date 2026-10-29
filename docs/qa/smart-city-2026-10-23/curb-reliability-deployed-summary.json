@@ -1,0 +1,120 @@
+{
+  "checkedAt": "2026-10-23T18:47:53.033408+00:00",
+  "status": "deployed with short acceptance checks",
+  "url": "http://127.0.0.1:7782/?workspace=smart-city",
+  "uiMode": "isolated source-mounted development profile",
+  "sourceCount": 2,
+  "liveSources": 2,
+  "exactProcessedPreviewsAvailable": true,
+  "nativePrimitives": 14,
+  "siteRevision": 71,
+  "rulesRevision": 262,
+  "configRevision": 3,
+  "configurationIssues": [],
+  "containers": [
+    {
+      "name": "vss-city-analytics",
+      "image": "sha256:bc667c99fd6b3055c0c925afbcf158f356553070dbf184221ee394b8bbbf3487",
+      "startedAt": "2026-10-23T18:44:39.624689329Z",
+      "running": true,
+      "oomKilled": false
+    },
+    {
+      "name": "vss-city-polish-ui",
+      "image": "sha256:3134f445308c4ccf95d4b28b01b4b9b8e0a1f120957900c17b6f1f1c27d60f8e",
+      "startedAt": "2026-10-23T18:44:51.493259419Z",
+      "running": true,
+      "oomKilled": false
+    }
+  ],
+  "sourceModelRevisions": [
+    null,
+    null
+  ],
+  "liveCurbSample": [
+    {
+      "id": "north-curbside-access",
+      "role": "general",
+      "status": "empty",
+      "occupancy": 0,
+      "arrivalCount": 4,
+      "departureCount": 4,
+      "completedVisitCount": 4,
+      "incompleteVisitCount": 0,
+      "occupiedSeconds": 11.437311112,
+      "completedDwellP50Ms": 2877.9611115
+    }
+  ],
+  "checks": {
+    "cpuApiAndLauncher": "227 passed in 4.55 s",
+    "ui": "30 scoped tests passed in 2.39 s",
+    "typescript": "app tsc --noEmit --incremental false passed",
+    "browser": [
+      "two live exact-frame camera panes",
+      "five topic controls",
+      "curb measurements visible and changing",
+      "curb map focus",
+      "two walking directions with approach-time labels",
+      "CSV download parsed:86 rows, camera-scoped curb arrivals/departures/turnover/dwell",
+      "final console error sample empty"
+    ]
+  },
+  "recordedInferenceReplay": {
+    "inputFrames": 6500,
+    "inputSha256": "dae1c086e2aadd0a6b3e2e598e5824aa5572d8c41d7ea710ecf8528cb17390e2",
+    "sourceTimeSpanSeconds": 373.263,
+    "cpuElapsedSeconds": 8.698,
+    "method": "unmodified actual detector output replayed through an in-memory CPU city engine, no actor truth or synthetic observations",
+    "configurationIssues": [],
+    "crossings": [
+      {
+        "name": "South crossing \u00b7 west to east",
+        "completedCount": 0,
+        "waitSampleCount": 0,
+        "firstSeenWaitingCount": 0,
+        "lowerBoundWaitP50Ms": null,
+        "incompleteCount": 0,
+        "lostTrackCount": 10
+      },
+      {
+        "name": "South crossing \u00b7 east to west",
+        "completedCount": 1,
+        "waitSampleCount": 0,
+        "firstSeenWaitingCount": 4,
+        "lowerBoundWaitP50Ms": 2385.2722224999998,
+        "incompleteCount": 14,
+        "lostTrackCount": 19
+      }
+    ],
+    "curbs": [
+      {
+        "arrivalCount": 2,
+        "departureCount": 2,
+        "completedVisitCount": 2,
+        "occupiedSeconds": 6.786325888,
+        "completedDwellP50Ms": 2843.579611
+      }
+    ]
+  },
+  "screenshot": "/home/sparkdev/.codex/visualizations/2026/10/23/city-mobility/curb-access-live.png",
+  "scopeLimits": [
+    "No model/native-image build or GPU benchmark.",
+    "No long endurance or final-scene accuracy qualification.",
+    "Curb is a general curbside lane zone, not a designated parking/loading/bus-stop bay.",
+    "Pedestrian approach time includes walking and waiting; stationary waiting and signal delay are not isolated.",
+    "Pedestrian corridor includes 1.5 m beside painted crossing; original obstruction polygons unchanged.",
+    "Missing membership remains explicit; expiring historical evidence is not confirmed clearance.",
+    "Camera-local identities, per-camera source-time windows; MV3DT remains disabled."
+  ],
+  "sha256": {
+    "services/analytics/behavior-analytics/apps/city/models.py": "b66fa07fc6934986e1fdfc8d07c0e4212cf4299cd19e70e4b32a0184f488863c",
+    "services/analytics/behavior-analytics/apps/city/mobility.py": "73860a083202022eb11721c6f2719f947de32b78fc893ab7081a45bf03094d02",
+    "services/analytics/behavior-analytics/apps/city/mobility_spatial.py": "f1c9afc91e4eca0d7d3b59cd24134e806f84c868b7b282ba85f59278816eac74",
+    "services/analytics/behavior-analytics/apps/city/mobility_curb.py": "e2ffc571cf54751b528373863bce6736b321c1a06f3811b7ce3837fc8d3967bf",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMobilityPanel.tsx": "a19824c5b44d3ef5e5f797f9d32725fd1e9d8529d559a36b703c7a8c6bc88695",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMobility.module.css": "acac2c01fbdb84fe20d51f3c9c85ab0a1261145e4af04aa477769eb52b6be4ea",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mobilityTypes.ts": "bdce3a91034989871b0610f8b3fe5f6e4607372ff1d48c7eab31aef88c6e906c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/useMobility.ts": "7e790753497160a09d0b639d4fbc770de8f1ff40b0a4b48f7a3ab9aa90791213",
+    "tools/smart-city/isaac_mobility.py": "5ca53295d66d5b512f56caa716864a316456126c264ea76f089ed823ae7bb160"
+  }
+}

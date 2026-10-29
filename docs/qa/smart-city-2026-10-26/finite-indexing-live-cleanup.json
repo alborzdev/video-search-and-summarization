@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-26T05:26:22.028911Z",
+  "verificationMode": "read-only HTTP GET; no search/model requests, service actions, or runtime changes",
+  "sessionId": "4576ea61-1ebe-4bce-bb3a-4b715511afc6",
+  "indexing": {
+    "sensorId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+    "name": "isaac-intersection-southwest",
+    "analysisProfileId": "smart-city",
+    "mode": "on-demand",
+    "revision": 2,
+    "state": "completed",
+    "generationConnected": false,
+    "generationManaged": false,
+    "indexingRequested": false,
+    "configured": true,
+    "cvIndependent": true,
+    "sourcePaused": false,
+    "session": {
+      "id": "4576ea61-1ebe-4bce-bb3a-4b715511afc6",
+      "requestedAt": "2026-10-26T05:20:07.240958Z",
+      "deadlineAt": "2026-10-26T05:22:07.240958Z",
+      "durationSeconds": 120,
+      "startedAt": "2026-10-26T05:20:08.030118Z",
+      "endedAt": "2026-10-26T05:22:07.240958Z",
+      "state": "completed",
+      "reason": "deadline-reached"
+    },
+    "cleanup": {
+      "status": "confirmed",
+      "message": "Stopped"
+    },
+    "evidence": {
+      "status": "indexed-window",
+      "documentCount": 24,
+      "latestTimestamp": "2026-10-26T05:22:03.055Z",
+      "liveFresh": false
+    },
+    "searchScope": {
+      "available": true,
+      "applied": false,
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "sourceName": "isaac-intersection-southwest",
+      "timestampStart": "2026-10-26T05:20:08.030118Z",
+      "timestampEnd": "2026-10-26T05:22:07.240958Z",
+      "sourceType": "rtsp",
+      "queryParams": {
+        "video_sources": "[\"isaac-intersection-southwest\"]",
+        "exact_sensor_ids": "[\"997d3a69-e052-45a4-a1ce-be1b046670c4\", \"isaac-intersection-southwest\"]",
+        "timestamp_start": "2026-10-26T05:20:08.030118Z",
+        "timestamp_end": "2026-10-26T05:22:07.240958Z"
+      },
+      "basis": "source-and-camera-timestamp-range; not an indexed session tag"
+    },
+    "limits": [
+      "Requested wall-clock interval is not proof of complete camera-time coverage; camera clocks remain unverified.",
+      "Existing vector history is retained. Search callers must explicitly apply the returned source/time parameters.",
+      "General assistant search is not automatically restricted. Booth requests use exact source aliases and time bounds.",
+      "Completed means the producer lease ended, not that every chunk reached the search index.",
+      "Time bounds select chunk start timestamps; a matching clip can extend past the requested upper bound."
+    ]
+  },
+  "analysis": [
+    {
+      "sensorId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "name": "",
+      "state": "active",
+      "analysisActive": true,
+      "analysisProfileId": "smart-city",
+      "detectionEnabled": true,
+      "indexingPolicy": "on-demand",
+      "indexingRequired": false,
+      "steps": {
+        "detection": true,
+        "embedding_resource": false,
+        "embedding": false,
+        "caption_resource": true,
+        "indexing": false
+      }
+    },
+    {
+      "sensorId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "name": "",
+      "state": "active",
+      "analysisActive": true,
+      "analysisProfileId": "smart-city",
+      "detectionEnabled": true,
+      "indexingPolicy": "on-demand",
+      "indexingRequired": false,
+      "steps": {
+        "detection": true,
+        "embedding_resource": false,
+        "embedding": false,
+        "caption_resource": true,
+        "indexing": false
+      }
+    }
+  ],
+  "embeddingInventory": [],
+  "embeddingMetrics": {
+    "video_file_queries_pending": 0.0,
+    "active_live_streams": 0.0
+  },
+  "controller": [
+    {
+      "camera_id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "camera_name": "isaac-intersection-southwest",
+      "status": "running"
+    },
+    {
+      "camera_id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "camera_name": "isaac-intersection-northeast",
+      "status": "running"
+    }
+  ],
+  "cityHealth": {
+    "status": "ok",
+    "siteId": "isaac-intersection-a",
+    "mode": "live",
+    "sources": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "status": "live"
+      },
+      {
+        "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "status": "live"
+      }
+    ],
+    "nativeAnalyticsStatus": {
+      "status": "active",
+      "requestedRevision": 357,
+      "appliedRevision": 357,
+      "primitives": [
+        {
+          "ruleId": "cam_sw-pedestrian-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_c47a8de677f26b7f",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_a559dd0e91c5de06",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_5a0caf467f01fa2e",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "cam_ne-pedestrian-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_c11e6442062e2a0a",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_1d1607eeab2e1d0d",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_ne-intersection-occupancy",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_581d42acb63e6870",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "mobility-isaac-northbound-queue",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-waiting-west",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-crossing-measurement",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-waiting-east",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "cam_ne-stopped-junction",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_d7c571f5027b9f35",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        }
+      ],
+      "eventAuthority": "city-behavior-analytics",
+      "counterEpoch": "aeb68d93-96e0-4036-938c-9bdbe61c56b0",
+      "sourceTimeNs": "1792991905921510667",
+      "error": "",
+      "lastAppliedRevision": 357,
+      "operationalStatus": "fresh"
+    }
+  },
+  "previewHealth": {
+    "enabled": true,
+    "acceptedFrames": 16527,
+    "retainedBytes": 397061,
+    "ttlSeconds": 2.0,
+    "sources": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "status": "ready",
+        "available": true
+      },
+      {
+        "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "status": "ready",
+        "available": true
+      }
+    ],
+    "nativeDelivery": {
+      "status": "fresh",
+      "deliveryAgeSeconds": 0.21214795112609863,
+      "failed": false,
+      "enabled": true,
+      "fpsLimitPerSource": 30,
+      "pendingJpegs": 0,
+      "batchQueueOverruns": 0,
+      "jpegQuality": 70
+    }
+  },
+  "rootReportedUiSearch": {
+    "independentlyRepeated": false,
+    "query": "cars at an intersection",
+    "resultCount": 6,
+    "scope": "selected southwest source and completed finite session",
+    "source": "parent agent actual browser test report; no additional search was issued by this verification"
+  },
+  "limits": [
+    "Status searchScope.applied=false refers to this status-only read, not the separately executed UI search.",
+    "Completed finite evidence is historical: liveFresh=false is expected.",
+    "Search scope uses exact source aliases and chunk-start camera timestamps, not a persistent indexed-session tag.",
+    "This snapshot verifies cleanup and current continuity, not sustained FPS or accuracy."
+  ],
+  "checks": {
+    "requestedSessionCompletedAtDeadline": true,
+    "finiteWindow120Seconds": true,
+    "indexingStopped": true,
+    "cleanupConfirmed": true,
+    "embeddingInventoryEmpty": true,
+    "embeddingLiveStreamsZero": true,
+    "embeddingPendingZero": true,
+    "twoSourcesCvActive": true,
+    "twoControllerStreamsRunning": true,
+    "twoCitySourcesLive": true,
+    "twoProcessedPreviewsReady": true,
+    "nativeAnalyticsAppliedAndFresh": true,
+    "previewDeliveryFresh": true
+  },
+  "result": "pass"
+}

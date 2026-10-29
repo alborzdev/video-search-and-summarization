@@ -1,0 +1,94 @@
+{
+  "capturedAt": "2026-10-22T04:50:49.412602+00:00",
+  "phase": "recorded-agent-lifecycle-passed",
+  "sourceIds": [
+    "9821cf71-2e77-44e3-8655-7c1ddbe47681",
+    "b6e98271-cb65-4c3f-b6c7-d0b890a2a533"
+  ],
+  "configuredThroughAgent": true,
+  "registeredCount": 2,
+  "unrelatedSourceProfile": "semantic-search",
+  "steps": [
+    {
+      "test": "duplicate-running-add",
+      "httpStatus": 200,
+      "sameNativeContainer": true,
+      "response": {
+        "status": "ok",
+        "camera_id": "9821cf71-2e77-44e3-8655-7c1ddbe47681",
+        "sourceState": "registered",
+        "message": "Already registered",
+        "profileId": "smart-city"
+      }
+    },
+    {
+      "test": "remove-absent-source",
+      "httpStatus": 200,
+      "sameNativeContainer": true
+    },
+    {
+      "test": "reject-third-source",
+      "httpStatus": 409,
+      "detail": {
+        "detail": "Smart City capacity exhausted: maximum two registered sources"
+      }
+    },
+    {
+      "test": "remove-first-through-Agent",
+      "result": "200 semantic-search; second source retained"
+    },
+    {
+      "test": "remove-final-through-Agent",
+      "result": "200 semantic-search; controller empty and native container stopped"
+    }
+  ],
+  "qualification": "Functional controls; frame progress checked separately. No live clock or map claim.",
+  "twoSourceObservedSnapshot": {
+    "timestamp": "2026-10-22T04:51:00.501631Z",
+    "sources": [
+      {
+        "id": "9821cf71-2e77-44e3-8655-7c1ddbe47681",
+        "status": "live",
+        "mediaTimeSeconds": 26.7333333,
+        "sourceTimeNs": null,
+        "sessionId": "8f094cba-bc9f-4f69-8ae7-3390582a999e"
+      },
+      {
+        "id": "b6e98271-cb65-4c3f-b6c7-d0b890a2a533",
+        "status": "live",
+        "mediaTimeSeconds": 27.6,
+        "sourceTimeNs": null,
+        "sessionId": "fb4ff156-084b-4974-9708-4159cb989049"
+      }
+    ],
+    "trackCount": 116,
+    "nativeAnalytics": {
+      "status": "active",
+      "requestedRevision": 7,
+      "appliedRevision": 7,
+      "primitives": [],
+      "eventAuthority": "city-behavior-analytics",
+      "counterEpoch": "3416e278-409e-4ca0-838b-740b85339357",
+      "sourceTimeNs": "1792644628677827764",
+      "error": "",
+      "lastAppliedRevision": 7,
+      "operationalStatus": "fresh"
+    }
+  },
+  "sourceLifecycleQualified": true,
+  "finalRegisteredCount": 0,
+  "nativeWorkerStopped": true,
+  "removedThroughAgent": true,
+  "mode": "recorded-inference",
+  "memoryAvailableGiB": 24.677547454833984,
+  "limits": "Controls verified with both real recorded sources; not sustained ingestion, ground calibration, identity fusion or live clock qualification.",
+  "postTestFixes": {
+    "localAgentStorageAlias": "Validated fixed local VIOS aliases normalize to the configured storage origin; arbitrary HTTP remains rejected.",
+    "incrementalSourceSettings": "Per-source rules/calibration retained across temporary removal; deliberate rule deletions respected; site/map preserved when empty.",
+    "timestampBasis": "Internal epoch reset on same-session timestamp-basis changes; late prior-basis data rejected.",
+    "focusedCpuTests": 72,
+    "ruff": "passed",
+    "sourceModelRevision": "Actual observed model revision exposed; historical frame source metadata matches selected tracks.",
+    "sourceClockHealth": "Separate ingest age and unverified reported RTCP clock age/progress; bounded16sample window."
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "test": "native-analytics-transaction-and-negative-control",
+  "exitCode": 0,
+  "paced": true,
+  "wallSeconds": 7.845086005982012,
+  "frames": 180,
+  "roiObservations": {
+    "before": 186,
+    "after": 172,
+    "restored": 2007
+  },
+  "activeAcks": [
+    {
+      "revision": "native-test-1",
+      "status": "active",
+      "counterEpoch": "2ef755c6-2472-4dc6-851d-b3bc5f0bcd83",
+      "sourceTimeNs": "1792641704054118841",
+      "error": ""
+    },
+    {
+      "revision": "native-test-2",
+      "status": "active",
+      "counterEpoch": "f68f02a6-dc06-4db7-8d6f-96e1eec1772d",
+      "sourceTimeNs": "1792641704820785508",
+      "error": ""
+    },
+    {
+      "revision": "native-test-3",
+      "status": "active",
+      "counterEpoch": "f0284197-2440-4244-84a2-05d9f0f9e7f9",
+      "sourceTimeNs": "1792641705320785508",
+      "error": ""
+    }
+  ],
+  "invalidRevisionAck": {
+    "revision": "native-invalid",
+    "status": "error",
+    "counterEpoch": "f68f02a6-dc06-4db7-8d6f-96e1eec1772d",
+    "sourceTimeNs": "0",
+    "error": "Positive config-width/config-height required"
+  },
+  "invalidRevisionNeverObserved": true,
+  "blackNegativeControl": {
+    "frames": 15,
+    "objects": 0
+  },
+  "engineSha256": "e3f1143477f5320b45e1dfdb840ed39c1655179ef6444c77581aeaa73b07dc0c",
+  "image": "sha256:87014f626496737dc888eb80d5de9baf5a37c834033cabfbbcc50139c7183251",
+  "limits": "Native ROI reload and envelope rejection tested; directed crossing configured but crossing accuracy not qualified."
+}

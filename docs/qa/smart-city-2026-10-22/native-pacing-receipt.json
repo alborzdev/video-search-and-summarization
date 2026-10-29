@@ -1,0 +1,42 @@
+{
+  "test": "native-mixed-fps-paced-http",
+  "exitCode": 0,
+  "wallSecondsIncludingStartup": 16.3586196731776,
+  "observations": 480,
+  "publisher": {
+    "enqueued": 480,
+    "published": 480,
+    "peakQueue": 2,
+    "backpressureWaits": 0,
+    "failed": false
+  },
+  "sources": {
+    "pedestrian-cam-2": {
+      "frames": 127,
+      "steadyFrames": 107,
+      "firstMediaSeconds": 0,
+      "lastMediaSeconds": 12.6,
+      "warmupMediaSeconds": 2,
+      "steadyWallSeconds": 10.615048191975802,
+      "steadyMediaSeconds": 10.6,
+      "mediaToWallRatio": 0.9985823717703723,
+      "receivedFps": 9.985823717703724,
+      "endRelativeDriftMs": 15.048191975802538
+    },
+    "traffic-cam-1": {
+      "frames": 353,
+      "steadyFrames": 293,
+      "firstMediaSeconds": 0,
+      "lastMediaSeconds": 11.7333333,
+      "warmupMediaSeconds": 2,
+      "steadyWallSeconds": 9.722821181174368,
+      "steadyMediaSeconds": 9.7333333,
+      "mediaToWallRatio": 1.001081179899306,
+      "receivedFps": 30.032435499829987,
+      "endRelativeDriftMs": -10.5121188256323
+    }
+  },
+  "consumer": "fast local HTTP receiver, monotonic timestamps at request body receipt",
+  "pacing": "per-source identity sync; terminal fakesink sync disabled",
+  "gpuTimingScope": "native end-to-end file playback; engine-only timing is separate"
+}

@@ -1,0 +1,310 @@
+{
+  "source": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022",
+  "records": {
+    "settings.json": {
+      "task": "segment",
+      "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.jpg",
+      "object": "plane in front",
+      "model": "moondream2",
+      "segmenter": "sam2.1-tiny",
+      "grounded_by": "point",
+      "presence": "off",
+      "max_objects": 3,
+      "gb10_compat": false,
+      "output_dir": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022",
+      "repeat": 3,
+      "timeout": 600,
+      "reserve_gib_at_admission": 20.0,
+      "startup_extra_gib": 30,
+      "runtime_extra_gib": 3,
+      "guard": "vss-spark-guard.service",
+      "cli_source_sha256": "3bbdbf2b0e5c7c1b6c90df2d64a1dbad0ed873d8ab46c2a4e3b1aeabb61d8fd8"
+    },
+    "exit.json": {
+      "returncode": 0,
+      "child_returncode": 0,
+      "stop_reason": null,
+      "elapsed_s": 32.44469045707956,
+      "output_dir": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022",
+      "reserve_gib": 20.0
+    },
+    "result.json": {
+      "task": "segment",
+      "image": "/home/sparkdev/vss/.spark/local-segmentation/fixtures/refcocom-airplane-front.jpg",
+      "input_file_sha256": "f724f225a5f83e67f5088f8c9f7de6ff24bf7363de29f3bd8342406949d28302",
+      "image_open_ms": 10.844050906598568,
+      "calls": [
+        {
+          "call_index": 0,
+          "process_phase": "first_call",
+          "status": "ok",
+          "result": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022/call-000/result.json",
+          "timings_ms": {
+            "preprocess": 55.45665603131056,
+            "moondream_load": 27157.92695712298,
+            "describe": 0.0,
+            "presence": 0.0,
+            "detect": 0.0,
+            "point": 707.8746450133622,
+            "segmenter_load": 838.0838236771524,
+            "image_encode": 221.65969386696815,
+            "mask_decode": 118.75453405082226,
+            "total": 29101.17815528065
+          },
+          "model_load_ms": 27996.010780800134,
+          "call_excluding_model_load_ms": 1105.1673744805157,
+          "artifact_write_ms": 168.09001378715038,
+          "mask_count": 1
+        },
+        {
+          "call_index": 1,
+          "process_phase": "resident_reuse",
+          "status": "ok",
+          "result": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022/call-001/result.json",
+          "timings_ms": {
+            "preprocess": 0.5483692511916161,
+            "moondream_load": 0.0,
+            "describe": 0.0,
+            "presence": 0.0,
+            "detect": 0.0,
+            "point": 562.5098431482911,
+            "segmenter_load": 0.0,
+            "image_encode": 49.3937530554831,
+            "mask_decode": 5.1139299757778645,
+            "total": 618.468648288399
+          },
+          "model_load_ms": 0.0,
+          "call_excluding_model_load_ms": 618.468648288399,
+          "artifact_write_ms": 160.37020832300186,
+          "mask_count": 1
+        },
+        {
+          "call_index": 2,
+          "process_phase": "resident_reuse",
+          "status": "ok",
+          "result": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022/call-002/result.json",
+          "timings_ms": {
+            "preprocess": 0.5356650799512863,
+            "moondream_load": 0.0,
+            "describe": 0.0,
+            "presence": 0.0,
+            "detect": 0.0,
+            "point": 573.6331278458238,
+            "segmenter_load": 0.0,
+            "image_encode": 34.91926286369562,
+            "mask_decode": 8.45756707713008,
+            "total": 618.377863895148
+          },
+          "model_load_ms": 0.0,
+          "call_excluding_model_load_ms": 618.377863895148,
+          "artifact_write_ms": 161.54715465381742,
+          "mask_count": 1
+        }
+      ],
+      "worker_total_ms": 31058.097578119487,
+      "timing_scope": "Serial local calls. First call includes lazy model load. Resident reuse is not a sustained-throughput benchmark. Artifact writes are separate.",
+      "accuracy_evaluated": false,
+      "cuda_peak_allocated_gib": 4.651919364929199,
+      "cuda_peak_reserved_gib": 4.94921875
+    },
+    "call-002/result.json": {
+      "operation": "segment",
+      "model": "moondream2",
+      "object": "plane in front",
+      "status": "ok",
+      "image": {
+        "width": 640,
+        "height": 441,
+        "rgb_sha256": "992acf8fce85f0fb21941def82ecbb2db98342a7490797ec6a08a8634a4ff494"
+      },
+      "timings_ms": {
+        "preprocess": 0.5356650799512863,
+        "moondream_load": 0.0,
+        "describe": 0.0,
+        "presence": 0.0,
+        "detect": 0.0,
+        "point": 573.6331278458238,
+        "segmenter_load": 0.0,
+        "image_encode": 34.91926286369562,
+        "mask_decode": 8.45756707713008,
+        "total": 618.377863895148
+      },
+      "segmenter_name": "sam2.1-tiny",
+      "grounded_by": "point",
+      "presence_mode": "off",
+      "presence": null,
+      "raw_grounding": {
+        "points": [
+          {
+            "x": 0.63671875,
+            "y": 0.64453125
+          }
+        ]
+      },
+      "segmenter_used": true,
+      "moondream_receipt": {
+        "model": "moondream2",
+        "model_path": "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--vikhyatk--moondream2/snapshots/5d6c926f44e26b07957b0dd315bbedcb4c17a5fe/model.safetensors",
+        "tokenizer_path": "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--moondream--starmie-v1/blobs/b34d2539188d02eda1a1a23a1ec575349fb12518",
+        "device": "cuda",
+        "runtime": "photon",
+        "gb10_compat": null,
+        "enable_cuda_graphs": false,
+        "enable_prefix_cache": false,
+        "max_batch_size": 1,
+        "reserve_gib": 20
+      },
+      "grounding_settings": {
+        "max_objects": 3
+      },
+      "grounding_generation_limit": 3,
+      "grounding_returned_at_limit": false,
+      "rejected_grounding": [],
+      "valid_grounding_count": 1,
+      "truncated": false,
+      "segmenter_receipt": {
+        "name": "sam2.1-tiny",
+        "device": "cuda:0",
+        "source_repository": "facebookresearch/sam2",
+        "source_revision": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+        "source_sha256": {
+          "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "LICENSE_cctorch": "687d4f65ffe399358b170e22572564a16689e496f85a79dc5385fccf6bbc9558",
+          "pyproject.toml": "c58230f78769620dcd11d15824d491b049be8f542eeb875d2e8091be797ec3f3",
+          "sam2/__init__.py": "b87ca1e95cd54b81766e8c74acf0e937952639529e40d2b4088693286f49419e",
+          "sam2/automatic_mask_generator.py": "66df266dbe14412305ae3398f0ec1bb21b303a93216b102d767e6c4ee5d4c3d7",
+          "sam2/benchmark.py": "9b7a3506b88842ec09031fb7cd0fc1d3fed82e137ce06dbca10495e6c180dda9",
+          "sam2/build_sam.py": "856d64d71e44407401297b551884fb4cd1aba8082de0ff5fc60fac3dd42f094d",
+          "sam2/configs/sam2.1/sam2.1_hiera_b+.yaml": "37d6c56b07a7f8d08baaa314315c60dc3aabe2edc66cd92bac6d1ed50038e788",
+          "sam2/configs/sam2.1/sam2.1_hiera_l.yaml": "1dbd6cb6dfebeaf588c7006ee222c6efbfa9049a7ad472a3cdfb2f5d919e8107",
+          "sam2/configs/sam2.1/sam2.1_hiera_s.yaml": "0f36b91e86e58d06c87e42997166212468b88b98b60e4d816d5e4d4d088b6f55",
+          "sam2/configs/sam2.1/sam2.1_hiera_t.yaml": "f932eac1c6241e910031b2f000a81cd9f8a8d4896e2277ab5ffb721f378b188d",
+          "sam2/configs/sam2.1_training/sam2.1_hiera_b+_MOSE_finetune.yaml": "d96919e157527116c3a80c6ec961151bda98e5eb988ae4dd85be6e7efbd2b51f",
+          "sam2/configs/sam2/sam2_hiera_b+.yaml": "644d1a9aaa7e14183802246dee4f43627e067d77dd89f1f40d83657db18d038b",
+          "sam2/configs/sam2/sam2_hiera_l.yaml": "0ee9f2037fd98489212bb0b78a56f33ac82eb177cf5e52c88be3714cb84eea26",
+          "sam2/configs/sam2/sam2_hiera_s.yaml": "20e0ade957a4ab5e8138c93c346a8d8965c0b00d1a05fa0e79ce477985904188",
+          "sam2/configs/sam2/sam2_hiera_t.yaml": "33399c73cd13bbc3d0c1cea843fa2fc255fdb20139fe07f042743e046ac46b6b",
+          "sam2/modeling/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/backbones/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/backbones/hieradet.py": "03785581ca304d0451ae0df7a08ee0bf1e1dbe66fad285066e6b9ffc0d88d64f",
+          "sam2/modeling/backbones/image_encoder.py": "16eaad232220386f510ca8dfab8655e63699977149a4daf9ce9c6f374e6777a9",
+          "sam2/modeling/backbones/utils.py": "c4a0657db2a92bda2a7ff116cd4017f6b1c59af6408093d8874eb08a0df476ad",
+          "sam2/modeling/memory_attention.py": "07358cb7f58ec3788e88ff4e6415f8a9d628a3963529d6e2c915494a5347c8e2",
+          "sam2/modeling/memory_encoder.py": "73f7089ae5fdacdfcaaf3deca1ca6d9f84d89e7deb9cf97589622a9ef17ba42f",
+          "sam2/modeling/position_encoding.py": "b51404718c0d38f381293c8e5e00a15d129651b7f09b1158002d8974a30967b5",
+          "sam2/modeling/sam/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/modeling/sam/mask_decoder.py": "ca3523c58365574faddf1bfb54f374e4b4beba05127185ea2b17d22b916e099a",
+          "sam2/modeling/sam/prompt_encoder.py": "4965ccb4a4504aa4d7246b2ad66ffeacd2626415c86a261dc1c65ffd8ae1d40d",
+          "sam2/modeling/sam/transformer.py": "cda19052331e775190ce8b1159efcb828a4632d931a6d8bd4d47109f121782f1",
+          "sam2/modeling/sam2_base.py": "69a46b44e8625f509791352bd09beaafe589cd7d872721384e63d37f9fdc6e41",
+          "sam2/modeling/sam2_utils.py": "e35bbf13bc2e544a0272cd3f9539af38a752676ac3cd744be31cd8220afee804",
+          "sam2/sam2_hiera_b+.yaml": "212887bd5b1d90c07a3439a911593ec6ec8a586cce0b12799f1ebec38bbe401d",
+          "sam2/sam2_hiera_l.yaml": "0e313563f8f467c382c81192a0e2aff4624dda2b23218f1a78df30ebe4b4eb1a",
+          "sam2/sam2_hiera_s.yaml": "6fff1ab952d4ff7bc4bf8bb480f6283bcf12a763057f5bb697b25151a20f7608",
+          "sam2/sam2_hiera_t.yaml": "4ba0a249a1da9a6cc4070d47894808f206f67249d0c6fda21c6280af692dd77e",
+          "sam2/sam2_image_predictor.py": "f13e5f9d94e5c8d9d2c3622dab20c8f334c089ef2ee5ea8e199da7d332b029ba",
+          "sam2/sam2_video_predictor.py": "912555920a77f72ded07839efa33fcceecc79f3523abbec783f0be46ee2c55c2",
+          "sam2/sam2_video_predictor_legacy.py": "e0c054112f21bfa63620f2026c8bb2e0f4e284b138d09426a08d39f2e882c3f2",
+          "sam2/utils/__init__.py": "34bd8069c54764e7b8d73a78905dbe6467140a2f73170875128f6ca4d8cdd0aa",
+          "sam2/utils/amg.py": "b7b33090e2af72e04dbb815c8f32aff41a4ed1abf9668f62b59f1bdd640ca5d8",
+          "sam2/utils/misc.py": "01600c01c161cd079d7106fb1d4da845cf91aa31ab2bcecaf8cb151b6d6d20a2",
+          "sam2/utils/transforms.py": "ba3a64f4600c62f209206a6df3b40e3fcf133edae32fad658831bb0c2a6d1146",
+          "setup.py": "9ca49a33def161d2cafa56ddef744178fa56d3219242bd8b69909904c2e63dff"
+        },
+        "checkpoint_sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+        "checkpoint_path": "/home/sparkdev/vss/.spark/local-segmentation/weights/sam2.1_hiera_tiny.pt",
+        "checkpoint_bytes": 156008466,
+        "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+        "versions": {
+          "torch": "2.13.0",
+          "torchvision": "0.28.0",
+          "hydra-core": "1.3.2",
+          "omegaconf": "2.3.1",
+          "iopath": "0.1.10",
+          "timm": "1.0.15"
+        },
+        "load_ms": 420.18505884334445,
+        "parameter_count": 38962498,
+        "parameter_dtypes": [
+          "torch.float32"
+        ],
+        "autocast": "bfloat16",
+        "strict_checkpoint_load": true,
+        "forward_modified": false,
+        "backbone_pretrained_download_suppressed": false,
+        "compile_image_encoder": false,
+        "postprocessing_stability_fallback": false,
+        "hole_and_sprinkle_cleanup": false,
+        "reserve_gib": 20
+      },
+      "image_encoding": {
+        "encode_ms": 34.43361399695277,
+        "image_shape": [
+          441,
+          640
+        ],
+        "batch_size": 1
+      },
+      "call_index": 2,
+      "process_phase": "resident_reuse",
+      "model_load_ms": 0.0,
+      "call_excluding_model_load_ms": 618.377863895148,
+      "objects": [
+        {
+          "source_index": 0,
+          "grounding": {
+            "x": 0.63671875,
+            "y": 0.64453125
+          },
+          "point": [
+            0.63671875,
+            0.64453125
+          ],
+          "mask_metadata": {
+            "score": 0.94921875,
+            "score_kind": "uncalibrated_predicted_mask_iou",
+            "candidate_scores": [
+              0.91796875,
+              0.5390625,
+              0.94921875
+            ],
+            "selected_candidate": 2,
+            "candidate_count": 3,
+            "mask_area": 73495,
+            "mask_fraction": 0.26039895124716556,
+            "decode_ms": 7.9325418919324875
+          },
+          "mask_artifact": {
+            "path": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022/call-002/mask-000.png",
+            "overlay": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022/call-002/overlay-000.png",
+            "pixels": 73495,
+            "sha256": "3ffbf1f39925a941377bde010dc61e141ee668898fd32abc70ccb5c4ec323a99",
+            "encoding": "grayscale PNG, 0 background / 255 foreground"
+          }
+        }
+      ],
+      "artifacts": {
+        "overlay": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022/call-002/overlay.png",
+        "grounding_overlay": "/home/sparkdev/vss/.spark/local-segmentation/cli-aircraft-20261022/call-002/grounding.png",
+        "mask_count": 1,
+        "mask_color": "teal",
+        "grounding_color": "amber"
+      },
+      "prompt_source": "moondream_predicted",
+      "accuracy_evaluated": false,
+      "artifact_write_ms": 161.54715465381742
+    }
+  },
+  "sha256": {
+    "settings.json": "f7a87055bd2913a66a2c70f6c26a8754c21be381779b058eb3eb1e623c650426",
+    "exit.json": "eca422609d2284e7b7ad401d7e8b11d894ea4b1a21b46ade2daeadb11ce5d1e6",
+    "result.json": "95eb5656644c5bd6fc5b5dd7149dc8d472ce54eee20e6997c8360131b4f0f1d2",
+    "call-002/result.json": "cfb8f82e54299000bec4b490c18fd0a4994f2fc7db17a873da255522c1dff03a"
+  },
+  "min_mem_available_gib": 51.41904067993164,
+  "validation": {
+    "cpu_tests_passed": 33,
+    "pip_check": "No broken requirements found",
+    "mask_matches_benchmark": true
+  }
+}

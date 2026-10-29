@@ -1,0 +1,982 @@
+{
+  "schemaVersion": "city.east-pedestrian-v3-forensic.v1",
+  "readOnly": true,
+  "sourceRaw": "/home/sparkdev/vss/.spark/city/state/live-observations.ndjson",
+  "rawReadUpperBoundBytes": 88080722,
+  "rawByteBounds": [
+    57905815,
+    71924030
+  ],
+  "selectedRows": 2298,
+  "swFrames": 1149,
+  "windowSourceNs": [
+    "1793003130952679680",
+    "1793003234089489152"
+  ],
+  "scenario": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-east-v3-ui.ndjson",
+  "scenarioSha256": "199b0f6bd48278df309a003a827475e1664652fcc844b0f448999f83ce96e792",
+  "rawSubset": "/home/sparkdev/vss/.spark/city/runtime/east-pedestrian-v3-audit-20261026/observations.ndjson",
+  "rawSubsetSha256": "502e129e759cdb829226134ee37c4c0500577c4b9835e90df47575e5cc997559",
+  "nativeGroundTruthSeparate": {
+    "entryM": [
+      -11.2,
+      88.4,
+      0.0
+    ],
+    "exitM": [
+      -11.2,
+      70.0,
+      0.0
+    ],
+    "completed": "completed",
+    "elapsedWallSeconds": 81.51960411900654,
+    "scope": "Only labels the episode; no actor position enters replay or identity."
+  },
+  "sessionChanges": [
+    {
+      "ns": "1793003130985766001",
+      "session": "0dd7adc9-3f21-4916-b7dd-411553225ae3"
+    }
+  ],
+  "config": {
+    "revision": 6,
+    "movements": [
+      {
+        "id": "northbound-through",
+        "name": "Northbound \u00b7 straight",
+        "entryRuleId": "cam_sw-northbound-line",
+        "exitRuleId": "mobility-isaac-north-exit",
+        "classes": [
+          "car",
+          "bus",
+          "truck",
+          "motorcycle",
+          "bicycle"
+        ]
+      },
+      {
+        "id": "northbound-left",
+        "name": "Northbound \u00b7 left",
+        "entryRuleId": "cam_sw-northbound-line",
+        "exitRuleId": "mobility-isaac-west-exit",
+        "classes": [
+          "car",
+          "bus",
+          "truck",
+          "motorcycle",
+          "bicycle"
+        ]
+      },
+      {
+        "id": "northbound-right",
+        "name": "Northbound \u00b7 right",
+        "entryRuleId": "cam_sw-northbound-line",
+        "exitRuleId": "mobility-isaac-east-right-exit",
+        "classes": [
+          "car",
+          "bus",
+          "truck",
+          "motorcycle",
+          "bicycle"
+        ]
+      }
+    ],
+    "crossings": [
+      {
+        "id": "east-crossing-south-north",
+        "name": "East crossing \u00b7 south to north",
+        "waitingRuleId": "mobility-isaac-east-waiting-south",
+        "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+      },
+      {
+        "id": "east-crossing-north-south",
+        "name": "East crossing \u00b7 north to south",
+        "waitingRuleId": "mobility-isaac-east-waiting-north",
+        "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+      }
+    ],
+    "queues": [
+      {
+        "id": "northbound-queue",
+        "name": "Northbound approach",
+        "zoneRuleId": "mobility-isaac-northbound-queue",
+        "stopLine": [
+          [
+            -23.7,
+            63.8
+          ],
+          [
+            -20.2,
+            63.8
+          ]
+        ],
+        "upstreamPoint": [
+          -22.89410029498525,
+          50.0
+        ],
+        "spillbackDistanceM": 10.0,
+        "maxAnchorGapM": 8.0,
+        "stopLineReachM": 8.0,
+        "minimumDurationMs": 1500,
+        "maximumObservationGapMs": 1000
+      }
+    ],
+    "curbs": [
+      {
+        "id": "north-curbside-access",
+        "name": "North arm \u00b7 curbside access",
+        "zoneRuleId": "mobility-isaac-north-curbside-lane",
+        "role": "general",
+        "dwellThresholdMs": 8000,
+        "maximumObservationGapMs": 1000
+      }
+    ]
+  },
+  "rules": [
+    {
+      "id": "mobility-isaac-east-waiting-south",
+      "name": "East crossing \u00b7 south waiting area",
+      "kind": "occupancy-threshold",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -12.2,
+            69.2
+          ],
+          [
+            -10.2,
+            69.2
+          ],
+          [
+            -10.2,
+            72.0
+          ],
+          [
+            -12.2,
+            72.0
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 10000,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 425,
+      "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-east-crossing-measurement",
+      "name": "East crossing \u00b7 painted crossing",
+      "kind": "occupancy-threshold",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -13.2,
+            72.0
+          ],
+          [
+            -9.2,
+            72.0
+          ],
+          [
+            -9.2,
+            86.4
+          ],
+          [
+            -13.2,
+            86.4
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 10000,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 425,
+      "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+      "purpose": "mobility-measurement"
+    },
+    {
+      "id": "mobility-isaac-east-waiting-north",
+      "name": "East crossing \u00b7 north waiting area",
+      "kind": "occupancy-threshold",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "classes": [
+        "person"
+      ],
+      "geometry": {
+        "space": "site-metres",
+        "points": [
+          [
+            -12.2,
+            86.4
+          ],
+          [
+            -10.2,
+            86.4
+          ],
+          [
+            -10.2,
+            90.4
+          ],
+          [
+            -12.2,
+            90.4
+          ]
+        ],
+        "direction": null
+      },
+      "conditions": {
+        "minimumDurationMs": 0,
+        "clearAfterMs": 500,
+        "maximumObservationGapMs": 1000,
+        "speedBelowMps": 0.5,
+        "speedAboveMps": 0.2,
+        "countThreshold": 10000,
+        "wrongWayCosine": -0.5,
+        "lineHysteresis": null
+      },
+      "enabled": true,
+      "revision": 425,
+      "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+      "purpose": "mobility-measurement"
+    }
+  ],
+  "replayScope": "Actual MobilitySpatial code and actual native boxes projected through the same source-class homography. Starts20seconds before UI observer; historical totals before this window intentionally omitted.",
+  "analysisScript": {
+    "path": "/home/sparkdev/vss/.spark/city/runtime/east-pedestrian-v3-audit-20261026/analyze.py",
+    "sha256": "9af11ef0233af83cbfa3bcec7a3e9f2f0a4802c435041a299e18df1ee1921ea4"
+  },
+  "trackedHandles": {
+    "5527462707671859204": {
+      "samples": 1043,
+      "firstElapsed": -19.96691370010376,
+      "lastElapsed": 79.60377025604248,
+      "firstM": [
+        -10.967137144450763,
+        88.63395257447611
+      ],
+      "lastM": [
+        -13.406222922002057,
+        83.2301212431828
+      ],
+      "rangeM": [
+        [
+          -13.406222922002057,
+          -10.609260647845923
+        ],
+        [
+          77.39809100573507,
+          88.6498015982546
+        ]
+      ],
+      "maximumGapMs": 1173.188889,
+      "projectionCounts": {
+        "valid": 1043
+      }
+    },
+    "5527462707671859206": {
+      "samples": 1121,
+      "firstElapsed": -19.96691370010376,
+      "lastElapsed": 83.04839634895325,
+      "firstM": [
+        -10.4029910521589,
+        70.21795453810299
+      ],
+      "lastM": [
+        -11.383091625605813,
+        69.57525814576898
+      ],
+      "rangeM": [
+        [
+          -12.11151053736107,
+          -10.02923740450577
+        ],
+        [
+          69.52727283169077,
+          77.60134799858889
+        ]
+      ],
+      "maximumGapMs": 993.822222,
+      "projectionCounts": {
+        "valid": 1121
+      }
+    }
+  },
+  "relevantTransitions": [
+    {
+      "ns": "1793003130985766001",
+      "elapsed": -19.96691370010376,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": null,
+      "to": "outside",
+      "journey": false,
+      "previousPointM": null,
+      "pointM": [
+        -10.967137144450763,
+        88.63395257447611
+      ],
+      "gapMs": null
+    },
+    {
+      "ns": "1793003130985766001",
+      "elapsed": -19.96691370010376,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859206",
+      "from": null,
+      "to": "waiting",
+      "journey": false,
+      "previousPointM": null,
+      "pointM": [
+        -10.4029910521589,
+        70.21795453810299
+      ],
+      "gapMs": null
+    },
+    {
+      "ns": "1793003130985766001",
+      "elapsed": -19.96691370010376,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": null,
+      "to": "waiting",
+      "journey": false,
+      "previousPointM": null,
+      "pointM": [
+        -10.967137144450763,
+        88.63395257447611
+      ],
+      "gapMs": null
+    },
+    {
+      "ns": "1793003130985766001",
+      "elapsed": -19.96691370010376,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859206",
+      "from": null,
+      "to": "outside",
+      "journey": false,
+      "previousPointM": null,
+      "pointM": [
+        -10.4029910521589,
+        70.21795453810299
+      ],
+      "gapMs": null
+    },
+    {
+      "ns": "1793003147384833444",
+      "elapsed": -3.5678460597991943,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": null,
+      "to": "outside",
+      "journey": false,
+      "previousPointM": null,
+      "pointM": [
+        -10.9389887963959,
+        88.4845624060004
+      ],
+      "gapMs": null
+    },
+    {
+      "ns": "1793003147384833444",
+      "elapsed": -3.5678460597991943,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": null,
+      "to": "waiting",
+      "journey": false,
+      "previousPointM": null,
+      "pointM": [
+        -10.9389887963959,
+        88.4845624060004
+      ],
+      "gapMs": null
+    },
+    {
+      "ns": "1793003193254249777",
+      "elapsed": 42.30157017707825,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859206",
+      "from": "waiting",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -10.315162261276223,
+        69.79475161856844
+      ],
+      "pointM": [
+        -10.08439131432194,
+        69.83164461929177
+      ],
+      "gapMs": 183.688888
+    },
+    {
+      "ns": "1793003195084107889",
+      "elapsed": 44.131428241729736,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859206",
+      "from": "outside",
+      "to": "waiting",
+      "journey": false,
+      "previousPointM": [
+        -10.15694003635662,
+        70.20323625221815
+      ],
+      "pointM": [
+        -10.260491599931031,
+        70.22531068687572
+      ],
+      "gapMs": 88.411111
+    },
+    {
+      "ns": "1793003196449174556",
+      "elapsed": 45.49649500846863,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859206",
+      "from": "waiting",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -10.209504359128545,
+        70.90469130255894
+      ],
+      "pointM": [
+        -10.054716305655893,
+        71.04479839140885
+      ],
+      "gapMs": 55.366667
+    },
+    {
+      "ns": "1793003196687874556",
+      "elapsed": 45.73519492149353,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859206",
+      "from": "outside",
+      "to": "waiting",
+      "journey": false,
+      "previousPointM": [
+        -10.054716305655893,
+        71.04479839140885
+      ],
+      "pointM": [
+        -10.265445180164834,
+        71.10504581751177
+      ],
+      "gapMs": 51.111111
+    },
+    {
+      "ns": "1793003197509030111",
+      "elapsed": 46.55635046958923,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": "outside",
+      "to": "crossing",
+      "journey": false,
+      "previousPointM": [
+        -10.609260647845923,
+        86.51916418763625
+      ],
+      "pointM": [
+        -10.999724064595458,
+        85.52529700940524
+      ],
+      "gapMs": 650.055555
+    },
+    {
+      "ns": "1793003197509030111",
+      "elapsed": 46.55635046958923,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": "waiting",
+      "to": "crossing",
+      "journey": true,
+      "previousPointM": [
+        -10.609260647845923,
+        86.51916418763625
+      ],
+      "pointM": [
+        -10.999724064595458,
+        85.52529700940524
+      ],
+      "gapMs": 650.055555
+    },
+    {
+      "ns": "1793003197895063445",
+      "elapsed": 46.942384004592896,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": "crossing",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -11.130686513902862,
+        85.31704623291427
+      ],
+      "pointM": [
+        -13.345221077315163,
+        83.22030985973025
+      ],
+      "gapMs": 190.977778
+    },
+    {
+      "ns": "1793003197895063445",
+      "elapsed": 46.942384004592896,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": "crossing",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -11.130686513902862,
+        85.31704623291427
+      ],
+      "pointM": [
+        -13.345221077315163,
+        83.22030985973025
+      ],
+      "gapMs": 190.977778
+    },
+    {
+      "ns": "1793003197949241222",
+      "elapsed": 46.996561765670776,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": "outside",
+      "to": "crossing",
+      "journey": false,
+      "previousPointM": [
+        -13.345221077315163,
+        83.22030985973025
+      ],
+      "pointM": [
+        -11.077203567742043,
+        85.25419525931258
+      ],
+      "gapMs": 54.177777
+    },
+    {
+      "ns": "1793003197949241222",
+      "elapsed": 46.996561765670776,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": "outside",
+      "to": "crossing",
+      "journey": false,
+      "previousPointM": [
+        -13.345221077315163,
+        83.22030985973025
+      ],
+      "pointM": [
+        -11.077203567742043,
+        85.25419525931258
+      ],
+      "gapMs": 54.177777
+    },
+    {
+      "ns": "1793003198534074556",
+      "elapsed": 47.58139491081238,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859206",
+      "from": "waiting",
+      "to": "crossing",
+      "journey": true,
+      "previousPointM": [
+        -10.707493013809177,
+        71.993699259324
+      ],
+      "pointM": [
+        -10.77521274920464,
+        72.03202603931929
+      ],
+      "gapMs": 123.444445
+    },
+    {
+      "ns": "1793003198534074556",
+      "elapsed": 47.58139491081238,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859206",
+      "from": "outside",
+      "to": "crossing",
+      "journey": false,
+      "previousPointM": [
+        -10.707493013809177,
+        71.993699259324
+      ],
+      "pointM": [
+        -10.77521274920464,
+        72.03202603931929
+      ],
+      "gapMs": 123.444445
+    },
+    {
+      "ns": "1793003223565794334",
+      "elapsed": 72.61311459541321,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859206",
+      "from": "crossing",
+      "to": "waiting",
+      "journey": false,
+      "previousPointM": [
+        -11.692599816341168,
+        72.02538893543
+      ],
+      "pointM": [
+        -11.394108245373248,
+        71.95828539481262
+      ],
+      "gapMs": 56.033333
+    },
+    {
+      "ns": "1793003223565794334",
+      "elapsed": 72.61311459541321,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859206",
+      "from": "crossing",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -11.692599816341168,
+        72.02538893543
+      ],
+      "pointM": [
+        -11.394108245373248,
+        71.95828539481262
+      ],
+      "gapMs": 56.033333
+    },
+    {
+      "ns": "1793003230382038778",
+      "elapsed": 79.42935919761658,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": "crossing",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -11.14424208082549,
+        85.22633440754018
+      ],
+      "pointM": [
+        -13.395030989157105,
+        83.17052966712707
+      ],
+      "gapMs": 311.777777
+    },
+    {
+      "ns": "1793003230382038778",
+      "elapsed": 79.42935919761658,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": "crossing",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -11.14424208082549,
+        85.22633440754018
+      ],
+      "pointM": [
+        -13.395030989157105,
+        83.17052966712707
+      ],
+      "gapMs": 311.777777
+    },
+    {
+      "ns": "1793003230442494334",
+      "elapsed": 79.4898145198822,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": "outside",
+      "to": "crossing",
+      "journey": false,
+      "previousPointM": [
+        -13.395030989157105,
+        83.17052966712707
+      ],
+      "pointM": [
+        -10.883766257811274,
+        85.60178416101279
+      ],
+      "gapMs": 60.455556
+    },
+    {
+      "ns": "1793003230442494334",
+      "elapsed": 79.4898145198822,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": "outside",
+      "to": "crossing",
+      "journey": false,
+      "previousPointM": [
+        -13.395030989157105,
+        83.17052966712707
+      ],
+      "pointM": [
+        -10.883766257811274,
+        85.60178416101279
+      ],
+      "gapMs": 60.455556
+    },
+    {
+      "ns": "1793003230556449889",
+      "elapsed": 79.60377025604248,
+      "crossing": "east-crossing-south-north",
+      "localTrackId": "5527462707671859204",
+      "from": "crossing",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -10.883766257811274,
+        85.60178416101279
+      ],
+      "pointM": [
+        -13.406222922002057,
+        83.2301212431828
+      ],
+      "gapMs": 113.955555
+    },
+    {
+      "ns": "1793003230556449889",
+      "elapsed": 79.60377025604248,
+      "crossing": "east-crossing-north-south",
+      "localTrackId": "5527462707671859204",
+      "from": "crossing",
+      "to": "outside",
+      "journey": false,
+      "previousPointM": [
+        -10.883766257811274,
+        85.60178416101279
+      ],
+      "pointM": [
+        -13.406222922002057,
+        83.2301212431828
+      ],
+      "gapMs": 113.955555
+    }
+  ],
+  "outcomes": [
+    {
+      "crossing": "east-crossing-north-south",
+      "ns": "1793003147291000111",
+      "outcome": "incomplete",
+      "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:0dd7adc9-3f21-4916-b7dd-411553225ae3:5527462707671859204",
+      "waitMs": null,
+      "elapsed": -3.66167950630188
+    },
+    {
+      "crossing": "east-crossing-south-north",
+      "ns": "1793003193254249777",
+      "outcome": "abandoned",
+      "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:0dd7adc9-3f21-4916-b7dd-411553225ae3:5527462707671859206",
+      "waitMs": null,
+      "elapsed": 42.30157017707825
+    },
+    {
+      "crossing": "east-crossing-south-north",
+      "ns": "1793003196449174556",
+      "outcome": "abandoned",
+      "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:0dd7adc9-3f21-4916-b7dd-411553225ae3:5527462707671859206",
+      "waitMs": null,
+      "elapsed": 45.49649500846863
+    },
+    {
+      "crossing": "east-crossing-north-south",
+      "ns": "1793003197509030111",
+      "outcome": "entered-crossing",
+      "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:0dd7adc9-3f21-4916-b7dd-411553225ae3:5527462707671859204",
+      "waitMs": null,
+      "lowerBoundWaitMs": 50124.196667,
+      "briefGapCount": 4,
+      "elapsed": 46.55635046958923
+    },
+    {
+      "crossing": "east-crossing-north-south",
+      "ns": "1793003197895063445",
+      "outcome": "incomplete",
+      "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:0dd7adc9-3f21-4916-b7dd-411553225ae3:5527462707671859204",
+      "waitMs": null,
+      "elapsed": 46.942384004592896
+    },
+    {
+      "crossing": "east-crossing-south-north",
+      "ns": "1793003198534074556",
+      "outcome": "entered-crossing",
+      "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:0dd7adc9-3f21-4916-b7dd-411553225ae3:5527462707671859206",
+      "waitMs": 1846.2,
+      "lowerBoundWaitMs": null,
+      "briefGapCount": 1,
+      "elapsed": 47.58139491081238
+    },
+    {
+      "crossing": "east-crossing-south-north",
+      "ns": "1793003223565794334",
+      "outcome": "returned",
+      "trackId": "997d3a69-e052-45a4-a1ce-be1b046670c4:0dd7adc9-3f21-4916-b7dd-411553225ae3:5527462707671859206",
+      "waitMs": null,
+      "elapsed": 72.61311459541321
+    }
+  ],
+  "replayedCrossings": [
+    {
+      "id": "east-crossing-south-north",
+      "name": "East crossing \u00b7 south to north",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "waitingRuleId": "mobility-isaac-east-waiting-south",
+      "crossingRuleId": "mobility-isaac-east-crossing-measurement",
+      "completionBasis": "observed-far-side-exit",
+      "timeBasis": "source-time",
+      "status": "active",
+      "waitingCount": 1,
+      "crossingCount": 0,
+      "pendingTrackCount": 0,
+      "oldestPendingGapMs": null,
+      "membershipComplete": true,
+      "currentCountsAvailable": true,
+      "oldestObservedWaitMs": 10435.281555,
+      "qualityReasons": [],
+      "asOfSourceTimeNs": "1793003234001075889",
+      "countBasis": "currently-observed",
+      "unresolvedHistoricalTrackCount": 0,
+      "oldestLostTrackAgeMs": null,
+      "lossEvidenceRetentionSeconds": 900,
+      "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+      "windowMinutes": 5,
+      "completedCount": 0,
+      "abandonedCount": 2,
+      "returnedCount": 1,
+      "incompleteCount": 0,
+      "waitSampleCount": 1,
+      "waitP50Ms": 1846.2,
+      "waitP95Ms": 1846.2,
+      "firstSeenWaitingCount": 0,
+      "lowerBoundWaitP50Ms": null,
+      "briefGapRecoveredWaitCount": 1,
+      "lostTrackCount": 0
+    },
+    {
+      "id": "east-crossing-north-south",
+      "name": "East crossing \u00b7 north to south",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "waitingRuleId": "mobility-isaac-east-waiting-north",
+      "crossingRuleId": "mobility-isaac-east-crossing-measurement",
+      "completionBasis": "observed-far-side-exit",
+      "timeBasis": "source-time",
+      "status": "active",
+      "waitingCount": 1,
+      "crossingCount": 0,
+      "pendingTrackCount": 0,
+      "oldestPendingGapMs": null,
+      "membershipComplete": true,
+      "currentCountsAvailable": true,
+      "oldestObservedWaitMs": 1515.814888,
+      "qualityReasons": [],
+      "asOfSourceTimeNs": "1793003234001075889",
+      "countBasis": "currently-observed",
+      "unresolvedHistoricalTrackCount": 0,
+      "oldestLostTrackAgeMs": null,
+      "lossEvidenceRetentionSeconds": 900,
+      "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+      "windowMinutes": 5,
+      "completedCount": 0,
+      "abandonedCount": 0,
+      "returnedCount": 0,
+      "incompleteCount": 2,
+      "waitSampleCount": 0,
+      "waitP50Ms": null,
+      "waitP95Ms": null,
+      "firstSeenWaitingCount": 1,
+      "lowerBoundWaitP50Ms": 50124.196667,
+      "briefGapRecoveredWaitCount": 1,
+      "lostTrackCount": 1
+    }
+  ],
+  "findings": [
+    {
+      "kind": "confirmed-exported-spatial-outlier",
+      "sourceTimeNs": "1793003197895063445",
+      "localTrackId": "5527462707671859204",
+      "sequence": "2709",
+      "previousPointM": [
+        -11.130686513902862,
+        85.31704623291427
+      ],
+      "outsidePointM": [
+        -13.345221077315163,
+        83.22030985973025
+      ],
+      "nextPointM": [
+        -11.077203567742043,
+        85.25419525931258
+      ],
+      "previousGapMs": 190.977778,
+      "nextGapMs": 54.177777,
+      "effect": "An observed west side exit changes a true north-origin journey to incomplete. Re-entry from the side cannot create a new journey.",
+      "provenance": "bboxPx is first-stage NvDCF object.rect_params, not independently retained raw PGIE detector output. TrackerDiagnostics is absent from this cohort; do not attribute its cause uniquely to detector or tracker."
+    },
+    {
+      "kind": "opposing-path-identity-reversal",
+      "localTrackIds": [
+        "5527462707671859204",
+        "5527462707671859206"
+      ],
+      "observerElapsedSeconds": [
+        61.998,
+        63.994
+      ],
+      "effect": "North-origin handle9204 reverses northward while south-origin9206 reverses southward near their meeting. The leased native actor continues south in separate snapshots. Camera-local state therefore reports9206 returned; no same-ID far-side traversal is observed.",
+      "confidence": "Strong association-swap evidence from observed trajectories and separate native monotonic path. Saved UI pixels show both people in the crossing but are not a matched image sequence proving each exact assignment."
+    },
+    {
+      "kind": "no-gap-threshold-failure-during-crossing",
+      "observerElapsedSeconds": [
+        42,
+        78
+      ],
+      "maximumGapMsByTrack": {
+        "5527462707671859204": 650.055555,
+        "5527462707671859206": 993.822222
+      },
+      "configuredMaximumObservationGapMs": 1000,
+      "effect": "These two continuous handles did not exceed the existing observation-gap limit during the crossing. There was an earlier1173ms9204 waiting gap before the UI observer began; it is separate from the measured entry-side outlier."
+    }
+  ],
+  "nextSourceRepairs": [
+    "Shared owned/normal cohort admission before WALK, allowing any earlier crossing person to finish. No forced phase, cancellation of normal crossing, teleport or ID alias.",
+    "Separate spatial measurement quality change may defer a one-frame exit until fresh same-ID evidence confirms it within the existing gap limit. It must retain raw outside position/counts and must not claim an unobserved completion. Independent source owner implements/tests this."
+  ],
+  "limits": [
+    "No native or service configuration changed during this audit.",
+    "No ground truth position entered replay, rules, map, tracking or identity.",
+    "The native81.5196second scene completion remains independent of camera analytics.",
+    "Neither candidate source repair has a live pass in this forensic receipt."
+  ],
+  "historicalReplaySourceIdentity": "The original replay ran before the pending-exit source edit. No pre-edit MobilitySpatial source file/hash was retained at that instant. Reproduction must select the matching historical implementation; analyze.py otherwise imports the current on-disk module. Exact raw observations, scenario, polygons and replay result are retained."
+}

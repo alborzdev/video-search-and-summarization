@@ -1,0 +1,21 @@
+{
+  "returncode": 3,
+  "child_returncode": 0,
+  "missing_or_failed_tasks": [],
+  "mask_failures": [
+    {
+      "case": "panel-point-svg-start",
+      "expected_present": true,
+      "status": "invalid_mask",
+      "finish_reason": "length"
+    },
+    {
+      "case": "blank-svg-start",
+      "expected_present": false,
+      "status": "nonempty_mask",
+      "finish_reason": "stop"
+    }
+  ],
+  "elapsed_s": 136.23267143312842,
+  "log": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T165047Z-moondream3.1-9B-A2B-gb10/inference.jsonl"
+}

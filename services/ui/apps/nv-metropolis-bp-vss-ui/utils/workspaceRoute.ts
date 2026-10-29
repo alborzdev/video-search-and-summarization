@@ -3,6 +3,8 @@
 import type { PrimarySection } from '../components/vision-intelligence/types';
 
 const PRIMARY_SECTIONS: readonly PrimarySection[] = [
+  'smart-city',
+  'defense',
   'home',
   'guided',
   'live',

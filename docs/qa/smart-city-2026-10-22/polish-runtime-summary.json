@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "city.polish-runtime-summary.v1",
+  "verifiedAt": "2026-10-22T14:55:37.470714+00:00",
+  "passed": true,
+  "wallSeconds": 1200.0003308248706,
+  "sampleCount": 232,
+  "totalFrameObservations": 47848,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 35886,
+      "uniquePts": 35878,
+      "duplicatePts": 8,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 1265770364794,
+      "lastNs": 1792680669964626632,
+      "lastSequence": 37788,
+      "session": "21b8cd9b-b846-46b2-9a5a-3a921327c156",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 11962,
+      "uniquePts": 11962,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 1265888141075,
+      "lastNs": 1792680670109296613,
+      "lastSequence": 12605,
+      "session": "785c7d09-c990-44db-b621-94f43092383e",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "observationRotations": 0,
+  "minimumAvailableGiB": 25.854629516601562,
+  "maximumTrustedSourceAgeSeconds": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.3113973140716553,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.18140530586242676
+  },
+  "scheduledAskCount": 1,
+  "scheduledAsks": [
+    {
+      "at": "2026-10-22T14:46:27.108234+00:00",
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallSeconds": 12.022064893040806,
+      "answerSha256": "bb9b73f3af5bafc57100b052e7b951109d73c7c8a9519b6dad6acbbc6f212e2c",
+      "answerCharacters": 814,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T14:46:05.075000Z",
+        "endTime": "2026-10-22T14:46:10.075000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    }
+  ],
+  "manualBrowserAsk": "One additional completed five-second question and explicit evidence load during this run, recorded in polish-ui-production.json. Not counted in scheduledAsks.",
+  "containers": {
+    "vss-city-detector": {
+      "imageId": "sha256:403f58f44856eafe5ce6d1a42308203ed4d923bab91cf7a073aceb3a6a2a868e",
+      "containerId": "91101580c5332369e09f93c1574ac8cbf9d51fdd57ad84aaa63bb969aebac6f4",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "8589934592",
+      "initialMiB": 1011.953125,
+      "finalMiB": 1019.34765625,
+      "peakMiB": 1020.25
+    },
+    "vss-city-analytics": {
+      "imageId": "sha256:bc667c99fd6b3055c0c925afbcf158f356553070dbf184221ee394b8bbbf3487",
+      "containerId": "565e37f8e4ae1e364ed8903bd8286834b0905d723f670236d552954961ad505a",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "805306368",
+      "initialMiB": 65.67578125,
+      "finalMiB": 74.1328125,
+      "peakMiB": 85.71484375
+    },
+    "vss-agent": {
+      "imageId": "sha256:165dfe62fea62e2716716f66dfab3f5059fe5eccce57df47dcc4f5e8ac170efe",
+      "containerId": "6adfd46f42c8359a26674516dad9031e9f867cec3596413f683c3048009456d9",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 841.05859375,
+      "finalMiB": 841.41015625,
+      "peakMiB": 854.32421875
+    },
+    "vss-vios-streamprocessing": {
+      "imageId": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+      "containerId": "b1a30cf933dbd9342e411f83ae73ab9bddc1ebf4a7de5db23d25fc41309cefc2",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "2147483648",
+      "initialMiB": 1449.7265625,
+      "finalMiB": 1490.5,
+      "peakMiB": 1499.44140625
+    },
+    "vss-rtvi-embed": {
+      "imageId": "sha256:335093f228cd4e616a44e10bef1204d212a0922ad4a4142ff882c532db8b371c",
+      "containerId": "56bfb7f6f1f38cb0e159c6df8153f7c309e627d86f71ff0163807ef77fb232a1",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 3374.23046875,
+      "finalMiB": 3375.47265625,
+      "peakMiB": 3389.0625
+    },
+    "vss-rtvi-vlm": {
+      "imageId": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "containerId": "700cbd44ab5dc9a88093d4b35d17b1027eef03bf9d1fc68d72e1dd1ac869284c",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 6201.06640625,
+      "finalMiB": 6250.01171875,
+      "peakMiB": 6260.75390625
+    },
+    "vss-spark-spark-llm-1": {
+      "imageId": "sha256:82028e38ab950edd32f5053ca2030ee14d965e8fd4fe1c6e06468eb0be07a9a4",
+      "containerId": "13987a6f7d1b2877ef854d03fb7d948ddff3489c6c1fa61fd7c4738620a304bf",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 2759.26953125,
+      "finalMiB": 2759.28515625,
+      "peakMiB": 2777.421875
+    },
+    "vss-city-polish-ui": {
+      "imageId": "sha256:066c450ffe1a5f557dc306cd835bd4237ae351334291dca9acc80666195e8fce",
+      "containerId": "729b2576e5654d7aea90b3a6f8d8a4a0cf92cb0831b4c86bbb23f1151a2b1252",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "2147483648",
+      "initialMiB": 107.68359375,
+      "finalMiB": 114.01953125,
+      "peakMiB": 115.40625
+    },
+    "vss-city-polish-ingress": {
+      "imageId": "sha256:d84eb36e91830bcaa67b23cfde1909850b99f11eb60da3abd185bd0daf3f75bb",
+      "containerId": "e4a1c2bb9b468b1734506f09c92cc3ad3511974033714009e849393b3d1cdaed",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "134217728",
+      "initialMiB": 23.30859375,
+      "finalMiB": 25.1640625,
+      "peakMiB": 26.06640625
+    }
+  },
+  "workerSha256": "bf807609fbf3412b6c96c1614822eac5fd3c7ecda86e56b6ffa89b432c6544c9",
+  "samplesSha256Verified": "c372a437688feaadd6b5d53de8fcaa34426c42097e8cc0f326421619bc0376a3",
+  "monitorSourceSha256Verified": "53367510c4b96a3a418244ad7681000ea2b74e286dcdd987d08fb42ca4266816",
+  "uiReceipt": "polish-ui-production.json",
+  "priorInterruptedAttempt": "polish-shared-ui-interrupted.json",
+  "scope": "Twenty-minute regression qualification on the changed native/gateway/controller stack, immutable UI/ingress and existing two-source Spark replay with one scheduled plus one manual sequential question. Shared source-mode Defense UI development continued separately. Not a new two-hour/full-booth-day, semantic accuracy, final-city calibration, MV3DT or Thor qualification."
+}

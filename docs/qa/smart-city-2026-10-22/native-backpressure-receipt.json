@@ -1,0 +1,17 @@
+{
+  "test": "native-unpaced-file-backpressure",
+  "exitCode": 0,
+  "wallSeconds": 4.6409123740158975,
+  "paced": false,
+  "observations": 30,
+  "publisher": {
+    "enqueued": 30,
+    "published": 30,
+    "peakQueue": 4,
+    "backpressureWaits": 25,
+    "failed": false
+  },
+  "duplicateResponseHandledIdempotently": true,
+  "output": "/state/native-backpressure.ndjson",
+  "consumer": "deliberately slow local HTTP test consumer, no VSS state changed"
+}

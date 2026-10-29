@@ -1,0 +1,2083 @@
+{
+  "schemaVersion": "city.vios-memory-investigation.v1",
+  "collectedAt": "2026-10-22T05:43:14.773517+00:00",
+  "mode": "read-only-existing-runtime-and-artifacts",
+  "runtime": {
+    "imageId": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+    "imageTag": "vss-vios-streamprocessing:3.3-native",
+    "containerStartedAt": "2026-10-22T05:07:20.894189107Z",
+    "restartCount": 0,
+    "memoryLimitBytes": 2147483648,
+    "cpuQuota": 2.0,
+    "libc": "Ubuntu GLIBC 2.39-0ubuntu8.9",
+    "onlineProcessorsReported": 20,
+    "architectureBits": 64,
+    "allocatorEnvironment": {
+      "LD_PRELOAD": ""
+    },
+    "binarySha256": "d94f104176e4419446db13ba1ba5718118107edf4b361262766b0bd0ed7641df"
+  },
+  "windows": [
+    {
+      "name": "mux-10000-qualification",
+      "samplesFile": ".spark/city/runtime/mux-10000-qualification/samples.ndjson",
+      "samplesSha256": "098a1b030bc760c0e9c88cc33ee5df564792401e8f3b75830b58fff5cc024956",
+      "sampleCount": 57,
+      "minimumMiB": 1032.902,
+      "maximumMiB": 1126.719,
+      "samples": [
+        {
+          "at": "2026-10-22T05:23:35.110308+00:00",
+          "memoryCurrentBytes": 1083076608,
+          "memoryCurrentMiB": 1032.902,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:23:40.378960+00:00",
+          "memoryCurrentBytes": 1092227072,
+          "memoryCurrentMiB": 1041.629,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:23:45.644644+00:00",
+          "memoryCurrentBytes": 1086574592,
+          "memoryCurrentMiB": 1036.238,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:23:50.945306+00:00",
+          "memoryCurrentBytes": 1101860864,
+          "memoryCurrentMiB": 1050.816,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:23:56.141598+00:00",
+          "memoryCurrentBytes": 1092603904,
+          "memoryCurrentMiB": 1041.988,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:01.345107+00:00",
+          "memoryCurrentBytes": 1086078976,
+          "memoryCurrentMiB": 1035.766,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:06.576431+00:00",
+          "memoryCurrentBytes": 1093378048,
+          "memoryCurrentMiB": 1042.727,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:11.847247+00:00",
+          "memoryCurrentBytes": 1113952256,
+          "memoryCurrentMiB": 1062.348,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:17.067779+00:00",
+          "memoryCurrentBytes": 1090887680,
+          "memoryCurrentMiB": 1040.352,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:22.330354+00:00",
+          "memoryCurrentBytes": 1108574208,
+          "memoryCurrentMiB": 1057.219,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:27.629308+00:00",
+          "memoryCurrentBytes": 1181450240,
+          "memoryCurrentMiB": 1126.719,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:32.922024+00:00",
+          "memoryCurrentBytes": 1149935616,
+          "memoryCurrentMiB": 1096.664,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:38.275808+00:00",
+          "memoryCurrentBytes": 1147150336,
+          "memoryCurrentMiB": 1094.008,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:43.614447+00:00",
+          "memoryCurrentBytes": 1149399040,
+          "memoryCurrentMiB": 1096.152,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:48.871261+00:00",
+          "memoryCurrentBytes": 1149407232,
+          "memoryCurrentMiB": 1096.16,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:54.210582+00:00",
+          "memoryCurrentBytes": 1150783488,
+          "memoryCurrentMiB": 1097.473,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:24:59.466323+00:00",
+          "memoryCurrentBytes": 1152315392,
+          "memoryCurrentMiB": 1098.934,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:04.762242+00:00",
+          "memoryCurrentBytes": 1151561728,
+          "memoryCurrentMiB": 1098.215,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:10.013310+00:00",
+          "memoryCurrentBytes": 1148416000,
+          "memoryCurrentMiB": 1095.215,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:15.354083+00:00",
+          "memoryCurrentBytes": 1149935616,
+          "memoryCurrentMiB": 1096.664,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:20.658713+00:00",
+          "memoryCurrentBytes": 1149296640,
+          "memoryCurrentMiB": 1096.055,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:25.921002+00:00",
+          "memoryCurrentBytes": 1150652416,
+          "memoryCurrentMiB": 1097.348,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:31.150863+00:00",
+          "memoryCurrentBytes": 1148526592,
+          "memoryCurrentMiB": 1095.32,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:36.446264+00:00",
+          "memoryCurrentBytes": 1150435328,
+          "memoryCurrentMiB": 1097.141,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:41.668874+00:00",
+          "memoryCurrentBytes": 1148653568,
+          "memoryCurrentMiB": 1095.441,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:46.905509+00:00",
+          "memoryCurrentBytes": 1150222336,
+          "memoryCurrentMiB": 1096.938,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:52.120733+00:00",
+          "memoryCurrentBytes": 1149247488,
+          "memoryCurrentMiB": 1096.008,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:25:57.331362+00:00",
+          "memoryCurrentBytes": 1149935616,
+          "memoryCurrentMiB": 1096.664,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:02.673582+00:00",
+          "memoryCurrentBytes": 1149079552,
+          "memoryCurrentMiB": 1095.848,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:07.977272+00:00",
+          "memoryCurrentBytes": 1150582784,
+          "memoryCurrentMiB": 1097.281,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:13.338776+00:00",
+          "memoryCurrentBytes": 1148862464,
+          "memoryCurrentMiB": 1095.641,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:18.619211+00:00",
+          "memoryCurrentBytes": 1150787584,
+          "memoryCurrentMiB": 1097.477,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:23.911772+00:00",
+          "memoryCurrentBytes": 1148882944,
+          "memoryCurrentMiB": 1095.66,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:29.210438+00:00",
+          "memoryCurrentBytes": 1150328832,
+          "memoryCurrentMiB": 1097.039,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:34.541816+00:00",
+          "memoryCurrentBytes": 1149329408,
+          "memoryCurrentMiB": 1096.086,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:39.812045+00:00",
+          "memoryCurrentBytes": 1151496192,
+          "memoryCurrentMiB": 1098.152,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:45.120551+00:00",
+          "memoryCurrentBytes": 1149730816,
+          "memoryCurrentMiB": 1096.469,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:50.412989+00:00",
+          "memoryCurrentBytes": 1150947328,
+          "memoryCurrentMiB": 1097.629,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:26:55.735095+00:00",
+          "memoryCurrentBytes": 1149296640,
+          "memoryCurrentMiB": 1096.055,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:00.998852+00:00",
+          "memoryCurrentBytes": 1153138688,
+          "memoryCurrentMiB": 1099.719,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:06.234468+00:00",
+          "memoryCurrentBytes": 1148792832,
+          "memoryCurrentMiB": 1095.574,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:11.443604+00:00",
+          "memoryCurrentBytes": 1151197184,
+          "memoryCurrentMiB": 1097.867,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:16.691997+00:00",
+          "memoryCurrentBytes": 1148563456,
+          "memoryCurrentMiB": 1095.355,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:21.957828+00:00",
+          "memoryCurrentBytes": 1154781184,
+          "memoryCurrentMiB": 1101.285,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:27.219747+00:00",
+          "memoryCurrentBytes": 1152770048,
+          "memoryCurrentMiB": 1099.367,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:32.475211+00:00",
+          "memoryCurrentBytes": 1150631936,
+          "memoryCurrentMiB": 1097.328,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:37.754932+00:00",
+          "memoryCurrentBytes": 1151803392,
+          "memoryCurrentMiB": 1098.445,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:43.108973+00:00",
+          "memoryCurrentBytes": 1153499136,
+          "memoryCurrentMiB": 1100.062,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:48.386504+00:00",
+          "memoryCurrentBytes": 1148891136,
+          "memoryCurrentMiB": 1095.668,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:53.734849+00:00",
+          "memoryCurrentBytes": 1151057920,
+          "memoryCurrentMiB": 1097.734,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:27:59.004980+00:00",
+          "memoryCurrentBytes": 1152360448,
+          "memoryCurrentMiB": 1098.977,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:28:04.301000+00:00",
+          "memoryCurrentBytes": 1150533632,
+          "memoryCurrentMiB": 1097.234,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:28:09.661534+00:00",
+          "memoryCurrentBytes": 1153581056,
+          "memoryCurrentMiB": 1100.141,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:28:14.903081+00:00",
+          "memoryCurrentBytes": 1151229952,
+          "memoryCurrentMiB": 1097.898,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:28:20.261191+00:00",
+          "memoryCurrentBytes": 1149796352,
+          "memoryCurrentMiB": 1096.531,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:28:25.509921+00:00",
+          "memoryCurrentBytes": 1151078400,
+          "memoryCurrentMiB": 1097.754,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:28:30.832594+00:00",
+          "memoryCurrentBytes": 1152438272,
+          "memoryCurrentMiB": 1099.051,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        }
+      ]
+    },
+    {
+      "name": "small-single-ask-qualification",
+      "samplesFile": ".spark/city/runtime/small-single-ask-qualification/samples.ndjson",
+      "samplesSha256": "a7dd82c8a4a7a87ae1e7dc52305e46fc131912f868be38209abc043a4ca50bd9",
+      "sampleCount": 17,
+      "minimumMiB": 1096.52,
+      "maximumMiB": 1648.301,
+      "samples": [
+        {
+          "at": "2026-10-22T05:29:08.637329+00:00",
+          "memoryCurrentBytes": 1151610880,
+          "memoryCurrentMiB": 1098.262,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:13.942503+00:00",
+          "memoryCurrentBytes": 1149784064,
+          "memoryCurrentMiB": 1096.52,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:19.358589+00:00",
+          "memoryCurrentBytes": 1151803392,
+          "memoryCurrentMiB": 1098.445,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:24.704971+00:00",
+          "memoryCurrentBytes": 1153671168,
+          "memoryCurrentMiB": 1100.227,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:30.035209+00:00",
+          "memoryCurrentBytes": 1728368640,
+          "memoryCurrentMiB": 1648.301,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:35.295971+00:00",
+          "memoryCurrentBytes": 1713446912,
+          "memoryCurrentMiB": 1634.07,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:40.607193+00:00",
+          "memoryCurrentBytes": 1715036160,
+          "memoryCurrentMiB": 1635.586,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:45.872784+00:00",
+          "memoryCurrentBytes": 1713512448,
+          "memoryCurrentMiB": 1634.133,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:51.127300+00:00",
+          "memoryCurrentBytes": 1715556352,
+          "memoryCurrentMiB": 1636.082,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:29:56.362476+00:00",
+          "memoryCurrentBytes": 1713967104,
+          "memoryCurrentMiB": 1634.566,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:30:01.549861+00:00",
+          "memoryCurrentBytes": 1715855360,
+          "memoryCurrentMiB": 1636.367,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:30:06.913382+00:00",
+          "memoryCurrentBytes": 1713545216,
+          "memoryCurrentMiB": 1634.164,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:30:12.188127+00:00",
+          "memoryCurrentBytes": 1715347456,
+          "memoryCurrentMiB": 1635.883,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:30:17.524280+00:00",
+          "memoryCurrentBytes": 1714155520,
+          "memoryCurrentMiB": 1634.746,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:30:22.817174+00:00",
+          "memoryCurrentBytes": 1715437568,
+          "memoryCurrentMiB": 1635.969,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:30:28.105772+00:00",
+          "memoryCurrentBytes": 1713754112,
+          "memoryCurrentMiB": 1634.363,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:30:33.521731+00:00",
+          "memoryCurrentBytes": 1715982336,
+          "memoryCurrentMiB": 1636.488,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        }
+      ]
+    },
+    {
+      "name": "medium-native-qualification",
+      "samplesFile": ".spark/city/runtime/medium-native-qualification/samples.ndjson",
+      "samplesSha256": "0f00e8e5e52ad685c4ddd8e92670470f7705b6f6ff7eac49426adcd742098266",
+      "sampleCount": 57,
+      "minimumMiB": 1697.215,
+      "maximumMiB": 1783.254,
+      "samples": [
+        {
+          "at": "2026-10-22T05:35:47.640951+00:00",
+          "memoryCurrentBytes": 1869877248,
+          "memoryCurrentMiB": 1783.254,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:35:52.960150+00:00",
+          "memoryCurrentBytes": 1785720832,
+          "memoryCurrentMiB": 1702.996,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:35:58.239311+00:00",
+          "memoryCurrentBytes": 1786941440,
+          "memoryCurrentMiB": 1704.16,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:03.570428+00:00",
+          "memoryCurrentBytes": 1780387840,
+          "memoryCurrentMiB": 1697.91,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:08.800043+00:00",
+          "memoryCurrentBytes": 1791504384,
+          "memoryCurrentMiB": 1708.512,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:14.080563+00:00",
+          "memoryCurrentBytes": 1786843136,
+          "memoryCurrentMiB": 1704.066,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:19.353380+00:00",
+          "memoryCurrentBytes": 1779658752,
+          "memoryCurrentMiB": 1697.215,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:24.621208+00:00",
+          "memoryCurrentBytes": 1793699840,
+          "memoryCurrentMiB": 1710.605,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:29.856160+00:00",
+          "memoryCurrentBytes": 1849016320,
+          "memoryCurrentMiB": 1763.359,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:35.181788+00:00",
+          "memoryCurrentBytes": 1804378112,
+          "memoryCurrentMiB": 1720.789,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:40.477028+00:00",
+          "memoryCurrentBytes": 1808715776,
+          "memoryCurrentMiB": 1724.926,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:45.726072+00:00",
+          "memoryCurrentBytes": 1816477696,
+          "memoryCurrentMiB": 1732.328,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:51.145273+00:00",
+          "memoryCurrentBytes": 1800351744,
+          "memoryCurrentMiB": 1716.949,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:36:56.455417+00:00",
+          "memoryCurrentBytes": 1809469440,
+          "memoryCurrentMiB": 1725.645,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:01.814466+00:00",
+          "memoryCurrentBytes": 1802842112,
+          "memoryCurrentMiB": 1719.324,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:07.153717+00:00",
+          "memoryCurrentBytes": 1792122880,
+          "memoryCurrentMiB": 1709.102,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:12.451673+00:00",
+          "memoryCurrentBytes": 1800364032,
+          "memoryCurrentMiB": 1716.961,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:17.726703+00:00",
+          "memoryCurrentBytes": 1820147712,
+          "memoryCurrentMiB": 1735.828,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:23.055768+00:00",
+          "memoryCurrentBytes": 1813061632,
+          "memoryCurrentMiB": 1729.07,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:28.324405+00:00",
+          "memoryCurrentBytes": 1823096832,
+          "memoryCurrentMiB": 1738.641,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:33.572668+00:00",
+          "memoryCurrentBytes": 1865908224,
+          "memoryCurrentMiB": 1779.469,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:38.778542+00:00",
+          "memoryCurrentBytes": 1821257728,
+          "memoryCurrentMiB": 1736.887,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:44.051716+00:00",
+          "memoryCurrentBytes": 1826717696,
+          "memoryCurrentMiB": 1742.094,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:49.259736+00:00",
+          "memoryCurrentBytes": 1825198080,
+          "memoryCurrentMiB": 1740.645,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:54.512854+00:00",
+          "memoryCurrentBytes": 1826668544,
+          "memoryCurrentMiB": 1742.047,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:37:59.750831+00:00",
+          "memoryCurrentBytes": 1813037056,
+          "memoryCurrentMiB": 1729.047,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:05.001570+00:00",
+          "memoryCurrentBytes": 1821732864,
+          "memoryCurrentMiB": 1737.34,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:10.326917+00:00",
+          "memoryCurrentBytes": 1823920128,
+          "memoryCurrentMiB": 1739.426,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:15.615444+00:00",
+          "memoryCurrentBytes": 1827479552,
+          "memoryCurrentMiB": 1742.82,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:20.918041+00:00",
+          "memoryCurrentBytes": 1834680320,
+          "memoryCurrentMiB": 1749.688,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:26.221511+00:00",
+          "memoryCurrentBytes": 1815732224,
+          "memoryCurrentMiB": 1731.617,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:31.473041+00:00",
+          "memoryCurrentBytes": 1844199424,
+          "memoryCurrentMiB": 1758.766,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:36.819750+00:00",
+          "memoryCurrentBytes": 1824141312,
+          "memoryCurrentMiB": 1739.637,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:42.111670+00:00",
+          "memoryCurrentBytes": 1832726528,
+          "memoryCurrentMiB": 1747.824,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:47.373556+00:00",
+          "memoryCurrentBytes": 1837477888,
+          "memoryCurrentMiB": 1752.355,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:52.663979+00:00",
+          "memoryCurrentBytes": 1832804352,
+          "memoryCurrentMiB": 1747.898,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:38:57.930868+00:00",
+          "memoryCurrentBytes": 1824673792,
+          "memoryCurrentMiB": 1740.145,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:03.254733+00:00",
+          "memoryCurrentBytes": 1826729984,
+          "memoryCurrentMiB": 1742.105,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:08.471854+00:00",
+          "memoryCurrentBytes": 1827528704,
+          "memoryCurrentMiB": 1742.867,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:13.687187+00:00",
+          "memoryCurrentBytes": 1841438720,
+          "memoryCurrentMiB": 1756.133,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:18.927333+00:00",
+          "memoryCurrentBytes": 1831387136,
+          "memoryCurrentMiB": 1746.547,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:24.178272+00:00",
+          "memoryCurrentBytes": 1833058304,
+          "memoryCurrentMiB": 1748.141,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:29.411631+00:00",
+          "memoryCurrentBytes": 1830903808,
+          "memoryCurrentMiB": 1746.086,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:34.685444+00:00",
+          "memoryCurrentBytes": 1820135424,
+          "memoryCurrentMiB": 1735.816,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:39.920954+00:00",
+          "memoryCurrentBytes": 1824657408,
+          "memoryCurrentMiB": 1740.129,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:45.177190+00:00",
+          "memoryCurrentBytes": 1847525376,
+          "memoryCurrentMiB": 1761.938,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:50.517288+00:00",
+          "memoryCurrentBytes": 1855983616,
+          "memoryCurrentMiB": 1770.004,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:39:55.768917+00:00",
+          "memoryCurrentBytes": 1819869184,
+          "memoryCurrentMiB": 1735.562,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:01.106282+00:00",
+          "memoryCurrentBytes": 1828536320,
+          "memoryCurrentMiB": 1743.828,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:06.415510+00:00",
+          "memoryCurrentBytes": 1838592000,
+          "memoryCurrentMiB": 1753.418,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:11.718687+00:00",
+          "memoryCurrentBytes": 1824534528,
+          "memoryCurrentMiB": 1740.012,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:16.984679+00:00",
+          "memoryCurrentBytes": 1817440256,
+          "memoryCurrentMiB": 1733.246,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:22.244985+00:00",
+          "memoryCurrentBytes": 1821810688,
+          "memoryCurrentMiB": 1737.414,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:27.703219+00:00",
+          "memoryCurrentBytes": 1829584896,
+          "memoryCurrentMiB": 1744.828,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:32.961708+00:00",
+          "memoryCurrentBytes": 1822822400,
+          "memoryCurrentMiB": 1738.379,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:38.239773+00:00",
+          "memoryCurrentBytes": 1829564416,
+          "memoryCurrentMiB": 1744.809,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        },
+        {
+          "at": "2026-10-22T05:40:43.470118+00:00",
+          "memoryCurrentBytes": 1827586048,
+          "memoryCurrentMiB": 1742.922,
+          "oomEvents": {
+            "low": 0,
+            "high": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_kill": 0,
+            "oom_group_kill": 0
+          },
+          "containerId": "8c85aa0dea5be9b6740d73a837ac67812b377b4ebe28327daf7de351c4979a8d",
+          "restartCount": 0
+        }
+      ]
+    }
+  ],
+  "observedExport": {
+    "requestedWindowSeconds": 5,
+    "start": "2026-10-22T05:29:25.693175Z",
+    "pipeline": "ClipReaderProducer + TranscodeWriterConsumer",
+    "transcode": "full",
+    "softwareEncoder": true,
+    "overlay": false,
+    "audioDisabled": true,
+    "pipelineNullAndProducerDestructorBy": "2026-10-22T05:29:30.279Z",
+    "sampleBefore": {
+      "at": "2026-10-22T05:29:19.358589+00:00",
+      "memoryCurrentMiB": 1098.45
+    },
+    "sampleDuringCompletion": {
+      "at": "2026-10-22T05:29:30.035209+00:00",
+      "memoryCurrentMiB": 1648.3
+    },
+    "sampleAfter": {
+      "at": "2026-10-22T05:30:33.521731+00:00",
+      "memoryCurrentMiB": 1636.49
+    },
+    "increaseAtCompletionMiB": 549.85,
+    "cachedReuseAt": "2026-10-22T05:30:20.192Z",
+    "tempFileExpirySeconds": 3600
+  },
+  "cgroupSnapshot": {
+    "at": "2026-10-22T05:38:22.560977Z",
+    "memoryCurrentMiB": 1754.629,
+    "anonMiB": 1705.8,
+    "fileMiB": 33.1,
+    "kernelMiB": 15.2,
+    "sockMiB": 0.1,
+    "oom": 0,
+    "oomKill": 0
+  },
+  "readOnlyObservations": {
+    "liveWebrtcPeerCountAt0539": 4,
+    "activeRtspSessionsAt0539": 6,
+    "recorderMaxQueueBytesPerSource": 16000000,
+    "recorderQueueSampleBytesUsually": 0,
+    "recorderQueueOneNonzeroSampleBytes": 97924,
+    "privateAnonymousMaps": "Several anonymous mappings with approximately60\u201364MiB resident pages; not proof of arena identity or free allocation bytes."
+  },
+  "localSourceSha256": {
+    "services/vios/src/modules/storage_management/video_download.cpp": "754d705798b5504ee173421926d5ade7d956183df51ae74bf5e88af840b15531",
+    "services/vios/src/framework/media/media_pipelines/transcode_writer_consumer.cpp": "59e736e95f0f5de2a6cceb9a23edc5944b2d10346ad0baa69638d1217dba472f",
+    "services/vios/src/framework/media/media_pipelines/VideoQueue.cpp": "f9abb1311b6175ab7f98e5026cb46e42f17ca98f255b3f5004fc36b291547228",
+    "services/vios/src/framework/media/video_source/decoders/gstnvvideodecoder.cpp": "9a31059a611468a1034dc7ba1d00c5c4b2d481b4cb894b80d6568cb244a024ec",
+    "services/vios/src/framework/media/video_source/processors/transforms/ll_transform.cpp": "b98cd50b8948fa240fd0fc4b42ca9343f3f7dbc381ddee885c8c157c0d286204"
+  },
+  "officialSources": [
+    "https://sourceware.org/glibc/manual/2.39/html_node/Memory-Allocation-Tunables.html",
+    "https://sourceware.org/glibc/manual/2.39/html_node/Malloc-Tunable-Parameters.html"
+  ],
+  "inference": "A major persistent RSS/cgroup-memory increase coincides with the software-transcoded evidence export. Allocation reuse, fragmentation, retained live objects and unreachable leaks are not separated by RSS alone.",
+  "proposedTrial": {
+    "status": "not-run",
+    "singleVariable": "MALLOC_ARENA_MAX=2 for VIOS streamprocessing only",
+    "preserveCpuCores": 2,
+    "preserveMemoryLimitGiB": 2,
+    "preserveHostAvailableReserveGiB": 20,
+    "newSequentialExports": 3,
+    "testWindows": "Three different recent five-second windows, with a repeat of one window to verify cache reuse.",
+    "inferenceConcurrency": "Existing two-source native Medium + embedding + LLM/VLM services, one actual Ask at a time."
+  },
+  "scope": "No runtime settings, budgets, services, RTSP readers, models or GPU jobs changed/launched by this investigation."
+}

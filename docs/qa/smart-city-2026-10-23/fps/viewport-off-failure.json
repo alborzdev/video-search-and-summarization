@@ -1,0 +1,6 @@
+{
+  "at": "2026-10-23T20:39:09.320156+00:00",
+  "action": "Separate active GUI viewport updates_enabled=False from Kit main update bridge",
+  "result": "Kit main loop stopped answering; both camera sources became stale; no pass",
+  "recovery": "Preserve logs; restart existing owned simulator; do not repeat viewport-off test on this live workflow."
+}

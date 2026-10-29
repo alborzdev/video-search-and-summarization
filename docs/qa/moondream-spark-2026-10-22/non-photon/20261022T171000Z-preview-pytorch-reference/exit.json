@@ -1,0 +1,21 @@
+{
+  "returncode": 1,
+  "child_returncode": 1,
+  "stop_reason": null,
+  "missing_cases": [
+    "blank-conditioned",
+    "blank-detect-control",
+    "blank-raw",
+    "box-point-conditioned",
+    "box-point-raw",
+    "panel-point-conditioned",
+    "panel-point-raw",
+    "person-detect-control",
+    "person-point-conditioned",
+    "person-point-raw",
+    "person-query-control"
+  ],
+  "mask_failures": [],
+  "elapsed_s": 26.443763026036322,
+  "run_dir": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171000Z-preview-pytorch-reference"
+}

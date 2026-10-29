@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/home/sparkdev/vss/tools/moondream/measure_reference.py", line 165, in <module>
+    child(args)
+  File "/home/sparkdev/vss/tools/moondream/measure_reference.py", line 68, in child
+    result = model.query(image, case['prompt'], reasoning=False,
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--moondream--moondream3-preview/snapshots/5112966d1a723413b1c9a1e8bea272b72e647b35/moondream.py", line 670, in query
+    self.load_encoded_image(image)
+  File "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--moondream--moondream3-preview/snapshots/5112966d1a723413b1c9a1e8bea272b72e647b35/moondream.py", line 728, in load_encoded_image
+    b.kv_cache.k_cache[:, :, : k.size(2), :] = k
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Inplace update to inference tensor outside InferenceMode is not allowed.You can make a clone to get a normal tensor before doing inplace update.See https://github.com/pytorch/rfcs/pull/17 for more details.

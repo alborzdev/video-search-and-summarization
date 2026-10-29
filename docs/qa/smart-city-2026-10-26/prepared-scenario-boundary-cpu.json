@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-26",
+  "writtenAt": "2026-10-26T14:44:33.648584+00:00",
+  "qualification": "CPU contract tests and compile only; no GPU tracker reset or live scenario qualification",
+  "files": {
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "2401bc272f32a760730da52210e239696561227edd9ce44d5f13356608b0d0f7",
+    "services/rtvi/rt-cv/smart-city/tests/test_scenario_boundary.cpp": "90343ad09cf4e215a2a98276bb0e58fcfdb44c2b7348b01f0d441483d8fa996f",
+    "services/rtvi/rt-cv/smart-city/Makefile": "c9e03f7c5a9b9503045187c099c62661c537bdeb0076e4116619a6ec2b08471b",
+    "services/analytics/behavior-analytics/apps/city/scenario_boundary.py": "bf06d07b9c3f74674e5d3d744e0925d84c9677ba12b1f40f337a18dc0b95b5bc",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "2ddd4de6f32fc16d9bb4f2b457aeab55f689edc32b8b615d950d08d9fef136a2",
+    "services/analytics/behavior-analytics/apps/city/main.py": "c092402323d094bb9a1f55b1ea73248f7e7416363ecb9fc7223cb8ac06bff015",
+    "services/analytics/behavior-analytics/apps/city/models.py": "bcc2054c538a264890797717f12fc2d51839c59d4c04f2c1d432192b4e69bfb8",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "0810bbac3d01649a50811872bdb46a4c75a5f6b268eb659d0020179e23fa3f16",
+    "services/analytics/behavior-analytics/apps/city/tests/test_scenario_boundary.py": "d9a01fc304310f1aa3222b8c54a71d3eb2dfc7d6fa67f640af30f05c9dd170e1"
+  },
+  "checks": [
+    {
+      "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q services/analytics/behavior-analytics/apps/city/tests",
+      "result": "295 passed on final hardened frozen source; 1 existing FastAPI/httpx deprecation warning"
+    },
+    {
+      "command": "final test_scenario_boundary.py",
+      "result": "10 passed including source session/epoch/config changes before Play"
+    },
+    {
+      "command": "make scenario-boundary-test native-capture-clock-test staged-tracking-test city-worker",
+      "result": "All passed on final hardened native source; CPU probes include pre-fence drops/proof consumption, persistent late-frame fence, per-frame epoch serialization, two-stage events and missing-stage refusal; clock20groups; staged metadata; full worker compile",
+      "runtime": "isolated /tmp/scenario-boundary-cpu in existing detector; no GPU pipeline"
+    }
+  ],
+  "gatewayContract": {
+    "path": "/api/v1/city/scenario-boundary",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "actions": [
+      "prepare",
+      "recover",
+      "settle",
+      "play",
+      "normal"
+    ],
+    "runId": "host opaque UUID; same across all commands",
+    "readyRequirements": "native matching reset ack, expected sources/stages, >=3 accepted post-cutoff observations over >=1 source-clock second per source",
+    "deadlineSeconds": 20,
+    "failure": "gate remains closed; recover/settle/normal required"
+  },
+  "preserved": [
+    "source sessions and monotonically increasing capture clock",
+    "exact native SEI clock proof and all visibility/position/continuity guards",
+    "site/calibration/rule/mobility configuration revisions",
+    "old events and original historical scopes"
+  ],
+  "deploymentNeeded": "detector worker replacement + CPU gateway restart under parent coordination",
+  "previousSourceFreeze": {
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "233792e0f5c349dbfac96c27c55bcbda61928ad184baf51ae07fd8d87c2d52da",
+    "services/rtvi/rt-cv/smart-city/tests/test_scenario_boundary.cpp": "cc4c4a5bffd1855b7ab6d6559fea44f6b2c055ac0c493b743e236abef8f73381",
+    "services/rtvi/rt-cv/smart-city/Makefile": "c9e03f7c5a9b9503045187c099c62661c537bdeb0076e4116619a6ec2b08471b",
+    "services/analytics/behavior-analytics/apps/city/scenario_boundary.py": "13e9597d6c6ef402abc0ff4545a2b438adcc5e6ec5d35e9b677d1509ef132046",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "2ddd4de6f32fc16d9bb4f2b457aeab55f689edc32b8b615d950d08d9fef136a2",
+    "services/analytics/behavior-analytics/apps/city/main.py": "c092402323d094bb9a1f55b1ea73248f7e7416363ecb9fc7223cb8ac06bff015",
+    "services/analytics/behavior-analytics/apps/city/models.py": "bcc2054c538a264890797717f12fc2d51839c59d4c04f2c1d432192b4e69bfb8",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "0810bbac3d01649a50811872bdb46a4c75a5f6b268eb659d0020179e23fa3f16",
+    "services/analytics/behavior-analytics/apps/city/tests/test_scenario_boundary.py": "657645a942f5cab45f44af4a3adbc4911a81737fd0d477e5f437a3d66e8b39cd"
+  },
+  "reviewHardening": [
+    "Native reset waits until every batch frame has verified capture time at or after staging fence; pre-fence batches are dropped before trackers and proof consumed exactly once.",
+    "Fence remains active after reset for late old batches.",
+    "Tracking/fusion epoch is carried by immutable per-frame user metadata; output and shared IDs cannot acquire a later global epoch.",
+    "Ready and Play revalidate source set, sessions, tracking epoch, frame count, span and freshness."
+  ],
+  "independentIsaacCpuReview": {
+    "command": "python3 -m unittest scripts.scenarios.test_prepared",
+    "result": "14 passed in 5.557 seconds; fake native agents, actual traffic model; no live qualification"
+  }
+}

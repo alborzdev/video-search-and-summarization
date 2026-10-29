@@ -1,0 +1,42 @@
+/* SPDX-License-Identifier: MIT */
+.page { display:grid; grid-template-columns:minmax(260px,.34fr) minmax(0,1fr); gap:22px; min-width:0; color:#f0f2f3; font-size:14px; line-height:1.5; height:100%; min-height:0; }
+.index,.report,.empty { border:1px solid #353e44; border-radius:7px; min-width:0; }
+.index { padding:20px 0; max-height:100%; display:flex; flex-direction:column; overflow:hidden; }
+.index header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 20px; }
+.index header h2 { font-size:20px; font-weight:600; }
+.index header button { border:1px solid #3e484f; padding:8px; border-radius:5px; }
+.index>p { color:#a4adb3; padding:8px 20px 18px; font-size:13px; }
+.index nav { display:flex; flex-direction:column; flex:1; min-height:0; overflow:auto; }
+.index nav button { display:flex; align-items:center; gap:14px; padding:18px 20px; border-top:1px solid #30383d; text-align:left; width:100%; }
+.index nav button[aria-current=true] { background:#203a3c; border-left:3px solid #37d5c1; padding-left:17px; }
+.index nav button:hover { background:#222b30; }
+.index nav button>span { flex:1; min-width:0; }
+.index strong { display:block; font-size:15px; font-weight:600; }
+.index small { display:block; color:#aab6bd; font-size:12px; margin-top:4px; }
+.report { padding:24px; overflow:auto; max-height:100%; }
+.report>h2 { font-size:34px; line-height:1.2; letter-spacing:-.025em; font-weight:600; margin-bottom:12px; }
+.badge { display:inline-block; color:#062a25; background:#38cfbb; border-radius:15px; padding:4px 12px; font-size:12px; font-weight:600; }
+.time { color:#aebac1; margin:12px 0 20px; font-size:13px; }
+.metrics { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:24px; border-block:1px solid #354149; padding:22px 0; }
+.primary>strong { display:block; color:#38d4c0; font-size:48px; font-weight:600; line-height:1.1; letter-spacing:-.03em; }
+.primary>span { display:block; font-size:17px; margin-top:8px; }
+.primary>small { display:block; color:#a4adb3; font-size:13px; max-width:420px; margin-top:8px; }
+.metrics dl { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px 20px; border-left:1px solid #354149; padding-left:24px; }
+.metrics dt { color:#a4adb3; font-size:12px; }
+.metrics dd { font-size:19px; margin-top:3px; font-variant-numeric:tabular-nums; }
+.context { margin:22px 0; }
+.context h3 { font-size:18px; font-weight:600; margin:16px 0 5px; }
+.context p { color:#b7c0c6; }
+.context a { color:#55cdbf; display:inline-flex; align-items:center; gap:8px; margin-top:12px; font-size:13px; }
+.actions { display:flex; flex-wrap:wrap; gap:10px; }
+.actions button { display:inline-flex; align-items:center; justify-content:center; gap:9px; border:1px solid #42515a; border-radius:6px; padding:11px 16px; min-height:44px; background:#20272b; }
+.actions .action { background:#38cfbb; color:#082821; border-color:#38cfbb; font-weight:600; }
+.actions button:disabled { opacity:.5; }
+.notice { padding:12px; border:1px solid #75623e; border-radius:5px; background:#30271b; margin-top:12px; color:#e4cfa5; }
+.scope { padding:14px 16px; border:1px solid #3c4a52; border-radius:6px; margin-top:22px; background:#1d2529; }
+.scope summary { cursor:pointer; font-weight:500; }
+.scope p { font-size:12px; color:#aab5bd; margin-top:10px; overflow-wrap:anywhere; }
+.empty { padding:40px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; color:#a4adb3; min-height:300px; }
+.empty h2 { color:#f0f2f3; font-size:24px; margin:16px 0 8px; }
+@media(max-width:1050px) { .page { grid-template-columns:260px minmax(0,1fr); gap:16px; } .metrics { grid-template-columns:1fr; } .metrics dl { border-left:0; border-top:1px solid #354149; padding:16px 0 0; } }
+@media(max-width:760px) { .page { display:flex; flex-direction:column; height:auto; } .index { max-height:235px; } .report { padding:18px; max-height:none; overflow:visible; } .report>h2 { font-size:28px; } .primary>strong { font-size:40px; } .actions button { flex:1 1 100%; } }

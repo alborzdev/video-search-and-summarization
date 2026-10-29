@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "city.container-gate-offline-replay.v1",
+  "scope": "Differential replay of strengthened memory/container prefix over raw logged telemetry; all other source/clock/preview gates are unchanged from the pinned live monitor. Raw JPEG and full omitted context are not reconstructed or re-fetched.",
+  "status": "final-differential-pass",
+  "originalMonitorSourceSha256": "53367510c4b96a3a418244ad7681000ea2b74e286dcdd987d08fb42ca4266816",
+  "candidateMonitorSourceSha256": "82147d01e3fd890108d42172df9c81218b269b82d64e261f442ac561aed38ac3",
+  "unchangedEvaluateRemainderAstSha256": "c9248ee649eb9a17b528178ea22347e404cd64242178b344686699154273d083",
+  "unchangedProcessedPreviewChecksAstSha256": "85a38999023b11369931b645174fd6677a0557d19e47a0461d9312017b0d9512",
+  "originalCommandSha256": "c4b174c0f99b1326cfef102562568e88efe7b8646c97f8d50db3ec8d4657669c",
+  "sampleCount": 232,
+  "sampleSpanSeconds": 1197.902785699349,
+  "samplesPrefixSha256": "6752bde802b61a2ed3dc55e079b69652857ab0ce7bdfd80b6f4f065ea654efaa",
+  "ignoredIncompleteSuffixBytes": 0,
+  "requiredContainers": [
+    "vss-city-detector",
+    "vss-city-analytics",
+    "vss-agent",
+    "vss-vios-streamprocessing",
+    "vss-rtvi-embed",
+    "vss-rtvi-vlm",
+    "vss-spark-spark-llm-1",
+    "vss-city-polish-ui",
+    "vss-city-polish-ingress"
+  ],
+  "containerStatuses": {
+    "vss-city-detector": {
+      "running": 232
+    },
+    "vss-city-analytics": {
+      "running": 232
+    },
+    "vss-agent": {
+      "running": 232
+    },
+    "vss-vios-streamprocessing": {
+      "running": 232
+    },
+    "vss-rtvi-embed": {
+      "running": 232
+    },
+    "vss-rtvi-vlm": {
+      "running": 232
+    },
+    "vss-spark-spark-llm-1": {
+      "running": 232
+    },
+    "vss-city-polish-ui": {
+      "running": 232
+    },
+    "vss-city-polish-ingress": {
+      "running": 232
+    }
+  },
+  "containerHealth": {
+    "vss-city-detector": {
+      "None": 232
+    },
+    "vss-city-analytics": {
+      "healthy": 232
+    },
+    "vss-agent": {
+      "healthy": 232
+    },
+    "vss-vios-streamprocessing": {
+      "healthy": 232
+    },
+    "vss-rtvi-embed": {
+      "healthy": 232
+    },
+    "vss-rtvi-vlm": {
+      "healthy": 232
+    },
+    "vss-spark-spark-llm-1": {
+      "healthy": 232
+    },
+    "vss-city-polish-ui": {
+      "None": 232
+    },
+    "vss-city-polish-ingress": {
+      "None": 232
+    }
+  },
+  "originalProcessedPreviewRequired": true,
+  "postWarmupLivePreviewReadySamples": 229,
+  "recordedAvailableBinarySamples": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 232,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 232
+  },
+  "originalBaselinePassed": true,
+  "noNetworkOrModelRequests": true,
+  "limits": [
+    "Final conclusion requires the original passing receipt plus exact complete sample hash.",
+    "Compact samples omit enabled/full current source context/full track bodies/JPEG bytes; this is an isolated stronger-container-gate replay, not a fresh independent validation of those omitted inputs.",
+    "The original source/clock/preview gates and original require-processed-preview option remain unchanged and are attested by the original live receipt."
+  ]
+}

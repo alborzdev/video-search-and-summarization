@@ -1,0 +1,93 @@
+{
+  "operation": "segment",
+  "model": "moondream2",
+  "object": "damaged pavement",
+  "status": "ok",
+  "image": {
+    "width": 1024,
+    "height": 576,
+    "rgb_sha256": "863c662864af757f818a1d519f533ef7b28d05437d02b7787e12a6576578aa86"
+  },
+  "timings_ms": {
+    "preprocess": 1.615472137928009,
+    "moondream_load": 0,
+    "describe": 0,
+    "presence": 0,
+    "detect": 0,
+    "point": 910.4190520010889,
+    "segmenter_load": 0,
+    "image_encode": 36.36177536100149,
+    "mask_decode": 6.094092037528753,
+    "total": 955.5255752056837
+  },
+  "segmenter_name": "sam2.1-tiny",
+  "grounded_by": "point",
+  "presence_mode": "off",
+  "presence": null,
+  "raw_grounding": {
+    "points": [
+      {
+        "x": 0.51953125,
+        "y": 0.5390625
+      }
+    ]
+  },
+  "segmenter_used": true,
+  "grounding_generation_limit": 3,
+  "grounding_returned_at_limit": false,
+  "valid_grounding_count": 1,
+  "truncated": false,
+  "objects": [
+    {
+      "source_index": 0,
+      "grounding": {
+        "x": 0.51953125,
+        "y": 0.5390625
+      },
+      "point": [
+        0.51953125,
+        0.5390625
+      ],
+      "mask_metadata": {
+        "score": 0.83984375,
+        "score_kind": "uncalibrated_predicted_mask_iou",
+        "candidate_scores": [
+          0.00136566162109375,
+          0.83984375,
+          0.80859375
+        ],
+        "selected_candidate": 1,
+        "candidate_count": 3,
+        "mask_area": 83,
+        "mask_fraction": 0.00014071994357638888
+      },
+      "mask_encoding": "PNG grayscale: 0 background, 255 foreground"
+    }
+  ],
+  "input_image": {
+    "source_width": 1024,
+    "source_height": 576,
+    "format": "JPEG",
+    "encoded_bytes": 272971,
+    "max_dimension": 1024,
+    "exif_transposed": true,
+    "width": 1024,
+    "height": 576,
+    "resized": false,
+    "inference_width": 1024,
+    "inference_height": 576
+  },
+  "model_identity": {
+    "moondream": "moondream2",
+    "segmenter": "sam2.1-tiny",
+    "runtime": "photon",
+    "device": "cuda",
+    "gb10_compat": false
+  },
+  "accuracy_evaluated": false,
+  "service_timings_ms": {
+    "image_prepare": 3.680875990539789,
+    "total": 961.1703925766051
+  },
+  "process_phase": "resident_reuse"
+}

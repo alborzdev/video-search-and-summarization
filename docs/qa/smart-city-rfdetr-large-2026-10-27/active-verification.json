@@ -1,0 +1,50 @@
+{
+  "modelSelection": {
+    "schemaVersion": "city.model-selection.v1",
+    "device": "spark",
+    "size": "large",
+    "engineSha256": "4434b077b3602ae2c3d9e950e5c36fc718de07b7c8444a9a4fbc7e4451b90ff6",
+    "modelRevision": "rfdetr-large-fp16@sha256:4434b077b3602ae2c3d9e950e5c36fc718de07b7c8444a9a4fbc7e4451b90ff6",
+    "selectedAt": "2026-10-27T17:22:44.493829+00:00"
+  },
+  "workerImage": "sha256:8e755229e733280aaf9555ef54688c0c7fb694c9c5ce18279d79e377c3b07c20",
+  "runtimeTuning": {
+    "muxTimeoutUs": 10000,
+    "previewFps": 30,
+    "decoder": "cpu"
+  },
+  "guardActive": true,
+  "savedReserveGiB": 20.0,
+  "sources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "status": "live",
+      "modelRevision": "rfdetr-large-fp16@sha256:4434b077b3602ae2c3d9e950e5c36fc718de07b7c8444a9a4fbc7e4451b90ff6;postprocess=one-city-class-per-query-v1",
+      "trackingArchitecture": "mv3dt-native-v1",
+      "timestampBasis": "source-native-sei",
+      "calibrationRevision": "isaac-live-b2b013d952e0748d",
+      "width": 960,
+      "height": 540
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "status": "live",
+      "modelRevision": "rfdetr-large-fp16@sha256:4434b077b3602ae2c3d9e950e5c36fc718de07b7c8444a9a4fbc7e4451b90ff6;postprocess=one-city-class-per-query-v1",
+      "trackingArchitecture": "mv3dt-native-v1",
+      "timestampBasis": "source-native-sei",
+      "calibrationRevision": "isaac-live-b2b013d952e0748d",
+      "width": 960,
+      "height": 540
+    }
+  ],
+  "focusedTestsPassed": 14,
+  "sourceHashes": {
+    "model_assets.py": "2d3b0135713b91fb3f544cc304f8ce8d2d28896d275d52c9e80821826905c4f0",
+    "export_model.py": "a7adf57ce11cd5adaf6b4b6132601f71f5c94f5997e5dad816c11b3eed1e7840",
+    "verify_export.py": "7bc44b93aa1088be5eec3f146de39fe7eda53d7291f8737fc5bf916e1dec7420",
+    "build_engine.py": "bc6a01e5dba00adbf9501c810e8cdaa04a9365c6c0e307dc4d4213406300c7f7",
+    "model_profile.py": "056502c90a0fede086122592501023aa031f6dc33bb38db4d25a84eabb097c94",
+    "evaluate_detectors.py": "1e3c7b7456a599c936673ea20a450e275dcd7fd8244a81aedb88947da5eccd65",
+    "evaluate_tensorrt_corpus.py": "a25703d2ba1447761abec25e2f49a9a1cfffeecc2e29930025d5e89f9518ef17"
+  }
+}

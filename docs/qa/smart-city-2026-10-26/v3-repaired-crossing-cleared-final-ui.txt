@@ -1,0 +1,79 @@
+TRAFFIC ENGINEERING
+Intersection insights
+
+Movement demand, crossing service, queues and curb access. Measured on this device.
+
+1 min
+5 min
+15 min
+
+Per-camera video time · no combined camera total
+
+Observed video time
+2 cameras
+Movements
+Crossing access
+Queues
+Walking
+Curb access
+Crossing access
+Observed stopped vehicles
+South crossing · stopped vehicle
+Southwest corner
+Observed
+12.1 s
+observed stopped-zone time · lower bound
+Episodes
+1
+Ongoing
+0
+Completed
+1
+Unresolved
+0
+
+Confirmed active intervals only; gaps and candidate time are excluded. Simultaneous stops do not add duplicate time.
+
+Show on map
+North crossing · stopped vehicle
+Northeast corner
+Observed
+0 s
+observed stopped-zone time · lower bound
+Episodes
+0
+Ongoing
+0
+Completed
+0
+Unresolved
+0
+
+Confirmed active intervals only; gaps and candidate time are excluded. Simultaneous stops do not add duplicate time.
+
+Show on map
+Junction · stopped vehicle
+Northeast corner
+Observed
+0 s
+observed stopped-zone time · lower bound
+Episodes
+0
+Ongoing
+0
+Completed
+0
+Unresolved
+0
+
+Confirmed active intervals only; gaps and candidate time are excluded. Simultaneous stops do not add duplicate time.
+
+Show on map
+Take the measurements with you
+
+Camera-scoped report with the selected window, coverage and configuration.
+
+Export CSV
+JSON
+Received 4:58:36 AM · configuration 6
+How to read these measures

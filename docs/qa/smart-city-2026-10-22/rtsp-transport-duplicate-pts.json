@@ -1,0 +1,32 @@
+{
+  "capturedAt": "2026-10-22T05:04:15.272551+00:00",
+  "method": "CPU PyAV19.0.2 H264 decode, two sources concurrently, discard first2sec then collect through8sec; no inference, no GPUjobs",
+  "sources": [
+    {
+      "source": "original-pedestrian-MediaMTX",
+      "frames": 61,
+      "wallSeconds": 6.000126525294036,
+      "uniquePts": 61,
+      "ptsSeconds": 5.999999999999999,
+      "ptsStepCounts": {
+        "0.1": 60
+      }
+    },
+    {
+      "source": "registered-VIOS-pedestrian-proxy",
+      "frames": 161,
+      "wallSeconds": 5.788627395872027,
+      "uniquePts": 21,
+      "ptsSeconds": 5.899999999999999,
+      "ptsStepCounts": {
+        "0.0": 140,
+        "0.1": 6,
+        "0.4": 11,
+        "0.3": 3
+      }
+    }
+  ],
+  "interpretation": "Original publisher is paced correctly at10FPS. VIOS proxy yields duplicate decoded timestamps and skipped unique timestamps. Cause not yet repaired/qualified; do not infer live freshness from source-rtcp alone.",
+  "budgetsChanged": false,
+  "proposedControlledNextStep": "Inspect H264 access-unit/multi-slice forwarding; a separately labelled single-slice replay derivative may isolate transport defect while originals remain preserved."
+}

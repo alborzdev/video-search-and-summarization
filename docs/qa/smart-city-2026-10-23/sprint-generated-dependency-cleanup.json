@@ -1,0 +1,17 @@
+{
+  "removedAfterSuccessfulImageBuild": [
+    "apps/nemo-agent-toolkit-ui/node_modules",
+    "apps/nv-metropolis-bp-vss-ui/node_modules",
+    "node_modules",
+    "packages/common/node_modules",
+    "packages/nemo-agent-toolkit-ui/node_modules",
+    "packages/nv-metropolis-bp-vss-ui/alerts/node_modules",
+    "packages/nv-metropolis-bp-vss-ui/all/node_modules",
+    "packages/nv-metropolis-bp-vss-ui/dashboard/node_modules",
+    "packages/nv-metropolis-bp-vss-ui/map/node_modules",
+    "packages/nv-metropolis-bp-vss-ui/search/node_modules",
+    "packages/nv-metropolis-bp-vss-ui/video-management/node_modules"
+  ],
+  "reason": "Remove only this build\u2019s duplicate installed dependency trees to restore disk headroom; original installed dependencies, frozen source, build output, image and manifests preserved.",
+  "at": "2026-10-23T15:41:02.601281+00:00"
+}

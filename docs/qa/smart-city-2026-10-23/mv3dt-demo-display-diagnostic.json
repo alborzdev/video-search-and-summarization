@@ -1,0 +1,551 @@
+{
+  "schemaVersion": "city.map-display-diagnostic.v1",
+  "method": "Read actual simultaneous gateway preview DTOs, synthesize only presentation receipt timestamps, call unmodified displaySnapshot and deriveMapObjects offline.",
+  "runtimeMutations": false,
+  "sourceEdits": false,
+  "guardChanges": false,
+  "syntheticDetections": false,
+  "qualificationClaim": false,
+  "samples": [
+    {
+      "sample": 0,
+      "capturedAt": "2026-10-23T19:37:48.799Z",
+      "frameMatched": true,
+      "sharedObjects": [],
+      "candidatePairs": [],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        }
+      ]
+    },
+    {
+      "sample": 1,
+      "capturedAt": "2026-10-23T19:37:49.339Z",
+      "frameMatched": true,
+      "sharedObjects": [],
+      "candidatePairs": [],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        }
+      ]
+    },
+    {
+      "sample": 2,
+      "capturedAt": "2026-10-23T19:37:49.869Z",
+      "frameMatched": true,
+      "sharedObjects": [],
+      "candidatePairs": [],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "50",
+          "hasAssociation": false,
+          "hasProjectedPosition": true
+        }
+      ]
+    },
+    {
+      "sample": 3,
+      "capturedAt": "2026-10-23T19:37:50.414Z",
+      "frameMatched": true,
+      "sharedObjects": [
+        {
+          "id": "experimental:[\"isaac-intersection-a\",80,\"mv3dt-demo\",\"eb9bd586-1677-4d70-90a3-c4f09eb93655\",\"mv3dt-demo:eb9bd586-1677-4d70-90a3-c4f09eb93655:50\",\"50\"]",
+          "memberTrackIds": [
+            "997d3a69-e052-45a4-a1ce-be1b046670c4:e4e5d38d-64a5-48c5-afba-3fe8eed7972b:50",
+            "40af41ea-2180-4b7b-83d6-bb5d08ff094a:76f1b8ca-307b-4254-8cd6-e386115bba92:50"
+          ],
+          "positionM": [
+            -27.48086559612857,
+            89.98342513632682
+          ]
+        }
+      ],
+      "candidatePairs": [
+        {
+          "targetId": "50",
+          "memberIds": [
+            "997d3a69-e052-45a4-a1ce-be1b046670c4:e4e5d38d-64a5-48c5-afba-3fe8eed7972b:50",
+            "40af41ea-2180-4b7b-83d6-bb5d08ff094a:76f1b8ca-307b-4254-8cd6-e386115bba92:50"
+          ],
+          "positions": [
+            [
+              -27.48086559612857,
+              89.98342513632682
+            ],
+            [
+              -27.014581030415805,
+              90.80877140301673
+            ]
+          ],
+          "distanceM": 0.9479545116517618,
+          "captureSkewMs": -0.208555
+        }
+      ],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        }
+      ]
+    },
+    {
+      "sample": 4,
+      "capturedAt": "2026-10-23T19:37:50.948Z",
+      "frameMatched": true,
+      "sharedObjects": [],
+      "candidatePairs": [
+        {
+          "targetId": "50",
+          "memberIds": [
+            "997d3a69-e052-45a4-a1ce-be1b046670c4:e4e5d38d-64a5-48c5-afba-3fe8eed7972b:50",
+            "40af41ea-2180-4b7b-83d6-bb5d08ff094a:76f1b8ca-307b-4254-8cd6-e386115bba92:50"
+          ],
+          "positions": [
+            [
+              -27.41222320494543,
+              89.8407157811241
+            ],
+            [
+              -26.887300449057538,
+              90.78753718688779
+            ]
+          ],
+          "distanceM": 1.0825962654938648,
+          "captureSkewMs": -0.208555
+        }
+      ],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        }
+      ]
+    },
+    {
+      "sample": 5,
+      "capturedAt": "2026-10-23T19:37:51.491Z",
+      "frameMatched": true,
+      "sharedObjects": [
+        {
+          "id": "experimental:[\"isaac-intersection-a\",80,\"mv3dt-demo\",\"eb9bd586-1677-4d70-90a3-c4f09eb93655\",\"mv3dt-demo:eb9bd586-1677-4d70-90a3-c4f09eb93655:50\",\"50\"]",
+          "memberTrackIds": [
+            "997d3a69-e052-45a4-a1ce-be1b046670c4:e4e5d38d-64a5-48c5-afba-3fe8eed7972b:50",
+            "40af41ea-2180-4b7b-83d6-bb5d08ff094a:76f1b8ca-307b-4254-8cd6-e386115bba92:50"
+          ],
+          "positionM": [
+            -27.234375830303886,
+            89.95279716880913
+          ]
+        }
+      ],
+      "candidatePairs": [
+        {
+          "targetId": "50",
+          "memberIds": [
+            "997d3a69-e052-45a4-a1ce-be1b046670c4:e4e5d38d-64a5-48c5-afba-3fe8eed7972b:50",
+            "40af41ea-2180-4b7b-83d6-bb5d08ff094a:76f1b8ca-307b-4254-8cd6-e386115bba92:50"
+          ],
+          "positions": [
+            [
+              -27.234375830303886,
+              89.95279716880913
+            ],
+            [
+              -26.86807447145559,
+              90.78825301884343
+            ]
+          ],
+          "distanceM": 0.9122297752488985,
+          "captureSkewMs": -0.197444
+        }
+      ],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "87",
+          "hasAssociation": false,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        }
+      ]
+    },
+    {
+      "sample": 6,
+      "capturedAt": "2026-10-23T19:37:52.023Z",
+      "frameMatched": true,
+      "sharedObjects": [],
+      "candidatePairs": [],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "87",
+          "hasAssociation": false,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "88",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        }
+      ]
+    },
+    {
+      "sample": 7,
+      "capturedAt": "2026-10-23T19:37:52.548Z",
+      "frameMatched": true,
+      "sharedObjects": [],
+      "candidatePairs": [],
+      "observedPeople": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "4",
+          "hasAssociation": true,
+          "hasProjectedPosition": false
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "70",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "74",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "localTrackId": "87",
+          "hasAssociation": false,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "68",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "80",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "81",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "50",
+          "hasAssociation": true,
+          "hasProjectedPosition": true
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "localTrackId": "70",
+          "hasAssociation": false,
+          "hasProjectedPosition": true
+        }
+      ]
+    }
+  ]
+}

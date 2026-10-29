@@ -1,0 +1,164 @@
+{
+  "schemaVersion": "city.native-sei-qualified-shared-pair.v1",
+  "readOnly": true,
+  "runtimeChanged": false,
+  "context": "Historical actual observations within current active source/fusion sessions. Offline guard evaluation conditional on these exact images being displayed; not itself a browser-presented-frame receipt.",
+  "sourceSessions": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": "6e116200-8ef5-4bba-81d5-e9d7fa69a344",
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "b446ec1c-b2f8-4660-a675-609c40bd48ef"
+  },
+  "inputPrefixBytes": 87362999,
+  "inputReadStartBytes": 79363614,
+  "inputReadBytes": 7999385,
+  "inputSegmentSha256": "a0b9b27878e78aa13640adcb51fcf96b7d1ac8381107f2a49f0b86cf17173eff",
+  "retainedCurrentSessionRows": 1455,
+  "windowSourceTimeNs": [
+    "1793010822526165613",
+    "1793010888591071696"
+  ],
+  "opportunities": {
+    "latestSourcePairUpdates": 1453,
+    "sharedActualSdkHintUpdates": 94,
+    "sharedClockWithin150ms": 90,
+    "distanceAbove1mRefusals": 6,
+    "initialMapGuardsPass": 83,
+    "projectionRefusals": 1
+  },
+  "sameNativeFrameCounterInitialGuardPasses": 45,
+  "selectedPair": {
+    "globalTrackId": "mv3dt-demo:98738a41-d8cd-4e61-ac54-23f3768451a1:13",
+    "captureSkewMs": 0.350032,
+    "homographyAnchorDistanceM": 0.8296306600523886,
+    "sameNativeFrameCounter": true,
+    "members": [
+      {
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "sourceSessionId": "b446ec1c-b2f8-4660-a675-609c40bd48ef",
+        "sequence": "1587",
+        "sourceTimeNs": "1793010886882596171",
+        "rawSourcePtsNs": "157618482476",
+        "sourceClockEvidence": {
+          "schemaVersion": "city.source-native-sei.v1",
+          "method": "isaac-native-sei-wall-capture",
+          "correlation": "exact-au-pts",
+          "captureTimeNs": "1793010886882596171",
+          "auPtsNs": "157618482476",
+          "frameCounter": "84706"
+        },
+        "localTrackId": "14111885434996916317",
+        "nativeTargetId": "13",
+        "positionM": [
+          -36.16531057359327,
+          73.72903634994819
+        ],
+        "projectionStatus": "valid",
+        "bboxPx": [
+          637.474365,
+          107.067261,
+          12.2387695,
+          37.4084473
+        ],
+        "native3D": {
+          "method": "nvidia-mv3dt-9.2",
+          "targetId": "13",
+          "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+          "worldPositionM": [
+            -36.7498131,
+            72.9648209
+          ],
+          "imageFootPx": [
+            640.563843,
+            143.395096
+          ],
+          "visibility": 0.830839515,
+          "state": "observed",
+          "localTargetId": "14111885434996916317",
+          "localTrackingMethod": "nvidia-nvdcf-first-stage-9.2"
+        },
+        "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "fusionEpoch": "98738a41-d8cd-4e61-ac54-23f3768451a1",
+        "observedThisFrame": true
+      },
+      {
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sourceSessionId": "6e116200-8ef5-4bba-81d5-e9d7fa69a344",
+        "sequence": "1587",
+        "sourceTimeNs": "1793010886882246139",
+        "rawSourcePtsNs": "157618460302",
+        "sourceClockEvidence": {
+          "schemaVersion": "city.source-native-sei.v1",
+          "method": "isaac-native-sei-wall-capture",
+          "correlation": "exact-au-pts",
+          "captureTimeNs": "1793010886882246139",
+          "auPtsNs": "157618460302",
+          "frameCounter": "84706"
+        },
+        "localTrackId": "14111885434996916239",
+        "nativeTargetId": "13",
+        "positionM": [
+          -36.70823165262574,
+          73.10172164898768
+        ],
+        "projectionStatus": "valid",
+        "bboxPx": [
+          24.0234375,
+          431.433105,
+          67.6171875,
+          86.3525391
+        ],
+        "native3D": {
+          "method": "nvidia-mv3dt-9.2",
+          "targetId": "13",
+          "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+          "worldPositionM": [
+            -36.3687782,
+            73.1045227
+          ],
+          "imageFootPx": [
+            86.824379,
+            516.000732
+          ],
+          "visibility": 0.259009689,
+          "state": "observed",
+          "localTargetId": "14111885434996916239",
+          "localTrackingMethod": "nvidia-nvdcf-first-stage-9.2"
+        },
+        "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "fusionEpoch": "98738a41-d8cd-4e61-ac54-23f3768451a1",
+        "observedThisFrame": true
+      }
+    ]
+  },
+  "guardContract": {
+    "sameActualSdkGlobalId": true,
+    "uniqueCameraMembers": true,
+    "observedPersonOnly": true,
+    "matchingCurrentSessionsAndFusionEpoch": true,
+    "matchingPinnedCalibration": "isaac-live-045c84fe5fda7a15",
+    "explicitNativeSeiClockEvidence": true,
+    "sameNativeRenderFrameCounter": true,
+    "clockThresholdMs": 150,
+    "initialJoinDistanceThresholdM": 1,
+    "visibilityMinimum": 0.25,
+    "positionBasis": "existing per-camera bbox-foot homography, not SDK world coordinate or actor ground truth"
+  },
+  "artifacts": {
+    "rawPair": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/final-shared-pair/qualifying-pair.ndjson",
+    "rawPairSha256": "8d0caea10e286e7402d6dc948e80be1b01e27a2400c9b25466ac2d61c2cae461",
+    "projectionInputs": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/final-shared-pair/projection-inputs.json",
+    "projectionInputsSha256": "c57e226ee646046ff37dc7282a96361a3f2be02edbe5d6b0fcf9b860c67d252d"
+  },
+  "separateActualBrowserProof": {
+    "screenshot": "native-sei-shared-person-browser.jpg",
+    "accessibility": "native-sei-shared-person-browser.txt",
+    "reportedBy": "root actual browser",
+    "label": "Shared person \u00b7 2 views; 1 joined",
+    "sameSessionContext": true,
+    "note": "Browser proof captured separately during pedestrian start; not asserted to be the selected historical pair."
+  },
+  "limits": [
+    "Shared SDK identity is not independently labelled physical-person accuracy.",
+    "Latest snapshot may legitimately show zero joined when the second camera no longer observes that target.",
+    "No geometry, identity, clock or map thresholds changed."
+  ]
+}

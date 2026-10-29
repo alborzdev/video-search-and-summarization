@@ -1,0 +1,20 @@
+{
+  "valid_mask": false,
+  "quality_validated": false,
+  "image_size": [
+    1024,
+    576
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.0,
+    "x_max": 1.0,
+    "y_min": 0.0,
+    "y_max": 1.0
+  },
+  "artifacts": {
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T164622Z-moondream2-stock/masks/blank-svg-start.mask.json"
+  },
+  "status": "bbox_only"
+}

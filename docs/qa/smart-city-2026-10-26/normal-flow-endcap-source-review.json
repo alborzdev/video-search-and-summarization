@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "city.normal-flow-endcap-source-review.v1",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "sourceRoot": "/home/sparkdev/isaac_city_sim",
+  "sourceSha256": {
+    "scripts/people/people_controller.py": "e63c1afb86764b35833dcf8948f7702d1f53188be454dabe017bd1f20b8aaa15",
+    "scripts/people/test_normal_flow.py": "dfc01ee1d26bce46c9971500aca2b3774404574b90057076a269c24e7e44c56a",
+    "scripts/people/crossing_gate.py": "4bd9d71a20f604be1a002b318ecbc8715fb2a08c6ab30a9390339af83b55d733",
+    "config/people_commands_expo_signal.txt": "e2b9bfd39756d80d7823b861a6787d24b6d3c7b00659861150821e662c168bf4"
+  },
+  "checks": {
+    "command": "PYTHONPATH=scripts/people python3 -m unittest scripts.people.test_normal_flow scripts.people.test_crossing_gate scripts.people.test_episode_phases scripts.people.test_episode_clock",
+    "passed": 70,
+    "failed": 0,
+    "seconds": 7.088,
+    "normalFlowTests": 28,
+    "crossingHelperTests": 25,
+    "ownedPhaseTests": 13,
+    "episodeClockTests": 4
+  },
+  "reviewFindings": [
+    "No blocker found for a controlled live trial.",
+    "Accepted-crossing exit repair requires the original accepted program, program counter, named crossing and exact target; it only plans a same-endcap path to that original exit.",
+    "A curb entry reapproach must stay outside all crosswalks and road geometry, then recheck the unchanged full native path, WALK, shared phase coherence and cohort gate.",
+    "Returned native path includes actual start and requested target connectors for both geometry and length checks.",
+    "Alignment rejects invalid native IDs before polling and requires observed endpoint proximity; native raw failures and timeouts remain diagnostic evidence.",
+    "Program advance, rollback, public reload, agent rearm and owned-program restore retire repair permission.",
+    "Entry repair does not grant a new crossing admission or restore a prior native task ID."
+  ],
+  "arrivalTolerances": {
+    "repairAndNearGoal": "XY<=0.25m and Z<=0.15m",
+    "unchangedDirectNativeCrossWalkSucceeded": "3D distance<=0.35m"
+  },
+  "limits": [
+    "Native paths are planned navigation geometry, not observed avoidance trajectories.",
+    "Native-agent CPU objects are mocks; this review does not qualify live arrival, throughput, camera counts or cross-camera fusion.",
+    "Existing-road exit clearance is scoped by accepted-crossing provenance, same-endcap path, crossing exclusions and safe target; no new absolute path-length threshold was added.",
+    "No source controller, runtime, Kit, model, camera, renderer or signal changes were made by reviewer."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "smart-city.preview-display-projection.v1",
+  "recordedAt": "2026-10-26T05:34:34.599358+00:00",
+  "backendTests": {
+    "passed": 218,
+    "failed": 0
+  },
+  "sourceSha256": {
+    "services/analytics/behavior-analytics/apps/city/preview.py": "db77af6d4f92327210b2c6ec23cc98c87352552b3abd336e677398e681ed3837",
+    "services/analytics/behavior-analytics/apps/city/tests/test_preview.py": "eaecdcfb4d39e48f331bcd3d70f40e10cc75f8565f5502048286ea502c576df9"
+  },
+  "bounds": {
+    "allCapturedActiveEvents": true,
+    "recentOtherEvents": 8,
+    "originalTrailSamples": 12,
+    "trailEndpointsAndSpanPreserved": true
+  },
+  "historyMutation": false,
+  "deployment": "Confirmed two-source pause; CPU gateway restart; normal launcher readiness passed",
+  "pauseReceipt": ".spark/city/runtime/intersection-rebuild-20261026/pause-for-compact-preview.json",
+  "readinessLog": ".spark/city/runtime/intersection-rebuild-20261026/start-compact-preview.log",
+  "limits": [
+    "No UI revision cache is implemented.",
+    "Different-content payload observations do not establish measured percentage or FPS gains.",
+    "This does not qualify a full booth day."
+  ]
+}

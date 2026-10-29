@@ -1,3 +1,5 @@
+> Current Spark policy (operator request, October 28): saved reserve **5 GiB**, no additional startup allowance. The active memory guard and saved-reserve checks remain enabled. This supersedes older startup headroom and 20 GiB values below.
+
 # Runtime tools for Spark and Thor
 
 Use the same `codex/unified-spark-thor` application branch on both devices.
@@ -26,6 +28,37 @@ choices when flags are omitted. `--no-adaptive-evs` disables session pruning
 while retaining the selected engine. The UI reports the configured engine and
 EVS choice; inference validation is separate. Thor's pinned MPS launcher must
 be reviewed against a new image before that engine is qualified on Thor.
+
+On Spark, the compatible 3.3 engine can select the pinned Nano NVFP4 checkpoint
+after its files have been staged and checked against
+[`cosmos3-nano-nvfp4.lock.json`](../spark/cosmos3-nano-nvfp4.lock.json):
+
+```sh
+python3 tools/runtime/bootstrap.py render --host-ip 127.0.0.1 --cached-models --rtvi-vlm-image vss-rtvi-vlm:3.3-sbsa-codecs --vlm-precision nvfp4 --adaptive-evs
+```
+
+The cache directory is
+`nim_nvidia_cosmos3-nano-reasoner_modelopt-nvfp4-full-quantize-final_format_fix`
+inside the existing RTVI NGC model-cache volume. Rendering does not download
+weights or start services. The saved precision is preserved by later renders;
+`--vlm-precision bf16` restores the previous checkpoint selection. Both retain
+the existing memory reserve, four-GiB KV cache and single-sequence limit.
+NVFP4 quantizes the language-model weights and activations; this artifact keeps
+its vision tower and output head in their original precision. Spark selection
+does not change or qualify Thor's model configuration.
+
+October 21 Spark comparison: NVFP4 with EVS passed the four-frame box/empty
+controls and reduced their measured latency, but missed a brief box appearance
+in the 20-frame positive control that BF16 with EVS answered correctly.
+Turning EVS off restored that binary answer; reducing pruning to 25% did not.
+Do not treat healthy startup or faster answers as accuracy qualification. The
+BF16 cache remains available for rollback; representative demo footage still
+needs review with the chosen checkpoint and EVS settings.
+
+Spark's Agent ISO clip tool disables overlay exports: the CPU VIOS image
+segfaulted while constructing that overlay during the model-switch app check.
+Fresh visual inspection uses the existing validated retained-clip path instead.
+This does not qualify native overlay rendering or change Thor's configuration.
 
 `--demo-profile clips` omits the live alert-candidate consumer while retaining
 the CPU search consumer that forwards embeddings to the indexed topic. Combine it
@@ -84,6 +117,20 @@ guard while other GPU workloads run. Do not update the host driver or reboot
 while an unrelated training job is active.
 
 ## Spark operator setting
+
+Spark can start the staged **Moondream2/Photon + SAM 2.1 Tiny** resident service
+with VSS. `render --local-vision` selects it; omitted flags preserve the saved
+choice. The current setup has it enabled. Desktop Start VSS and bootstrap up
+wait for model readiness, and VSS shutdown stops it. Both Defense and Smart
+City expose the same service through **Local vision**. This processes a requested
+image, independently of existing continuous detectors and Cosmos.
+
+The fixed 1024-pixel image profile uses reserve + 12 GiB startup admission and
+a reserve + 3 GiB watchdog; the reserve itself is unchanged. Concurrent Cosmos
+and segmentation requests passed the bounded check with at least 31.35 GiB
+system memory available. This is not a new sustained-stream capacity claim.
+See [implementation and lifecycle](../segmentation/README.md) and
+[executed deployment evidence](../../docs/qa/local-segmentation-2026-10-22/vss-integration.md).
 
 On October 20 the operator selected a **20 GiB** reserve for the GB10 setup.
 The guard and bounded workload admission accept that saved floor; the extra

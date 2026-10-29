@@ -1,0 +1,44 @@
+{
+  "kind": "offline-person-anchor-audit",
+  "observationFrames": 3701,
+  "labelAssignment": "Independent image-space one-to-one assignment, confidence >= 0.55, maximum normalized matching cost 1; ambiguous occlusion assignments are possible. Speed uses consecutive source frames with the same local ID and matched person, 0 < frame and label intervals <= 0.3 seconds.",
+  "qualification": "Saved simulator footage only. This is not a new runtime, detector-recall, speed-accuracy or fusion qualification. No smoothing, camera calibration, thresholds or operational actor inputs changed.",
+  "inputs": {
+    "observations": {
+      "path": "/home/sparkdev/vss/.spark/city/runtime/isaac-ground-association-20261023/observations.ndjson",
+      "sha256": "aaa1016c7f33a2bba3c031fcd7b71d0eca7d3bb881559a6dd37b036e00bd899f"
+    },
+    "package": {
+      "path": "/home/sparkdev/vss/.spark/city/state/native/mv3dt-person-plane/package.json",
+      "sha256": "20f148347e50659a150e375bf4a1dcb8169bb24c20ac1b465519299c7e846a80"
+    },
+    "evaluationLabels": {
+      "path": "/home/sparkdev/isaac_city_sim/logs/vss-integration/evaluation-ground-truth-1792730895658285642.ndjson",
+      "sha256": "9f4f1391812c1ade85dce4fbe8a634d5cf3fed35afa3ea306dff9449d161be9a"
+    }
+  },
+  "cameras": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "matchedPersonSamples": 4682,
+      "positionMedianM": 0.39134501769775965,
+      "positionP95M": 0.93390140150763,
+      "speedPairSamples": 3759,
+      "speedAbsoluteErrorMedianMps": 0.2705135190850808,
+      "speedAbsoluteErrorP95Mps": 1.65261275465633,
+      "estimatedSpeedMedianMps": 0.5366271159026086,
+      "trueSpeedMedianMps": 0.4079639018213149,
+      "normalizedVsPriorProjectionMaximumDeltaM": 4.3944641265813476e-14
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "matchedPersonSamples": 3696,
+      "positionMedianM": 0.4495901292719894,
+      "positionP95M": 0.9650936032201995,
+      "speedPairSamples": 2876,
+      "speedAbsoluteErrorMedianMps": 0.27305108678080836,
+      "speedAbsoluteErrorP95Mps": 1.4786331903691372,
+      "estimatedSpeedMedianMps": 0.5132686989718822,
+      "trueSpeedMedianMps": 0.4307273771754031,
+      "normalizedVsPriorProjectionMaximumDeltaM": 4.4938668397781776e-14
+    }
+  }
+}

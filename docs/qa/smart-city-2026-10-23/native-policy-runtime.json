@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": {
+    "file_open_converts_before_loading": true,
+    "accidental_legacy_reference_disabled_without_discarding_edits": true,
+    "backend_preflights_source_before_open": true,
+    "new_edit_layer_uses_converted_source": true,
+    "unsupported_backend_open_retains_safe_stage": true,
+    "unsupported_file_open_rejected_before_loading": true
+  },
+  "started": 1792731487.68593
+}

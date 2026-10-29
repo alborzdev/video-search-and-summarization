@@ -1,0 +1,7 @@
+{
+  "returncode": 0,
+  "child_returncode": 0,
+  "missing_or_failed_tasks": [],
+  "elapsed_s": 86.73877488262951,
+  "log": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T154237Z-gb10/inference.jsonl"
+}

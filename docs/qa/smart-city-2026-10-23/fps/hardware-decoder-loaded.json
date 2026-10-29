@@ -1,0 +1,12 @@
+{
+  "pid": 2482628,
+  "decoderLibraries": [
+    "/opt/nvidia/deepstream/deepstream-9.2/lib/libnvcuvidv4l2.so",
+    "/usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstnvvideo4linux2.so",
+    "/usr/lib/aarch64-linux-gnu/libnvcuvid.so.580.142",
+    "/usr/lib/aarch64-linux-gnu/tegra/libnvv4l2.so",
+    "/usr/lib/aarch64-linux-gnu/tegra/libv4l2_nvcuvidvideocodec.so"
+  ],
+  "nativeLibrariesLoaded": true,
+  "scope": "Native video decoder plugin and driver are mapped in the actual city-worker, with no cpu-decode skip option. Live decoded tracking/previews independently required."
+}

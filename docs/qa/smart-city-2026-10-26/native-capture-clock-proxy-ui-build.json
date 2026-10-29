@@ -1,0 +1,33 @@
+{
+  "schemaVersion": "city.native-sei-proxy-ui-build.v1",
+  "at": "2026-10-26T10:32:18.018014+00:00",
+  "status": "built-offline-not-activated",
+  "packageId": "20261026T102610382036Z",
+  "imageId": "sha256:1d94d0350f90c2e4f120f0295553e6ed06d6b71789579378bf532a634605fc0f",
+  "imageReference": "vss-spark-vss-ui:smart-city-d4aee494f102-20261026t102610382036z",
+  "sourceSha256": "d4aee494f102dc2a60782060735fc22a879b5313cf5f140ea79543868ed0e25f",
+  "artifactSha256": "41a60b1f584e4db68d67adf4c79823b8454b3e5f1efbf2f97d04552f2c909f53",
+  "manifestSha256": "1afcf392efc2eacb70248cd446a507adaf8d57a8d8e89af8d0870c5140a19bf4",
+  "buildLogSha256": "564eef65ca71603b6302e92d43cb365a2934f9abd404c66c95e56332e23d902d",
+  "imageLogSha256": "c794ec8f46d5e717d33c9417bf22c8dc515c6ec270fb82875e6742f986bc355b",
+  "buildTasks": {
+    "passed": 10,
+    "total": 10,
+    "elapsed": "2m4.333s"
+  },
+  "dependencyMode": "reuse-installed",
+  "environment": {
+    "cpuOnly": true,
+    "networkDuringCompile": "none",
+    "cpus": 2,
+    "memoryGiB": 4,
+    "NVIDIA_VISIBLE_DEVICES": "void",
+    "installsPerformed": false
+  },
+  "repairReceipt": "native-capture-clock-proxy-repair.json",
+  "independentReview": "native-capture-clock-independent-review.json",
+  "previousIntermediateImageId": "sha256:77c06679148cc6cc1e9cb7277fc100261e8a63217b1f49db3096ec3b117931ed",
+  "scope": "Fresh immutable proxy-repaired UI. Only two public source keys plus tests/real metadata fixture differ from the initial SEI UI candidate. Layout/branding/map/source context unchanged. No source guard is weakened, and no service/runtime/Kit/GPU/model request is made by this build.",
+  "runtimeActivated": false,
+  "goalComplete": false
+}

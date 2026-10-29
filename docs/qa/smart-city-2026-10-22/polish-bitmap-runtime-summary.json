@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "city.polish-runtime-summary.v1",
+  "verifiedAt": "2026-10-22T15:34:04.815067+00:00",
+  "passed": true,
+  "wallSeconds": 1200.0002382122912,
+  "sampleCount": 232,
+  "totalFrameObservations": 47916,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 35937,
+      "uniquePts": 35934,
+      "duplicatePts": 3,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 1241898836695,
+      "lastNs": 1792683175218594770,
+      "lastSequence": 37046,
+      "session": "b45dfc04-b456-43b8-970c-0f32c633ccb2",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 11979,
+      "uniquePts": 11979,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 1242059141393,
+      "lastNs": 1792683175409296083,
+      "lastSequence": 12358,
+      "session": "b55a3d65-2032-45f1-b469-60e212a2c300",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "observationRotations": 1,
+  "minimumAvailableGiB": 40.170040130615234,
+  "maximumTrustedSourceAgeSeconds": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.278012752532959,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.1685655117034912
+  },
+  "scheduledAskCount": 1,
+  "scheduledAsks": [
+    {
+      "at": "2026-10-22T15:28:13.344671+00:00",
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallSeconds": 13.600586987100542,
+      "answerSha256": "3b47b7daf6ecfd20bd16deed3927a4ef0ef28dca5b254094bd7205f9d5e169f7",
+      "answerCharacters": 1044,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T15:27:49.744000Z",
+        "endTime": "2026-10-22T15:27:54.744000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    }
+  ],
+  "manualBrowserAsk": "No additional manual question during this run. The previous manual question belongs to the prior UI package and receipt.",
+  "containers": {
+    "vss-city-detector": {
+      "imageId": "sha256:403f58f44856eafe5ce6d1a42308203ed4d923bab91cf7a073aceb3a6a2a868e",
+      "containerId": "4f24489c26752436eb152c513a9013f3b2449ae5bc75c72f31dd7d00f143a937",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "8589934592",
+      "initialMiB": 1016.87109375,
+      "finalMiB": 1024.76953125,
+      "peakMiB": 1025.5
+    },
+    "vss-city-analytics": {
+      "imageId": "sha256:bc667c99fd6b3055c0c925afbcf158f356553070dbf184221ee394b8bbbf3487",
+      "containerId": "565e37f8e4ae1e364ed8903bd8286834b0905d723f670236d552954961ad505a",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "805306368",
+      "initialMiB": 79.578125,
+      "finalMiB": 71.546875,
+      "peakMiB": 82.6015625
+    },
+    "vss-agent": {
+      "imageId": "sha256:165dfe62fea62e2716716f66dfab3f5059fe5eccce57df47dcc4f5e8ac170efe",
+      "containerId": "6adfd46f42c8359a26674516dad9031e9f867cec3596413f683c3048009456d9",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 842.234375,
+      "finalMiB": 841.6328125,
+      "peakMiB": 861.6171875
+    },
+    "vss-vios-streamprocessing": {
+      "imageId": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+      "containerId": "b1a30cf933dbd9342e411f83ae73ab9bddc1ebf4a7de5db23d25fc41309cefc2",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "2147483648",
+      "initialMiB": 1491.05859375,
+      "finalMiB": 1491.95703125,
+      "peakMiB": 1495.69140625
+    },
+    "vss-rtvi-embed": {
+      "imageId": "sha256:335093f228cd4e616a44e10bef1204d212a0922ad4a4142ff882c532db8b371c",
+      "containerId": "56bfb7f6f1f38cb0e159c6df8153f7c309e627d86f71ff0163807ef77fb232a1",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 3386.26953125,
+      "finalMiB": 3399.9375,
+      "peakMiB": 3400.39453125
+    },
+    "vss-rtvi-vlm": {
+      "imageId": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "containerId": "700cbd44ab5dc9a88093d4b35d17b1027eef03bf9d1fc68d72e1dd1ac869284c",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 5347.48046875,
+      "finalMiB": 5552.05859375,
+      "peakMiB": 5562.3828125
+    },
+    "vss-spark-spark-llm-1": {
+      "imageId": "sha256:82028e38ab950edd32f5053ca2030ee14d965e8fd4fe1c6e06468eb0be07a9a4",
+      "containerId": "13987a6f7d1b2877ef854d03fb7d948ddff3489c6c1fa61fd7c4738620a304bf",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "max",
+      "initialMiB": 2759.07421875,
+      "finalMiB": 2775.82421875,
+      "peakMiB": 2776.63671875
+    },
+    "vss-city-polish-ui": {
+      "imageId": "sha256:dbf42268586b4979015a0ba15f2fc81cb41aec27a350c4b93785a9cfa3254a04",
+      "containerId": "f4eeb92e66b9df671511e493786b54ff00cc5c243ee60f07572e7a9a5b6b086b",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "2147483648",
+      "initialMiB": 104.32421875,
+      "finalMiB": 107.3828125,
+      "peakMiB": 110.6015625
+    },
+    "vss-city-polish-ingress": {
+      "imageId": "sha256:d84eb36e91830bcaa67b23cfde1909850b99f11eb60da3abd185bd0daf3f75bb",
+      "containerId": "e4a1c2bb9b468b1734506f09c92cc3ad3511974033714009e849393b3d1cdaed",
+      "restartDelta": 0,
+      "oomDelta": 0,
+      "oomKillDelta": 0,
+      "memoryLimitBytes": "134217728",
+      "initialMiB": 25.46484375,
+      "finalMiB": 24.921875,
+      "peakMiB": 26.1953125
+    }
+  },
+  "workerSha256": "bf807609fbf3412b6c96c1614822eac5fd3c7ecda86e56b6ffa89b432c6544c9",
+  "samplesSha256Verified": "6752bde802b61a2ed3dc55e079b69652857ab0ce7bdfd80b6f4f065ea654efaa",
+  "monitorSourceSha256Verified": "53367510c4b96a3a418244ad7681000ea2b74e286dcdd987d08fb42ca4266816",
+  "uiReceipt": "polish-bitmap-ui.json",
+  "priorInterruptedAttempt": "polish-bitmap-interrupted.json",
+  "scope": "Twenty-minute regression qualification after decoded-bitmap ownership/canvas allocation corrections, with the current immutable UI, existing two-source Spark replay, exact preview checks and one scheduled question. The managed run retained its original monitor source hash; stronger container-state checks are reviewed separately against its saved states. Not a two-hour/full-booth-day, semantic accuracy, final-city calibration, Firefox-specific, MV3DT or Thor qualification."
+}

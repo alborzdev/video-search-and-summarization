@@ -1,0 +1,1943 @@
+[
+  {
+    "epoch": "d70a8e38-1496-4df5-ae5a-128640fbefb8",
+    "kind": "preparing",
+    "runId": "5b4ea4cd144c42b9903f51371fe0b87b",
+    "scenarioId": "turning-demand",
+    "startedAt": "2026-10-26T15:32:23.839084+00:00",
+    "endedAt": "2026-10-26T15:32:25.466671+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793028745432341095",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793028745319919375"
+    },
+    "metrics": [],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 186,
+      "mode": "live",
+      "configRevision": 6,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 6,
+        "movements": [
+          {
+            "id": "northbound-through",
+            "name": "Northbound \u00b7 straight",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-north-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-left",
+            "name": "Northbound \u00b7 left",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-west-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-right",
+            "name": "Northbound \u00b7 right",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-east-right-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          }
+        ],
+        "crossings": [
+          {
+            "id": "east-crossing-south-north",
+            "name": "East crossing \u00b7 south to north",
+            "waitingRuleId": "mobility-isaac-east-waiting-south",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          },
+          {
+            "id": "east-crossing-north-south",
+            "name": "East crossing \u00b7 north to south",
+            "waitingRuleId": "mobility-isaac-east-waiting-north",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          }
+        ],
+        "queues": [
+          {
+            "id": "northbound-queue",
+            "name": "Northbound approach",
+            "zoneRuleId": "mobility-isaac-northbound-queue",
+            "stopLine": [
+              [
+                -23.7,
+                63.8
+              ],
+              [
+                -20.2,
+                63.8
+              ]
+            ],
+            "upstreamPoint": [
+              -22.89410029498525,
+              50.0
+            ],
+            "spillbackDistanceM": 10.0,
+            "maxAnchorGapM": 8.0,
+            "stopLineReachM": 8.0,
+            "minimumDurationMs": 1500,
+            "maximumObservationGapMs": 1000
+          }
+        ],
+        "curbs": [
+          {
+            "id": "north-curbside-access",
+            "name": "North arm \u00b7 curbside access",
+            "zoneRuleId": "mobility-isaac-north-curbside-lane",
+            "role": "general",
+            "dwellThresholdMs": 8000,
+            "maximumObservationGapMs": 1000
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "name": "Northbound vehicles \u00b7 crossing count",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "name": "Northbound \u00b7 north gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "name": "Westbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "name": "Eastbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-right-exit",
+          "name": "Northbound right \u00b7 outer east gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        }
+      ],
+      "movements": [
+        {
+          "id": "northbound-through",
+          "name": "Northbound \u00b7 straight",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-left",
+          "name": "Northbound \u00b7 left",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-right",
+          "name": "Northbound \u00b7 right",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        }
+      ],
+      "obstructions": [
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "name": "South crossing \u00b7 stopped vehicle",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "name": "North crossing \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-stopped-junction",
+          "name": "Junction \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [
+        {
+          "id": "north-curbside-access",
+          "name": "North arm \u00b7 curbside access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "zoneRuleId": "mobility-isaac-north-curbside-lane",
+          "role": "general",
+          "asOfSourceTimeNs": null,
+          "windowMinutes": 5,
+          "timeBasis": "source-time",
+          "status": "unknown",
+          "occupancy": null,
+          "observedOccupancy": 0,
+          "occupancyIsLowerBound": true,
+          "pendingTrackCount": 0,
+          "lostTrackCount": 0,
+          "byClass": {},
+          "longestActiveObservedDwellMs": null,
+          "persistentOccupancyCount": null,
+          "persistentByClass": {},
+          "stoppedCount": null,
+          "stoppedByClass": {},
+          "activeVisits": [],
+          "qualityReasons": [
+            "Awaiting camera observations."
+          ],
+          "arrivalCount": 0,
+          "departureCount": 0,
+          "turnoverCount": 0,
+          "completedVisitCount": 0,
+          "incompleteVisitCount": 0,
+          "partialVisitCount": 0,
+          "occupiedSeconds": 0,
+          "observedStoppedSeconds": null,
+          "stoppedEvidenceSeconds": 0,
+          "completedDwellP50Ms": null,
+          "completedDwellP95Ms": null
+        }
+      ],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    }
+  },
+  {
+    "epoch": "e6727ffc-f323-4dc4-8226-e0da9c2a6a5a",
+    "kind": "settling",
+    "runId": "5b4ea4cd144c42b9903f51371fe0b87b",
+    "scenarioId": "turning-demand",
+    "startedAt": "2026-10-26T15:32:25.493970+00:00",
+    "endedAt": "2026-10-26T15:32:31.470856+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793028751437953858",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793028751437595761"
+    },
+    "metrics": [],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 186,
+      "mode": "live",
+      "configRevision": 6,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 6,
+        "movements": [
+          {
+            "id": "northbound-through",
+            "name": "Northbound \u00b7 straight",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-north-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-left",
+            "name": "Northbound \u00b7 left",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-west-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-right",
+            "name": "Northbound \u00b7 right",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-east-right-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          }
+        ],
+        "crossings": [
+          {
+            "id": "east-crossing-south-north",
+            "name": "East crossing \u00b7 south to north",
+            "waitingRuleId": "mobility-isaac-east-waiting-south",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          },
+          {
+            "id": "east-crossing-north-south",
+            "name": "East crossing \u00b7 north to south",
+            "waitingRuleId": "mobility-isaac-east-waiting-north",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          }
+        ],
+        "queues": [
+          {
+            "id": "northbound-queue",
+            "name": "Northbound approach",
+            "zoneRuleId": "mobility-isaac-northbound-queue",
+            "stopLine": [
+              [
+                -23.7,
+                63.8
+              ],
+              [
+                -20.2,
+                63.8
+              ]
+            ],
+            "upstreamPoint": [
+              -22.89410029498525,
+              50.0
+            ],
+            "spillbackDistanceM": 10.0,
+            "maxAnchorGapM": 8.0,
+            "stopLineReachM": 8.0,
+            "minimumDurationMs": 1500,
+            "maximumObservationGapMs": 1000
+          }
+        ],
+        "curbs": [
+          {
+            "id": "north-curbside-access",
+            "name": "North arm \u00b7 curbside access",
+            "zoneRuleId": "mobility-isaac-north-curbside-lane",
+            "role": "general",
+            "dwellThresholdMs": 8000,
+            "maximumObservationGapMs": 1000
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "name": "Northbound vehicles \u00b7 crossing count",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "name": "Northbound \u00b7 north gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "name": "Westbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "name": "Eastbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-right-exit",
+          "name": "Northbound right \u00b7 outer east gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        }
+      ],
+      "movements": [
+        {
+          "id": "northbound-through",
+          "name": "Northbound \u00b7 straight",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-left",
+          "name": "Northbound \u00b7 left",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-right",
+          "name": "Northbound \u00b7 right",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        }
+      ],
+      "obstructions": [
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "name": "South crossing \u00b7 stopped vehicle",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "name": "North crossing \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-stopped-junction",
+          "name": "Junction \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [
+        {
+          "id": "north-curbside-access",
+          "name": "North arm \u00b7 curbside access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "zoneRuleId": "mobility-isaac-north-curbside-lane",
+          "role": "general",
+          "asOfSourceTimeNs": null,
+          "windowMinutes": 5,
+          "timeBasis": "source-time",
+          "status": "unknown",
+          "occupancy": null,
+          "observedOccupancy": 0,
+          "occupancyIsLowerBound": true,
+          "pendingTrackCount": 0,
+          "lostTrackCount": 0,
+          "byClass": {},
+          "longestActiveObservedDwellMs": null,
+          "persistentOccupancyCount": null,
+          "persistentByClass": {},
+          "stoppedCount": null,
+          "stoppedByClass": {},
+          "activeVisits": [],
+          "qualityReasons": [
+            "Awaiting camera observations."
+          ],
+          "arrivalCount": 0,
+          "departureCount": 0,
+          "turnoverCount": 0,
+          "completedVisitCount": 0,
+          "incompleteVisitCount": 0,
+          "partialVisitCount": 0,
+          "occupiedSeconds": 0,
+          "observedStoppedSeconds": null,
+          "stoppedEvidenceSeconds": 0,
+          "completedDwellP50Ms": null,
+          "completedDwellP95Ms": null
+        }
+      ],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    }
+  },
+  {
+    "epoch": "79ab7a63-8b44-455d-8953-771ad5674ba1",
+    "kind": "scenario",
+    "runId": "5b4ea4cd144c42b9903f51371fe0b87b",
+    "scenarioId": "turning-demand",
+    "startedAt": "2026-10-26T15:32:31.485859+00:00",
+    "endedAt": "2026-10-26T15:32:48.325059+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793028768279009500",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793028768278605195"
+    },
+    "metrics": [
+      {
+        "ruleId": "cam_ne-pedestrian-crossing",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "cam_ne-blocked-crossing",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "cam_ne-intersection-occupancy",
+        "totalCrossings": 0,
+        "count": 1,
+        "occupancy": 1,
+        "activeEventCount": 0,
+        "oldestDwellMs": 4175.875179,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-northbound-queue",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-south-waiting-west",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-south-crossing-measurement",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-south-waiting-east",
+        "totalCrossings": 0,
+        "count": 1,
+        "occupancy": 1,
+        "activeEventCount": 0,
+        "oldestDwellMs": 16501.512784,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "cam_ne-stopped-junction",
+        "totalCrossings": 0,
+        "count": 1,
+        "occupancy": 1,
+        "activeEventCount": 0,
+        "oldestDwellMs": 4175.875179,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.278605Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "cam_sw-pedestrian-crossing",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "cam_sw-blocked-crossing",
+        "totalCrossings": 0,
+        "count": 1,
+        "occupancy": 1,
+        "activeEventCount": 0,
+        "oldestDwellMs": 59.667522,
+        "status": "unknown",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": [
+          "speed-unavailable"
+        ]
+      },
+      {
+        "ruleId": "cam_sw-northbound-line",
+        "totalCrossings": 2,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-north-exit",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-west-exit",
+        "totalCrossings": 1,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-east-exit",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-north-curbside-lane",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-east-right-exit",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-east-waiting-south",
+        "totalCrossings": 0,
+        "count": 1,
+        "occupancy": 1,
+        "activeEventCount": 0,
+        "oldestDwellMs": 16790.748861,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-east-crossing-measurement",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      },
+      {
+        "ruleId": "mobility-isaac-east-waiting-north",
+        "totalCrossings": 0,
+        "count": 0,
+        "occupancy": 0,
+        "activeEventCount": 0,
+        "oldestDwellMs": 0,
+        "status": "normal",
+        "timestamp": "2026-10-26T15:32:48.279010Z",
+        "evidenceReasons": []
+      }
+    ],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 186,
+      "mode": "live",
+      "configRevision": 6,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 6,
+        "movements": [
+          {
+            "id": "northbound-through",
+            "name": "Northbound \u00b7 straight",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-north-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-left",
+            "name": "Northbound \u00b7 left",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-west-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-right",
+            "name": "Northbound \u00b7 right",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-east-right-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          }
+        ],
+        "crossings": [
+          {
+            "id": "east-crossing-south-north",
+            "name": "East crossing \u00b7 south to north",
+            "waitingRuleId": "mobility-isaac-east-waiting-south",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          },
+          {
+            "id": "east-crossing-north-south",
+            "name": "East crossing \u00b7 north to south",
+            "waitingRuleId": "mobility-isaac-east-waiting-north",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          }
+        ],
+        "queues": [
+          {
+            "id": "northbound-queue",
+            "name": "Northbound approach",
+            "zoneRuleId": "mobility-isaac-northbound-queue",
+            "stopLine": [
+              [
+                -23.7,
+                63.8
+              ],
+              [
+                -20.2,
+                63.8
+              ]
+            ],
+            "upstreamPoint": [
+              -22.89410029498525,
+              50.0
+            ],
+            "spillbackDistanceM": 10.0,
+            "maxAnchorGapM": 8.0,
+            "stopLineReachM": 8.0,
+            "minimumDurationMs": 1500,
+            "maximumObservationGapMs": 1000
+          }
+        ],
+        "curbs": [
+          {
+            "id": "north-curbside-access",
+            "name": "North arm \u00b7 curbside access",
+            "zoneRuleId": "mobility-isaac-north-curbside-lane",
+            "role": "general",
+            "dwellThresholdMs": 8000,
+            "maximumObservationGapMs": 1000
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": "1793028468279009500",
+          "windowEndNs": "1793028768279009500",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 16.790748861,
+          "windowSeconds": 300,
+          "coverageRatio": 0.055969162870000005,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": "1793028468278605195",
+          "windowEndNs": "1793028768278605195",
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 16.790998894,
+          "windowSeconds": 300,
+          "coverageRatio": 0.05596999631333334,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "name": "Northbound vehicles \u00b7 crossing count",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 2,
+          "byClass": {
+            "car": 2
+          },
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "name": "Northbound \u00b7 north gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "name": "Westbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 1,
+          "byClass": {
+            "car": 1
+          },
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "name": "Eastbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-right-exit",
+          "name": "Northbound right \u00b7 outer east gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        }
+      ],
+      "movements": [
+        {
+          "id": "northbound-through",
+          "name": "Northbound \u00b7 straight",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 1,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-left",
+          "name": "Northbound \u00b7 left",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 1,
+          "incompleteCount": 1,
+          "activeCount": 0,
+          "byClass": {
+            "car": 1
+          },
+          "medianTravelSeconds": 8.942024327,
+          "p95TravelSeconds": 8.942024327,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-right",
+          "name": "Northbound \u00b7 right",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 1,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        }
+      ],
+      "obstructions": [
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "name": "South crossing \u00b7 stopped vehicle",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "name": "North crossing \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-stopped-junction",
+          "name": "Junction \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        }
+      ],
+      "queues": [
+        {
+          "id": "northbound-queue",
+          "name": "Northbound approach",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "ruleId": "mobility-isaac-northbound-queue",
+          "zoneRuleId": "mobility-isaac-northbound-queue",
+          "stopLineM": [
+            [
+              -23.7,
+              63.8
+            ],
+            [
+              -20.2,
+              63.8
+            ]
+          ],
+          "upstreamPointM": [
+            -22.89410029498525,
+            50.0
+          ],
+          "spillbackDistanceM": 10.0,
+          "extentBasis": "ground-anchor-distance",
+          "timeBasis": "source-time",
+          "status": "unknown",
+          "count": 0,
+          "observedExtentM": null,
+          "tailPositionM": null,
+          "extentIsLowerBound": true,
+          "spillback": null,
+          "durationMs": 0,
+          "spillbackDurationMs": 0,
+          "trackIds": [],
+          "pendingTrackCount": 0,
+          "oldestPendingGapMs": null,
+          "membershipComplete": false,
+          "currentCountsAvailable": false,
+          "qualityReasons": [
+            "No fresh observation since reset (scenario-boundary)."
+          ],
+          "asOfSourceTimeNs": "1793028768278605195",
+          "countBasis": "currently-observed",
+          "unresolvedHistoricalTrackCount": 0,
+          "oldestLostTrackAgeMs": null,
+          "lossEvidenceRetentionSeconds": 900,
+          "clearanceConfirmed": false,
+          "windowMinutes": 5,
+          "maximumObservedExtentM": null,
+          "lostTrackCount": 0
+        }
+      ],
+      "crossings": [
+        {
+          "id": "east-crossing-south-north",
+          "name": "East crossing \u00b7 south to north",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "waitingRuleId": "mobility-isaac-east-waiting-south",
+          "crossingRuleId": "mobility-isaac-east-crossing-measurement",
+          "completionBasis": "observed-far-side-exit",
+          "timeBasis": "source-time",
+          "exitConfirmationBasis": "two-fresh-same-identity-observations",
+          "status": "unknown",
+          "waitingCount": 0,
+          "crossingCount": 0,
+          "pendingTrackCount": 0,
+          "pendingExitTrackCount": 0,
+          "oldestPendingGapMs": null,
+          "membershipComplete": false,
+          "currentCountsAvailable": false,
+          "oldestObservedWaitMs": null,
+          "qualityReasons": [
+            "No fresh observation since reset (scenario-boundary)."
+          ],
+          "asOfSourceTimeNs": "1793028768279009500",
+          "countBasis": "currently-observed",
+          "unresolvedHistoricalTrackCount": 0,
+          "oldestLostTrackAgeMs": null,
+          "lossEvidenceRetentionSeconds": 900,
+          "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+          "windowMinutes": 5,
+          "completedCount": 0,
+          "abandonedCount": 0,
+          "returnedCount": 0,
+          "incompleteCount": 0,
+          "waitSampleCount": 0,
+          "waitP50Ms": null,
+          "waitP95Ms": null,
+          "firstSeenWaitingCount": 0,
+          "lowerBoundWaitP50Ms": null,
+          "briefGapRecoveredWaitCount": 0,
+          "recoveredExitCandidateCount": 0,
+          "lostTrackCount": 0
+        },
+        {
+          "id": "east-crossing-north-south",
+          "name": "East crossing \u00b7 north to south",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "waitingRuleId": "mobility-isaac-east-waiting-north",
+          "crossingRuleId": "mobility-isaac-east-crossing-measurement",
+          "completionBasis": "observed-far-side-exit",
+          "timeBasis": "source-time",
+          "exitConfirmationBasis": "two-fresh-same-identity-observations",
+          "status": "unknown",
+          "waitingCount": 0,
+          "crossingCount": 0,
+          "pendingTrackCount": 0,
+          "pendingExitTrackCount": 0,
+          "oldestPendingGapMs": null,
+          "membershipComplete": false,
+          "currentCountsAvailable": false,
+          "oldestObservedWaitMs": null,
+          "qualityReasons": [
+            "No fresh observation since reset (scenario-boundary)."
+          ],
+          "asOfSourceTimeNs": "1793028768279009500",
+          "countBasis": "currently-observed",
+          "unresolvedHistoricalTrackCount": 0,
+          "oldestLostTrackAgeMs": null,
+          "lossEvidenceRetentionSeconds": 900,
+          "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+          "windowMinutes": 5,
+          "completedCount": 0,
+          "abandonedCount": 0,
+          "returnedCount": 0,
+          "incompleteCount": 0,
+          "waitSampleCount": 0,
+          "waitP50Ms": null,
+          "waitP95Ms": null,
+          "firstSeenWaitingCount": 0,
+          "lowerBoundWaitP50Ms": null,
+          "briefGapRecoveredWaitCount": 0,
+          "recoveredExitCandidateCount": 0,
+          "lostTrackCount": 0
+        }
+      ],
+      "curbs": [
+        {
+          "id": "north-curbside-access",
+          "name": "North arm \u00b7 curbside access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "zoneRuleId": "mobility-isaac-north-curbside-lane",
+          "role": "general",
+          "asOfSourceTimeNs": null,
+          "windowMinutes": 5,
+          "timeBasis": "source-time",
+          "status": "unknown",
+          "occupancy": null,
+          "observedOccupancy": 0,
+          "occupancyIsLowerBound": true,
+          "pendingTrackCount": 0,
+          "lostTrackCount": 0,
+          "byClass": {},
+          "longestActiveObservedDwellMs": null,
+          "persistentOccupancyCount": null,
+          "persistentByClass": {},
+          "stoppedCount": null,
+          "stoppedByClass": {},
+          "activeVisits": [],
+          "qualityReasons": [
+            "Awaiting camera observations."
+          ],
+          "arrivalCount": 0,
+          "departureCount": 0,
+          "turnoverCount": 0,
+          "completedVisitCount": 0,
+          "incompleteVisitCount": 0,
+          "partialVisitCount": 0,
+          "occupiedSeconds": 0,
+          "observedStoppedSeconds": null,
+          "stoppedEvidenceSeconds": 0,
+          "completedDwellP50Ms": null,
+          "completedDwellP95Ms": null
+        }
+      ],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    }
+  },
+  {
+    "epoch": "52383a97-5638-464c-b45e-cfd1a1425a89",
+    "kind": "recovering",
+    "runId": "5b4ea4cd144c42b9903f51371fe0b87b",
+    "scenarioId": "turning-demand",
+    "startedAt": "2026-10-26T15:32:48.344645+00:00",
+    "endedAt": "2026-10-26T15:32:49.376846+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793028769282251748",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793028769281314146"
+    },
+    "metrics": [],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 186,
+      "mode": "live",
+      "configRevision": 6,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 6,
+        "movements": [
+          {
+            "id": "northbound-through",
+            "name": "Northbound \u00b7 straight",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-north-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-left",
+            "name": "Northbound \u00b7 left",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-west-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-right",
+            "name": "Northbound \u00b7 right",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-east-right-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          }
+        ],
+        "crossings": [
+          {
+            "id": "east-crossing-south-north",
+            "name": "East crossing \u00b7 south to north",
+            "waitingRuleId": "mobility-isaac-east-waiting-south",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          },
+          {
+            "id": "east-crossing-north-south",
+            "name": "East crossing \u00b7 north to south",
+            "waitingRuleId": "mobility-isaac-east-waiting-north",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          }
+        ],
+        "queues": [
+          {
+            "id": "northbound-queue",
+            "name": "Northbound approach",
+            "zoneRuleId": "mobility-isaac-northbound-queue",
+            "stopLine": [
+              [
+                -23.7,
+                63.8
+              ],
+              [
+                -20.2,
+                63.8
+              ]
+            ],
+            "upstreamPoint": [
+              -22.89410029498525,
+              50.0
+            ],
+            "spillbackDistanceM": 10.0,
+            "maxAnchorGapM": 8.0,
+            "stopLineReachM": 8.0,
+            "minimumDurationMs": 1500,
+            "maximumObservationGapMs": 1000
+          }
+        ],
+        "curbs": [
+          {
+            "id": "north-curbside-access",
+            "name": "North arm \u00b7 curbside access",
+            "zoneRuleId": "mobility-isaac-north-curbside-lane",
+            "role": "general",
+            "dwellThresholdMs": 8000,
+            "maximumObservationGapMs": 1000
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "name": "Northbound vehicles \u00b7 crossing count",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "name": "Northbound \u00b7 north gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "name": "Westbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "name": "Eastbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-right-exit",
+          "name": "Northbound right \u00b7 outer east gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        }
+      ],
+      "movements": [
+        {
+          "id": "northbound-through",
+          "name": "Northbound \u00b7 straight",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-left",
+          "name": "Northbound \u00b7 left",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-right",
+          "name": "Northbound \u00b7 right",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        }
+      ],
+      "obstructions": [
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "name": "South crossing \u00b7 stopped vehicle",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "name": "North crossing \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-stopped-junction",
+          "name": "Junction \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [
+        {
+          "id": "north-curbside-access",
+          "name": "North arm \u00b7 curbside access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "zoneRuleId": "mobility-isaac-north-curbside-lane",
+          "role": "general",
+          "asOfSourceTimeNs": null,
+          "windowMinutes": 5,
+          "timeBasis": "source-time",
+          "status": "unknown",
+          "occupancy": null,
+          "observedOccupancy": 0,
+          "occupancyIsLowerBound": true,
+          "pendingTrackCount": 0,
+          "lostTrackCount": 0,
+          "byClass": {},
+          "longestActiveObservedDwellMs": null,
+          "persistentOccupancyCount": null,
+          "persistentByClass": {},
+          "stoppedCount": null,
+          "stoppedByClass": {},
+          "activeVisits": [],
+          "qualityReasons": [
+            "Awaiting camera observations."
+          ],
+          "arrivalCount": 0,
+          "departureCount": 0,
+          "turnoverCount": 0,
+          "completedVisitCount": 0,
+          "incompleteVisitCount": 0,
+          "partialVisitCount": 0,
+          "occupiedSeconds": 0,
+          "observedStoppedSeconds": null,
+          "stoppedEvidenceSeconds": 0,
+          "completedDwellP50Ms": null,
+          "completedDwellP95Ms": null
+        }
+      ],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    }
+  },
+  {
+    "epoch": "e0ab3c27-5e58-4144-b7fd-c1dc93759154",
+    "kind": "settling",
+    "runId": "5b4ea4cd144c42b9903f51371fe0b87b",
+    "scenarioId": "turning-demand",
+    "startedAt": "2026-10-26T15:32:49.410291+00:00",
+    "endedAt": "2026-10-26T15:32:51.834317+00:00",
+    "lastSourceTimeNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": "1793028771443116020",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "1793028771442780339"
+    },
+    "metrics": [],
+    "mobility": {
+      "schemaVersion": "city.mobility.v1",
+      "siteId": "isaac-intersection-a",
+      "siteRevision": 186,
+      "mode": "live",
+      "configRevision": 6,
+      "windowMinutes": 5,
+      "timeBasis": "per-camera-source-time",
+      "globalFusionEnabled": false,
+      "config": {
+        "revision": 6,
+        "movements": [
+          {
+            "id": "northbound-through",
+            "name": "Northbound \u00b7 straight",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-north-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-left",
+            "name": "Northbound \u00b7 left",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-west-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          },
+          {
+            "id": "northbound-right",
+            "name": "Northbound \u00b7 right",
+            "entryRuleId": "cam_sw-northbound-line",
+            "exitRuleId": "mobility-isaac-east-right-exit",
+            "classes": [
+              "car",
+              "bus",
+              "truck",
+              "motorcycle",
+              "bicycle"
+            ]
+          }
+        ],
+        "crossings": [
+          {
+            "id": "east-crossing-south-north",
+            "name": "East crossing \u00b7 south to north",
+            "waitingRuleId": "mobility-isaac-east-waiting-south",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          },
+          {
+            "id": "east-crossing-north-south",
+            "name": "East crossing \u00b7 north to south",
+            "waitingRuleId": "mobility-isaac-east-waiting-north",
+            "crossingRuleId": "mobility-isaac-east-crossing-measurement"
+          }
+        ],
+        "queues": [
+          {
+            "id": "northbound-queue",
+            "name": "Northbound approach",
+            "zoneRuleId": "mobility-isaac-northbound-queue",
+            "stopLine": [
+              [
+                -23.7,
+                63.8
+              ],
+              [
+                -20.2,
+                63.8
+              ]
+            ],
+            "upstreamPoint": [
+              -22.89410029498525,
+              50.0
+            ],
+            "spillbackDistanceM": 10.0,
+            "maxAnchorGapM": 8.0,
+            "stopLineReachM": 8.0,
+            "minimumDurationMs": 1500,
+            "maximumObservationGapMs": 1000
+          }
+        ],
+        "curbs": [
+          {
+            "id": "north-curbside-access",
+            "name": "North arm \u00b7 curbside access",
+            "zoneRuleId": "mobility-isaac-north-curbside-lane",
+            "role": "general",
+            "dwellThresholdMs": 8000,
+            "maximumObservationGapMs": 1000
+          }
+        ]
+      },
+      "coverage": [
+        {
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "name": "isaac-intersection-southwest",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        },
+        {
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "name": "isaac-intersection-northeast",
+          "status": "live",
+          "windowStartNs": null,
+          "windowEndNs": null,
+          "timestampBasis": "source-native-sei",
+          "observedSeconds": 0,
+          "windowSeconds": 300,
+          "coverageRatio": 0.0,
+          "truncated": false
+        }
+      ],
+      "lineCounts": [
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "name": "Northbound vehicles \u00b7 crossing count",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "name": "Northbound \u00b7 north gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "name": "Westbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "name": "Eastbound \u00b7 exit gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        },
+        {
+          "ruleId": "mobility-isaac-east-right-exit",
+          "name": "Northbound right \u00b7 outer east gate",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "count": 0,
+          "byClass": {},
+          "status": "partial"
+        }
+      ],
+      "movements": [
+        {
+          "id": "northbound-through",
+          "name": "Northbound \u00b7 straight",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-left",
+          "name": "Northbound \u00b7 left",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        },
+        {
+          "id": "northbound-right",
+          "name": "Northbound \u00b7 right",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "completedCount": 0,
+          "incompleteCount": 0,
+          "activeCount": 0,
+          "byClass": {},
+          "medianTravelSeconds": null,
+          "p95TravelSeconds": null,
+          "status": "partial"
+        }
+      ],
+      "obstructions": [
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "name": "South crossing \u00b7 stopped vehicle",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "name": "North crossing \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        },
+        {
+          "ruleId": "cam_ne-stopped-junction",
+          "name": "Junction \u00b7 stopped vehicle",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "episodeCount": 0,
+          "completedEpisodes": 0,
+          "ongoingEpisodes": 0,
+          "unknownEpisodes": 0,
+          "pendingEvidenceEpisodes": 0,
+          "blockedSeconds": 0.0,
+          "longestObservedEpisodeSeconds": null,
+          "eventIds": [],
+          "status": "partial"
+        }
+      ],
+      "queues": [],
+      "crossings": [],
+      "curbs": [
+        {
+          "id": "north-curbside-access",
+          "name": "North arm \u00b7 curbside access",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "zoneRuleId": "mobility-isaac-north-curbside-lane",
+          "role": "general",
+          "asOfSourceTimeNs": null,
+          "windowMinutes": 5,
+          "timeBasis": "source-time",
+          "status": "unknown",
+          "occupancy": null,
+          "observedOccupancy": 0,
+          "occupancyIsLowerBound": true,
+          "pendingTrackCount": 0,
+          "lostTrackCount": 0,
+          "byClass": {},
+          "longestActiveObservedDwellMs": null,
+          "persistentOccupancyCount": null,
+          "persistentByClass": {},
+          "stoppedCount": null,
+          "stoppedByClass": {},
+          "activeVisits": [],
+          "qualityReasons": [
+            "Awaiting camera observations."
+          ],
+          "arrivalCount": 0,
+          "departureCount": 0,
+          "turnoverCount": 0,
+          "completedVisitCount": 0,
+          "incompleteVisitCount": 0,
+          "partialVisitCount": 0,
+          "occupiedSeconds": 0,
+          "observedStoppedSeconds": null,
+          "stoppedEvidenceSeconds": 0,
+          "completedDwellP50Ms": null,
+          "completedDwellP95Ms": null
+        }
+      ],
+      "configurationIssues": [],
+      "limitations": [
+        "Counts belong to their owner camera; overlapping views are not deduplicated.",
+        "Observation coverage measures received frame time, not detector recall or physical traffic exposure.",
+        "Times use camera source time, not nominal Isaac scenario time or signal delay.",
+        "Stopped-zone evidence uses a ground anchor, not a validated vehicle footprint. Blocked time counts observed active intervals after confirmation; missing frames and candidate time are excluded.",
+        "Curb roles label operator-defined zones; detections do not establish loading activity, permission or a traffic violation.",
+        "Rolling windows are bounded in memory and restart after analytics/configuration/source-session resets."
+      ]
+    }
+  }
+]

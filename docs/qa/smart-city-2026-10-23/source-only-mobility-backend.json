@@ -1,0 +1,65 @@
+{
+  "schemaVersion": "smart-city.source-only-mobility.v1",
+  "recordedAt": "2026-10-23T17:49:33.779836+00:00",
+  "scope": "Source-only demand-led mobility feature implementation; deployment and runtime qualification are owned by the root task.",
+  "deploymentPerformedByThisAgent": false,
+  "tests": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q services/analytics/behavior-analytics/apps/city/tests",
+    "passed": 155,
+    "durationSeconds": 4.12,
+    "warnings": [
+      "Existing Starlette/httpx deprecation warning"
+    ],
+    "type": "CPU fixtures and API contract tests; not detector accuracy evidence"
+  },
+  "api": {
+    "get": "/api/v1/city/mobility?windowMinutes=1|5|15",
+    "put": "/api/v1/city/mobility/config",
+    "optimisticRevision": "expectedRevision; stale writes return 409; invalid references/config return 422",
+    "persistence": "Independent SQLite config key mobility:<site-id>; config save does not reset cameras, tracks, or native rules."
+  },
+  "verified": [
+    "Existing line events produce camera-local per-class rolling totals.",
+    "Continuous observed entry/exit gates produce completed movement travel times; first sighting inside a gate does not fabricate entry.",
+    "Source gaps, wall stalls, prediction-only gaps, projection loss and capacity loss cannot become completed movements.",
+    "Line-boundary touches preserve the prior side with the existing rule hysteresis.",
+    "Stopped-zone blockedSeconds unions confirmed-active fresh intervals; concurrent vehicles do not double the zone duration.",
+    "Missing and predicted frames and candidate dwell are excluded from blockedSeconds; new evidence must requalify after loss.",
+    "Cleared episodes expire from rolling windows; bounded count-history eviction marks coverage truncated.",
+    "Queue/crossing integration preserves historical evidence during wall stalls while marking current measurements unknown.",
+    "Deleted or disabled rule references fail closed through configurationIssues."
+  ],
+  "bounds": {
+    "windowMinutes": [
+      1,
+      5,
+      15
+    ],
+    "historyHorizonSeconds": 900,
+    "recordsPerCamera": 10000,
+    "obstructionEpisodes": 10000,
+    "intervalsPerSeries": 2048,
+    "movementStates": "engine.max_tracks",
+    "configMaxPerKind": 32
+  },
+  "limits": [
+    "Measurements use each camera source timestamp; no conversion to Isaac scenario time.",
+    "Camera-local identity only; overlapping views are not fused or deduplicated.",
+    "Observation coverage is frame receipt coverage, not detector recall or verified physical exposure.",
+    "Blocked time is a measured lower bound after confirmation, not full incident age.",
+    "Vehicle obstruction uses a ground anchor rather than a validated full vehicle footprint.",
+    "Rolling measurements reset on process, configuration or source-session changes.",
+    "Queue extent is an estimate from connected observed ground anchors; visibility and unresolved tracks can make it a lower bound or unknown.",
+    "Pedestrian wait samples exclude first-seen-inside waits; completion requires an observed far-side exit, not signal-phase knowledge.",
+    "CPU validation does not establish real-scene movement/count/queue accuracy."
+  ],
+  "sources": {
+    "services/analytics/behavior-analytics/apps/city/models.py": "09f49debb2ca8f3c705e724c6111b6db899036c1050a58c1c47b906fe3f2305c",
+    "services/analytics/behavior-analytics/apps/city/main.py": "8aade33754f382d39f9629ed54479eac5c227e68bc6c5f4e92b9c8ef69d9a600",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "2e21e29f207d3c85e51d8f247c5f4d584eda30b7b18626333fb37e11c0a14ab0",
+    "services/analytics/behavior-analytics/apps/city/mobility.py": "7cbc62aa87ffe8abc7937d9c6482b1356f2d43d2b4e8706a0ecf92b1ea0f894c",
+    "services/analytics/behavior-analytics/apps/city/mobility_spatial.py": "fce40b8b1a26a0e6fbe5d71dc2263605b470e47ba51464a6df695f56f1d7051e",
+    "services/analytics/behavior-analytics/apps/city/tests/test_mobility.py": "71f3530ca42bdff01c1745ecaf34b05123cc27a916f39c1f2cc5a8629f92767f",
+    "services/analytics/behavior-analytics/apps/city/tests/test_mobility_spatial.py": "ed09674703612b80fdb39d4c3003adaf2ccae5cffef380f2ae731ae99e4fc7b1"
+  }
+}

@@ -1,0 +1,1982 @@
+{
+  "checkedAtNs": "1793029193363067518",
+  "sceneControl": {
+    "schemaVersion": "city.tradeshow-control.v1",
+    "available": true,
+    "playing": true,
+    "scene": "/home/sparkdev/isaac_city_sim/stages/neighborhood/pedestrian-pocket-v3/smart_city_expo_pedestrian.usda",
+    "scenario": {
+      "schemaVersion": "smartcity.episode.v1",
+      "prepared": true,
+      "preparedAvailable": true,
+      "state": "completed",
+      "active": false,
+      "phase": "normal-traffic",
+      "runId": "prepared-86661a326f1e4817",
+      "boundaryToken": "46c73cfbc9cd430eb610d8c38e56aa5c",
+      "scenarioId": "queue-recovery",
+      "episodeId": "queue-recovery",
+      "title": "A queue grows, then clears",
+      "analyticsAuthority": "VSS camera observations only; scene receipts are simulation cues",
+      "sceneReady": false,
+      "reason": "prepared-presentation-finished",
+      "restored": true,
+      "normalFlowVerified": true,
+      "elapsedWallSeconds": 61.74263529712334,
+      "phaseElapsedWallSeconds": 0.0,
+      "requestedPacing": "prepared",
+      "pacing": "prepared",
+      "progressClock": "wall",
+      "maximumWallSeconds": 90,
+      "phaseBudgetWallSeconds": 90,
+      "boothKind": "vehicle",
+      "holdConfirmed": true,
+      "currentOperation": "normal-traffic",
+      "preparation": {
+        "basis": "scripted scene control; camera analytics are independent",
+        "nativeStarts": [
+          {
+            "character": "Character",
+            "targetM": [
+              -11.2,
+              70.0,
+              0.0
+            ],
+            "snapErrorM": 0.03738691830279897,
+            "nativePathVerified": true
+          },
+          {
+            "character": "Character_01",
+            "targetM": [
+              -39.5,
+              94.5,
+              0.0
+            ],
+            "snapErrorM": 0.012500002048909664,
+            "nativePathVerified": true
+          },
+          {
+            "character": "Character_02",
+            "targetM": [
+              -39.5,
+              62.5,
+              0.0
+            ],
+            "snapErrorM": 0.009999998845160007,
+            "nativePathVerified": true
+          },
+          {
+            "character": "Character_03",
+            "targetM": [
+              -14.5,
+              94.5,
+              0.0
+            ],
+            "snapErrorM": 0.020655172893641254,
+            "nativePathVerified": true
+          },
+          {
+            "character": "Character_04",
+            "targetM": [
+              -14.5,
+              62.5,
+              0.0
+            ],
+            "snapErrorM": 0.04500001296401024,
+            "nativePathVerified": true
+          },
+          {
+            "character": "Character_05",
+            "targetM": [
+              -38.0,
+              90.0,
+              0.0
+            ],
+            "snapErrorM": 0.03999358662094099,
+            "nativePathVerified": true
+          },
+          {
+            "character": "Character_06",
+            "targetM": [
+              10.0,
+              40.0,
+              0.0
+            ],
+            "snapErrorM": 0.04750001057982445,
+            "nativePathVerified": true
+          },
+          {
+            "character": "Character_07",
+            "targetM": [
+              -70.0,
+              90.0,
+              0.0
+            ],
+            "snapErrorM": 0.03999999538064003,
+            "nativePathVerified": true
+          }
+        ],
+        "vehicles": [
+          {
+            "slot": 9,
+            "class": "car",
+            "route": "NB_1",
+            "s": 69.66232525065998,
+            "positionM": [
+              -21.901724546118217,
+              64.50028841397327,
+              -0.202
+            ],
+            "stopS": 70.36232525065998,
+            "binding": "northbound-queue-head",
+            "aid": 1936
+          },
+          {
+            "slot": 4,
+            "class": "car",
+            "route": "NB_1",
+            "s": 63.97772525065997,
+            "positionM": [
+              -22.291171304930003,
+              58.82906814810921,
+              -0.202
+            ],
+            "stopS": null,
+            "binding": null,
+            "aid": 1937
+          },
+          {
+            "slot": 14,
+            "class": "car",
+            "route": "NB_1",
+            "s": 57.96532525065997,
+            "positionM": [
+              -22.700798586043263,
+              52.830638416040344,
+              -0.202
+            ],
+            "stopS": null,
+            "binding": null,
+            "aid": 1938
+          }
+        ],
+        "nativePath": null,
+        "nativeQueueDepartures": [
+          {
+            "aid": 1936,
+            "route": "NB_1",
+            "rearS": 70.74926499721205,
+            "headStopS": 70.36232525065998,
+            "speedMps": 3.2475456234214914,
+            "elapsedPlayWallSeconds": 26.839328550267965
+          },
+          {
+            "aid": 1937,
+            "route": "NB_1",
+            "rearS": 70.72420817597782,
+            "headStopS": 70.36232525065998,
+            "speedMps": 5.659166541772008,
+            "elapsedPlayWallSeconds": 32.62437942996621
+          },
+          {
+            "aid": 1938,
+            "route": "NB_1",
+            "rearS": 70.75502055021555,
+            "headStopS": 70.36232525065998,
+            "speedMps": 7.003248030578081,
+            "elapsedPlayWallSeconds": 38.16228131018579
+          }
+        ],
+        "signalClockFrozen": false,
+        "normalArrivalSchedulePaused": false
+      },
+      "timings": {
+        "prepareWallSeconds": 0.6954275332391262,
+        "nativePlacementVerifiedModelStep": 601260,
+        "nativePlacementVerifiedTimelineSeconds": 10021.066666689136,
+        "readyWaitWallSeconds": 17.755577080883086,
+        "playToStationaryInZoneWallSeconds": 0.007307420950382948,
+        "playToNativeVisibleMotionWallSeconds": 1.8292047400027514,
+        "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+        "nativeAllQueueBodiesClearWallSeconds": 38.16228131018579,
+        "nativeDepartureVerifiedWallSeconds": 43.19695586292073,
+        "postQueueClearObservationWallSeconds": 5.034662952646613,
+        "postDepartureObservationWallSeconds": 5.034663640893996,
+        "restoredWallSeconds": 61.64823020622134,
+        "playToRestoredWallSeconds": 43.19722583191469,
+        "totalWallSeconds": 61.74263915326446,
+        "normalFlowVerified": true,
+        "playToNormalWallSeconds": 43.29163524322212,
+        "requestedAt": 1793029083.2233427,
+        "hostPhase": "closed"
+      },
+      "events": [
+        {
+          "phase": "placing-loaded-actors",
+          "elapsedWallSeconds": 0.0723879081197083
+        },
+        {
+          "phase": "settling-native-starts",
+          "elapsedWallSeconds": 0.16488980315625668
+        },
+        {
+          "phase": "ready",
+          "elapsedWallSeconds": 0.6954353251494467
+        },
+        {
+          "phase": "starting",
+          "elapsedWallSeconds": 18.451007382012904
+        },
+        {
+          "phase": "observing",
+          "elapsedWallSeconds": 18.45834758738056
+        },
+        {
+          "phase": "clearing",
+          "elapsedWallSeconds": 42.48495982820168
+        },
+        {
+          "phase": "observing-clearance",
+          "elapsedWallSeconds": 56.613311156164855
+        },
+        {
+          "phase": "returning-to-normal",
+          "elapsedWallSeconds": 61.64797558216378
+        },
+        {
+          "phase": "normal-traffic",
+          "elapsedWallSeconds": 61.742637088987976
+        }
+      ],
+      "runtime": {
+        "controllerCurrent": true,
+        "extraVehiclesActive": 0,
+        "extraVehiclesLimit": 3,
+        "stops": [],
+        "departuresPending": 0,
+        "walkerFailures": [],
+        "bindingBasis": "caller-supplied geometry; caller must verify VSS revisions"
+      },
+      "error": null,
+      "catalog": [
+        {
+          "id": "turning-demand",
+          "title": "Who uses this junction?",
+          "question": "Which way do vehicles turn, and how many people cross?",
+          "durationSimSeconds": 72,
+          "measurements": [
+            "Completed left/straight/right movements",
+            "Class counts",
+            "Observed pedestrian crossings"
+          ],
+          "limits": [
+            "A spawn request is not a counted movement.",
+            "Only configured camera entry/exit pairs can establish a turn.",
+            "Buses use the existing through-only route permission; no bicycle episode is enabled."
+          ],
+          "available": true,
+          "defaultPacing": "prepared",
+          "boothDwellWallSeconds": null,
+          "boothMaximumWallSeconds": 31.0,
+          "readiness": {
+            "available": true,
+            "state": "ready-to-prepare",
+            "basis": "loaded actor and route capability; native navigation is checked before placement"
+          }
+        },
+        {
+          "id": "queue-recovery",
+          "title": "A queue grows, then clears",
+          "question": "Where does the approach queue end, and is crossing access blocked?",
+          "durationSimSeconds": 78,
+          "measurements": [
+            "Stopped approach queue count",
+            "Observed queue extent and tail",
+            "Observed south-crossing access obstruction"
+          ],
+          "limits": [
+            "Extent is the visible queue estimate, not the full queue beyond the camera.",
+            "The queue head is near the south crossing, not inside the junction box; no blocked-junction duration is claimed.",
+            "Follower requests do not guarantee a camera count; clearance depends on signals and actual observations."
+          ],
+          "available": true,
+          "defaultPacing": "prepared",
+          "boothDwellWallSeconds": 24,
+          "boothMaximumWallSeconds": 180.0,
+          "readiness": {
+            "available": true,
+            "state": "ready-to-prepare",
+            "basis": "loaded actor and route capability; native navigation is checked before placement"
+          }
+        },
+        {
+          "id": "pedestrian-service",
+          "title": "People wait, cross, and clear",
+          "question": "How long do people wait, and is someone still on the crossing?",
+          "durationSimSeconds": 82,
+          "measurements": [
+            "People in waiting areas",
+            "Observed waiting time",
+            "Completed crossings",
+            "Current people on the crossing"
+          ],
+          "limits": [
+            "Wait is time observed in a configured waiting area, not intent inferred from appearance.",
+            "The demo does not identify disability, age, or protected traits.",
+            "The camera does not change real signal timing."
+          ],
+          "available": true,
+          "defaultPacing": "prepared",
+          "boothDwellWallSeconds": 5.0,
+          "boothMaximumWallSeconds": 180.0,
+          "readiness": {
+            "available": true,
+            "state": "ready-to-prepare",
+            "basis": "loaded actor and route capability; native navigation is checked before placement"
+          }
+        },
+        {
+          "id": "curb-obstruction",
+          "title": "A stopped car blocks curb access",
+          "question": "How long is this curbside lane occupied, and when is it free?",
+          "durationSimSeconds": 72,
+          "measurements": [
+            "Curbside occupancy",
+            "Stopped dwell",
+            "Observed arrival/departure and turnover",
+            "Persistent obstruction alert when configured"
+          ],
+          "limits": [
+            "This is a curbside-lane stop, not a validated parking manoeuvre.",
+            "ROI occupancy alone does not establish an illegal stop or a loading purpose.",
+            "No ticket, licence-plate recognition, or enforcement decision is produced."
+          ],
+          "available": true,
+          "defaultPacing": "prepared",
+          "boothDwellWallSeconds": 12.0,
+          "boothMaximumWallSeconds": 180.0,
+          "readiness": {
+            "available": true,
+            "state": "ready-to-prepare",
+            "basis": "loaded actor and route capability; native navigation is checked before placement"
+          }
+        },
+        {
+          "id": "crossing-obstruction",
+          "title": "Keep the crossing clear",
+          "question": "Has a vehicle stopped across the pedestrian crossing?",
+          "durationSimSeconds": 64,
+          "measurements": [
+            "Vehicle in the configured crossing zone",
+            "Stopped duration",
+            "Alert active and cleared state",
+            "Exact analysed frame for operator review"
+          ],
+          "limits": [
+            "This is an observed obstruction; it is not a crash or near-miss classifier.",
+            "The curated northbound approach family leaves into the visible junction; other approaches are not selected.",
+            "No collision, emergency response, or synthetic AI verdict is scripted.",
+            "Visibility, projection and camera-derived clearance still need live validation."
+          ],
+          "available": true,
+          "defaultPacing": "prepared",
+          "boothDwellWallSeconds": 12.0,
+          "boothMaximumWallSeconds": 180.0,
+          "readiness": {
+            "available": true,
+            "state": "ready-to-prepare",
+            "basis": "loaded actor and route capability; native navigation is checked before placement"
+          }
+        }
+      ],
+      "analyticsBoundary": {
+        "ready": false,
+        "state": "normal",
+        "epoch": "db23d02f-e24a-40cb-a921-e921524d6e5f",
+        "runId": "46c73cfbc9cd430eb610d8c38e56aa5c",
+        "scope": {
+          "epoch": "6ce5e041-3e53-40cb-8d29-5e7e8ccac4aa",
+          "kind": "normal",
+          "runId": null,
+          "scenarioId": null,
+          "startedAt": "2026-10-26T15:39:05.357659+00:00",
+          "suppressed": false
+        },
+        "reason": ""
+      }
+    }
+  },
+  "boundary": {
+    "state": "normal",
+    "runId": null,
+    "completedRunId": "46c73cfbc9cd430eb610d8c38e56aa5c",
+    "trackingEpoch": "db23d02f-e24a-40cb-a921-e921524d6e5f",
+    "restoredAtNs": "1793029145358517902",
+    "analyticsScope": {
+      "epoch": "6ce5e041-3e53-40cb-8d29-5e7e8ccac4aa",
+      "kind": "normal",
+      "runId": null,
+      "scenarioId": null,
+      "startedAt": "2026-10-26T15:39:05.357659+00:00",
+      "suppressed": false
+    },
+    "settling": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "frames": 265,
+        "observedSeconds": 16.801383261
+      },
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "frames": 264,
+        "observedSeconds": 16.697815681
+      }
+    },
+    "settleMinimumSeconds": 1.0,
+    "deadlineSeconds": 20.0,
+    "historyScope": "Prior events retain their original scope; archived scope summaries are retained separately."
+  },
+  "nativeObservation": {
+    "output": "",
+    "result": {
+      "evidenceAuthority": "simulation-cues-only; not AI counts or observed camera events",
+      "wallNs": "1793029193357426005",
+      "controlledFailureProbe": {
+        "armed": false,
+        "result": {
+          "state": "native-preflight-refused",
+          "scenarioId": "queue-recovery",
+          "actorPlacement": false,
+          "runId": "prepared-208ea7868de94567",
+          "boundaryToken": "40aafb18e278463895619b087359b1e4",
+          "reason": "Prepared start is not on native navigation: Character"
+        }
+      },
+      "nativePlacementAttempted": true,
+      "preparedVehiclePlacementCount": 3,
+      "timelineSeconds": 10069.366666688433,
+      "playing": true,
+      "scenario": {
+        "runId": "prepared-86661a326f1e4817",
+        "scenarioId": "queue-recovery",
+        "state": "completed",
+        "phase": "normal-traffic",
+        "reason": "prepared-presentation-finished",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "prepareWallSeconds": 0.6954275332391262,
+          "nativePlacementVerifiedModelStep": 601260,
+          "nativePlacementVerifiedTimelineSeconds": 10021.066666689136,
+          "readyWaitWallSeconds": 17.755577080883086,
+          "playToStationaryInZoneWallSeconds": 0.007307420950382948,
+          "playToNativeVisibleMotionWallSeconds": 1.8292047400027514,
+          "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+          "nativeAllQueueBodiesClearWallSeconds": 38.16228131018579,
+          "nativeDepartureVerifiedWallSeconds": 43.19695586292073,
+          "postQueueClearObservationWallSeconds": 5.034662952646613,
+          "postDepartureObservationWallSeconds": 5.034663640893996,
+          "restoredWallSeconds": 61.64823020622134,
+          "playToRestoredWallSeconds": 43.19722583191469,
+          "totalWallSeconds": 61.74263915326446,
+          "normalFlowVerified": true,
+          "playToNormalWallSeconds": 43.29163524322212
+        }
+      },
+      "people": [
+        {
+          "name": "Character",
+          "state": "signal-wait",
+          "taskId": "5754",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            -11.4779052734375,
+            70.19376373291016,
+            0.03315134346485138
+          ],
+          "goalM": [
+            -11.2,
+            70.0,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 275,
+          "rejections": 0,
+          "timeouts": 3,
+          "nearGoalNativeArrivals": 29,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "5416",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9637.60000002805,
+              "positionM": [
+                -14.38671875,
+                89.9518051147461,
+                0.03249085694551468
+              ],
+              "requestedGoalM": [
+                -14.4,
+                90.0,
+                0.0
+              ],
+              "observedArrival": true
+            },
+            {
+              "taskId": "5699",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9967.933333356576,
+              "positionM": [
+                -14.34913444519043,
+                89.91134643554688,
+                0.03203462064266205
+              ],
+              "requestedGoalM": [
+                -14.4,
+                90.0,
+                0.0
+              ],
+              "observedArrival": true
+            }
+          ]
+        },
+        {
+          "name": "Character_01",
+          "state": "signal-wait",
+          "taskId": "5777",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            -36.451904296875,
+            89.43035125732422,
+            0.034974873065948486
+          ],
+          "goalM": [
+            -36.5,
+            89.4,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 66,
+          "rejections": 0,
+          "timeouts": 1,
+          "nearGoalNativeArrivals": 23,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "5676",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9927.000000023838,
+              "positionM": [
+                -37.93793869018555,
+                89.86270904541016,
+                0.03910950943827629
+              ],
+              "requestedGoalM": [
+                -38.0,
+                90.0,
+                0.0
+              ],
+              "observedArrival": true
+            },
+            {
+              "taskId": "5768",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 10058.533333355257,
+              "positionM": [
+                -39.85752868652344,
+                94.5340805053711,
+                0.012504994869232178
+              ],
+              "requestedGoalM": [
+                -39.5,
+                94.5,
+                0.0
+              ],
+              "observedArrival": false
+            }
+          ]
+        },
+        {
+          "name": "Character_02",
+          "state": "signal-wait",
+          "taskId": "5770",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            -37.64086151123047,
+            66.7906494140625,
+            0.029990332201123238
+          ],
+          "goalM": [
+            -37.5,
+            66.8,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 91,
+          "rejections": 0,
+          "timeouts": 0,
+          "nearGoalNativeArrivals": 12,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "5447",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9699.500000027148,
+              "positionM": [
+                -14.87030029296875,
+                66.93379211425781,
+                0.02999565750360489
+              ],
+              "requestedGoalM": [
+                -14.5,
+                66.8,
+                0.0
+              ],
+              "observedArrival": false,
+              "operation": "normal-curb-alignment"
+            },
+            {
+              "taskId": "5449",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9701.200000027124,
+              "positionM": [
+                -14.858659744262695,
+                66.94165802001953,
+                0.029996173456311226
+              ],
+              "requestedGoalM": [
+                -14.5,
+                66.8,
+                0.0
+              ],
+              "observedArrival": false,
+              "operation": "normal-curb-alignment"
+            }
+          ]
+        },
+        {
+          "name": "Character_03",
+          "state": "signal-wait",
+          "taskId": "5773",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            -14.304229736328125,
+            90.36904907226562,
+            0.03248978778719902
+          ],
+          "goalM": [
+            -14.5,
+            90.4,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 93,
+          "rejections": 0,
+          "timeouts": 1,
+          "nearGoalNativeArrivals": 11,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "4689",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 8678.000000042013,
+              "positionM": [
+                -38.00415802001953,
+                90.37602996826172,
+                0.04001840949058533
+              ],
+              "requestedGoalM": [
+                -38.0,
+                90.4,
+                0.0
+              ],
+              "observedArrival": true
+            },
+            {
+              "taskId": "4927",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9146.400000035197,
+              "positionM": [
+                -14.513874053955078,
+                90.41677856445312,
+                0.03261631727218628
+              ],
+              "requestedGoalM": [
+                -14.5,
+                90.4,
+                0.0
+              ],
+              "observedArrival": true
+            }
+          ]
+        },
+        {
+          "name": "Character_04",
+          "state": "signal-wait",
+          "taskId": "5775",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            -14.52357006072998,
+            66.80977630615234,
+            0.030010558664798737
+          ],
+          "goalM": [
+            -14.5,
+            66.8,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 167,
+          "rejections": 0,
+          "timeouts": 1,
+          "nearGoalNativeArrivals": 35,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "5345",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9524.33333336303,
+              "positionM": [
+                -37.28006362915039,
+                66.81877899169922,
+                0.029996000230312347
+              ],
+              "requestedGoalM": [
+                -37.5,
+                66.8,
+                0.0
+              ],
+              "observedArrival": true,
+              "operation": "normal-curb-alignment"
+            },
+            {
+              "taskId": "5679",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9944.166666690255,
+              "positionM": [
+                -37.4749641418457,
+                66.8034439086914,
+                0.03038458526134491
+              ],
+              "requestedGoalM": [
+                -37.5,
+                66.8,
+                0.0
+              ],
+              "observedArrival": true
+            }
+          ]
+        },
+        {
+          "name": "Character_05",
+          "state": "moving",
+          "taskId": "5778",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            -38.402076721191406,
+            92.12249755859375,
+            0.03999384865164757
+          ],
+          "goalM": [
+            -38.0,
+            90.4,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 242,
+          "rejections": 0,
+          "timeouts": 1,
+          "nearGoalNativeArrivals": 53,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "5721",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 10011.666666689272,
+              "positionM": [
+                -39.403961181640625,
+                94.5098876953125,
+                0.012504969723522663
+              ],
+              "requestedGoalM": [
+                -39.5,
+                94.5,
+                0.0
+              ],
+              "observedArrival": true
+            },
+            {
+              "taskId": "5755",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 10058.300000021927,
+              "positionM": [
+                -39.39371871948242,
+                94.52582550048828,
+                0.012504957616329193
+              ],
+              "requestedGoalM": [
+                -39.5,
+                94.5,
+                0.0
+              ],
+              "observedArrival": true
+            }
+          ]
+        },
+        {
+          "name": "Character_06",
+          "state": "moving",
+          "taskId": "5764",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            1.6387274265289307,
+            51.10564041137695,
+            0.04749257117509842
+          ],
+          "goalM": [
+            -5.0,
+            60.0,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 77,
+          "rejections": 0,
+          "timeouts": 1,
+          "nearGoalNativeArrivals": 26,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "5357",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9578.766666695572,
+              "positionM": [
+                -10.79547119140625,
+                87.707763671875,
+                0.037501897662878036
+              ],
+              "requestedGoalM": [
+                -11.2,
+                88.4,
+                0.0
+              ],
+              "observedArrival": false
+            },
+            {
+              "taskId": "5359",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9579.866666695556,
+              "positionM": [
+                -10.789579391479492,
+                87.69588470458984,
+                0.037504419684410095
+              ],
+              "requestedGoalM": [
+                -11.2,
+                88.4,
+                0.0
+              ],
+              "observedArrival": false,
+              "operation": "normal-curb-alignment"
+            }
+          ]
+        },
+        {
+          "name": "Character_07",
+          "state": "moving",
+          "taskId": "5763",
+          "nativeStatus": "BehaviorTaskStatus.RUNNING",
+          "positionM": [
+            -54.50874710083008,
+            91.020263671875,
+            0.03995892032980919
+          ],
+          "goalM": [
+            -39.5,
+            94.5,
+            0.0
+          ],
+          "owner": null,
+          "phase": null,
+          "leaseError": null,
+          "failures": 241,
+          "rejections": 0,
+          "timeouts": 0,
+          "nearGoalNativeArrivals": 37,
+          "nativeFailureReceipts": [
+            {
+              "taskId": "5417",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9634.56666669476,
+              "positionM": [
+                -36.65041732788086,
+                89.33866882324219,
+                0.03494766727089882
+              ],
+              "requestedGoalM": [
+                -36.5,
+                89.4,
+                0.0
+              ],
+              "observedArrival": true
+            },
+            {
+              "taskId": "5688",
+              "nativeStatus": "FAILED",
+              "nativeError": 0,
+              "simTime": 9946.133333356893,
+              "positionM": [
+                -36.63587188720703,
+                89.33551788330078,
+                0.034953270107507706
+              ],
+              "requestedGoalM": [
+                -36.5,
+                89.4,
+                0.0
+              ],
+              "observedArrival": true
+            }
+          ]
+        }
+      ],
+      "peopleResults": {
+        "prepared-7e00d305a2bc4d13/Character": {
+          "character": "Character",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5707
+          ],
+          "positionM": [
+            -11.322937965393066,
+            70.04558563232422,
+            0.03595497086644173
+          ],
+          "entryM": [
+            -11.2,
+            70.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -11.199995994567871,
+              70.00006866455078,
+              0.03748927637934685
+            ],
+            "targetM": [
+              -11.2,
+              70.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-7e00d305a2bc4d13/Character_01": {
+          "character": "Character_01",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5708
+          ],
+          "positionM": [
+            -39.70237731933594,
+            94.60182189941406,
+            0.011123910546302795
+          ],
+          "entryM": [
+            -39.5,
+            94.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -39.63636779785156,
+              94.56033325195312,
+              0.010909478180110455
+            ],
+            "targetM": [
+              -39.5,
+              94.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-7e00d305a2bc4d13/Character_02": {
+          "character": "Character_02",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5709
+          ],
+          "positionM": [
+            -39.65701675415039,
+            62.60557556152344,
+            0.008858545683324337
+          ],
+          "entryM": [
+            -39.5,
+            62.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -39.68731689453125,
+              62.56668472290039,
+              0.009418608620762825
+            ],
+            "targetM": [
+              -39.5,
+              62.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-7e00d305a2bc4d13/Character_03": {
+          "character": "Character_03",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5710
+          ],
+          "positionM": [
+            -14.445755004882812,
+            94.52678680419922,
+            0.020488979294896126
+          ],
+          "entryM": [
+            -14.5,
+            94.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -14.399824142456055,
+              94.48491668701172,
+              0.020489899441599846
+            ],
+            "targetM": [
+              -14.5,
+              94.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-7e00d305a2bc4d13/Character_04": {
+          "character": "Character_04",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5711
+          ],
+          "positionM": [
+            -14.598981857299805,
+            62.53640365600586,
+            0.044091686606407166
+          ],
+          "entryM": [
+            -14.5,
+            62.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -14.496407508850098,
+              62.5361213684082,
+              0.04476692155003548
+            ],
+            "targetM": [
+              -14.5,
+              62.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-7e00d305a2bc4d13/Character_05": {
+          "character": "Character_05",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5712
+          ],
+          "positionM": [
+            -38.07175064086914,
+            90.12723541259766,
+            0.03773815929889679
+          ],
+          "entryM": [
+            -38.0,
+            90.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -38.07356643676758,
+              90.12870025634766,
+              0.03882267326116562
+            ],
+            "targetM": [
+              -38.0,
+              90.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-7e00d305a2bc4d13/Character_06": {
+          "character": "Character_06",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5713
+          ],
+          "positionM": [
+            9.798727989196777,
+            40.16999053955078,
+            0.047501858323812485
+          ],
+          "entryM": [
+            10.0,
+            40.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              9.897031784057617,
+              40.1033821105957,
+              0.04750237241387367
+            ],
+            "targetM": [
+              10.0,
+              40.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-7e00d305a2bc4d13/Character_07": {
+          "character": "Character_07",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5714
+          ],
+          "positionM": [
+            -70.18342590332031,
+            90.02729034423828,
+            0.040001802146434784
+          ],
+          "entryM": [
+            -70.0,
+            90.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -70.05672454833984,
+              90.0153579711914,
+              0.040001221001148224
+            ],
+            "targetM": [
+              -70.0,
+              90.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character": {
+          "character": "Character",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5739
+          ],
+          "positionM": [
+            -11.383720397949219,
+            70.09293365478516,
+            0.037356916815042496
+          ],
+          "entryM": [
+            -11.2,
+            70.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -11.222538948059082,
+              70.00563049316406,
+              0.03736399859189987
+            ],
+            "targetM": [
+              -11.2,
+              70.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character_01": {
+          "character": "Character_01",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5740
+          ],
+          "positionM": [
+            -39.605262756347656,
+            94.5022964477539,
+            0.010550410486757755
+          ],
+          "entryM": [
+            -39.5,
+            94.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -39.49940872192383,
+              94.49725341796875,
+              0.012504995800554752
+            ],
+            "targetM": [
+              -39.5,
+              94.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character_02": {
+          "character": "Character_02",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5741
+          ],
+          "positionM": [
+            -39.62929153442383,
+            62.564613342285156,
+            0.010005699470639229
+          ],
+          "entryM": [
+            -39.5,
+            62.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -39.62852478027344,
+              62.56578063964844,
+              0.009999800473451614
+            ],
+            "targetM": [
+              -39.5,
+              62.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character_03": {
+          "character": "Character_03",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5742
+          ],
+          "positionM": [
+            -14.481118202209473,
+            94.5624771118164,
+            0.01967957243323326
+          ],
+          "entryM": [
+            -14.5,
+            94.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -14.50560188293457,
+              94.497314453125,
+              0.019895294681191444
+            ],
+            "targetM": [
+              -14.5,
+              94.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character_04": {
+          "character": "Character_04",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5743
+          ],
+          "positionM": [
+            -14.736791610717773,
+            62.466033935546875,
+            0.04498792067170143
+          ],
+          "entryM": [
+            -14.5,
+            62.5,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -14.535417556762695,
+              62.5218620300293,
+              0.04498812556266785
+            ],
+            "targetM": [
+              -14.5,
+              62.5,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character_05": {
+          "character": "Character_05",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5744
+          ],
+          "positionM": [
+            -38.239200592041016,
+            90.19511413574219,
+            0.03997424244880676
+          ],
+          "entryM": [
+            -38.0,
+            90.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -38.06804275512695,
+              90.12210083007812,
+              0.03997541218996048
+            ],
+            "targetM": [
+              -38.0,
+              90.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character_06": {
+          "character": "Character_06",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5745
+          ],
+          "positionM": [
+            9.552173614501953,
+            40.20392608642578,
+            0.04750199243426323
+          ],
+          "entryM": [
+            10.0,
+            40.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              9.7799654006958,
+              40.11240005493164,
+              0.04750195890665054
+            ],
+            "targetM": [
+              10.0,
+              40.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        },
+        "prepared-86661a326f1e4817/Character_07": {
+          "character": "Character_07",
+          "state": "canceled",
+          "phase": "canceled",
+          "reason": "owner-restored",
+          "acceptedTaskIds": [
+            5746
+          ],
+          "positionM": [
+            -70.26311492919922,
+            90.33336639404297,
+            0.0390089750289917
+          ],
+          "entryM": [
+            -70.0,
+            90.0,
+            0.0
+          ],
+          "exitM": null,
+          "entryArrivalVerified": true,
+          "endpointArrivalVerified": false,
+          "arrivalToleranceM": 0.35,
+          "arrivalEvidence": {
+            "basis": "prepared-native-teleport-and-current-position; simulation cue only",
+            "positionM": [
+              -70.18350219726562,
+              90.1610107421875,
+              0.04000120237469673
+            ],
+            "targetM": [
+              -70.0,
+              90.0,
+              0.0
+            ]
+          },
+          "observedArrival": false,
+          "restored": true
+        }
+      },
+      "vehicles": [
+        {
+          "aid": 1939,
+          "route": "WB_1:R",
+          "s": 193.1633368393999,
+          "v": 3.4730016849366505,
+          "positionM": [
+            -16.87018685499837,
+            83.7356416774428,
+            -0.202
+          ],
+          "headingRadians": 2.1069200328429707,
+          "turnCommitted": true,
+          "owner": "",
+          "stopS": -1.0,
+          "held": false,
+          "constraint": "curve"
+        },
+        {
+          "aid": 1940,
+          "route": "SB_1",
+          "s": 50.52694131072002,
+          "v": 2.274141710973309,
+          "positionM": [
+            -25.15,
+            99.47305868927998,
+            -0.202
+          ],
+          "headingRadians": -1.5707963267948966,
+          "turnCommitted": false,
+          "owner": "",
+          "stopS": -1.0,
+          "held": false,
+          "constraint": "stopline"
+        }
+      ],
+      "nativeQueueDepartures": [
+        {
+          "aid": 1936,
+          "route": "NB_1",
+          "rearS": 70.74926499721205,
+          "headStopS": 70.36232525065998,
+          "speedMps": 3.2475456234214914,
+          "elapsedPlayWallSeconds": 26.839328550267965
+        },
+        {
+          "aid": 1937,
+          "route": "NB_1",
+          "rearS": 70.72420817597782,
+          "headStopS": 70.36232525065998,
+          "speedMps": 5.659166541772008,
+          "elapsedPlayWallSeconds": 32.62437942996621
+        },
+        {
+          "aid": 1938,
+          "route": "NB_1",
+          "rearS": 70.75502055021555,
+          "headStopS": 70.36232525065998,
+          "speedMps": 7.003248030578081,
+          "elapsedPlayWallSeconds": 38.16228131018579
+        }
+      ],
+      "signalPhase": {
+        "name": "EW_green",
+        "index": 3,
+        "t_in": 14.0,
+        "t_remaining": 6.0,
+        "states": {
+          "NS_through": "red",
+          "EW_through": "green",
+          "ped_cross_EW": "dont_walk",
+          "ped_cross_NS": "walk"
+        }
+      },
+      "lightHealth": "OK",
+      "phaseClockSeconds": 10288.966666581955,
+      "phaseSkewSeconds": -0.0,
+      "phaseMismatchCount": 0,
+      "poolSlots": 28,
+      "nativeAgents": 8,
+      "arrivalsPaused": false,
+      "trafficFrozen": false
+    }
+  },
+  "pairedReadiness": {
+    "status": "ok",
+    "service": "vss-city-analytics",
+    "mode": "live",
+    "siteId": "isaac-intersection-a",
+    "setupRequired": false,
+    "awaitingObservations": false,
+    "sources": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "status": "live"
+      },
+      {
+        "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "status": "live"
+      }
+    ],
+    "association": {
+      "mode": "camera-local",
+      "globalFusionEnabled": false,
+      "mapFusion": {
+        "mode": "mv3dt-demo",
+        "enabled": true,
+        "available": true,
+        "experimental": true,
+        "qualified": false,
+        "positionBasis": "camera-local-homography",
+        "analyticsIdentityBasis": "camera-local",
+        "status": "enabled"
+      }
+    },
+    "nativeAnalyticsStatus": {
+      "status": "active",
+      "requestedRevision": 498,
+      "appliedRevision": 498,
+      "primitives": [
+        {
+          "ruleId": "cam_sw-pedestrian-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_c47a8de677f26b7f",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_a559dd0e91c5de06",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_5a0caf467f01fa2e",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-east-right-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-east-waiting-south",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-east-crossing-measurement",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-east-waiting-north",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "cam_ne-pedestrian-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_c11e6442062e2a0a",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_1d1607eeab2e1d0d",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_ne-intersection-occupancy",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_581d42acb63e6870",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "mobility-isaac-northbound-queue",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-waiting-west",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-crossing-measurement",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-waiting-east",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "cam_ne-stopped-junction",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_d7c571f5027b9f35",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        }
+      ],
+      "eventAuthority": "city-behavior-analytics",
+      "counterEpoch": "f920405a-f0ef-4b54-80d4-2ad9dbc4355b",
+      "sourceTimeNs": "1793029084699142341",
+      "error": "",
+      "sourceClockMode": "source-native-sei",
+      "lastAppliedRevision": 498,
+      "operationalStatus": "fresh"
+    },
+    "processedPreview": {
+      "enabled": true,
+      "acceptedFrames": 6193,
+      "maximumSources": 2,
+      "maximumJpegBytes": 2097152,
+      "maximumJsonBytes": 524288,
+      "ttlSeconds": 2.0,
+      "retainedBytes": 169744,
+      "sources": [
+        {
+          "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "available": true,
+          "status": "ready"
+        },
+        {
+          "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "available": true,
+          "status": "ready"
+        }
+      ],
+      "nativeDelivery": {
+        "status": "fresh",
+        "enabled": true,
+        "failed": false,
+        "sources": [
+          {
+            "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+            "width": 960,
+            "height": 540,
+            "selected": 3092,
+            "rateDropped": 51,
+            "sourceQueueOverruns": 1,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "identitiesPending": 0,
+            "geometryMismatch": 0,
+            "encoded": 3092,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 2,
+            "published": 3088,
+            "postFailed": 2,
+            "pendingDropped": 0,
+            "observedEncodedFps": 7.99479,
+            "observedPublishedFps": 8.99414,
+            "timingMs": {
+              "selectedToJpeg": {
+                "count": 3092,
+                "mean": 1.68729,
+                "last": 1.79277,
+                "max": 13.784,
+                "p50Upper": 2,
+                "p95Upper": 5
+              },
+              "postQueue": {
+                "count": 3090,
+                "mean": 0.879838,
+                "last": 0.021504,
+                "max": 100.246,
+                "p50Upper": 1,
+                "p95Upper": 5
+              },
+              "post": {
+                "count": 3090,
+                "mean": 11.6376,
+                "last": 20.8282,
+                "max": 145.833,
+                "p50Upper": 10,
+                "p95Upper": 50
+              }
+            },
+            "lastPublishedAtNs": "1793029192484227312"
+          },
+          {
+            "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+            "width": 960,
+            "height": 540,
+            "selected": 3091,
+            "rateDropped": 52,
+            "sourceQueueOverruns": 1,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "identitiesPending": 0,
+            "geometryMismatch": 0,
+            "encoded": 3091,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 2,
+            "published": 3089,
+            "postFailed": 0,
+            "pendingDropped": 0,
+            "observedEncodedFps": 7.99479,
+            "observedPublishedFps": 7.99479,
+            "timingMs": {
+              "selectedToJpeg": {
+                "count": 3091,
+                "mean": 1.66128,
+                "last": 1.91263,
+                "max": 13.8615,
+                "p50Upper": 2,
+                "p95Upper": 5
+              },
+              "postQueue": {
+                "count": 3089,
+                "mean": 0.730069,
+                "last": 0.030032,
+                "max": 68.2489,
+                "p50Upper": 1,
+                "p95Upper": 5
+              },
+              "post": {
+                "count": 3089,
+                "mean": 11.0745,
+                "last": 3.14365,
+                "max": 118.168,
+                "p50Upper": 10,
+                "p95Upper": 50
+              }
+            },
+            "lastPublishedAtNs": "1793029192466544546"
+          }
+        ],
+        "updatedAtNs": "1793029192513103184",
+        "deliveryAgeSeconds": 0.8567049503326416,
+        "fpsLimitPerSource": 30,
+        "jpegQuality": 70,
+        "maxJpegBytes": 2097152,
+        "identityLimitPerSource": 32,
+        "pendingJpegs": 0,
+        "batchQueueOverruns": 0
+      }
+    },
+    "globalFusionEnabled": false,
+    "scenarioBoundary": {
+      "state": "normal",
+      "runId": null,
+      "completedRunId": "46c73cfbc9cd430eb610d8c38e56aa5c",
+      "trackingEpoch": "db23d02f-e24a-40cb-a921-e921524d6e5f",
+      "restoredAtNs": "1793029145358517902",
+      "analyticsScope": {
+        "epoch": "6ce5e041-3e53-40cb-8d29-5e7e8ccac4aa",
+        "kind": "normal",
+        "runId": null,
+        "scenarioId": null,
+        "startedAt": "2026-10-26T15:39:05.357659+00:00",
+        "suppressed": false
+      },
+      "settling": {
+        "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+          "frames": 265,
+          "observedSeconds": 16.801383261
+        },
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+          "frames": 264,
+          "observedSeconds": 16.697815681
+        }
+      },
+      "settleMinimumSeconds": 1.0,
+      "deadlineSeconds": 20.0,
+      "historyScope": "Prior events retain their original scope; archived scope summaries are retained separately."
+    }
+  },
+  "guard": {
+    "time": 1793029192.750734,
+    "available_gib": 35.45444107055664,
+    "floor_gib": 20.0
+  },
+  "profileChangedOnlyImage": true,
+  "allEightTrackerPinsMatch": true,
+  "rulesCount": 19,
+  "rulesUnchangedExceptLifecycleRevision": true,
+  "mobilityConfigurationUnchanged": true,
+  "workerImage": "sha256:17af10a349f2c1234c53fad139f5e533b47898d67dfa67fa06d085e5abf38506"
+}

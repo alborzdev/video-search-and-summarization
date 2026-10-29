@@ -1,0 +1,541 @@
+{
+  "as_of": "2026-10-22",
+  "scope": "Primary-source research, image masks selected by Moondream point or bounding box, Spark GB10 and Thor; no GPU tests",
+  "recommendation": {
+    "first": "SAM 2.1 Hiera Tiny",
+    "second": "EdgeTAM",
+    "tensorrt_challenger": "EfficientViT-SAM-L0",
+    "confidence": "Practical ranking, not measured device speed ranking"
+  },
+  "observed_local_metadata": {
+    "machine": "aarch64",
+    "environment": ".spark/moondream-photon/venv",
+    "torch": "2.13.0",
+    "triton": "3.7.1",
+    "not_installed": [
+      "torchvision",
+      "transformers",
+      "timm",
+      "hydra-core",
+      "iopath"
+    ],
+    "torch_or_cuda_imported_for_check": false
+  },
+  "candidates": [
+    {
+      "name": "SAM 2.1 Hiera Tiny",
+      "practical_rank": 1,
+      "role": "Quality/reliability baseline and first deployment candidate",
+      "code_repo": "facebookresearch/sam2",
+      "code_revision": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+      "license": "Apache-2.0 code and checkpoint; optional connected-components third-party BSD license",
+      "checkpoint": {
+        "repo": "facebook/sam2.1-hiera-tiny",
+        "revision": "de431c4043854a71d8101e17995dfe596bf101a5",
+        "gated": false,
+        "filename": "sam2.1_hiera_tiny.pt",
+        "bytes": 156008466,
+        "sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+        "download_url": "https://huggingface.co/facebook/sam2.1-hiera-tiny/resolve/de431c4043854a71d8101e17995dfe596bf101a5/sam2.1_hiera_tiny.pt",
+        "sha256_verified_by_download": false
+      },
+      "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+      "api": "sam2.build_sam.build_sam2 + sam2.sam2_image_predictor.SAM2ImagePredictor",
+      "parameters_million": 38.9,
+      "input_resolution": 1024,
+      "reported_benchmarks": [
+        {
+          "hardware": "NVIDIA A100",
+          "task": "compiled video object segmentation",
+          "fps": 91.2,
+          "runtime": "torch 2.5.1, CUDA 12.4",
+          "quality": {
+            "SA-V test J&F": 76.5
+          }
+        }
+      ],
+      "dependencies": [
+        "Python>=3.10",
+        "torch>=2.5.1",
+        "torchvision>=0.20.1 matched to Torch build",
+        "numpy>=1.24.4",
+        "tqdm>=4.66.1",
+        "hydra-core>=1.3.2",
+        "iopath>=0.1.10",
+        "pillow>=9.4.0"
+      ],
+      "notes": [
+        "SAM2_BUILD_CUDA=0 disables optional connected components extension.",
+        "No special Photon FP8/AOT kernel dependency; architecture-specific Torch/TorchVision compatibility still needs smoke test.",
+        "Image-only set_image + predict measures are required; published video FPS is not click latency."
+      ]
+    },
+    {
+      "name": "EdgeTAM",
+      "practical_rank": 2,
+      "role": "Compact speed challenger",
+      "code_repo": "facebookresearch/EdgeTAM",
+      "code_revision": "7711e012a30a2402c4eaab637bdb00a521302c91",
+      "license": "Apache-2.0 code and checkpoint",
+      "checkpoint": {
+        "repo": "facebook/EdgeTAM",
+        "revision": "14d7ecc48c656b94e5184519f698cd5386c5a2bf",
+        "gated": false,
+        "filename": "edgetam.pt",
+        "bytes": 56116523,
+        "sha256": "ed2d4850b8792c239689b043c47046ec239b6e808a3d9b6ae676c803fd8780df",
+        "download_url": "https://huggingface.co/facebook/EdgeTAM/resolve/14d7ecc48c656b94e5184519f698cd5386c5a2bf/edgetam.pt",
+        "sha256_verified_by_download": false
+      },
+      "config": "configs/edgetam.yaml",
+      "api": "sam2.build_sam.build_sam2 + sam2.sam2_image_predictor.SAM2ImagePredictor (EdgeTAM fork)",
+      "input_resolution": 1024,
+      "reported_benchmarks": [
+        {
+          "hardware": "NVIDIA A100",
+          "task": "compiled video object segmentation",
+          "fps": 150.9,
+          "quality": {
+            "SA-V test J&F": 71.7
+          }
+        },
+        {
+          "hardware": "iPhone 15 Pro Max",
+          "task": "image segmentation",
+          "fps": 40.4,
+          "quality": {
+            "SA-23 All 1-click mIoU": 55.5,
+            "SA-23 All 5-click mIoU": 81.7
+          }
+        }
+      ],
+      "dependencies": [
+        "Python>=3.10",
+        "torch>=2.3.1",
+        "torchvision>=0.18.1 matched to Torch build",
+        "numpy>=1.24.4",
+        "tqdm>=4.66.1",
+        "hydra-core>=1.3.2",
+        "iopath>=0.1.10",
+        "pillow>=9.4.0",
+        "timm (source import, omitted from setup required packages)"
+      ],
+      "notes": [
+        "Same sam2 import namespace as Meta SAM2; do not install both in one interpreter.",
+        "TimmBackbone uses repvit_m1.dist_in1k, pretrained=True; pre-stage backbone download or explicitly avoid redundant initialization only after full checkpoint coverage checked.",
+        "SAM2_BUILD_CUDA=0 disables optional extension.",
+        "Reported speed advantage trades some one-click quality; not proof of Spark rank."
+      ]
+    },
+    {
+      "name": "EfficientViT-SAM-L0",
+      "practical_rank": 3,
+      "role": "TensorRT optimization challenger after quality baseline",
+      "code_repo": "mit-han-lab/efficientvit",
+      "code_revision": "de7d7733cc0329f391b33f1f459271562ec27bd5",
+      "license": "Apache-2.0",
+      "checkpoint": {
+        "repo": "mit-han-lab/efficientvit-sam",
+        "revision": "a2f0c5929196a13ef1ffc9338d3f9e482e1e0e68",
+        "gated": false,
+        "filename": "efficientvit_sam_l0.pt",
+        "bytes": 139410184,
+        "sha256": "c4f994b01a16d48bcf2fbbb089448cfbf58fae5811edfa8113c953b8b8cc64b8",
+        "download_url": "https://huggingface.co/mit-han-lab/efficientvit-sam/resolve/a2f0c5929196a13ef1ffc9338d3f9e482e1e0e68/efficientvit_sam_l0.pt",
+        "sha256_verified_by_download": false
+      },
+      "api": "efficientvit.sam_model_zoo.create_efficientvit_sam_model + EfficientViTSamPredictor",
+      "input_resolution": 512,
+      "parameters_million": 34.8,
+      "reported_benchmarks": [
+        {
+          "hardware": "Jetson Orin (README does not qualify SKU/power for this table)",
+          "task": "SAM model table batch1 latency",
+          "latency_ms": 8.2,
+          "runtime": "TensorRT FP16 family paper; whole application pipeline not established by table"
+        },
+        {
+          "hardware": "A100",
+          "task": "TensorRT FP16 batch16 throughput",
+          "images_per_second": 762,
+          "quality": {
+            "COCO mask mAP (detector boxes)": 45.7
+          }
+        }
+      ],
+      "dependencies": [
+        "torch",
+        "torchvision",
+        "original segment_anything",
+        "numpy",
+        "timm/einops and imported efficientvit helper dependencies; audit minimal inference closure",
+        "TensorRT/ONNX only for optimized export route"
+      ],
+      "notes": [
+        "Official separate encoder and decoder ONNX/TensorRT export scripts.",
+        "Maintenance explicitly ended 2025-09-05.",
+        "Do not install broad training/generative/demo requirements into Photon environment.",
+        "512 resolution may lose thin/distant inspection features."
+      ]
+    },
+    {
+      "name": "EfficientTAM-Ti (and Ti 512 variant)",
+      "practical_rank": 4,
+      "role": "Alternative lightweight image/video model; lower priority due dependency and artifact ambiguity",
+      "code_repo": "yformer/EfficientTAM",
+      "code_revision": "abcd061ebd3cc6e7527d152d75b890126aaa53f6",
+      "license": "Apache-2.0 code and checkpoint",
+      "checkpoint": {
+        "repo": "yunyangx/efficient-track-anything",
+        "revision": "9bdd8ab585b19ef95f9c9ed847ac9478301890b4",
+        "gated": false,
+        "filename": "efficienttam_ti.pt",
+        "bytes": 71616316,
+        "sha256": "acbb17b28cca1f860acee09c9ecb6efdb732080dc7a85a07292c31813175fa7d",
+        "download_url": "https://huggingface.co/yunyangx/efficient-track-anything/resolve/9bdd8ab585b19ef95f9c9ed847ac9478301890b4/efficienttam_ti.pt",
+        "sha256_verified_by_download": false
+      },
+      "alternative_checkpoint": {
+        "repo": "yunyangx/efficient-track-anything",
+        "revision": "9bdd8ab585b19ef95f9c9ed847ac9478301890b4",
+        "gated": false,
+        "filename": "efficienttam_ti_512x512.pt",
+        "bytes": 71620052,
+        "sha256": "7d4d652a465f0081391050932f45d8a66768ccc99c8ea393ce8a5927e83f3b9b",
+        "download_url": "https://huggingface.co/yunyangx/efficient-track-anything/resolve/9bdd8ab585b19ef95f9c9ed847ac9478301890b4/efficienttam_ti_512x512.pt",
+        "sha256_verified_by_download": false
+      },
+      "config": "configs/efficienttam/efficienttam_ti.yaml or efficienttam_ti_512x512.yaml",
+      "parameters_million": 18,
+      "dependencies": [
+        "Python>=3.10",
+        "torch>=2.5.1",
+        "torchvision>=0.20.1",
+        "hydra-core",
+        "iopath",
+        "numpy",
+        "Pillow",
+        "tqdm",
+        "setup.py additionally pins old gradio/HF/demo dependencies"
+      ],
+      "reported_benchmarks": [
+        {
+          "hardware": "A100",
+          "task": "video object segmentation, EfficientTAM-Ti",
+          "fps": 117.7,
+          "quality": {
+            "SA-V test J&F": 70.7
+          }
+        },
+        {
+          "hardware": "A100",
+          "task": "video object segmentation, EfficientTAM-Ti/2",
+          "fps": 156.2,
+          "quality": {
+            "SA-V test J&F": 70.8
+          }
+        }
+      ],
+      "notes": [
+        "Ti/2 paper speed must not be silently assigned to separately named 512x512 checkpoint.",
+        "Paper describes EfficientTAM-Mobile; official current download script and HF manifest expose only s/ti/_1/_2/_512 variants, with no named Mobile checkpoint.",
+        "Separate efficient_track_anything namespace; optional SAM-style CUDA component."
+      ]
+    },
+    {
+      "name": "MobileSAM",
+      "practical_rank": 5,
+      "role": "Older lightweight baseline; not expected best quality/speed tradeoff",
+      "code_repo": "ChaoningZhang/MobileSAM",
+      "code_revision": "f706ad9c4eb7f219c00d9050e46328518ffb65d2",
+      "license": "Apache-2.0",
+      "checkpoint": {
+        "download_url": "https://raw.githubusercontent.com/ChaoningZhang/MobileSAM/f706ad9c4eb7f219c00d9050e46328518ffb65d2/weights/mobile_sam.pt",
+        "bytes": 40728226,
+        "git_blob_sha": "7ef2d090979fd9853adf17b7a99c8b94a1c5a6a7"
+      },
+      "parameters_million": 9.66,
+      "api": "mobile_sam.sam_model_registry[vit_t] + SamPredictor",
+      "reported_benchmarks": [
+        {
+          "hardware": "single GPU, README unspecified",
+          "task": "image encoder + one prompt decoder",
+          "latency_ms": 12
+        }
+      ],
+      "dependencies": [
+        "torch",
+        "torchvision",
+        "timm (TinyViT source)",
+        "numpy",
+        "Pillow"
+      ],
+      "notes": [
+        "NVIDIA NanoSAM project reports TensorRT FP16 MobileSAM encoder errors and used FP32 for encoder; verify precision before promising speed."
+      ]
+    },
+    {
+      "name": "NanoSAM",
+      "role": "NVIDIA Jetson-specific TensorRT alternative if minimum latency outweighs accuracy",
+      "code_repo": "NVIDIA-AI-IOT/nanosam",
+      "license": "Apache-2.0 repository",
+      "reported_benchmarks": [
+        {
+          "hardware": "Jetson AGX Orin",
+          "task": "full pipeline",
+          "latency_ms": 8.1,
+          "image_encoder_ms": 4.2,
+          "quality": {
+            "COCO box-prompt mIoU": 0.706
+          }
+        },
+        {
+          "hardware": "Jetson Orin Nano",
+          "task": "full pipeline",
+          "latency_ms": 27
+        }
+      ],
+      "dependencies": [
+        "torch",
+        "torch2trt",
+        "TensorRT"
+      ],
+      "notes": [
+        "Public pretrained ONNX export links in official README; uses FP16 ResNet18 encoder and FP32 MobileSAM decoder.",
+        "Older Orin workflow needs TensorRT-version audit for Spark/Thor; not measured here."
+      ]
+    },
+    {
+      "name": "Efficient-SAM2 (ICLR2026)",
+      "role": "Future continuous-video optimization, not first image mask replacement",
+      "code_repo": "jingjing0419/Efficient-SAM2",
+      "license": "Apache-2.0 / BSD components shown by official repository",
+      "notes": [
+        "Sparse routing and memory retrieval depend on previous-frame masks; adds bypass checkpoint/training configuration.",
+        "No evidence it improves our single-frame prompt use-case enough to justify first integration."
+      ]
+    },
+    {
+      "name": "TinySAM 2 (May2026 paper)",
+      "role": "Watch list only",
+      "paper_url": "https://arxiv.org/abs/2605.18013",
+      "notes": [
+        "No verified official downloadable checkpoint/code route found in inspected paper landing page and primary-source search; do not claim deployable winner."
+      ]
+    },
+    {
+      "name": "SAM3 / SAM3.1",
+      "role": "Not shortlisted for permissive small local segmenter",
+      "code_repo": "facebookresearch/sam3",
+      "license": "Custom SAM License (not Apache-2.0)",
+      "notes": [
+        "Gated checkpoint request required.",
+        "SAM3.1 March27 2026 optimizes multiobject tracking; 7x claim applies to128objects onH100, not a single mask on Spark.",
+        "License contains restrictions relating to ITAR and prohibited military/warfare end uses; eligibility for defense product needs review, no legal determination made.",
+        "Larger text/concept capability duplicates much of Moondream role."
+      ]
+    }
+  ],
+  "moondream_update": {
+    "current_pypi_moondream": "2.6.1",
+    "current_pypi_kestrel": "0.9.2",
+    "new_reliable_local_segmentation_route_found": false,
+    "prior_evidence": "../moondream-spark-2026-10-22/advertised-segmentation/upstream-evidence.md",
+    "denied_gates_retried": false
+  },
+  "benchmark_plan": [
+    "Same image, same pixel-space prompt, same output resolution; measure set_image and predict separately.",
+    "Compare oracle/hand-selected prompts before Moondream-generated prompts to isolate grounding from masking.",
+    "Measure cold-load, warm p50/p95, peak and resident memory, 1 and10objects, endpoint encode overhead.",
+    "Run FP32/BF16 or FP16 quality comparison, then torch.compile/TensorRT after correctness.",
+    "Evaluate full Moondream detection + segmentation end-to-end; do not substitute decoder-only latency.",
+    "Require representative tiny/thin/occluded inspection objects and agreed masks before quality claims."
+  ],
+  "sources": {
+    "sam2_readme": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/sam2/main/README.md",
+      "sha256": "eea69ee1042fb30933c5ca5019fbf0f6f9366cec5e792109281b5023a4f1589c",
+      "bytes": 16249
+    },
+    "sam2_setup": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/sam2/main/setup.py",
+      "sha256": "9ca49a33def161d2cafa56ddef744178fa56d3219242bd8b69909904c2e63dff",
+      "bytes": 5051
+    },
+    "edge_readme": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/EdgeTAM/main/README.md",
+      "sha256": "9c29d6ec68ee541e53203d1f6e0fb8a7d4a407691062ad2f33b970f0a379bca1",
+      "bytes": 10491
+    },
+    "edge_setup": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/EdgeTAM/main/setup.py",
+      "sha256": "bb56f8448ee08dcd729660b7205dcc2147ff817140a21f6d94222731d2d977fd",
+      "bytes": 5169
+    },
+    "efficienttam_readme": {
+      "url": "https://raw.githubusercontent.com/yformer/EfficientTAM/main/README.md",
+      "sha256": "68907f37a1fadc48778b5544412577af7beb889690392195aa5641290c981daa",
+      "bytes": 4942
+    },
+    "efficienttam_setup": {
+      "url": "https://raw.githubusercontent.com/yformer/EfficientTAM/main/setup.py",
+      "sha256": "76b8f6a2748dfaa9c2c112541f622a11ef203073baf3d117dbf129a38a2a09e6",
+      "bytes": 5547
+    },
+    "efficienttam_download": {
+      "url": "https://raw.githubusercontent.com/yformer/EfficientTAM/main/checkpoints/download_checkpoints.sh",
+      "sha256": "c69fccdde35a21f140406ecea9a3af8be74ffd53cf47a14ae708cc05a38c4d61",
+      "bytes": 2725
+    },
+    "efficientvit_readme": {
+      "url": "https://raw.githubusercontent.com/mit-han-lab/efficientvit/master/applications/efficientvit_sam/README.md",
+      "sha256": "77e6d8664ffbc4924f3d2b3a30638e6e01e629dd28ad1e1a196f8ab54233e33b",
+      "bytes": 10627
+    },
+    "efficientvit_requirements": {
+      "url": "https://raw.githubusercontent.com/mit-han-lab/efficientvit/master/requirements.txt",
+      "sha256": "3be91d3c4e9bce5bfb18783791033832867479d5beb3e6a4497a8891c3e34eb8",
+      "bytes": 517
+    },
+    "mobile_readme": {
+      "url": "https://raw.githubusercontent.com/ChaoningZhang/MobileSAM/master/README.md",
+      "sha256": "940d3a87b3d13e3f4544aac4d920cbaf68aae0e4ac1d81a7db2c292b11c4e08d",
+      "bytes": 10854
+    },
+    "mobile_setup": {
+      "url": "https://raw.githubusercontent.com/ChaoningZhang/MobileSAM/master/setup.py",
+      "sha256": "44ff0104a2d980460e4801f22611739e8e9a6d4cf9b05c63922413712cfc6e36",
+      "bytes": 535
+    },
+    "sam2_meta": {
+      "url": "https://api.github.com/repos/facebookresearch/sam2/commits/main",
+      "sha256": "deb738be49569bda269fbcd47974b6b54f5213307d27f7cbd2113417a220ad7b",
+      "bytes": 6709
+    },
+    "edge_meta": {
+      "url": "https://api.github.com/repos/facebookresearch/EdgeTAM/commits/main",
+      "sha256": "27c7539a000b9f22b82da9a167515a7f73ba00a12ba90ff8794c12bb4ffa0446",
+      "bytes": 35667
+    },
+    "edge_checkpoint": {
+      "url": "https://api.github.com/repos/facebookresearch/EdgeTAM/contents/checkpoints/edgetam.pt",
+      "sha256": "0532e744b62a0205127c88af45356bb8a91d4bae1a969379b1913dfeb5c93ba7",
+      "bytes": 891
+    },
+    "edge_config": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/EdgeTAM/main/sam2/configs/edgetam.yaml",
+      "sha256": "25c2fda8490e7684f924abba130775487ca6eccee87b1d9cf92ddccf2436afe1",
+      "bytes": 4105
+    },
+    "edge_tree": {
+      "url": "https://api.github.com/repos/facebookresearch/EdgeTAM/git/trees/main?recursive=1",
+      "sha256": "d9f07e96747f5b60a19803d7eae5efca7499146ddeda834a16a548623e3cb3fe",
+      "bytes": 77923
+    },
+    "efficienttam_meta": {
+      "url": "https://api.github.com/repos/yformer/EfficientTAM/commits/main",
+      "sha256": "9e4fc073a2bf38b02992f460fb14ea9a5e7b39112f89ba3d5e43b2d9b804caeb",
+      "bytes": 2779
+    },
+    "efficienttam_hf": {
+      "url": "https://huggingface.co/api/models/yunyangx/efficient-track-anything?blobs=true",
+      "sha256": "7af78db7cd4b376adae441bb65d41869917ebdd5fba9e8d6f66dccc41dc6f991",
+      "bytes": 2501
+    },
+    "efficientvit_meta": {
+      "url": "https://api.github.com/repos/mit-han-lab/efficientvit/commits/master",
+      "sha256": "8ca6636f7c85b68a31539e2376a44ff0739344765a4e60e2b5c8f8ba2cc18c8f",
+      "bytes": 5099
+    },
+    "efficientvit_hf": {
+      "url": "https://huggingface.co/api/models/mit-han-lab/efficientvit-sam?blobs=true",
+      "sha256": "88d17e81ea43436db8da77ea8fe5147707828082a365a6248d322fa33c5eeb47",
+      "bytes": 8708
+    },
+    "efficientvit_sam_source": {
+      "url": "https://raw.githubusercontent.com/mit-han-lab/efficientvit/master/efficientvit/models/efficientvit/sam.py",
+      "sha256": "8f208f0fddd04cc20543f8a9acedf334fdf14a0ce7dfe59b4d256a226cd0c991",
+      "bytes": 25664
+    },
+    "mobile_meta": {
+      "url": "https://api.github.com/repos/ChaoningZhang/MobileSAM/commits/master",
+      "sha256": "ccd455ef666b9b99d01299687d7193b97e83ac8be083234f8c772ab0c0f2c72e",
+      "bytes": 7186
+    },
+    "mobile_checkpoint": {
+      "url": "https://api.github.com/repos/ChaoningZhang/MobileSAM/contents/weights/mobile_sam.pt",
+      "sha256": "8fa29eec00b8c77034ea01574ca4537d2bdaaefb800f743a9d3c25b311baa0aa",
+      "bytes": 891
+    },
+    "sam2_hf": {
+      "url": "https://huggingface.co/api/models/facebook/sam2.1-hiera-tiny?blobs=true",
+      "sha256": "831b7e53402f98eced16084da8616e46a4c36cae278daf5daacbfe677f8c3133",
+      "bytes": 4449
+    },
+    "edge_hf": {
+      "url": "https://huggingface.co/api/models/facebook/EdgeTAM?blobs=true",
+      "sha256": "cccc001f28d397998b30b5c68ede78a132d71f623d2f0b3986ae8b53a9d67534",
+      "bytes": 979
+    },
+    "new_tinysam_paper": {
+      "url": "https://arxiv.org/abs/2605.18013",
+      "sha256": "f8cfbcef18e7d5dd3c9930a3abae9a08b3c26895567b613aaffdc7b59af45d13",
+      "bytes": 43314
+    },
+    "new_efficientsam_paper": {
+      "url": "https://arxiv.org/abs/2602.08224",
+      "sha256": "2cd0b0acfa3ced3426cab4b36705552a7d33891a0e863c8a62b178d2c980b5c4",
+      "bytes": 44377
+    },
+    "edge_backbone": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/EdgeTAM/main/sam2/modeling/backbones/timm.py",
+      "sha256": "e4900a13189d0568e53a0bec609da993b4a03c1885538ff87ec1e3f7138a27bd",
+      "bytes": 1070
+    },
+    "edge_misc": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/EdgeTAM/main/sam2/utils/misc.py",
+      "sha256": "01600c01c161cd079d7106fb1d4da845cf91aa31ab2bcecaf8cb151b6d6d20a2",
+      "bytes": 13090
+    },
+    "edge_transforms": {
+      "url": "https://raw.githubusercontent.com/facebookresearch/EdgeTAM/main/sam2/utils/transforms.py",
+      "sha256": "ba3a64f4600c62f209206a6df3b40e3fcf133edae32fad658831bb0c2a6d1146",
+      "bytes": 4885
+    },
+    "efficienttam_benchmark": {
+      "url": "https://raw.githubusercontent.com/yformer/EfficientTAM/main/efficient_track_anything/benchmark.py",
+      "sha256": "d8da706b39d277bd06c5a6b600b96f7f87ce54662324aa8d83fd829480f54429",
+      "bytes": 3482
+    },
+    "efficienttam_ti_config": {
+      "url": "https://raw.githubusercontent.com/yformer/EfficientTAM/main/efficient_track_anything/configs/efficienttam/efficienttam_ti.yaml",
+      "sha256": "65b03d82f744954283adfc9dc268f6449daa8e83e05fab65d1852c6589944fc3",
+      "bytes": 3861
+    },
+    "efficienttam_ti512_config": {
+      "url": "https://raw.githubusercontent.com/yformer/EfficientTAM/main/efficient_track_anything/configs/efficienttam/efficienttam_ti_512x512.yaml",
+      "sha256": "55a0142a2d0076d3c434a8a35c23ccc16e7e42ef06153b571f147615befa070d",
+      "bytes": 3860
+    },
+    "new_efficientsam2_readme": {
+      "url": "https://raw.githubusercontent.com/jingjing0419/Efficient-SAM2/main/README.md",
+      "sha256": "32658960631b8d4e99fac51b78df85617dfdcc002c6e3fc470391b014332f41e",
+      "bytes": 5634
+    },
+    "edgesam_readme": {
+      "url": "https://raw.githubusercontent.com/chongzhou96/EdgeSAM/master/README.md",
+      "sha256": "c0ac91bfbc5e5fdf3acda93782f9b10658e7c11d4c89dc49375a7d69c5b7d330",
+      "bytes": 14775
+    },
+    "moondream_pypi": {
+      "url": "https://pypi.org/pypi/moondream/json",
+      "sha256": "c425b8fd295e6b1eda214b8bf76c90564238e8f00c74459ccad114cd9b939911",
+      "bytes": 56711
+    },
+    "kestrel_pypi": {
+      "url": "https://pypi.org/pypi/kestrel/json",
+      "sha256": "2c39fb7c66157ef18c3c98fb344604b573771e54b896446e758e46913201bb08",
+      "bytes": 57873
+    }
+  }
+}

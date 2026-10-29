@@ -1,0 +1,217 @@
+{
+  "schemaVersion": "city.final-v3-queue-live-ui.v1",
+  "passed": true,
+  "trace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-queue-full-final-v3-ui.ndjson",
+  "traceSha256": "38c4f9a932ce2c808f58b12f3130e4b16677eb5dd7a93bfbdbc993d8759b26f3",
+  "runId": "2227daf39a19476d:000002",
+  "elapsedWallSeconds": 36.01401882106438,
+  "sceneOutcome": {
+    "state": "completed",
+    "reason": "booth-finished",
+    "restored": true,
+    "normalFlowVerified": true,
+    "holdConfirmed": true
+  },
+  "actualActionReceipts": [
+    {
+      "kind": "action-applied",
+      "simTime": 1801.1666666656859,
+      "commandId": "2227daf39a19476d:000002:01",
+      "operation": "traffic.spawn",
+      "detail": "Requested arrival entered the normal model",
+      "evidence": {
+        "aid": 368,
+        "route": "NB_1"
+      }
+    },
+    {
+      "kind": "action-applied",
+      "simTime": 1803.4333333323505,
+      "commandId": "2227daf39a19476d:000002:02",
+      "operation": "traffic.spawn",
+      "detail": "Requested arrival entered the normal model",
+      "evidence": {
+        "aid": 369,
+        "route": "NB_1"
+      }
+    },
+    {
+      "kind": "action-applied",
+      "simTime": 1804.1333333323498,
+      "commandId": "2227daf39a19476d:000002:00",
+      "operation": "vehicle.hold_in_zone",
+      "detail": "Car is stationary inside the requested zone",
+      "evidence": {
+        "aid": 360,
+        "positionM": [
+          -21.877213096201253,
+          65.13442845584953
+        ],
+        "speedMps": 0.0,
+        "binding": "northbound-queue-head",
+        "route": "NB_1",
+        "targetS": 70.36232525065998,
+        "stationaryInsideZone": true
+      }
+    },
+    {
+      "kind": "action-applied",
+      "simTime": 1812.2666666656758,
+      "commandId": "2227daf39a19476d:000002:03",
+      "operation": "vehicle.release",
+      "detail": "Owned stop released; departure still needs observation",
+      "evidence": {
+        "released": 1
+      }
+    },
+    {
+      "kind": "action-applied",
+      "simTime": 1813.0999999990083,
+      "commandId": "2227daf39a19476d:000002:clear",
+      "operation": "vehicle.wait_clear",
+      "detail": "Released car moved out of the zone under normal control",
+      "evidence": {
+        "aid": 360,
+        "positionM": [
+          -21.869979850626354,
+          66.00241792483754
+        ],
+        "speedMps": 2.0830721392560827,
+        "distanceSinceReleaseM": 0.8680196069880282,
+        "outsideZone": true,
+        "normalMotionObserved": true,
+        "binding": "northbound-queue-head",
+        "normalFlow": true
+      }
+    },
+    {
+      "kind": "restored",
+      "simTime": 1813.0999999990083,
+      "detail": "All episode-owned overrides released; normal schedule retained",
+      "evidence": {
+        "releasedStops": 0,
+        "normalFlow": true,
+        "movingVehicles": 5,
+        "modelStep": 108781,
+        "controllerCurrent": true
+      },
+      "outcome": "completed"
+    }
+  ],
+  "maximumCurrentlyObservedQueueObjects": 2,
+  "observedQueueAtPeakCount": {
+    "id": "northbound-queue",
+    "name": "Northbound approach",
+    "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+    "ruleId": "mobility-isaac-northbound-queue",
+    "zoneRuleId": "mobility-isaac-northbound-queue",
+    "stopLineM": [
+      [
+        -23.7,
+        63.8
+      ],
+      [
+        -20.2,
+        63.8
+      ]
+    ],
+    "upstreamPointM": [
+      -22.89410029498525,
+      50.0
+    ],
+    "spillbackDistanceM": 10.0,
+    "extentBasis": "ground-anchor-distance",
+    "timeBasis": "source-time",
+    "status": "candidate",
+    "count": 2,
+    "observedExtentM": 9.534861108743742,
+    "tailPositionM": [
+      -22.32094596010031,
+      54.26822925737723
+    ],
+    "extentIsLowerBound": true,
+    "spillback": null,
+    "durationMs": 507.5,
+    "spillbackDurationMs": 0,
+    "trackIds": [
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a:206ee1d2-c3ef-43b7-a010-dabaea6085c3:8378286562227521115",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a:206ee1d2-c3ef-43b7-a010-dabaea6085c3:8378286562227521121"
+    ],
+    "pendingTrackCount": 0,
+    "oldestPendingGapMs": null,
+    "membershipComplete": false,
+    "currentCountsAvailable": true,
+    "qualityReasons": [
+      "Earlier queue tracks were lost; current visible anchors are a lower bound, not confirmed clearance.",
+      "The observed tail is near the configured zone boundary."
+    ],
+    "asOfSourceTimeNs": "1793007663965600731",
+    "countBasis": "currently-observed",
+    "unresolvedHistoricalTrackCount": 2,
+    "oldestLostTrackAgeMs": 746651.655556,
+    "lossEvidenceRetentionSeconds": 900,
+    "clearanceConfirmed": false,
+    "windowMinutes": 5,
+    "maximumObservedExtentM": 9.677586653400688,
+    "lostTrackCount": 1
+  },
+  "peakCountElapsedWallSeconds": 18.993678423110396,
+  "maximumCurrentObservedExtentM": 9.534861108743742,
+  "finalQueueRow": {
+    "id": "northbound-queue",
+    "name": "Northbound approach",
+    "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+    "ruleId": "mobility-isaac-northbound-queue",
+    "zoneRuleId": "mobility-isaac-northbound-queue",
+    "stopLineM": [
+      [
+        -23.7,
+        63.8
+      ],
+      [
+        -20.2,
+        63.8
+      ]
+    ],
+    "upstreamPointM": [
+      -22.89410029498525,
+      50.0
+    ],
+    "spillbackDistanceM": 10.0,
+    "extentBasis": "ground-anchor-distance",
+    "timeBasis": "source-time",
+    "status": "unknown",
+    "count": 0,
+    "observedExtentM": null,
+    "tailPositionM": null,
+    "extentIsLowerBound": true,
+    "spillback": null,
+    "durationMs": 0,
+    "spillbackDurationMs": 0,
+    "trackIds": [],
+    "pendingTrackCount": 0,
+    "oldestPendingGapMs": null,
+    "membershipComplete": false,
+    "currentCountsAvailable": true,
+    "qualityReasons": [
+      "Earlier queue tracks were lost; current visible anchors are a lower bound, not confirmed clearance."
+    ],
+    "asOfSourceTimeNs": "1793007682021745175",
+    "countBasis": "currently-observed",
+    "unresolvedHistoricalTrackCount": 3,
+    "oldestLostTrackAgeMs": 764707.8,
+    "lossEvidenceRetentionSeconds": 900,
+    "clearanceConfirmed": false,
+    "windowMinutes": 5,
+    "maximumObservedExtentM": null,
+    "lostTrackCount": 1
+  },
+  "cameraClearanceConfirmed": false,
+  "scope": "One full actual UI episode with native hold/release/departure and a separately computed camera queue observation.",
+  "limits": [
+    "Native head departure is not camera-confirmed empty-queue evidence.",
+    "Camera membership became incomplete and confirmed queue clearance is not claimed.",
+    "Window maxima may include ordinary traffic from before this scenario.",
+    "No all-click or all-day success claim."
+  ]
+}

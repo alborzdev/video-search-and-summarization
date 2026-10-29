@@ -1,0 +1,310 @@
+{
+  "at": "2026-10-23T20:18:16.791567+00:00",
+  "isaac": {
+    "stage": "/home/sparkdev/isaac_city_sim/stages/smart_city_pilot.usda",
+    "playing": true,
+    "simTime": 1475.6999999993152,
+    "loaded": true,
+    "error": null,
+    "loading": false,
+    "streaming": true,
+    "streamBusy": false,
+    "streams": {
+      "h264_setups": 0,
+      "max_h264_setups_per_run": 2,
+      "nvenc_budget_left": 2,
+      "generation": 1,
+      "n_cameras": 2,
+      "attached": true,
+      "backend": "software",
+      "urls": [
+        {
+          "cam": "cam_SW",
+          "port": 18556,
+          "mount": "/cam_SW",
+          "url_local": "rtsp://172.17.0.1:18556/cam_SW"
+        },
+        {
+          "cam": "cam_NE",
+          "port": 18556,
+          "mount": "/cam_NE",
+          "url_local": "rtsp://172.17.0.1:18556/cam_NE"
+        }
+      ],
+      "base_dir": null,
+      "cameras": [
+        {
+          "id": "cam_SW",
+          "prim_path": "/World/SmartCity/Cameras/cam_SW",
+          "render_product": "/Render/OmniverseKit/HydraTextures/Replicator"
+        },
+        {
+          "id": "cam_NE",
+          "prim_path": "/World/SmartCity/Cameras/cam_NE",
+          "render_product": "/Render/OmniverseKit/HydraTextures/Replicator_01"
+        }
+      ],
+      "rings": {},
+      "streams": {
+        "cam_SW": {
+          "frames": 35876,
+          "failed": false
+        },
+        "cam_NE": {
+          "frames": 35876,
+          "failed": false
+        }
+      },
+      "stats": {
+        "write_calls": 43674,
+        "frames_pushed": 71752,
+        "push_errors": 0,
+        "error": null,
+        "pairedCaptureSamples": 256,
+        "evaluationOnlyFile": "/home/sparkdev/isaac_city_sim/logs/vss-integration/evaluation-ground-truth-1792783015032122329.ndjson",
+        "streams": {
+          "cam_SW": {
+            "frame_id": 35876,
+            "queued": 35876,
+            "dropped": 0,
+            "error": null,
+            "encoderAlive": true,
+            "url": "rtsp://172.17.0.1:18556/cam_SW"
+          },
+          "cam_NE": {
+            "frame_id": 35876,
+            "queued": 35876,
+            "dropped": 0,
+            "error": null,
+            "encoderAlive": true,
+            "url": "rtsp://172.17.0.1:18556/cam_NE"
+          }
+        }
+      }
+    },
+    "log": [
+      "    gate PASS: spill event armed",
+      "PILOT UP in 99s (RTSP not brought up)",
+      "=== streaming: start ===",
+      "    RTSP backend requested: software",
+      "      [stream] backend = software (source=env)",
+      "      /home/sparkdev/isaac_city_sim/scripts/rtsp/native_rtsp_backend.py:476: FutureWarning: `torch.distributed.reduce_op` is deprecated, please use `torch.distributed.ReduceOp` instead",
+      "        if not isinstance(obj, HydraTexture):",
+      "      [stream] software H.264: 2 render products, (1280, 720), 15.0 FPS target",
+      "    camera stream registry snapshot: {'h264_setups': 0, 'max_h264_setups_per_run': 2, 'nvenc_budget_left': 2, 'generation': 1, 'n_cameras': 2, 'attached': True, 'backend': 'software', 'urls': [{'cam': 'cam_SW', 'port': 18556, 'mount': '/cam_SW', 'url_local': 'rtsp://172.17.0.1:18556/cam_SW'}, {'cam': 'cam_NE', 'port': 18556, 'mount': '/cam_NE', 'url_local': 'rtsp://172.17.0.1:18556/cam_NE'}], 'base_dir': None, 'cameras': [{'id': 'cam_SW', 'prim_path': '/World/SmartCity/Cameras/cam_SW', 'render_product': '/Render/OmniverseKit/HydraTextures/Replicator'}, {'id': 'cam_NE', 'prim_path': '/World/SmartCity/Cameras/cam_NE', 'render_product': '/Render/OmniverseKit/HydraTextures/Replicator_01'}], 'rings': {}, 'streams': {'cam_SW': {'frames': 0, 'failed': False}, 'cam_NE': {'frames': 0, 'failed': False}}, 'stats': {'write_calls': 0, 'frames_pushed': 0, 'push_errors': 0, 'error': None, 'pairedCaptureSamples': 0, 'evaluationOnlyFile': None, 'streams': {'cam_SW': {'frame_id': 0, 'queued': 0, 'dropped': 0, 'error': None, 'encoderAlive': True, 'url': 'rtsp://172.17.0.1:18556/cam_SW'}, 'cam_NE': {'frame_id': 0, 'queued': 0, 'dropped': 0, 'error': None, 'encoderAlive': True, 'url': 'rtsp://172.17.0.1:18556/cam_NE'}}}}",
+      "    software backend: bounded CPU encoders and the dedicated local RTSP server",
+      "    health gate: waiting up to 20s for 2/2 mounts",
+      "    DESCRIBE 200: cam_SW@18556 after 0.7s",
+      "    DESCRIBE 200: cam_NE@18556 after 0.7s",
+      "streaming UP (software):",
+      "      rtsp://172.17.0.1:18556/cam_SW",
+      "      rtsp://172.17.0.1:18556/cam_NE"
+    ]
+  },
+  "health": {
+    "status": "ok",
+    "service": "vss-city-analytics",
+    "mode": "live",
+    "siteId": "isaac-intersection-a",
+    "setupRequired": false,
+    "awaitingObservations": false,
+    "sources": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "status": "live"
+      },
+      {
+        "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "status": "live"
+      }
+    ],
+    "association": {
+      "mode": "camera-local",
+      "globalFusionEnabled": false,
+      "mapFusion": {
+        "mode": "mv3dt-demo",
+        "enabled": true,
+        "available": true,
+        "experimental": true,
+        "qualified": false,
+        "positionBasis": "camera-local-homography",
+        "analyticsIdentityBasis": "camera-local",
+        "status": "enabled"
+      }
+    },
+    "nativeAnalyticsStatus": {
+      "status": "active",
+      "requestedRevision": 280,
+      "appliedRevision": 280,
+      "primitives": [
+        {
+          "ruleId": "cam_sw-pedestrian-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_c47a8de677f26b7f",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_sw-blocked-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_a559dd0e91c5de06",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_sw-northbound-line",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_5a0caf467f01fa2e",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "mobility-isaac-north-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-west-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-east-exit",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-north-curbside-lane",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "cam_ne-pedestrian-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_c11e6442062e2a0a",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_ne-blocked-crossing",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_1d1607eeab2e1d0d",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "cam_ne-intersection-occupancy",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_581d42acb63e6870",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        },
+        {
+          "ruleId": "mobility-isaac-northbound-queue",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-waiting-west",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-crossing-measurement",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        },
+        {
+          "ruleId": "mobility-isaac-south-waiting-east",
+          "primitiveStatus": "backend-only",
+          "reason": "world geometry requires independent inverse-projection validation"
+        }
+      ],
+      "eventAuthority": "city-behavior-analytics",
+      "counterEpoch": "d3aec9b2-4f21-464c-aa4c-aea73f886c1b",
+      "sourceTimeNs": "1792784145496470667",
+      "error": "",
+      "lastAppliedRevision": 280,
+      "operationalStatus": "fresh"
+    },
+    "processedPreview": {
+      "enabled": true,
+      "acceptedFrames": 41088,
+      "maximumSources": 2,
+      "maximumJpegBytes": 2097152,
+      "maximumJsonBytes": 524288,
+      "ttlSeconds": 2.0,
+      "retainedBytes": 574805,
+      "sources": [
+        {
+          "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "available": true,
+          "status": "ready"
+        },
+        {
+          "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "available": true,
+          "status": "ready"
+        }
+      ],
+      "nativeDelivery": {
+        "status": "fresh",
+        "enabled": true,
+        "failed": false,
+        "sources": [
+          {
+            "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+            "width": 1280,
+            "height": 720,
+            "selected": 19907,
+            "rateDropped": 2419,
+            "sourceQueueOverruns": 0,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "identitiesPending": 1,
+            "geometryMismatch": 0,
+            "encoded": 19906,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 452,
+            "published": 19451,
+            "postFailed": 0,
+            "pendingDropped": 2,
+            "observedEncodedFps": 5.99822,
+            "observedPublishedFps": 4.99851,
+            "lastPublishedAtNs": "1792786695706554457"
+          },
+          {
+            "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+            "width": 1280,
+            "height": 720,
+            "selected": 19949,
+            "rateDropped": 2377,
+            "sourceQueueOverruns": 0,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "identitiesPending": 1,
+            "geometryMismatch": 0,
+            "encoded": 19948,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 447,
+            "published": 19500,
+            "postFailed": 0,
+            "pendingDropped": 1,
+            "observedEncodedFps": 6.99792,
+            "observedPublishedFps": 6.99792,
+            "lastPublishedAtNs": "1792786695946356293"
+          }
+        ],
+        "updatedAtNs": "1792786696095819481",
+        "deliveryAgeSeconds": 0.6937723159790039,
+        "fpsLimitPerSource": 15,
+        "jpegQuality": 70,
+        "maxJpegBytes": 2097152,
+        "identityLimitPerSource": 32,
+        "pendingJpegs": 0,
+        "batchQueueOverruns": 0
+      }
+    },
+    "globalFusionEnabled": false
+  }
+}

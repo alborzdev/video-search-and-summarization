@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "city.preview-gateway-cpu-qualification.v1",
+  "capturedAt": "2026-10-22T06:44:52.170998+00:00",
+  "result": "passed",
+  "scope": "CPU gateway/store/API contract tests only; native GPU encoding and browser presentation separately qualified.",
+  "isolation": {
+    "gpuUsed": false,
+    "runtimeRestarts": false,
+    "liveStateMutated": false,
+    "networkListenerStarted": false,
+    "api": "private in-process FastAPI TestClient"
+  },
+  "previewTests": {
+    "passed": 19,
+    "failures": 0,
+    "errors": 0,
+    "junit": "preview-gateway-cpu-tests.xml"
+  },
+  "fullBackendControllerManageTestsPassed": 105,
+  "limits": {
+    "sources": 2,
+    "jpegBytes": 2097152,
+    "jsonBytes": 524288,
+    "ttlSeconds": 2,
+    "metadataRaceWaitSeconds": 0.2,
+    "nativeStatusBytes": 32768
+  },
+  "exactIdentity": [
+    "sourceId",
+    "sourceSessionId",
+    "engineSessionId",
+    "sequence",
+    "sourceTimeNs",
+    "modelRevision",
+    "originalImageDimensions",
+    "configurationGeneration"
+  ],
+  "verified": [
+    "exact frame snapshots despite duplicate timestamps",
+    "POST observations then correlated JPEG through actual API",
+    "metadata/JPEG arrival race and bounded pending drop",
+    "superseded and conflicting identities rejected",
+    "reset/session/generation invalidation",
+    "original versus proportional JPEG dimensions",
+    "observed/stale track flags retained",
+    "TTL and ETag conditional reads",
+    "JPEG and metadata body limits",
+    "two-source memory bound",
+    "no JPEG persistence or observation reinsertion",
+    "private source configuration excluded",
+    "native delivery counters sanitized/current-source scoped",
+    "read-only capability/media GET-PUT roundtrip preserves generation"
+  ],
+  "syntheticFixtureConsistencyReceipt": "synthetic-30-loop-rules-preview-context.json",
+  "sourceSha256": {
+    "services/analytics/behavior-analytics/apps/city/engine.py": "95335db2801b4bed4b4039a3ca35c731c806dae385468bc22f1c16aab1eb3b02",
+    "services/analytics/behavior-analytics/apps/city/main.py": "fc998fd59e3993b0a24bfb93eb306f4aba1c46847eaa10d39e685813331c9865",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "020e0324f4fe902ec54840870009f30f438537572532091d8d3fd15cff08b9b5",
+    "services/analytics/behavior-analytics/apps/city/tests/test_preview.py": "e6ef359e69edde155ce3822468eca20ce926021172830ccf5748436451d6ecd5"
+  },
+  "contract": "services/analytics/behavior-analytics/apps/city/PREVIEW.md",
+  "clockQualification": "Exact native image/observation pair; browserClockVerified remains false, absolute capture-clock and physical-map accuracy are not inferred."
+}

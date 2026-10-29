@@ -22,7 +22,9 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-async def registered_rtvi_cv_stream_ids(client: httpx.AsyncClient, base_url: str) -> set[str]:
+async def registered_rtvi_cv_stream_ids(
+    client: httpx.AsyncClient, base_url: str, *, running_only: bool = False
+) -> set[str]:
     """Return the source IDs that a specific RTVI-CV worker actually owns.
 
     RTVI-CV's remove endpoint is not reliably idempotent: some releases can
@@ -31,6 +33,11 @@ async def registered_rtvi_cv_stream_ids(client: httpx.AsyncClient, base_url: str
     precondition before issuing a remove request.  Malformed responses raise
     so callers can distinguish an authoritative empty inventory from a worker
     whose state could not be read.
+
+    Cleanup needs every owned ID, including stopped registrations. Recovery
+    requests running_only so an explicitly failed/stopped resource is retried.
+    Older workers omit status or use other vocabularies; preserve their prior
+    ownership behavior rather than blindly restarting a healthy pipeline.
     """
     endpoint = base_url.rstrip("/")
     if not endpoint:
@@ -54,6 +61,11 @@ async def registered_rtvi_cv_stream_ids(client: httpx.AsyncClient, base_url: str
         if isinstance(stream, dict)
         and isinstance((stream_id := stream.get("camera_id") or stream.get("camera-id")), str)
         and stream_id
+        and (
+            not running_only
+            or str(stream.get("status", "")).strip().lower().replace("_", "-")
+            not in {"registered-stopped", "stopped", "failed", "error", "paused", "completed", "ended", "terminated"}
+        )
     }
 
 

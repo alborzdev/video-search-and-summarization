@@ -1,0 +1,51 @@
+TRAFFIC ENGINEERING
+Intersection insights
+
+Movement demand, crossing service, queues and curb access. Measured on this device.
+
+1 min
+5 min
+15 min
+
+Per-camera video time · no combined camera total
+
+Observed video time
+2 cameras
+Movements
+Crossing access
+Queues
+Walking
+Curb access
+Curb access
+Occupancy & observed visits
+North arm · curbside access
+Southwest corner · General curb
+Observed empty
+0
+vehicles detected now
+Observed occupied time
+25.3 s
+Current observed dwell
+—
+Zone turnover
+2
+Observed arrivals
+2
+Observed departures
+2
+At least 8 s observed dwell
+0
+Confirmed stopped now
+0
+Visit outcomes
+1 complete
+Evidence and limits
+Show on map
+Take the measurements with you
+
+Camera-scoped report with the selected window, coverage and configuration.
+
+Export CSV
+JSON
+Received 5:00:37 AM · configuration 6
+How to read these measures

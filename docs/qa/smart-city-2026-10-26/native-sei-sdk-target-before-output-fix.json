@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "city.native-sei-sdk-shared-target.v1",
+  "actualSdkSharedTarget": "12",
+  "sample": {
+    "skewMs": 0.328417,
+    "observations": [
+      {
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sourceTimeNs": "1793010368990017795",
+        "sourceClockEvidence": {
+          "schemaVersion": "city.source-native-sei.v1",
+          "method": "isaac-native-sei-wall-capture",
+          "correlation": "exact-au-pts",
+          "captureTimeNs": "1793010368990017795",
+          "auPtsNs": "260160394846",
+          "frameCounter": "79627"
+        },
+        "localTrackId": "12146045634801041517",
+        "native3D": {
+          "method": "nvidia-mv3dt-9.2",
+          "targetId": "12",
+          "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+          "worldPositionM": [
+            -11.65168,
+            70.4556046
+          ],
+          "imageFootPx": [
+            890.852295,
+            240.40654
+          ],
+          "visibility": 0.728383243,
+          "state": "observed",
+          "localTargetId": "12146045634801041517",
+          "localTrackingMethod": "nvidia-nvdcf-first-stage-9.2"
+        },
+        "globalTrackId": null
+      },
+      {
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "sourceTimeNs": "1793010368990346212",
+        "sourceClockEvidence": {
+          "schemaVersion": "city.source-native-sei.v1",
+          "method": "isaac-native-sei-wall-capture",
+          "correlation": "exact-au-pts",
+          "captureTimeNs": "1793010368990346212",
+          "auPtsNs": "260160382665",
+          "frameCounter": "79627"
+        },
+        "localTrackId": "12146045634801041422",
+        "native3D": {
+          "method": "nvidia-mv3dt-9.2",
+          "targetId": "12",
+          "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+          "worldPositionM": [
+            -11.659132,
+            70.3433685
+          ],
+          "imageFootPx": [
+            154.31749,
+            221.890594
+          ],
+          "visibility": 0.696098745,
+          "state": "observed",
+          "localTargetId": "12146045634801041422",
+          "localTrackingMethod": "nvidia-nvdcf-first-stage-9.2"
+        },
+        "globalTrackId": null
+      }
+    ]
+  },
+  "scope": "Actual SDK two-view target already exists; old RTCP-only output gate suppresses global hints. This is not a rendered map join or accuracy score."
+}

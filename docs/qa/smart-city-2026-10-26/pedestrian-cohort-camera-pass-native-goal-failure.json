@@ -1,0 +1,237 @@
+{
+  "schemaVersion": "city.pedestrian-cohort-camera-pass-native-goal-failure.v1",
+  "input": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-cohort-repaired-v3-ui.ndjson",
+  "sha256": "25db96df5dc38cdf850c7e59e730f0c43b7f9dbf278ddaa062d0389733716032",
+  "rows": 63,
+  "readOnly": true,
+  "native": {
+    "runId": "45854524c4fa40c4:000001",
+    "state": "cancelled",
+    "reason": "native-navigation-task-failed",
+    "elapsedWallSeconds": 133.84432530589402,
+    "restored": true,
+    "normalFlowVerified": true
+  },
+  "nativeLastPreparation": {
+    "character": "Character",
+    "positionM": [
+      -11.348602294921875,
+      87.88257598876953,
+      0.036591481417417526
+    ],
+    "goalM": [
+      -11.2,
+      88.4,
+      0.0
+    ],
+    "entryM": [
+      -11.2,
+      70.0,
+      0.0
+    ],
+    "exitM": [
+      -11.2,
+      88.4,
+      0.0
+    ],
+    "endpointArrivalVerified": false,
+    "outsideCrossing": true,
+    "nativeTaskStatus": "RUNNING",
+    "acceptedTaskIds": [
+      353,
+      364,
+      367
+    ],
+    "arrivalEvidence": {
+      "basis": "native-succeeded-and-position",
+      "nativeStatus": "SUCCEEDED",
+      "nativeError": null,
+      "taskId": "364",
+      "positionM": [
+        -11.202299118041992,
+        79.20670318603516,
+        0.03750207647681236
+      ],
+      "requestedGoalM": [
+        -11.2,
+        79.2,
+        0.0
+      ],
+      "simTime": 757.0666666666355
+    },
+    "cohortAdmission": {
+      "schemaVersion": "city.crossing-gate.v1",
+      "crosswalkId": "XW_E",
+      "gatePassed": true,
+      "reason": "owned-crossing-cohort-ready",
+      "signal": "walk",
+      "signalGroup": "ped_cross_EW",
+      "phaseName": "NS_green",
+      "phaseIndex": 0,
+      "cycleIndex": 15,
+      "crossingWindowRemainingSimSeconds": 24.96666666669148,
+      "requiredSimSeconds": 15.100786517635557,
+      "nextUsableWalkSimSeconds": 0.0,
+      "window": 24.96666666669148,
+      "requiredSIM": 15.100786517635557,
+      "clearingExistingCrossing": false,
+      "timingBasis": "phase schedule and path length; not native arrival evidence",
+      "geometry": {
+        "startCrosswalkIds": [],
+        "targetCrosswalkIds": [],
+        "segmentCrosswalkIds": [
+          "XW_E"
+        ],
+        "straightDistanceM": 18.161240704654446,
+        "pathLengthM": 18.34110112468978,
+        "pathLengthBasis": "caller-supplied-native-path",
+        "oppositeSides": true,
+        "exitOutsideAllCrosswalks": true,
+        "startStrictlyInsideNamedCrosswalk": false,
+        "endpointsWithinStripBand": true
+      },
+      "nativePathVerified": true,
+      "pathQueryBasis": "native-navmesh-plan-with-agent-dimensions; not observed trajectory",
+      "cohortKey": [
+        15,
+        0,
+        "ped_cross_EW"
+      ],
+      "nativeCrossingAccepted": true,
+      "taskId": "364"
+    }
+  },
+  "contemporaneousNextNativeCandidate": {
+    "state": "walker-available",
+    "basis": "simulator preparation only",
+    "character": "Character_06",
+    "points": [
+      [
+        -11.2,
+        88.4,
+        0
+      ],
+      [
+        -11.2,
+        79.2,
+        0
+      ],
+      [
+        -11.2,
+        70.0,
+        0
+      ]
+    ],
+    "positionM": [
+      -11.2723388671875,
+      88.42516326904297,
+      0.037226930260658264
+    ],
+    "distanceToEntryM": 0.09,
+    "crosswalkId": "XW_E",
+    "signalGroup": "ped_cross_EW",
+    "radiusM": 0.2541946768760681,
+    "binding": "east-crossing",
+    "pedSignalGroup": "ped_cross_EW",
+    "pedSignalState": "walk",
+    "nextWalkSimSeconds": 0.0,
+    "nextUsableWalkSimSeconds": 34.58,
+    "crossingWindowRemainingSimSeconds": 9.58,
+    "plannedCrossingWithMarginSimSeconds": 14.14,
+    "walkGatePassed": false,
+    "timingBasis": "signal schedule and path length; not an arrival guarantee",
+    "detail": "Distance is preparation data, not native arrival or an ETA"
+  },
+  "nativeActorCentreSeparationM": 0.5479210444211414,
+  "otherNativeActorToRequestedGoalM": 0.08515835925809823,
+  "cameraMeasurement": {
+    "id": "east-crossing-south-north",
+    "initial": {
+      "id": "east-crossing-south-north",
+      "name": "East crossing \u00b7 south to north",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "waitingRuleId": "mobility-isaac-east-waiting-south",
+      "crossingRuleId": "mobility-isaac-east-crossing-measurement",
+      "completionBasis": "observed-far-side-exit",
+      "timeBasis": "source-time",
+      "exitConfirmationBasis": "two-fresh-same-identity-observations",
+      "status": "active",
+      "waitingCount": 1,
+      "crossingCount": 0,
+      "pendingTrackCount": 0,
+      "pendingExitTrackCount": 0,
+      "oldestPendingGapMs": null,
+      "membershipComplete": true,
+      "currentCountsAvailable": true,
+      "oldestObservedWaitMs": 18361.21011,
+      "qualityReasons": [],
+      "asOfSourceTimeNs": "1793004651591294222",
+      "countBasis": "currently-observed",
+      "unresolvedHistoricalTrackCount": 0,
+      "oldestLostTrackAgeMs": null,
+      "lossEvidenceRetentionSeconds": 900,
+      "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+      "windowMinutes": 5,
+      "completedCount": 0,
+      "abandonedCount": 0,
+      "returnedCount": 0,
+      "incompleteCount": 0,
+      "waitSampleCount": 0,
+      "waitP50Ms": null,
+      "waitP95Ms": null,
+      "firstSeenWaitingCount": 0,
+      "lowerBoundWaitP50Ms": null,
+      "briefGapRecoveredWaitCount": 0,
+      "recoveredExitCandidateCount": 0,
+      "lostTrackCount": 0
+    },
+    "final": {
+      "id": "east-crossing-south-north",
+      "name": "East crossing \u00b7 south to north",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "waitingRuleId": "mobility-isaac-east-waiting-south",
+      "crossingRuleId": "mobility-isaac-east-crossing-measurement",
+      "completionBasis": "observed-far-side-exit",
+      "timeBasis": "source-time",
+      "exitConfirmationBasis": "two-fresh-same-identity-observations",
+      "status": "active",
+      "waitingCount": 0,
+      "crossingCount": 0,
+      "pendingTrackCount": 0,
+      "pendingExitTrackCount": 0,
+      "oldestPendingGapMs": null,
+      "membershipComplete": true,
+      "currentCountsAvailable": true,
+      "oldestObservedWaitMs": null,
+      "qualityReasons": [],
+      "asOfSourceTimeNs": "1793004783178958889",
+      "countBasis": "currently-observed",
+      "unresolvedHistoricalTrackCount": 0,
+      "oldestLostTrackAgeMs": null,
+      "lossEvidenceRetentionSeconds": 900,
+      "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+      "windowMinutes": 5,
+      "completedCount": 1,
+      "abandonedCount": 0,
+      "returnedCount": 0,
+      "incompleteCount": 0,
+      "waitSampleCount": 0,
+      "waitP50Ms": null,
+      "waitP95Ms": null,
+      "firstSeenWaitingCount": 1,
+      "lowerBoundWaitP50Ms": 110402.164998,
+      "briefGapRecoveredWaitCount": 0,
+      "recoveredExitCandidateCount": 1,
+      "lostTrackCount": 0
+    },
+    "completedDelta": 1,
+    "firstCompletionObserverElapsedSeconds": 123.067,
+    "authority": "Camera observations only; simulator actor positions were not supplied as detections, counts or identities."
+  },
+  "finding": "Another native actor was almost exactly at the fixed goal. The failed actor stopped0.548m from it and0.539m from the requested endpoint. This supports crowding as the goal failure cause. The saved preparation can retain a prior RUNNING task view; actual FAILED task367 is separately logged in console at2026-10-26T08:53:01Z. No raw native error enum is asserted.",
+  "limits": [
+    "This is a real camera completion pass, not a native endpoint pass.",
+    "Camera crossing count and native scene outcome remain independent.",
+    "The proposed selector changes only native targets inside existing waiting pads; no tolerance, tracking or measurement geometry changes."
+  ]
+}

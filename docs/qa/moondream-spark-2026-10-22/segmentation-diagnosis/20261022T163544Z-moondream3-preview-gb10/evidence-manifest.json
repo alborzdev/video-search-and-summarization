@@ -1,0 +1,93 @@
+{
+  "copied_after_exit_receipt": true,
+  "harness_failure_closed_and_no_process_reported_by_parent": false,
+  "source_run_directory": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T163544Z-moondream3-preview-gb10",
+  "files": {
+    "cases.json": {
+      "sha256": "eea896cc0b422e131c30f89d0b44da17f8a86751dfaa57e4fa1499683c755f46",
+      "bytes": 2470
+    },
+    "exit.json": {
+      "sha256": "f464f8ee57898b8c5936a4de5e63f75fb422bae11ed69f747561e1644131da7e",
+      "bytes": 820
+    },
+    "inference.jsonl": {
+      "sha256": "d0f64719cf9271d8617af0d8ddfce844450762eb3dbcb04f85bdf9e8ae80754f",
+      "bytes": 15578
+    },
+    "inference.stderr": {
+      "sha256": "5ed3dc01601d8074e1e124e0092bdc1d056afcdea596c0b6674f9ebe006ef103",
+      "bytes": 3374
+    },
+    "masks/blank.mask.json": {
+      "sha256": "835a33f4b621e62a638787517d95b0e2f45801da428b2cd9ee98dbcd6fab4ca6",
+      "bytes": 368
+    },
+    "masks/panel-baseline-baseline.mask.json": {
+      "sha256": "49a0022fcee7e4b531c6fb52432019048f0bb7856fc1d9c07171e2985841cff7",
+      "bytes": 480
+    },
+    "masks/panel-baseline-continue.mask.json": {
+      "sha256": "121bbe5ef969a10e964a3400a37cab14d9a3e3733a40e654f4b0c202f9f0e5bd",
+      "bytes": 480
+    },
+    "masks/panel-baseline-lut1024.mask.json": {
+      "sha256": "165483185b77c3c7e98d7a7830d08bef1e171218cb13f58318eeb7b174acb374",
+      "bytes": 482
+    },
+    "masks/person-point-baseline.mask.json": {
+      "sha256": "4a0ea2f752fedaa9f76628979a22369a53a4d4db06e74fe5eb3c17b3479f15e0",
+      "bytes": 478
+    },
+    "masks/person-point-continue.mask.json": {
+      "sha256": "62a2a9688a2f17a078e44720fbc768ba3be9bd6c1da6b1e6a73ddcfd72d02da3",
+      "bytes": 1086
+    },
+    "masks/person-point-continue.mask.png": {
+      "sha256": "3d9100ab4f5f7832412efa5b39afed9ddee4f978eca285021b6a8831f21389de",
+      "bytes": 1020
+    },
+    "masks/person-point-continue.mask.svg": {
+      "sha256": "f3db0df65147536f483a6a42813a78e99f50bdb9aabd6121167e2b31e1777edb",
+      "bytes": 605
+    },
+    "masks/person-point-continue.overlay.png": {
+      "sha256": "01626758a76c6976e41b80ae532ce11bb7ed8619cd8624f4ffda175f2717ff40",
+      "bytes": 287758
+    },
+    "masks/person-point-lut1024.mask.json": {
+      "sha256": "973e40ebb875dc694a3782e00aa35bb9a57e2b4c0c0b9eb55213324ac2a4d210",
+      "bytes": 477
+    },
+    "memory.jsonl": {
+      "sha256": "706e2d56d22b7800d82e2a16503539a7d8fceb2c2daa430b649bef8ab8449a82",
+      "bytes": 32691
+    },
+    "model-manifest.json": {
+      "sha256": "6e406bff0a0e8f78e12707d65c29a8371871a449c3a59691a167dd125c0e7720",
+      "bytes": 8307
+    },
+    "segment-trace.jsonl": {
+      "sha256": "e61ce1b4929c2dfb50b8e2a819f6dcde8b14bd8b421cdeb9a94c60e6fe7ae45f",
+      "bytes": 919281
+    },
+    "settings.json": {
+      "sha256": "a0a08cb7cbcb20ab16a6f89f61bb3fbbbe4fd4cb61665c15328fecb52b70b850",
+      "bytes": 379
+    }
+  },
+  "input_images": {
+    "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png": {
+      "sha256": "1032983acc2d9544663a3c677aae9287d2771318a4ce5b838f7cf5ca9cbc28d9",
+      "bytes": 3096736
+    },
+    "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg": {
+      "sha256": "35b32a048d19204076cec423e0daad4483e3b8f853e8b57620b11d25e7b9f194",
+      "bytes": 31604
+    },
+    "/home/sparkdev/vss/.spark/moondream-photon/blank-control.png": {
+      "sha256": "97d19142e8658c1a175c7917b1eccbfea77b0cf1195089dfb7f14b50bb386d48",
+      "bytes": 3038
+    }
+  }
+}

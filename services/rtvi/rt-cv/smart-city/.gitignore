@@ -1,0 +1,6 @@
+/city-worker
+/libcity_parser.so
+/libcity_preprocess.so
+/preprocess-test
+__pycache__/
+/time-test

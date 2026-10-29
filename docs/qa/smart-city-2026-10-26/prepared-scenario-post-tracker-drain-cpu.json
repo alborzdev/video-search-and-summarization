@@ -1,0 +1,39 @@
+{
+  "writtenAt": "2026-10-26T15:23:14.122353+00:00",
+  "qualification": "Final revised post-tracker closure CPU tests/full worker compile pass; live qualification pending.",
+  "confirmedFailure": {
+    "log": ".spark/city/runtime/detector-20261026T151745Z.log",
+    "candidateImage": "9b0113f770c8ef1a0f9b50b46bfa33957a5ee46ea88a5821def5411916e5c70b",
+    "scenario": "turning-demand",
+    "firstError": "Stale native capture before tracking pts=40372568431 captureNs=1793027909003529266 nowNs=1793027911005434879 frameCounter=12991",
+    "captureAgeNs": 2001905613,
+    "cause": "Reset drain closed on first pretracker admissions before lazy tracker/MQTT initialization finished. Subsequent queued verified frame became older than strict2second bound and worker failed closed.",
+    "monitorReceipt": "/tmp/final-prepared-boundary-monitor.json",
+    "monitorLimitation": "Monitor began after worker stopped producing; stale-source errors reflect failure. Empty204 preview response caused monitor parser error, not a preview alignment defect."
+  },
+  "revisedClosure": "Only fresh post-tracker output for current immutable tracking epoch counts. Every source needs >=3 samples spanning >=1capture-clock second and a fresh latest sample. Original20second deadline neverextends. Oldepoch/stale output cannot close drain.",
+  "preserved": [
+    "strict2second admission bound",
+    "invalid/missing/duplicate/notdecoded/notmuxed/future proof failclosed",
+    "whole stalebatch discard with exactproof consumedonce",
+    "source session/capture/PTS/frame monotonic guards",
+    "no gateway/config/threshold/flag changes"
+  ],
+  "tests": {
+    "command": "make scenario-boundary-test native-capture-clock-test staged-tracking-test city-worker",
+    "environment": "Disposable runc container based on9b0113f770c8; networknone, noGPU,2CPU/2GiB caps, readonly source; compiler copies in/tmp",
+    "result": "all passed;20native clock groups; fullworker compile",
+    "addedCases": [
+      "Actual mux/boundary/output probes: first andsecond output remain draining; third pair after1.1second span closes drain",
+      "Originaldeadline unchanged betweenframes",
+      "Oldtrackingepoch and staleoutput cannot qualify",
+      "Existing stale/unqualified/future/deadline/normalfatal controls remain passing"
+    ]
+  },
+  "files": {
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "eb80007df4da6707c26902fc5aacbcbf485c07240e957d534b57b2d0ac8d16e8",
+    "services/rtvi/rt-cv/smart-city/src/native_capture_clock.hpp": "083fbf29de24215a328443f87676bbacfe583c68e64358559722527a747c06c6",
+    "services/rtvi/rt-cv/smart-city/tests/test_scenario_boundary.cpp": "99e4978e18e0bb259cdb4e1387d7dd09e8ee243743276bc03ffd1a41cf6e1704",
+    "services/rtvi/rt-cv/smart-city/README.md": "d81c1d81d0dbd1574975d5836c31f00f7031caf4e617421f7a39becdad4f532b"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "at": "2026-10-23T20:45:28.338503+00:00",
+  "action": "Native CPU profiler monitor sampling from Kit update callback",
+  "result": "After enabling native CPU capture, Kit stopped answering and did not complete deadline; no result and no pass. Native GPU-only profiler baseline had completed.",
+  "recovery": "Restart existing simulator, remove unsupported live CPU profiler from further tests. Use external frame counters and source decoding."
+}

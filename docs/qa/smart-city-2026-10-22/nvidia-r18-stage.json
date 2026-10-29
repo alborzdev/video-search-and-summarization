@@ -1,0 +1,78 @@
+{
+  "model": "nvidia/tao/trafficcamnet_transformer_lite",
+  "version": "deployable_resnet18_v2.0",
+  "license": "NVIDIA Open Model License Agreement",
+  "licenseUrl": "https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/",
+  "modelCardUrl": "https://catalog.ngc.nvidia.com/orgs/nvidia/tao/models/trafficcamnet_transformer_lite/-",
+  "inputResolution": [
+    544,
+    960
+  ],
+  "files": [
+    {
+      "name": "labels.txt",
+      "path": "/work/nvidia-r18/labels.txt",
+      "url": "https://api.ngc.nvidia.com/v2/models/nvidia/tao/trafficcamnet_transformer_lite/versions/deployable_resnet18_v2.0/files/labels.txt",
+      "sha256": "0e241f0e948dfa7e56fc4dbf7bede9a1188f9ee8ff7ec05af58a4bacc4b499eb",
+      "bytes": 40
+    },
+    {
+      "name": "nvdsinfer_config.yaml",
+      "path": "/work/nvidia-r18/nvdsinfer_config.yaml",
+      "url": "https://api.ngc.nvidia.com/v2/models/nvidia/tao/trafficcamnet_transformer_lite/versions/deployable_resnet18_v2.0/files/nvdsinfer_config.yaml",
+      "sha256": "650537970a7025981c973bc205dff325e6086b6d607ce23cc7a4d024f4721eca",
+      "bytes": 612
+    },
+    {
+      "name": "resnet18_trafficcamnet_rtdetr.fp16.onnx",
+      "path": "/work/nvidia-r18/resnet18_trafficcamnet_rtdetr.fp16.onnx",
+      "url": "https://api.ngc.nvidia.com/v2/models/nvidia/tao/trafficcamnet_transformer_lite/versions/deployable_resnet18_v2.0/files/resnet18_trafficcamnet_rtdetr.fp16.onnx",
+      "sha256": "c533a2fb51994a7770dbdfb89c93582c91150043a239776ad4f17624d2cf2247",
+      "bytes": 81294130
+    },
+    {
+      "name": "resnet18_trafficcamnet_rtdetr.onnx",
+      "path": "/work/nvidia-r18/resnet18_trafficcamnet_rtdetr.onnx",
+      "url": "https://api.ngc.nvidia.com/v2/models/nvidia/tao/trafficcamnet_transformer_lite/versions/deployable_resnet18_v2.0/files/resnet18_trafficcamnet_rtdetr.onnx",
+      "sha256": "869a317494552773e424ae2228135b3c111052804e22100cb43c0cb2639293c4",
+      "bytes": 122842594
+    }
+  ],
+  "gpuUsed": false,
+  "stage": "downloaded; TensorRT plugin and positive-control qualification required before evaluation",
+  "limitation": "Four native classes; no independent bus/truck output. Not a six-class city replacement.",
+  "graph": {
+    "inputs": {
+      "inputs": [
+        "batch",
+        3,
+        544,
+        960
+      ]
+    },
+    "outputs": {
+      "pred_logits": [
+        "batch",
+        "Gatherpred_logits_dim_1",
+        "Gatherpred_logits_dim_2"
+      ],
+      "pred_boxes": [
+        "batch",
+        "Gatherpred_boxes_dim_1",
+        "Gatherpred_boxes_dim_2"
+      ]
+    },
+    "customOperators": [
+      "nvidia:MultiscaleDeformableAttnPlugin_TRT"
+    ],
+    "onnxVersion": "1.21.0"
+  },
+  "cpuOnnxRuntimeCompatible": false,
+  "nativeLabels": [
+    "background",
+    "bicycle",
+    "car",
+    "person",
+    "road_sign"
+  ]
+}

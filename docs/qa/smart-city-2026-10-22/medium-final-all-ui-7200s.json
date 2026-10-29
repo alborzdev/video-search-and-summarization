@@ -1,0 +1,304 @@
+{
+  "schemaVersion": "city.soak-result.v1",
+  "siteId": "recorded-traffic-tests",
+  "sourceIds": [
+    "291399aa-a062-43b6-badc-48c34bc08237",
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9"
+  ],
+  "startedAt": "2026-10-22T07:49:48.438426+00:00",
+  "finishedAt": "2026-10-22T09:49:48.438642+00:00",
+  "requestedSeconds": 7200.0,
+  "wallSeconds": 7200.0002212990075,
+  "sampleCount": 1359,
+  "passed": true,
+  "failure": null,
+  "minimumAvailableGiB": 22.87506866455078,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 215896,
+      "uniquePts": 215704,
+      "duplicatePts": 192,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 7207063999060,
+      "lastNs": 1792662584658454671,
+      "lastSequence": 216130,
+      "session": "3e55d59a-bdb7-4294-810b-40222374058b",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 71966,
+      "uniquePts": 71966,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 7207247960470,
+      "lastNs": 1792662584909336858,
+      "lastSequence": 72053,
+      "session": "45e5118f-e1ec-45e1-950a-1ff26b0ddf2b",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "lastMetrics": {
+    "sources": {
+      "291399aa-a062-43b6-badc-48c34bc08237": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792662584658454671",
+        "sessionId": "3e55d59a-bdb7-4294-810b-40222374058b",
+        "clockToWallRatio": 1.0000010206121788,
+        "trustedSourceAgeSeconds": 0.2924671173095703,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 960,
+        "windowDuplicateFraction": 0.0,
+        "frames": 215896,
+        "uniquePts": 215704
+      },
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792662584909336858",
+        "sessionId": "45e5118f-e1ec-45e1-950a-1ff26b0ddf2b",
+        "clockToWallRatio": 1.0002385669775706,
+        "trustedSourceAgeSeconds": 0.04158520698547363,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 320,
+        "windowDuplicateFraction": 0.0,
+        "frames": 71966,
+        "uniquePts": 71966
+      }
+    },
+    "minimumAvailableGiB": 22.87506866455078,
+    "nativeActive": true,
+    "nativeRevision": 77,
+    "warmedUp": true,
+    "processedPreview": {
+      "ready": true,
+      "acceptedFrames": 223603,
+      "nativeDeliveryAgeSeconds": 0.20504260063171387,
+      "sources": {
+        "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+          "available": true,
+          "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+          "sessionId": "45e5118f-e1ec-45e1-950a-1ff26b0ddf2b",
+          "sourceSessionId": "45e5118f-e1ec-45e1-950a-1ff26b0ddf2b",
+          "sequence": "72055",
+          "sourceTimeNs": "1792662585109337147",
+          "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+          "width": 768,
+          "height": 576,
+          "jpegWidth": 768,
+          "jpegHeight": 576,
+          "envelopeBytes": 65340,
+          "jpegBytes": 49216,
+          "envelopeSha256": "f1c41df13cbb0849250181997644a7271e138c65c11300cab61a1f101a4b0da1",
+          "jpegSha256": "4b63feaea63e4011122ad5663490681ea1bd3c2b3a12fd18b246be36dff6f9d9",
+          "fetchedAtMonotonic": 3090436.341480245,
+          "nativeCounters": {
+            "selected": 67146,
+            "encoded": 67146,
+            "published": 67136,
+            "rateDropped": 4924,
+            "sourceQueueOverruns": 0,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "geometryMismatch": 0,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 10,
+            "postFailed": 0,
+            "pendingDropped": 0
+          },
+          "identityStalledForSeconds": 0.0,
+          "publishedStalledForSeconds": 0.0,
+          "successfulFetches": 1359
+        },
+        "291399aa-a062-43b6-badc-48c34bc08237": {
+          "available": true,
+          "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+          "sessionId": "3e55d59a-bdb7-4294-810b-40222374058b",
+          "sourceSessionId": "3e55d59a-bdb7-4294-810b-40222374058b",
+          "sequence": "216136",
+          "sourceTimeNs": "1792662584857468773",
+          "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+          "width": 1920,
+          "height": 1080,
+          "jpegWidth": 1920,
+          "jpegHeight": 1080,
+          "envelopeBytes": 307437,
+          "jpegBytes": 191048,
+          "envelopeSha256": "6a5fe31b1f336e7f481c52d9ca6c62b51adec4cfe22027e8d29ed78a874057eb",
+          "jpegSha256": "a4498c6f9179ace1c41ccdf8fc8015ecd8f10988cba1706c0b30853e9a80e895",
+          "fetchedAtMonotonic": 3090436.328843575,
+          "nativeCounters": {
+            "selected": 107521,
+            "encoded": 107521,
+            "published": 107271,
+            "rateDropped": 108685,
+            "sourceQueueOverruns": 1,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "geometryMismatch": 0,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 250,
+            "postFailed": 0,
+            "pendingDropped": 0
+          },
+          "identityStalledForSeconds": 0.0,
+          "publishedStalledForSeconds": 0.0,
+          "successfulFetches": 1359
+        }
+      },
+      "epochResetsDuringWarmup": 0
+    }
+  },
+  "maximumTrustedSourceAgeSeconds": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.3895869255065918,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.23232579231262207
+  },
+  "maximumDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.010559662090813094,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "maximumPostWarmupDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.010559662090813094,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "lastClockToWallRatios": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 1.0000010206121788,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 1.0002385669775706
+  },
+  "requireProcessedPreview": true,
+  "askEnabled": true,
+  "scheduledAskCount": 7,
+  "asks": [
+    {
+      "at": "2026-10-22T08:05:07.340298+00:00",
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallSeconds": 17.93165841093287,
+      "answerSha256": "a4445c330b8a5a78052d371de6e21a7ae74cc6795e960c3110dbaa10cf2e37b0",
+      "answerCharacters": 517,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T08:04:39.375000Z",
+        "endTime": "2026-10-22T08:04:44.375000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    },
+    {
+      "at": "2026-10-22T08:20:05.096915+00:00",
+      "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "wallSeconds": 14.928376409690827,
+      "answerSha256": "ad9cf2777e684407413cd7304f044bd11893a650b8b6c8c4c6404a6079eef1ce",
+      "answerCharacters": 501,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T08:19:40.168000Z",
+        "endTime": "2026-10-22T08:19:45.168000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    },
+    {
+      "at": "2026-10-22T08:35:15.097837+00:00",
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallSeconds": 23.811193811241537,
+      "answerSha256": "f7e35ef305e1b0b22f5ae43f7bcfa046e82b7803166e597ed80586e793f4fce5",
+      "answerCharacters": 806,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T08:34:41.275000Z",
+        "endTime": "2026-10-22T08:34:46.275000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    },
+    {
+      "at": "2026-10-22T08:49:59.930816+00:00",
+      "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "wallSeconds": 7.751943130977452,
+      "answerSha256": "86ab0d34dd98b55e2d96365ff57da468e2832220aa4e0771456852151a26124a",
+      "answerCharacters": 169,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T08:49:42.109000Z",
+        "endTime": "2026-10-22T08:49:47.109000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    },
+    {
+      "at": "2026-10-22T09:05:11.820567+00:00",
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallSeconds": 18.841339465696365,
+      "answerSha256": "2a982dd59f4f7801968a2a6db480e7c4d7f64bb708cb9825823c10440fa90746",
+      "answerCharacters": 469,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T09:04:42.975000Z",
+        "endTime": "2026-10-22T09:04:47.975000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    },
+    {
+      "at": "2026-10-22T09:20:03.820959+00:00",
+      "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "wallSeconds": 9.964466380886734,
+      "answerSha256": "ddf99d1c311e499e8c87654a69bd65d13593ef383a296cf4ff99913afa3cec42",
+      "answerCharacters": 271,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T09:19:43.809000Z",
+        "endTime": "2026-10-22T09:19:48.809000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    },
+    {
+      "at": "2026-10-22T09:35:19.347128+00:00",
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallSeconds": 24.330813702661544,
+      "answerSha256": "6d0479af74373af10a229afc160f0b6ce59017ed47fa77878f63a1bc635e9beb",
+      "answerCharacters": 748,
+      "grounded": true,
+      "observedWindow": {
+        "startTime": "2026-10-22T09:34:45.009000Z",
+        "endTime": "2026-10-22T09:34:50.009000Z"
+      },
+      "evidenceToolCount": 1,
+      "scope": "Real UI API call; semantic answer correctness is not automatically established."
+    }
+  ],
+  "pauseOnFailure": true,
+  "pauseReceipts": [],
+  "samplesFile": "Private runtime samples retained; see samplesSha256",
+  "samplesSha256": "3b99bcbd9813092493fd9d5fa69c9e2d77aa33b1b3843515635d6be574078389",
+  "monitorSourceSha256": "5c3e7f645605518e34e1e3f4044b5322d550c1dd9178d8eb5bf9a6ec0fbb3aff",
+  "criteria": {
+    "minimumReserveGiB": 20,
+    "warmupSeconds": 15,
+    "sampleEverySeconds": 5,
+    "processedPreview": {
+      "required": true,
+      "fetchEverySeconds": 5,
+      "requestTimeoutSeconds": 3,
+      "maximumEnvelopeBytes": 2621444,
+      "staleSeconds": 5
+    },
+    "clockWindowSeconds": 30,
+    "clockRatioBounds": [
+      0.9,
+      1.1
+    ],
+    "maximumDuplicateFraction": 0.05,
+    "trustSourceRtcpUtc": true,
+    "maximumSourceAgeSeconds": 5
+  },
+  "scope": "Concurrent pipeline stability and optional real UI Ask qualification; not engine latency, semantic event accuracy, browser-frame latency or final-city/MV3DT qualification.",
+  "privateReceiptSha256": "a178c908a54bdc6efc13d4bec5c19bdf46ab049992a5fd9e1cac3c59c56aca76"
+}

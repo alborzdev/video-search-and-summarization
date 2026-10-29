@@ -1,0 +1,232 @@
+{
+  "schemaVersion": "city.east-pedestrian-preparation-and-first-hot-apply.v1",
+  "candidatePreparedBy": "next_pipeline_perf; no service writes or actor tasks by this agent",
+  "measurementAppliedBy": "parent root; independently inspected saved live receipts",
+  "preparation": {
+    "schemaVersion": "city.east-pedestrian-story-preparation.v1",
+    "candidateOnly": true,
+    "runtimeChanged": false,
+    "siteRevision": 146,
+    "calibrationRevision": "isaac-live-e8b0fd8728666cd5",
+    "rulesChangeRequired": true,
+    "addedRuleIds": [
+      "mobility-isaac-east-waiting-south",
+      "mobility-isaac-east-crossing-measurement",
+      "mobility-isaac-east-waiting-north"
+    ],
+    "mobilityChangeRequired": true,
+    "selectedCrossingIds": [
+      "east-crossing-south-north",
+      "east-crossing-north-south"
+    ],
+    "preservedSouthRuleIds": [
+      "mobility-isaac-south-waiting-west",
+      "mobility-isaac-south-crossing-measurement",
+      "mobility-isaac-south-waiting-east"
+    ],
+    "expectedRulesRevision": 414,
+    "expectedMobilityRevision": 5,
+    "ownerSourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+    "ownerCamera": "cam_SW",
+    "roiImagePx": {
+      "mobility-isaac-east-waiting-south": [
+        [
+          928.2771559952209,
+          252.32435888226695
+        ],
+        [
+          951.5525413065138,
+          238.4624338338008
+        ],
+        [
+          866.0765609690579,
+          211.9658766242584
+        ],
+        [
+          841.1920971036999,
+          223.0220258283991
+        ]
+      ],
+      "mobility-isaac-east-crossing-measurement": [
+        [
+          827.8196522238902,
+          228.96339336660603
+        ],
+        [
+          877.6729013017155,
+          206.81363104510632
+        ],
+        [
+          621.3051845353273,
+          130.35252937923062
+        ],
+        [
+          573.4853984912648,
+          139.5652295663319
+        ]
+      ],
+      "mobility-isaac-east-waiting-north": [
+        [
+          585.9983105579502,
+          137.15455990687937
+        ],
+        [
+          609.8913664207827,
+          132.55145356894812
+        ],
+        [
+          567.6813930319789,
+          119.46685400899898
+        ],
+        [
+          544.7674419049828,
+          123.2812197409791
+        ]
+      ]
+    },
+    "signalGroup": "ped_cross_EW",
+    "conflictingLanes": [
+      "EB_1",
+      "WB_1"
+    ],
+    "preserved": [
+      "all existing rules byte-for-value, including South geometry and policy",
+      "site, protected cameras/calibration and model profiles",
+      "movement, queue and curb selections",
+      "full previous mobility selection in before/rollback material",
+      "one-second continuity (or the actual unchanged template value)"
+    ],
+    "applyOrder": [
+      "Finish/cancel scenarios and take a fresh snapshot; reprepare if any input changes.",
+      "Keep source owners registered. PUT rules with expectedRevision and wait for exact native acknowledgement.",
+      "PUT mobility/config with expectedRevision to select only the two East directional cards.",
+      "Reload reviewed scenario source using normal setup, not importlib.reload; no actor lease may be active.",
+      "Run a fresh finite owned approach, actual WALK-gated crossing and normal restoration; verify actual camera counts."
+    ],
+    "limits": [
+      "Static render-ray samples exclude moving actors and some dressing; not a detector/identity guarantee.",
+      "The two waiting ROIs cover visible bands, not whole sidewalks. Both directional cards share current occupancy.",
+      "Completion still requires one actual camera-local handle through an observed far-side exit.",
+      "This preparer has no network or apply operation. Runtime controller must use explicit crosswalk/signal metadata.",
+      "East story requires owned booth phases; the legacy fixed-wait people.crossing API is not accepted for this explicit binding."
+    ],
+    "inputSha256": {
+      "snapshot": "cf93e2325118b092a9bad2c297a9cd9722dbebc07f6156bb389da1cba659093c",
+      "camera-export": "f76f9aee3b2b1497d14b304932f3f827e602c1ba4c8bef661c49bf98ad353e1c",
+      "survey": "6209a553468966d6f56ae1cf63b075db47a20516f92b945a43f7c80fa59bb539",
+      "static-visibility-audit": "23cde3306f9341152a9d91659391f79716925a41a162bf297a396c4b9acb763e"
+    },
+    "outputSha256": {
+      "before.json": "cf93e2325118b092a9bad2c297a9cd9722dbebc07f6156bb389da1cba659093c",
+      "unchanged-site.json": "14c6aa9997bf1fb9a2f8f8aae96ae21b9b236e48beba72baf1d78539e63ce549",
+      "rules-put.json": "3ad771cfd30a99b3183533a755ff3920282e4e01249d9c91ba7b7ef7580d2a7b",
+      "mobility-put.json": "adea243b0376b82e91c766308e377c2a209f5747f0c419097edefa059a8e5fd3",
+      "proposed-pedestrian-bindings.json": "72cd116ddeada0ef7e7ee20b655d473471e692c0981c434eaaa6cf735ea8fc42",
+      "south-selection-archive.json": "4759eaf8186de3b8abc0fd84c360290325f03f983731bb81ad459534b6bdafd5",
+      "rollback-rules-template.json": "e310ef3080272cb04f94786c524ae522767978b34472231cbd6a4dbbfb1e6e9e",
+      "rollback-mobility-template.json": "087215f8bb955bdd0812883d0b392a07ef770863ee3609d85f5a76e3bb2073b3"
+    }
+  },
+  "nativePathReview": {
+    "source": "/home/sparkdev/vss/.spark/city/runtime/east-pedestrian-review-20261026/native-path-review.json",
+    "sha256": "de48310316d2c1c45aebbe877fb0abb3b63a9d203e265bc37c054ded7d00e630",
+    "readOnly": true,
+    "wallSeconds": 0.012421105988323689,
+    "actor": {
+      "name": "Character_02",
+      "radiusM": 0.2551494538784027,
+      "heightM": 1.8224960565567017,
+      "currentPositionM": [
+        -14.80066967010498,
+        67.00538635253906,
+        0.029375920072197914
+      ]
+    },
+    "paths": [
+      {
+        "direction": "east-south-north",
+        "segments": [
+          {
+            "exists": true,
+            "pointCount": 108,
+            "lengthM": 9.20235950623385
+          },
+          {
+            "exists": true,
+            "pointCount": 108,
+            "lengthM": 9.264904167175823
+          }
+        ]
+      },
+      {
+        "direction": "east-north-south",
+        "segments": [
+          {
+            "exists": true,
+            "pointCount": 108,
+            "lengthM": 9.228001183770912
+          },
+          {
+            "exists": true,
+            "pointCount": 108,
+            "lengthM": 9.276850097863134
+          }
+        ]
+      }
+    ]
+  },
+  "firstHotApply": {
+    "siteRevision": 146,
+    "ruleCount": 19,
+    "nativeStatus": "active",
+    "requestedRevision": 415,
+    "appliedRevision": 415,
+    "mobilityRevision": 6,
+    "selectedCrossings": [
+      "east-crossing-south-north",
+      "east-crossing-north-south"
+    ],
+    "healthStatus": "ok",
+    "awaitingObservations": false,
+    "sourceStates": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "status": "live"
+      },
+      {
+        "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "status": "live"
+      }
+    ],
+    "scope": "Measurement setup on v2 scene. Fresh native scenario setup and actual camera-derived East completion were not yet accepted by this receipt."
+  },
+  "tests": {
+    "preparer": "14 passed; actual geometry/reference validation and real MobilitySpatial both directions, ID replacement refuses completion",
+    "preparerPlusMovementMigration": "28 passed",
+    "preparerMypy": "--follow-imports=silent --check-untyped-defs; success",
+    "fatalRuff": "E9,F63,F7,F82; success",
+    "actualGeneratedDtos": "19 Rule models, Site, MobilityConfig and configuration_issues pass",
+    "pedestrianRuntimeBeforeSequentialVehicleChange": "88 scenario tests passed; source handed off to next_sim_perf",
+    "combinedScenarioFollowup": "next_sim_perf reports94 scenario tests passed after approved vehicle planning repair; parent performs final combined acceptance",
+    "independentIdenticalCalibrationAndLoader": "53 passed; source reviewed without mutation"
+  },
+  "sourceHashes": {
+    "tools/smart-city/prepare_east_pedestrian_story.py": "afc1edfeff4b11e600b8ed7b35fdaad35b13db4ed6177f97d01451df7136cf04",
+    "tools/smart-city/tests/test_prepare_east_pedestrian_story.py": "922fcd2bdeda017f5e79bf7619dc8125753bc7f47e38fdb99f050d6ef1798eee"
+  },
+  "preservedLiveReceiptHashes": {
+    "after.json": "bb42601d999f573c4c510f60319c698f63c4de815fd8b394e804e3896b3ff294",
+    "before.json": "a0bddcdd3e1e80868f33386e297d79758f032234ed81141296e04a4dff2dc9e3",
+    "mobility-response.json": "539dd18d559c5544b8de0b6b88fb9e0e606f20e5e00953910363a22b3b6135c9",
+    "native-ack.json": "b10e0bde26f82a5e435cad99dbf892186ce31d6931726985228af27a351e5b82",
+    "readiness.json": "1fc13011afbdc9d5055c8fe67252a4ed5b250ffe54fb76ae034dd0db422f103c",
+    "rules-response.json": "c488d41e7d5bd13a05a2e86a9cc2e8fa0e8a98c5af341404255949fdae7f9443"
+  },
+  "limits": [
+    "Static ray sample visibility excludes moving traffic and some dressing.",
+    "First hot-apply health is not completed pedestrian scenario evidence or final v3 scene qualification.",
+    "Both directional cards share current occupancy, but have independent waiting/far-edge journey authority.",
+    "A future preparation begun with East already selected archives that actual previous selection; it must not relabel East as a South archive.",
+    "Protected cameras, detector/tracker models, map guards and all existing South rules are preserved."
+  ]
+}

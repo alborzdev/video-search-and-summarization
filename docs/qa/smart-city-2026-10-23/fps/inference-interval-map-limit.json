@@ -1,0 +1,139 @@
+{
+  "schemaVersion": "city.inference-interval-map-limit.v1",
+  "createdAt": "2026-10-23T21:06:00.063062+00:00",
+  "kind": "synthetic-cpu-contract-reproduction",
+  "reproductionPassed": true,
+  "diagnosticOnly": true,
+  "qualifiesInferenceInterval1ForDemo": false,
+  "method": {
+    "python": "/tmp/vss-city-backend-test-env/bin/python",
+    "fixture": "test_map_demo.demo + frame",
+    "state": "new in-memory CityEngine and SQLite store; isolated process environment",
+    "inputs": "Two synthetic camera-local people with the same valid MV3DT demo target. Both source frames are ingested at each sequence. Bounding-box x increases by one pixel each sequence. Odd sequences are observations; even sequences use confidence=null, observedThisFrame=false, globalTrackId=null, associationMethod=null and native3D.state=predicted-or-peer.",
+    "nativeWorkerExecuted": false,
+    "inferenceOrGpuExecuted": false,
+    "runtimeServicesAccessedOrChanged": false,
+    "sourceFilesChanged": false,
+    "uiBehaviorBasis": "Read-only source inspection, not a browser or rendered-UI test"
+  },
+  "sequenceOutputs": [
+    {
+      "sequence": 1,
+      "observedThisFrame": true,
+      "trackCount": 2,
+      "freshTrackCount": 2,
+      "mapHintCount": 2,
+      "mapFusionAvailable": true,
+      "speedMps": [
+        null,
+        null
+      ],
+      "cameraLocalIdsUnchanged": true
+    },
+    {
+      "sequence": 2,
+      "observedThisFrame": false,
+      "trackCount": 2,
+      "freshTrackCount": 0,
+      "mapHintCount": 0,
+      "mapFusionAvailable": false,
+      "speedMps": [
+        null,
+        null
+      ],
+      "cameraLocalIdsUnchanged": true
+    },
+    {
+      "sequence": 3,
+      "observedThisFrame": true,
+      "trackCount": 2,
+      "freshTrackCount": 2,
+      "mapHintCount": 2,
+      "mapFusionAvailable": true,
+      "speedMps": [
+        null,
+        null
+      ],
+      "cameraLocalIdsUnchanged": true
+    },
+    {
+      "sequence": 4,
+      "observedThisFrame": false,
+      "trackCount": 2,
+      "freshTrackCount": 0,
+      "mapHintCount": 0,
+      "mapFusionAvailable": false,
+      "speedMps": [
+        null,
+        null
+      ],
+      "cameraLocalIdsUnchanged": true
+    },
+    {
+      "sequence": 5,
+      "observedThisFrame": true,
+      "trackCount": 2,
+      "freshTrackCount": 2,
+      "mapHintCount": 2,
+      "mapFusionAvailable": true,
+      "speedMps": [
+        null,
+        null
+      ],
+      "cameraLocalIdsUnchanged": true
+    }
+  ],
+  "confirmedFindings": [
+    "Camera-local track identity survives predicted frames; the test does not create new local IDs.",
+    "Current backend map hints and fresh tracks alternate 2,0,2,0,2; mapFusion.available alternates true,false,true,false,true.",
+    "Velocity requires adjacent observed frames. The alternating sequence leaves both speeds null even when observed positions change.",
+    "UI source filters exclude predicted/stale tracks. Both predicted views therefore hide the marker; asymmetric displayed frames can show one local view instead of a joined marker.",
+    "Existing 1m join / 1.5m split hysteresis requires currently eligible members and does not preserve shared display membership through missing/predicted frames."
+  ],
+  "retentionAlreadyPresent": [
+    "Stable camera-local IDs, last real observation time and prior real-observation trails remain bounded in the engine.",
+    "Known inside occupancy can remain unresolved within its rule observation-gap limit; predictions do not create fresh observation evidence."
+  ],
+  "qualificationLimits": [
+    "Synthetic rule/display contract evidence only; not model, MV3DT accuracy, real detector scheduling, live FPS, or camera-clock qualification.",
+    "No browser flicker rate was measured. A 15FPS display sampling an alternating 30FPS pipeline can alias onto either frame phase.",
+    "No code or runtime fix is included. Interval1 must remain diagnostic until display and observation-to-observation speed semantics are deliberately addressed."
+  ],
+  "sourceReferences": [
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/tests/test_map_demo.py",
+      "sha256": "127aa86b6aeac24af23f93d49ddeeb9fba1b4278fb9ecd74463730a2a38c2c4f",
+      "relevance": "demo/frame fixtures used for actual CPU execution"
+    },
+    {
+      "path": "services/analytics/behavior-analytics/apps/city/engine.py",
+      "sha256": "4ae1c2aa05fa7e58bdd5640a2670582d44694b8b40fc3ed29cf94c508af752ef",
+      "relevance": "_map_association; ingest observed/velocity gates; _track_json"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mapObjects.ts",
+      "sha256": "529ddb87c95d22d7711afba45c82accabdb96c2a466a37a638d5e6883d5d9447",
+      "relevance": "deriveMapObjects: filters stale/predicted frames; current-position distance hysteresis only"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/SmartCityWorkspace.tsx",
+      "sha256": "212e5c594e829807c4f2c3d8dbb70807c677efc86da2d95ff242fdeb5127126d",
+      "relevance": "previousMapObjects replaced by each committed current result"
+    },
+    {
+      "path": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityCamera.tsx",
+      "sha256": "2727d6872850a97a35f1214a48122a723009ca3921ee6f14e38f24bdebe1bc35",
+      "relevance": "camera overlays exclude stale/predicted tracks"
+    },
+    {
+      "path": "services/rtvi/rt-cv/smart-city/src/city_worker.cpp",
+      "sha256": "a2729d3df8eb0b00a3e650cd9917ab31ae81c633151b59aaa157b1f8c9a4a2fd",
+      "relevance": "observation_probe: detector confidence defines observed; predictions emit null confidence"
+    },
+    {
+      "path": "services/rtvi/rt-cv/smart-city/src/tracker_3d.hpp",
+      "sha256": "aaf7f131b5d122295a57ef13d88c978984c9d85fd637a117524015966d53ed4e",
+      "relevance": "demo_global_identity rejects nonobserved objects"
+    }
+  ]
+}

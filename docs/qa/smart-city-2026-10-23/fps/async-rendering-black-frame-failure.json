@@ -1,0 +1,36 @@
+{
+  "acceptedAsWorkingDemoBenchmark": false,
+  "reason": "Async rendering preset delivered black decoded native H.264 frames despite increasing handoff counters. Removed all async startup flags. Valid source, detection and preview FPS must be remeasured after image validation.",
+  "decodedFrame": {
+    "size": [
+      960,
+      540
+    ],
+    "extrema": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "channelMeans": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "channelStandardDeviation": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "preservedImage": "540p-fast-sw.jpg",
+  "diagnosisCorrection": "Async was not isolated as the cause: synchronous mode with maxBounces1 also delivered black images. Restoring RTPT maxBounces/maxSpecularAndTransmissionBounces3 made the same native540p camera nonblack. Both aggressive RTPT bounce overrides removed; async stays off pending separate validation."
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "city.scene-appearance-evidence.v1",
+  "reviewedAt": "2026-10-26T06:14:09.022378+00:00",
+  "scene": "stages/neighborhood/smart_city_expo.usda",
+  "profile": "expo-neighborhood-daylight-v2",
+  "artifacts": {
+    "stages/neighborhood/city-neighborhood.usdc": "24a0f0cbf6ebe30a4a068247a67a627078ac0a12a4bee7fe89002308d24df6ba",
+    "stages/neighborhood/smart_city_neighborhood.usda": "0b18e59ff36de20449a360ace55f361e67d8dfc121c46862a8e339e41dfc0da4",
+    "stages/neighborhood/smart_city_expo.usda": "5040ab0ba3d03f5822a64d23d3939ed63c1a4acf4c978a116609d54d1f01425e",
+    "stages/neighborhood/tradeshow-look.usda": "ac1b7ea8e9affd7460bce312105ea0b0db94fa89d6557853bd05641cbe283d83",
+    "assets/tradeshow/derived/island-tree-lod.usdc": "216dd26c0339f0f230e17af4949fc5707417af919e5c99765f5444ddcf3c0789",
+    "assets/tradeshow/polyhaven/kloofendal_48d_partly_cloudy_puresky_2k.hdr": "5244534e9cf5b606f2ff513aa00ddb161b0a4826ffd88a0d3bd03ac29247d198",
+    "assets/tradeshow/polyhaven/shrub_03/shrub_03_4k.usdc": "80765d829938e8eec091053aec3b4d0593b7f55ae9d4c5e115ad84cede31ca29",
+    "assets/tradeshow/derived/island-tree-branches-lod.usdc": "56ec419658d429f6f6f9ea7094ef287ebdb45ad3ca57e7a768a9cd16c9bb7723",
+    "config/people_commands_expo_signal.txt": "e2b9bfd39756d80d7823b861a6787d24b6d3c7b00659861150821e662c168bf4"
+  },
+  "derivedCity": {
+    "sourceMeshes": 11819,
+    "derivedMeshes": 1826,
+    "sourceTriangles": 209428,
+    "derivedTriangles": 44260,
+    "sourceMaterialBindings": 11823,
+    "derivedMaterials": 368
+  },
+  "appearancePass": "v2; v1 rejected for lost foliage and excessive pavement brightness",
+  "cameraGeometry": "Protected analytics camera geometry unchanged; capture used owned scratch camera and restored viewport.",
+  "captures": {
+    "presentation": {
+      "file": "scene-v2-presentation.png",
+      "sha256": "af097a0f27cf3facd758c7fe60d7f31a4799f1e8d3490d679215ee1e6e3bb670"
+    },
+    "cam_SW": {
+      "file": "scene-v2-cam_SW.png",
+      "sha256": "ee68bdab8df5d8692168aef2e5b929b97c4f64f6fa985c14385dcf0a8282cba0"
+    },
+    "cam_NE": {
+      "file": "scene-v2-cam_NE.png",
+      "sha256": "3b0cf8646ada4253af91535b17b1b511c718ada4fac2d337e48326fac503e6da"
+    }
+  },
+  "sourcePreservation": "All 20 AECO pack manifest checks passed on 2026-10-26. Earlier generator receipt verifies its 1805 source files unchanged.",
+  "limits": [
+    "Rendered appearance review, not a lighting accuracy benchmark.",
+    "This receipt does not qualify scenario behavior, tracking or combined frame rate.",
+    "Program pin was added after capture; no scene/camera geometry changed."
+  ]
+}

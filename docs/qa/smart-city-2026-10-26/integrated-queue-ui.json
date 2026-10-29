@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "city.integrated-episode-receipt.v1",
+  "scenarioId": "queue-recovery",
+  "runId": "31a0547535ac4979:000001",
+  "finalState": "completed",
+  "reason": "booth-finished",
+  "elapsedWallSeconds": 29.089772421400994,
+  "holdConfirmed": true,
+  "normalFlowVerified": true,
+  "ownedStopCount": 0,
+  "departuresPending": 0,
+  "aiEvents": [
+    {
+      "id": "9ab58009f5423736ce6a29b02ca940b6",
+      "ruleId": "cam_ne-stopped-junction",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "state": "cleared",
+      "triggeredAtNs": "1792991937683832445",
+      "endedAtNs": "1792991950239160111",
+      "triggerMetrics": {
+        "durationMs": 4010.833333,
+        "speedMps": 0.08254856368639545
+      },
+      "latestMetrics": {
+        "durationMs": 15455.705443,
+        "speedMps": 0.34638392544347424
+      }
+    }
+  ],
+  "lastMobilityObstructions": [
+    {
+      "ruleId": "cam_sw-blocked-crossing",
+      "name": "South crossing \u00b7 stopped vehicle",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "episodeCount": 0,
+      "completedEpisodes": 0,
+      "ongoingEpisodes": 0,
+      "unknownEpisodes": 0,
+      "blockedSeconds": 0.0,
+      "longestObservedEpisodeSeconds": null,
+      "eventIds": [],
+      "status": "partial"
+    },
+    {
+      "ruleId": "cam_ne-blocked-crossing",
+      "name": "North crossing \u00b7 stopped vehicle",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "episodeCount": 0,
+      "completedEpisodes": 0,
+      "ongoingEpisodes": 0,
+      "unknownEpisodes": 0,
+      "blockedSeconds": 0.0,
+      "longestObservedEpisodeSeconds": null,
+      "eventIds": [],
+      "status": "partial"
+    },
+    {
+      "ruleId": "cam_ne-stopped-junction",
+      "name": "Junction \u00b7 stopped vehicle",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "episodeCount": 1,
+      "completedEpisodes": 1,
+      "ongoingEpisodes": 0,
+      "unknownEpisodes": 0,
+      "blockedSeconds": 12.496149888,
+      "longestObservedEpisodeSeconds": 12.496149888,
+      "eventIds": [
+        "9ab58009f5423736ce6a29b02ca940b6"
+      ],
+      "status": "partial"
+    }
+  ]
+}

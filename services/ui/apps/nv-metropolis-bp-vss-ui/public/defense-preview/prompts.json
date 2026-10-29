@@ -1,0 +1,30 @@
+[
+  {
+    "name": "site",
+    "prompt": "Generate a single standalone photorealistic 16:9 camera image for a clearly labelled UI design preview. This is an illustrative camera frame, NO UI, NO text, NO detection boxes, NO colored overlays, NO logo, NO borders. Realistic industrial military maintenance base with olive unarmed utility trucks, steel hangars, concrete apron, overcast bright neutral daylight, high-end Isaac Sim photographic aesthetic. No weapons, combat or explosions.Elevated security camera overlooking a chainlink pedestrian gate beside a steel storage hangar. One adult maintenance worker with dark jacket, tan trousers and backpack stepping from outside through open gate into storage apron; equipment cases to right. Main gate and worker center-right, generous visible concrete ground. Wide view with horizon high."
+  },
+  {
+    "name": "drone-wide",
+    "prompt": "Generate a single standalone photorealistic 16:9 camera image for a clearly labelled UI design preview. This is an illustrative camera frame, NO UI, NO text, NO detection boxes, NO colored overlays, NO logo, NO borders. Realistic industrial military maintenance base with olive unarmed utility trucks, steel hangars, concrete apron, overcast bright neutral daylight, high-end Isaac Sim photographic aesthetic. No weapons, combat or explosions.Drone oblique aerial inspection image of airfield service apron, concrete slabs, yellow taxiway marking, small bent dark metal sheet lying beside the yellow line, large maintenance hangar along upper edge. Object visible bottom-center. Wide view from about 20 metres."
+  },
+  {
+    "name": "drone-close",
+    "prompt": "Generate a single standalone photorealistic 16:9 camera image for a clearly labelled UI design preview. This is an illustrative camera frame, NO UI, NO text, NO detection boxes, NO colored overlays, NO logo, NO borders. Realistic industrial military maintenance base with olive unarmed utility trucks, steel hangars, concrete apron, overcast bright neutral daylight, high-end Isaac Sim photographic aesthetic. No weapons, combat or explosions.Drone inspection close image of one bent dark metal sheet on concrete apron beside a worn yellow painted line. Object centered, authentic bent edges and mounting holes, 50cm-ish object. No labels. Camera oblique downward, realistic concrete grain, not dramatic macro."
+  },
+  {
+    "name": "airfield-map",
+    "prompt": "Generate a single standalone photorealistic 16:9 camera image for a clearly labelled UI design preview. This is an illustrative camera frame, NO UI, NO text, NO detection boxes, NO colored overlays, NO logo, NO borders. Realistic industrial military maintenance base with olive unarmed utility trucks, steel hangars, concrete apron, overcast bright neutral daylight, high-end Isaac Sim photographic aesthetic. No weapons, combat or explosions.Orthographic top-down aerial reference image of airfield service apron and small taxiway. Large rectangular steel maintenance hangar at upper right, generous clear paved apron center and left, yellow painted taxiway curve, surrounding short grass at left edge. No aircraft, people, vehicles or moving objects. North-up true vertical view, no perspective, no annotations."
+  },
+  {
+    "name": "vehicle-rear",
+    "prompt": "Generate a single standalone photorealistic 16:9 camera image for a clearly labelled UI design preview. This is an illustrative camera frame, NO UI, NO text, NO detection boxes, NO colored overlays, NO logo, NO borders. Realistic industrial military maintenance base with olive unarmed utility trucks, steel hangars, concrete apron, overcast bright neutral daylight, high-end Isaac Sim photographic aesthetic. No weapons, combat or explosions.Rear-mounted camera on an olive unarmed engineering truck, looking backwards down wide maintenance yard between steel workshops. One adult worker wearing hi-vis vest and hardhat crossing immediately behind vehicle, near center-right. Small bit of truck tailgate visible at bottom of frame. Realistic wide-angle but straight buildings."
+  },
+  {
+    "name": "vehicle-left",
+    "prompt": "Generate a single standalone photorealistic 16:9 camera image for a clearly labelled UI design preview. This is an illustrative camera frame, NO UI, NO text, NO detection boxes, NO colored overlays, NO logo, NO borders. Realistic industrial military maintenance base with olive unarmed utility trucks, steel hangars, concrete apron, overcast bright neutral daylight, high-end Isaac Sim photographic aesthetic. No weapons, combat or explosions.Exterior left-side camera mounted on olive unarmed engineering truck looking backward along its left flank, truck side occupies rightmost quarter of image, workshop and paved maintenance yard fills left, no people. Wide-angle photo."
+  },
+  {
+    "name": "vehicle-right",
+    "prompt": "Generate a single standalone photorealistic 16:9 camera image for a clearly labelled UI design preview. This is an illustrative camera frame, NO UI, NO text, NO detection boxes, NO colored overlays, NO logo, NO borders. Realistic industrial military maintenance base with olive unarmed utility trucks, steel hangars, concrete apron, overcast bright neutral daylight, high-end Isaac Sim photographic aesthetic. No weapons, combat or explosions.Exterior right-side camera mounted on olive unarmed engineering truck looking backward along its right flank, truck side occupies leftmost quarter of image, workshop and paved maintenance yard fills right, no people. Wide-angle photo."
+  }
+]

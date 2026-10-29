@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-26T04:59:40.757704+00:00",
+  "applied": false,
+  "runtimeChanged": false,
+  "reviewDirectory": "/home/sparkdev/vss/.spark/city/runtime/intersection-rebuild-20261026/review-migration-final",
+  "reviewReceiptSha256": "24c1d8282dca5f122381ad34960c3bda750659e2b08a52150425f5fc531eb448",
+  "candidateOutputHashes": "pass",
+  "actualCandidateWithUnchangedLoader": "pass",
+  "nativeArguments": [
+    "--tracker-mode",
+    "mv3dt-demo",
+    "--tracker-config",
+    "/state/native/mv3dt-demo/intersection-rebuild-20261026-e8b0fd/tracker-mv3dt.experimental.yml",
+    "--tracker-calibration-revision",
+    "isaac-live-e8b0fd8728666cd5"
+  ],
+  "imageId": "sha256:6b74dbe97296e40adcd019f20422d4a1dc3b7f301e0bff2e9fab88f24f705cf1",
+  "immutableImageInspected": true,
+  "pinnedFileCount": 7,
+  "tests": {
+    "passed": 121,
+    "elapsedSeconds": 0.12,
+    "command": [
+      "/tmp/vss-city-backend-test-env/bin/python",
+      "-m",
+      "pytest",
+      "tools/smart-city/tests/test_isaac_identical_calibration.py",
+      "tools/smart-city/tests/test_mv3dt_demo_profile.py",
+      "tools/smart-city/tests/test_isaac_demo.py",
+      "-q",
+      "--tb=short"
+    ]
+  },
+  "staticChecks": {
+    "ruff": "pass",
+    "format": "pass",
+    "files": [
+      "tools/smart-city/isaac_identical_calibration.py",
+      "tools/smart-city/tests/test_isaac_identical_calibration.py"
+    ]
+  },
+  "sourceSha256": {
+    "tools/smart-city/isaac_identical_calibration.py": "c21cdef254c963e1bc888ff0581e37f109b7b72087d6b62c18e258c68919aab3",
+    "tools/smart-city/tests/test_isaac_identical_calibration.py": "741c499852c2eb511391a1331224ab98abbd3bf4e9d2280bfed59560efd5a272",
+    "tools/smart-city/isaac_demo.py": "e137030aef6ebb9ba3ea4e536d06d35ba4fdb8f396eeba935e15500fc646f3db",
+    "tools/smart-city/tests/test_isaac_demo.py": "9dc7befdb76f2bbd3e2a956582f7d879fa00ec3e4a40b2bea4dd7247590bb548",
+    "tools/smart-city/IDENTICAL-CALIBRATION-MIGRATION.md": "80e20b21d7822ddf9cbf18a47259faa1c20a515ddb08cde2ece6b1d13ee55478",
+    "tools/smart-city/mv3dt_demo_profile.py": "087c46dda05b891f314459f5a8735fe307fdbd5c34d90212fb4a31dceb3a2d05"
+  },
+  "limits": [
+    "Candidate only; no services, profiles, archives or API resources changed",
+    "New runtime, clock and accuracy qualification remain absent",
+    "Root must pause both sources, stop controller, refresh preconditions and API revisions before manual apply",
+    "Desired-source archive in this pre-pause review is active; do not restore it after pausing",
+    "Existing snapshots and original assets remain preserved"
+  ]
+}

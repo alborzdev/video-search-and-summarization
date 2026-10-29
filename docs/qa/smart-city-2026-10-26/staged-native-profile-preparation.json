@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "city.mv3dt-staged-preparation.v1",
+  "preparedOnly": true,
+  "runtimeChanged": false,
+  "variant": "nvdcf-local-then-mv3dt-v1",
+  "sourceActiveProfile": "/home/sparkdev/vss/.spark/city/state/native/mv3dt-demo/active.json",
+  "sourceActiveSha256": "13c9ed3114a8a419f4d60fa561f431ee04eeea8a45de7a621eedaa6dbb6101a3",
+  "sourceFileHashes": {
+    "native/mv3dt-demo/intersection-stable-local-ids-20261026/camera-0.yml": "774de465c84e3ea80fa84344293751ae84c0698849969622afa3fa4ed01cfba3",
+    "native/mv3dt-demo/intersection-stable-local-ids-20261026/camera-1.yml": "2476ff134fc3563679482ce2d31de4312b9440f14e23ba3b168de6c1f8bbe9e1",
+    "native/mv3dt-demo/intersection-stable-local-ids-20261026/manifest.json": "a975a7ab0a368314da9beffd8775eec0aa51a8c77adc2941654826c74321745e",
+    "native/mv3dt-demo/intersection-stable-local-ids-20261026/mqtt.ini": "eb3d6b9077ae486ea1cc57c36a834312074b982b5285e50c7d87ef5c49efd032",
+    "native/mv3dt-demo/intersection-stable-local-ids-20261026/package.json": "ca754693cc7b3e8b3583f0426e213ef8aac5354f61cb34fd2a3c0103466e8c99",
+    "native/mv3dt-demo/intersection-stable-local-ids-20261026/pub-sub.yml": "c9370f2a996b7d392a7f4913f39771feb617cc8f34c06bea26fef72c484c8cf5",
+    "native/mv3dt-demo/intersection-stable-local-ids-20261026/tracker-mv3dt.experimental.yml": "4b1b254c11f0d57223343aea6a117a68d0f34da65542dd7dcb30b1be830f232c"
+  },
+  "staticExportSha256": "f76f9aee3b2b1497d14b304932f3f827e602c1ba4c8bef661c49bf98ad353e1c",
+  "candidateProfileSha256": "72dea439ea5e2543909f4763060013261c1c8e4a9cecb6ca2b70885fbe1d444d",
+  "candidateFileHashes": {
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/camera-0.yml": "774de465c84e3ea80fa84344293751ae84c0698849969622afa3fa4ed01cfba3",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/camera-1.yml": "2476ff134fc3563679482ce2d31de4312b9440f14e23ba3b168de6c1f8bbe9e1",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/manifest.json": "c60d027de0a2e7097a238cd14976c0d5a277e0129b4b8c78d389473da72e4610",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/mqtt.ini": "eb3d6b9077ae486ea1cc57c36a834312074b982b5285e50c7d87ef5c49efd032",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/package.json": "ca754693cc7b3e8b3583f0426e213ef8aac5354f61cb34fd2a3c0103466e8c99",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/pub-sub.yml": "c9370f2a996b7d392a7f4913f39771feb617cc8f34c06bea26fef72c484c8cf5",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-mv3dt.experimental.yml": "b9e17165c72583c0c75055588d44231a1854591ea218de819a8c7c7633948360",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-nvdcf-local.yml": "7d298f186a3e2b31335c53382ecffc90146d998ef4cf6f4cce729a414c681b8d"
+  },
+  "cameraCalibrations": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": "isaac-live-e8b0fd8728666cd5",
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "isaac-live-e8b0fd8728666cd5"
+  },
+  "imageId": "sha256:e362f9f63ce450d1def2d14b01648a8563f52fc4494f9814d232d7af72f1a23d",
+  "policy": {
+    "schemaVersion": "city.mv3dt-staged-policy.v1",
+    "name": "nvdcf-local-then-mv3dt-v1",
+    "candidateOnly": true,
+    "runtimeQualified": false,
+    "localIdentityAuthority": "first-native-nvdcf-sdk-handle",
+    "mapIdentityAuthority": "second-native-mv3dt-sdk-handle",
+    "associationJoin": "exact-current-detector-object-user-meta",
+    "noHeuristicAliases": true,
+    "noGroundTruthIdentity": true,
+    "parentProfileSha256": "13c9ed3114a8a419f4d60fa561f431ee04eeea8a45de7a621eedaa6dbb6101a3",
+    "changes": [
+      {
+        "path": "MultiViewAssociator.enableLatePeerReAssoc",
+        "before": 0,
+        "after": 1
+      },
+      {
+        "path": "MultiViewAssociator.enableIDCorrection",
+        "before": 0,
+        "after": 1
+      }
+    ],
+    "rebasedFileReferences": [
+      {
+        "before": "/state/native/mv3dt-demo/intersection-stable-local-ids-20261026/camera-0.yml",
+        "after": "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/camera-0.yml"
+      },
+      {
+        "before": "/state/native/mv3dt-demo/intersection-stable-local-ids-20261026/camera-1.yml",
+        "after": "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/camera-1.yml"
+      },
+      {
+        "before": "/state/native/mv3dt-demo/intersection-stable-local-ids-20261026/pub-sub.yml",
+        "after": "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/pub-sub.yml"
+      },
+      {
+        "before": "/state/native/mv3dt-demo/intersection-stable-local-ids-20261026/mqtt.ini",
+        "after": "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/mqtt.ini"
+      }
+    ],
+    "localConfigSourceSha256": "7d298f186a3e2b31335c53382ecffc90146d998ef4cf6f4cce729a414c681b8d",
+    "existingMapGuardsUnchanged": true
+  },
+  "runtimeLoaderValidationPassed": true,
+  "generatorSha256": "6987d0346eb668ff68096457990be6ba46a60bf0ae789d18853d9c4d3d0ba87d"
+}

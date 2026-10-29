@@ -1,0 +1,7 @@
+{
+  "cosmos_restored": true,
+  "http_status": 200,
+  "body": "{\"object\":\"health.response\",\"message\":\"Service is ready.\"}",
+  "checked_at": "2026-10-22T15:47:32.374274+00:00",
+  "moondream_service_running": false
+}

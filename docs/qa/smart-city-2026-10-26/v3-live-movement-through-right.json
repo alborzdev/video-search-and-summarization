@@ -1,0 +1,104 @@
+{
+  "ruleRevision": 426,
+  "mobilityRevision": 6,
+  "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+  "movements": [
+    {
+      "id": "northbound-through",
+      "name": "Northbound \u00b7 straight",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "completedCount": 2,
+      "incompleteCount": 2,
+      "activeCount": 0,
+      "byClass": {
+        "car": 2
+      },
+      "medianTravelSeconds": 9.191872667,
+      "p95TravelSeconds": 11.8315206659,
+      "status": "ready"
+    },
+    {
+      "id": "northbound-left",
+      "name": "Northbound \u00b7 left",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "completedCount": 0,
+      "incompleteCount": 2,
+      "activeCount": 0,
+      "byClass": {},
+      "medianTravelSeconds": null,
+      "p95TravelSeconds": null,
+      "status": "ready"
+    },
+    {
+      "id": "northbound-right",
+      "name": "Northbound \u00b7 right",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "completedCount": 1,
+      "incompleteCount": 2,
+      "activeCount": 0,
+      "byClass": {
+        "car": 1
+      },
+      "medianTravelSeconds": 13.179481777,
+      "p95TravelSeconds": 13.179481777,
+      "status": "ready"
+    }
+  ],
+  "lineCounts": [
+    {
+      "ruleId": "cam_sw-northbound-line",
+      "name": "Northbound vehicles \u00b7 crossing count",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "count": 4,
+      "byClass": {
+        "car": 3,
+        "motorcycle": 1
+      },
+      "status": "ready"
+    },
+    {
+      "ruleId": "mobility-isaac-north-exit",
+      "name": "Northbound \u00b7 north gate",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "count": 5,
+      "byClass": {
+        "car": 3,
+        "motorcycle": 2
+      },
+      "status": "ready"
+    },
+    {
+      "ruleId": "mobility-isaac-west-exit",
+      "name": "Westbound \u00b7 exit gate",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "count": 4,
+      "byClass": {
+        "car": 3,
+        "motorcycle": 1
+      },
+      "status": "ready"
+    },
+    {
+      "ruleId": "mobility-isaac-east-exit",
+      "name": "Eastbound \u00b7 exit gate",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "count": 5,
+      "byClass": {
+        "car": 4,
+        "bus": 1
+      },
+      "status": "ready"
+    },
+    {
+      "ruleId": "mobility-isaac-east-right-exit",
+      "name": "Northbound right \u00b7 outer east gate",
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "count": 1,
+      "byClass": {
+        "car": 1
+      },
+      "status": "ready"
+    }
+  ],
+  "scope": "Actual new rule revision426 with live camera-local journeys. Straight and right completed; no claimed left success or exhaustive accuracy."
+}

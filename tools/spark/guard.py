@@ -21,6 +21,19 @@ def halt(cid):
         return {'id': cid, 'error': type(error).__name__}
 
 
+def halt_local_vision():
+    # Independent of settings, Compose parsing, Docker and telemetry writes.
+    # The unit has Restart=no, so a reserve trip cannot trigger a reload loop.
+    try:
+        result = subprocess.run(['systemctl', '--user', 'stop', 'vss-spark-local-vision.service'],
+                                capture_output=True, timeout=20)
+        return {'unit': 'vss-spark-local-vision.service', 'code': result.returncode}
+    except subprocess.TimeoutExpired:
+        return {'unit': 'vss-spark-local-vision.service', 'timeout': True}
+    except OSError as error:
+        return {'unit': 'vss-spark-local-vision.service', 'error': type(error).__name__}
+
+
 def record(name, value):
     # A full disk must not prevent the memory guard from stopping workloads.
     try:
@@ -40,12 +53,14 @@ def main():
             tripped = True
             trip = {'time': time.time(), 'available_gib': free, 'floor_gib': reserve, 'stops': []}
             record('guard-trip-in-progress.json', trip)
-            try:
-                ids = subprocess.run(compose('ps', '-q'), capture_output=True, text=True, timeout=15, check=True).stdout.splitlines()
-                with concurrent.futures.ThreadPoolExecutor(max_workers=16) as pool:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=17) as pool:
+                local_stop = pool.submit(halt_local_vision)
+                try:
+                    ids = subprocess.run(compose('ps', '-q'), capture_output=True, text=True, timeout=15, check=True).stdout.splitlines()
                     trip['stops'] = list(pool.map(halt, ids))
-            except (OSError, subprocess.SubprocessError) as error:
-                trip['error'] = type(error).__name__
+                except (OSError, subprocess.SubprocessError) as error:
+                    trip['error'] = type(error).__name__
+                trip['local_vision_stop'] = local_stop.result()
             record('guard-trip.json', trip)
             # Keep protecting an ongoing low-memory interval: failed stops and
             # workloads started after the first trip both need another attempt.

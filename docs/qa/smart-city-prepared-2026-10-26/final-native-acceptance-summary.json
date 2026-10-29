@@ -1,0 +1,598 @@
+{
+  "evidenceAuthority": "native simulation cues only; camera analytics qualification is separate",
+  "observerStopped": true,
+  "testCounts": {
+    "prepared": 20,
+    "directorAndRuntime": 88,
+    "people": 52,
+    "normalSignalCohort": 28,
+    "traffic": 740
+  },
+  "runs": [
+    {
+      "runId": "prepared-a49f9ffb67914fb7",
+      "scenario": {
+        "runId": "prepared-a49f9ffb67914fb7",
+        "scenarioId": "turning-demand",
+        "state": "completed",
+        "phase": "normal-traffic",
+        "reason": "prepared-presentation-finished",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "prepareWallSeconds": 0.6834185039624572,
+          "nativePlacementVerifiedModelStep": 582180,
+          "nativePlacementVerifiedTimelineSeconds": 9703.066666693763,
+          "readyWaitWallSeconds": 18.670507315080613,
+          "playToNativeVisibleMotionWallSeconds": 0.8690844080410898,
+          "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+          "restoredWallSeconds": 64.37705165473744,
+          "playToRestoredWallSeconds": 45.02312722802162,
+          "totalWallSeconds": 66.00284160207957,
+          "normalFlowVerified": true,
+          "playToNormalWallSeconds": 46.64891783101484
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": {
+        "Character": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_01": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_02": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_03": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_04": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_05": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_06": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_07": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        }
+      },
+      "source": "acceptance-prepared-a49f9ffb67914fb7-native-summary.json"
+    },
+    {
+      "runId": "prepared-2e72c479e39b4c73",
+      "scenario": {
+        "runId": "prepared-2e72c479e39b4c73",
+        "scenarioId": "queue-recovery",
+        "state": "completed",
+        "phase": "normal-traffic",
+        "reason": "prepared-presentation-finished",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "prepareWallSeconds": 1.0414649141021073,
+          "nativePlacementVerifiedModelStep": 586214,
+          "nativePlacementVerifiedTimelineSeconds": 9770.300000026118,
+          "readyWaitWallSeconds": 11.36679367814213,
+          "playToStationaryInZoneWallSeconds": 0.0062380386516451836,
+          "playToNativeVisibleMotionWallSeconds": 1.647847109939903,
+          "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+          "nativeAllQueueBodiesClearWallSeconds": 37.798068061005324,
+          "nativeDepartureVerifiedWallSeconds": 42.81012085499242,
+          "postQueueClearObservationWallSeconds": 5.012044009752572,
+          "postDepartureObservationWallSeconds": 5.012044585775584,
+          "restoredWallSeconds": 55.21862995997071,
+          "playToRestoredWallSeconds": 42.810371703933924,
+          "totalWallSeconds": 55.30213408591226,
+          "normalFlowVerified": true,
+          "playToNormalWallSeconds": 42.893876309972256
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": {
+        "Character": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_01": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_02": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_03": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_04": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_05": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_06": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_07": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        }
+      },
+      "source": "acceptance-prepared-2e72c479e39b4c73-native-summary.json"
+    },
+    {
+      "runId": "prepared-fa30d6617fbd47d8",
+      "scenario": {
+        "runId": "prepared-fa30d6617fbd47d8",
+        "scenarioId": "pedestrian-service",
+        "state": "completed",
+        "phase": "normal-traffic",
+        "reason": "prepared-presentation-finished",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "prepareWallSeconds": 0.7699681059457362,
+          "nativePlacementVerifiedModelStep": 591170,
+          "nativePlacementVerifiedTimelineSeconds": 9852.900000024916,
+          "readyWaitWallSeconds": 8.914701495319605,
+          "playToNativeVisibleMotionWallSeconds": 1.889261705800891,
+          "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+          "restoredWallSeconds": 38.9250676590018,
+          "playToRestoredWallSeconds": 29.24039844190702,
+          "totalWallSeconds": 41.23827211325988,
+          "normalFlowVerified": true,
+          "playToNormalWallSeconds": 31.5536033436656
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": {
+        "Character": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_01": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_02": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_03": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_04": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_05": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_06": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_07": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        }
+      },
+      "source": "acceptance-prepared-fa30d6617fbd47d8-native-summary.json"
+    },
+    {
+      "runId": "prepared-f54bede357d345ae",
+      "scenario": {
+        "runId": "prepared-f54bede357d345ae",
+        "scenarioId": "curb-obstruction",
+        "state": "completed",
+        "phase": "normal-traffic",
+        "reason": "prepared-presentation-finished",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "prepareWallSeconds": 0.7301498069427907,
+          "nativePlacementVerifiedModelStep": 589676,
+          "nativePlacementVerifiedTimelineSeconds": 9828.000000025278,
+          "readyWaitWallSeconds": 8.731974904891104,
+          "playToStationaryInZoneWallSeconds": 0.008586554322391748,
+          "playToNativeVisibleMotionWallSeconds": 1.8257972560822964,
+          "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+          "nativeDepartureVerifiedWallSeconds": 16.01862311642617,
+          "postDepartureObservationWallSeconds": 5.00680328020826,
+          "restoredWallSeconds": 30.48783187707886,
+          "playToRestoredWallSeconds": 21.025707421358675,
+          "totalWallSeconds": 30.63110898807645,
+          "normalFlowVerified": true,
+          "playToNormalWallSeconds": 21.168984996154904
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": {
+        "Character": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_01": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_02": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_03": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_04": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_05": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_06": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_07": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        }
+      },
+      "source": "acceptance-prepared-f54bede357d345ae-native-summary.json"
+    },
+    {
+      "runId": "prepared-3c4801fd85e94d8a",
+      "scenario": {
+        "runId": "prepared-3c4801fd85e94d8a",
+        "scenarioId": "crossing-obstruction",
+        "state": "completed",
+        "phase": "normal-traffic",
+        "reason": "prepared-presentation-finished",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "prepareWallSeconds": 0.7147322576493025,
+          "nativePlacementVerifiedModelStep": 584522,
+          "nativePlacementVerifiedTimelineSeconds": 9742.100000026529,
+          "readyWaitWallSeconds": 20.31882711313665,
+          "playToStationaryInZoneWallSeconds": 0.007496716920286417,
+          "playToNativeVisibleMotionWallSeconds": 1.8513137181289494,
+          "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+          "nativeDepartureVerifiedWallSeconds": 14.641296999994665,
+          "postDepartureObservationWallSeconds": 5.014320697169751,
+          "restoredWallSeconds": 40.689437228720635,
+          "playToRestoredWallSeconds": 19.655878705903888,
+          "totalWallSeconds": 40.778230398893356,
+          "normalFlowVerified": true,
+          "playToNormalWallSeconds": 19.74467237200588
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": {
+        "Character": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_01": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_02": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_03": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_04": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_05": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_06": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_07": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        }
+      },
+      "source": "acceptance-prepared-3c4801fd85e94d8a-native-summary.json"
+    },
+    {
+      "runId": "prepared-79463b5dcff5490c",
+      "scenario": {
+        "runId": "prepared-79463b5dcff5490c",
+        "scenarioId": "queue-recovery",
+        "state": "cancelled",
+        "phase": "normal-traffic",
+        "reason": "operator-cancel",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "restoredWallSeconds": 0.5222259629517794,
+          "totalWallSeconds": 2.2593205687589943,
+          "normalFlowVerified": true
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": null,
+      "source": "acceptance-prepared-79463b5dcff5490c-native-summary.json"
+    },
+    {
+      "runId": "prepared-c31fdfb22dac4fbf",
+      "scenario": {
+        "runId": "prepared-c31fdfb22dac4fbf",
+        "scenarioId": "turning-demand",
+        "state": "cancelled",
+        "phase": "normal-traffic",
+        "reason": "operator-cancel",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "prepareWallSeconds": 0.7892941329628229,
+          "nativePlacementVerifiedModelStep": 593600,
+          "nativePlacementVerifiedTimelineSeconds": 9893.400000024327,
+          "readyWaitWallSeconds": 6.8496256517246366,
+          "playToNativeVisibleMotionWallSeconds": 1.0239669531583786,
+          "visibleMotionBasis": "native displacement >= 0.25 m; verify on camera independently",
+          "restoredWallSeconds": 24.48905547708273,
+          "playToRestoredWallSeconds": 16.85013614036143,
+          "totalWallSeconds": 24.55647992901504,
+          "normalFlowVerified": true,
+          "playToNormalWallSeconds": 16.917560848407447
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": {
+        "Character": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_01": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_02": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_03": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_04": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_05": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_06": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        },
+        "Character_07": {
+          "failures": 0,
+          "rejections": 0,
+          "timeouts": 0
+        }
+      },
+      "source": "acceptance-prepared-c31fdfb22dac4fbf-native-summary.json"
+    },
+    {
+      "runId": "prepared-208ea7868de94567",
+      "scenario": {
+        "runId": "prepared-208ea7868de94567",
+        "scenarioId": "queue-recovery",
+        "state": "failed",
+        "phase": "normal-traffic",
+        "reason": "Prepared start is not on native navigation: Character",
+        "active": false,
+        "restored": true,
+        "normalFlowVerified": true,
+        "timings": {
+          "restoredWallSeconds": 0.0965978060849011,
+          "totalWallSeconds": 0.20170595217496157,
+          "normalFlowVerified": true
+        }
+      },
+      "timelineMonotonic": true,
+      "playingAll": true,
+      "phaseMismatchMax": 0,
+      "phaseSkewMaxSeconds": 0,
+      "nativeAgents": [
+        8,
+        8
+      ],
+      "poolSlots": [
+        28,
+        28
+      ],
+      "remainingOwners": [],
+      "trafficFrozen": false,
+      "arrivalsPaused": false,
+      "ownedActorDeltas": null,
+      "source": "acceptance-prepared-208ea7868de94567-native-summary.json"
+    }
+  ]
+}

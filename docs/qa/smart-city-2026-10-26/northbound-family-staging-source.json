@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "city.northbound-family-staging-source.v1",
+  "candidateOnly": true,
+  "runtimeChangedByThisTask": false,
+  "scope": "Exact saved model replay and static framing controls, not camera accuracy or final live story acceptance.",
+  "changes": {
+    "queueAndCrossingAllowedRoutes": [
+      "NB_1",
+      "NB_1:L",
+      "NB_1:R"
+    ],
+    "curbUnchanged": true,
+    "trafficSafetyUnchanged": true,
+    "bindingsThresholdsBudgetsUnchanged": true
+  },
+  "actualSnapshots": {
+    "wallDeltaSeconds": 92.350748427,
+    "integratedSimDeltaSeconds": 33.633333332843904,
+    "target770ProgressM": 7.634987177828876,
+    "oldBlockersAbsentAtSavedSnapshot": [
+      757,
+      774,
+      776
+    ],
+    "noOwnedStops": true
+  },
+  "cpuContinuations": [
+    {
+      "seconds": 120.0,
+      "pedestrianAssumption": "empty; isolates vehicle coupling",
+      "startPhase": "NS_green",
+      "firstLeaderCycle": null,
+      "maxLeaderCycles": 0,
+      "initialVehicles": [
+        791,
+        770,
+        787,
+        788,
+        789,
+        790,
+        782,
+        761,
+        765,
+        767,
+        783
+      ],
+      "completedInitialVehicles": {
+        "788": 1.9999999999708962,
+        "790": 5.9999999999126885,
+        "761": 9.99999999985448,
+        "787": 21.999999999679858,
+        "791": 28.999999999577994,
+        "789": 28.999999999577994,
+        "765": 58.99999999914144,
+        "767": 100.99999999853026,
+        "770": 102.99999999850115,
+        "782": 104.99999999847205,
+        "783": 106.99999999844295
+      },
+      "remainingInitialVehicles": []
+    },
+    {
+      "seconds": 120.0,
+      "pedestrianAssumption": "saved positions held fixed",
+      "startPhase": "NS_green",
+      "firstLeaderCycle": null,
+      "maxLeaderCycles": 0,
+      "initialVehicles": [
+        791,
+        770,
+        787,
+        788,
+        789,
+        790,
+        782,
+        761,
+        765,
+        767,
+        783
+      ],
+      "completedInitialVehicles": {
+        "788": 1.9999999999708962,
+        "790": 5.9999999999126885,
+        "761": 9.99999999985448,
+        "787": 21.999999999679858,
+        "791": 28.999999999577994,
+        "789": 28.999999999577994,
+        "765": 58.99999999914144,
+        "767": 100.99999999853026,
+        "770": 102.99999999850115,
+        "782": 104.99999999847205,
+        "783": 106.99999999844295
+      },
+      "remainingInitialVehicles": []
+    }
+  ],
+  "framing": {
+    "sourceCalibrationRevision": "isaac-live-e8b0fd8728666cd5",
+    "imagePixels": [
+      960,
+      540
+    ],
+    "queueTargetYAllRoutesM": 65.1995120135541,
+    "crossingTargetYThroughLeftM": 66.79995847940884,
+    "crossingTargetYRightM": 66.81733152498781,
+    "envelopeLengthWidthM": [
+      5.18,
+      2.1
+    ],
+    "assumedRoofHeightM": 1.9,
+    "northClearanceMarginM": 0.25,
+    "crossingToWholeBodyNorthClearanceM": {
+      "NB_1": 4.9,
+      "NB_1:L": 5.1,
+      "NB_1:R": 5.4
+    },
+    "additionalVisiblePathTestM": 3,
+    "limits": "Geometry only. No scene occlusion, native exposure, detection or AI-clearance guarantee."
+  },
+  "initialRegressionRun": {
+    "tests": 75,
+    "outcome": "failed",
+    "failures": 3,
+    "errors": 2,
+    "reason": "Five scenario fixtures disabled turn routes. Strict explicit route policy refused missing NB_1:L/R; production turns are enabled.",
+    "affectedTests": [
+      "test_readiness_reads_current_car_without_reserving_or_spawning",
+      "test_northbound_crossing_exit_remains_inside_recorded_southwest_calibration",
+      "test_queue_holds_twentyfour_wall_seconds_and_requests_two_bounded_real_followers",
+      "test_queue_fallback_and_two_followers_enter_before_hold_and_survive_cancel_normally",
+      "test_red_bound_car_waits_unreserved_then_stages_after_actual_green"
+    ],
+    "resolution": "Only these fixtures now use real turns-enabled geometry; new missing-route control preserves fail-closed refusal."
+  },
+  "additionalFixtureFinding": {
+    "outcome": "initial immediate-hold follower assertion failed for both turns",
+    "finding": "If a head starts already held, newly spawned followers can still be moving after 23 wall seconds. This is not a guaranteed stopped count.",
+    "resolution": "The bounded formation control now includes a real 30m approach and unchanged early-arrival preparation. Live formation stays conditional."
+  },
+  "diagnosticTests": {
+    "tests": 3,
+    "elapsedSeconds": 1.015,
+    "outcome": "passed"
+  },
+  "sourceSha256": {
+    "scripts/scenarios/catalog.py": "89c1911bb8e1a32f59fc0ee3fd97ea364304e687ccc7cb05026f67de1ead5fe4",
+    "scripts/scenarios/test_runtime.py": "7c25de40db1d5bff0a8e78a0f17188b70e312dc71effa426c2b73c0ac5988cda",
+    "scripts/scenarios/test_nb_family_staging.py": "9bdcec2b8d8870060377126596339eb2064fbb63415670ce9122d548bd86087d",
+    "scripts/scenarios/runtime.py": "4e18d2fc7177089eb4dbf6d6b70e785ffec92e949294a4b2ed6fd210ed940dc6",
+    "scripts/scenarios/director.py": "370ea31cd01badad51c005b88bf1b9023c514cbb0ae1d9baab07f53c14ed032a",
+    "scripts/traffic/vehicle_lib.py": "c0ee83c9376fcfe0a68cf079403c3dc7b5cf6807e34d526517bcc07b6678217f",
+    "scripts/tools/inspect_traffic_constraints.py": "69304d9158383d32cfac56e7d9ac9ebaa9e883be70d4b7f2f780383e97c27d92",
+    "scripts/traffic/diagnose_live_replay.py": "8749e948579de9200ba58f44f45e8895f46edc5828b94d213ad4b698fd06a11a",
+    "scripts/traffic/test_diagnose_live_replay.py": "0e55ca054fdc9f53c49634d706029d69dcad91c83c10929d838dc43d168f442b",
+    "logs/vss-integration/rebuild-20261026/traffic-gridlock-live-20261026.json": "ade0854202b30ccc72489736ed8d44d558f67fd3b76ed6d367b6fca78ad26b19",
+    "logs/vss-integration/rebuild-20261026/traffic-gridlock-live-followup-20261026.json": "0f16e0f2b55b8aa619c00cae0cca16b4383b7e22c6fd5f1dd40c4e914e710af6",
+    "logs/vss-integration/rebuild-20261026/traffic-gridlock-cpu-replay-120.json": "7dba4c2bea778b0b63c4486225b08cc256999d9ef95580b050280222ec2ee2c1"
+  },
+  "finalRegressionRun": {
+    "command": "python3 -m unittest scripts.scenarios.test_runtime scripts.scenarios.test_director scripts.scenarios.test_nb_family_staging -q",
+    "tests": 82,
+    "elapsedSeconds": 5.207,
+    "outcome": "passed",
+    "newControls": 7
+  },
+  "compile": "python3 -m py_compile passed for catalog, scenario tests, snapshot helper and CPU replay helper."
+}

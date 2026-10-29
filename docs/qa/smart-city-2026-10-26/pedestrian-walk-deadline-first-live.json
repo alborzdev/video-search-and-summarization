@@ -1,0 +1,261 @@
+{
+  "schemaVersion": "city.pedestrian-walk-deadline-first-live.v1",
+  "wholeEpisodePassed": false,
+  "sourceTrace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-reapproach-final-v3-ui.ndjson",
+  "traceSha256": "ffc97f614b466f3699aa65ae84b795e80628f775738109668402c2dd67b7e485",
+  "runId": "6cb839744cdf46fc:000001",
+  "state": "failed",
+  "reason": "pedestrian-walk-signal-deadline",
+  "elapsedWallSeconds": 107.97596416529268,
+  "restored": true,
+  "pacingBudget": {
+    "planningSimPerWall": 0.3152413179475277,
+    "observedSimPerWall": 0.3152413179475277,
+    "preparationWallSeconds": 15.0,
+    "preparationLatched": false,
+    "vehiclePreparationPlan": null,
+    "walkWaitWallSeconds": 102.78527485278386,
+    "walkWaitLatched": true,
+    "crossingWallSeconds": 80.0,
+    "capLimited": false,
+    "basis": "finite presentation planning; not an arrival guarantee"
+  },
+  "lastPreparation": {
+    "owner": "6cb839744cdf46fc:000001/walker",
+    "character": "Character_04",
+    "pc": 0,
+    "state": "waiting",
+    "acceptedTaskIds": [
+      762
+    ],
+    "reason": null,
+    "phase": "waiting",
+    "positionM": [
+      -10.995719909667969,
+      88.41864013671875,
+      0.037393853068351746
+    ],
+    "goalM": [
+      -11.2,
+      88.4,
+      0.0
+    ],
+    "entryM": [
+      -11.2,
+      88.4,
+      0.0
+    ],
+    "exitM": null,
+    "entryArrivalVerified": true,
+    "entryReapproach": false,
+    "entryRecovery": null,
+    "atEntry": true,
+    "endpointArrivalVerified": false,
+    "nativeTaskStatus": "RUNNING",
+    "arrivalEvidence": {
+      "sequence": 1,
+      "basis": "already-near-requested-goal",
+      "simTime": 1562.466666665903,
+      "taskId": null,
+      "nativeStatus": null,
+      "nativeError": null,
+      "positionM": [
+        -11.18890380859375,
+        88.39080047607422,
+        0.03739757090806961
+      ],
+      "requestedGoalM": [
+        -11.2,
+        88.4,
+        0.0
+      ],
+      "xyErrorM": 0.01441376786913286,
+      "zErrorM": 0.03739757090806961,
+      "xyToleranceM": 0.25,
+      "zToleranceM": 0.15
+    },
+    "observedArrival": true,
+    "arrivalToleranceM": 0.35,
+    "crossingRequest": {
+      "owner": "6cb839744cdf46fc:000001/walker",
+      "crosswalkId": "XW_E",
+      "signalGroup": "ped_cross_EW",
+      "points": [
+        [
+          -11.2,
+          79.2,
+          0.0
+        ],
+        [
+          -11.549999999999999,
+          71.0,
+          0.0
+        ]
+      ],
+      "requestedSimTime": 1562.466666665903,
+      "epoch": 9,
+      "generation": 4
+    },
+    "cohortAdmission": null,
+    "crosswalkId": "XW_E",
+    "pedSignalGroup": "ped_cross_EW",
+    "pedSignalState": "dont_walk",
+    "nextWalkSimSeconds": 0.25,
+    "nextUsableWalkSimSeconds": 0.25,
+    "crossingWindowRemainingSimSeconds": 0.0,
+    "plannedCrossingWithMarginSimSeconds": 13.63,
+    "walkGatePassed": false,
+    "timingBasis": "signal schedule and path length; not an arrival guarantee",
+    "planningSimPerWall": 0.3136266291906739,
+    "plannedCrossingWallSeconds": 51.4593198771825,
+    "remainingPresentationWallSeconds": 72.10582169983536,
+    "cohortTiming": {
+      "cohortKey": [
+        31,
+        5,
+        "ped_cross_EW"
+      ],
+      "cohortAlreadyServed": false,
+      "nextOwnedCohortSimSeconds": 0.23333333413097535,
+      "basis": "current normal cohort and signal schedule; planning only"
+    }
+  },
+  "entryReapproachTriggered": false,
+  "nativeSelectedPlan": {
+    "6cb839744cdf46fc:000001/walker": {
+      "character": "Character_04",
+      "points": [
+        [
+          -11.2,
+          88.4,
+          0
+        ],
+        [
+          -11.2,
+          79.2,
+          0
+        ],
+        [
+          -11.549999999999999,
+          71.0,
+          0
+        ]
+      ],
+      "positionM": [
+        -11.18890380859375,
+        88.39080047607422,
+        0.03739757090806961
+      ],
+      "distanceToEntryM": 0.04,
+      "crosswalkId": "XW_E",
+      "signalGroup": "ped_cross_EW",
+      "radiusM": 0.23157918453216553,
+      "binding": "east-crossing",
+      "templatePoints": [
+        [
+          -11.2,
+          88.4,
+          0
+        ],
+        [
+          -11.2,
+          79.2,
+          0
+        ],
+        [
+          -11.2,
+          70.0,
+          0
+        ]
+      ],
+      "selectedPoints": [
+        [
+          -11.2,
+          88.4,
+          0
+        ],
+        [
+          -11.2,
+          79.2,
+          0
+        ],
+        [
+          -11.549999999999999,
+          71.0,
+          0
+        ]
+      ],
+      "templateWaitingAreas": [
+        [
+          [
+            -12.2,
+            69.2
+          ],
+          [
+            -10.2,
+            69.2
+          ],
+          [
+            -10.2,
+            72.0
+          ],
+          [
+            -12.2,
+            72.0
+          ]
+        ],
+        [
+          [
+            -12.2,
+            86.4
+          ],
+          [
+            -10.2,
+            86.4
+          ],
+          [
+            -10.2,
+            90.4
+          ],
+          [
+            -12.2,
+            90.4
+          ]
+        ]
+      ],
+      "pointSelection": {
+        "basis": "actual native bodies and finite targets inside unchanged waiting pads",
+        "entryM": [
+          -11.2,
+          88.4,
+          0
+        ],
+        "exitM": [
+          -11.549999999999999,
+          71.0,
+          0
+        ],
+        "originalEntryM": [
+          -11.2,
+          88.4,
+          0
+        ],
+        "originalExitM": [
+          -11.2,
+          70.0,
+          0
+        ]
+      },
+      "nativePlanProof": {
+        "nativePathVerified": true,
+        "crosswalkId": "XW_E",
+        "crossingPathMetres": 17.680827876230673,
+        "approachPathMetres": 0.05197208599580561,
+        "pointCount": 213,
+        "basis": "native navmesh query with actual agent dimensions; not observed arrival",
+        "selectionProofAttempts": 1
+      }
+    }
+  },
+  "remainingRepair": "Latch a finite WALK wait allowance within the original180second total, reserving the native path crossing/cleanup budget; no forced signal or change to evidence."
+}

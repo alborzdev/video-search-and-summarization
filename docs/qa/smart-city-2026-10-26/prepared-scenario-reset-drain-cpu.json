@@ -1,0 +1,47 @@
+{
+  "writtenAt": "2026-10-26T15:16:06.066537+00:00",
+  "qualification": "CPU implementation/compile controls only; deployment/live reset drain acceptance pending parent.",
+  "observedFailure": {
+    "log": ".spark/city/runtime/detector-20261026T150323Z.log",
+    "firstError": "Unqualified pre-tracker native capture evidence",
+    "laterErrors": "Missing exact native AU PTS evidence (cascade after first rejection clears all clocks)",
+    "nativeRows": 5356,
+    "sourceCounters": {
+      "first": 4471,
+      "last": 7148
+    },
+    "counterTimestampPtsRegressions": 0,
+    "sourceSessionsUnchangedThroughoutWorker": true,
+    "lastCaptureUtc": "2026-10-26T15:07:03.820/821Z",
+    "lastFrameTrackingEpoch": "117086c3-9d0a-4849-bfe5-44f4bf9ba582",
+    "interpretation": "First exact record existed but failed qualification. Source restart and boundary double-consumption are not evidenced. Synchronous reset backlog is consistent with first new-epoch frame then failure; original generic reason cannot distinguish staleness from qualification flags, so this is not definitive stale-cause proof."
+  },
+  "change": [
+    "Explicit reset drain bounded to20seconds; stale exact records are dropped as whole batches before trackers and consumed once.",
+    "All records validated before a stale batch is discarded, so missing/duplicate/not-decoded/not-muxed/future partners still fail closed.",
+    "Existing2second freshness bound checked at mux and immediately after synchronous reset; no stale image enters trackers.",
+    "First fresh post-reset frames from all sources end drain; outside reset unchanged stale fatal policy.",
+    "Detailed qualification/freshness diagnostics; preserve first native failure rather than cache-clear cascade."
+  ],
+  "tests": {
+    "command": "make scenario-boundary-test native-capture-clock-test staged-tracking-test city-worker",
+    "environment": "isolated /tmp/city-reset-drain-cpu in existing detector; CPU only, no running binary replacement or GPU pipeline",
+    "result": "all passed; full worker compiles",
+    "cases": [
+      "stale+fresh mux batch dropped wholly with zero prepare/emission and single proof consumption",
+      "fresh following batch passes unchanged strict proof and closes drain",
+      "prepared carrier aged before final tracker admission dropped wholly",
+      "missing/duplicate/not-decoded/not-muxed/future partner refuses stale batch",
+      "20second deadline remains fail-closed",
+      "normal stale evidence remains fatal",
+      "prior serialized two-stage reset/epoch/proof controls and20native SEI groups pass"
+    ]
+  },
+  "files": {
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "bf83278c84045d0a6ae68e8673c8e73d6da35434d66d561031d618a1fbc34753",
+    "services/rtvi/rt-cv/smart-city/src/native_capture_clock.hpp": "083fbf29de24215a328443f87676bbacfe583c68e64358559722527a747c06c6",
+    "services/rtvi/rt-cv/smart-city/tests/test_scenario_boundary.cpp": "9fc18025da72f455cad6d0813b8c5fd8b52af95e29fabd57d8f0435ae14274db",
+    "services/rtvi/rt-cv/smart-city/README.md": "99a203fe37eb648565e616432143a72b5e8863949531a1a84f5835e1e2910e3b"
+  },
+  "buildNeeds": "Recompile city-worker including native_capture_clock.hpp; derivative of current pinned detector; no flags/config/gateway changes."
+}

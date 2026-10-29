@@ -13,6 +13,35 @@ from vss_agents.api.source_cleanup import GENERATED_INDEX_PATTERNS
 from vss_agents.api.source_cleanup import _source_identity_query
 from vss_agents.api.source_cleanup import delete_generated_source_data
 from vss_agents.api.source_cleanup import delete_lvs_graph_history
+from vss_agents.api.source_cleanup import registered_rtvi_cv_stream_ids
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", ["registered-stopped", "STOPPED", "failed", "error", "paused", "completed"])
+async def test_stopped_registration_is_owned_for_cleanup_but_not_running(status):
+    response = MagicMock()
+    response.json.return_value = {
+        "stream-info": {
+            "stream-info": [
+                {"camera_id": "stopped", "status": status},
+                {"camera_id": "healthy", "status": "running"},
+                {"camera-id": "legacy-missing-status"},
+                {"camera_id": "legacy-vocabulary", "status": "vendor-ready"},
+            ]
+        }
+    }
+    client = MagicMock(get=AsyncMock(return_value=response))
+    assert await registered_rtvi_cv_stream_ids(client, "http://worker") == {
+        "stopped",
+        "healthy",
+        "legacy-missing-status",
+        "legacy-vocabulary",
+    }
+    assert await registered_rtvi_cv_stream_ids(client, "http://worker", running_only=True) == {
+        "healthy",
+        "legacy-missing-status",
+        "legacy-vocabulary",
+    }
 
 
 def test_source_identity_covers_legacy_media_name_without_extension():

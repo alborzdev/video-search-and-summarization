@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "city.corpus-qa-index.v1",
+  "scope": "Actual Spark FP16-enabled engines, two batches, fixed100-image COCO road subset; not final-city or fullCOCO qualification",
+  "files": [
+    {
+      "name": "rfdetr-small-fp16-b1-coco100-quality.json",
+      "sha256": "0734e12583d4e5ba75ff607ce9a1f0d84cacdf1df020262f8377a6f2c7ceb7fa"
+    },
+    {
+      "name": "rfdetr-small-fp16-b1-coco100-run.json",
+      "sha256": "f99d5eb04e1b2622cd47c4e08d921c8d233253a8a5bd4f62aa264452611004d1"
+    },
+    {
+      "name": "rfdetr-small-fp16-b2-coco100-quality.json",
+      "sha256": "2ae54f97dc833f651354feed583ae3b5c30c34a2f26440e9d4320a517ef25bc7"
+    },
+    {
+      "name": "rfdetr-small-fp16-b2-coco100-run.json",
+      "sha256": "15ff9c1c6960e809c8891602580b9c00a1de56fee6d0150de947d9789dc0daf6"
+    },
+    {
+      "name": "rfdetr-medium-fp16-b1-coco100-quality.json",
+      "sha256": "3efd65d7a2fc5118a50c867f4e1040b9e29201882fb2a9f0db7e8e64d6039b5d"
+    },
+    {
+      "name": "rfdetr-medium-fp16-b1-coco100-run.json",
+      "sha256": "9bb089664ab7cb1052860e798c830e4f6d705a6cfe7eb3454cc5452cdca02ec3"
+    },
+    {
+      "name": "rfdetr-medium-fp16-b2-coco100-quality.json",
+      "sha256": "64f5636a0bf039c657c7a589a7b1869dd6f9eec8644b69b50e2a0440216bf252"
+    },
+    {
+      "name": "rfdetr-medium-fp16-b2-coco100-run.json",
+      "sha256": "e9d74ea282f2e9286bd139b46c7b65b72410f769077952317b44b5050175a900"
+    },
+    {
+      "name": "coco100-subset-manifest.json",
+      "sha256": "900ab9789a74be6653d8c74519e64349bd5ba37c1104bdd685e40a5f72ea7830"
+    },
+    {
+      "name": "nvidia-r18-stage.json",
+      "sha256": "1699c0f1fd9b5a2b8fb68f4bca834b2b7df55c9612be7ad20782f7b76493f42c"
+    },
+    {
+      "name": "rfdetr-small-coco100-inputs.json",
+      "sha256": "9dfa8e2a02ed75b7060dddf022af1900421dc848feed4c0ebc9022035ba6ea4f"
+    },
+    {
+      "name": "rfdetr-medium-coco100-inputs.json",
+      "sha256": "46f3f204bec0588dd33ad2e5d49777cf83bd9f03c9a274ea0d50a67ca2957e8e"
+    }
+  ]
+}

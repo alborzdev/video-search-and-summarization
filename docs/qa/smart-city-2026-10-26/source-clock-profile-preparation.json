@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "city.source-clock-profile-review.v1",
+  "preparedOnly": true,
+  "runtimeChanged": false,
+  "sourceActiveProfileSha256": "72dea439ea5e2543909f4763060013261c1c8e4a9cecb6ca2b70885fbe1d444d",
+  "rollbackSha256": "72dea439ea5e2543909f4763060013261c1c8e4a9cecb6ca2b70885fbe1d444d",
+  "imageId": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+  "imageIdResolves": true,
+  "configPinCount": 8,
+  "sourceFileHashes": {
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/camera-0.yml": "774de465c84e3ea80fa84344293751ae84c0698849969622afa3fa4ed01cfba3",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/camera-1.yml": "2476ff134fc3563679482ce2d31de4312b9440f14e23ba3b168de6c1f8bbe9e1",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/manifest.json": "c60d027de0a2e7097a238cd14976c0d5a277e0129b4b8c78d389473da72e4610",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/mqtt.ini": "eb3d6b9077ae486ea1cc57c36a834312074b982b5285e50c7d87ef5c49efd032",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/package.json": "ca754693cc7b3e8b3583f0426e213ef8aac5354f61cb34fd2a3c0103466e8c99",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/pub-sub.yml": "c9370f2a996b7d392a7f4913f39771feb617cc8f34c06bea26fef72c484c8cf5",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-mv3dt.experimental.yml": "b9e17165c72583c0c75055588d44231a1854591ea218de819a8c7c7633948360",
+    "native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-nvdcf-local.yml": "7d298f186a3e2b31335c53382ecffc90146d998ef4cf6f4cce729a414c681b8d"
+  },
+  "variants": {
+    "diagnostic-active.json": {
+      "sha256": "b609e11b7d3a05344e185d93505592e12dcd28e453346bd65fea49ced8a4245f",
+      "controls": {
+        "sourceClockDiagnostics": true,
+        "muxSyncInputs": false,
+        "muxMaxLatencyNs": 0,
+        "muxSyncInputsNtpNs": 0
+      },
+      "actualNativeArgs": [
+        "--tracker-mode",
+        "mv3dt-demo",
+        "--tracker-config",
+        "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-mv3dt.experimental.yml",
+        "--tracker-calibration-revision",
+        "isaac-live-e8b0fd8728666cd5",
+        "--local-tracker-config",
+        "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-nvdcf-local.yml",
+        "--source-clock-diagnostics",
+        "--mux-max-latency-ns",
+        "0",
+        "--mux-sync-inputs-ntp-ns",
+        "0"
+      ],
+      "actualRuntimeLoaderPassed": true,
+      "singleCameraAdmissionHasNoExtraArgs": true,
+      "configFileHashesUnchanged": true
+    },
+    "mux-pts-candidate.json": {
+      "sha256": "9492417e6494259276dbcd3ee05d51be1b9c4fe34583e7427e8f4d406b0a1645",
+      "controls": {
+        "sourceClockDiagnostics": true,
+        "muxSyncInputs": true,
+        "muxMaxLatencyNs": 200000000,
+        "muxSyncInputsNtpNs": 0
+      },
+      "actualNativeArgs": [
+        "--tracker-mode",
+        "mv3dt-demo",
+        "--tracker-config",
+        "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-mv3dt.experimental.yml",
+        "--tracker-calibration-revision",
+        "isaac-live-e8b0fd8728666cd5",
+        "--local-tracker-config",
+        "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-nvdcf-local.yml",
+        "--source-clock-diagnostics",
+        "--mux-sync-inputs",
+        "--mux-max-latency-ns",
+        "200000000",
+        "--mux-sync-inputs-ntp-ns",
+        "0"
+      ],
+      "actualRuntimeLoaderPassed": true,
+      "singleCameraAdmissionHasNoExtraArgs": true,
+      "configFileHashesUnchanged": true
+    },
+    "mux-ntp-candidate.json": {
+      "sha256": "99bd378a227dd3eace603e00c9054e736468ef146e78bf33b906b7da4d6ae871",
+      "controls": {
+        "sourceClockDiagnostics": true,
+        "muxSyncInputs": false,
+        "muxMaxLatencyNs": 200000000,
+        "muxSyncInputsNtpNs": 50000000
+      },
+      "actualNativeArgs": [
+        "--tracker-mode",
+        "mv3dt-demo",
+        "--tracker-config",
+        "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-mv3dt.experimental.yml",
+        "--tracker-calibration-revision",
+        "isaac-live-e8b0fd8728666cd5",
+        "--local-tracker-config",
+        "/state/native/mv3dt-demo/intersection-staged-native-handles-20261026/tracker-nvdcf-local.yml",
+        "--source-clock-diagnostics",
+        "--mux-max-latency-ns",
+        "200000000",
+        "--mux-sync-inputs-ntp-ns",
+        "50000000"
+      ],
+      "actualRuntimeLoaderPassed": true,
+      "singleCameraAdmissionHasNoExtraArgs": true,
+      "configFileHashesUnchanged": true
+    }
+  },
+  "firstTrial": "diagnostic-active.json ONLY. Both optional sync candidates remain unselected until actual same-buffer reference proof.",
+  "clockBasisChanges": false,
+  "units": "Actual legacy9.2 sync-inputs bool;max-latency guint nanoseconds;sync-inputs-ntp gint nanoseconds. Strict0..1e9 bounds. Worker validates types and emits actual property readback."
+}

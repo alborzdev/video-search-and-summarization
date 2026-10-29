@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "city.ui-curb-current-detections.v1",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "builtOrDeployed": false,
+  "imageUsedForCpuChecks": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+  "checks": {
+    "reactSuites": 3,
+    "reactTestsPassed": 61,
+    "reactTestsFailed": 0,
+    "reactSeconds": 2.679,
+    "appTypecheck": "tsc --noEmit --incremental false: passed"
+  },
+  "files": {
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMobilityPanel.tsx": "44332a47c36e54fc43c31f50584747b8c2322522f19ef2abd0b820361ae6fb57",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/CurbAccess.test.tsx": "effb3c38551b865213a339c63e17c54636bb404b5af571183df5ffd77a876d22",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityDemoControls.tsx": "c26213163165ef1e86857bc12b8dadf3f4110975cf6cc81357a6524b65b441d6",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/__tests__/CityDemoControls.test.tsx": "df2fb427f02874f5249981e5c72a0d9c254e6b10ab743265136fc3c21e3377a1"
+  },
+  "observedCountRequires": [
+    "No current fetch error",
+    "Source coverage is live",
+    "Digit-only row observation time equals source coverage windowEndNs",
+    "Observed count is a nonnegative integer",
+    "No curb configuration issue for this measurement"
+  ],
+  "semanticsPreserved": [
+    "Unknown total and status remain unknown",
+    "Zero does not imply a clear curb",
+    "Pending and interrupted-visit evidence stays visible",
+    "Lower-bound total is stated separately from exact detected count",
+    "Current dwell/stopped values remain withheld when total is unknown",
+    "CSV/JSON export and backend membership/durations unchanged"
+  ],
+  "scenarioCopy": [
+    "Five current pedestrian failure codes have plain-language labels and retain raw diagnostics",
+    "WALK timeout does not claim restoration before restored=true"
+  ],
+  "limits": [
+    "No UI image build or runtime deployment performed",
+    "No browser/live-pixel verification against changed source; current production package remains unchanged"
+  ]
+}

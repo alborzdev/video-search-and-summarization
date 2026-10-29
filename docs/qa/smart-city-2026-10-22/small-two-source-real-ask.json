@@ -1,0 +1,143 @@
+{
+  "schemaVersion": "city.soak-result.v1",
+  "siteId": "recorded-traffic-tests",
+  "sourceIds": [
+    "291399aa-a062-43b6-badc-48c34bc08237",
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9"
+  ],
+  "startedAt": "2026-10-22T05:29:08.637087+00:00",
+  "finishedAt": "2026-10-22T05:30:38.637609+00:00",
+  "requestedSeconds": 90.0,
+  "wallSeconds": 90.00053089205176,
+  "sampleCount": 17,
+  "passed": true,
+  "failure": null,
+  "minimumAvailableGiB": 22.010570526123047,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 2547,
+      "uniquePts": 2488,
+      "duplicatePts": 59,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 424817853965,
+      "lastNs": 1792647033168125615,
+      "lastSequence": 12523,
+      "session": "84c3db1d-78a4-4b17-8557-d8dd39d0e197",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 850,
+      "uniquePts": 850,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 424951752134,
+      "lastNs": 1792647033409308992,
+      "lastSequence": 4218,
+      "session": "1dfc9692-8faa-4af6-8aec-2ef78e784a8f",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "lastMetrics": {
+    "sources": {
+      "291399aa-a062-43b6-badc-48c34bc08237": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792647033201458948",
+        "sessionId": "84c3db1d-78a4-4b17-8557-d8dd39d0e197",
+        "clockToWallRatio": 0.9988536803141042,
+        "trustedSourceAgeSeconds": 0.3202693462371826,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 961,
+        "windowDuplicateFraction": 0.021852237252861603,
+        "frames": 2547,
+        "uniquePts": 2488
+      },
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792647033409308992",
+        "sessionId": "1dfc9692-8faa-4af6-8aec-2ef78e784a8f",
+        "clockToWallRatio": 1.0008804774227267,
+        "trustedSourceAgeSeconds": 0.11241936683654785,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 320,
+        "windowDuplicateFraction": 0.0,
+        "frames": 850,
+        "uniquePts": 850
+      }
+    },
+    "minimumAvailableGiB": 22.010570526123047,
+    "nativeActive": true,
+    "nativeRevision": 37,
+    "warmedUp": true
+  },
+  "maximumTrustedSourceAgeSeconds": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.4853839874267578,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.2867426872253418
+  },
+  "maximumDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.040372670807453416,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "lastClockToWallRatios": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.9988536803141042,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 1.0008804774227267
+  },
+  "askEnabled": false,
+  "scheduledAskCount": 0,
+  "asks": [],
+  "pauseOnFailure": false,
+  "pauseReceipts": [],
+  "samplesFile": "private runtime/small-single-ask-qualification/samples.ndjson",
+  "samplesSha256": "a7dd82c8a4a7a87ae1e7dc52305e46fc131912f868be38209abc043a4ca50bd9",
+  "monitorSourceSha256": "a4cc1aa97a8ec236d7a781470f8c65717ae6f0c48704b57011ac597cf6e19959",
+  "criteria": {
+    "minimumReserveGiB": 20,
+    "warmupSeconds": 15,
+    "sampleEverySeconds": 5,
+    "clockWindowSeconds": 30,
+    "clockRatioBounds": [
+      0.9,
+      1.1
+    ],
+    "maximumDuplicateFraction": 0.05,
+    "trustSourceRtcpUtc": true,
+    "maximumSourceAgeSeconds": 5
+  },
+  "scope": "Concurrent pipeline stability and optional real UI Ask qualification; not engine latency, semantic event accuracy, browser-frame latency or final-city/MV3DT qualification.",
+  "modelSize": "small",
+  "muxTimeoutUs": 10000,
+  "externalAskDuringMonitor": true,
+  "context": "Exactly one root-issued real UI API Ask occurred during this monitor; its own built-in scheduling was disabled. A bounded5s evidence export was also requested. This is not a pure no-Ask baseline.",
+  "manualAsk": {
+    "httpStatus": 200,
+    "wallSeconds": 14.77006687829271,
+    "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+    "observedWindow": {
+      "startTime": "2026-10-22T05:29:14.468000Z",
+      "endTime": "2026-10-22T05:29:19.468000Z"
+    },
+    "evidenceTools": [
+      "video_understanding_iso"
+    ],
+    "groundedFlag": true,
+    "answerSha256": "cd34f4d7df040bb8f628186041ea78ae6d5584f754668660df95e4e2a2962489",
+    "answer": "A silver SUV drives forward on the left side of the road, followed by a gray car moving in the same direction. A few pedestrians walk along the sidewalk on the far left. Traffic flows steadily in both directions under clear daylight conditions.",
+    "scope": "One actual generated response; grounded flag is application provenance, not a proof of semantic correctness."
+  },
+  "evidenceReview": {
+    "exportSeconds": 0.19866662565618753,
+    "clipSha256": "3428b1ec47ec605145bec7557b990e2bc0ee0df2bbd425f66e153991d99107ad",
+    "decodedFrames": 151,
+    "firstPtsSeconds": 0.0,
+    "lastPtsSeconds": 5.0,
+    "contactSheetSha256": "dfdb0c1c5493ede20f02ad79674b8f327dee5b5ad1ebf33d12dcef4e8c876d69",
+    "manualAssessment": "The sampled evidence shows a silver SUV, following car, pedestrians on the left sidewalk, opposing traffic and daylight, consistent with the broad answer. A yellow school bus appears near the end and is omitted by the brief answer. No safety event or exact object count accuracy was established."
+  }
+}

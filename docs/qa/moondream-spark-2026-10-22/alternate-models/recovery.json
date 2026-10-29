@@ -1,0 +1,8 @@
+{
+  "checked_at": "2026-10-22T16:09:04.356992+00:00",
+  "http_status": 200,
+  "body": "{\"object\":\"health.response\",\"message\":\"Service is ready.\"}",
+  "container_status": "running healthy",
+  "guard_active": true,
+  "moondream_service_running": false
+}

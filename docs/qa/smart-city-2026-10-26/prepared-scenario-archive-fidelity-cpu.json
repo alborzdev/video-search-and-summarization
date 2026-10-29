@@ -1,0 +1,33 @@
+{
+  "recordedAt": "2026-10-26T15:34:09.120259+00:00",
+  "purpose": "Preserve last observed scenario mobility before boundary invalidation; never fabricate departure or clearance.",
+  "files": {
+    "services/analytics/behavior-analytics/apps/city/engine.py": "d917a333953116a18ab69db91f866a9d15626fe8cecaee78c142895620b8f4c8",
+    "services/analytics/behavior-analytics/apps/city/README.md": "aa3c98ac31d2d4ce802f58417ef99b9126e317c72f1c9a42af931b24a1168d4b",
+    "services/analytics/behavior-analytics/apps/city/tests/test_mobility.py": "d9058cc11f8e3d9674f74407d5b6f17e8372e841654141623dbdb495cedf0760",
+    "services/analytics/behavior-analytics/apps/city/tests/test_mobility_curb.py": "a979a0976241437877354372fd3ed753e21142c9a93cbb7429e7ca130163cbf3"
+  },
+  "tests": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q services/analytics/behavior-analytics/apps/city/tests",
+    "result": "298 passed, 1 pre-existing Starlette TestClient deprecation warning",
+    "durationSeconds": 2.7,
+    "regressions": [
+      "Active queue summary survives scope archive while active events become unknown with no endedAt",
+      "Observed empty queue preserves measured maximum extent and original clearance flag",
+      "Completed curb visit counters and dwell survive archive",
+      "New normal scope starts without old mobility state",
+      "Later live observations do not change archived mobility"
+    ]
+  },
+  "archiveFields": {
+    "mobilitySnapshotBasis": "last-observed-before-boundary",
+    "observationEnd": {
+      "reason": "scenario-boundary",
+      "activeEventState": "unknown"
+    }
+  },
+  "runtimeMutation": false,
+  "deploymentNeeded": "Gateway restart at a parent-coordinated safe normal boundary; no native worker rebuild.",
+  "nativeWorkerSha256": "eb80007df4da6707c26902fc5aacbcbf485c07240e957d534b57b2d0ac8d16e8",
+  "limits": "CPU synthetic-observation tests verify archive semantics. Previously archived invalidated summaries cannot be reconstructed from this change; use their saved live traces."
+}

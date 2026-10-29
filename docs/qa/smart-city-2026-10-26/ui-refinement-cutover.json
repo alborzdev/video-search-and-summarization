@@ -1,0 +1,52 @@
+{
+  "schemaVersion": "city.ui-refinement-cutover.v1",
+  "at": "2026-10-26T06:48:34.782576+00:00",
+  "origin": "http://127.0.0.1:7782/?workspace=smart-city",
+  "package": "/home/sparkdev/vss/.spark/smart-city-ui/20261026T063508178935Z",
+  "imageId": "sha256:cb118065f43e6306a5413c5211c67208e54b69963385e57843078a2bd4fef86f",
+  "sourceSha256": "dc779f8f52de0ce9519a61ec43fd22131551dd9d35b8c7a4f035378055c654c5",
+  "artifactSha256": "fc1dc5efc4922ccfffe91123aff4bb48a986c36bd30a1b16259c33d3c524177c",
+  "buildId": "aAsiva7PdDs02hj5ZnymP",
+  "build": {
+    "tasksPassed": 10,
+    "tasksTotal": 10,
+    "duration": "2m8.988s",
+    "runtime": "runc; 2CPU,4GiB; no network or GPU; reused tested dependencies"
+  },
+  "verification": {
+    "reactTests": 61,
+    "mainAppTypeCheck": "passed",
+    "actualBrowser": "New Curb access card rendered 0 vehicles detected now and separately kept total occupancy unknown / 3 interrupted visits unresolved. Both analyzed cameras and registered map visible.",
+    "map": {
+      "status": 200,
+      "sha256": "b5e8efb8f7491d21da0c6fe1d1ccb80413dc604fa28f0d1586263b209b6430a1"
+    },
+    "containerState": {
+      "Status": "running",
+      "Running": true,
+      "Paused": false,
+      "Restarting": false,
+      "OOMKilled": false,
+      "Dead": false,
+      "Pid": 1559263,
+      "ExitCode": 0,
+      "Error": "",
+      "StartedAt": "2026-10-26T06:44:24.827741962Z",
+      "FinishedAt": "0001-01-01T00:00:00Z"
+    }
+  },
+  "changes": [
+    "Fresh zone-filtered observed detections, including zero, shown separately from unknown total occupancy.",
+    "Missing/stale/configuration-invalid observations remain unavailable.",
+    "Five pedestrian failure messages clarified; no unverified restoration claim on timeout."
+  ],
+  "rollback": ".spark/city/runtime/ui-curb-refresh-20261026T0644Z/previous-compose.json",
+  "composeChangeScope": [
+    "services.city-polish-ui.image"
+  ],
+  "resolvedInspectionIssue": "Initial filesystem inspection used /repo/public, which is not the standalone application directory. Correct nested application public path was then inspected and its map hash matched; served HTTP bytes also match.",
+  "limits": [
+    "This is packaging/browser acceptance, not a new endurance or semantic-model accuracy result.",
+    "Native tracker and scene behavior qualify separately."
+  ]
+}

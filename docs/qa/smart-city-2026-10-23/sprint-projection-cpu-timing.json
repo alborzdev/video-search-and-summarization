@@ -1,0 +1,22 @@
+{
+  "kind": "cpu-projection-microbenchmark",
+  "callsPerRepeat": 50000,
+  "repeats": 5,
+  "beforeSeconds": [
+    0.11456231772899628,
+    0.11021713307127357,
+    0.10864338278770447,
+    0.10894301673397422,
+    0.10831227898597717
+  ],
+  "afterSeconds": [
+    0.10697763366624713,
+    0.10695596877485514,
+    0.10673440108075738,
+    0.10680961841717362,
+    0.10692745819687843
+  ],
+  "beforeBestMicrosecondsPerCall": 2.1662455797195435,
+  "afterBestMicrosecondsPerCall": 2.1346880216151476,
+  "qualification": "CPU-only interleaved microbenchmark while the shared machine is active; no end-to-end performance claim. Before reproduces the previous projection algorithm with the same public guards and validator; after retains normalized coefficients for projection. Actual saved camera matrix, anchor (640,360), no optional region/bounds."
+}

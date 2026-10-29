@@ -1,0 +1,464 @@
+{
+  "failure": "SDK supplied duplicate local object IDs within one camera frame; gateway rejected422 and publisher stopped after3 failures",
+  "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+  "sequence": "1107",
+  "duplicateId": "9",
+  "detectorLog": ".spark/city/runtime/detector-20261023T192614Z.log",
+  "ambiguity": true,
+  "productionQualified": false,
+  "failedFrames": [
+    {
+      "schemaVersion": "city.observations.v1",
+      "siteId": "isaac-intersection-a",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sourceSessionId": "3c52767c-c209-4042-ae0c-f5b12a586794",
+      "sequence": "1107",
+      "sourceFrameId": "1598",
+      "sourceTimeNs": "1792783708221039667",
+      "timestampBasis": "source-rtcp",
+      "sourceEpochReason": null,
+      "mediaTimeSeconds": 129.868267,
+      "rawSourcePtsNs": "129945934963",
+      "mediaTimeBasis": "source-relative-pts",
+      "image": {
+        "width": 1280,
+        "height": 720
+      },
+      "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+      "rulesRevision": "272",
+      "trackingMode": "mv3dt-demo",
+      "fusionEpoch": "322220c1-a46a-4518-bc33-7614e77502c8",
+      "analyticsRevision": "0474347c-af95-49d7-84aa-fea891e1a283",
+      "objects": [
+        {
+          "localTrackId": "107",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "truck",
+          "confidence": 0.372048795,
+          "bboxPx": [
+            768.242188,
+            221.132812,
+            132.265625,
+            85.078125
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.381448627,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "107",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -27.8896465,
+              80.0567703
+            ],
+            "imageFootPx": [
+              829.946452,
+              290.391398
+            ],
+            "visibility": 0,
+            "state": "observed"
+          },
+          "nativeAnalytics": {
+            "roiStatus": [
+              "city_581d42acb63e6870"
+            ],
+            "lineCrossings": [],
+            "direction": ""
+          }
+        },
+        {
+          "localTrackId": "62",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "truck",
+          "confidence": 0.561214805,
+          "bboxPx": [
+            391.738281,
+            110.544434,
+            45.2734375,
+            42.2314453
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.880824745,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "62",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -22.4535198,
+              53.9751701
+            ],
+            "imageFootPx": [
+              417.254761,
+              148.313527
+            ],
+            "visibility": 0.667909265,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "116",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "truck",
+          "confidence": 0.807460666,
+          "bboxPx": [
+            974.101562,
+            148.710938,
+            104.296875,
+            47.6367188
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.658090472,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "116",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -42.783802,
+              77.1394501
+            ],
+            "imageFootPx": [
+              1019.73079,
+              193.861694
+            ],
+            "visibility": 0.91084516,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "100",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "car",
+          "confidence": 0.495117337,
+          "bboxPx": [
+            473.515625,
+            120.618896,
+            58.59375,
+            43.3520508
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.437183529,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "100",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -25.6492805,
+              59.0792046
+            ],
+            "imageFootPx": [
+              504.652262,
+              159.650157
+            ],
+            "visibility": 1,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "44",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "car",
+          "confidence": 0.662796497,
+          "bboxPx": [
+            357.744141,
+            84.276123,
+            28.2617188,
+            26.2133789
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.892733455,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "44",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -23.3392487,
+              39.0469742
+            ],
+            "imageFootPx": [
+              374.026937,
+              108.129954
+            ],
+            "visibility": 0.846253693,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "0",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "car",
+          "confidence": 0.766293645,
+          "bboxPx": [
+            419.628906,
+            140.449219,
+            51.9921875,
+            41.484375
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.904094517,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "0",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -22.0758095,
+              60.7811661
+            ],
+            "imageFootPx": [
+              447.918905,
+              176.241211
+            ],
+            "visibility": 1,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "114",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "car",
+          "confidence": 0.772530675,
+          "bboxPx": [
+            768.046875,
+            220.847168,
+            132.65625,
+            85.6494141
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.396020472,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "114",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -27.7630749,
+              80.1632156
+            ],
+            "imageFootPx": [
+              829.523763,
+              292.941833
+            ],
+            "visibility": 1,
+            "state": "observed"
+          },
+          "nativeAnalytics": {
+            "roiStatus": [
+              "city_581d42acb63e6870"
+            ],
+            "lineCrossings": [],
+            "direction": ""
+          }
+        },
+        {
+          "localTrackId": "121",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "person",
+          "confidence": 0.401687801,
+          "bboxPx": [
+            1251.48438,
+            461.535645,
+            28.28125,
+            40.9130859
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.79464525,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "121",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -28.1398373,
+              90.6542587
+            ],
+            "imageFootPx": [
+              1260.32104,
+              490.083781
+            ],
+            "visibility": 0.108845316,
+            "state": "observed"
+          },
+          "nativeAnalytics": {
+            "roiStatus": [
+              "city_c11e6442062e2a0a",
+              "city_1d1607eeab2e1d0d"
+            ],
+            "lineCrossings": [],
+            "direction": ""
+          }
+        },
+        {
+          "localTrackId": "85",
+          "globalTrackId": "mv3dt-demo:322220c1-a46a-4518-bc33-7614e77502c8:85",
+          "associationMethod": "mv3dt-demo",
+          "class": "person",
+          "confidence": 0.490235597,
+          "bboxPx": [
+            569.824219,
+            152.039795,
+            12.2265625,
+            39.2211914
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.252636313,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "85",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -25.7375565,
+              67.3386688
+            ],
+            "imageFootPx": [
+              577.271077,
+              197.978475
+            ],
+            "visibility": 0.714933872,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "9",
+          "globalTrackId": null,
+          "associationMethod": null,
+          "class": "person",
+          "confidence": 0.50683552,
+          "bboxPx": [
+            266.123047,
+            213.519287,
+            14.0039062,
+            26.8286133
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.282191485,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "9",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -14.2629509,
+              69.7053833
+            ],
+            "imageFootPx": [
+              286.6663,
+              271.575907
+            ],
+            "visibility": 0.188070238,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "120",
+          "globalTrackId": "mv3dt-demo:322220c1-a46a-4518-bc33-7614e77502c8:120",
+          "associationMethod": "mv3dt-demo",
+          "class": "person",
+          "confidence": 0.542863309,
+          "bboxPx": [
+            927.929688,
+            174.638672,
+            22.890625,
+            45.5273438
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.734713495,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "120",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -35.7927589,
+              77.8294296
+            ],
+            "imageFootPx": [
+              932.503662,
+              225.8408
+            ],
+            "visibility": 0.74480623,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "89",
+          "globalTrackId": "mv3dt-demo:322220c1-a46a-4518-bc33-7614e77502c8:89",
+          "associationMethod": "mv3dt-demo",
+          "class": "person",
+          "confidence": 0.662796497,
+          "bboxPx": [
+            582.016602,
+            151.270752,
+            14.7167969,
+            41.2866211
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.498879552,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "89",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -26.3360748,
+              67.4458694
+            ],
+            "imageFootPx": [
+              590.386149,
+              197.171183
+            ],
+            "visibility": 0.872877955,
+            "state": "observed"
+          }
+        },
+        {
+          "localTrackId": "9",
+          "globalTrackId": "mv3dt-demo:322220c1-a46a-4518-bc33-7614e77502c8:9",
+          "associationMethod": "mv3dt-demo",
+          "class": "person",
+          "confidence": 0.819893301,
+          "bboxPx": [
+            283.964844,
+            212.783203,
+            26.1328125,
+            56.7773438
+          ],
+          "observedThisFrame": true,
+          "trackerConfidence": 0.906537116,
+          "native3D": {
+            "method": "nvidia-mv3dt-9.2",
+            "targetId": "9",
+            "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+            "worldPositionM": [
+              -14.4892683,
+              70.0049362
+            ],
+            "imageFootPx": [
+              306.01355,
+              272.475566
+            ],
+            "visibility": 0.694596589,
+            "state": "observed"
+          },
+          "nativeAnalytics": {
+            "roiStatus": [
+              "city_581d42acb63e6870"
+            ],
+            "lineCrossings": [],
+            "direction": ""
+          }
+        }
+      ],
+      "nativeAnalyticsFrame": {
+        "roiCounts": {
+          "city_581d42acb63e6870": 3,
+          "city_1d1607eeab2e1d0d": 1,
+          "city_c11e6442062e2a0a": 1
+        },
+        "lineCrossingsCurrent": {},
+        "lineCrossingsCumulative": {}
+      }
+    }
+  ]
+}

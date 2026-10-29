@@ -5,8 +5,10 @@ import { DashPlaybackCapability } from "./DashPlaybackCapability";
 import type { MonitoringRule } from "./monitoringRules";
 import type { SystemPanel } from "./SystemWorkspace";
 import { demoServiceChecks, formatMemory, healthLabel, type SystemHealth } from "./systemHealth";
+import type { CityWorkspaceView } from './smart-city/types';
 import type { PrimarySection, VisionStream } from "./types";
 import {
+  IconShieldCheck,
   IconBell,
   IconBellCog,
   IconBulb,
@@ -43,6 +45,14 @@ const HomeWorkspace = dynamic(
   () => import("./HomeWorkspace").then((module) => module.HomeWorkspace),
   { loading: workspaceLoading("Home") }
 );
+const DefenseWorkspace = dynamic(
+  () => import("./DefenseWorkspace").then((module) => module.DefenseWorkspace),
+  { loading: workspaceLoading("Defense") }
+);
+const SmartCityWorkspace = dynamic(
+  () => import("./SmartCityWorkspace").then((module) => module.SmartCityWorkspace),
+  { loading: workspaceLoading("Smart City") }
+);
 const GuidedDemoWorkspace = dynamic(
   () => import("./GuidedDemoWorkspace").then((module) => module.GuidedDemoWorkspace),
   { loading: workspaceLoading("Video workflow") }
@@ -62,6 +72,14 @@ const ActivityInsightsWorkspace = dynamic(
 const VssStoryWorkspace = dynamic(
   () => import("./VssStoryWorkspace").then((module) => module.VssStoryWorkspace),
   { loading: workspaceLoading("Capabilities") }
+);
+const DefenseStoryWorkspace = dynamic(
+  () => import("./DefenseStoryWorkspace").then((module) => module.DefenseStoryWorkspace),
+  { ssr: false }
+);
+const SmartCityStoryWorkspace = dynamic(
+  () => import("./SmartCityStoryWorkspace").then((module) => module.SmartCityStoryWorkspace),
+  { loading: workspaceLoading("Smart City story") }
 );
 const AlertRulesWorkspace = dynamic(
   () => import("./AlertRulesWorkspace").then((module) => module.AlertRulesWorkspace),
@@ -136,6 +154,8 @@ const THEME_STORAGE_KEY = "ctai-vision-theme-v1";
 
 const sectionMeta: Record<PrimarySection, { eyebrow: string; title: string }> =
   {
+    defense: { eyebrow: "", title: "Defense" },
+    'smart-city': { eyebrow: "", title: "Smart City" },
     capabilities: { eyebrow: "Video Search & Summarization", title: "What it can do" },
     events: { eyebrow: "Evidence-led review", title: "Events & reports" },
     explore: { eyebrow: "Search video in your own words", title: "Search video" },
@@ -154,6 +174,8 @@ export default function VisionIntelligenceApp({
 }: VisionIntelligenceAppProps) {
   const router = useRouter();
   const primaryNav = useRef<HTMLElement>(null);
+  const cityScroll = useRef<HTMLDivElement>(null);
+  const cityStory = useRef<HTMLElement>(null);
   const [section, setSection] = useState<PrimarySection>(() =>
     parseWorkspace(router.query.workspace)
   );
@@ -168,6 +190,20 @@ export default function VisionIntelligenceApp({
   const [monitoringSourceId, setMonitoringSourceId] = useState<string | null>(null);
   const [pendingMonitoringSetup, setPendingMonitoringSetup] = useState<PendingMonitoringSetup | null>(null);
   const [presentationMode, setPresentationMode] = useState(false);
+  const [cityView, setCityView] = useState<CityWorkspaceView>('overview');
+  const changeCityView = useCallback((view: CityWorkspaceView) => {
+    setCityView(view);
+    cityScroll.current?.scrollTo?.({ top: 0, behavior: "auto" });
+  }, []);
+  const showCityStory = useCallback(() => {
+    const container = cityScroll.current;
+    const story = cityStory.current;
+    if (!container || !story) return;
+    container.scrollTo({
+      top: story.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+  }, []);
   const [systemPanel, setSystemPanel] = useState<SystemPanel>("overview");
   const [showSystemHealth, setShowSystemHealth] = useState(false);
   const [showThemeMenu, setShowThemeMenu] = useState(false);
@@ -199,7 +235,7 @@ export default function VisionIntelligenceApp({
       )
     : false;
   const resolvedTheme =
-    themePreference === "system"
+    (section === "smart-city" || section === "defense") ? "dark" : themePreference === "system"
       ? systemPrefersDark
         ? "dark"
         : "light"
@@ -364,6 +400,8 @@ export default function VisionIntelligenceApp({
 
   const navItems = useMemo(
     () => [
+      { icon: IconRoute, id: "smart-city" as const, label: "Smart City" },
+      { icon: IconShieldCheck, id: "defense" as const, label: "Defense" },
       { icon: IconVideo, id: "home" as const, label: "Live view" },
       { icon: IconRoute, id: "guided" as const, label: "Video workflow" },
       { icon: IconSearch, id: "explore" as const, label: "Search video" },
@@ -432,6 +470,64 @@ export default function VisionIntelligenceApp({
       data-theme={resolvedTheme}
       data-theme-preference={themePreference}
     >
+      {section === "capabilities" && ["smart-city", "defense"].includes(String(router.query.story)) && <style jsx global>{`
+        .vi-brand-v2.vi-tradeshow.vi-story-mode.is-presenting { grid-template-columns: minmax(0, 1fr); }
+      `}</style>}
+      {section === "smart-city" && <style jsx global>{`
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] { --vi-bg:#151617; --vi-surface:#1b1d1f; --vi-surface-hover:#232629; --vi-border:#303438; --vi-border-strong:#475057; --vi-text:#eff2f4; --vi-muted:#a3acb3; --vi-positive:#37d5c1; --vi-accent:#37d5c1; --vi-accent-strong:#58dfce; background:#151617; height:100dvh; min-height:0; max-height:100dvh; overflow:hidden; grid-template-columns:228px minmax(0,1fr); grid-template-rows:64px minmax(0,1fr); }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-side-nav { background:#151719; border-color:#303438; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-primary-nav { gap:6px; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-primary-nav button { min-height:46px; font-size:14px; border-radius:6px; color:#aab3ba; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-primary-nav button.is-active { background:#222c30; color:#f2f5f6; box-shadow:inset 3px 0 #37d5c1; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-primary-nav button.is-active svg { color:#37d5c1; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-bar { background:#151719; padding-inline:24px; gap:24px; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-title { flex:none; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-title strong { font-size:23px; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status { min-height:32px; padding:0 14px; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status strong { font-size:13px; font-weight:500; color:#c1c9cf; white-space:nowrap; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status em { display:none; }
+        .vi-city-tabs { display:flex; align-self:stretch; align-items:stretch; gap:22px; margin-right:auto; }
+        .vi-city-tabs button { padding:0 8px; border:0; border-bottom:2px solid transparent; color:#a7b1b8; background:transparent; font-family:inherit; font-size:14px; font-weight:500; line-height:1.3; cursor:pointer; white-space:nowrap; }
+        .vi-city-tabs button[aria-current=page] { border-bottom-color:#37d5c1; color:#f2f4f5; }
+        .vi-city-tabs button:hover { color:#fff; }
+        .vi-city-tabs button:focus-visible { outline:2px solid #37d5c1; outline-offset:-4px; }
+        @media(min-width:901px) and (max-width:1450px) { .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status { display:none; } .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-bar { gap:16px; } .vi-city-tabs { gap:10px; } }
+        @media(max-width:1100px) { .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-title strong { font-size:18px; } .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-presentation-button { width:36px; min-width:36px; padding:0; font-size:0; } }
+        @media(max-width:900px) { .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] { grid-template-columns:minmax(0,1fr); } .vi-city-tabs { gap:4px; } .vi-city-tabs button { font-size:12px; padding-inline:5px; } .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status { display:none; } }
+
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"].is-presenting { grid-template-columns: minmax(0, 1fr); }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-bar { height: 64px; min-height: 64px; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-theme-control { display: none; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-main { min-width: 0; padding: 0; }
+        .vi-city-scroll { height:100%; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior-y:contain; }
+        .vi-city-dashboard { height:100%; min-height:0; }
+        .vi-city-scroll[data-overview="true"] .vi-city-dashboard { height:calc(100% - 42px); }
+        .vi-city-story-cue { width:100%; height:42px; border:0; border-top:1px solid #303438; background:#171a1b; color:#a9dcd2; font:inherit; font-size:12px; cursor:pointer; }
+        .vi-city-story-cue:hover { background:#202a29; color:#e8fffa; }
+        .vi-city-story-cue:focus-visible { outline:2px solid #37d5c1; outline-offset:-3px; }
+        @media (max-width: 900px) {
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] { grid-template-rows:104px minmax(0,1fr); }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-bar { display:grid; grid-template-columns:minmax(0,1fr) 36px; grid-template-rows:40px 44px; height:104px; min-height:104px; padding:8px 12px 0; gap:4px 8px; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-title { grid-column:1; grid-row:1; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-actions { grid-column:2; grid-row:1; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-city-tabs { grid-column:1/-1; grid-row:2; width:100%; justify-content:space-between; margin:0; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-city-tabs button { font-size:13px; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-main { overflow:auto; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"]:not(.is-presenting) .vi-main { padding-bottom: 76px; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-bar { padding-inline: 12px; gap: 8px; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-title { flex: 1; min-width: 0; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-actions { flex: 0 0 auto; min-width: 0; gap: 4px; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status { min-width: 28px; padding: 0; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-presentation-button { flex-shrink: 0; width: 36px; min-width: 36px; padding: 0; margin:0; font-size: 0; }
+          .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-more-button { display: none; }
+        }
+        .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-main { overflow:hidden; }
+        @media(max-width:760px) { .vi-city-dashboard, .vi-city-scroll[data-overview="true"] .vi-city-dashboard { height:auto; min-height:100%; } }
+      `}</style>}
+      {section === "defense" && <style jsx global>{`
+        .vi-brand-v2.vi-tradeshow[data-workspace="defense"] .vi-main { min-width: 0; padding: 0; }
+        .vi-brand-v2.vi-tradeshow[data-workspace="defense"].is-presenting { grid-template-columns: minmax(0, 1fr); }
+      `}</style>}
       <aside className="vi-side-nav">
         <button
           className="vi-wordmark"
@@ -484,11 +580,11 @@ export default function VisionIntelligenceApp({
 
       <header className="vi-context-bar">
         <div className="vi-context-title">
-          <span>{sectionMeta[section].eyebrow}</span>
-          <strong>{sectionMeta[section].title}</strong>
+          {section === "smart-city" && presentationMode ? <div style={{ display: "flex", alignItems: "center", gap: 16 }}><img src="/ctai-labs-horizontal-white.png" alt="CTAI Labs" style={{ width: "clamp(70px, 10vw, 140px)", height: "auto" }} /><strong style={{ whiteSpace: "nowrap" }}>Smart City</strong></div> : <><span>{sectionMeta[section].eyebrow}</span><strong style={section === "smart-city" ? { whiteSpace: "nowrap" } : undefined}>{sectionMeta[section].title}</strong></>}
         </div>
+        {section === 'smart-city' && <nav className="vi-city-tabs" aria-label="Smart City views">{(['overview', 'measurements', 'search', 'edge'] as const).map(view => <button key={view} type="button" aria-current={cityView === view ? 'page' : undefined} onClick={() => changeCityView(view)}>{view === 'overview' ? 'Overview' : view === 'measurements' ? 'Measurements' : view === 'edge' ? 'Why edge AI' : 'Search & reports'}</button>)}</nav>}
         <div className="vi-context-actions">
-          <ClearHistoryControl />
+          <ClearHistoryControl hideTrigger={section === "smart-city" || section === "defense"} />
           <button
             className="vi-processing-status"
             type="button"
@@ -498,7 +594,7 @@ export default function VisionIntelligenceApp({
           >
             <span className={presentationMode ? "is-presentation" : `is-${localProcessingStatus}`} />
             <div>
-              <strong>LOCAL PROCESSING</strong>
+              <strong>{section === 'smart-city' ? `On device · ${systemHealth?.hardwareProfile === 'DGX-SPARK' ? 'DGX Spark' : systemHealth?.thor ? 'Jetson Thor' : 'Local AI'}` : 'LOCAL PROCESSING'}</strong>
               <em>
                 {presentationMode
                   ? "ON THIS DEVICE"
@@ -697,6 +793,25 @@ export default function VisionIntelligenceApp({
       )}
 
       <main className="vi-main">
+        {section === "defense" && <DefenseWorkspace onOpenExplainer={() => { setSection("capabilities"); void router.push(workspaceHref("capabilities", { ...router.query, story: "defense" }), undefined, { shallow: true, scroll: false }); }} onOpenSources={() => { setSystemPanel("sources"); navigateToSection("system"); }} />}
+        {section === "smart-city" && (
+          <div ref={cityScroll} className="vi-city-scroll" data-city-scroll data-overview={cityView === "overview"}>
+            <div className="vi-city-dashboard">
+              <SmartCityWorkspace activeView={cityView} onViewChange={changeCityView} vstApiUrl={vstApiUrl} onOpenExplainer={showCityStory} />
+            </div>
+            {cityView === "overview" && <>
+              <button type="button" className="vi-city-story-cue" onClick={showCityStory}>Scroll to explore how Smart City works ↓</button>
+              <section ref={cityStory} aria-label="How Smart City works">
+                <SmartCityStoryWorkspace
+                  embedded
+                  onOpenDemo={() => changeCityView("overview")}
+                  onOpenGeneral={() => { setSection("capabilities"); void router.push(workspaceHref("capabilities", { ...router.query, story: "general" }), undefined, { shallow: true, scroll: false }); }}
+                  systemHealth={systemHealth}
+                />
+              </section>
+            </>}
+          </div>
+        )}
         {section === "guided" && (
           <GuidedDemoWorkspace
             agentApiUrl={searchData?.agentApiUrl}
@@ -762,9 +877,25 @@ export default function VisionIntelligenceApp({
             vstApiUrl={vstApiUrl}
           />
         )}
-        {section === "capabilities" && (
+        {section === "capabilities" && router.query.story === "smart-city" && (
+          <SmartCityStoryWorkspace
+            onOpenDemo={() => navigateToSection("smart-city")}
+            onOpenGeneral={() => void router.push(workspaceHref("capabilities", { ...router.query, story: "general" }), undefined, { shallow: true, scroll: false })}
+            systemHealth={systemHealth}
+          />
+        )}
+        {section === "capabilities" && router.query.story === "defense" && (
+          <DefenseStoryWorkspace
+            onOpenDemo={() => navigateToSection("defense")}
+            onOpenGeneral={() => void router.push(workspaceHref("capabilities", { ...router.query, story: "general" }), undefined, { shallow: true, scroll: false })}
+            systemHealth={systemHealth}
+          />
+        )}
+        {section === "capabilities" && !["smart-city", "defense"].includes(String(router.query.story)) && (
           <VssStoryWorkspace
             onOpenDemo={() => navigateToSection("guided")}
+            onOpenDefenseStory={() => void router.push(workspaceHref("capabilities", { ...router.query, story: "defense" }), undefined, { shallow: true, scroll: false })}
+            onOpenCityStory={() => void router.push(workspaceHref("capabilities", { ...router.query, story: "smart-city" }), undefined, { shallow: true, scroll: false })}
             systemHealth={systemHealth}
           />
         )}

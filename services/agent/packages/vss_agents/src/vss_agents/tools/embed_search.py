@@ -34,6 +34,7 @@ from pydantic import BaseModel
 from pydantic import Field
 
 from vss_agents.embed.cosmos_embed import CosmosEmbedClient
+from vss_agents.tools.embed_search_scope import exact_source_scope_filters
 from vss_agents.tools.vst.snapshot import build_screenshot_url
 from vss_agents.utils.es_client import VSSESClient
 from vss_agents.utils.time_convert import datetime_to_iso8601
@@ -234,6 +235,10 @@ def _build_es_query(query_input: QueryInput, query_embedding: list[float], confi
     Returns:
         The search query body.
     """
+    # Validate explicit booth scope before legacy permissive timestamp/name
+    # parsing. Invalid selected intervals must not silently become global.
+    explicit_scope = exact_source_scope_filters(query_input.params)
+
     # Extract parameters from QueryInput
     video_sources_str = query_input.params.get("video_sources", "")
     top_k_str = query_input.params.get("top_k", "")
@@ -275,7 +280,7 @@ def _build_es_query(query_input: QueryInput, query_embedding: list[float], confi
             logger.warning(f"Failed to parse timestamp_end: {e}")
 
     # Build filter conditions
-    filters: list[dict[str, Any]] = []
+    filters: list[dict[str, Any]] = list(explicit_scope)
 
     # Add video_sources filter if provided
     # Two-tier approach: resolved UUIDs get a single `terms` clause (O(1) hash lookup),

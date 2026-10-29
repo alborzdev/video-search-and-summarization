@@ -1,0 +1,169 @@
+{
+  "schemaVersion": "city.people-startup-motion.v1",
+  "state": "passed",
+  "reason": "eight-native-motion-tasks-and-observed-displacements",
+  "passed": true,
+  "elapsedWallSeconds": 40.81878386903554,
+  "elapsedSimSeconds": 18.30000000000047,
+  "controllerTickDelta": 1098,
+  "maximumWallSeconds": 120.0,
+  "thresholdMetres": 0.5,
+  "observedMovingWalkers": 8,
+  "expectedWalkers": 8,
+  "dependenciesReady": true,
+  "walkers": {
+    "Character": {
+      "positionM": [
+        -11.144457817077637,
+        70.1142578125,
+        0.0349210686981678
+      ],
+      "agentPresent": true,
+      "state": "signal-wait",
+      "command": "CrossWalk",
+      "taskId": 38,
+      "nativeMotionActive": false,
+      "rejoinPending": false,
+      "reason": "signalNotWalk",
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 34,
+      "maximumObservedMotionMetres": 3.0064717486442496
+    },
+    "Character_01": {
+      "positionM": [
+        -36.43439483642578,
+        89.45191955566406,
+        0.03497486561536789
+      ],
+      "agentPresent": true,
+      "state": "signal-wait",
+      "command": "CrossWalk",
+      "taskId": 41,
+      "nativeMotionActive": false,
+      "rejoinPending": false,
+      "reason": "signalNotWalk",
+      "fails": 1,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 40,
+      "maximumObservedMotionMetres": 4.782913835679671
+    },
+    "Character_02": {
+      "positionM": [
+        -36.84994888305664,
+        66.76930236816406,
+        0.029410595074295998
+      ],
+      "agentPresent": true,
+      "state": "moving",
+      "command": "CrossWalk",
+      "taskId": 42,
+      "nativeMotionActive": true,
+      "rejoinPending": false,
+      "reason": "usable-walk-and-cohort-ready",
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 42,
+      "maximumObservedMotionMetres": 0.6872522367247064
+    },
+    "Character_03": {
+      "positionM": [
+        -14.411791801452637,
+        90.32435607910156,
+        0.032490286976099014
+      ],
+      "agentPresent": true,
+      "state": "signal-wait",
+      "command": "CrossWalk",
+      "taskId": 33,
+      "nativeMotionActive": false,
+      "rejoinPending": false,
+      "reason": "normal-cohort-served-this-walk",
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 23,
+      "maximumObservedMotionMetres": 1.6978219105298469
+    },
+    "Character_04": {
+      "positionM": [
+        -14.50536060333252,
+        66.8247299194336,
+        0.028471115976572037
+      ],
+      "agentPresent": true,
+      "state": "signal-wait",
+      "command": "CrossWalk",
+      "taskId": 39,
+      "nativeMotionActive": false,
+      "rejoinPending": false,
+      "reason": "normal-cohort-served-this-walk",
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 35,
+      "maximumObservedMotionMetres": 4.314596829690541
+    },
+    "Character_05": {
+      "positionM": [
+        -37.8463134765625,
+        90.32908630371094,
+        0.038957491517066956
+      ],
+      "agentPresent": true,
+      "state": "signal-wait",
+      "command": "CrossWalk",
+      "taskId": 37,
+      "nativeMotionActive": false,
+      "rejoinPending": false,
+      "reason": "normal-cohort-served-this-walk",
+      "fails": 1,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 27,
+      "maximumObservedMotionMetres": 4.261063262049598
+    },
+    "Character_06": {
+      "positionM": [
+        0.010041795670986176,
+        53.26469039916992,
+        0.0474892258644104
+      ],
+      "agentPresent": true,
+      "state": "moving",
+      "command": "GoTo",
+      "taskId": 36,
+      "nativeMotionActive": true,
+      "rejoinPending": false,
+      "reason": "sidewalk-leg",
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 36,
+      "maximumObservedMotionMetres": 16.614963082590023
+    },
+    "Character_07": {
+      "positionM": [
+        -47.79100799560547,
+        91.47364807128906,
+        0.03992452472448349
+      ],
+      "agentPresent": true,
+      "state": "moving",
+      "command": "GoTo",
+      "taskId": 24,
+      "nativeMotionActive": true,
+      "rejoinPending": false,
+      "reason": "sidewalk-leg",
+      "fails": 0,
+      "rejects": 0,
+      "timeouts": 0,
+      "acceptedMotionTaskId": 24,
+      "maximumObservedMotionMetres": 20.140699893000185
+    }
+  },
+  "scope": "Read-only startup motion proof; valid waits do not replace movement and do not erase prior proof."
+}

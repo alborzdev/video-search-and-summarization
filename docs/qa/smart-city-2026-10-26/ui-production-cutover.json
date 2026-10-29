@@ -1,0 +1,460 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-26T05:38:43.623243Z",
+  "status": "production-deployed-http-verified-browser-pending",
+  "packageDir": ".spark/smart-city-ui/20261026T052920432329Z",
+  "sourceSha256": "9812ce4f10c1e37dab38bb99cdb9c2b66e732267f3f1ea2b773393aac89db9d3",
+  "sourceHashReverifiedBeforeCutover": true,
+  "lockSha256": "b937110179a40d8e7cb22ba570481ae759759ac2f746b450e925dcd652e40daa",
+  "dependencyMode": "reuse-installed",
+  "dependencyTreeSha256": "55eabe10c588c158c43cdd577805b881ee171a356c2768d8be125a4686c55567",
+  "artifactSha256": "603f2c362ea52e089f789ee325d238f2f6b89884a4bad2725503cd512647a6fd",
+  "imageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+  "imageReference": "vss-spark-vss-ui:smart-city-9812ce4f10c1-20261026t052920432329z",
+  "baseImageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+  "fallbackReference": "vss-spark-vss-ui:pre-city-0510e98cab54",
+  "build": {
+    "tasksPassed": 10,
+    "tasksTotal": 10,
+    "compileDurationSeconds": 135.412,
+    "maximumSeconds": 1200,
+    "runtime": {
+      "containerName": "city-ui-compile-20261026t052920432329z",
+      "imageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+      "state": "running",
+      "runtime": "runc",
+      "networkMode": "none",
+      "memoryBytes": 4294967296,
+      "memorySwapBytes": 4294967296,
+      "nanoCpus": 2000000000,
+      "pidsLimit": 512,
+      "deviceRequests": null,
+      "gpuVisibility": {
+        "NVIDIA_VISIBLE_DEVICES": "void",
+        "CUDA_VISIBLE_DEVICES": ""
+      },
+      "nodeOptions": "--max-old-space-size=2048"
+    },
+    "logs": {
+      "compile.log": {
+        "path": ".spark/smart-city-ui/20261026T052920432329Z/compile.log",
+        "sha256": "b6aeb4ae5c7e2cf0249bde43bd13cbddacd9e8edd159ee687fa5779e6cffc9ae"
+      },
+      "image.log": {
+        "path": ".spark/smart-city-ui/20261026T052920432329Z/image.log",
+        "sha256": "d453f7b188da4eba3f306988ad138b75f8c31af830046db2cc587d1bfe535f1c"
+      },
+      "final-focused-ui-tests.log": {
+        "path": ".spark/smart-city-ui/20261026T052920432329Z/final-focused-ui-tests.log",
+        "sha256": "80dd5c37a0ebb3796ab17675df8cf47c27d046e4fc69500d7b19af36662d10f9"
+      },
+      "cutover-compose.log": {
+        "path": ".spark/smart-city-ui/20261026T052920432329Z/cutover-compose.log",
+        "sha256": "e9aa956eb2f39f32552354966988216fb381c5b40e8ea0d6466540a6b4e7535c"
+      }
+    }
+  },
+  "focusedUiTests": {
+    "success": true,
+    "numPassedTests": 127,
+    "numFailedTests": 0,
+    "numPendingTests": 0,
+    "numTotalTests": 127,
+    "numPassedTestSuites": 8,
+    "numFailedTestSuites": 0,
+    "numTotalTestSuites": 8,
+    "startTime": 1792992911577,
+    "exitCode": 0,
+    "testFiles": [
+      "components/vision-intelligence/__tests__/CityDemoControls.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/SmartCityWorkspace.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityIndexingControl.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityInspector.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityCaptureEvidenceDrawer.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityMobilityPanel.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityCamera.test.tsx",
+      "__tests__/api/vision/city-indexing.test.ts"
+    ],
+    "execution": "Existing source-mounted UI container; CPU Jest only; no API/model calls",
+    "command": [
+      "docker",
+      "exec",
+      "-e",
+      "NODE_OPTIONS=--max-old-space-size=2048",
+      "-w",
+      "/workspace/apps/nv-metropolis-bp-vss-ui",
+      "vss-city-polish-ui",
+      "node",
+      "../../node_modules/jest/bin/jest.js",
+      "--runInBand",
+      "--json",
+      "--outputFile=/tmp/city-ui-final-focused-20261026.json",
+      "components/vision-intelligence/__tests__/CityDemoControls.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/SmartCityWorkspace.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityIndexingControl.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityInspector.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityCaptureEvidenceDrawer.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityMobilityPanel.test.tsx",
+      "components/vision-intelligence/smart-city/__tests__/CityCamera.test.tsx",
+      "__tests__/api/vision/city-indexing.test.ts"
+    ]
+  },
+  "mainAppTypecheck": {
+    "exitCode": 0,
+    "observedBy": "Parent agent actual process session 11645, reported completed approximately 05:28 UTC; not rerun concurrently with production compiler",
+    "command": [
+      "docker",
+      "exec",
+      "-e",
+      "NODE_OPTIONS=--max-old-space-size=2048",
+      "-w",
+      "/workspace/apps/nv-metropolis-bp-vss-ui",
+      "vss-city-polish-ui",
+      "node",
+      "../../node_modules/typescript/bin/tsc",
+      "--noEmit",
+      "--incremental",
+      "false"
+    ]
+  },
+  "artifactFilesystemCheck": {
+    "serverExists": true,
+    "indexingApiExists": true,
+    "scenarioApiExists": true,
+    "mapSha256": "b5e8efb8f7491d21da0c6fe1d1ccb80413dc604fa28f0d1586263b209b6430a1",
+    "mapMode": "755",
+    "mapOwner": 65532,
+    "mapGroup": 65532,
+    "buildId": "dX-0FaFKqbHq8mwxGyp0s",
+    "user": 65532,
+    "group": 1000,
+    "imageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+    "verification": "CPU-only immutable image filesystem inspection; application server not started; no network/model requests"
+  },
+  "isolatedOverlayPreflight": {
+    "packageDir": ".spark/smart-city-ui/20261026T052920432329Z",
+    "status": "built-not-deployed",
+    "sourceSha256": "9812ce4f10c1e37dab38bb99cdb9c2b66e732267f3f1ea2b773393aac89db9d3",
+    "imageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+    "imageReference": "vss-spark-vss-ui:smart-city-9812ce4f10c1-20261026t052920432329z",
+    "isolatedOverlay": ".spark/smart-city-ui/20261026T052920432329Z/compose-city-polish-production.json",
+    "isolatedOverlaySha256": "106240e7d55bb30c0d163e9454fb06b30907625954a96618f1e256a5149869b3",
+    "renderedPreflight": {
+      "project": "vss-city-polish",
+      "service": "city-polish-ui",
+      "services": [
+        "city-polish-ingress",
+        "city-polish-ui"
+      ],
+      "runtime": "runc",
+      "workingDirectory": "/repo",
+      "user": "65532:1000",
+      "command": [
+        "node",
+        "custom-server.js"
+      ],
+      "memoryBytes": "2147483648",
+      "memorySwapBytes": "2147483648",
+      "cpus": 2,
+      "host": "127.0.0.1",
+      "port": "7781",
+      "nodeEnvironment": "production",
+      "nodeOptions": "--max-old-space-size=1024",
+      "mountTargets": [
+        "/data/vision-investigations",
+        "/data/vision-history",
+        "/data/vision-rules"
+      ],
+      "sourceOrCacheMounts": false
+    },
+    "rollbackFiles": {
+      ".spark/city/polish-ui-compose.json": "c7613b7433c5cd192a41270f424038b9aefeb666743ca30586680e76a0fd330d",
+      ".spark/city/polish-ui-dev.json": "83562763fc1713e2fe10f7fcd78432aebe4d0d33dd057679679237608bfcd816",
+      ".spark/city/polish-ui-pre-sprint-production.json": "b05effdc778bb1bf12e32c0c9de11cda093c9fdf68844b7cae8e265a6848d90f"
+    },
+    "deploymentPerformed": false
+  },
+  "cutover": {
+    "exitCode": 0,
+    "imageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+    "canonicalFile": ".spark/city/polish-ui-compose.json",
+    "canonicalSha256": "ddce8c661f7f2f199b53a03bb48b30b3744768a4ee65d03e81fe08dd0e5aafb9",
+    "changedUiFields": [
+      "image"
+    ],
+    "ingressConfigurationUnchanged": true,
+    "dataMountsUnchanged": true,
+    "command": [
+      "docker",
+      "compose",
+      "--project-name",
+      "vss-city-polish",
+      "-f",
+      "/home/sparkdev/vss/.spark/city/polish-ui-compose.json",
+      "up",
+      "-d",
+      "--no-deps",
+      "--force-recreate",
+      "--no-build",
+      "--pull",
+      "never",
+      "city-polish-ui"
+    ],
+    "log": ".spark/smart-city-ui/20261026T052920432329Z/cutover-compose.log",
+    "archivedPreviousCanonical": ".spark/city/runtime/ui-production-cutover-20261026T053626Z/polish-ui-compose.json",
+    "sourceSha256": "9812ce4f10c1e37dab38bb99cdb9c2b66e732267f3f1ea2b773393aac89db9d3"
+  },
+  "preCutover": {
+    "preparedAt": "2026-10-26T05:36:26.865112Z",
+    "sourceSha256": "9812ce4f10c1e37dab38bb99cdb9c2b66e732267f3f1ea2b773393aac89db9d3",
+    "expectedSourceSha256": "9812ce4f10c1e37dab38bb99cdb9c2b66e732267f3f1ea2b773393aac89db9d3",
+    "sourceMatch": true,
+    "packageDir": ".spark/smart-city-ui/20261026T052920432329Z",
+    "archiveDir": ".spark/city/runtime/ui-production-cutover-20261026T053626Z",
+    "imageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+    "files": [
+      {
+        "source": ".spark/city/polish-ui-compose.json",
+        "archive": ".spark/city/runtime/ui-production-cutover-20261026T053626Z/polish-ui-compose.json",
+        "sha256": "c7613b7433c5cd192a41270f424038b9aefeb666743ca30586680e76a0fd330d"
+      },
+      {
+        "source": ".spark/city/polish-ui-dev.json",
+        "archive": ".spark/city/runtime/ui-production-cutover-20261026T053626Z/polish-ui-dev.json",
+        "sha256": "83562763fc1713e2fe10f7fcd78432aebe4d0d33dd057679679237608bfcd816"
+      },
+      {
+        "source": ".spark/city/polish-ui-pre-sprint-production.json",
+        "archive": ".spark/city/runtime/ui-production-cutover-20261026T053626Z/polish-ui-pre-sprint-production.json",
+        "sha256": "b05effdc778bb1bf12e32c0c9de11cda093c9fdf68844b7cae8e265a6848d90f"
+      }
+    ],
+    "uiBefore": {
+      "containerId": "7d75bd04c969ca3591cb30a4187a4f0b76d8960612f92e17a922bb759b41e892",
+      "imageId": "sha256:3134f445308c4ccf95d4b28b01b4b9b8e0a1f120957900c17b6f1f1c27d60f8e",
+      "status": "running",
+      "startedAt": "2026-10-26T04:33:49.028763122Z",
+      "oomKilled": false,
+      "command": [
+        "umask 0002; exec node ../../node_modules/next/dist/bin/next dev --turbopack -H 127.0.0.1 -p 7781"
+      ],
+      "entrypoint": [
+        "/bin/sh",
+        "-ec"
+      ],
+      "user": "65532:1000",
+      "project": "vss-city-polish",
+      "service": "city-polish-ui",
+      "mountTargets": [
+        "/workspace/external/vios-dash",
+        "/data/vision-investigations",
+        "/data/vision-history",
+        "/data/vision-rules",
+        "/workspace",
+        "/workspace/apps/nv-metropolis-bp-vss-ui/.next",
+        "/workspace/apps/nv-metropolis-bp-vss-ui/public"
+      ]
+    },
+    "ingressBefore": {
+      "containerId": "e4a1c2bb9b468b1734506f09c92cc3ad3511974033714009e849393b3d1cdaed",
+      "imageId": "sha256:d84eb36e91830bcaa67b23cfde1909850b99f11eb60da3abd185bd0daf3f75bb",
+      "status": "running",
+      "startedAt": "2026-10-22T14:30:57.879750392Z",
+      "oomKilled": false,
+      "command": [
+        "haproxy",
+        "-f",
+        "/usr/local/etc/haproxy/haproxy.cfg"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "user": "haproxy",
+      "project": "vss-city-polish",
+      "service": "city-polish-ingress",
+      "mountTargets": [
+        "/usr/local/etc/haproxy/haproxy.cfg"
+      ]
+    },
+    "streamsBefore": [
+      {
+        "camera_id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "camera_name": "isaac-intersection-southwest",
+        "status": "running"
+      },
+      {
+        "camera_id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "camera_name": "isaac-intersection-northeast",
+        "status": "running"
+      }
+    ]
+  },
+  "verification": {
+    "verifiedAt": "2026-10-26T05:37:37.945047Z",
+    "result": "pass",
+    "httpChecks": [
+      {
+        "route": "smart-city page",
+        "httpStatus": 200,
+        "bytes": 14396,
+        "elapsedMs": 719.2,
+        "buildIdMatches": true
+      },
+      {
+        "route": "static map",
+        "httpStatus": 200,
+        "elapsedMs": 7.39,
+        "sha256": "b5e8efb8f7491d21da0c6fe1d1ccb80413dc604fa28f0d1586263b209b6430a1",
+        "sourceMapMatches": true
+      },
+      {
+        "route": "city health proxy",
+        "httpStatus": 200,
+        "elapsedMs": 5.18,
+        "status": "ok",
+        "sources": [
+          {
+            "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+            "status": "live"
+          },
+          {
+            "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+            "status": "live"
+          }
+        ],
+        "nativeRevision": 365,
+        "nativeOperationalStatus": "fresh"
+      },
+      {
+        "route": "finite indexing status proxy",
+        "httpStatus": 200,
+        "elapsedMs": 36.08,
+        "state": "completed",
+        "sessionId": "4576ea61-1ebe-4bce-bb3a-4b715511afc6",
+        "generationConnected": false,
+        "mode": "on-demand"
+      },
+      {
+        "route": "scenario status proxy",
+        "httpStatus": 200,
+        "elapsedMs": 35.0,
+        "schemaVersion": "city.tradeshow-control.v1",
+        "state": null,
+        "active": null
+      },
+      {
+        "route": "processed preview proxy",
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "httpStatus": 200,
+        "elapsedMs": 19.63,
+        "sequence": "4805",
+        "sessionId": "dd16c922-b4c1-4245-a7d6-477a278e9fdc",
+        "sourceSessionId": "dd16c922-b4c1-4245-a7d6-477a278e9fdc",
+        "sourceTimeNs": "1792993058320198623",
+        "image": {
+          "width": 960,
+          "height": 540,
+          "jpegWidth": 960,
+          "jpegHeight": 540,
+          "mimeType": "image/jpeg"
+        },
+        "identityAndJpegValid": true
+      },
+      {
+        "route": "processed preview proxy",
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "httpStatus": 200,
+        "elapsedMs": 4.66,
+        "sequence": "4708",
+        "sessionId": "c913d4ce-f52b-43dd-be5a-4e1b62231399",
+        "sourceSessionId": "c913d4ce-f52b-43dd-be5a-4e1b62231399",
+        "sourceTimeNs": "1792993057773188778",
+        "image": {
+          "width": 960,
+          "height": 540,
+          "jpegWidth": 960,
+          "jpegHeight": 540,
+          "mimeType": "image/jpeg"
+        },
+        "identityAndJpegValid": true
+      }
+    ],
+    "uiAfter": {
+      "containerId": "57cf3cdb70ffa83b99e23d670d3d75453a74367a7ba48741cbf0a51b39ffd4f0",
+      "imageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+      "status": "running",
+      "startedAt": "2026-10-26T05:36:51.095087302Z",
+      "oomKilled": false,
+      "command": [
+        "node",
+        "custom-server.js"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "workingDirectory": "/repo",
+      "user": "65532:1000",
+      "runtime": "runc",
+      "memoryBytes": 2147483648,
+      "memorySwapBytes": 2147483648,
+      "nanoCpus": 2000000000,
+      "project": "vss-city-polish",
+      "service": "city-polish-ui",
+      "mountTargets": [
+        "/data/vision-rules",
+        "/data/vision-investigations",
+        "/data/vision-history"
+      ]
+    },
+    "ingressAfter": {
+      "containerId": "e4a1c2bb9b468b1734506f09c92cc3ad3511974033714009e849393b3d1cdaed",
+      "imageId": "sha256:d84eb36e91830bcaa67b23cfde1909850b99f11eb60da3abd185bd0daf3f75bb",
+      "status": "running",
+      "startedAt": "2026-10-22T14:30:57.879750392Z",
+      "oomKilled": false,
+      "command": [
+        "haproxy",
+        "-f",
+        "/usr/local/etc/haproxy/haproxy.cfg"
+      ],
+      "entrypoint": [
+        "docker-entrypoint.sh"
+      ],
+      "workingDirectory": "/var/lib/haproxy",
+      "user": "haproxy",
+      "runtime": "runc",
+      "memoryBytes": 134217728,
+      "memorySwapBytes": 134217728,
+      "nanoCpus": 500000000,
+      "project": "vss-city-polish",
+      "service": "city-polish-ingress",
+      "mountTargets": [
+        "/usr/local/etc/haproxy/haproxy.cfg"
+      ]
+    },
+    "ingressContainerUnchanged": true,
+    "controllerStreamsAfter": [
+      {
+        "camera_id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "camera_name": "isaac-intersection-southwest",
+        "status": "running"
+      },
+      {
+        "camera_id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "camera_name": "isaac-intersection-northeast",
+        "status": "running"
+      }
+    ],
+    "controllerRegistrationsUnchanged": true,
+    "scope": "UI-only production cutover; GET/static checks only, no model requests; root browser/rehearsal/performance checks remain separate"
+  },
+  "browserStatus": "Pending root agent actual rendered-browser reload and inspection after this production cutover. Earlier source-mode browser observations remain separate.",
+  "limits": [
+    "HTTP timings are individual startup checks, not a performance benchmark.",
+    "No model requests, new inference, scenario start, or accuracy evaluation were issued by build/cutover verification.",
+    "Only isolated city-polish-ui was recreated. Shared port 7777, ingress container, controller registrations, backend/model services and Isaac were not recreated by these commands.",
+    "Long integrated endurance and measured final FPS remain separate.",
+    "Existing non-blocking React hook and Browserslist data warnings remain; dependencies were not upgraded."
+  ],
+  "buildContainersRemaining": []
+}

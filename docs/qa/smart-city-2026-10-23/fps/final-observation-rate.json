@@ -1,0 +1,16 @@
+{
+  "acceptedAsWorkingDemoBenchmark": true,
+  "sampledSeconds": 58.811189281754196,
+  "observationFps": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": 11.83448266392956,
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 11.83448266392956
+  },
+  "observationCounts": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": 696,
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 696
+  },
+  "reader": "rotation-aware operational soak reader",
+  "observedRotations": 1,
+  "sourceReceipt": "final-pipeline-60s.json",
+  "sourceSamplesSha256": "2c9b0f725a2121b3a577188d1c06ba1fde0ee403d1d55292e8f25dbd784f07aa"
+}

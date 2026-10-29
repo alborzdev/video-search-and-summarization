@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "city.target-preparation.v1",
+  "target": "Jetson Thor / Connect Tech Anvil-T5",
+  "qualification": "Prepared configuration; no Thor execution was performed on the Spark host.",
+  "deepstream": "9.2",
+  "candidateImage": "ghcr.io/nvidia/deepstream:9.2-samples-multiarch",
+  "jetpack": "7.2.1 GA",
+  "l4t": "39.2",
+  "cuda": "13.2",
+  "source": "https://docs.nvidia.com/deepstream/text/DS_Installation",
+  "hostPolicy": "Verify Connect Tech BSP support first. Do not flash or change the target's existing BSP from this preparation workflow.",
+  "memoryPolicy": "Preserve the actual target's saved .thor/settings.json reserve and active guard. Do not initialize or lower it from Spark.",
+  "enginePolicy": "Rebuild from the pinned ONNX on the actual Thor GPU and record its local build and inference receipts. Never copy the Spark TensorRT engine or native binaries.",
+  "requiredChecks": [
+    "Actual Anvil-T5 BSP, JetPack, driver and selected DeepStream package compatibility",
+    "Compiler and CUDA build tooling in the chosen Jetson build environment",
+    "Linear CUDA RGBA input, GPU conversion/copy and CUDA NvDCF memory paths",
+    "Target-specific hardware decode and bounded CPU fallback if explicitly configured",
+    "Reference/ONNX/TensorRT/DeepStream positive and negative controls",
+    "Two actual RTSP sources, frame clock alignment, rule reloads and evidence",
+    "Concurrent Cosmos/semantic services and saved-reserve endurance"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "city.native-sei-public-proxy-repair.v1",
+  "at": "2026-10-26T10:29:10.454106+00:00",
+  "status": "source-fixed-ui-built-awaiting-root-live-qualification",
+  "cause": "Next API public source allowlist omitted sourceClockMode and sourceClockEvidence. Top envelope proof survived but nested exact snapshot source proof was removed. Direct gateway metadata was correct.",
+  "runtimeCodeChanges": [
+    "Add the two existing public clock keys to PUBLIC_SOURCE_FIELDS in pages/api/vision/city/[...path].ts."
+  ],
+  "sourceSha256": {
+    "services/ui/apps/nv-metropolis-bp-vss-ui/pages/api/vision/city/[...path].ts": "5df46ac4e5ebbfa35970b0aadccc673c454da4372cf0a290a473304aef20f962",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/proxy.test.ts": "1cf8e490f219ad5570416ccc73b3ad8f89d485de67cad661591dd8af14298f74",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/fixtures/native-sei-preview-metadata.json": "a5724526d32a3249fc4c862e990a0c110f2b0ef3171619a7bdce8e4fb8e1a703",
+    "services/analytics/behavior-analytics/apps/city/tests/test_native_sei_clock.py": "7c3dc8c2122173b39ee6ce2fc5c26f2d6f461b8a854510dcdb63fc01c6063789"
+  },
+  "sourceFixture": {
+    "rawDirectGatewayMetadataSha256": "a0592f5a621e7066742f4daab8eead71ad280831153a6abe274b89d5e5163604",
+    "rawEnvelopeSha256": "04b59accc8abc611a7f7b6a5ab901939dcba2c2d4941b46888cfb985c64a3b7d",
+    "derivation": "Retain exact real frame/source identity,dimensions,native proof and one actual track; omit unrelated rules/events/metrics/trails. Test JPEG is explicitly marker-only, not pixel-fidelity/inference evidence.",
+    "fixtureSha256": "a5724526d32a3249fc4c862e990a0c110f2b0ef3171619a7bdce8e4fb8e1a703"
+  },
+  "checks": {
+    "beforeFix": {
+      "newFailed": 2,
+      "existingPassed": 20,
+      "failure": "Proof/mode missing after publicCityPayload; actual frame validator refuses proxied envelope."
+    },
+    "afterFix": {
+      "suites": 4,
+      "passed": 88,
+      "seconds": 1.313
+    },
+    "independentRepeat": {
+      "suites": 4,
+      "passed": 88,
+      "seconds": 1.482
+    },
+    "backendNestedProof": {
+      "passed": 26,
+      "seconds": 0.3,
+      "runtimeCodeChanged": false
+    }
+  },
+  "preserved": [
+    "Exact image/JPEG/session/sequence/sourceTime/model identity",
+    "Strict six-field native proof and false browser clock",
+    "Current150ms map guard and all association guards",
+    "Private inputURI/filename/credentials filtering",
+    "Generic RTCP behavior",
+    "Accepted layout/branding/map bytes"
+  ],
+  "uiCandidate": {
+    "packageId": "20261026T102610382036Z",
+    "sourceSha256": "d4aee494f102dc2a60782060735fc22a879b5313cf5f140ea79543868ed0e25f",
+    "status": "built-offline",
+    "activated": false,
+    "layoutBrandingChanged": false,
+    "previousImageId": "sha256:77c06679148cc6cc1e9cb7277fc100261e8a63217b1f49db3096ec3b117931ed",
+    "repair": "Add only native sourceClockMode/sourceClockEvidence to public Next source-field allowlist.",
+    "imageId": "sha256:1d94d0350f90c2e4f120f0295553e6ed06d6b71789579378bf532a634605fc0f",
+    "artifactSha256": "41a60b1f584e4db68d67adf4c79823b8454b3e5f1efbf2f97d04552f2c909f53",
+    "buildTasks": 10,
+    "buildTime": "2m4.333s",
+    "buildReceipt": "native-capture-clock-proxy-ui-build.json"
+  },
+  "nativeFollowupImageId": "sha256:4e6b73d1b19e133680a583d5d2f109e20a6953537adea1165b7a381abf42c3dd",
+  "limits": "Source/proxy controls and offline build are not live final acceptance. Root owns isolated UI/native activation and fresh clock/preview/map/Ask/health/FPS qualification.",
+  "goalComplete": false,
+  "uiSourceDeltaFrom77c066": [
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/fixtures/native-sei-preview-metadata.json",
+      "previousSha256": null,
+      "candidateSha256": "a5724526d32a3249fc4c862e990a0c110f2b0ef3171619a7bdce8e4fb8e1a703"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/proxy.test.ts",
+      "previousSha256": "7f5a91dbcd05aa228e8c0b606ca40a53f269c2f73d8b047e8c03be341250629d",
+      "candidateSha256": "1cf8e490f219ad5570416ccc73b3ad8f89d485de67cad661591dd8af14298f74"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/pages/api/vision/city/[...path].ts",
+      "previousSha256": "f515b4616532cb6dbac538d2331fe7d8365df699f20336e770014e6628f60f9d",
+      "candidateSha256": "5df46ac4e5ebbfa35970b0aadccc673c454da4372cf0a290a473304aef20f962"
+    }
+  ]
+}

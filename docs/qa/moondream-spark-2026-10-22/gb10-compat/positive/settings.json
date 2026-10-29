@@ -1,0 +1,6 @@
+{
+  "child": false,
+  "compat": true,
+  "tasks": "query,detect,segment",
+  "timeout": 600
+}

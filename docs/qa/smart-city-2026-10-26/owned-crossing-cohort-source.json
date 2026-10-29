@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "city.owned-crossing-cohort-source.v1",
+  "sourceOnly": true,
+  "liveAppliedByThisTask": false,
+  "problem": "The owned phased crossing bypassed the normal one-entry-per-WALK cohort. Two opposing people could enter the same strip and their observed first-stage tracker paths could swap.",
+  "repair": {
+    "queueApi": "episode_queue_crossing(owner, points, now)",
+    "registeredAt": "Actual verified curb arrival, before the five-wall-second presentation dwell. Retried idempotently at continue. No native task is sent by queueing.",
+    "ownership": "Request is held only by a current phased lease at the real verified curb; owner, episode epoch, controller generation, native agent and timeline are checked.",
+    "admission": "The same (cycleIndex, phaseIndex, signalGroup) cohort as normal CrossWalk commands. Actual full native path, lateral band, applied light phase, vehicle phase, WALK and clearance remain required.",
+    "earlierNormalCrossing": "Never canceled or interrupted. A real same-group person still in a crossing keeps the owned walker at its curb.",
+    "consumption": "Only after a valid native movement task is accepted. Rejected navigation consumes no cohort. Cancellation after accepted entry leaves that current cohort consumed, as for normal movement.",
+    "planning": "A consumed current WALK reports the next real usable cohort to the existing once-latched capped signal budget. No wall cap or deadline rule changed.",
+    "cleanup": [
+      "restore/cancel",
+      "rejected navigation",
+      "actual clock rollback",
+      "stale episode epoch",
+      "changed controller generation",
+      "missing agent",
+      "drift from verified curb"
+    ],
+    "legacy": "Non-Expo phased behavior is preserved. No normal signal table, actor program, analytics geometry, tracking threshold or identity alias changed."
+  },
+  "validation": {
+    "ownedCohortControls": {
+      "passed": 9,
+      "elapsedSeconds": 3.009
+    },
+    "normalFlowControls": {
+      "passed": 28,
+      "elapsedSeconds": 7.058
+    },
+    "ownedPhaseControls": {
+      "passed": 13
+    },
+    "episodeClockControls": {
+      "passed": 4
+    },
+    "coldStartupControls": {
+      "passed": 12,
+      "elapsedSeconds": 0.006
+    },
+    "scenarioControls": {
+      "passed": 96,
+      "elapsedSeconds": 6.792
+    },
+    "originalPeopleChecks": {
+      "passed": 52
+    },
+    "pyCompile": "passed",
+    "fatalRuff": "passed",
+    "meaningfulOrderTest": "Request queues on red; the ordinary people update executes before the scenario continuation at the next WALK, remains at its curb, then the owned valid native task consumes that exact cohort.",
+    "harnessNote": "A combined test_episode*.py discovery imports two controller test modules into one shared public registry, so its export-function identity assertion failed. Each episode module was then run separately and passed. This import-fixture collision is preserved as a harness limit, not counted as a pass."
+  },
+  "sha256": {
+    "/home/sparkdev/isaac_city_sim/scripts/people/people_controller.py": "28d6349c015be5ac873d7cefbba027e72a6284ec9e01a3914f59929a5116219e",
+    "/home/sparkdev/isaac_city_sim/scripts/people/test_owned_cohort.py": "f70d7df187ce2b18f0cad489c3a7264b58ef7a2b22229fe7d8820eabfd948dee",
+    "/home/sparkdev/isaac_city_sim/scripts/scenarios/runtime.py": "276eb2930e93177a04cf507f6525ac9b79c85e257c3d54eb57e7b90aa870abba",
+    "/home/sparkdev/isaac_city_sim/scripts/scenarios/test_runtime.py": "d88f53523675c33db338153b8cce0b7cf924966049684b7c601ba2236257c912"
+  },
+  "liveAcceptanceRequired": [
+    "Fresh people/controller and scenario source load by root",
+    "Actual queued request at native curb before WALK",
+    "No simultaneous opposing owned/normal strip entry",
+    "Native endpoint and restoration proof",
+    "Independent same-ID camera far-side exit; no fabricated completion"
+  ],
+  "forensicReceipt": "pedestrian-east-v3-forensic.json"
+}

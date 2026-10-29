@@ -1,0 +1,4 @@
+.evidence { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; min-width: 0; color: #f5f7f8; font-size: 12px; line-height: 1.35; }
+.label { color: #9cafb1; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.evidence strong { font-size: 13px; font-weight: 700; }
+.secondary { color: #c4d0d0; }

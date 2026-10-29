@@ -1,0 +1,131 @@
+{
+  "schemaVersion": "city.pts-sync-bounded-trial-failure.v1",
+  "outcome": "failed-and-rolled-back",
+  "actualWorker": {
+    "containerId": "3597af781fc12233bc9871752fb0e27679e69d280f72958917402a1fcb4d9abc",
+    "imageId": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+    "startedAt": "2026-10-26T07:13:02.844845257Z",
+    "oomKilled": false
+  },
+  "actualReadback": {
+    "syncInputs": true,
+    "maxLatencyNs": 200000000,
+    "syncInputsNtpNs": 0
+  },
+  "strictReadiness": false,
+  "earlyReadiness": false,
+  "failedHealthSources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "status": "awaiting-observations"
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "status": "stale"
+    }
+  ],
+  "failedSnapshotSources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "sessionId": null,
+      "sequence": null,
+      "lastSourceTimeNs": null,
+      "timestampBasis": null
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sessionId": "6eed7185-bfaf-455d-bc5c-15a9ca690597",
+      "sequence": "0",
+      "lastSourceTimeNs": "1792998784477791862",
+      "timestampBasis": "arrival-pts-unsynchronized"
+    }
+  ],
+  "tail": {
+    "parseableTrialRows": 1,
+    "skippedPartialJsonLines": 1,
+    "firstTrialOutput": {
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sourceSessionId": "6eed7185-bfaf-455d-bc5c-15a9ca690597",
+      "sequence": "0",
+      "sourceTimeNs": "1792998784477791862",
+      "timestampBasis": "arrival-pts-unsynchronized",
+      "rawSourcePtsNs": "50988687"
+    },
+    "firstFrameReferenceStates": {
+      "depay": "missing",
+      "parsed": "missing",
+      "decoded": "missing",
+      "beforeMux": "missing"
+    },
+    "sdkNtpUnixNs": null
+  },
+  "rollback": {
+    "baselineControls": {
+      "sourceClockDiagnostics": true,
+      "muxSyncInputs": false,
+      "muxMaxLatencyNs": 0,
+      "muxSyncInputsNtpNs": 0
+    },
+    "health": {
+      "status": "ok",
+      "mode": "live",
+      "awaitingObservations": false,
+      "sources": [
+        {
+          "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "status": "live"
+        },
+        {
+          "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "status": "live"
+        }
+      ]
+    },
+    "laterExactPairClockSkewMs": 14.485333
+  },
+  "interpretation": "Actual PTS sync candidate failed startup before valid source RTCP evidence. Both trackers/engine initialized; preserved log has no explicit fatal pipeline error. Current output alone cannot distinguish mux waiting/dropping from upstream blockage. No timestamp offset or threshold relaxation is justified.",
+  "ntpOnlyCandidate": "Not tried. Installed legacy properties/docs do not establish independence from PTS sync or startup behavior without sender reports; newmux source cannot prove legacy behavior.",
+  "remainingLimit": "Startup, missing/delayed RTCP, one-camera absence and reconnect skew recovery are not qualified. Future changes require bounded fault cases and rollback; healthy current baseline is retained.",
+  "preservedFiles": [
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/readiness.json",
+      "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+      "bytes": 6
+    },
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/readiness-now.json",
+      "sha256": "2ed27c1421e6928dbe13dbfdb5c59e1045b30341fe7ebe05700006bc5ac572c0",
+      "bytes": 6
+    },
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/actual-worker.json",
+      "sha256": "b464cad145fefd73617fd33dea646084ba81d65733c543b47c85dc9ff641c367",
+      "bytes": 2182
+    },
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/failed-snapshot.json",
+      "sha256": "e5074b25242f36d9fb69909e8a0a1fe10d2110ffda9ad77fdf4ebcca5e151fc1",
+      "bytes": 250825
+    },
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/failed-health.json",
+      "sha256": "8f2eb7de7ece4d91aad8dfd6e3cee77131140b6f820f894b7a33de8864ad92f7",
+      "bytes": 7994
+    },
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/failed-worker.log",
+      "sha256": "f59c314c2cff1797e05ea925a92835171510804e7fe3bfa1ae9230938628fc5a",
+      "bytes": 6903
+    },
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/failed-tail.ndjson",
+      "sha256": "814bb76ea6eecd202c4c8626e0cd58aa403a11e51d5ca215810a9cfa52be1f11",
+      "bytes": 200000
+    },
+    {
+      "path": ".spark/city/runtime/source-clock-candidate-20261026-final/live-pts/rollback-readiness.json",
+      "sha256": "1f4f1c81a438e61a4b49e62f6151614f962c6db12a587775426f5d6811b5ddff",
+      "bytes": 8055
+    }
+  ]
+}

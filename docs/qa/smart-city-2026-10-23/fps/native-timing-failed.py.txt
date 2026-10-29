@@ -1,0 +1,214 @@
+"""Sample native CPU/GPU scopes for 5–30 seconds; restore capture settings.
+
+Run inside the existing Kit process with isaac_client.py, SECONDS=15 and a
+new LABEL. No scene, camera, renderer quality, or stream settings are changed.
+The deadline is handled on the Kit event loop, so a blocked main thread can
+delay cleanup until that loop resumes. Instrumentation adds some overhead.
+"""
+import asyncio
+import json
+import math
+from pathlib import Path
+import statistics
+import sys
+import time
+import types
+
+import carb.profiler
+import carb.settings
+import omni.kit.app
+import omni.usd
+from marble.importer.native_policy import assert_native_stage
+
+
+def _summary(values):
+    if not values:
+        return None
+    ordered = sorted(values)
+    return {"samples": len(values), "meanMs": statistics.fmean(values),
+            "p50Ms": statistics.median(values),
+            "p95Ms": ordered[min(len(ordered) - 1, math.ceil(len(ordered) * .95) - 1)],
+            "maxMs": ordered[-1]}
+
+
+def _start():
+    duration = int(globals().get("SECONDS", 15))
+    label = str(globals().get("LABEL", "native-timing"))
+    if not 5 <= duration <= 30 or not label.replace("-", "").replace("_", "").isalnum():
+        raise ValueError("Require SECONDS 5–30 and an alphanumeric LABEL (hyphens/underscores allowed)")
+    for name in ("city_vss_native_timing", "city_vss_performance"):
+        if getattr(sys.modules.get(name), "running", False):
+            raise RuntimeError("A timing probe is already running: " + name)
+    assert_native_stage(omni.usd.get_context().get_stage())
+    output = Path(__file__).resolve().parents[2] / "logs/vss-integration/performance" / label
+    output.mkdir(parents=True, exist_ok=False)
+    reg = types.ModuleType("city_vss_native_timing")
+    sys.modules[reg.__name__] = reg
+    reg.running = True
+    reg.subscription = None
+    reg.task = None
+    reg.rows = []
+    reg.scopes = {}
+    reg.errors = {}
+    reg.scope_limit_reached = False
+    reg.start = time.monotonic()
+    reg.last = None
+    reg.profiler = reg.monitor = reg.hydra = None
+    reg.mask_before = None
+    settings = carb.settings.get_settings()
+    reg.gpu_before = settings.get("/profiler/enabled")
+    reg.gpu_changed = False
+
+    def scopes(nodes, group):
+        """Keep all root durations, but only the first 1,024 named shallow scopes."""
+        roots = []
+        per_frame = {}
+        for node in nodes:
+            try:
+                ms, depth = float(node["duration"]), int(node["indent"])
+            except (KeyError, TypeError, ValueError):
+                continue
+            if not math.isfinite(ms) or ms < 0:
+                continue
+            if depth == 0:
+                roots.append(ms)
+            if not 0 <= depth <= 2:
+                continue
+            key = (group, str(node.get("name") or "unnamed")[:240], depth)
+            per_frame[key] = per_frame.get(key, 0.0) + ms
+        for key, ms in per_frame.items():
+            if key not in reg.scopes:
+                if len(reg.scopes) >= 1024:
+                    reg.scope_limit_reached = True
+                    continue
+                reg.scopes[key] = [0, 0.0, 0.0]
+            entry = reg.scopes[key]
+            entry[0] += 1
+            entry[1] += ms
+            entry[2] = max(entry[2], ms)
+        return sum(roots) if roots else None
+
+    def finish(reason):
+        if not reg.running:
+            return
+        reg.running = False
+        reg.subscription = None
+        # Restore before statistics or file output, including all error paths.
+        if reg.profiler is not None and reg.mask_before is not None:
+            try:
+                reg.profiler.set_capture_mask(reg.mask_before)
+            except Exception as exc:
+                reg.errors["cpuRestore"] = repr(exc)
+        if reg.gpu_changed:
+            try:
+                if reg.gpu_before is None:
+                    settings.destroy_item("/profiler/enabled")
+                else:
+                    settings.set("/profiler/enabled", reg.gpu_before)
+            except Exception as exc:
+                reg.errors["gpuRestore"] = repr(exc)
+        groups = sorted({key[0] for key in reg.scopes})
+        top = {}
+        for group in groups:
+            ranked = sorted(((key, value) for key, value in reg.scopes.items() if key[0] == group),
+                            key=lambda item: item[1][1], reverse=True)[:30]
+            top[group] = [{"name": key[1], "indent": key[2], "sampledFrames": v[0],
+                           "totalMs": v[1], "meanWhenPresentMs": v[1] / v[0], "maxMs": v[2]}
+                          for key, v in ranked]
+        gpu_indices = sorted({key for row in reg.rows for key in row["gpuMs"]})
+        report = {"schema": "city.native-timing.v1", "reason": reason,
+                  "requestedSeconds": duration, "elapsedSeconds": time.monotonic() - reg.start,
+                  "updateSamples": len(reg.rows), "errors": reg.errors,
+                  "cpuMainScopeMs": _summary([r["cpuMs"] for r in reg.rows if r["cpuMs"] is not None]),
+                  "gpuScopeMs": {key: _summary([r["gpuMs"][key] for r in reg.rows
+                                                 if r["gpuMs"].get(key) is not None]) for key in gpu_indices},
+                  "updateIntervalMs": _summary([r["intervalMs"] for r in reg.rows if r["intervalMs"] is not None]),
+                  "topScopes": top, "scopeLimitReached": reg.scope_limit_reached,
+                  "rows": reg.rows, "captureMaskBefore": reg.mask_before,
+                  "gpuProfilerBefore": reg.gpu_before,
+                  "limits": ["CPU scope time can include waiting, not just CPU execution.",
+                             "GPU scopes can overlap; nested scopes must not be added to root totals.",
+                             "Unavailable scope data is null, never an inferred zero.",
+                             "The most recent profiler capture is sampled once per update; frame identity is not supplied.",
+                             "First three updates omitted for profiler warm-up; instrumentation adds overhead."]}
+        (output / "native-timing.json").write_text(json.dumps(report, separators=(",", ":"), allow_nan=False) + "\n")
+        reg.result = {"finished": True, "output": str(output / "native-timing.json"), "errors": reg.errors}
+
+    reg.finish = finish
+    try:
+        try:
+            reg.monitor = carb.profiler.acquire_profile_monitor_interface()
+            reg.profiler = carb.profiler.acquire_profiler_interface(plugin_name="carb.profiler-mux.plugin")
+            reg.mask_before = reg.profiler.get_capture_mask()
+            mask = settings.get("/app/profilerMask")
+            mask = (int(mask) if mask is not None else (1 << 64) - 1) & ((1 << 64) - 1)
+            reg.profiler.set_capture_mask(mask)
+            if mask == 0:
+                reg.errors["cpu"] = "Configured /app/profilerMask is zero; no scopes requested"
+                reg.monitor = None
+        except Exception as exc:
+            reg.errors["cpu"] = repr(exc)
+            reg.monitor = None
+        try:
+            from omni.hydra.engine.stats import HydraEngineStats
+            from omni.kit.viewport.utility import get_active_viewport
+            viewport = get_active_viewport()
+            reg.hydra = HydraEngineStats(viewport.usd_context_name, viewport.hydra_engine) if viewport else HydraEngineStats()
+            reg.gpu_changed = True
+            settings.set_bool("/profiler/enabled", True)
+        except Exception as exc:
+            reg.errors["gpu"] = repr(exc)
+            reg.hydra = None
+        reg.warmup = 3
+
+        def sample(_event):
+            if not reg.running:
+                return
+            now = time.monotonic()
+            if now - reg.start >= duration or len(reg.rows) >= 4000:
+                finish("deadline" if now - reg.start >= duration else "sample-limit")
+                return
+            interval = (now - reg.last) * 1000 if reg.last is not None else None
+            reg.last = now
+            if reg.warmup:
+                reg.warmup -= 1
+                return
+            row = {"elapsedSeconds": now - reg.start, "intervalMs": interval, "cpuMs": None, "gpuMs": {}}
+            if reg.monitor is not None:
+                try:
+                    events = reg.monitor.get_last_profile_events()
+                    thread_id = events.get_main_thread_id()
+                    # The API uses 0 to request all threads. Never label that
+                    # broader result as a main-thread measurement.
+                    if thread_id:
+                        row["cpuMs"] = scopes(events.get_profile_events(thread_id), "cpu-main")
+                except Exception as exc:
+                    reg.errors.setdefault("cpuSample", repr(exc))
+                    reg.monitor = None
+            if reg.hydra is not None:
+                try:
+                    for i, nodes in enumerate(reg.hydra.get_gpu_profiler_result()):
+                        row["gpuMs"][str(i)] = scopes(nodes, "gpu-" + str(i))
+                except Exception as exc:
+                    reg.errors.setdefault("gpuSample", repr(exc))
+                    reg.hydra = None
+            reg.rows.append(row)
+
+        async def deadline():
+            try:
+                await asyncio.sleep(duration)
+            finally:
+                finish("deadline")
+
+        reg.subscription = omni.kit.app.get_app().get_update_event_stream().create_subscription_to_pop(
+            sample, name="Bounded native CPU/GPU timing")
+        reg.task = asyncio.ensure_future(deadline())
+    except Exception:
+        finish("setup-error")
+        raise
+    return {"started": True, "seconds": duration, "output": str(output / "native-timing.json"),
+            "unavailable": reg.errors}
+
+
+RESULT = _start()
+print(json.dumps(RESULT))

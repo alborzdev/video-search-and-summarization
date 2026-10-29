@@ -1,0 +1,1352 @@
+.layout {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 2.7fr) minmax(250px, 1fr);
+  gap: 3%;
+  align-items: center;
+  color: #eaf2ed;
+}
+.visual {
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 3%,
+    #000 94%,
+    transparent
+  );
+}
+.diorama {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+.framing {
+  transform-origin: 50% 55%;
+  transform: scale(calc(1.2 + 0.35 * min(var(--travel, 0), 1)));
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.world {
+  --reveal: 1;
+}
+.layout[data-step="0"] .framing {
+  transform: scale(1.2);
+}
+.layout[data-scene="direction"] .framing {
+  transform: translate(-40px, 40px) scale(1.55);
+}
+.sceneNote {
+  position: absolute;
+  bottom: 10px;
+  left: 5%;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  color: #92a99e;
+}
+.copy {
+  padding: 24px 0;
+  min-width: 0;
+}
+.heading > span {
+  font-size: 10px;
+  color: #a8e4ce;
+  letter-spacing: 1.3px;
+  display: block;
+  margin-bottom: 17px;
+}
+.heading h1 {
+  font-size: clamp(28px, 2.7vw, 45px);
+  line-height: 1.1;
+  font-weight: 500;
+  letter-spacing: -1.4px;
+  margin: 0;
+  text-wrap: balance;
+}
+.heading p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #a8bbb0;
+  margin: 22px 0 0;
+}
+.detail {
+  border-top: 1px solid #2d443a;
+  margin-top: 28px;
+  padding-top: 24px;
+}
+.detail h2 {
+  font-size: 19px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #d8ece0;
+  margin: 0 0 13px;
+  letter-spacing: -0.25px;
+}
+.detail h2.amber {
+  color: #e9b970;
+}
+.detail p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #a9beb0;
+  margin: 0 0 15px;
+}
+.detail small {
+  font-size: 10px;
+  line-height: 1.7;
+  color: #7f9c8a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.introNote {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #a8e4ce;
+}
+.duration {
+  height: 3px;
+  background: #253e31;
+  margin: 22px 0 12px;
+}
+.duration i {
+  display: block;
+  width: calc(var(--dwell, var(--duration)) * 100%);
+  height: 100%;
+  background: #e9b970;
+}
+.time {
+  font-size: 12px;
+  color: #e9b970;
+}
+.time b {
+  font-size: 20px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  margin-right: 4px;
+}
+.time small {
+  display: block;
+  margin-top: 8px;
+}
+.detail dl {
+  font-size: 11px;
+  margin: 0 0 20px;
+}
+.detail dl > div {
+  display: grid;
+  grid-template-columns: 45px 1fr;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid #243a2e;
+}
+.detail dt {
+  color: #7c9b88;
+}
+.detail dd {
+  margin: 0;
+  color: #c8dacf;
+}
+.reason,
+.action {
+  margin-top: 17px;
+}
+.reason > span,
+.action > span {
+  font-size: 10px;
+  color: #a8e4ce;
+}
+.reason p,
+.action p {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.65;
+}
+.action {
+  border-top: 1px solid #2d443a;
+  padding-top: 15px;
+}
+.detail a {
+  font-size: 9px;
+  line-height: 1.6;
+  color: #829f8c;
+  text-decoration: none;
+  border-bottom: 1px solid #3d5b49;
+  padding-bottom: 3px;
+}
+.detail a:hover {
+  color: #a8e4ce;
+}
+.hardware {
+  width: 200px;
+  max-height: 135px;
+  object-fit: contain;
+  margin: 0 auto 20px;
+  display: block;
+}
+.playback {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+.playback button {
+  background: none;
+  border: 0;
+  padding: 7px 0;
+  color: #91ab9b;
+  font-size: 11px;
+}
+.playback button[aria-pressed="true"] {
+  color: #a8e4ce;
+  border-bottom: 1px solid #a8e4ce;
+}
+.playback span {
+  height: 1px;
+  width: 25px;
+  background: #355241;
+}
+.playback .replay {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #a8e4ce;
+}
+.frame {
+  transition: opacity 0.65s ease;
+}
+.coverage {
+  opacity: calc(var(--camera, 0) * (1 - var(--detect, 0)));
+  fill: #a8e4ce20;
+  stroke: #a8e4ce;
+  stroke-width: 2;
+  stroke-dasharray: 7 7;
+}
+.coverage circle {
+  fill: #b7efd4;
+}
+.crossingZone,
+.eventZone {
+  fill: #eeb86924;
+  stroke: #edbc79;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+.crossingZone {
+  opacity: var(--zone, 0);
+}
+.crossingZone[data-clear="true"] {
+  fill: #a8e4ce18;
+  stroke: #a8e4ce;
+}
+.track,
+.queueLine,
+.wrongTrack,
+.allowed {
+  fill: none;
+  stroke: #b9f2d9;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.track {
+  opacity: var(--tracking, 0);
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--tracking, 0));
+}
+.queueLine,
+.wrongTrack {
+  stroke: #edbc79;
+  color: #edbc79;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--reveal, 1));
+}
+.allowed {
+  color: #b9f2d9;
+}
+.personMark {
+  fill: none;
+  stroke: #c7ffe5;
+  stroke-width: 1.5;
+}
+.ground {
+  fill: #c7ffe5;
+  opacity: var(--locate, 0);
+}
+.callout path {
+  fill: none;
+  stroke: #b3d8c7;
+  stroke-width: 1;
+}
+.callout text {
+  fill: #def8e9;
+  font: 18px var(--ctai-font-sans);
+  paint-order: stroke;
+  stroke: #0b1913;
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+.sceneStatus {
+  position: absolute;
+  left: 7%;
+  top: 8%;
+  display: grid;
+  grid-template-columns: 7px auto;
+  gap: 7px 10px;
+  align-items: center;
+  padding: 13px 17px;
+  background: #0a1b14dc;
+  border: 1px solid #4c5c42;
+  border-radius: 8px;
+  color: #efc186;
+  box-shadow: 0 8px 30px #020a0640;
+}
+.sceneStatus i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.sceneStatus span {
+  font-size: 13px;
+}
+.sceneStatus small {
+  grid-column: 2;
+  font-size: 9px;
+  color: #93ad9f;
+}
+.sceneStatus[data-clear="true"] {
+  color: #b6ebd3;
+  border-color: #375e4b;
+}
+.response {
+  padding: 18px 0;
+}
+.response > span {
+  color: #a8e4ce;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  display: block;
+  margin-bottom: 12px;
+}
+.response p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail blockquote {
+  margin: 0 0 16px;
+  color: #c8dfd2;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.detail .review {
+  margin-top: 16px;
+}
+@media (min-width: 1700px) {
+  .layout {
+    grid-template-columns: minmax(0, 3fr) minmax(310px, 1fr);
+  }
+  .heading h1 {
+    font-size: 46px;
+  }
+  .heading p {
+    font-size: 16px;
+  }
+  .detail h2 {
+    font-size: 23px;
+  }
+  .detail p {
+    font-size: 14px;
+  }
+  .reason p,
+  .action p {
+    font-size: 13px;
+  }
+  .playback button {
+    font-size: 12px;
+  }
+}
+@media (max-width: 1100px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.9fr) minmax(220px, 1fr);
+    gap: 2%;
+  }
+  .heading h1 {
+    font-size: 30px;
+  }
+  .heading p {
+    font-size: 12px;
+    margin-top: 16px;
+  }
+  .heading > span {
+    font-size: 9px;
+    margin-bottom: 13px;
+  }
+  .detail {
+    margin-top: 20px;
+    padding-top: 18px;
+  }
+  .detail h2 {
+    font-size: 17px;
+  }
+  .detail p {
+    font-size: 11px;
+  }
+  .playback {
+    margin-top: 17px;
+  }
+  .reason,
+  .action {
+    margin-top: 10px;
+  }
+  .action {
+    padding-top: 10px;
+  }
+}
+@media (max-height: 750px) and (min-width: 701px) {
+  .heading h1 {
+    font-size: 29px;
+  }
+  .heading p {
+    font-size: 11px;
+    line-height: 1.6;
+    margin-top: 13px;
+  }
+  .heading > span {
+    margin-bottom: 12px;
+  }
+  .detail {
+    padding-top: 15px;
+    margin-top: 17px;
+  }
+  .detail h2 {
+    font-size: 16px;
+    margin-bottom: 9px;
+  }
+  .detail p {
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 9px;
+  }
+  .reason p,
+  .action p {
+    font-size: 10px;
+  }
+  .reason,
+  .action {
+    margin-top: 10px;
+  }
+  .action {
+    padding-top: 10px;
+  }
+  .playback {
+    margin-top: 15px;
+  }
+  .copy {
+    padding: 10px 0;
+  }
+  .hardware {
+    max-height: 90px;
+    margin-bottom: 13px;
+  }
+}
+@media (max-width: 700px) {
+  .layout {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    gap: 0;
+  }
+  .visual {
+    height: 330px;
+    min-height: 330px;
+    width: calc(100% + 36px);
+    margin: 0 -18px;
+    order: 1;
+    mask-image: none;
+  }
+  .copy {
+    display: contents;
+  }
+  .heading {
+    order: 0;
+    padding: 19px 0 0;
+    text-align: left;
+    width: 100%;
+  }
+  .heading h1 {
+    font-size: 32px;
+    max-width: 420px;
+    letter-spacing: -1px;
+  }
+  .heading p {
+    font-size: 12px;
+    margin-top: 13px;
+  }
+  .heading > span {
+    font-size: 9px;
+    margin-bottom: 10px;
+  }
+  .detail {
+    order: 2;
+    width: 100%;
+    margin-top: 0;
+    padding-top: 18px;
+  }
+  .detail h2 {
+    font-size: 20px;
+  }
+  .detail p {
+    font-size: 13px;
+  }
+  .detail small,
+  .reason > span,
+  .action > span {
+    font-size: 10px;
+  }
+  .reason p,
+  .action p {
+    font-size: 12px;
+  }
+  .playback {
+    order: 3;
+    width: 100%;
+    margin: 15px 0 8px;
+  }
+  .playback button {
+    font-size: 12px;
+  }
+  .sceneNote {
+    font-size: 9px;
+    bottom: 8px;
+  }
+  .framing {
+    transform: scale(1.75);
+  }
+  .layout[data-step="0"] .framing {
+    transform: scale(1.12);
+  }
+  .hardware {
+    max-height: 130px;
+  }
+  .detail a {
+    font-size: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .framing,
+  .frame {
+    transition: none;
+  }
+}
+
+.layout[data-step="0"] .heading h1 {
+  font-size: clamp(28px, 2.2vw, 40px);
+}
+
+/* Camera choreography keeps the same street in view while changing the visual task. */
+.framing,
+.layout[data-step="0"] .framing,
+.layout[data-scene="direction"] .framing {
+  transform: translate(var(--focus-x), var(--focus-y)) scale(var(--focus-scale));
+  transition: transform 1.8s cubic-bezier(0.22, 0.68, 0.14, 1);
+  will-change: transform;
+}
+.diorama {
+  transition: opacity 1s ease, filter 1s ease;
+}
+.layout[data-step="9"] .diorama {
+  opacity: 0.48;
+}
+.layout[data-step="12"] .diorama {
+  opacity: 0.22;
+  filter: saturate(0.55);
+}
+.chapterAction {
+  position: absolute;
+  inset: 0;
+  padding: 32px 6% 45px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-direction: column;
+  pointer-events: none;
+}
+.chapterAction strong {
+  font-weight: 500;
+}
+.openingPrompt {
+  align-self: flex-start;
+  margin-bottom: 4%;
+  display: grid;
+  gap: 8px;
+  animation: arrive 1.2s both;
+}
+.openingPrompt span {
+  font-size: 23px;
+  color: #e4f3eb;
+}
+.openingPrompt small {
+  font-size: 12px;
+  color: #b5c9bc;
+}
+.cameraFrame {
+  position: absolute;
+  inset: 14% 13% 19%;
+  border: 1px solid #c2ebd27d;
+  border-radius: 12px;
+  box-shadow: 0 0 0 160px #04100b40;
+  overflow: hidden;
+  animation: focusFrame 1.5s both;
+}
+.cameraFrame > div {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  background: #071910db;
+  font-size: 12px;
+  color: #d6ecdf;
+}
+.cameraFrame small {
+  margin-left: auto;
+  font-size: 9px;
+  color: #94b6a3;
+}
+.scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20%;
+  height: 1px;
+  background: #befadd90;
+  box-shadow: 0 -15px 45px 10px #9fe7c81a;
+  animation: scanStreet 3s ease-in-out 2;
+}
+.cameraCaption {
+  position: absolute;
+  left: 18px;
+  bottom: 15px;
+  color: #d2ebdb;
+  background: #0b1a13df;
+  padding: 8px 11px;
+  border-radius: 4px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  font-size: 11px;
+}
+.observation,
+.clearLesson {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #0a1d15ed;
+  border: 1px solid #78a78c70;
+  border-radius: 10px;
+  padding: 19px 25px;
+  box-shadow: 0 18px 50px #020b0840;
+  color: #bdf2d5;
+  animation: arrive 0.9s 0.4s both;
+}
+.observation > div,
+.clearLesson > div {
+  display: grid;
+  gap: 7px;
+}
+.observation small,
+.clearLesson small {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #91bba3;
+}
+.observation strong,
+.clearLesson strong {
+  font-size: 22px;
+  color: #e8f5ed;
+}
+.check {
+  margin-left: 30px;
+  animation: confirm 0.6s 0.9s both;
+}
+.momentRail {
+  display: flex;
+  width: 100%;
+  max-width: 650px;
+  background: #07180fe8;
+  padding: 20px 24px;
+  border: 1px solid #3f6150;
+  border-radius: 8px;
+}
+.momentRail > div {
+  flex: 1;
+  display: grid;
+  gap: 8px;
+  color: #738c7e;
+}
+.momentRail span {
+  font-size: 10px;
+}
+.momentRail strong {
+  font-size: 12px;
+}
+.momentRail small {
+  font-size: 10px;
+}
+.momentRail i {
+  width: 100%;
+  height: 2px;
+  background: #2b4637;
+}
+.momentRail [data-current="true"] {
+  color: #c8f7df;
+}
+.momentRail [data-current="true"] i {
+  background: #b9f3d6;
+  transition: background 0.5s;
+}
+.groundLesson {
+  display: grid;
+  grid-template-columns: 1fr 45px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 28px;
+  background: #081a12ec;
+  border-radius: 8px;
+  border: 1px solid #47725a;
+  animation: arrive 0.8s 0.5s both;
+}
+.groundLesson span,
+.groundLesson strong {
+  font-size: 16px;
+}
+.groundLesson i {
+  height: 1px;
+  background: #a8e4ce;
+  transform-origin: left;
+  animation: sendLine 1s 1s both;
+}
+.groundLesson small {
+  grid-column: 1/-1;
+  text-align: center;
+  color: #98b6a3;
+  font-size: 10px;
+  margin-top: 8px;
+}
+.ruleLesson {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 21px 26px;
+  background: #102017ee;
+  border: 1px solid #a3854c70;
+  border-radius: 8px;
+  animation: arrive 0.8s 0.5s both;
+  color: #efc58b;
+}
+.ruleLesson > span {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #a9b8ac;
+}
+.ruleLesson > strong {
+  font-size: 15px;
+}
+.signalLesson {
+  width: 320px;
+  align-self: flex-end;
+  margin-right: 1%;
+  background: #0b1a13ef;
+  padding: 21px 25px 14px;
+  border: 1px solid #a2855266;
+  border-radius: 10px;
+  box-shadow: 0 10px 50px #04100970;
+  animation: arrive 0.7s both;
+}
+.signalLesson > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+.signalLesson span {
+  color: #92ad9d;
+  font-size: 11px;
+}
+.signalLesson strong {
+  color: #efd1a2;
+  font-size: 14px;
+}
+.phaseBar {
+  height: 4px;
+  background: #2e3a29;
+  margin: 16px 0 22px;
+  overflow: hidden;
+}
+.phaseBar i {
+  display: block;
+  height: 100%;
+  background: #efc382;
+  transform-origin: left;
+  transform: scaleX(0.12);
+  animation: phaseEnds 3.4s ease-out both;
+}
+.signalLesson footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #efc382;
+}
+.signalLesson footer span {
+  font-size: 8px;
+  margin-left: auto;
+  color: #efc382;
+}
+.signalLesson > small {
+  display: block;
+  font-size: 9px;
+  color: #86a08f;
+  margin-top: 15px;
+}
+.requestLesson {
+  width: 100%;
+  max-width: 720px;
+  padding: 24px 26px;
+  border: 1px solid #486b55;
+  border-radius: 10px;
+  background: #091a12f0;
+  animation: arrive 0.8s both;
+}
+.requestLesson > small {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #a8e4ce;
+  display: block;
+  margin-bottom: 23px;
+}
+.requestLesson > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.requestLesson span {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  text-align: center;
+  color: #c1ead2;
+  flex: 1;
+}
+.requestLesson strong {
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 130px;
+}
+.requestLesson i,
+.edgeLink {
+  height: 1px;
+  flex: 0.4;
+  background: #3f5d4b;
+  position: relative;
+}
+.requestLesson i:after,
+.edgeLink:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 18px;
+  height: 4px;
+  background: #bcecd1;
+  border-radius: 4px;
+  animation: packet 1.7s ease-in-out 3;
+}
+.requestLesson i:nth-of-type(2):after {
+  animation-delay: 0.9s;
+}
+.clearLesson {
+  border-color: #a78654;
+}
+.clearLesson[data-clear="true"] {
+  border-color: #8cc5a2;
+}
+.clearLesson[data-clear="true"] > span {
+  animation: confirm 0.6s both;
+}
+.evidenceLesson {
+  width: 100%;
+  max-width: 790px;
+  padding: 22px;
+  border-radius: 10px;
+  border: 1px solid #3b5846;
+  background: #0b1913f5;
+  box-shadow: 0 25px 80px #0005;
+  margin-bottom: 8%;
+  animation: arrive 1s both;
+}
+.evidenceLesson header {
+  color: #e4f2e8;
+  font-size: 23px;
+  margin-bottom: 20px;
+}
+.evidenceLesson > div {
+  display: flex;
+  gap: 12px;
+}
+.evidenceLesson figure {
+  flex: 1;
+  margin: 0;
+  min-width: 0;
+  animation: arrive 0.7s calc(var(--order) * 0.3s + 0.4s) both;
+}
+.evidenceLesson figure svg {
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+  background: #06100a;
+}
+.evidenceLesson figcaption {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 10px;
+  font-size: 11px;
+  text-transform: capitalize;
+  color: #d0e5d7;
+}
+.evidenceLesson figcaption span {
+  color: #8ea997;
+  font-size: 9px;
+}
+.evidenceLesson footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 23px;
+  color: #9bb8a5;
+  font-size: 11px;
+}
+.directionLesson {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 35px;
+  padding: 22px 30px;
+  background: #0b1a13ee;
+  border: 1px solid #647351;
+  border-radius: 10px;
+  animation: arrive 1s both;
+}
+.directionLesson span {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #b9f2d9;
+  font-size: 12px;
+}
+.directionLesson span:nth-child(2) {
+  color: #efbd75;
+}
+.directionLesson span:nth-child(2) svg {
+  transform: rotate(180deg);
+}
+.directionLesson strong {
+  grid-column: 1/-1;
+  color: #efcf9d;
+  text-align: center;
+  font-size: 19px;
+}
+.edgeLesson {
+  position: absolute;
+  inset: 18% 4% 18%;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  animation: arrive 1.2s both;
+}
+.edgeSources {
+  width: 22%;
+}
+.edgeSources > span {
+  color: #b9dac7;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.edgeSources > div {
+  display: grid;
+  gap: 12px;
+}
+.edgeSources img {
+  width: 100%;
+  border: 1px solid #4c6856;
+  border-radius: 5px;
+}
+.edgeDevice {
+  flex: 1;
+  display: grid;
+  text-align: center;
+  gap: 12px;
+}
+.edgeDevice img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  filter: drop-shadow(0 25px 35px #0008);
+  animation: deviceReveal 1.5s both;
+}
+.edgeDevice strong {
+  font-size: 22px;
+  color: #e1f2e7;
+}
+.edgeDevice small {
+  color: #93ae9e;
+  font-size: 10px;
+}
+.edgeOutput {
+  width: 20%;
+  display: grid;
+  gap: 15px;
+  color: #bfead2;
+}
+.edgeOutput strong {
+  font-size: 20px;
+}
+.edgeOutput span {
+  font-size: 11px;
+  color: #9bb4a5;
+  line-height: 1.7;
+}
+.edgeLink {
+  flex: 0 0 35px;
+}
+.layout[data-step="12"] .hardware {
+  display: none;
+}
+.projection {
+  fill: none;
+  stroke: #c4f7dc;
+  stroke-width: 1.4;
+  animation: arrive 1.4s both;
+}
+.layout[data-step="5"] .crossingZone {
+  stroke-dasharray: 1;
+  animation: drawBoundary 1.7s ease both;
+}
+.track {
+  animation: tracePath 1.5s ease both;
+}
+.personMark {
+  animation: acquire 0.9s ease both;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.layout[data-step="10"] .queueLine,
+.layout[data-step="11"] .wrongTrack {
+  animation: tracePath 2s ease both;
+}
+@keyframes arrive {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes focusFrame {
+  from {
+    opacity: 0;
+    transform: scale(1.13);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes scanStreet {
+  0% {
+    top: 22%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    top: 90%;
+    opacity: 0;
+  }
+}
+@keyframes confirm {
+  from {
+    opacity: 0;
+    scale: 0.7;
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes acquire {
+  from {
+    opacity: 0;
+    stroke-width: 4;
+  }
+  to {
+    opacity: 1;
+    stroke-width: 1.5;
+  }
+}
+@keyframes sendLine {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes drawBoundary {
+  from {
+    stroke-dashoffset: 1;
+    fill-opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    fill-opacity: 1;
+  }
+}
+@keyframes tracePath {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes phaseEnds {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0.12);
+  }
+}
+@keyframes packet {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 18px);
+    opacity: 0;
+  }
+}
+@keyframes deviceReveal {
+  from {
+    opacity: 0;
+    transform: translateY(35px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@media (max-width: 1100px) {
+  .ruleLesson {
+    padding: 17px 15px;
+    gap: 8px;
+  }
+  .ruleLesson > strong {
+    font-size: 12px;
+  }
+  .edgeLesson {
+    gap: 9px;
+  }
+  .edgeDevice strong {
+    font-size: 16px;
+  }
+  .edgeOutput strong {
+    font-size: 14px;
+  }
+  .edgeLink {
+    flex-basis: 15px;
+  }
+}
+@media (max-width: 700px) {
+  .framing,
+  .layout[data-step="0"] .framing,
+  .layout[data-scene="direction"] .framing {
+    transform: translate(calc(var(--focus-x) * 0.5), calc(var(--focus-y) * 0.6))
+      scale(calc(1 + (var(--focus-scale) - 1) * 0.75));
+  }
+  .chapterAction {
+    padding: 15px 5% 30px;
+  }
+  .openingPrompt {
+    display: none;
+  }
+  .cameraFrame {
+    inset: 10% 9% 15%;
+  }
+  .cameraFrame > div {
+    padding: 10px;
+    font-size: 10px;
+  }
+  .cameraCaption {
+    font-size: 9px;
+    left: 10px;
+  }
+  .observation,
+  .clearLesson {
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .observation strong,
+  .clearLesson strong {
+    font-size: 16px;
+  }
+  .momentRail {
+    padding: 13px;
+  }
+  .momentRail strong {
+    font-size: 9px;
+  }
+  .signalLesson {
+    padding: 12px 17px;
+    width: 260px;
+  }
+  .phaseBar {
+    margin: 10px 0 15px;
+  }
+  .signalLesson strong {
+    font-size: 12px;
+  }
+  .sceneStatus {
+    top: 5%;
+    left: 6%;
+    padding: 8px 11px;
+  }
+  .sceneStatus span {
+    font-size: 10px;
+  }
+  .sceneStatus small {
+    font-size: 8px;
+  }
+  .groundLesson {
+    padding: 12px 14px;
+    gap: 7px;
+    grid-template-columns: 1fr 22px 1fr;
+  }
+  .groundLesson strong,
+  .groundLesson span {
+    font-size: 12px;
+  }
+  .ruleLesson {
+    padding: 12px;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .ruleLesson > strong {
+    font-size: 11px;
+  }
+  .requestLesson {
+    padding: 14px;
+  }
+  .requestLesson > small {
+    margin-bottom: 15px;
+    font-size: 8px;
+  }
+  .requestLesson strong {
+    font-size: 9px;
+  }
+  .requestLesson > div {
+    gap: 7px;
+  }
+  .requestLesson span {
+    gap: 9px;
+  }
+  .evidenceLesson {
+    padding: 14px;
+    margin-bottom: 0;
+  }
+  .evidenceLesson header {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+  .evidenceLesson > div {
+    gap: 7px;
+  }
+  .evidenceLesson footer {
+    font-size: 8px;
+    gap: 6px;
+    margin-top: 15px;
+  }
+  .evidenceLesson figcaption {
+    font-size: 9px;
+  }
+  .directionLesson {
+    padding: 14px 20px;
+    gap: 8px 25px;
+  }
+  .directionLesson strong {
+    font-size: 15px;
+  }
+  .edgeLesson {
+    inset: 12% 5%;
+    gap: 6px;
+  }
+  .edgeSources > span {
+    font-size: 9px;
+    gap: 4px;
+  }
+  .edgeSources > div {
+    gap: 6px;
+  }
+  .edgeDevice strong {
+    font-size: 12px;
+  }
+  .edgeDevice small {
+    font-size: 8px;
+  }
+  .edgeOutput strong {
+    font-size: 11px;
+  }
+  .edgeOutput span {
+    font-size: 8px;
+  }
+  .edgeLink {
+    flex-basis: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .layout *,
+  .framing,
+  .frame {
+    animation: none !important;
+    transition: none !important;
+  }
+  .scan {
+    display: none;
+  }
+}

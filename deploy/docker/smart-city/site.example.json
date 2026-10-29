@@ -1,0 +1,38 @@
+{
+  "id": "replace-with-approved-city-site-id",
+  "name": "City camera configuration template",
+  "revision": 1,
+  "mode": "live",
+  "qualification": "Template only. Not connected, calibrated, approved or runtime qualified.",
+  "sources": [
+    {
+      "id": "REGISTERED_VSS_CAMERA_UUID_1",
+      "vssSensorId": "REGISTERED_VSS_CAMERA_UUID_1",
+      "name": "Camera 1",
+      "width": 1920,
+      "height": 1080,
+      "deepstreamStreamIndex": 0,
+      "imageToGroundHomography": null,
+      "validGroundPolygon": null,
+      "calibrationRevision": null,
+      "browserClockVerified": false
+    },
+    {
+      "id": "REGISTERED_VSS_CAMERA_UUID_2",
+      "vssSensorId": "REGISTERED_VSS_CAMERA_UUID_2",
+      "name": "Camera 2",
+      "width": 1920,
+      "height": 1080,
+      "deepstreamStreamIndex": 1,
+      "imageToGroundHomography": null,
+      "validGroundPolygon": null,
+      "calibrationRevision": null,
+      "browserClockVerified": false
+    }
+  ],
+  "map": {
+    "bounds": [-50, -50, 50, 50],
+    "roads": [],
+    "buildings": []
+  }
+}

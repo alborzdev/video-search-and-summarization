@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "city.sprint-backend-qa.v1",
+  "recordedAt": "2026-10-23T15:41:27.004606+00:00",
+  "status": "cpu-and-independent-review-passed-runtime-deployment-separate",
+  "tests": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q services/analytics/behavior-analytics/apps/city/tests",
+    "passed": 109,
+    "failed": 0,
+    "warnings": 1,
+    "warning": "Existing Starlette/httpx TestClient deprecation",
+    "elapsedSeconds": 3.32
+  },
+  "independentReview": {
+    "agent": "sprint_ui_review",
+    "status": "passed",
+    "cases": [
+      "Aggregate occupancy and queue candidate resets across source-clock gaps",
+      "Active aggregate duration requalification",
+      "Continuously proven aggregate survives extra-track reacquisition",
+      "Missing and prediction-only wall-stall recovery stays unknown",
+      "TTL eviction preserves unresolved incident",
+      "Unrelated outside identity does not resolve lost member",
+      "Original identity observed outside clears incident"
+    ]
+  },
+  "sourceHashes": {
+    "services/analytics/behavior-analytics/apps/city/engine.py": "4f9ecac244f729dec3fab06f6b4a82f4e8e6822dd8d67f6721cecb8b60afd5f4",
+    "services/analytics/behavior-analytics/apps/city/geometry.py": "35133251487497884d27dd2902de286648d4181a636362d7fef7ee6fff91e237",
+    "services/analytics/behavior-analytics/apps/city/preview.py": "ec14e1ac07f0f1bb8927c1397aa7b57a926f3fcb5fdfc63605733ba3b4f1e756",
+    "services/analytics/behavior-analytics/apps/city/tests/test_city.py": "bb85885089dd1d973d6badce42b27e48762cbb1561c5b17e343a3e5894c09889",
+    "services/analytics/behavior-analytics/apps/city/tests/test_preview.py": "f68f37d7f706fdea19bbd47e6e3cbcefd787e63b28cd990a69d1a8255a14c82d"
+  },
+  "details": "docs/qa/smart-city-2026-10-23/sprint-map-rules-review.md",
+  "scope": "CPU-only source fixes and saved-data audit. No model/GPU runs, calibration edits, simulator edits, service restart or runtime qualification by this agent. Backend source frozen for root deployment."
+}

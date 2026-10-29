@@ -1,0 +1,40 @@
+{
+  "gpu": "NVIDIA GB10",
+  "passed": true,
+  "cases": [
+    {
+      "tokens": 1,
+      "experts": 4,
+      "hidden": 2048,
+      "intermediate": 1024,
+      "top_k": 2,
+      "relative_l2": 0.0006693763425573707,
+      "cosine": 1.0000004768371582,
+      "elapsed_s": 0.2939088847488165,
+      "max_abs": 0.0001220703125
+    },
+    {
+      "tokens": 8,
+      "experts": 4,
+      "hidden": 2048,
+      "intermediate": 1024,
+      "top_k": 2,
+      "relative_l2": 0.0003063145559281111,
+      "cosine": 1.0000027418136597,
+      "elapsed_s": 0.026426046155393124,
+      "max_abs": 0.00048828125
+    },
+    {
+      "tokens": 64,
+      "experts": 4,
+      "hidden": 2048,
+      "intermediate": 1024,
+      "top_k": 2,
+      "relative_l2": 0.00036013161297887564,
+      "cosine": 0.999991774559021,
+      "elapsed_s": 0.012495169881731272,
+      "max_abs": 0.0009765625
+    }
+  ],
+  "cuda_peak_allocated_gib": 0.06864404678344727
+}

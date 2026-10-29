@@ -1,0 +1,2756 @@
+{
+  "meta": {
+    "units": "m",
+    "frame": "world(smart_city_pilot)",
+    "cm_to_m": 0.01,
+    "intersection_id": "A",
+    "seed": 42,
+    "surveyed": "2026-07-31",
+    "notes": "4-way signalized intersection NW of GlassTower lawn. Measured from instance-proxy mesh bboxes of ce_Context_City_Streets (CenterLineMarkings_4/7/13/38) in the meters pilot stage. E-W street is slightly diagonal: centerline y drops ~0.064 per +x meter east of the box. Intersection box: x[-37.4,-9.2], y[64.8,92.4], center (-23.3, 78.6)."
+  },
+  "geometry": {
+    "street_z": 0.0,
+    "sidewalk_z": 0.0,
+    "asphalt_z": -0.2,
+    "box": {
+      "x": [
+        -37.4,
+        -9.2
+      ],
+      "y": [
+        64.8,
+        92.4
+      ],
+      "center": [
+        -23.3,
+        78.6
+      ]
+    },
+    "roadway_bands": {
+      "ns_street_x": [
+        -35.5,
+        -16.9
+      ],
+      "ew_west_arm_y": [
+        73.9,
+        88.3
+      ],
+      "ew_east_arm_y_at_box": [
+        66.4,
+        81.0
+      ]
+    },
+    "curbs": {
+      "measured": "2026-08-05, scripts/survey/scan_curbs_intersection_A.py",
+      "units": "m (stage world frame, metersPerUnit=1.0)",
+      "region_scanned": {
+        "x": [
+          -60.0,
+          30.0
+        ],
+        "y": [
+          40.0,
+          120.0
+        ],
+        "root": "/World/CityCm",
+        "traversal": "Usd.TraverseInstanceProxies"
+      },
+      "scan_stats": {
+        "meshes_traversed": 11819,
+        "curb_pavement_marking_meshes": 3902,
+        "meshes_in_region": 28
+      },
+      "method": {
+        "curb_edge": "0.20 m wide, 0.20 m tall vertical-faced extruded strip; the roadway-side edge has identical (x,y) at z=-0.200 (asphalt) and z=0.000 (sidewalk top), so the reported polyline is BOTH the top inner edge and the roadway-side boundary at asphalt level.",
+        "road_side_rule": "of the strip's two 0.20 m-offset edges, the one nearer the intersection centre (-23.3, 78.6).",
+        "centerline": "midline of the marking quad's two long edges, NOT its bbox chord.",
+        "lane_count": "measured half-width / 3.5 m; no lane-divider marking geometry exists near this intersection (verified: 0 LaneMarkings and 0 CrosswalkStripes instances in x[-145,195] y[40,125])."
+      },
+      "calibration": {
+        "reference": "survey.construction.west_arm_lane_model (measured 2026-08-05, independent session)",
+        "checks": [
+          {
+            "what": "west-arm centreline y at x=-135.27",
+            "recorded": 84.4791,
+            "measured": 84.4791,
+            "delta_m": 0.0
+          },
+          {
+            "what": "west-arm centreline dydx",
+            "recorded": -0.06853,
+            "measured": -0.06853,
+            "delta": 0.0
+          },
+          {
+            "what": "west-arm centreline y at x=-62",
+            "recorded": 79.46,
+            "measured": 79.4579,
+            "delta_m": -0.0021
+          },
+          {
+            "what": "west-arm SOUTH curb y at x=-138.73",
+            "recorded": 81.21,
+            "measured": 81.208,
+            "delta_m": -0.002
+          }
+        ],
+        "correction": {
+          "what": "west-arm south/north curb dydx",
+          "recorded": -0.0705,
+          "measured": -0.06853,
+          "explanation": "the recorded -0.0705 was derived from the curb mesh's axis-aligned BBOX, which mixes the strip's two parallel edges; the true slope equals the centreline's (-0.06853).  Worth 0.15 m at the east end: recorded south curb y=75.80 at x=-62, measured 75.9497."
+        },
+        "max_abs_delta_m": 0.0021,
+        "pass": true
+      },
+      "lines": {
+        "ns_south_west_curb": {
+          "param": "y",
+          "source_mesh": "Curbs_24",
+          "n_pts": 3,
+          "valid": [
+            -10.3921,
+            69.3495
+          ],
+          "resid_rms_m": 5.0379767395648535e-06,
+          "resid_max_m": 6.23876415062341e-06,
+          "y0": -10.3921,
+          "x0": -35.528293900654695,
+          "dxdy": 0.06166535459626425,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.20001189381508003
+        },
+        "ns_south_east_curb": {
+          "param": "y",
+          "source_mesh": "Curbs_25",
+          "n_pts": 2,
+          "valid": [
+            -9.4718,
+            68.4103
+          ],
+          "resid_rms_m": 2.5121479338940403e-15,
+          "resid_max_m": 3.552713678800501e-15,
+          "y0": -9.4718,
+          "x0": -21.444900000000004,
+          "dxdy": 0.061665003896916044,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.19997862368461772
+        },
+        "ns_south_centerline": {
+          "param": "y",
+          "source_mesh": "CenterLineMarkings_4",
+          "n_pts": 3,
+          "valid": [
+            -9.29815,
+            64.8014
+          ],
+          "resid_rms_m": 4.259641186562378e-06,
+          "resid_max_m": 5.226019826665151e-06,
+          "y0": -9.29815,
+          "x0": -28.447555207880264,
+          "dxdy": 0.061665761664419415,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "note": "midline of the marking quad's two long edges (strip width 0.492 m); the bbox chord is NOT the centreline",
+          "strip_width_m": 0.4921531022850725
+        },
+        "ns_north_west_curb": {
+          "param": "y",
+          "source_mesh": "Curbs_40",
+          "n_pts": 2,
+          "valid": [
+            89.1634,
+            160.4898
+          ],
+          "resid_rms_m": 3.552713678800501e-15,
+          "resid_max_m": 3.552713678800501e-15,
+          "y0": 89.1634,
+          "x0": -30.117300000000004,
+          "dxdy": -0.008109199398819962,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.19995680577553895
+        },
+        "ns_north_east_curb": {
+          "param": "y",
+          "source_mesh": "Curbs_41",
+          "n_pts": 3,
+          "valid": [
+            87.639,
+            160.2249
+          ],
+          "resid_rms_m": 7.53315446506812e-06,
+          "resid_max_m": 9.32965247102402e-06,
+          "y0": 87.639,
+          "x0": -16.10440911912897,
+          "dxdy": -0.008108890175564928,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.20000639871199133
+        },
+        "ns_north_centerline": {
+          "param": "y",
+          "source_mesh": "CenterLineMarkings_7",
+          "n_pts": 2,
+          "valid": [
+            92.40485,
+            155.3259
+          ],
+          "resid_rms_m": 1.0658141036401503e-14,
+          "resid_max_m": 1.0658141036401503e-14,
+          "y0": 92.40485,
+          "x0": -23.143349999999987,
+          "dxdy": -0.008108574157615017,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "note": "midline of the marking quad's two long edges (strip width 0.492 m); the bbox chord is NOT the centreline",
+          "strip_width_m": 0.49216436388905527
+        },
+        "ew_west_south_curb": {
+          "param": "x",
+          "source_mesh": "Curbs_64",
+          "n_pts": 3,
+          "valid": [
+            -138.712,
+            -35.3293
+          ],
+          "resid_rms_m": 2.4857827751447717e-05,
+          "resid_max_m": 3.0577538140619254e-05,
+          "x0": -138.712,
+          "y0": 81.2067997321504,
+          "dydx": -0.06853013165489913,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.2000008220829927
+        },
+        "ew_west_north_curb": {
+          "param": "x",
+          "source_mesh": "Curbs_65",
+          "n_pts": 2,
+          "valid": [
+            -138.2233,
+            -35.517
+          ],
+          "resid_rms_m": 1.0048591735576161e-14,
+          "resid_max_m": 1.4210854715202004e-14,
+          "x0": -138.2233,
+          "y0": 91.6979,
+          "dydx": -0.06852938914165932,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.2000163102634973
+        },
+        "ew_west_centerline": {
+          "param": "x",
+          "source_mesh": "CenterLineMarkings_13",
+          "n_pts": 2,
+          "valid": [
+            -135.269,
+            -37.355199999999996
+          ],
+          "resid_rms_m": 8.585520542392951e-14,
+          "resid_max_m": 1.1368683772161603e-13,
+          "x0": -135.269,
+          "y0": 84.47904999999989,
+          "dydx": -0.06852966588979231,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "note": "midline of the marking quad's two long edges (strip width 0.492 m); the bbox chord is NOT the centreline",
+          "strip_width_m": 0.4922014764596827
+        },
+        "ew_east_south_curb": {
+          "param": "x",
+          "source_mesh": "Curbs_158",
+          "n_pts": 2,
+          "valid": [
+            -11.3431,
+            183.7536
+          ],
+          "resid_rms_m": 1.8115356374411762e-14,
+          "resid_max_m": 2.1316282072803006e-14,
+          "x0": -11.3431,
+          "y0": 72.56080000000001,
+          "dydx": -0.06166531776293494,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.19997862368200936
+        },
+        "ew_east_north_curb": {
+          "param": "x",
+          "source_mesh": "Curbs_157",
+          "n_pts": 3,
+          "valid": [
+            -11.2844,
+            184.4447
+          ],
+          "resid_rms_m": 1.1604585807589441e-05,
+          "resid_max_m": 1.423397111466329e-05,
+          "x0": -11.2844,
+          "y0": 83.07711419124647,
+          "dydx": -0.061665404625688244,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "note": "roadway-side edge of the curb strip (strip width 0.200 m); identical in plan at z=-0.200 and z=0.000 (vertical face)",
+          "strip_width_m": 0.19998272691365862
+        },
+        "ew_east_centerline": {
+          "param": "x",
+          "source_mesh": "CenterLineMarkings_38",
+          "n_pts": 2,
+          "valid": [
+            -9.20725,
+            182.71335
+          ],
+          "resid_rms_m": 1.0048591735576161e-14,
+          "resid_max_m": 1.4210854715202004e-14,
+          "x0": -9.20725,
+          "y0": 79.44235,
+          "dydx": -0.06166508441511759,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "note": "midline of the marking quad's two long edges (strip width 0.492 m); the bbox chord is NOT the centreline",
+          "strip_width_m": 0.49217642194139266
+        }
+      },
+      "ns_single_line_fit_rejected": {
+        "param": "y",
+        "source_mesh": "Curbs_24+Curbs_40",
+        "n_pts": 5,
+        "valid": [
+          -10.3921,
+          160.4898
+        ],
+        "resid_rms_m": 1.2428247766519793,
+        "resid_max_m": 1.5551464864728395,
+        "y0": -10.3921,
+        "x0": -34.79304185497538,
+        "dxdy": 0.03294259669360205,
+        "formula": "x(y) = x0 + dxdy*(y - y0)",
+        "note": "REJECTED: a single straight fit across both NS arms"
+      },
+      "arms": {
+        "ns_south": {
+          "param": "y",
+          "valid_y": [
+            -10.4,
+            69.35
+          ],
+          "geometry": "straight, diagonal",
+          "cross_section": {
+            "at": {
+              "y": 64.8
+            },
+            "curb_lo": -30.8915,
+            "centerline": -23.8782,
+            "curb_hi": -16.8649,
+            "width_m": 14.0266,
+            "half_lo_m": 7.0133,
+            "half_hi_m": 7.0133,
+            "lanes_lo": 2,
+            "lanes_hi": 2
+          },
+          "lanes": {
+            "southbound(west half)": 2,
+            "northbound(east half)": 2
+          }
+        },
+        "ns_north": {
+          "param": "y",
+          "valid_y": [
+            87.64,
+            160.49
+          ],
+          "geometry": "straight, near-N-S",
+          "cross_section": {
+            "at": {
+              "y": 92.4
+            },
+            "curb_lo": -30.1435,
+            "centerline": -23.1433,
+            "curb_hi": -16.143,
+            "width_m": 14.0005,
+            "half_lo_m": 7.0002,
+            "half_hi_m": 7.0003,
+            "lanes_lo": 2,
+            "lanes_hi": 2
+          },
+          "lanes": {
+            "southbound(west half)": 2,
+            "northbound(east half)": 2
+          }
+        },
+        "ew_west": {
+          "param": "x",
+          "valid_x": [
+            -138.7,
+            -35.33
+          ],
+          "geometry": "straight, diagonal",
+          "cross_section": {
+            "at": {
+              "x": -62.0
+            },
+            "curb_lo": 75.9497,
+            "centerline": 79.4579,
+            "curb_hi": 86.4744,
+            "width_m": 10.5246,
+            "half_lo_m": 3.5082,
+            "half_hi_m": 7.0164,
+            "lanes_lo": 1,
+            "lanes_hi": 2
+          },
+          "lanes": {
+            "eastbound(south half)": 1,
+            "westbound(north half)": 2
+          }
+        },
+        "ew_east": {
+          "param": "x",
+          "valid_x": [
+            -11.34,
+            183.75
+          ],
+          "geometry": "straight, diagonal",
+          "cross_section": {
+            "at": {
+              "x": -9.2
+            },
+            "curb_lo": 72.4286,
+            "centerline": 79.4419,
+            "curb_hi": 82.9486,
+            "width_m": 10.5199,
+            "half_lo_m": 7.0133,
+            "half_hi_m": 3.5067,
+            "lanes_lo": 2,
+            "lanes_hi": 1
+          },
+          "lanes": {
+            "eastbound(south half)": 2,
+            "westbound(north half)": 1
+          }
+        }
+      },
+      "east_arm_lane_model": {
+        "y_c_east": {
+          "param": "x",
+          "x0": -9.20725,
+          "y0": 79.44235,
+          "dydx": -0.06166508441511759,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "valid": [
+            -9.20725,
+            182.71335
+          ]
+        },
+        "eb_lane_count": 2,
+        "wb_lane_count": 1,
+        "eb_inner_offset_m": -1.75,
+        "eb_outer_offset_m": -5.25,
+        "y_eb_inner": {
+          "formula": "y(x) = y_c_east(x) - 1.75",
+          "at_x_-9.2": 77.6919,
+          "at_x_40": 74.658
+        },
+        "y_eb_outer": {
+          "formula": "y(x) = y_c_east(x) - 5.25",
+          "at_x_-9.2": 74.1919,
+          "at_x_40": 71.158
+        },
+        "wb_lane_offset_m": 1.75,
+        "y_wb": {
+          "formula": "y(x) = y_c_east(x) + 1.75",
+          "at_x_-9.2": 81.1919
+        },
+        "note": "No lane-divider marking geometry exists on this street (the dashes are asphalt texture); lane counts come from the measured half-widths at a 3.5 m modulus.  EB (south half) is the WIDE half on the east arm -- the opposite of the west arm, where the WB (north) half is the wide one."
+      },
+      "derived_lane_centers": {
+        "ns_south_NB_1": {
+          "param": "y",
+          "valid": [
+            -9.29815,
+            64.8014
+          ],
+          "y0": -9.29815,
+          "x0": -26.6942,
+          "dxdy": 0.061665761664419415,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": 1.7533,
+          "lane_width_m": 3.5067,
+          "derived_from": "ns_south_centerline"
+        },
+        "ns_south_NB_2": {
+          "param": "y",
+          "valid": [
+            -9.29815,
+            64.8014
+          ],
+          "y0": -9.29815,
+          "x0": -23.1876,
+          "dxdy": 0.061665761664419415,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": 5.26,
+          "lane_width_m": 3.5067,
+          "derived_from": "ns_south_centerline"
+        },
+        "ns_south_SB_1": {
+          "param": "y",
+          "valid": [
+            -9.29815,
+            64.8014
+          ],
+          "y0": -9.29815,
+          "x0": -30.2009,
+          "dxdy": 0.061665761664419415,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": -1.7533,
+          "lane_width_m": 3.5067,
+          "derived_from": "ns_south_centerline"
+        },
+        "ns_south_SB_2": {
+          "param": "y",
+          "valid": [
+            -9.29815,
+            64.8014
+          ],
+          "y0": -9.29815,
+          "x0": -33.7075,
+          "dxdy": 0.061665761664419415,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": -5.26,
+          "lane_width_m": 3.5067,
+          "derived_from": "ns_south_centerline"
+        },
+        "ns_north_NB_1": {
+          "param": "y",
+          "valid": [
+            92.40485,
+            155.3259
+          ],
+          "y0": 92.40485,
+          "x0": -21.3933,
+          "dxdy": -0.008108574157615017,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": 1.7501,
+          "lane_width_m": 3.5002,
+          "derived_from": "ns_north_centerline"
+        },
+        "ns_north_NB_2": {
+          "param": "y",
+          "valid": [
+            92.40485,
+            155.3259
+          ],
+          "y0": 92.40485,
+          "x0": -17.8931,
+          "dxdy": -0.008108574157615017,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": 5.2502,
+          "lane_width_m": 3.5002,
+          "derived_from": "ns_north_centerline"
+        },
+        "ns_north_SB_1": {
+          "param": "y",
+          "valid": [
+            92.40485,
+            155.3259
+          ],
+          "y0": 92.40485,
+          "x0": -24.8934,
+          "dxdy": -0.008108574157615017,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": -1.7501,
+          "lane_width_m": 3.5001,
+          "derived_from": "ns_north_centerline"
+        },
+        "ns_north_SB_2": {
+          "param": "y",
+          "valid": [
+            92.40485,
+            155.3259
+          ],
+          "y0": 92.40485,
+          "x0": -28.3935,
+          "dxdy": -0.008108574157615017,
+          "formula": "x(y) = x0 + dxdy*(y - y0)",
+          "offset_from_centerline_m": -5.2502,
+          "lane_width_m": 3.5001,
+          "derived_from": "ns_north_centerline"
+        },
+        "ew_west_EB_1": {
+          "param": "x",
+          "valid": [
+            -135.269,
+            -37.355199999999996
+          ],
+          "x0": -135.269,
+          "y0": 82.7249,
+          "dydx": -0.06852966588979231,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "offset_from_centerline_m": -1.7541,
+          "lane_width_m": 3.5082,
+          "derived_from": "ew_west_centerline"
+        },
+        "ew_west_WB_1": {
+          "param": "x",
+          "valid": [
+            -135.269,
+            -37.355199999999996
+          ],
+          "x0": -135.269,
+          "y0": 86.2331,
+          "dydx": -0.06852966588979231,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "offset_from_centerline_m": 1.7541,
+          "lane_width_m": 3.5082,
+          "derived_from": "ew_west_centerline"
+        },
+        "ew_west_WB_2": {
+          "param": "x",
+          "valid": [
+            -135.269,
+            -37.355199999999996
+          ],
+          "x0": -135.269,
+          "y0": 89.7413,
+          "dydx": -0.06852966588979231,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "offset_from_centerline_m": 5.2623,
+          "lane_width_m": 3.5082,
+          "derived_from": "ew_west_centerline"
+        },
+        "ew_east_EB_1": {
+          "param": "x",
+          "valid": [
+            -9.20725,
+            182.71335
+          ],
+          "x0": -9.20725,
+          "y0": 77.689,
+          "dydx": -0.06166508441511759,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "offset_from_centerline_m": -1.7533,
+          "lane_width_m": 3.5067,
+          "derived_from": "ew_east_centerline"
+        },
+        "ew_east_EB_2": {
+          "param": "x",
+          "valid": [
+            -9.20725,
+            182.71335
+          ],
+          "x0": -9.20725,
+          "y0": 74.1824,
+          "dydx": -0.06166508441511759,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "offset_from_centerline_m": -5.26,
+          "lane_width_m": 3.5067,
+          "derived_from": "ew_east_centerline"
+        },
+        "ew_east_WB_1": {
+          "param": "x",
+          "valid": [
+            -9.20725,
+            182.71335
+          ],
+          "x0": -9.20725,
+          "y0": 81.1957,
+          "dydx": -0.06166508441511759,
+          "formula": "y(x) = y0 + dydx*(x - x0)",
+          "offset_from_centerline_m": 1.7533,
+          "lane_width_m": 3.5067,
+          "derived_from": "ew_east_centerline"
+        },
+        "_note": "lane index 1 is the INNER lane (nearest the centreline).  Same {param,x0,y0,dxdy|dydx,formula} shape as `lines`."
+      },
+      "movement_geometry": {
+        "note": "Approach and exit headings measured from the arm CENTRELINE fits.  The approaches are NOT perpendicular and the NS street kinks across the box, so deflections range 86.0-94.4 deg -- P2's fillet builder must use these, not 90 deg.  A through NB vehicle genuinely changes heading by 3.99 deg at the box.  Rightmost exit lanes are suggested for right turns and the innermost for left turns; EB:T uses the inner east-arm lane.  2026-08-10: EB:R / EB:L added when the eastbound approach reopened (they were missing because EB carried no movements while it was closed).",
+        "approach_headings_deg": {
+          "NB": 86.4713,
+          "SB": 270.4646,
+          "EB": 356.0797,
+          "WB": 176.4713
+        },
+        "exit_headings_deg": {
+          "north": 90.4646,
+          "south": 266.4713,
+          "east": 356.4713,
+          "west": 176.0797
+        },
+        "movements": {
+          "NB:R": {
+            "approach": "NB",
+            "exit_arm": "east",
+            "approach_heading_deg": 86.4713,
+            "exit_heading_deg": 356.4713,
+            "deflection_deg": -90.0,
+            "turn": "right",
+            "suggested_exit_lane": "ew_east_EB_2",
+            "exit_lane_line": "y(x) = y0 + dydx*(x - x0)"
+          },
+          "NB:L": {
+            "approach": "NB",
+            "exit_arm": "west",
+            "approach_heading_deg": 86.4713,
+            "exit_heading_deg": 176.0797,
+            "deflection_deg": 89.6084,
+            "turn": "left",
+            "suggested_exit_lane": "ew_west_WB_1",
+            "exit_lane_line": "y(x) = y0 + dydx*(x - x0)"
+          },
+          "SB:R": {
+            "approach": "SB",
+            "exit_arm": "west",
+            "approach_heading_deg": 270.4646,
+            "exit_heading_deg": 176.0797,
+            "deflection_deg": -94.3849,
+            "turn": "right",
+            "suggested_exit_lane": "ew_west_WB_2",
+            "exit_lane_line": "y(x) = y0 + dydx*(x - x0)"
+          },
+          "SB:L": {
+            "approach": "SB",
+            "exit_arm": "east",
+            "approach_heading_deg": 270.4646,
+            "exit_heading_deg": 356.4713,
+            "deflection_deg": 86.0067,
+            "turn": "left",
+            "suggested_exit_lane": "ew_east_EB_1",
+            "exit_lane_line": "y(x) = y0 + dydx*(x - x0)"
+          },
+          "WB:R": {
+            "approach": "WB",
+            "exit_arm": "north",
+            "approach_heading_deg": 176.4713,
+            "exit_heading_deg": 90.4646,
+            "deflection_deg": -86.0067,
+            "turn": "right",
+            "suggested_exit_lane": "ns_north_NB_2",
+            "exit_lane_line": "x(y) = x0 + dxdy*(y - y0)"
+          },
+          "WB:L": {
+            "approach": "WB",
+            "exit_arm": "south",
+            "approach_heading_deg": 176.4713,
+            "exit_heading_deg": 266.4713,
+            "deflection_deg": 90.0,
+            "turn": "left",
+            "suggested_exit_lane": "ns_south_SB_1",
+            "exit_lane_line": "x(y) = x0 + dxdy*(y - y0)"
+          },
+          "NB:T": {
+            "approach": "NB",
+            "exit_arm": "north",
+            "approach_heading_deg": 86.4713,
+            "exit_heading_deg": 90.4646,
+            "deflection_deg": 3.9933,
+            "turn": "through",
+            "suggested_exit_lane": "ns_north_NB_1",
+            "exit_lane_line": "x(y) = x0 + dxdy*(y - y0)"
+          },
+          "SB:T": {
+            "approach": "SB",
+            "exit_arm": "south",
+            "approach_heading_deg": 270.4646,
+            "exit_heading_deg": 266.4713,
+            "deflection_deg": -3.9933,
+            "turn": "through",
+            "suggested_exit_lane": "ns_south_SB_1",
+            "exit_lane_line": "x(y) = x0 + dxdy*(y - y0)"
+          },
+          "EB:T": {
+            "approach": "EB",
+            "exit_arm": "east",
+            "approach_heading_deg": 356.0797,
+            "exit_heading_deg": 356.4713,
+            "deflection_deg": 0.3916,
+            "turn": "through",
+            "suggested_exit_lane": "ew_east_EB_1",
+            "exit_lane_line": "y(x) = y0 + dydx*(x - x0)"
+          },
+          "WB:T": {
+            "approach": "WB",
+            "exit_arm": "west",
+            "approach_heading_deg": 176.4713,
+            "exit_heading_deg": 176.0797,
+            "deflection_deg": -0.3916,
+            "turn": "through",
+            "suggested_exit_lane": "ew_west_WB_1",
+            "exit_lane_line": "y(x) = y0 + dydx*(x - x0)"
+          },
+          "EB:R": {
+            "approach": "EB",
+            "exit_arm": "south",
+            "approach_heading_deg": 356.0797,
+            "exit_heading_deg": 266.4713,
+            "deflection_deg": -89.6084,
+            "turn": "right",
+            "suggested_exit_lane": "ns_south_SB_2",
+            "exit_lane_line": "x(y) = x0 + dxdy*(y - y0)"
+          },
+          "EB:L": {
+            "approach": "EB",
+            "exit_arm": "north",
+            "approach_heading_deg": 356.0797,
+            "exit_heading_deg": 90.4646,
+            "deflection_deg": 94.3849,
+            "turn": "left",
+            "suggested_exit_lane": "ns_north_NB_1",
+            "exit_lane_line": "x(y) = x0 + dxdy*(y - y0)"
+          }
+        }
+      },
+      "corner_returns": {
+        "SW": {
+          "source_mesh": "Curbs_23",
+          "arc": {
+            "center": [
+              -33.6327,
+              70.8878
+            ],
+            "radius_m": 3.1164,
+            "fit_rms_m": 0.0048,
+            "n_arc_vertices": 8,
+            "sweep_deg": 85.56,
+            "note": "circle fit to the interior vertices (the first and last mesh segments are the tangent straights into the arms).  This is the INNER curb radius the corner was modelled with -- any vehicle fillet must sit outside it by the clearance margin."
+          },
+          "edge": "roadway-side (inner) curb edge; identical at z=-0.200 and z=0.000",
+          "n_mesh_vertices": 10,
+          "n_points": 34,
+          "spacing_m": 0.25,
+          "length_m": 8.1289,
+          "bbox": [
+            [
+              -35.3293,
+              69.3495
+            ],
+            [
+              -30.5224,
+              74.122
+            ]
+          ],
+          "ends": [
+            [
+              -30.611,
+              69.3495
+            ],
+            [
+              -35.3293,
+              74.122
+            ]
+          ],
+          "points": [
+            [
+              -30.611,
+              69.3495
+            ],
+            [
+              -30.5958,
+              69.5954
+            ],
+            [
+              -30.5807,
+              69.8412
+            ],
+            [
+              -30.5655,
+              70.0871
+            ],
+            [
+              -30.5504,
+              70.333
+            ],
+            [
+              -30.5352,
+              70.5788
+            ],
+            [
+              -30.5224,
+              70.8247
+            ],
+            [
+              -30.5382,
+              71.0705
+            ],
+            [
+              -30.5539,
+              71.3163
+            ],
+            [
+              -30.5917,
+              71.5581
+            ],
+            [
+              -30.6646,
+              71.7934
+            ],
+            [
+              -30.7375,
+              72.0287
+            ],
+            [
+              -30.8446,
+              72.2492
+            ],
+            [
+              -30.9662,
+              72.4634
+            ],
+            [
+              -31.0878,
+              72.6777
+            ],
+            [
+              -31.2503,
+              72.8628
+            ],
+            [
+              -31.4128,
+              73.0479
+            ],
+            [
+              -31.5852,
+              73.2223
+            ],
+            [
+              -31.7819,
+              73.3707
+            ],
+            [
+              -31.9785,
+              73.5191
+            ],
+            [
+              -32.1912,
+              73.6405
+            ],
+            [
+              -32.4151,
+              73.7433
+            ],
+            [
+              -32.6389,
+              73.8461
+            ],
+            [
+              -32.879,
+              73.8988
+            ],
+            [
+              -33.1207,
+              73.9463
+            ],
+            [
+              -33.3633,
+              73.9872
+            ],
+            [
+              -33.609,
+              74.0041
+            ],
+            [
+              -33.8548,
+              74.0209
+            ],
+            [
+              -34.1005,
+              74.0378
+            ],
+            [
+              -34.3463,
+              74.0546
+            ],
+            [
+              -34.592,
+              74.0715
+            ],
+            [
+              -34.8378,
+              74.0883
+            ],
+            [
+              -35.0835,
+              74.1052
+            ],
+            [
+              -35.3293,
+              74.122
+            ]
+          ],
+          "junction_check": [
+            {
+              "end": [
+                -30.611,
+                69.3495
+              ],
+              "joins": "ns_south_west_curb",
+              "coord": "x",
+              "predicted": -30.611,
+              "measured": -30.611,
+              "delta_m": -0.0
+            },
+            {
+              "end": [
+                -35.3293,
+                74.122
+              ],
+              "joins": "ew_west_south_curb",
+              "coord": "y",
+              "predicted": 74.122,
+              "measured": 74.122,
+              "delta_m": 0.0
+            }
+          ],
+          "junction_max_abs_delta_m": 0.0
+        },
+        "SE": {
+          "source_mesh": "Curbs_20",
+          "arc": {
+            "center": [
+              -13.4533,
+              69.5737
+            ],
+            "radius_m": 3.1172,
+            "fit_rms_m": 0.00488,
+            "n_arc_vertices": 8,
+            "sweep_deg": 85.9,
+            "note": "circle fit to the interior vertices (the first and last mesh segments are the tangent straights into the arms).  This is the INNER curb radius the corner was modelled with -- any vehicle fillet must sit outside it by the clearance margin."
+          },
+          "edge": "roadway-side (inner) curb edge; identical at z=-0.200 and z=0.000",
+          "n_mesh_vertices": 10,
+          "n_points": 34,
+          "spacing_m": 0.25,
+          "length_m": 8.1681,
+          "bbox": [
+            [
+              -16.6423,
+              68.4103
+            ],
+            [
+              -11.3431,
+              72.6827
+            ]
+          ],
+          "ends": [
+            [
+              -16.6423,
+              68.4103
+            ],
+            [
+              -11.3431,
+              72.5608
+            ]
+          ],
+          "points": [
+            [
+              -16.6423,
+              68.4103
+            ],
+            [
+              -16.6271,
+              68.6574
+            ],
+            [
+              -16.6118,
+              68.9044
+            ],
+            [
+              -16.5966,
+              69.1515
+            ],
+            [
+              -16.5814,
+              69.3985
+            ],
+            [
+              -16.5661,
+              69.6456
+            ],
+            [
+              -16.5488,
+              69.8923
+            ],
+            [
+              -16.5026,
+              70.1355
+            ],
+            [
+              -16.4564,
+              70.3787
+            ],
+            [
+              -16.3891,
+              70.6152
+            ],
+            [
+              -16.2869,
+              70.8406
+            ],
+            [
+              -16.1847,
+              71.0661
+            ],
+            [
+              -16.0506,
+              71.2726
+            ],
+            [
+              -15.9024,
+              71.4708
+            ],
+            [
+              -15.7541,
+              71.669
+            ],
+            [
+              -15.5688,
+              71.8331
+            ],
+            [
+              -15.3834,
+              71.9971
+            ],
+            [
+              -15.1894,
+              72.1491
+            ],
+            [
+              -14.9745,
+              72.2719
+            ],
+            [
+              -14.7596,
+              72.3947
+            ],
+            [
+              -14.5321,
+              72.4886
+            ],
+            [
+              -14.2958,
+              72.5623
+            ],
+            [
+              -14.0595,
+              72.6359
+            ],
+            [
+              -13.8135,
+              72.6574
+            ],
+            [
+              -13.5665,
+              72.6734
+            ],
+            [
+              -13.3195,
+              72.6827
+            ],
+            [
+              -13.0725,
+              72.6675
+            ],
+            [
+              -12.8254,
+              72.6522
+            ],
+            [
+              -12.5784,
+              72.637
+            ],
+            [
+              -12.3313,
+              72.6218
+            ],
+            [
+              -12.0843,
+              72.6065
+            ],
+            [
+              -11.8372,
+              72.5913
+            ],
+            [
+              -11.5902,
+              72.576
+            ],
+            [
+              -11.3431,
+              72.5608
+            ]
+          ],
+          "junction_check": [
+            {
+              "end": [
+                -16.6423,
+                68.4103
+              ],
+              "joins": "ns_south_east_curb",
+              "coord": "x",
+              "predicted": -16.6423,
+              "measured": -16.6423,
+              "delta_m": 0.0
+            },
+            {
+              "end": [
+                -11.3431,
+                72.5608
+              ],
+              "joins": "ew_east_south_curb",
+              "coord": "y",
+              "predicted": 72.5608,
+              "measured": 72.5608,
+              "delta_m": -0.0
+            }
+          ],
+          "junction_max_abs_delta_m": 0.0
+        },
+        "NW": {
+          "source_mesh": "Curbs_22",
+          "arc": {
+            "center": [
+              -33.2229,
+              87.6275
+            ],
+            "radius_m": 3.1252,
+            "fit_rms_m": 0.00588,
+            "n_arc_vertices": 8,
+            "sweep_deg": 89.71,
+            "note": "circle fit to the interior vertices (the first and last mesh segments are the tangent straights into the arms).  This is the INNER curb radius the corner was modelled with -- any vehicle fillet must sit outside it by the clearance margin."
+          },
+          "edge": "roadway-side (inner) curb edge; identical at z=-0.200 and z=0.000",
+          "n_mesh_vertices": 10,
+          "n_points": 36,
+          "spacing_m": 0.25,
+          "length_m": 8.7355,
+          "bbox": [
+            [
+              -35.517,
+              84.5103
+            ],
+            [
+              -30.1051,
+              89.1634
+            ]
+          ],
+          "ends": [
+            [
+              -35.517,
+              84.6595
+            ],
+            [
+              -30.1173,
+              89.1634
+            ]
+          ],
+          "points": [
+            [
+              -35.517,
+              84.6595
+            ],
+            [
+              -35.268,
+              84.6424
+            ],
+            [
+              -35.019,
+              84.6254
+            ],
+            [
+              -34.77,
+              84.6083
+            ],
+            [
+              -34.521,
+              84.5912
+            ],
+            [
+              -34.272,
+              84.5741
+            ],
+            [
+              -34.023,
+              84.5571
+            ],
+            [
+              -33.774,
+              84.54
+            ],
+            [
+              -33.525,
+              84.5229
+            ],
+            [
+              -33.276,
+              84.5103
+            ],
+            [
+              -33.0269,
+              84.5265
+            ],
+            [
+              -32.7779,
+              84.5428
+            ],
+            [
+              -32.5328,
+              84.58
+            ],
+            [
+              -32.2956,
+              84.6575
+            ],
+            [
+              -32.0584,
+              84.735
+            ],
+            [
+              -31.8342,
+              84.8411
+            ],
+            [
+              -31.6204,
+              84.9699
+            ],
+            [
+              -31.4066,
+              85.0987
+            ],
+            [
+              -31.217,
+              85.2594
+            ],
+            [
+              -31.0353,
+              85.4305
+            ],
+            [
+              -30.8536,
+              85.6015
+            ],
+            [
+              -30.7097,
+              85.8051
+            ],
+            [
+              -30.5682,
+              86.0107
+            ],
+            [
+              -30.4336,
+              86.22
+            ],
+            [
+              -30.342,
+              86.4522
+            ],
+            [
+              -30.2504,
+              86.6843
+            ],
+            [
+              -30.1801,
+              86.922
+            ],
+            [
+              -30.1489,
+              87.1696
+            ],
+            [
+              -30.1177,
+              87.4172
+            ],
+            [
+              -30.1051,
+              87.6659
+            ],
+            [
+              -30.1072,
+              87.9155
+            ],
+            [
+              -30.1092,
+              88.1651
+            ],
+            [
+              -30.1112,
+              88.4147
+            ],
+            [
+              -30.1132,
+              88.6642
+            ],
+            [
+              -30.1153,
+              88.9138
+            ],
+            [
+              -30.1173,
+              89.1634
+            ]
+          ],
+          "junction_check": [
+            {
+              "end": [
+                -35.517,
+                84.6595
+              ],
+              "joins": "ew_west_north_curb",
+              "coord": "y",
+              "predicted": 84.6595,
+              "measured": 84.6595,
+              "delta_m": 0.0
+            },
+            {
+              "end": [
+                -30.1173,
+                89.1634
+              ],
+              "joins": "ns_north_west_curb",
+              "coord": "x",
+              "predicted": -30.1173,
+              "measured": -30.1173,
+              "delta_m": 0.0
+            }
+          ],
+          "junction_max_abs_delta_m": 0.0
+        },
+        "NE": {
+          "source_mesh": "Curbs_21",
+          "arc": {
+            "center": [
+              -12.9885,
+              86.293
+            ],
+            "radius_m": 3.1097,
+            "fit_rms_m": 0.00407,
+            "n_arc_vertices": 8,
+            "sweep_deg": 82.39,
+            "note": "circle fit to the interior vertices (the first and last mesh segments are the tangent straights into the arms).  This is the INNER curb radius the corner was modelled with -- any vehicle fillet must sit outside it by the clearance margin."
+          },
+          "edge": "roadway-side (inner) curb edge; identical at z=-0.200 and z=0.000",
+          "n_mesh_vertices": 11,
+          "n_points": 33,
+          "spacing_m": 0.25,
+          "length_m": 7.9307,
+          "bbox": [
+            [
+              -16.1044,
+              83.0771
+            ],
+            [
+              -11.2844,
+              87.639
+            ]
+          ],
+          "ends": [
+            [
+              -11.2844,
+              83.0771
+            ],
+            [
+              -16.1044,
+              87.639
+            ]
+          ],
+          "points": [
+            [
+              -11.2844,
+              83.0771
+            ],
+            [
+              -11.5318,
+              83.0924
+            ],
+            [
+              -11.7791,
+              83.1076
+            ],
+            [
+              -12.0265,
+              83.1229
+            ],
+            [
+              -12.2739,
+              83.1381
+            ],
+            [
+              -12.5212,
+              83.1534
+            ],
+            [
+              -12.7686,
+              83.1686
+            ],
+            [
+              -13.016,
+              83.1839
+            ],
+            [
+              -13.2633,
+              83.1991
+            ],
+            [
+              -13.5073,
+              83.2422
+            ],
+            [
+              -13.7511,
+              83.2869
+            ],
+            [
+              -13.9888,
+              83.3515
+            ],
+            [
+              -14.2163,
+              83.4497
+            ],
+            [
+              -14.4439,
+              83.5479
+            ],
+            [
+              -14.6512,
+              83.6823
+            ],
+            [
+              -14.8536,
+              83.8252
+            ],
+            [
+              -15.0488,
+              83.9766
+            ],
+            [
+              -15.2193,
+              84.1565
+            ],
+            [
+              -15.3898,
+              84.3363
+            ],
+            [
+              -15.5355,
+              84.5354
+            ],
+            [
+              -15.6674,
+              84.7452
+            ],
+            [
+              -15.7964,
+              84.9565
+            ],
+            [
+              -15.8823,
+              85.189
+            ],
+            [
+              -15.9682,
+              85.4214
+            ],
+            [
+              -16.027,
+              85.6606
+            ],
+            [
+              -16.0586,
+              85.9064
+            ],
+            [
+              -16.0902,
+              86.1522
+            ],
+            [
+              -16.0944,
+              86.3999
+            ],
+            [
+              -16.0964,
+              86.6477
+            ],
+            [
+              -16.0984,
+              86.8955
+            ],
+            [
+              -16.1004,
+              87.1433
+            ],
+            [
+              -16.1024,
+              87.3912
+            ],
+            [
+              -16.1044,
+              87.639
+            ]
+          ],
+          "junction_check": [
+            {
+              "end": [
+                -11.2844,
+                83.0771
+              ],
+              "joins": "ew_east_north_curb",
+              "coord": "y",
+              "predicted": 83.0771,
+              "measured": 83.0771,
+              "delta_m": -0.0
+            },
+            {
+              "end": [
+                -16.1044,
+                87.639
+              ],
+              "joins": "ns_north_east_curb",
+              "coord": "x",
+              "predicted": -16.1044,
+              "measured": -16.1044,
+              "delta_m": 0.0
+            }
+          ],
+          "junction_max_abs_delta_m": 0.0
+        }
+      },
+      "ns_centerline_reconciliation": {
+        "winner": "marking/curb-midline (per-arm)",
+        "verdict": "The surveyed x_c(y) = -28.69 + 0.0683*(y+9.31) is the CHORD of the south-arm double-yellow marking quad's axis-aligned bbox: it runs from the strip's WEST edge at the south end to its EAST edge at the north end.  It coincides with the true centreline only at mid-span (y ~ 27.7) and is 0.245 m off at each end -- EAST of true at y=64.8 (the intersection).  It is also only valid on the SOUTH arm: the NS street kinks at the intersection (south dx/dy = +0.06167, north dx/dy = -0.00811, centreline offset 0.735 m across the box), so extrapolating it north gives 1.1-1.4 m of error.  That extrapolation is the source of the unreconciled ~0.9 m discrepancy against the pad-implied centres.",
+        "evidence": {
+          "marking_vs_curb_midline_max_abs_m": 0.0,
+          "surveyed_vs_marking_south_arm_max_abs_m": 0.2499,
+          "surveyed_vs_marking_north_arm_max_abs_m": 6.2062,
+          "single_line_ns_fit_resid_max_m": 1.5551,
+          "stations": [
+            {
+              "y": -9.3,
+              "marking": -28.4477,
+              "curb_midline": -28.4476,
+              "surveyed_x_c": -28.6893,
+              "marking_minus_curbmid": -0.0,
+              "surveyed_minus_marking": -0.2416
+            },
+            {
+              "y": 0.0,
+              "marking": -27.8742,
+              "curb_midline": -27.8741,
+              "surveyed_x_c": -28.0541,
+              "marking_minus_curbmid": -0.0,
+              "surveyed_minus_marking": -0.1799
+            },
+            {
+              "y": 30.0,
+              "marking": -26.0242,
+              "curb_midline": -26.0242,
+              "surveyed_x_c": -26.0051,
+              "marking_minus_curbmid": -0.0,
+              "surveyed_minus_marking": 0.0191
+            },
+            {
+              "y": 60.0,
+              "marking": -24.1742,
+              "curb_midline": -24.1742,
+              "surveyed_x_c": -23.9561,
+              "marking_minus_curbmid": -0.0,
+              "surveyed_minus_marking": 0.2181
+            },
+            {
+              "y": 64.8,
+              "marking": -23.8782,
+              "curb_midline": -23.8782,
+              "surveyed_x_c": -23.6283,
+              "marking_minus_curbmid": 0.0,
+              "surveyed_minus_marking": 0.2499
+            },
+            {
+              "y": 92.4,
+              "marking": -23.1433,
+              "curb_midline": -23.1433,
+              "surveyed_x_c(extrapolated)": -21.7432,
+              "marking_minus_curbmid": -0.0,
+              "surveyed_minus_marking": 1.4001
+            },
+            {
+              "y": 120.0,
+              "marking": -23.3671,
+              "curb_midline": -23.3671,
+              "surveyed_x_c(extrapolated)": -19.8581,
+              "marking_minus_curbmid": -0.0,
+              "surveyed_minus_marking": 3.509
+            },
+            {
+              "y": 155.3,
+              "marking": -23.6533,
+              "curb_midline": -23.6533,
+              "surveyed_x_c(extrapolated)": -17.4471,
+              "marking_minus_curbmid": -0.0,
+              "surveyed_minus_marking": 6.2062
+            }
+          ],
+          "pad_implied": [
+            {
+              "y": 71.7,
+              "pad_implied_x": -23.55,
+              "box_interpolated_x": -23.6945,
+              "pad_minus_measured": 0.1445,
+              "surveyed_minus_measured": 0.5375
+            },
+            {
+              "y": 85.5,
+              "pad_implied_x": -23.1,
+              "box_interpolated_x": -23.327,
+              "pad_minus_measured": 0.227,
+              "surveyed_minus_measured": 1.1126
+            }
+          ]
+        },
+        "impact_on_authored_lanes_FLAG_ONLY": {
+          "NB_1_at_y64.8": {
+            "authored_x": -21.88,
+            "measured_centerline_x": -23.8782,
+            "offset_from_centerline_m": 1.9982,
+            "ideal_inner_lane_offset_m": 1.75
+          },
+          "SB_1_at_y64.8": {
+            "authored_x": -25.38,
+            "measured_centerline_x": -23.8782,
+            "offset_from_centerline_m": -1.5018,
+            "ideal_inner_lane_offset_m": -1.75
+          },
+          "NB_1_at_y92.4": {
+            "authored_x": -21.65,
+            "measured_centerline_x": -23.1433,
+            "offset_from_centerline_m": 1.4933
+          },
+          "SB_1_at_y92.4": {
+            "authored_x": -25.25,
+            "measured_centerline_x": -23.1433,
+            "offset_from_centerline_m": -2.1067
+          },
+          "note": "FLAG ONLY -- do not re-cut lane polylines from this scan without a separate decision; every offline traffic baseline is bound to them."
+        },
+        "box_centerline_interpolation": {
+          "formula": "x_c(y) = -23.8782 + 0.026628*(y - 64.8) for y in [64.8, 92.4]",
+          "note": "linear bridge between the two arm centrelines across the box; the asphalt inside the box carries no marking geometry."
+        }
+      },
+      "promoted_west_arm_prose": {
+        "original_key": "construction.west_arm_lane_model",
+        "promoted": "2026-08-05 by scan_curbs_intersection_A.py; the original key is left in place untouched for back-compat with scripts/scene/build_construction.py.",
+        "original_measured_note": "2026-08-05. THE WEST ARM IS DIAGONAL -- every axis-aligned y constant previously used here was wrong. The double yellow is /World/CityCm/.../Shape_88/Street_Modern_Standard_CenterLineMarkings_13/mesh, a single 4-point textured quad whose 0.49 m wide strip runs from (-135.27,84.479) to (-37.36,77.771); its y[77.52,84.72] AABB is the sweep of that DIAGONAL, not three parallel lines (an earlier reading of this same AABB as 'centre 81.12 = centreline, edges = lane lines, 3.6 m lanes' was a coincidence of arithmetic and is superseded). The survey meta note 'E-W street centreline y drops ~0.064 per +x metre' applies here too, not only east of the box. Road edges from the curb meshes Shape_89/Street_Modern_Standard_Curbs_64 (south) and Shape_90/Street_Modern_Standard_Curbs_65 (north), same -0.0705 slope.",
+        "original_centerline": {
+          "x0": -135.27,
+          "y0": 84.4791,
+          "dydx": -0.06853,
+          "formula": "y_c(x) = y0 + dydx * (x - x0)",
+          "x_valid": [
+            -135.3,
+            -37.35
+          ]
+        },
+        "original_south_curb": {
+          "x0": -138.73,
+          "y0": 81.21,
+          "dydx": -0.0705
+        },
+        "original_north_curb": {
+          "x0": -138.22,
+          "y0": 91.9,
+          "dydx": -0.0705
+        },
+        "original_cross_section_at_x_-62": {
+          "south_curb": 75.8,
+          "centerline": 79.46,
+          "north_curb": 86.53,
+          "road_width_m": 10.73,
+          "south_half_m": 3.66,
+          "north_half_m": 7.07
+        },
+        "original_eb_lanes": 1,
+        "original_wb_lanes": 2,
+        "corrections": [
+          "centerline: CONFIRMED exact (y0 84.4791 @ x0 -135.27, dydx -0.06853; re-measured 84.4790 / -0.068530).",
+          "south_curb / north_curb dydx: the recorded -0.0705 is a BBOX artifact (the axis-aligned box mixes the strip's two parallel edges).  True slope is -0.068530, identical to the centreline.  Use curbs.lines.ew_west_south_curb / ew_west_north_curb.",
+          "cross_section_at_x_-62: recorded south_curb 75.80 / north_curb 86.53 / road_width 10.73 / south_half 3.66 / north_half 7.07.  Measured: 75.9497 / 86.4744 / 10.5246 / 3.5082 / 7.0164 -- i.e. the west arm's EB half is exactly ONE 3.5 m lane and its WB half exactly TWO, which is what eb_lanes=1 / wb_lanes=2 already said; the half-widths were 0.15 m off.",
+          "eb_lanes=1 / wb_lanes=2: CONFIRMED by the corrected half-widths."
+        ]
+      }
+    }
+  },
+  "lanes": [
+    {
+      "id": "NB_1",
+      "approach": "S",
+      "movement": "through",
+      "polyline": [
+        [
+          -26.65,
+          -5.0,
+          -0.202
+        ],
+        [
+          -22.02,
+          62.8,
+          -0.202
+        ],
+        [
+          -21.88,
+          64.8,
+          -0.202
+        ],
+        [
+          -21.65,
+          92.4,
+          -0.202
+        ],
+        [
+          -21.65,
+          150.0,
+          -0.202
+        ]
+      ],
+      "width": 3.5,
+      "stop_line_s": 67.9,
+      "spawn_s": 0.0,
+      "despawn_s": 155.6,
+      "closed": false,
+      "reroute_if_closed": null,
+      "note": "S-arm centerline is diagonal: x_c(y) = -28.69 + 0.0683*(y+9.31); lane = x_c + 1.75"
+    },
+    {
+      "id": "SB_1",
+      "approach": "N",
+      "movement": "through",
+      "polyline": [
+        [
+          -25.15,
+          150.0,
+          -0.202
+        ],
+        [
+          -25.15,
+          94.4,
+          -0.202
+        ],
+        [
+          -25.25,
+          92.4,
+          -0.202
+        ],
+        [
+          -25.38,
+          64.8,
+          -0.202
+        ],
+        [
+          -30.15,
+          -5.0,
+          -0.202
+        ]
+      ],
+      "width": 3.5,
+      "stop_line_s": 55.6,
+      "spawn_s": 0.0,
+      "despawn_s": 155.6,
+      "closed": false,
+      "reroute_if_closed": null,
+      "note": "S-arm: lane = x_c - 1.75 on the diagonal centerline"
+    },
+    {
+      "id": "EB_1",
+      "approach": "W",
+      "movement": "through",
+      "polyline": [
+        [
+          -130.0,
+          82.3638,
+          -0.202
+        ],
+        [
+          -39.4,
+          76.155,
+          -0.202
+        ],
+        [
+          -37.4,
+          76.018,
+          -0.202
+        ],
+        [
+          -9.2,
+          77.6886,
+          -0.202
+        ],
+        [
+          175.0,
+          66.3298,
+          -0.202
+        ]
+      ],
+      "width": 3.5,
+      "stop_line_s": 90.8125,
+      "spawn_s": 0.0,
+      "despawn_s": 305.0,
+      "closed": false,
+      "reroute_if_closed": null,
+      "note": "2026-08-10 REOPENED and RE-CUT. The old polyline was a straight y=79.35 (authored when the arm was assumed axis-aligned): up to ~1.7 m off the real lane centre and NORTH of the double yellow at its east end. West arm now follows geometry.curbs.derived_lane_centers.ew_west_EB_1 (offset -1.7541), east arm ew_east_EB_1 (offset -1.7533); the two arm centrelines do not meet, so the box crossing carries the real +7.31 / -6.92 deg kinks. stop_line_s keeps the bar at x=-39.4 (2 m west of the box edge, ahead of XW_W)."
+    },
+    {
+      "id": "WB_1",
+      "approach": "E",
+      "movement": "through",
+      "polyline": [
+        [
+          175.0,
+          69.83654,
+          -0.202
+        ],
+        [
+          -7.2,
+          81.07192,
+          -0.202
+        ],
+        [
+          -9.2,
+          81.19525,
+          -0.202
+        ],
+        [
+          -34.0,
+          79.29317,
+          -0.202
+        ],
+        [
+          -130.0,
+          85.87202,
+          -0.202
+        ]
+      ],
+      "width": 3.5,
+      "stop_line_s": 182.5461,
+      "spawn_s": 0.0,
+      "despawn_s": 305.0,
+      "closed": false,
+      "reroute_if_closed": null,
+      "note": "2026-08-10 RE-CUT for the WB-outer-lane closure. The authored straight y=82.85 west of the box drifted from the inner WB lane into the OUTER one (offset +5.08 at the box edge, +4.68 at x=-43) -- straight through the new cone band -- and crossed the double yellow into oncoming EB west of x=-111.5. The lane now aims across the box at the MEASURED inner-lane fit geometry.curbs.derived_lane_centers.ew_west_WB_1 (offset +1.7541) and is ON it from x=-34 (still inside the box) all the way to despawn, so the merge is complete 9 m before the work zone's easternmost cone (x=-43). The two vertices carry the real +7.8 / -8.9 deg kinks; both sit inside the intersection box, which is where a driver actually lines up for the exit lane. NOTE the coupling: the x=-34 vertex also puts the whole west arm within MERGE_MAX_OFFSET_M of NB_1:L's tangent point B (-30.221, 79.034), which is what lets NB_1:L declare its merge instead of tripping build_conflict_points' shallow-crossing audit. The EAST arm was re-cut too, onto the measured ew_east_WB_1 fit: the authored points sat 0.25 m NORTH of the real lane centre, and with the new box-crossing kink at x=-9.2 that error took BOTH WB turn routes' swept path to 0.242 m from the east-arm north curb (gate 0.30). On the fit they clear by 0.49 m. stop_line_s is now the exact arc length to the x=-7.2 vertex."
+    }
+  ],
+  "crosswalks": [
+    {
+      "id": "XW_S",
+      "crosses": "NS_street",
+      "polygon": [
+        [
+          -35.5,
+          64.8
+        ],
+        [
+          -16.9,
+          64.8
+        ],
+        [
+          -16.9,
+          68.8
+        ],
+        [
+          -35.5,
+          68.8
+        ]
+      ],
+      "ped_signal": "ped_cross_NS",
+      "conflicting_lanes": [
+        "NB_1",
+        "SB_1"
+      ]
+    },
+    {
+      "id": "XW_N",
+      "crosses": "NS_street",
+      "polygon": [
+        [
+          -35.5,
+          88.4
+        ],
+        [
+          -16.9,
+          88.4
+        ],
+        [
+          -16.9,
+          92.4
+        ],
+        [
+          -35.5,
+          92.4
+        ]
+      ],
+      "ped_signal": "ped_cross_NS",
+      "conflicting_lanes": [
+        "NB_1",
+        "SB_1"
+      ]
+    },
+    {
+      "id": "XW_W",
+      "crosses": "EW_street",
+      "polygon": [
+        [
+          -37.4,
+          73.9
+        ],
+        [
+          -33.4,
+          73.9
+        ],
+        [
+          -33.4,
+          88.3
+        ],
+        [
+          -37.4,
+          88.3
+        ]
+      ],
+      "ped_signal": "ped_cross_EW",
+      "conflicting_lanes": [
+        "EB_1",
+        "WB_1"
+      ]
+    },
+    {
+      "id": "XW_E",
+      "crosses": "EW_street",
+      "polygon": [
+        [
+          -13.2,
+          72.0
+        ],
+        [
+          -9.2,
+          72.0
+        ],
+        [
+          -9.2,
+          86.4
+        ],
+        [
+          -13.2,
+          86.4
+        ]
+      ],
+      "ped_signal": "ped_cross_EW",
+      "conflicting_lanes": [
+        "EB_1",
+        "WB_1"
+      ]
+    },
+    {
+      "id": "JW_N",
+      "crosses": "NS_street",
+      "polygon": [
+        [
+          -29.5,
+          105.5
+        ],
+        [
+          -20.5,
+          105.5
+        ],
+        [
+          -20.5,
+          108.5
+        ],
+        [
+          -29.5,
+          108.5
+        ]
+      ],
+      "ped_signal": "none",
+      "conflicting_lanes": [
+        "NB_1",
+        "SB_1"
+      ],
+      "note": "2026-08-01 jaywalk corridor, mid-block north arm: no ped signal (always-active occupancy yield). Generates the jaywalking/pedestrian-on-roadway anomaly class with vehicles yielding like attentive drivers."
+    }
+  ],
+  "signals": {
+    "pole_convention": {
+      "note": "2026-08-05 CORRECTION, supersedes the 2026-08-04 rule below. The 2026-08-04 rule 'the housing_3_vertical asset's BULB FACE points along its own LOCAL +Y' is WRONG, and it aimed the smooth BACK of every head at its approach for a whole day. What that measurement actually found was the LENS PLANE (local y=0), not the face. Full housing-local anatomy, measured on sig_NE: hood_square visor y[-0.302,-0.106]; base bezel/socket body y[-0.112,+0.059]; the flat yellow face panel (border + surround, 4 mm thick, carrying 'trafficLight__front' and '__back' GeomSubsets) y[-0.084,-0.080]; bulb lens discs ('on' and 'off', coplanar) y=0.000. The visor protrudes toward -Y and the face panel's front subset looks the same way, so the composite's TRUE FRONT IS LOCAL -Y, and the lenses shipped 0.082 m BEHIND the opaque face panel -- which is why the hoods read as empty dark sockets while the lens edges glowed out the back of the head (the user's exact complaint). CORRECTED RULE, unchanged at the survey level: yaw_deg is still the assembly ROOT's rotateZ, still equals face_deg - 90, and face_deg is still (approach heading at the stop line) + 180. What changed is entirely LOCAL to the housing child and lives in build_intersection_dressing.py: HOUSING_LOCAL_YAW=180 spins the composite about its own axis so local -Y (the hooded front) lands on face_deg, and BULB_LOCAL_Y=-0.118 seats the lenses 6 mm proud of the bezel lip (-0.105 was tried and REJECTED: the bezel aperture necks to r=0.120 at y=-0.1094 vs the 0.1205 lens, leaving only a crescent visible; caught as a doc/live mismatch by the 2026-08-05 Codex audit). Because both are local to the housing, the survey yaws, ARM_LOCAL_OFFSET and add_signal_masts.py's arm aiming (which reads only the housing's TRANSLATE op) are all untouched -- that coupling did NOT have to be re-derived.",
+      "note_2026_08_04_superseded": "2026-08-04 REWORK. yaw_deg is the assembly ROOT's xformOp:rotateZ (build_intersection_dressing.place_and_reference). The housing_3_vertical asset's BULB FACE points along its own LOCAL +Y (measured live: with root yaw 0 the bulb discs are 0.04 m thin in Y, 0.24 m wide in X, and sit at the +Y extreme of the housing box), so world face azimuth = yaw_deg + 90. The old yaws assumed the face was local +X, which is why every head read side-on to its approach. RULE: yaw_deg = face_deg - 90, where face_deg = (approach heading at the stop line) + 180, i.e. the head looks straight back down its approach corridor. The 0.5 m housing offset (ARM_LOCAL_OFFSET, along root-local +X) then automatically points roadway-ward for all four poles.",
+      "pole_mounted_props": "2026-08-05. Everything that belongs to a signal pole is now authored UNDER its assembly root, in the pole's local frame, so it cannot drift away from the pole: mast + arm + xwbutton (add_signal_masts.py) and housing + ped_housing/box + ped panels (build_intersection_dressing.py). Mount math for anything hung off the mast: the mast axis is the assembly root's local origin, radius MAST_RADIUS=0.06. A prop whose asset places its body at local y>=b with its own +Y as the outward face mounts at pole-local (r*cos(t), r*sin(t)) with t = face_deg - yaw_deg and r = MAST_RADIUS - b, and its own rotateZ = face_deg - yaw_deg - 90. Measured b: crosswalk_signal_01_inst = 0.045 (r=+0.015), crosswalk_button_01_inst = 0.129 (r=-0.069; that asset budgets for a 0.129 m-radius pole, so its origin sits slightly BEHIND our thinner mast's axis).",
+      "placement": "2026-08-04 (2nd pass) NEAR-SIDE-RIGHT. Superseded the far-side-right mapping authored earlier the same day (user: 'The traffic light poles need to be on the incoming traffic side. Currently, they are exactly on the opposite side.'). Each pole now stands on the corner sidewalk pad that its own approach's traffic reaches FIRST, on the driver's right at the stop line, bulb face aimed back down that approach. Measured curb pads (unchanged, from the city street mesh): SW x[-35.6,-30.7] y[69.4,73.9], SE x[-16.4,-11.4] y[68.1,72.5], NW x[-35.5,-30.3] y[84.7,89.2], NE x[-15.9,-11.0] y[83.3,87.6]. NEW mapping (diagonal swap of the far-side one): NB->SE pad, SB->NW pad, EB->SW pad, WB->NE pad. yaw_deg depends only on the approach (yaw = approach_heading + 90), so the yaws swapped diagonally with the 'controls'/'faces_approach' groups; the 0.5 m ARM_LOCAL_OFFSET along root-local +X still lands roadway-ward on all four (SE head goes W, NW head goes E, SW head goes N, NE head goes S). Positions are constrained by (a) staying on the pad with >=0.3 m edge margin, (b) staying >=0.3 m outside every crosswalk polygon, (c) camera clearance: each head's projected footprint must not overlap the intersection-box ROI in any of the 4 RTSP streams (1920x1080, hfov 70 -> half-widths tan35=0.7002 horizontal / 0.3939 vertical; head measured live as 0.48x0.36x1.056 m, so +-0.30 m horizontal / +-0.53 m vertical). Measured result (u,v normalized to the half-frame; |u|>1 or |v|>1 = out of frame): sig_SE head is OUT of cam_SE (u=+1.20 at 2.5 m) and cam_SW, and only appears small and high in cam_NW (u=+0.08, v=+0.61, 28.9 m) and cam_NE (u=-0.81, 19.7 m). sig_SW head is OUT of cam_SE/cam_SW/cam_NW, small in cam_NE (23.4 m). sig_NE head is OUT of cam_NE (u=-1.49 at 6.4 m) and cam_SE, small in cam_SW/cam_NW. COMPROMISE, sig_NW: no point on the NW pad puts the assembly out of cam_NW's frame (cam_NW eye (-35.5,91,5.2) sits directly over the pad's NW corner and looks SE across it). Also learned the hard way here: the head-only occlusion model is NOT sufficient - the MAST (0.12 m cylinder, ground to 5.35 m) must be projected as a column too. The first pick (-30.6,85.3) passed the head test (u=+0.03 but v=+0.61+-0.18, above the ROI) and then the live RTSP frame showed its mast running down the exact vertical centreline of cam_NW at 7.6 m. Final pick (-33.1,84.9) is at the west end of the pad's BUILDABLE part - note x[-35.5,-33.4] of that pad is the XW_W crosswalk, so -33.1 (0.3 m clear of the stripes) is the furthest-from-axis position available. Whole assembly projects at cam_NW u=+0.51 (head, +-0.07) to +0.64 (mast top), a quarter frame right of centre, at 6.2 m; out of frame in cam_NE, small and high in cam_SE (23.7 m) / cam_SW (16.0 m). Cost: SB driver bearing 38.1 deg right at 12.4 m instead of 28.5 deg at 10.4 m. ped_housing MOVED from {sig_SE, sig_NW} to {sig_SE, sig_SW} (build_intersection_dressing.PED_SIGNAL_IDS): light_controller derives ped_group from the pole's vehicle group, so sig_SE (now NS_through) -> ped_cross_NS and sig_SW (now EW_through) -> ped_cross_EW, one housing per ped group instead of two on the same group. Both land on real crosswalk landings: sig_SE (-15.3,68.7) is 1.6 m east of XW_S's east edge (x=-16.9) with y inside XW_S's band [64.8,68.8] -> the XW_S east landing, correct for ped_cross_NS; sig_SW (-35.0,73.6) is 0.3 m south of XW_W's south edge (y=73.9) with x inside XW_W's band [-37.4,-33.4] -> the XW_W south landing, correct for ped_cross_EW. sig_NW is the only pole not on a crosswalk landing, which is why it carries no ped housing. Free-air verified live (TraverseInstanceProxies world-bbox scan, 12104 meshes, 1.2 m radius, z 0..5.8): sig_SE / sig_NW / sig_NE have ZERO non-signal meshes above z=0.3 within 1.2 m; sig_SW's nearest is the SW block building (x<=-35.64, y<=72.46) at 1.19 m Euclidean from the mast, and its head offsets north, away from it. All four sit on Street_Modern_Standard_Pavement at z=0 (sidewalk), same surface class as the previous poles."
+    },
+    "poles": [
+      {
+        "id": "sig_SE",
+        "pos": [
+          -15.3,
+          68.7,
+          0.0
+        ],
+        "yaw_deg": 176.09,
+        "housing_asset": "housing_3_vertical",
+        "controls": "NS_through",
+        "faces_approach": "NB_1",
+        "has_ped_housing": true,
+        "ped_group": "ped_cross_NS",
+        "ped_yaw_deg": -86.09,
+        "xwbutton_face_deg": 180.0,
+        "xwbutton_note": "2026-08-05: face west. This pole stands at the XW_S EAST landing, so the pedestrian pressing it waits on the pole's west side about to cross westward; the sign face looks back at them. Mast-mounted at z=1.05 by add_signal_masts.py, replacing the free-standing xwbutton_SE prop stranded at the OLD far-side corner (-15.9,63.4).",
+        "note": "2026-08-04 near-side pass: SE pad now hosts the NB head (NB traffic reaches this corner first; it is on the NB driver's right). NB heading at stop line (-22.02,62.74) is 86.09 deg -> face 266.09 (south-southwest) -> yaw 176.09. Housing at (-15.80,68.73,5.2): from the NB stop line that is +6.40 m forward, +5.79 m right = 42.1 deg to the driver's right at 8.64 m. Carries the ped_cross_NS housing at the XW_S east landing. Was (-14.0,71.0) yaw 90 controlling EW_through/EB_1 (far-side). 2026-08-05: ped_housing was inheriting the pole's vehicle-facing yaw (176.09), so its display normal pointed close to world -Y (south-southwest) instead of along its crosswalk (XW_S runs E-W; the housing sits at its EAST landing and must face WEST so people on the west landing can read it). Same local-+Y-is-face-normal convention as the vehicle housing (verified: ped_wait/ped_walk bbox is thin in the housing's local Y, PED_BULB_LOCAL_Y is a Y-depth stack). World face azimuth (math convention, 0=+X/east, 90=+Y/north) = pole_yaw_deg + ped_yaw_deg + 90. Solving for target azimuth 180 (west): ped_yaw_deg = 180 - 176.09 - 90 = -86.09. Verified by rotation composition: total angle 176.09-86.09=90.0, rotating local +Y(0,1) by 90 gives (-1,0) = due west. add_signal_masts.py applies ped_yaw_deg as a RotateZ op on ped_housing AFTER its translate (translate is outermost per xformOpOrder/TRS convention, so the rotate happens in the housing's own local frame before being carried to world position by the parent chain) -- position unaffected, independent of pole yaw. xy sanity-checked: housing world center ~(-15.60,68.72) is inside the measured SE curb pad x[-16.4,-11.4] y[68.1,72.5] and >1.3 m east of the XW_S crosswalk edge (x=-16.9) -- no adjustment needed."
+      },
+      {
+        "id": "sig_NW",
+        "pos": [
+          -33.1,
+          84.9,
+          0.0
+        ],
+        "yaw_deg": 0,
+        "housing_asset": "housing_3_vertical",
+        "controls": "NS_through",
+        "faces_approach": "SB_1",
+        "has_ped_housing": false,
+        "note": "2026-08-04 near-side pass: NW pad now hosts the SB head. SB heading at stop line (-25.15,94.4) is 270 deg -> face 90 (north) -> yaw 0. Housing at (-32.60,84.90,5.2): +9.50 m forward, +7.95 m right of the SB stop line = 38.1 deg to the driver's right at 12.4 m. FLAGGED CAMERA COMPROMISE (see pole_convention.placement): nothing on this pad is out of cam_NW's frame. First choice was (-30.6,85.3) (driver 28.5 deg at 10.4 m) but the live RTSP frame showed its MAST running down the exact vertical centreline of cam_NW at 7.6 m -- the head cleared the ROI, the mast did not, and the mast was not in the head-only occlusion model. Moved west to the far end of the BUILDABLE pad: the pad's x[-35.5,-33.4] strip is the XW_W crosswalk, so x=-33.1 (0.3 m east of the stripes) is as far from cam_NW's optical axis as the pad allows. Whole assembly now projects at cam_NW u=+0.51..+0.64 (mast column) / +0.51+-0.07 (head), i.e. a quarter-frame right of centre instead of on it. Was (-34.0,85.8) yaw 266.33 controlling EW_through/WB_1 (far-side)."
+      },
+      {
+        "id": "sig_SW",
+        "pos": [
+          -35.0,
+          73.6,
+          0.0
+        ],
+        "yaw_deg": 90,
+        "housing_asset": "housing_3_vertical",
+        "controls": "EW_through",
+        "faces_approach": "EB_1",
+        "has_ped_housing": true,
+        "ped_group": "ped_cross_EW",
+        "ped_yaw_deg": -90.0,
+        "xwbutton_face_deg": 270.0,
+        "xwbutton_note": "2026-08-05: face south. This pole stands at the XW_W SOUTH landing, so the pedestrian pressing it waits on the pole's south side about to cross northward. Mast-mounted at z=1.05, replacing the free-standing xwbutton_NW prop stranded at (-36.1,93.6).",
+        "ped_local_offset_removed": "2026-08-05: ped_local_offset [0.2,0,2.4] deleted. It was a roadway-ward nudge along pole-local +X, which is NOT the display direction, so it hung the panels ~0.2 m off the mast in mid-air. The offset is now derived from the mount geometry in build_intersection_dressing (PED_BOX_MOUNT_R along the DISPLAY direction) so the box sits flush on the mast.",
+        "note": "2026-08-04 near-side pass: SW pad now hosts the EB head. EB heading at stop line (-39.4,79.35) is 0 deg -> face 180 (west) -> yaw 90. Housing at (-35.00,74.10,5.2): +4.40 m forward, +5.25 m right of the EB stop line = 50.0 deg to the driver's right at 6.85 m. Nearest solid geometry is the SW block building (x<=-35.64, y<=72.46), 1.19 m from the mast; the head offsets north (+Y), away from it. Carries the ped_cross_EW housing at the XW_W south landing. Was (-32.0,71.5) yaw 0 controlling NS_through/SB_1 (far-side). 2026-08-05: ped_housing inherited the pole's yaw=90 face (world -X, west) instead of facing along its crosswalk (XW_W runs N-S; housing sits at the SOUTH landing and must face NORTH so people on the north landing can read it). Target azimuth 90: ped_yaw_deg = 90 - 90 - 90 = -90.0 (verified: total angle 90-90=0, local +Y(0,1) stays (0,1) = north). Also fixed xy: the default PED_HOUSING_LOCAL=(0.3,0,2.4) roadway-ward offset, rotated by yaw=90, put the housing center at world y=73.9 -- exactly ON the EW roadway/crosswalk band edge (roadway_bands.ew_west_arm_y starts at 73.9), i.e. straddling into the street. ped_local_offset=(0.2,0,2.4) pulls world y back to 73.8; after the yaw fix rotates the housing's thin (normal) axis onto world Y (~0.11 m total), its y-range becomes ~73.75-73.85, clear of the 73.9 street edge and inside the measured SW curb pad (y<=73.9)."
+      },
+      {
+        "id": "sig_NE",
+        "pos": [
+          -13.5,
+          83.6,
+          0.0
+        ],
+        "yaw_deg": 266.33,
+        "housing_asset": "housing_3_vertical",
+        "controls": "EW_through",
+        "faces_approach": "WB_1",
+        "has_ped_housing": false,
+        "note": "2026-08-04 near-side pass: NE pad now hosts the WB head. WB heading at stop line (-7.2,81.35) is 176.33 deg -> face 356.33 (east) -> yaw 266.33. Housing at (-13.53,83.10,5.2): +6.43 m forward, +1.34 m right of the WB stop line = 11.8 deg to the driver's right at 6.57 m (the best-aligned of the four). x=-13.5 keeps the mast 0.3 m west of the XW_E crosswalk edge. Was (-14.5,85.5) yaw 176.09 controlling NS_through/NB_1 (far-side)."
+      }
+    ],
+    "phase_cycle": [
+      {
+        "name": "NS_green",
+        "dur_s": 20,
+        "states": {
+          "NS_through": "green",
+          "EW_through": "red",
+          "ped_cross_EW": "walk",
+          "ped_cross_NS": "dont_walk"
+        }
+      },
+      {
+        "name": "NS_amber",
+        "dur_s": 3,
+        "states": {
+          "NS_through": "amber",
+          "EW_through": "red",
+          "ped_cross_EW": "flash",
+          "ped_cross_NS": "dont_walk"
+        }
+      },
+      {
+        "name": "all_red_1",
+        "dur_s": 2,
+        "states": {
+          "NS_through": "red",
+          "EW_through": "red",
+          "ped_cross_EW": "dont_walk",
+          "ped_cross_NS": "dont_walk"
+        }
+      },
+      {
+        "name": "EW_green",
+        "dur_s": 20,
+        "states": {
+          "NS_through": "red",
+          "EW_through": "green",
+          "ped_cross_EW": "dont_walk",
+          "ped_cross_NS": "walk"
+        }
+      },
+      {
+        "name": "EW_amber",
+        "dur_s": 3,
+        "states": {
+          "NS_through": "red",
+          "EW_through": "amber",
+          "ped_cross_EW": "dont_walk",
+          "ped_cross_NS": "flash"
+        }
+      },
+      {
+        "name": "all_red_2",
+        "dur_s": 2,
+        "states": {
+          "NS_through": "red",
+          "EW_through": "red",
+          "ped_cross_EW": "dont_walk",
+          "ped_cross_NS": "dont_walk"
+        }
+      }
+    ]
+  },
+  "traffic": {
+    "vehicle_rate_per_min": {
+      "NB_1": 4,
+      "SB_1": 4,
+      "EB_1": 3,
+      "WB_1": 3
+    },
+    "mix": {
+      "car": 0.75,
+      "bus": 0.1,
+      "motorcycle": 0.15
+    },
+    "mix_note": "2026-07-31 review #4: bicycles removed from the ROADWAY mix. At v0=5 m/s in a 13 m/s through lane they held 20.1% of all car-steps below 9 m/s (measured, 600 s) and stood perfectly upright and motionless at every red (190 s of screen time per 600 s run). The bicycle vehicle class, asset and rig stay in the code; bicycles will be reintroduced on a dedicated lane/sidewalk path with their own geometry. Old mix: car 0.65 / bus 0.10 / motorcycle 0.10 / bicycle 0.15.",
+    "speed_mps": {
+      "car": 13.0,
+      "bus": 11.0,
+      "motorcycle": 13.0,
+      "bicycle": 5.0
+    },
+    "max_agents": 16,
+    "vehicle_rate_per_min_note": "2026-08-10: EB_1 0 -> 3/min when the eastbound approach reopened. 3 matches WB_1 (same street, same single-lane approach); NB/SB stay at 4 on the two-lane arms."
+  },
+  "construction": {
+    "closed_lane": null,
+    "closed_lane_note": "2026-08-10: was 'EB_1'. The eastbound approach REOPENED; the closure moved to the WEST ARM's OUTER WESTBOUND lane, which is NOT a lane object in the traffic model (the model carries one WB lane, WB_1, which now runs on the INNER westbound lane fit). closed_lane is therefore null by design and `closed_band` below is the authoritative descriptor. No python reads construction.closed_lane or the old closure_note -- verified by grep 2026-08-10; lane closure for the traffic model is expressed only by survey.lanes[*].closed.",
+    "closed_band": {
+      "arm": "ew_west",
+      "direction": "WB",
+      "lane": "outer (WB_2 fit; non-model lane)",
+      "offset_lo_m": 3.5082,
+      "offset_hi_m": 7.0164,
+      "x_range": [
+        -67.0,
+        -39.0
+      ],
+      "reference": "geometry.curbs.lines.ew_west_centerline; offsets are y - y_c(x), positive = NORTH. offset_lo is the WB lane divider (mid-way between derived_lane_centers ew_west_WB_1 +1.7541 and ew_west_WB_2 +5.2623); offset_hi is the measured north curb.",
+      "open_lane": "the INNER westbound lane, offset +1.7541 (ew_west_WB_1) -- this is where the re-cut WB_1 runs; it must stay clear of every prop."
+    },
+    "prop_z_m": -0.202,
+    "west_arm_lane_model": {
+      "measured": "2026-08-05. THE WEST ARM IS DIAGONAL -- every axis-aligned y constant previously used here was wrong. The double yellow is /World/CityCm/.../Shape_88/Street_Modern_Standard_CenterLineMarkings_13/mesh, a single 4-point textured quad whose 0.49 m wide strip runs from (-135.27,84.479) to (-37.36,77.771); its y[77.52,84.72] AABB is the sweep of that DIAGONAL, not three parallel lines (an earlier reading of this same AABB as 'centre 81.12 = centreline, edges = lane lines, 3.6 m lanes' was a coincidence of arithmetic and is superseded). The survey meta note 'E-W street centreline y drops ~0.064 per +x metre' applies here too, not only east of the box. Road edges from the curb meshes Shape_89/Street_Modern_Standard_Curbs_64 (south) and Shape_90/Street_Modern_Standard_Curbs_65 (north), same -0.0705 slope.",
+      "centerline": {
+        "x0": -135.27,
+        "y0": 84.4791,
+        "dydx": -0.06853,
+        "formula": "y_c(x) = y0 + dydx * (x - x0)",
+        "x_valid": [
+          -135.3,
+          -37.35
+        ]
+      },
+      "south_curb": {
+        "x0": -138.73,
+        "y0": 81.21,
+        "dydx": -0.0705
+      },
+      "north_curb": {
+        "x0": -138.22,
+        "y0": 91.9,
+        "dydx": -0.0705
+      },
+      "cross_section_at_x_-62": {
+        "south_curb": 75.8,
+        "centerline": 79.46,
+        "north_curb": 86.53,
+        "road_width_m": 10.73,
+        "south_half_m": 3.66,
+        "north_half_m": 7.07
+      },
+      "eb_lanes": 1,
+      "wb_lanes": 2,
+      "note": "The west arm is a THREE-lane road: ONE eastbound lane south of the double yellow (3.66 m, centre offset -1.83) and TWO westbound lanes north of it (7.07 m). The dashed white line visible in plan view is the WB lane divider, north of the centreline -- there is no dashed line on the EB side, because there is only one EB lane. This agrees with lane EB_1's own closure_note ('single EB lane') and with WB_1's polyline y=82.85, which is 3.39 m north of the centreline at x=-62, i.e. the inner WB lane. Consequence for the closure: closing EB_1 closes the ENTIRE eastbound direction, so the taper runs from the double yellow down to the south curb rather than between two same-direction lanes. Also noted: EB_1's polyline is authored as a STRAIGHT line at y=79.35 while the real lane centre is y_c(x)-1.83 (77.63 at x=-62), so it is up to ~1.7 m off and at the east end sits north of the centreline. Harmless while EB is closed and unspawned; re-opening EB traffic needs that polyline re-cut along y_c(x)-1.83 -- a scenario decision for the user, not for the dressing scripts.",
+      "see_also": "2026-08-05: geometry.curbs.promoted_west_arm_prose carries the re-measured version of these keys.  The centreline here is exact; the curb dydx -0.0705 is a bbox artifact (true -0.068530) and the cross-section half-widths are 0.15 m off.  Prefer geometry.curbs.lines.* for anything geometric."
+    },
+    "closure": {
+      "spec": "2026-08-10 rebuild for the WB outer-lane closure, regularised from the user's live GUI arrangement (captured 2026-08-10). Offsets are from the DIAGONAL centreline y_c(x); positive = NORTH = the westbound side. WB traffic travels EAST -> WEST (decreasing x), so drivers meet the legs in the order listed: advance-warning barricade, arrow board at the taper head, MERGING taper (curb -> work offset, closing the outer lane), tangent delineation alongside the work area, TERMINATION taper back out to the curb. Every cone is generated from these legs by build_intersection_dressing.closure_cone_positions(), so the layout stays tied to the measured lane geometry.",
+      "cone_offset_work": 3.9,
+      "cone_offset_curb": 6.62,
+      "cone_offset_note": "work 3.90 is 0.39 m north of the WB lane divider (3.5082); with the 0.19 m base radius of TrafficCone_A07_71cm the cone's south edge sits at 3.71, 0.20 m clear of the divider. curb 6.62 leaves 0.40 m to the north curb (7.0164), i.e. 0.21 m of cone-edge clearance.",
+      "legs": [
+        {
+          "name": "merge_taper",
+          "x_start": -43.0,
+          "x_end": -51.0,
+          "offset_start": 6.62,
+          "offset_end": 3.9,
+          "spacing_m": 2.0,
+          "note": "first thing a WB driver meets; closes the outer lane."
+        },
+        {
+          "name": "work_tangent",
+          "x_start": -51.0,
+          "x_end": -63.0,
+          "offset_start": 3.9,
+          "offset_end": 3.9,
+          "spacing_m": 3.0,
+          "note": "delineates the work area alongside the barriers and potholes."
+        },
+        {
+          "name": "term_taper",
+          "x_start": -63.0,
+          "x_end": -67.0,
+          "offset_start": 3.9,
+          "offset_end": 6.62,
+          "spacing_m": 2.0,
+          "note": "downstream/termination taper back out to the curb."
+        }
+      ]
+    },
+    "work_area": {
+      "x": [
+        -63.0,
+        -51.0
+      ],
+      "offset_center": 5.2623,
+      "note": "between the two tapers, inside the closed outer lane. offset_center is the closed lane's own centre (the ew_west_WB_2 fit, +5.2623)."
+    },
+    "zone_polygon": [
+      [
+        -67.0,
+        83.309
+      ],
+      [
+        -39.0,
+        81.39
+      ],
+      [
+        -39.0,
+        84.898
+      ],
+      [
+        -67.0,
+        86.817
+      ]
+    ],
+    "zone_polygon_note": "2026-08-10: still a back-compat approximation (now a parallelogram following the diagonal, not an axis-aligned box); the authoritative geometry is closed_band + closure + work_area. No python reads it.",
+    "superseded_2026_08_10": {
+      "note": "keys from the EB-closure parameterisation, kept for provenance only. Nothing reads them; `taper` was replaced by `closure.legs`.",
+      "closed_lane": "EB_1",
+      "taper": {
+        "spec": "2026-08-05 rebuild. All offsets are measured from the DIAGONAL centreline y_c(x) in west_arm_lane_model (negative = south = the EB side). The cone line starts UPSTREAM (west) just inside the double yellow and slants to just inside the south curb DOWNSTREAM (east), closing the single EB lane. From the EB driver's seat (looking east: left=north, right=south, near low in frame) that is a '/' running bottom-left to top-right, the orientation the user asked for. CAPTURE NOTE: in a north-up/east-right TOP-DOWN view the SAME line necessarily appears as a backslash; take plan views with up=(1,0,0) (east up, the driver's heading up) to see the '/'. EVERY cone is south of the centreline by construction, which is the actual bug being fixed: the previous hardcoded line ran y 77.6 -> 80.6 while y_c runs 79.46 -> 78.02 over the same span, so its upstream half sat NORTH of the double yellow in the oncoming WB lanes and read as diverting EB traffic into oncoming.",
+        "x_start": -62.0,
+        "x_end": -50.0,
+        "offset_start": -0.35,
+        "offset_end": -3.3,
+        "n_cones": 9,
+        "tangent": {
+          "x_start": -50.0,
+          "x_end": -41.5,
+          "offset": -3.3,
+          "n_cones": 4,
+          "note": "downstream tangent: cones held just inside the south curb so the closed lane stays delineated alongside the work area."
+        }
+      },
+      "taper_s": [
+        60.0,
+        68.0
+      ],
+      "props_anchor": [
+        -51.5,
+        79.3,
+        0.0
+      ],
+      "work_area": {
+        "x": [
+          -49.5,
+          -41.0
+        ],
+        "offset_center": -1.8,
+        "note": "Everything lives in the closed EB lane, downstream (east) of the taper, at y_c(x) + offset. Arrow board at the upstream (west) head, facing west, arrow pointing right/south."
+      },
+      "zone_polygon": [
+        [
+          -62.0,
+          77.52
+        ],
+        [
+          -41.0,
+          77.52
+        ],
+        [
+          -41.0,
+          81.12
+        ],
+        [
+          -62.0,
+          81.12
+        ]
+      ]
+    }
+  },
+  "spill": {
+    "plate_polygon": [
+      [
+        -30.0,
+        68.0
+      ],
+      [
+        -20.0,
+        68.0
+      ],
+      [
+        -20.0,
+        74.0
+      ],
+      [
+        -30.0,
+        74.0
+      ]
+    ],
+    "leak_source_pos": [
+      -25.0,
+      71.0,
+      0.0
+    ],
+    "target_size": 2.5,
+    "leak_duration": 8.0
+  },
+  "cameras": [
+    {
+      "id": "cam_SE",
+      "pole_pos": [
+        -13.5,
+        61.0,
+        0.0
+      ],
+      "eye": [
+        -9.7,
+        68.8,
+        8.0
+      ],
+      "mount_h": 5.5,
+      "look_at": [
+        -19.6973,
+        75.0184,
+        1.0
+      ],
+      "hfov_deg": 90.0,
+      "note": "2026-08-01: explicit eye - the default pole offset landed INSIDE the sig_SE signal housing (head occupies x[-15,-14.6] y[63.1,63.5] z[4.7,5.7]); dark 'rolled' frames were the housing interior | 2026-08-10 user retune (persisted from live GUI edits): raised to z=8.0, steeper pitch, focal 8.0 mm (hfov 105.27); ~1-2 deg incidental manipulator roll deliberately dropped by the eye->look_at reconstruction. | 2026-08-18 4-fold: 90 deg CCW clone of cam_SW about box centre (-23.3, 78.6). Old eye (-16.5, 65.5) sat on the south arm 7.3 m west of the SE curb, so that curb was beside/behind the camera (ROI vertex 1 clipped). New eye is on the east sidewalk analog of SW's south-edge mount; home pad inner projects in-frame at ~ (502, 1001)."
+    },
+    {
+      "id": "cam_SW",
+      "pole_pos": [
+        -41.0,
+        61.0,
+        0.0
+      ],
+      "eye": [
+        -33.1,
+        65.0,
+        8.0
+      ],
+      "mount_h": 5.5,
+      "look_at": [
+        -26.8816,
+        74.9973,
+        1.0
+      ],
+      "hfov_deg": 90.0,
+      "note": "2026-08-04: relocated sig_SW head (housing bbox center ~(-31.5,71.38,5.2)) sat 15.6 deg off the (-34.6,66.8,5.5) eye's optical axis - worst-case occlusion, well inside the 70 HFOV central half. New eye verified by world-bbox scan (2026-08-04, TraverseInstanceProxies): nearest mesh is the SW building edge x<=-35.64 (2.46 m clear) and the sig_SW housing itself (6.58 m clear); still south of the box on the curb/pavement, no solid geometry between z=0 and eye height. New separation 24.7 deg (fully outside the central 35 deg half-FOV), eye-to-lookat distance 17.36 m vs old 16.95 m (box framing preserved). Supersedes 2026-07-31 note. | 2026-08-10 user retune (persisted from live GUI edits): raised to z=8.0, steeper pitch, focal 8.0 mm (hfov 105.27); ~1-2 deg incidental manipulator roll deliberately dropped by the eye->look_at reconstruction. | 2026-08-18 4-fold TEMPLATE: this pose is cloned 90 deg CCW about the box centre to SE/NE/NW. Unchanged (already the view that showed all four sidewalk corners). Do not retune this eye without rotating the other three with it."
+    },
+    {
+      "id": "cam_NW",
+      "eye": [
+        -36.9,
+        88.4,
+        8.0
+      ],
+      "pole_pos": [
+        -41.0,
+        96.0,
+        0.0
+      ],
+      "mount_h": 5.2,
+      "look_at": [
+        -26.9027,
+        82.1816,
+        1.0
+      ],
+      "hfov_deg": 90.0,
+      "note": "2026-08-04: relocated sig_NW head (housing bbox center ~(-34.15,85.31,5.2)) sat 24.0 deg off the default pole-offset eye (-37.43,92.49,5.2) - mild but flagged. New explicit eye verified by world-bbox scan: nearest mesh is campole_NW pole shaft (~5.7 m away in x) and the Shape_21 building block (x<=-38.69, 3.19 m clear); no obstruction between z=0 and 5.2 m at this xy. New separation 33.7 deg (outside the central 35 deg half-FOV), eye-to-lookat distance 17.90 m vs old 20.26 m (box framing preserved, slightly closer). | 2026-08-10 user retune (persisted from live GUI edits): raised to z=8.0, steeper pitch, focal 8.0 mm (hfov 105.27); ~1-2 deg incidental manipulator roll deliberately dropped by the eye->look_at reconstruction. | 2026-08-18 4-fold: 90 deg CCW x3 clone of cam_SW about box centre. Eye x=-36.9 is 1.79 m east of Shape_21 (x<=-38.69); home mast ~11 deg off axis (u~1120), not on the centreline."
+    },
+    {
+      "id": "cam_NE",
+      "eye": [
+        -13.5,
+        92.2,
+        8.0
+      ],
+      "pole_pos": [
+        -13.5,
+        96.0,
+        0.0
+      ],
+      "mount_h": 5.5,
+      "look_at": [
+        -19.7184,
+        82.2027,
+        1.0
+      ],
+      "hfov_deg": 90.0,
+      "note": "2026-08-04: relocated sig_NE head (housing bbox center ~(-14.99,85.66,5.2)) sat 29.9 deg off the default pole-offset eye (-14.73,93.82,5.5) - already outside the central half but still filled the left foreground at close range (8.17 m). New explicit eye verified by world-bbox scan: nearest mesh is campole_NE pole shaft (>2.8 m away in x) and street curb/pavement (ground-level only, no height overlap at 5.5 m); no obstruction between z=0 and 5.5 m at this xy. New separation 42.0 deg, eye-to-lookat distance 15.69 m vs old 18.04 m (box framing preserved, slightly closer). | 2026-08-10 user retune (persisted from live GUI edits): raised to z=8.0, steeper pitch, focal 8.0 mm (hfov 105.27); ~1-2 deg incidental manipulator roll deliberately dropped by the eye->look_at reconstruction. | 2026-08-18 4-fold: 90 deg CCW x2 clone of cam_SW about box centre. Old eye was the outlier (look-dist 7.87 m, pitch -41.6 deg); now matches SW at 16.76 m / -30.7 deg."
+    }
+  ],
+  "cameras_convention": {
+    "surveyed": "2026-08-18",
+    "center_xy": [
+      -23.3,
+      78.6
+    ],
+    "look_at_z_m": 1.0,
+    "template": "cam_SW",
+    "rotation": "90 deg CCW about center_xy maps SW -> SE -> NE -> NW",
+    "height_m": 8.0,
+    "d_xy_m": 16.763,
+    "look_dist_xy_m": 11.773,
+    "pitch_deg": -30.7,
+    "hfov_deg": 90.0,
+    "note": "All four cameras share height, range-to-look, pitch, and hfov. Eyes and look_ats are 90 deg rotations of cam_SW about the intersection-box centre. A shared look_at at the centre was tried and REJECTED: it shallows pitch to -22.7 deg and drops SW's home pad inner out of frame. Site limit: NW/SW buildings cap pullback at D~21 m, so the geometric box HOME corner stays below a 58.7 deg vfov in every view; the matching quantity is the home PAD INNER (in-frame, lower third) not the outer box corner. Do not GUI-save; refresh cameras_build + cameras.usda bake."
+  },
+  "ped_waypoints": {
+    "sidewalk_SE_corner": [
+      -14.5,
+      62.5,
+      0.0
+    ],
+    "sidewalk_SW_corner": [
+      -39.5,
+      62.5,
+      0.0
+    ],
+    "sidewalk_NW_corner": [
+      -39.5,
+      94.5,
+      0.0
+    ],
+    "sidewalk_NE_corner": [
+      -14.5,
+      94.5,
+      0.0
+    ],
+    "lawn_east": [
+      10.0,
+      40.0,
+      0.0
+    ],
+    "lawn_north": [
+      -5.0,
+      60.0,
+      0.0
+    ],
+    "west_sidewalk_far": [
+      -70.0,
+      90.0,
+      0.0
+    ],
+    "north_sidewalk_far": [
+      -20.0,
+      130.0,
+      0.0
+    ]
+  },
+  "navmesh": {
+    "volume_center": [
+      -23.0,
+      78.0,
+      2.0
+    ],
+    "volume_extent_m": [
+      120.0,
+      120.0,
+      8.0
+    ],
+    "plate_zones": [
+      {
+        "id": "sidewalk_ring",
+        "note": "authored in P3 from roadway_bands: sidewalk strips outside curbs"
+      },
+      {
+        "id": "crosswalks",
+        "note": "the four crosswalk polygons above"
+      }
+    ]
+  },
+  "road": {
+    "surface_z_m": -0.2,
+    "surface_z_note": "Measured 2026-08-05: CenterLineMarkings_{4,7,13,38} world z = -0.200 exactly (markings lie ON the asphalt). Lane polylines are authored at -0.202 (2 mm tire settle) so wheels contact instead of hovering 0.2 m \u2014 the old z=0 was the survey datum, not the road.",
+    "prop_surface_z_m": -0.202,
+    "prop_surface_z_note": "2026-08-10: road-surface PROPS (cones, barriers, arrow board, barricade, pothole decals) are authored at z=-0.202, the same datum as the lane polylines (surface_z_m -0.200 + 2 mm settle). The construction manifest had authored them at z=0.0, the old survey datum, so every prop floated 20 cm above the asphalt -- the same defect as the 2026-08-05 hovering wheels and the 2026-08-10 fallen-ped prop."
+  },
+  "turns": {
+    "enabled": true,
+    "version": 1,
+    "authored": "2026-08-05 (P2/P4)",
+    "note": "Random left/right turns at intersection A. `enabled:false` means TrafficSim builds no route objects at all, so live behaviour is byte-identical to the through-only pilot; the offline checker and the test suite force-build instead. Exit targets are the P1-MEASURED lane-centre fits in geometry.curbs.derived_lane_centers, never the authored lane polylines (those carry up to 0.36 m of sign-reversing chord error). The fillet's INCOMING tangent is the authored approach polyline segment, so the join to the lane the vehicle is actually driving stays C1; the fillet absorbs the authored-vs-measured offset.",
+    "a_lat_max": 2.0,
+    "vlim_decel_mps2": 1.5,
+    "vlim_decel_note": "Rate at which the P4 backward pass propagates the arc's speed limit upstream. Lowered from B_COMF=3.0 on measurement: vlim caps IDM's DESIRED speed, and IDM only brakes at 3 m/s^2 once it is ~22 percent over that cap, so a 3.0 profile was tracked with a standing error and produced 3.50 m/s^2 of realised lateral acceleration against the 2.0 target. 1.5 gives 2.69 m/s^2 and starts braking 48 m before the fillet instead of 23 m. Full table in vehicle_lib VLIM_DECEL_DEFAULT.",
+    "gap_margin_s": 2.0,
+    "merge_margin_s": 2.5,
+    "tail_m": 45.0,
+    "movement_mix": {
+      "NB_1": {
+        "T": 0.7,
+        "R": 0.15,
+        "L": 0.15
+      },
+      "SB_1": {
+        "T": 0.85,
+        "L": 0.15
+      },
+      "WB_1": {
+        "T": 0.7,
+        "R": 0.15,
+        "L": 0.15
+      },
+      "EB_1": {
+        "T": 0.7,
+        "R": 0.15,
+        "L": 0.15
+      }
+    },
+    "class_permissions": {
+      "bus": [
+        "T"
+      ],
+      "bicycle": [
+        "T"
+      ]
+    },
+    "class_permissions_note": "movement codes a class may take. A class absent from this map may take any movement. Buses and bicycles are through-only (locked decision); P3 still consumes exactly one movement draw per arrival and discards it for them, so the arrival stream is unperturbed.",
+    "radius_selection": "chosen with scripts/turns/build_check_routes.py -- see that script's report for the per-route swept-path margins on BOTH sides (inner corner return vs outer/far curb).",
+    "movements": {
+      "NB_1:R": {
+        "approach_lane": "NB_1",
+        "movement": "R",
+        "exit_arm": "east",
+        "exit_line": "ew_east_EB_2",
+        "exit_heading_deg": 356.4713,
+        "exit_lane": null,
+        "inner_corner": "SE",
+        "radius_m": 8.0
+      },
+      "NB_1:L": {
+        "approach_lane": "NB_1",
+        "movement": "L",
+        "exit_arm": "west",
+        "exit_line": "ew_west_WB_1",
+        "exit_heading_deg": 176.0797,
+        "exit_lane": "WB_1",
+        "inner_corner": null,
+        "radius_m": 9.0,
+        "note": "2026-08-10: exit_lane null -> 'WB_1'. Its 45 m tail runs on the ew_west_WB_1 fit and the re-cut WB_1 IS that fit from x=-34 west, so the two are collinear -- without a declared merge build_conflict_points raises on the sub-20-deg crossing (measured min separation 0.109 m). The WB_1 re-cut was aimed to put B (-30.221, 79.034) inside MERGE_MAX_OFFSET_M of the WB_1 polyline (measured 0.588 m) precisely so this merge CAN be declared. The old P2 'head-on hazard vs EB_1' is RESOLVED: the re-cut EB_1 is 3.51 m south of this tail (the 0.218 m figure was measured against the wrong old EB_1 line)."
+      },
+      "SB_1:L": {
+        "approach_lane": "SB_1",
+        "movement": "L",
+        "exit_arm": "east",
+        "exit_line": "ew_east_EB_1",
+        "exit_heading_deg": 356.4713,
+        "exit_lane": "EB_1",
+        "inner_corner": null,
+        "radius_m": 9.0,
+        "note": "2026-08-10: exit_lane null -> 'EB_1'. EB_1 is a live lane again and its re-cut east-arm segment IS the ew_east_EB_1 fit this route is tangent to, so the standing P2 hazard (tail 0.266 m from EB_1, same direction, no merge bookkeeping) is now expressed as a declared merge instead of an accepted overlap."
+      },
+      "WB_1:R": {
+        "approach_lane": "WB_1",
+        "movement": "R",
+        "exit_arm": "north",
+        "exit_line": "ns_north_NB_2",
+        "exit_heading_deg": 90.4646,
+        "exit_lane": null,
+        "inner_corner": "NE",
+        "radius_m": 6.0
+      },
+      "WB_1:L": {
+        "approach_lane": "WB_1",
+        "movement": "L",
+        "exit_arm": "south",
+        "exit_line": "ns_south_SB_1",
+        "exit_heading_deg": 266.4713,
+        "exit_lane": "SB_1",
+        "inner_corner": null,
+        "radius_m": 8.0
+      },
+      "EB_1:R": {
+        "approach_lane": "EB_1",
+        "movement": "R",
+        "exit_arm": "south",
+        "exit_line": "ns_south_SB_2",
+        "exit_heading_deg": 266.4713,
+        "exit_lane": null,
+        "inner_corner": "SW",
+        "radius_m": 6.5,
+        "note": "2026-08-10: right turn onto the RIGHTMOST southbound lane (SB_2, offset -5.26), mirroring NB_1:R -> ew_east_EB_2. SB_2 carries no lane object, so no merge."
+      },
+      "EB_1:L": {
+        "approach_lane": "EB_1",
+        "movement": "L",
+        "exit_arm": "north",
+        "exit_line": "ns_north_NB_1",
+        "exit_heading_deg": 90.4646,
+        "exit_lane": "NB_1",
+        "inner_corner": null,
+        "radius_m": 9.0,
+        "note": "2026-08-10: left turn onto the INNERMOST northbound lane, mirroring SB_1:L -> ew_east_EB_1. NB_1's north-arm polyline sits within MERGE_MAX_OFFSET_M of that fit, so the merge is declared."
+      }
+    },
+    "prohibited_movements": {
+      "SB_1:R": {
+        "since": "2026-08-10",
+        "reason": "WORK-ZONE TURN RESTRICTION, forced by geometry and caught by vehicle_lib's own conflict-point audit. A southbound right turn's natural destination is the west arm's OUTER westbound lane (ew_west_WB_2) -- that lane IS the closure, and this route's 45 m tail ran straight down the middle of it (offset +5.26) through the whole cone band. The only open westbound lane is the INNER one, which is already the destination of NB_1:L; routing both onto ew_west_WB_1 makes the two fillets join the same line tangentially (measured min path separation 0.003 m) and build_conflict_points raises TurnBuildError: a sub-20-deg crossing between live geoms closer than CP_SHALLOW_MIN_SEP_M=2.0 m that cannot be expressed as a declared merge (the merge is validated at the tangent point B, and no radius that keeps the swept path on the road puts B within MERGE_MAX_OFFSET_M=1.0 m of either the re-cut WB_1 polyline or the other route). The movement whose own lane is closed is the one that gets prohibited; NB_1:L keeps the open inner lane. SB_1 mix 0.70/0.15/0.15 -> 0.85 T / 0.15 L. REVERT with the closure: restore this entry to turns.movements and put SB_1 back on 0.70/0.15/0.15.",
+        "movement": {
+          "approach_lane": "SB_1",
+          "movement": "R",
+          "exit_arm": "west",
+          "exit_line": "ew_west_WB_2",
+          "exit_heading_deg": 176.0797,
+          "exit_lane": "WB_1",
+          "inner_corner": "NW",
+          "radius_m": 7.0
+        }
+      }
+    }
+  },
+  "rtsp": {
+    "port": 8554,
+    "fps": 30,
+    "bitrate_kbps": 6000,
+    "cams": [
+      "cam_NW",
+      "cam_NE",
+      "cam_SW",
+      "cam_SE"
+    ],
+    "note": "2026-08-06: gst-rtsp-server pipeline. Mounts are rtsp://<host>:8554/<cam>. Supersedes the mediamtx/ffmpeg stream_url scheme.",
+    "backend": "software",
+    "native": {
+      "base_port": 8554,
+      "port_step": 1,
+      "encoding": "raw",
+      "fps": 30,
+      "gop": 15,
+      "note": "2026-10-20: Isaac Sim 6.0.1 in-Kit RTSP (isaacsim.streaming.rtsp). One gst-rtsp-server per camera: rtsp://<host>:<base_port+i>/<cam>. Encoding: raw = Kit nvh264enc, GOP ~ fps, ~5 Mbit/s, no NVENC leak; h264 = Replicator HW encode, GOP 1, leaks 4 NVENC sessions per setup (max 2 per run)."
+    }
+  }
+}

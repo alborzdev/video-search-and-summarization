@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "city.preview-cpu-validation.v1",
+  "at": "2026-10-22T06:58:46.538600+00:00",
+  "imageTag": "ghcr.io/nvidia/deepstream:9.2-triton-sbsa-dgx-spark",
+  "imageId": "sha256:87014f626496737dc888eb80d5de9baf5a37c834033cabfbbcc50139c7183251",
+  "resourceLimits": {
+    "runtime": "runc",
+    "memoryGiB": 2,
+    "memorySwapGiB": 2,
+    "cpus": 2,
+    "network": "none",
+    "capabilities": "none",
+    "nvidiaVisibleDevices": "void"
+  },
+  "workerCompile": {
+    "passed": true,
+    "warnings": 0,
+    "sha256": "5689867b0419680daca4a22ee4bc17c566bbd0d57bdbdc825899d1af6ab77524"
+  },
+  "controls": {
+    "existingRfParser": true,
+    "sourceEpochs": true,
+    "muxTuning": true,
+    "previewMapDuplicateSourceTimesAndEpochs": true,
+    "outOfOrderEncoderTokens": true,
+    "boundedMapAndOutbox100000Iterations": true,
+    "thirtyToFifteenCadence450Of900": true,
+    "actualInstalledCpuJpegenc": {
+      "passed": true,
+      "frames": 4,
+      "geometry": [
+        320,
+        180
+      ],
+      "opaqueTagBase": "4611686018427387904",
+      "allSourceTimesEqual": true,
+      "tokenPtsPreserved": true,
+      "jpegSoiEoiAndByteBound": true,
+      "pluginsLoaded": [
+        "coreelements",
+        "app",
+        "jpeg"
+      ]
+    },
+    "invalidCliBeforeGstreamer": 7,
+    "help": true,
+    "productionObservationFrameBudget": {
+      "passed": true,
+      "batchSize": 2,
+      "requestedLimits": [
+        1,
+        3
+      ],
+      "observationsEmitted": [
+        1,
+        3
+      ],
+      "laterCallbacksSuppressed": true,
+      "continuousFramesZeroEmitsAllSix": true,
+      "explicitStoppingEmitsZero": true,
+      "usesActualProductionCallback": true,
+      "gpuSurfacesOrContexts": 0
+    }
+  },
+  "sourceSha256": {
+    "src/city_worker.cpp": "59a0f391be8843a64ef3ce6e36a4b994dd1ee5e73b05600014458544db5054ce",
+    "src/preview_core.hpp": "9988eb6dfa5162ee8b9a4915b95efef3c3a27601491aeb8f1a525ae6225224dd",
+    "Makefile": "bc5e96929e29d5aad999241bcfae084d991798943751f887e1373ac7bd4107d7",
+    "tests/test_preview.cpp": "e48023d63d767408db9a092052af269992bc730ff1c4258e5cdd87d1ee55652b",
+    "tests/test_preview_jpeg.cpp": "8647c1d6bc08e587b0a950612bfc0b9bb3af1a518fbd4b6955ee067199f71e8b",
+    "tests/native_preview_options.py": "dff4ad6025218380d7f6210b07f0c7b89199e19aa226753fca8fbd802c76b4a2",
+    "README.md": "238500777059df6cc768e9ef64a3f6e477449a4021ef2bcfcffb08df055dedd8",
+    "tests/test_frame_limit.cpp": "723f496695e26eeedfcdd55897e5061d525a892819ef454896b799aad2c181b5"
+  },
+  "notTested": [
+    "GPU conversion/download",
+    "NvDs demux user-meta copy and exact pixel/frame correlation",
+    "two-source live FPS/source-clock/resource impact",
+    "preview consumer outage in full worker",
+    "browser frame/box rendering",
+    "codec/converter plugin fault isolation"
+  ],
+  "scope": "CPU-only source build and synthetic JPEG controls; no source/model/image/runtime activation and no GPU or RTSP jobs."
+}

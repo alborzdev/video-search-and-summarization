@@ -651,7 +651,7 @@ describe("VisionStreamCanvas", () => {
     await waitFor(() =>
       expect(global.fetch).toHaveBeenCalledWith(
         "http://thor.test/vst/api/v1/sensor/scan",
-        { method: "POST" }
+        expect.objectContaining({ method: "POST", signal: expect.any(AbortSignal) })
       )
     );
     expect(
@@ -986,6 +986,92 @@ describe("live Canvas handoff and decoded-frame deadline", () => {
     fireEvent(document, new Event('visibilitychange'));
     await advance(20_000);
     expect(rtc.sockets).toHaveLength(2);
+  });
+
+  it("stops an allocated remote session and local media at the no-frame deadline, exactly once", async () => {
+    const status = jest.fn(); const view = mount(live, endpoint, status);
+    await advance(0); await connect();
+    await act(async () => rtc.sockets[0].emit({ apiKey: 'api/v1/live/setAnswer', data: { type: 'answer', sdp: 'answer', mediaSessionId: 'timed-out-session' } }));
+    const track = { stop: jest.fn() } as unknown as MediaStreamTrack;
+    act(() => rtc.peers[0].ontrack?.({ streams: [], track }));
+    const video = view.container.querySelector('video')!;
+    await advance(20_000);
+    expect(rtc.peers[0].close).toHaveBeenCalledTimes(1); expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1);
+    expect(track.stop).toHaveBeenCalledTimes(1); expect(video.srcObject).toBeNull();
+    const stops = () => rtc.sockets[0].send.mock.calls.filter(([value]) => JSON.parse(value).apiKey === 'api/v1/live/stream/stop');
+    expect(stops()).toHaveLength(1); expect(JSON.parse(stops()[0][0]).data.mediaSessionId).toBe('timed-out-session');
+    fireEvent.loadedData(video); expect(status).toHaveBeenLastCalledWith('error');
+    view.unmount(); expect(rtc.peers[0].close).toHaveBeenCalledTimes(1); expect(stops()).toHaveLength(1);
+  });
+
+  it("tears down ICE failure without waiting for Retry or unmount", async () => {
+    const view = mount(); await advance(0); await connect();
+    await act(async () => rtc.sockets[0].emit({ apiKey: 'api/v1/live/setAnswer', data: { type: 'answer', sdp: 'answer', mediaSessionId: 'failed-ice' } }));
+    fireEvent.loadedData(view.container.querySelector('video')!);
+    const changed = rtc.peers[0].onconnectionstatechange;
+    act(() => { rtc.peers[0].connectionState = 'failed'; changed?.(); });
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+    expect(rtc.peers[0].close).toHaveBeenCalledTimes(1); expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1);
+    act(() => changed?.()); view.unmount(); expect(rtc.peers[0].close).toHaveBeenCalledTimes(1);
+  });
+
+  it("drains a pending allocation reply after unmount only to stop it, without applying late SDP", async () => {
+    const status = jest.fn(); const view = mount(live, endpoint, status);
+    await advance(0); await connect();
+    view.unmount(); const before = status.mock.calls.length;
+    expect(rtc.peers[0].close).toHaveBeenCalledTimes(1); expect(rtc.sockets[0].close).not.toHaveBeenCalled();
+    await act(async () => rtc.sockets[0].emit({ apiKey: 'api/v1/live/setAnswer', data: { type: 'answer', sdp: 'late-answer', mediaSessionId: 'late-allocation' } }));
+    expect(rtc.peers[0].setRemoteDescription).not.toHaveBeenCalled();
+    expect(rtc.sockets[0].send).toHaveBeenCalledWith(expect.stringContaining('late-allocation'));
+    expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1); await advance(5_000);
+    expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1); expect(status).toHaveBeenCalledTimes(before);
+  });
+
+  it("bounds an unanswered allocation drain to two seconds", async () => {
+    const view = mount(); await advance(0); await connect(); view.unmount();
+    await advance(1_999); expect(rtc.sockets[0].close).not.toHaveBeenCalled();
+    await advance(1); expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1);
+    await advance(60_000); expect(rtc.peers).toHaveLength(1); expect(rtc.sockets).toHaveLength(1);
+  });
+
+  it("holds a fast Retry through the pending-answer drain and decoder handoff", async () => {
+    mount(); await advance(0); await connect();
+    act(() => { rtc.peers[0].connectionState = 'failed'; rtc.peers[0].onconnectionstatechange?.(); });
+    fireEvent.click(screen.getByRole('button', { name: 'Retry' }));
+    await advance(1_999);
+    expect(rtc.sockets).toHaveLength(1);
+    await act(async () => rtc.sockets[0].emit({ apiKey: 'api/v1/live/setAnswer', data: { type: 'answer', sdp: 'late-answer', mediaSessionId: 'late-retry-allocation' } }));
+    expect(rtc.sockets[0].send).toHaveBeenCalledWith(expect.stringContaining('late-retry-allocation'));
+    expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1);
+    expect(rtc.peers[0].setRemoteDescription).not.toHaveBeenCalled();
+    await advance(1_200); expect(rtc.sockets).toHaveLength(1);
+    await advance(1); expect(rtc.sockets).toHaveLength(2);
+  });
+
+  it("releases an allocated live session when the video element fails", async () => {
+    const view = mount(); await advance(0); await connect();
+    await act(async () => rtc.sockets[0].emit({ apiKey: 'api/v1/live/setAnswer', data: { type: 'answer', sdp: 'answer', mediaSessionId: 'video-error' } }));
+    const track = { stop: jest.fn() } as unknown as MediaStreamTrack;
+    act(() => rtc.peers[0].ontrack?.({ streams: [], track }));
+    fireEvent.error(view.container.querySelector('video')!);
+    expect(rtc.peers[0].close).toHaveBeenCalledTimes(1); expect(track.stop).toHaveBeenCalledTimes(1);
+    expect(rtc.sockets[0].send).toHaveBeenCalledWith(expect.stringContaining('video-error'));
+    expect(rtc.sockets[0].close).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument();
+  });
+
+  it("retains two healthy peers across same-source metadata and callback rerenders", async () => {
+    const other = { ...live, streamId: live.streamId + '-second' };
+    const view = render(<><VisionStreamCanvas stream={live} liveSnapshotEnabled={false} vstApiUrl={endpoint} /><VisionStreamCanvas stream={other} liveSnapshotEnabled={false} vstApiUrl={endpoint} /></>);
+    await advance(0);
+    await act(async () => { for (const socket of rtc.sockets) socket.emit({ apiKey: 'api/v1/live/iceServers', data: { iceServers: [] } }); });
+    await act(async () => { rtc.sockets.forEach((socket, index) => socket.emit({ apiKey: 'api/v1/live/setAnswer', data: { type: 'answer', sdp: 'answer', mediaSessionId: 'healthy-' + index } })); });
+    for (const video of view.container.querySelectorAll('video')) fireEvent.loadedData(video);
+    for (let index = 0; index < 10; index++) view.rerender(<><VisionStreamCanvas stream={{ ...live, metadata: { update: index } }} onPresentedFrame={() => {}} liveSnapshotEnabled={false} vstApiUrl={endpoint} /><VisionStreamCanvas stream={{ ...other, metadata: { update: index } }} onPresentedFrame={() => {}} liveSnapshotEnabled={false} vstApiUrl={endpoint} /></>);
+    await advance(30 * 60_000);
+    expect(rtc.sockets).toHaveLength(2); expect(rtc.peers).toHaveLength(2);
+    for (const peer of rtc.peers) expect(peer.close).not.toHaveBeenCalled();
+    view.unmount(); for (const peer of rtc.peers) expect(peer.close).toHaveBeenCalledTimes(1);
   });
 
 });

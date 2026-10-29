@@ -1,0 +1,20 @@
+{
+  "valid_mask": false,
+  "quality_validated": false,
+  "image_size": [
+    640,
+    360
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.6278266608715057,
+    "y_min": 0.5155256241559982,
+    "x_max": 0.8116264641284943,
+    "y_max": 0.7500993758440018
+  },
+  "artifacts": {
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference/masks/box-point-raw.mask.json"
+  },
+  "status": "bbox_only"
+}

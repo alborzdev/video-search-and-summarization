@@ -33,6 +33,7 @@ import React, {
 const liveSessionCooldowns = new Map<string, number>();
 const LIVE_HANDOFF_DELAY_MS = 1_200;
 const LIVE_FRAME_TIMEOUT_MS = 20_000;
+const LIVE_STOP_DRAIN_MS = 2_000;
 
 export type PlaybackStatus =
   | "idle"
@@ -41,6 +42,17 @@ export type PlaybackStatus =
   | "poster"
   | "error";
 
+export interface PresentedVideoFrame {
+  mediaTimeSeconds: number;
+  presentedAtMs: number;
+  width: number;
+  height: number;
+  /** Estimated camera capture time supplied by WebRTC, expressed as Unix ms. */
+  sourceTimeUnixMs?: number;
+  rtpTimestamp?: number;
+  clockBasis: 'webrtc-capture-time' | 'unavailable';
+}
+
 export interface VisionStreamCanvasProps {
   className?: string;
   eager?: boolean;
@@ -48,6 +60,7 @@ export interface VisionStreamCanvasProps {
   liveSnapshotEnabled?: boolean;
   onPreviewAvailable?: (available: boolean) => void;
   onPlaybackStatus?: (status: PlaybackStatus) => void;
+  onPresentedFrame?: (frame: PresentedVideoFrame) => void;
   onPlaybackContext?: (context: {
     capturedAt: string;
     currentTimeSeconds?: number;
@@ -191,6 +204,7 @@ function StandardStreamCanvas({
   onPreviewAvailable,
   onPlaybackStatus,
   onPlaybackContext,
+  onPresentedFrame,
   showStatus = true,
   showReplayControls = false,
   stream,
@@ -199,6 +213,8 @@ function StandardStreamCanvas({
 }: VisionStreamCanvasProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const decodedLiveFrame = useRef<(() => void) | null>(null);
+  const failLivePreview = useRef<((message: string) => void) | null>(null);
+  const stopPresentedFrames = useRef<(() => void) | null>(null);
   const posterUrlRef = useRef<string | null>(null);
   const [status, setStatus] = useState<PlaybackStatus>(
     eager ? "connecting" : "idle"
@@ -219,6 +235,27 @@ function StandardStreamCanvas({
   const autoRescanAttempted = useRef<string | null>(null);
   const previousConnectionState = useRef(stream.connectionState);
   const liveSource = useMemo(() => isLiveStream(stream), [stream]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!onPresentedFrame || !video || typeof video.requestVideoFrameCallback !== 'function') return;
+    let active = true; let callback = 0;
+    const presented = (now: number, metadata: VideoFrameCallbackMetadata) => {
+      if (!active) return;
+      const network = metadata as VideoFrameCallbackMetadata & { captureTime?: number; rtpTimestamp?: number };
+      const capture = network.captureTime;
+      const validCapture = liveSource && typeof capture === 'number' && Number.isFinite(capture) && capture > 0;
+      onPresentedFrame({ mediaTimeSeconds: metadata.mediaTime, presentedAtMs: now,
+        width: video.videoWidth || metadata.width, height: video.videoHeight || metadata.height,
+        ...(validCapture ? { sourceTimeUnixMs: performance.timeOrigin + capture } : {}),
+        ...(typeof network.rtpTimestamp === 'number' ? { rtpTimestamp: network.rtpTimestamp } : {}),
+        clockBasis: validCapture ? 'webrtc-capture-time' : 'unavailable' });
+      callback = video.requestVideoFrameCallback(presented);
+    };
+    callback = video.requestVideoFrameCallback(presented);
+    const stop = () => { if (!active) return; active = false; video.cancelVideoFrameCallback(callback); };
+    stopPresentedFrames.current = stop;
+    return () => { stop(); if (stopPresentedFrames.current === stop) stopPresentedFrames.current = null; };
+  }, [onPresentedFrame, liveSource, stream.streamId, retryKey]);
   useEffect(() => {
     const previous = previousConnectionState.current;
     previousConnectionState.current = stream.connectionState;
@@ -413,6 +450,16 @@ function StandardStreamCanvas({
 
     const videoElement = videoRef.current;
     let disposed = false;
+    let mounted = true;
+    let released = false;
+    let startPending = false;
+    let signalingClosed = false;
+    let stoppedSessionId: string | null = null;
+    let drainTimer: number | null = null;
+    let rescanController: AbortController | null = null;
+    let rescanTimer: number | null = null;
+    const receivedTracks = new Set<MediaStreamTrack>();
+    let attachedStream: MediaStream | null = null;
     let peerConnection: RTCPeerConnection | null = null;
     let mediaSessionId: string | null = null;
     let websocket: WebSocket | null = null;
@@ -438,16 +485,70 @@ function StandardStreamCanvas({
     };
     decodedLiveFrame.current = markDecodedFrame;
 
+    const send = (apiKey: string, data: Record<string, unknown> = {}) => {
+      if (websocket?.readyState !== WebSocket.OPEN) return false;
+      try { websocket.send(JSON.stringify({ apiKey, peerId, data })); return true; }
+      catch { return false; }
+    };
+    const closeSignaling = () => {
+      if (drainTimer !== null) window.clearTimeout(drainTimer);
+      drainTimer = null;
+      if (signalingClosed) return;
+      signalingClosed = true;
+      if (websocket) {
+        websocket.onopen = null; websocket.onerror = null; websocket.onclose = null; websocket.onmessage = null;
+        websocket.close();
+      }
+    };
+    const stopRemote = () => {
+      if (mediaSessionId && stoppedSessionId !== mediaSessionId) {
+        if (send("api/v1/live/stream/stop", { mediaSessionId, peerId })) stoppedSessionId = mediaSessionId;
+      }
+    };
+    const teardown = () => {
+      disposed = true;
+      if (startTimer !== null) window.clearTimeout(startTimer);
+      if (frameTimer !== null) window.clearTimeout(frameTimer);
+      if (retryTimer !== null) window.clearTimeout(retryTimer);
+      startTimer = frameTimer = retryTimer = null;
+      rescanController?.abort();
+      if (rescanTimer !== null) window.clearTimeout(rescanTimer);
+      rescanTimer = null;
+      if (released) return;
+      released = true;
+      const awaitingAnswer = startPending && !mediaSessionId && websocket?.readyState === WebSocket.OPEN;
+      const now = Date.now();
+      for (const [key, expires] of liveSessionCooldowns) if (expires <= now) liveSessionCooldowns.delete(key);
+      liveSessionCooldowns.set(sessionKey, now + LIVE_HANDOFF_DELAY_MS + (awaitingAnswer ? LIVE_STOP_DRAIN_MS : 0));
+      if (decodedLiveFrame.current === markDecodedFrame) {
+        decodedLiveFrame.current = null;
+        stopPresentedFrames.current?.();
+      }
+      if (failLivePreview.current === fail) failLivePreview.current = null;
+      if (frameCallback !== null) videoElement?.cancelVideoFrameCallback(frameCallback);
+      frameCallback = null;
+      if (peerConnection) {
+        peerConnection.ontrack = null; peerConnection.onicecandidate = null; peerConnection.onconnectionstatechange = null;
+        peerConnection.close(); peerConnection = null;
+      }
+      for (const track of receivedTracks) track.stop?.();
+      receivedTracks.clear();
+      if (videoElement && (videoElement.srcObject === attachedStream || videoElement.srcObject === fallbackStream)) {
+        videoElement.pause(); videoElement.srcObject = null;
+      }
+      stopRemote();
+      if (awaitingAnswer) {
+        // Keep only signaling for a bounded late allocation reply; never apply its SDP.
+        drainTimer = window.setTimeout(closeSignaling, LIVE_STOP_DRAIN_MS);
+      } else closeSignaling();
+    };
     const fail = (message: string) => {
       if (disposed) return;
-      setErrorMessage(message);
+      setErrorMessage(message); setHasVideoFrame(false);
       setStatus(posterUrlRef.current ? "poster" : "error");
+      teardown();
     };
-
-    const send = (apiKey: string, data: Record<string, unknown> = {}) => {
-      if (websocket?.readyState !== WebSocket.OPEN) return;
-      websocket.send(JSON.stringify({ apiKey, peerId, data }));
-    };
+    failLivePreview.current = fail;
 
     const addRemoteCandidate = async (candidate: RTCIceCandidateInit) => {
       if (disposed) return;
@@ -470,10 +571,13 @@ function StandardStreamCanvas({
       pc.addTransceiver("video", { direction: "recvonly" });
 
       pc.ontrack = (event) => {
-        if (disposed) return;
+        if (disposed) { event.track.stop?.(); return; }
         const video = videoElement;
         if (!video) return;
         const remoteStream = event.streams[0];
+        receivedTracks.add(event.track);
+        remoteStream?.getTracks?.().forEach(track => receivedTracks.add(track));
+        attachedStream = remoteStream ?? fallbackStream;
         if (remoteStream) {
           video.srcObject = remoteStream;
         } else {
@@ -522,13 +626,14 @@ function StandardStreamCanvas({
       if (disposed) return;
       await pc.setLocalDescription(offer);
       if (disposed) return;
-      send("api/v1/live/stream/start", {
+      startPending = send("api/v1/live/stream/start", {
         clientIpAddr: null,
         options: { quality: "auto", rtptransport: "udp", timeout: 60 },
         peerId,
         sessionDescription: pc.localDescription,
         streamId: stream.streamId,
       });
+      if (!startPending) fail("The video service could not start this camera.");
     };
 
     const startSession = () => {
@@ -536,10 +641,7 @@ function StandardStreamCanvas({
       if (disposed) return;
       liveSessionCooldowns.delete(sessionKey);
       frameTimer = window.setTimeout(() => {
-        if (disposed) return;
-        setErrorMessage("No live video frames arrived. Retry the connection.");
-        setHasVideoFrame(false);
-        setStatus("error");
+        fail("No live video frames arrived. Retry the connection.");
       }, LIVE_FRAME_TIMEOUT_MS);
       try {
         websocket = new WebSocket(
@@ -554,16 +656,19 @@ function StandardStreamCanvas({
         if (!disposed) send("api/v1/live/iceServers", { peerId });
       };
       websocket.onerror = () => fail("Could not connect to the video service.");
+      websocket.onclose = () => fail("The video control connection closed. Retry the connection.");
       websocket.onmessage = (event) => {
-        if (disposed) return;
-        void (async () => {
-          let message: SignalingMessage;
-          try {
-            message = JSON.parse(String(event.data)) as SignalingMessage;
-          } catch {
-            return;
+        let message: SignalingMessage;
+        try { message = JSON.parse(String(event.data)) as SignalingMessage; } catch { return; }
+        const data = message.data ?? {};
+        if (disposed) {
+          if (message.apiKey === "api/v1/live/setAnswer" && !Array.isArray(data)) {
+            mediaSessionId = typeof data.mediaSessionId === "string" && data.mediaSessionId ? data.mediaSessionId : null;
+            startPending = false; stopRemote(); closeSignaling();
           }
-          const data = message.data ?? {};
+          return;
+        }
+        void (async () => {
 
           if (message.apiKey === "api/v1/live/iceServers") {
             const record = Array.isArray(data) ? {} : data;
@@ -580,10 +685,8 @@ function StandardStreamCanvas({
 
           if (message.apiKey === "api/v1/live/setAnswer") {
             if (!peerConnection || Array.isArray(data)) return;
-            mediaSessionId =
-              typeof data.mediaSessionId === "string"
-                ? data.mediaSessionId
-                : null;
+            startPending = false;
+            mediaSessionId = typeof data.mediaSessionId === "string" && data.mediaSessionId ? data.mediaSessionId : null;
             if (typeof data.sdp !== "string" || typeof data.type !== "string") {
               const signalingFailure = signalingError(data);
               if (
@@ -595,18 +698,21 @@ function StandardStreamCanvas({
                   "This camera was offline when video services started. Retrying its connection…"
                 );
                 setStatus("connecting");
+                teardown();
+                rescanController = new AbortController();
+                rescanTimer = window.setTimeout(() => rescanController?.abort(), 5_000);
                 try {
                   await fetch(`${vstApiUrl}/v1/sensor/scan`, {
-                    method: "POST",
+                    method: "POST", signal: rescanController.signal,
                   });
                 } catch {
                   // The retry below can still succeed if another service restored the sensor.
+                } finally {
+                  if (rescanTimer !== null) window.clearTimeout(rescanTimer);
+                  rescanTimer = null;
                 }
-                if (!disposed) {
-                  retryTimer = window.setTimeout(
-                    () => setRetryKey((value) => value + 1),
-                    1_200
-                  );
+                if (mounted) {
+                  retryTimer = window.setTimeout(() => { retryTimer = null; if (mounted) setRetryKey(value => value + 1); }, 1_200);
                 }
                 return;
               }
@@ -656,27 +762,7 @@ function StandardStreamCanvas({
     if (remaining) startTimer = window.setTimeout(startSession, remaining);
     else startSession();
 
-    return () => {
-      disposed = true;
-      const now = Date.now();
-      for (const [key, expires] of liveSessionCooldowns) {
-        if (expires <= now) liveSessionCooldowns.delete(key);
-      }
-      liveSessionCooldowns.set(sessionKey, now + LIVE_HANDOFF_DELAY_MS);
-      if (startTimer !== null) window.clearTimeout(startTimer);
-      if (frameTimer !== null) window.clearTimeout(frameTimer);
-      if (decodedLiveFrame.current === markDecodedFrame)
-        decodedLiveFrame.current = null;
-      if (websocket?.readyState === WebSocket.OPEN && mediaSessionId) {
-        send("api/v1/live/stream/stop", { mediaSessionId, peerId });
-      }
-      websocket?.close();
-      peerConnection?.close();
-      if (retryTimer !== null) window.clearTimeout(retryTimer);
-      if (frameCallback !== null)
-        videoElement?.cancelVideoFrameCallback(frameCallback);
-      if (videoElement) videoElement.srcObject = null;
-    };
+    return () => { mounted = false; teardown(); };
   }, [liveSource, playRequested, retryKey, stream.streamId, vstApiUrl]);
 
   useEffect(() => {
@@ -801,6 +887,10 @@ function StandardStreamCanvas({
           const video = event.currentTarget;
           // Cleanup and initial mounting have no media source to fail.
           if (!video.getAttribute("src") && !video.srcObject) return;
+          if (liveSource) {
+            failLivePreview.current?.("Video could not be loaded. Retry or choose another source.");
+            return;
+          }
           setHasVideoFrame(false);
           setErrorMessage(
             "Video could not be loaded. Retry or choose another source."

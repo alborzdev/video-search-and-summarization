@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "heldAid": 204,
+  "heldSpeedMps": 0.0,
+  "beforeS": 70.29756910832349,
+  "afterS": 73.7674,
+  "afterSpeedMps": 4.1581,
+  "actualUiCancel": true,
+  "scenarioChangesReleased": true,
+  "actualSubsequentMotionSampled": true,
+  "scope": "Actual simulator hold, UIcancel and subsequent native trajectory sample. Camera queue clearance remains separate.",
+  "cameraQueueAtHeldScreenshot": {
+    "minimumCurrentlyObservedObjects": 2,
+    "observedExtentLowerBoundM": 11.2,
+    "windowMaximumObservedExtentM": 11.4,
+    "clearanceConfirmed": false
+  },
+  "uiImage": "v3-final-held-queue.jpg"
+}

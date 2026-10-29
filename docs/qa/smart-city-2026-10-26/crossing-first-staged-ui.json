@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "city.crossing-first-staged-ui.v1",
+  "scope": "Actual production UI scenario; simulator effect completed, AI clearance did not qualify",
+  "at": "2026-10-26T07:05:05.407060+00:00",
+  "sourceFile": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-crossing-staged-ui.ndjson",
+  "sha256": "f2fc58c3471e5c59d40f5ad39e32aae63e7f665bcefc10c412f8455846b11e40",
+  "scenario": {
+    "runId": "53305c6c1f9e4710:000003",
+    "state": "completed",
+    "elapsedWallSeconds": 47.875629966147244,
+    "holdConfirmed": true,
+    "restored": true,
+    "normalFlowVerified": true,
+    "runtime": {
+      "controllerCurrent": true,
+      "extraVehiclesActive": 0,
+      "stops": [],
+      "departuresPending": 0,
+      "walkerFailures": [],
+      "bindingBasis": "survey-reference; verify against current VSS ROIs"
+    }
+  },
+  "finalCameraObstruction": {
+    "ruleId": "cam_sw-blocked-crossing",
+    "name": "South crossing \u00b7 stopped vehicle",
+    "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+    "episodeCount": 1,
+    "completedEpisodes": 0,
+    "ongoingEpisodes": 0,
+    "unknownEpisodes": 1,
+    "blockedSeconds": 14.9988,
+    "longestObservedEpisodeSeconds": 14.9988,
+    "eventIds": [
+      "607d090176ad36f213f080d24c2fcbf4"
+    ],
+    "status": "ready"
+  },
+  "designFinding": "Selected WB_1:L car drove south out of southwest camera ground coverage before observed zone exit. Alert became unresolved, not confirmed cleared.",
+  "correction": "Separate source change restricts this episode to NB_1; normal northbound departure stays in the owner camera. Thresholds and analytics geometry unchanged. Live retest pending."
+}

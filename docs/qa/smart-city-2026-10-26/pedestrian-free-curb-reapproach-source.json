@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "city.pedestrian-free-curb-reapproach-source.v1",
+  "recordedAt": "2026-10-26T09:29:20.607125+00:00",
+  "scope": "Source and CPU controls only; parent owns hot deployment and actual UI acceptance. No Kit/runtime/GPU/model changes by this author.",
+  "sourceSha256": {
+    "scripts/people/people_controller.py": "836ed862cde8ac7303411c91050b7cefbf3ca666a6a003a49c40dac57b7be111",
+    "scripts/scenarios/runtime.py": "0cf9ee6852079547d94361066bbadbe020c677207056c7b6877e452629778098",
+    "scripts/people/test_owned_cohort.py": "33f146e935a2d4d95f53b69d91e2698422e94025e8b64647e771a115541a11a2",
+    "scripts/scenarios/test_waiting_points.py": "7891028f67dc9e08a261dbc9f18d329f89053fc3baafdc308bedf9cd395c9e14",
+    "scripts/scenarios/test_director.py": "320b24951a97b28c4a57b70be3c2a657a8f4956e20f704020615f1d7217dae2e",
+    "scripts/people/test_native_plan.py": "e83570d58eac1b6cfdce28f49b78373931bcdbcfc1f955ef8f34cd189c48ec1a"
+  },
+  "actualFailuresPreserved": {
+    "crowdedFarGoal": "pedestrian-cohort-camera-pass-native-goal-failure.json: camera completed1, native endpoint not reached; original endpoint occupied by another actual body.",
+    "waitingDrift": "pedestrian-free-endpoint-first-live.json: whole episode failed41.344089wall, restoredtrue; actual native Idle position moved .350m from the fixed North88.4 curb."
+  },
+  "selector": {
+    "area": "UNCHANGED actual East waiting pads x[-12.2,-10.2], southy[69.2,72], northy[86.4,90.4]. Both native targets stay outside paint and roadway.",
+    "preference": "Nominal first when free; finite inward1m then outward1m/1.3m, with bounded lateral variants and actual radius+.35 body/arrival inset.",
+    "identity": "Selected entry/exit and original template points/pads/radius are pinned. Neither an arbitrary point nor another otherwise-valid candidate may reuse the selected proof.",
+    "proof": "Actual native NavMesh query with actual body dimensions; complete sidewalk approach and same named crossing path, including actual/requested endpoint connectors. No movement from this preflight. At most12 attempts, at most3 per actor/direction, diagonally ordered pairs.",
+    "race": "Actual other native body positions/radii checked at selection and both locked endpoints checked before native continue; crowding causes pending, never retargeting. Native goals cannot reserve future space.",
+    "planning": "Max(waypoint distance, verified native crossing path distance); unchanged WALK, speed, margins, finite caps and actual arrival proof."
+  },
+  "sameEntryRepair": {
+    "eligibility": "Only current Expo phased lease, original verified waiting entry and queued crossing request; actual current location <=1mXY/.15mZ from that SAME entry and both points outside all crosswalks and existing roadway envelope.",
+    "proof": "Rechecks current full native path before sending a GoTo to the original entry only; no selected point, crossing, camera, ROI, speed or signal changes.",
+    "task": "One valid nonnegative accepted native GoTo. Repeated polls expose its actual taskID and native path proof without cancel/reissue; entryArrivalVerified false until native/observed endpoint arrival and unchanged .35m actual position check. -1 is never read as success.",
+    "intent": "Original requestedSimTime, owner, epoch and generation remain; nearby safe intent retains priority before the earlier ordinary callback, but explicit owned WALK gate refuses while approaching or unverified. Cancel/stale/reset/failure restores normal state and retires intent.",
+    "finiteBudget": "Director stays awaiting-walk with original phase start, once-latched signal budget and180wall overall cap. Repair never starts another dwell or renews a deadline.",
+    "evidenceFields": [
+      "positionM",
+      "entryM",
+      "entryArrivalVerified",
+      "atEntry",
+      "entryReapproach",
+      "entryRecovery.sameEntryM",
+      "entryRecovery.fromPositionM",
+      "entryRecovery.startedSimTime",
+      "entryRecovery.nativePlanProof",
+      "entryRecovery.taskId",
+      "entryRecovery.nativeTaskAccepted",
+      "entryRecovery.arrivalEvidence",
+      "crossingRequest.requestedSimTime"
+    ]
+  },
+  "validation": [
+    {
+      "command": "python3 -m unittest discover -s scripts/people -p 'test_owned_cohort.py' -q",
+      "count": 14,
+      "seconds": 6.787,
+      "exitCode": 0
+    },
+    {
+      "command": "python3 -m unittest scripts.scenarios.test_waiting_points scripts.scenarios.test_director.AdaptiveBudgetControls -q",
+      "count": 21,
+      "seconds": 0.238,
+      "exitCode": 0
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/scenarios -t . -q",
+      "count": 113,
+      "seconds": 7.018,
+      "exitCode": 0
+    },
+    {
+      "command": "Ruff E9,F63,F7,F82 for changed source/tests; py_compile people_controller/runtime",
+      "result": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/people -p 'test_native_plan.py' -q",
+      "count": 7,
+      "seconds": 1.777,
+      "exitCode": 0
+    }
+  ],
+  "limits": [
+    "CPU native boundary controls are not actual navigation or FPS evidence.",
+    "Normal walkers can still arrive at the same curb; a persistently occupied locked point remains pending until original finite recovery.",
+    "Future dynamic blockage can still cause a real native refusal/failure. No endpoint tolerance, analytics gap, ROI or identity threshold was changed.",
+    "Simulator preparation/arrival evidence does not establish a camera crossing. Camera evidence must pass independently."
+  ],
+  "independentReview": "next_pipeline_perf found no blocker on exact836ed862 people/0cf9ee68 runtime; independently repeated14cohort controls and3 new Runtime/director cases. Their separate exact-hash review receipt is authoritative. Parent owns live cutover and UI acceptance."
+}

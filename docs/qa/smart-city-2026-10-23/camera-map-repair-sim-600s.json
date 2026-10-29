@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "failure": null,
+  "requestedSeconds": 600,
+  "wallSeconds": 600.3917260020971,
+  "samples": 101,
+  "minimumAvailableGiB": 23.122966766357422,
+  "minimumDiskFreeGiB": 16.120861053466797,
+  "minimumRollingFps": {
+    "cam_SW": 7.81912700525377,
+    "cam_NE": 7.81912700525377
+  },
+  "criteria": {
+    "twoStreamRenderProducts": true,
+    "memoryFloorGiB": 23,
+    "diskFloorGiB": 14,
+    "minimumCameraFps": 5,
+    "maximumQueuedFramesPerCamera": 1
+  },
+  "sourceSha256": "15269dea6e3d37fca26c4a6bf0df82057535af9c61752f91791d5a4a28fdd61c",
+  "scope": "Actual simulator lifecycle, bounded encoder queues and delivery progress; not cross-camera identity accuracy."
+}

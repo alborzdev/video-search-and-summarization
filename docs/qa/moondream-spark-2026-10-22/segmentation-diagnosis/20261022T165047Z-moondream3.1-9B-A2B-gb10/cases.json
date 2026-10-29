@@ -1,0 +1,64 @@
+[
+  {
+    "id": "panel-point-svg-start",
+    "image": "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png",
+    "object": "metal panel",
+    "prompt": "Describe the object on the concrete.",
+    "expect_present": true,
+    "spatial_refs": [
+      [
+        0.57,
+        0.49
+      ]
+    ],
+    "diagnostic_prompt": {
+      "force_svg_start_after_bbox": true
+    },
+    "max_tokens": 256
+  },
+  {
+    "id": "person-point-svg-start",
+    "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+    "object": "person",
+    "prompt": "Describe the person.",
+    "expect_present": true,
+    "spatial_refs": [
+      [
+        0.41,
+        0.46
+      ]
+    ],
+    "diagnostic_prompt": {
+      "force_svg_start_after_bbox": true
+    },
+    "max_tokens": 256
+  },
+  {
+    "id": "warehouse-box-svg-start",
+    "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+    "object": "cardboard box",
+    "prompt": "Describe the person.",
+    "expect_present": true,
+    "spatial_refs": [
+      [
+        0.73,
+        0.59
+      ]
+    ],
+    "diagnostic_prompt": {
+      "force_svg_start_after_bbox": true
+    },
+    "max_tokens": 256
+  },
+  {
+    "id": "blank-svg-start",
+    "image": "/home/sparkdev/vss/.spark/moondream-photon/blank-control.png",
+    "object": "metal panel",
+    "prompt": "What objects are visible?",
+    "expect_present": false,
+    "diagnostic_prompt": {
+      "force_svg_start_after_bbox": true
+    },
+    "max_tokens": 256
+  }
+]

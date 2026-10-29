@@ -1,0 +1,104 @@
+{
+  "schemaVersion": "city.staged-worker-ntp-source-audit.v1",
+  "readOnly": true,
+  "runtimeChanged": false,
+  "imageId": "sha256:e362f9f63ce450d1def2d14b01648a8563f52fc4494f9814d232d7af72f1a23d",
+  "loadedMux": "Legacy libnvdsgst_multistream.so 9.2.0; confirmed by /proc/1/maps and gst-inspect",
+  "effectiveWorkerSourceSettings": {
+    "transport": "TCP",
+    "rtspsrcLatencyMs": 200,
+    "configureSourceForNtpSync": true,
+    "decodedQueueBuffers": 4,
+    "decodedQueueLeaky": false,
+    "cpuDecode": true,
+    "muxBatchSize": 2,
+    "muxTimeoutUs": 10000,
+    "muxAttachSysTs": false,
+    "muxLiveSource": true,
+    "muxSyncInputsNotSet": true,
+    "muxSyncInputsNtpNotSet": true,
+    "muxFrameDurationNotSet": true
+  },
+  "installedLegacyPropertyInspection": {
+    "frame-duration": {
+      "type": "guint64 milliseconds",
+      "getterDefault": 18446744073709,
+      "description": "-1 disables frame-rate based NTP correction (default)",
+      "note": "Getter prints GST_CLOCK_TIME_NONE divided by1e6. Open newmux source initializes GST_CLOCK_TIME_NONE, but deployed legacy calculator source is not provided."
+    },
+    "sync-inputs": {
+      "type": "gboolean",
+      "default": false
+    },
+    "sync-inputs-ntp": {
+      "type": "gint nanoseconds",
+      "min": 0,
+      "max": 2147483647,
+      "default": 0
+    },
+    "max-latency": {
+      "type": "guint nanoseconds",
+      "min": 0,
+      "max": 4294967295,
+      "default": 0
+    }
+  },
+  "boundedObservationTail": {
+    "rows": 500,
+    "readBoundBytes": 8388608,
+    "sourceTimeMinusRawPtsNs": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "count": 251,
+        "min": 1792996295333358464,
+        "p50": 1792996295333358464,
+        "p95": 1792996295333358464,
+        "max": 1792996295333358464
+      },
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "count": 249,
+        "min": 1792996295332968472,
+        "p50": 1792996295332968472,
+        "p95": 1792996295332969250,
+        "max": 1792996295332971804
+      }
+    },
+    "adjacentSerializationPairsNotProvenBatchIdentity": 197,
+    "adjacentNtpSkewMs": {
+      "count": 197,
+      "min": 394.877248,
+      "p50": 452.732804,
+      "p95": 504.555025,
+      "max": 597.100248
+    },
+    "adjacentPtsSkewMs": {
+      "count": 197,
+      "min": 394.488034,
+      "p50": 452.34359,
+      "p95": 504.165811,
+      "max": 596.710256
+    },
+    "adjacentSourceFrameCounterDelta": {
+      "count": 197,
+      "min": -2,
+      "p50": -1,
+      "p95": 0,
+      "max": 0
+    },
+    "lastPair": {
+      "ntpSkewMs": 452.43025,
+      "ptsSkewMs": 452.04359,
+      "sourceFrameCounterDelta": -1
+    }
+  },
+  "sdkSha256Output": "c2937f7b68681d14d0d0379f4090ebbe188097ed5a503011d05eee19e5f0a8ef  /opt/nvidia/deepstream/deepstream-9.2/sources/gst-plugins/gst-nvmultistream2/gstnvstreammux_ntp.cpp\nbf5dd8fbc45a4926d3920c424de1185e03e520b72ffea8adb282fb3fb7a04a6b  /opt/nvidia/deepstream/deepstream-9.2/sources/gst-plugins/gst-nvmultistream2/gstnvstreammux.cpp\nd2afee6ebfdecea749d1ecf811d077352237470ec2c85926b4bc1390a05a549c  /opt/nvidia/deepstream/deepstream-9.2/sources/includes/nvdsgstutils.h\n859e69bc67f778a4ff60694316084f7ba21190667c90f755a4a30620d4206c60  /opt/nvidia/deepstream/deepstream-9.2/lib/libnvdsgst_helper.so\nb172f3c669d5ae59f2fc25f876b2822c78c85397a3f7f5486263000f6beaed2f  /opt/nvidia/deepstream/deepstream-9.2/lib/gst-plugins/libnvdsgst_multistream.so\n",
+  "conclusions": [
+    "Automatic frame-rate correction (frame-duration=0) is not the current default. Setting -1 is expected to be a no-op, not a test of that proposed cause.",
+    "Source NTP is SR/PTS reconstruction and does not itself align batch members.",
+    "The worker leaves PTS/NTP mux synchronization off and retains independent nonleaky decoded queues.",
+    "The current 450 ms skew may be a selection/FIFO offset or bad reconstruction. An independent encoded client does not prove that the worker mapped the same AU correctly.",
+    "Exact same-worker AU reference/SEI versus SDK NTP, plus pre-mux arrival ages, are required to separate the causes.",
+    "No offset subtraction or guard relaxation is justified."
+  ],
+  "workerSourceArchive": ".spark/city/runtime/staged-tracker-candidate-20261026/src/city_worker.cpp",
+  "workerSourceSha256": "2fdfc46c65c7e2f2ef601952bddd8e9eb8d35f92392db4490e41573d58cdd270"
+}

@@ -1,0 +1,39 @@
+{
+  "returncode": 3,
+  "child_returncode": 0,
+  "missing_or_failed_tasks": [],
+  "mask_failures": [
+    {
+      "case": "panel-baseline",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "panel-point",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "panel-box",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "person-baseline",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "person-point",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "person-box",
+      "expected_present": true,
+      "status": "bbox_only"
+    }
+  ],
+  "elapsed_s": 80.93526682304218,
+  "log": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T163013Z-moondream3-preview-gb10/inference.jsonl"
+}

@@ -1,0 +1,358 @@
+.scroll {
+  --mint: #a8e4ce;
+  --amber: #e5ab4f;
+  --ink: #08100f;
+  --muted: #97aaa6;
+  --nav-height: 56px;
+  height: calc(100dvh - var(--vi-header-height, 78px));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  background: var(--ink);
+  color: #f1f6f4;
+  font-family: var(--ctai-font-sans);
+  scrollbar-width: thin;
+  scrollbar-color: #345043 var(--ink);
+}
+.scroll * {
+  box-sizing: border-box;
+}
+.scroll button {
+  font-family: inherit;
+  cursor: pointer;
+  color: inherit;
+  font-size: 12px;
+}
+.scroll button:focus-visible,
+.scroll:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: -3px;
+}
+.scroll button:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  min-height: 56px;
+  padding: 0 4%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #08100ff7;
+  border-bottom: 1px solid #273936;
+}
+.nav > span {
+  color: #94a79e;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.nav > div {
+  display: flex;
+  gap: 26px;
+}
+.nav button {
+  border: 0;
+  background: none;
+  color: #8b9f94;
+  padding: 18px 0;
+  white-space: nowrap;
+}
+.nav button[aria-current] {
+  color: var(--mint);
+}
+.nav:after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left;
+  background: var(--mint);
+}
+.nav .general {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--mint);
+  font-size: 11px;
+}
+.rail {
+  position: relative;
+}
+
+.stage {
+  --travel: 0;
+  --camera: 0;
+  --detect: 0;
+  --tracking: 0;
+  --locate: 0;
+  --zone: 0;
+  --duration: 0;
+  position: sticky;
+  top: var(--nav-height);
+  height: var(--step-height);
+  min-height: 0;
+  padding: 10px 4% 9px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.canvas {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1660px;
+  margin: 0 auto;
+}
+.insight {
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-shrink: 0;
+  text-align: center;
+  color: #a2b9aa;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 0;
+}
+.insight > button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 0;
+  background: var(--mint);
+  color: #08100f;
+  padding: 10px 14px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.controls {
+  height: 43px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  border-top: 1px solid #273936;
+  flex-shrink: 0;
+}
+.controls > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  background: none;
+  color: #bad9c7;
+  padding: 10px 0;
+  font-size: 11px;
+}
+.controls > button:last-child {
+  margin-left: auto;
+}
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.dots > button {
+  width: 14px;
+  height: 23px;
+  position: relative;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.dots > button:before {
+  position: absolute;
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3d5a49;
+  top: 9px;
+  left: 5px;
+}
+.dots > button[aria-current]:before {
+  background: var(--mint);
+  box-shadow: 0 0 0 4px #a8e4ce13;
+}
+.counter {
+  font-size: 10px;
+  color: #9db3a5;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.disclosure {
+  font-size: 9px;
+  color: #6e8778;
+  text-align: center;
+  min-height: 18px;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1100px) {
+  .nav > span {
+    display: none;
+  }
+  .nav > div {
+    gap: 18px;
+  }
+  .insight {
+    font-size: 11px;
+  }
+  .controls {
+    gap: 12px;
+  }
+  .stage {
+    padding-left: 3%;
+    padding-right: 3%;
+  }
+}
+@media (max-width: 900px) {
+  .scroll {
+    height: calc(
+      100dvh - var(--vi-header-height, 78px) - var(--bottom-nav, 76px)
+    );
+  }
+  .nav {
+    padding: 0 3%;
+  }
+  .nav > div {
+    gap: 14px;
+  }
+  .nav button {
+    font-size: 10px;
+  }
+  .nav .general {
+    font-size: 10px;
+  }
+}
+@media (max-width: 700px) {
+  .nav {
+    min-height: 84px;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 8px 18px;
+  }
+  .nav > span {
+    display: block;
+    order: 0;
+    font-size: 11px;
+  }
+  .nav .general {
+    order: 1;
+    margin-left: auto;
+    padding: 4px 0;
+  }
+  .nav > div {
+    order: 2;
+    flex-basis: 100%;
+    justify-content: space-between;
+    gap: 5px;
+  }
+  .nav > div button {
+    padding: 12px 0 5px;
+    font-size: 10px;
+  }
+  .stage {
+    padding: 0 18px 7px;
+    overflow-y: auto;
+    overscroll-behavior-y: auto;
+  }
+  .canvas {
+    flex: none;
+    min-height: 0;
+  }
+  .insight {
+    font-size: 10px;
+    padding: 18px 0;
+    min-height: 58px;
+    gap: 10px;
+  }
+  .insight > button {
+    font-size: 10px;
+  }
+  .controls {
+    gap: 7px;
+    height: 39px;
+    min-height: 39px;
+  }
+  .controls > button {
+    font-size: 10px;
+    gap: 4px;
+  }
+  .controls > button svg {
+    width: 14px;
+  }
+  .dots {
+    gap: 1px;
+  }
+  .dots > button {
+    width: 9px;
+  }
+  .dots > button:before {
+    width: 4px;
+    height: 4px;
+    left: 2px;
+  }
+  .counter {
+    font-size: 8px;
+  }
+  .disclosure {
+    font-size: 8px;
+    line-height: 1.4;
+  }
+  .stage[data-step="12"] .insight {
+    flex-direction: column;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scroll * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.nav .tour {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #466555;
+  padding: 9px 13px;
+  border-radius: 6px;
+  color: #d0f3df;
+  font-size: 11px;
+}
+.nav .tour[aria-pressed="true"] {
+  background: #a8e4ce;
+  color: #0b1812;
+}
+.scroll[data-playing="true"] .nav:after {
+  transition: transform 1.2s ease;
+}
+@media (max-width: 700px) {
+  .nav .tour {
+    order: 0;
+    padding: 6px 9px;
+    font-size: 10px;
+  }
+}
+/* Scene contents change size inside a pinned story; do not anchor the outer scroll to them. */
+.scroll, .rail, .stage { overflow-anchor: none; }
+
+/* The overview and story share one scroller when embedded in Smart City. */
+.scroll.embedded { height: auto; overflow: visible; overscroll-behavior-y: auto; }
+
+@media (max-width:700px) {
+  /* Keep chapter scrolling inside the navigation row, not the whole story. */
+  .nav > div { min-width:0; max-width:100%; overflow-x:auto; scrollbar-width:none; }
+}

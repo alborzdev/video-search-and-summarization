@@ -1,0 +1,40 @@
+{
+  "model": "small",
+  "checkpointSha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+  "onnx": "/work/models/rfdetr-small/rfdetr-small.onnx",
+  "onnxSha256": "fff3ff4ec1a3dbf32b588cfc939a1a4b2c6b0b33755fdd6a7192f85892a3944f",
+  "opset": 17,
+  "spatialResolution": 512,
+  "dynamicBatch": true,
+  "optimizationBatch": 2,
+  "inputs": {
+    "input": "FLOAT"
+  },
+  "outputs": {
+    "dets": "FLOAT",
+    "labels": "FLOAT"
+  },
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "outputContract": {
+    "dets": "normalized-cxcywh",
+    "labels": "raw-sigmoid-logits-sparse-coco"
+  },
+  "versions": {
+    "rfdetr": "1.11.2",
+    "torch": "2.11.0a0+a6c236b9fd.nv26.3.46836102",
+    "torchvision": "0.25.0a0+b7d91027.nv26.3.46836102",
+    "onnx": "1.21.0",
+    "transformers": "5.5.0"
+  }
+}

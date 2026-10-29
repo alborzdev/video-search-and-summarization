@@ -1,0 +1,1657 @@
+{
+  "schemaVersion": "city.coco-subset.v1",
+  "selectionRevision": "ct-city-coco-road-roundrobin-v1",
+  "seed": "20261022",
+  "source": "COCO 2017 validation",
+  "annotationUrl": "https://s3.amazonaws.com/images.cocodataset.org/annotations/annotations_trainval2017.zip",
+  "annotationZipSha256": "113a836d90195ee1f884e704da6304dfaaecff1f023f49b6ca93c4aaae470268",
+  "officialValidationJsonSha256": "e8c7f7908f1d7278341fae127d0da654f102f11bd7b21d8aeefa635b8c810b6f",
+  "selectedGroundTruthSha256": "af585b52cdb0ccc13c6dbf2e46fbc0f9d61176fbafbb51962b8b03b4e522c188",
+  "coarseGroundTruthSha256": "4e5f59c41ef780c7b736659f7bab3af515eaadb6aa0e8376f7a4e382a3c113f6",
+  "imageCount": 100,
+  "classCounts": {
+    "person": {
+      "anchorImages": 17,
+      "positiveImages": 74,
+      "nonCrowdInstances": 453,
+      "crowdAnnotationsRetainedForIgnore": 15
+    },
+    "bicycle": {
+      "anchorImages": 17,
+      "positiveImages": 26,
+      "nonCrowdInstances": 52,
+      "crowdAnnotationsRetainedForIgnore": 0
+    },
+    "car": {
+      "anchorImages": 17,
+      "positiveImages": 47,
+      "nonCrowdInstances": 158,
+      "crowdAnnotationsRetainedForIgnore": 1
+    },
+    "motorcycle": {
+      "anchorImages": 17,
+      "positiveImages": 24,
+      "nonCrowdInstances": 62,
+      "crowdAnnotationsRetainedForIgnore": 1
+    },
+    "bus": {
+      "anchorImages": 16,
+      "positiveImages": 26,
+      "nonCrowdInstances": 44,
+      "crowdAnnotationsRetainedForIgnore": 1
+    },
+    "truck": {
+      "anchorImages": 16,
+      "positiveImages": 31,
+      "nonCrowdInstances": 57,
+      "crowdAnnotationsRetainedForIgnore": 0
+    }
+  },
+  "images": [
+    {
+      "id": 40083,
+      "fileName": "000000040083.jpg",
+      "sha256": "89b9c3771c9428e0e25134cde9bc0a962318a477d267ef47f8e1872526207da7",
+      "width": 500,
+      "height": 333,
+      "anchorClass": "person",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000040083.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/116/254881838_e21c6d17b8_z.jpg"
+    },
+    {
+      "id": 185157,
+      "fileName": "000000185157.jpg",
+      "sha256": "b8334260155c97a0c11e050b9ead6792d77b7770815411b9caa26c24c433d831",
+      "width": 426,
+      "height": 640,
+      "anchorClass": "bicycle",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000185157.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4037/5075371191_1d6b0497f6_z.jpg"
+    },
+    {
+      "id": 327890,
+      "fileName": "000000327890.jpg",
+      "sha256": "92b54b3e01c17d1a8d2b2b9d6995eb1a1a43c6cce9dd491d38e7078030a7d4f4",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "car",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000327890.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3753/9577665459_f56dac03f1_z.jpg"
+    },
+    {
+      "id": 481567,
+      "fileName": "000000481567.jpg",
+      "sha256": "aed504ef84b51bc402d4f33a5853fd04f4b9da1f17e5def24c3bc52da313a375",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000481567.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8195/8095641878_aefaa95d0f_z.jpg"
+    },
+    {
+      "id": 142472,
+      "fileName": "000000142472.jpg",
+      "sha256": "db7173813c230d969afa81c1012904f95a680a4b6b756eb07e17e6727c88c0dd",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bus",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000142472.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7274/7871818696_6bf4905675_z.jpg"
+    },
+    {
+      "id": 89556,
+      "fileName": "000000089556.jpg",
+      "sha256": "b78eb0eb1250b86210658687ff5063428e0cbff2858d4e07d8dee107ae1964f8",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "truck",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000089556.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6093/6210323230_57fab50c4b_z.jpg"
+    },
+    {
+      "id": 475572,
+      "fileName": "000000475572.jpg",
+      "sha256": "7106fb63c032cbd014e6d608e55466b263860a5fd022051cf64f097354dbec05",
+      "width": 640,
+      "height": 431,
+      "anchorClass": "person",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000475572.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3135/2746833091_f56afb805c_z.jpg"
+    },
+    {
+      "id": 476704,
+      "fileName": "000000476704.jpg",
+      "sha256": "18e55efaab31079be1c9caaafda3d9c28eae90beba4a8d4f96fb182f04703982",
+      "width": 640,
+      "height": 428,
+      "anchorClass": "bicycle",
+      "licenseId": 6,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+        "id": 6,
+        "name": "Attribution-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000476704.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7280/7685056938_fd6f97531c_z.jpg"
+    },
+    {
+      "id": 65350,
+      "fileName": "000000065350.jpg",
+      "sha256": "963a129714e3675b99b6a405a2cb46eca5678241358bb6b6bbefc3c3f1943ae0",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "car",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000065350.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4139/4869131880_ae3de10447_z.jpg"
+    },
+    {
+      "id": 165681,
+      "fileName": "000000165681.jpg",
+      "sha256": "7b23b958379742bd1fb13ade9a86b3e134a0493edf45039d3786e126b20cc9b2",
+      "width": 640,
+      "height": 444,
+      "anchorClass": "motorcycle",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000165681.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5253/5424364481_342b9336df_z.jpg"
+    },
+    {
+      "id": 57149,
+      "fileName": "000000057149.jpg",
+      "sha256": "4e57fdaa7e50f2f384087931a026ad14252f976289b636213d24b2f61f64f544",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "bus",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000057149.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8505/8541387897_fbf4b3050a_z.jpg"
+    },
+    {
+      "id": 220732,
+      "fileName": "000000220732.jpg",
+      "sha256": "81b9254c750f52ebc8fcc5fa421ab8a3ac430db19f541bfb7541adada76a6a30",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "truck",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000220732.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7278/8150890633_42a81c8e17_z.jpg"
+    },
+    {
+      "id": 156292,
+      "fileName": "000000156292.jpg",
+      "sha256": "0d54e1fa3bf3de937c56321dcf4f4a8ca1c9af6a939133cb4552483a66dcbaac",
+      "width": 428,
+      "height": 640,
+      "anchorClass": "person",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000156292.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8032/7985089105_9dcf1a314e_z.jpg"
+    },
+    {
+      "id": 122166,
+      "fileName": "000000122166.jpg",
+      "sha256": "914e39f9c79ced1a519f1003c410b3ed7bfbc8315df4e0e0c35ac421079e9c6d",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bicycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000122166.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3021/2581636027_11c600d5d0_z.jpg"
+    },
+    {
+      "id": 507975,
+      "fileName": "000000507975.jpg",
+      "sha256": "e4812f760f300f88e0bd1ef60782949a51c64631728e21b53531ae7e0f8cf62b",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "car",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000507975.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5098/5494717357_a7686bc04b_z.jpg"
+    },
+    {
+      "id": 153217,
+      "fileName": "000000153217.jpg",
+      "sha256": "fdc6c58a35f90ea7cd0c2f14e329466e7892aa51bca56c25312650640cabf9f1",
+      "width": 375,
+      "height": 500,
+      "anchorClass": "motorcycle",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000153217.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/32/36546844_5d6e8e5c37_z.jpg"
+    },
+    {
+      "id": 377723,
+      "fileName": "000000377723.jpg",
+      "sha256": "47a58184ee83f6c0c483a2ca1f2ce4550b08170a9576c8e78bda16693a591786",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "bus",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000377723.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8354/8303563388_c0b3b1939a_z.jpg"
+    },
+    {
+      "id": 511599,
+      "fileName": "000000511599.jpg",
+      "sha256": "f2de24fb69d55624946a215c565eeb8b5b83dc1e88f127c2d84270f764de8903",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "truck",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000511599.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4127/5057922539_44be49d73a_z.jpg"
+    },
+    {
+      "id": 35682,
+      "fileName": "000000035682.jpg",
+      "sha256": "1844cfa76d23a9768578f2c27306ecbad99326d2d374b070af9c56d50058c155",
+      "width": 480,
+      "height": 640,
+      "anchorClass": "person",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000035682.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4062/4666441455_b9bac3570c_z.jpg"
+    },
+    {
+      "id": 394510,
+      "fileName": "000000394510.jpg",
+      "sha256": "6ea16e5b77365fccc9a12ce7e5f9eb3182c580cefc7ee0a5cb29238d24106349",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bicycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000394510.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3195/2948181016_7cbbeeafab_z.jpg"
+    },
+    {
+      "id": 398742,
+      "fileName": "000000398742.jpg",
+      "sha256": "6af6678e8c5b9454647a9c1d206acf82b146bebc56463db796efd18037d30c3e",
+      "width": 427,
+      "height": 640,
+      "anchorClass": "car",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000398742.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4117/4913716666_4d871bc5d2_z.jpg"
+    },
+    {
+      "id": 244833,
+      "fileName": "000000244833.jpg",
+      "sha256": "b01c1fd26fbb6ef8b2c447e6460d392ed09ce555981992c28a20deac7572d202",
+      "width": 640,
+      "height": 428,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000244833.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/158/363794430_2e2acd5c8b_z.jpg"
+    },
+    {
+      "id": 311909,
+      "fileName": "000000311909.jpg",
+      "sha256": "f79fdaca57226b29458020701e10a441fb21e6180e5bebd059c4b01f86bd0cd7",
+      "width": 640,
+      "height": 496,
+      "anchorClass": "bus",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000311909.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8062/8169978824_bcfa9e0e1f_z.jpg"
+    },
+    {
+      "id": 467848,
+      "fileName": "000000467848.jpg",
+      "sha256": "8043630d9033bd8c58b57cf4faad1b2459c5341bfa487112479128f3ac80e4cd",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "truck",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000467848.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7282/8743933964_a0886ffeff_z.jpg"
+    },
+    {
+      "id": 343803,
+      "fileName": "000000343803.jpg",
+      "sha256": "0b632f3436577373d4ca2a7c0084adde69bcab6ad69a605eefd350a417fa861a",
+      "width": 427,
+      "height": 640,
+      "anchorClass": "person",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000343803.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4099/4940414828_aac51cdfe1_z.jpg"
+    },
+    {
+      "id": 439854,
+      "fileName": "000000439854.jpg",
+      "sha256": "d6e7d64034450928727ac679856ac954dd617129144f713e29beb0cf619b5e16",
+      "width": 500,
+      "height": 333,
+      "anchorClass": "bicycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000439854.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3014/3078274607_ff2beac811_z.jpg"
+    },
+    {
+      "id": 57597,
+      "fileName": "000000057597.jpg",
+      "sha256": "003280b50c99124750084f25939f305f3fefbd9e3caf5002a456249242b154c0",
+      "width": 640,
+      "height": 426,
+      "anchorClass": "car",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000057597.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6239/6258453198_b6ee9e6d6f_z.jpg"
+    },
+    {
+      "id": 472375,
+      "fileName": "000000472375.jpg",
+      "sha256": "928f89bb03d6c06a883ba1b4eadeeea8db2764134445a3c70c5d1c33cf13ed39",
+      "width": 612,
+      "height": 612,
+      "anchorClass": "motorcycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000472375.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5333/8941457326_2c96e58e7f_z.jpg"
+    },
+    {
+      "id": 293324,
+      "fileName": "000000293324.jpg",
+      "sha256": "4ab83b05b2a3011710fdbe8e13ab5c4e9964011baa4a838fcb5c1451149e2775",
+      "width": 640,
+      "height": 406,
+      "anchorClass": "bus",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000293324.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3552/5812461870_eb24c8eac5_z.jpg"
+    },
+    {
+      "id": 184324,
+      "fileName": "000000184324.jpg",
+      "sha256": "5bfec85c40197744fc7fa8262a0a0e14ad1a6fc0e11cee4b7b0c5df97a146107",
+      "width": 640,
+      "height": 425,
+      "anchorClass": "truck",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000184324.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3568/3364389746_361655c747_z.jpg"
+    },
+    {
+      "id": 567197,
+      "fileName": "000000567197.jpg",
+      "sha256": "c1681a31df2209dddff72e3143a3ea143878f4a13654b607a4af5698fd02d4f2",
+      "width": 500,
+      "height": 407,
+      "anchorClass": "person",
+      "licenseId": 7,
+      "license": {
+        "url": "http://flickr.com/commons/usage/",
+        "id": 7,
+        "name": "No known copyright restrictions"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000567197.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3044/3110606120_36aa6bdc13_z.jpg"
+    },
+    {
+      "id": 59635,
+      "fileName": "000000059635.jpg",
+      "sha256": "8d5bb0880f202267b97c5da77409f541acad3943ecfe8647c7d612d6f6bb27b8",
+      "width": 486,
+      "height": 640,
+      "anchorClass": "bicycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000059635.jpg",
+      "flickrUrl": "http://farm3.staticflickr.com/2284/5735274038_49d33e32cf_z.jpg"
+    },
+    {
+      "id": 181542,
+      "fileName": "000000181542.jpg",
+      "sha256": "c0fdc24e1516a871e5dd195ff34a0da7b2227ef6486492545fb2548743ba4bf5",
+      "width": 640,
+      "height": 600,
+      "anchorClass": "car",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000181542.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8526/8559644284_775451f3ef_z.jpg"
+    },
+    {
+      "id": 396338,
+      "fileName": "000000396338.jpg",
+      "sha256": "d316e263395e5724b7627cec7df7045df058c746e7180bf93b87d10976c662c6",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "motorcycle",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000396338.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8451/8027479332_1d4833f074_z.jpg"
+    },
+    {
+      "id": 315187,
+      "fileName": "000000315187.jpg",
+      "sha256": "29fcdb959434fddb1f1d11716cf3fd57d3d73310567b9be43046533a00fbd235",
+      "width": 640,
+      "height": 448,
+      "anchorClass": "bus",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000315187.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8451/7980026353_fdc782e256_z.jpg"
+    },
+    {
+      "id": 465675,
+      "fileName": "000000465675.jpg",
+      "sha256": "5ce1574df63983dcb03c6ac6c6c115f2ba148ed6d24f1aefc8701c28264ee8ad",
+      "width": 640,
+      "height": 403,
+      "anchorClass": "truck",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000465675.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6041/6296158420_868a46d225_z.jpg"
+    },
+    {
+      "id": 329323,
+      "fileName": "000000329323.jpg",
+      "sha256": "fc1d988944570a6cb43dd7c90cbc40a72ba2437559a849a759db932d4473d74f",
+      "width": 425,
+      "height": 640,
+      "anchorClass": "person",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000329323.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6183/6100180267_cecedd78ba_z.jpg"
+    },
+    {
+      "id": 571857,
+      "fileName": "000000571857.jpg",
+      "sha256": "d8771d52ba37b5ebfff1a5dee278d11dfed9c4b3e67a19c89e21fc8000a148c0",
+      "width": 640,
+      "height": 426,
+      "anchorClass": "bicycle",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000571857.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6179/6199221017_d5f37ecb01_z.jpg"
+    },
+    {
+      "id": 478721,
+      "fileName": "000000478721.jpg",
+      "sha256": "e3c8cdfe51d598c74a760009a489ebf59a5672e97475dcce9268e846f2f64cc6",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "car",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000478721.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7283/8744021186_d8e0d0b628_z.jpg"
+    },
+    {
+      "id": 158548,
+      "fileName": "000000158548.jpg",
+      "sha256": "8b8662687f8a639949f622da9ccec56bff0e0569b4eb498aa77f0520a19605b1",
+      "width": 640,
+      "height": 482,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000158548.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8030/7965301600_bae4984c9f_z.jpg"
+    },
+    {
+      "id": 187144,
+      "fileName": "000000187144.jpg",
+      "sha256": "ecda88adbae1ca905ecf37007ef2ce11013109523964dca9bf1ed856f26cbcfb",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bus",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000187144.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8422/7858381216_44ea734652_z.jpg"
+    },
+    {
+      "id": 259690,
+      "fileName": "000000259690.jpg",
+      "sha256": "d5296545bda4a910e90c0e252423bac9d61d11802d699ab2c27c562b7d00bd40",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "truck",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000259690.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5305/5575757380_555e1abeb0_z.jpg"
+    },
+    {
+      "id": 159791,
+      "fileName": "000000159791.jpg",
+      "sha256": "064a1dbf3418a71218e85213d4f990b6e7e2bbdf3ca980d3f86f8969e8101002",
+      "width": 500,
+      "height": 375,
+      "anchorClass": "person",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000159791.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3413/3291509811_3d6644d874_z.jpg"
+    },
+    {
+      "id": 135670,
+      "fileName": "000000135670.jpg",
+      "sha256": "8f3eea478483e5b94935fe4e20da629a3631b28895899bccb5acc0fba5286060",
+      "width": 375,
+      "height": 500,
+      "anchorClass": "bicycle",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000135670.jpg",
+      "flickrUrl": "http://farm3.staticflickr.com/2528/3925803088_79760dbe81_z.jpg"
+    },
+    {
+      "id": 553339,
+      "fileName": "000000553339.jpg",
+      "sha256": "d0d0281cbc1de4973486173f0c36fdbed7cde3e43d5c9b7728101922ecaa7848",
+      "width": 500,
+      "height": 375,
+      "anchorClass": "car",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000553339.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3084/2829150758_84d079bcb5_z.jpg"
+    },
+    {
+      "id": 551794,
+      "fileName": "000000551794.jpg",
+      "sha256": "4742da4db578ed6cdcb557661c7cff1e53e974d6c43762b324d904ba64e05a5d",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "motorcycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000551794.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5024/5612666049_00de8214e4_z.jpg"
+    },
+    {
+      "id": 509008,
+      "fileName": "000000509008.jpg",
+      "sha256": "07ca04c0f38fc0f30701b7ea65703b7424a1b357444bf57a0b8964f80b5e975b",
+      "width": 640,
+      "height": 434,
+      "anchorClass": "bus",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000509008.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8220/8374905570_935486f48b_z.jpg"
+    },
+    {
+      "id": 414510,
+      "fileName": "000000414510.jpg",
+      "sha256": "f6f2620707df79c606e0c1cfab462860ece49bee7768f0fb2dbdfac7bdf8346e",
+      "width": 480,
+      "height": 640,
+      "anchorClass": "truck",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000414510.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6011/5883783041_745340195b_z.jpg"
+    },
+    {
+      "id": 89648,
+      "fileName": "000000089648.jpg",
+      "sha256": "4fca67aaad67e1d0edbe7ccf837c019c774c7bf43204d7fe54abc1c28af4b953",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "person",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000089648.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6168/6148670625_1caaf41c72_z.jpg"
+    },
+    {
+      "id": 492937,
+      "fileName": "000000492937.jpg",
+      "sha256": "2c1dbb9427ecfcbb98eab03ba9c65a51ae9d3d72ba6df04ec83a07a15b8d937e",
+      "width": 612,
+      "height": 612,
+      "anchorClass": "bicycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000492937.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8215/8413523703_f60308df73_z.jpg"
+    },
+    {
+      "id": 210273,
+      "fileName": "000000210273.jpg",
+      "sha256": "3ec23de63592c1eef86740fd46fed2cb66170fca02b695d37e6ae379dcee4355",
+      "width": 640,
+      "height": 428,
+      "anchorClass": "car",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000210273.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5163/5336041838_1a09008014_z.jpg"
+    },
+    {
+      "id": 44590,
+      "fileName": "000000044590.jpg",
+      "sha256": "5ef55da25c21159d1aeaf61eee0c81b2127dc626eac012c68d2e9a81d2bd7789",
+      "width": 640,
+      "height": 246,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000044590.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7157/6751499463_721d9a4477_z.jpg"
+    },
+    {
+      "id": 147725,
+      "fileName": "000000147725.jpg",
+      "sha256": "38d78e088e16ff5b2d6340fa27f39fdfe7c9c1f2142b4464a2f79b27fcc49602",
+      "width": 640,
+      "height": 393,
+      "anchorClass": "bus",
+      "licenseId": 6,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+        "id": 6,
+        "name": "Attribution-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000147725.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8123/8625500680_b86b974d02_z.jpg"
+    },
+    {
+      "id": 523241,
+      "fileName": "000000523241.jpg",
+      "sha256": "f0056cc384a0a2bb0a44c8d7cacb989917ea1397de562b970b6fb60159cb36ea",
+      "width": 500,
+      "height": 333,
+      "anchorClass": "truck",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000523241.jpg",
+      "flickrUrl": "http://farm2.staticflickr.com/1008/597233904_32dd24e25e_z.jpg"
+    },
+    {
+      "id": 12639,
+      "fileName": "000000012639.jpg",
+      "sha256": "fb055f9572e8e059559a950b626a7a731683844f875b66523cbd8d29605d903f",
+      "width": 480,
+      "height": 640,
+      "anchorClass": "person",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000012639.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4102/4795012771_81c0b6b502_z.jpg"
+    },
+    {
+      "id": 470173,
+      "fileName": "000000470173.jpg",
+      "sha256": "65053671e807b19eb658413f209b8c0d4b126e71a49e0b2e0ad741d4213920c4",
+      "width": 446,
+      "height": 640,
+      "anchorClass": "bicycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000470173.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/49/116732486_d4183fba96_z.jpg"
+    },
+    {
+      "id": 366178,
+      "fileName": "000000366178.jpg",
+      "sha256": "d8e629211705dc857f7fdbca85733162b78b77c3a76eb890360866d22fda18ca",
+      "width": 375,
+      "height": 500,
+      "anchorClass": "car",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000366178.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/171/405321265_fb25fff175_z.jpg"
+    },
+    {
+      "id": 149406,
+      "fileName": "000000149406.jpg",
+      "sha256": "bb5adc5c3916aec1e6024432e428c6f6b216ab97c02c58590bbf80a5f6fe24bb",
+      "width": 640,
+      "height": 638,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000149406.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7010/6776542849_2dedcc64f1_z.jpg"
+    },
+    {
+      "id": 516143,
+      "fileName": "000000516143.jpg",
+      "sha256": "dfb9978fb742680c4d5eabda1c8966cca24687eb084a017830764fc37dc51726",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bus",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000516143.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7103/7209556862_8431c062d7_z.jpg"
+    },
+    {
+      "id": 350003,
+      "fileName": "000000350003.jpg",
+      "sha256": "4278c4c673a2e75b1f63780d026b3c05dd9955eeae50cd017a8e1844b736ce58",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "truck",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000350003.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8445/7858130416_bf868d66a5_z.jpg"
+    },
+    {
+      "id": 214192,
+      "fileName": "000000214192.jpg",
+      "sha256": "986551f31abf1ccb0d42021934ad6c030e79051781b021fb1bcc4a71fff705f6",
+      "width": 640,
+      "height": 436,
+      "anchorClass": "person",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000214192.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7101/7352174174_66ff1758a6_z.jpg"
+    },
+    {
+      "id": 109055,
+      "fileName": "000000109055.jpg",
+      "sha256": "dfc836167987263c93bd0d5bb25cd405ea3d127540f33c4cc4825c11ad327126",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bicycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000109055.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/21/37248397_dbe284ca85_z.jpg"
+    },
+    {
+      "id": 283038,
+      "fileName": "000000283038.jpg",
+      "sha256": "d2bd4dd1e335f37cb7765906adf646e8eb24b1fee3a61e1868e17e7bb2746a84",
+      "width": 500,
+      "height": 281,
+      "anchorClass": "car",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000283038.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/68/218713640_05adea9bc3_z.jpg"
+    },
+    {
+      "id": 507667,
+      "fileName": "000000507667.jpg",
+      "sha256": "9ed5fcf0028572ff5fbbc8fe4bcb46e1c2b5b951520d5fd44d8e12de2f7dc0ca",
+      "width": 500,
+      "height": 386,
+      "anchorClass": "motorcycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000507667.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/57/179334475_d3897225ff_z.jpg"
+    },
+    {
+      "id": 542856,
+      "fileName": "000000542856.jpg",
+      "sha256": "9bd2d9be44355c59e3599f1f5ddcfc06bf8209a0f24b655538e891ae6a4b3fcf",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "bus",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000542856.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8285/7826926496_3aa9e9d112_z.jpg"
+    },
+    {
+      "id": 15338,
+      "fileName": "000000015338.jpg",
+      "sha256": "b9e7f3f58e1568b0af83d0494d21614a38bb212da2d4b14bc36bd002c0b6f0ad",
+      "width": 640,
+      "height": 424,
+      "anchorClass": "truck",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000015338.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8526/8519097250_f635a04651_z.jpg"
+    },
+    {
+      "id": 369323,
+      "fileName": "000000369323.jpg",
+      "sha256": "237736cd6cfbb668e9b5e99cd08a826f63b79e53f76a7beb57dfd562a0914551",
+      "width": 377,
+      "height": 500,
+      "anchorClass": "person",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000369323.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3159/2876155563_b7f860ac4b_z.jpg"
+    },
+    {
+      "id": 196843,
+      "fileName": "000000196843.jpg",
+      "sha256": "7bafbbaa286e2fcb78d30b5192d09a82a05d231778a5d1b84929c1de64b566ae",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bicycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000196843.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3743/9916443776_91a58c2b62_z.jpg"
+    },
+    {
+      "id": 334006,
+      "fileName": "000000334006.jpg",
+      "sha256": "de98604a9ca39b461312d8073cb94eabc516bcbab21231404c96d4dea1419f68",
+      "width": 640,
+      "height": 426,
+      "anchorClass": "car",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000334006.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8526/8684868712_3122ac37d6_z.jpg"
+    },
+    {
+      "id": 68093,
+      "fileName": "000000068093.jpg",
+      "sha256": "c5f288d7a94cace0aa18389b07caaf48af32fc3a49a99a17794456a116016244",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000068093.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4120/4803479594_4fea166ab0_z.jpg"
+    },
+    {
+      "id": 449432,
+      "fileName": "000000449432.jpg",
+      "sha256": "8f9aded677bac57da1d4b55e370dbc97456b332ccfb5620d4cd20917843aa830",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "bus",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000449432.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6004/5922831081_1fbca9ab03_z.jpg"
+    },
+    {
+      "id": 242411,
+      "fileName": "000000242411.jpg",
+      "sha256": "758c1fb8f4dd4add47472a751b81fd01de2f0b0ff3f9c4e7bb6b749e45eacf62",
+      "width": 424,
+      "height": 640,
+      "anchorClass": "truck",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000242411.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7131/7673156942_ba0b13c31a_z.jpg"
+    },
+    {
+      "id": 73533,
+      "fileName": "000000073533.jpg",
+      "sha256": "6e49483e35cd110eea21970e066ba7101bac0e41327723fb9f142e62443ab3aa",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "person",
+      "licenseId": 6,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+        "id": 6,
+        "name": "Attribution-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000073533.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/60/169520835_9e8e36564b_z.jpg"
+    },
+    {
+      "id": 119516,
+      "fileName": "000000119516.jpg",
+      "sha256": "ee4d278eecc42f9c6830e030207fbabe888aebb36c58681f034f27081594d8c9",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "bicycle",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000119516.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/66/190818272_591479a383_z.jpg"
+    },
+    {
+      "id": 84492,
+      "fileName": "000000084492.jpg",
+      "sha256": "42cb1fddaf42db3203c1cc1273278c62c273a4017e06fa4e7156400db7cca321",
+      "width": 426,
+      "height": 640,
+      "anchorClass": "car",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000084492.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5091/5390732453_f76cc3faec_z.jpg"
+    },
+    {
+      "id": 534827,
+      "fileName": "000000534827.jpg",
+      "sha256": "12c5d60436e2e16a10e33081ebdd6d47dc5d7abeba82fa1831cc76c52c17b142",
+      "width": 612,
+      "height": 612,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000534827.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8262/8608658945_3b575a8c0e_z.jpg"
+    },
+    {
+      "id": 520009,
+      "fileName": "000000520009.jpg",
+      "sha256": "54617d5196a0d66e47f083ce2ecc67c990b5415eca52302dafdc0591597d4e02",
+      "width": 500,
+      "height": 412,
+      "anchorClass": "bus",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000520009.jpg",
+      "flickrUrl": "http://farm1.staticflickr.com/223/502213596_22f391ea0e_z.jpg"
+    },
+    {
+      "id": 124798,
+      "fileName": "000000124798.jpg",
+      "sha256": "945dffc0d0e390d50539049ebbe2a80691f9f0c5bee67bc10a6ecc57a08ae536",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "truck",
+      "licenseId": 5,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-sa/2.0/",
+        "id": 5,
+        "name": "Attribution-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000124798.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8090/8444499449_ec1094a7e2_z.jpg"
+    },
+    {
+      "id": 361551,
+      "fileName": "000000361551.jpg",
+      "sha256": "5609823f04e4c098a97420ce373636d11065d92a917429fd202a43988cd74262",
+      "width": 480,
+      "height": 640,
+      "anchorClass": "person",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000361551.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3300/3505136392_1c84ecc2a1_z.jpg"
+    },
+    {
+      "id": 93717,
+      "fileName": "000000093717.jpg",
+      "sha256": "5c6e3bbeea91c10e9fb55288c2b60305bf407aa5b74a9c49989d25a4d867604f",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "bicycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000093717.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4020/4430678125_d9f9b2f5e1_z.jpg"
+    },
+    {
+      "id": 392722,
+      "fileName": "000000392722.jpg",
+      "sha256": "137bbeb12ff0d4152279be001c8c5e59b03e2aac88a939db1a3667fd4aac72c6",
+      "width": 640,
+      "height": 423,
+      "anchorClass": "car",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000392722.jpg",
+      "flickrUrl": "http://farm3.staticflickr.com/2829/9953419346_8bcbd5480f_z.jpg"
+    },
+    {
+      "id": 204186,
+      "fileName": "000000204186.jpg",
+      "sha256": "0d322910c5db832c7a3c451ed8f793bb5db71f1b96b34acd5f4134474989d85b",
+      "width": 640,
+      "height": 513,
+      "anchorClass": "motorcycle",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000204186.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8167/7473704002_8fa474ce51_z.jpg"
+    },
+    {
+      "id": 15440,
+      "fileName": "000000015440.jpg",
+      "sha256": "477f0dd9751336fc5e5ef0f7c406506998049de4edae936311a4400c934c8419",
+      "width": 404,
+      "height": 640,
+      "anchorClass": "bus",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000015440.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3261/2870016347_39ffc0ca45_z.jpg"
+    },
+    {
+      "id": 177934,
+      "fileName": "000000177934.jpg",
+      "sha256": "81c836a2c877b44c79b0dbab615b3d07f6c7b2a98455e78554d57a6c9ed7e6ff",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "truck",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000177934.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6021/5994119446_b5ec8e1e76_z.jpg"
+    },
+    {
+      "id": 360960,
+      "fileName": "000000360960.jpg",
+      "sha256": "574c21ac9a17d685ccb2077c8c977ea2b20e419aa0a9d684a17b5be072fe58a5",
+      "width": 426,
+      "height": 640,
+      "anchorClass": "person",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000360960.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8222/8386917555_5bffa5b154_z.jpg"
+    },
+    {
+      "id": 107226,
+      "fileName": "000000107226.jpg",
+      "sha256": "285a3dfd666d35fb60eb63b9dd46b7b49aae4fcafe194f51d7e4b446abdab725",
+      "width": 480,
+      "height": 640,
+      "anchorClass": "bicycle",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000107226.jpg",
+      "flickrUrl": "http://farm3.staticflickr.com/2139/2185708967_4da3c7fb32_z.jpg"
+    },
+    {
+      "id": 345361,
+      "fileName": "000000345361.jpg",
+      "sha256": "2444d5e254c43f64175fb611d93fc19de85ab9eb389148e92687cd445c63095e",
+      "width": 500,
+      "height": 358,
+      "anchorClass": "car",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000345361.jpg",
+      "flickrUrl": "http://farm3.staticflickr.com/2676/4202623538_0146eb0024_z.jpg"
+    },
+    {
+      "id": 18737,
+      "fileName": "000000018737.jpg",
+      "sha256": "61b0ee16f913053290e0ee24971a6833b21290ee6a74039a0e0f3faa72dcf61c",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "motorcycle",
+      "licenseId": 6,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+        "id": 6,
+        "name": "Attribution-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000018737.jpg",
+      "flickrUrl": "http://farm5.staticflickr.com/4026/4511471485_c1791c0767_z.jpg"
+    },
+    {
+      "id": 210394,
+      "fileName": "000000210394.jpg",
+      "sha256": "d3a536af8607a677c7bfd4c87d8a21a4e42402980635eef8b54d476317471c99",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bus",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000210394.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8404/8613948465_7a698dd8b4_z.jpg"
+    },
+    {
+      "id": 519039,
+      "fileName": "000000519039.jpg",
+      "sha256": "786fc99638ab31311932bec09bd3728723d9e9fee63bbe1006302e236ac361ff",
+      "width": 640,
+      "height": 299,
+      "anchorClass": "truck",
+      "licenseId": 6,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+        "id": 6,
+        "name": "Attribution-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000519039.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8180/7990285797_26e2e119fe_z.jpg"
+    },
+    {
+      "id": 427997,
+      "fileName": "000000427997.jpg",
+      "sha256": "610fae475122adfd14bc33b367758ff65212b1f681fb4c2118621b4bc40c386b",
+      "width": 640,
+      "height": 428,
+      "anchorClass": "person",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000427997.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3452/3276552667_c057631f05_z.jpg"
+    },
+    {
+      "id": 139099,
+      "fileName": "000000139099.jpg",
+      "sha256": "ab9c7a09369b381043f90e6008307610d63cd9cbe3803ba1af6b1998b361fe51",
+      "width": 640,
+      "height": 453,
+      "anchorClass": "bicycle",
+      "licenseId": 6,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+        "id": 6,
+        "name": "Attribution-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000139099.jpg",
+      "flickrUrl": "http://farm6.staticflickr.com/5461/9331950744_9c89179dcb_z.jpg"
+    },
+    {
+      "id": 11197,
+      "fileName": "000000011197.jpg",
+      "sha256": "b6dbcc5c9e52f51480c4974ae6b15003ce25cd98fb936e2f26694fb7058fdbcb",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "car",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000011197.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7002/6732385791_cd9fcb9572_z.jpg"
+    },
+    {
+      "id": 454978,
+      "fileName": "000000454978.jpg",
+      "sha256": "6b2614bab34a31ada0b112c2ed29af589929aa7cf02978ad1ab41c9b1b6c512b",
+      "width": 640,
+      "height": 400,
+      "anchorClass": "motorcycle",
+      "licenseId": 3,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-nd/2.0/",
+        "id": 3,
+        "name": "Attribution-NonCommercial-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000454978.jpg",
+      "flickrUrl": "http://farm7.staticflickr.com/6163/6239106204_5a57bf8f21_z.jpg"
+    },
+    {
+      "id": 105912,
+      "fileName": "000000105912.jpg",
+      "sha256": "371f4f6ea696a0b01e6f2b1a5a3bf27d420dc3e8c8276091dd8f29f8aa21baa2",
+      "width": 500,
+      "height": 375,
+      "anchorClass": "bus",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000105912.jpg",
+      "flickrUrl": "http://farm3.staticflickr.com/2279/2054234754_27cdb35bd4_z.jpg"
+    },
+    {
+      "id": 476119,
+      "fileName": "000000476119.jpg",
+      "sha256": "b1e77b03b318546e0725250efdfb28a1ce24414750ae8e8c3b5097c5ffddf415",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "truck",
+      "licenseId": 4,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by/2.0/",
+        "id": 4,
+        "name": "Attribution License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000476119.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7046/7062224927_570b4f61f7_z.jpg"
+    },
+    {
+      "id": 561223,
+      "fileName": "000000561223.jpg",
+      "sha256": "33f2c01189bd11d5f1a2c07f22fea3e69b581ca70c4859cfa1c65656eb207ec6",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "person",
+      "licenseId": 6,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nd/2.0/",
+        "id": 6,
+        "name": "Attribution-NoDerivs License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000561223.jpg",
+      "flickrUrl": "http://farm9.staticflickr.com/8126/8603043646_26169ccc79_z.jpg"
+    },
+    {
+      "id": 101762,
+      "fileName": "000000101762.jpg",
+      "sha256": "8150aec4794933e1d30b565f6511a870e5721e58c72a919735eff71575fb098b",
+      "width": 640,
+      "height": 480,
+      "anchorClass": "bicycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000101762.jpg",
+      "flickrUrl": "http://farm3.staticflickr.com/2068/2135673297_6c75c29c61_z.jpg"
+    },
+    {
+      "id": 192716,
+      "fileName": "000000192716.jpg",
+      "sha256": "9a3223f94d7aaf079d3831b10c07ee5a84f36071c55c633394dd5c93a67c9c07",
+      "width": 518,
+      "height": 640,
+      "anchorClass": "car",
+      "licenseId": 2,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc/2.0/",
+        "id": 2,
+        "name": "Attribution-NonCommercial License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000192716.jpg",
+      "flickrUrl": "http://farm4.staticflickr.com/3674/9012908466_2b84e6d18e_z.jpg"
+    },
+    {
+      "id": 38829,
+      "fileName": "000000038829.jpg",
+      "sha256": "73f5b0fe070aaec65bbb7263d16d3d717a75304333fe939dcf086bd85d6ff2f9",
+      "width": 640,
+      "height": 427,
+      "anchorClass": "motorcycle",
+      "licenseId": 1,
+      "license": {
+        "url": "http://creativecommons.org/licenses/by-nc-sa/2.0/",
+        "id": 1,
+        "name": "Attribution-NonCommercial-ShareAlike License"
+      },
+      "sourceUrl": "https://s3.amazonaws.com/images.cocodataset.org/val2017/000000038829.jpg",
+      "flickrUrl": "http://farm8.staticflickr.com/7033/6799538227_e49c4d13bc_z.jpg"
+    }
+  ],
+  "selection": "Round-robin person/bicycle/car/motorcycle/bus/truck; deterministic SHA256 rank per class; each image chosen once; non-crowd positive anchors; all sizes retained.",
+  "crowdPolicy": "Crowds never qualify an anchor image; official crowd annotations retained and ignored by standard COCOeval matching.",
+  "annotationTerms": "COCO annotations under CC BY 4.0; each image retains its own COCO/Flickr license record.",
+  "scope": "Internal detector proxy evaluation. Not final intersection, elevated-camera, night, event or cross-camera accuracy. Do not use these images as booth content without checking individual image terms.",
+  "gpuUsed": false
+}

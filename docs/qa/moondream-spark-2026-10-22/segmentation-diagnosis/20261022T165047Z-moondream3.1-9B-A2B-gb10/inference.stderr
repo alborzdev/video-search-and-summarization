@@ -1,0 +1,76 @@
+MOONDREAM_API_KEY is not set. Finetune inference is disabled. Set MOONDREAM_API_KEY to enable finetune inference.
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py:458: UserWarning: KV scales found in checkpoint but FP8 KV cache currently requires SM80/SM86/SM87/SM89/SM90/SM100/SM110/SM120 decode kernels; falling back to standard KV cache.
+  return spec.runtime(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for tau_tail_apply_into (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for rotary_embedding (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:123: RuntimeWarning: kestrel-kernels: falling back to PyTorch for reshape_and_cache_flash (arch=sm121, supported_sms=[80, 86, 87, 89, 90, 100, 110, 120]).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/flash_attn/cute/fallback.py:622: RuntimeWarning: kestrel-kernels: falling back to torch attention for flash_attn_fwd (arch=sm121, variant=paged, mask=causal).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/topk/dispatch.py:82: RuntimeWarning: kestrel-kernels: no topk cubin bundle for the current CUDA architecture; using PyTorch fallback.
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:104: RuntimeWarning: kestrel-kernels: using PyTorch fallback for top_p_sampling_from_probs.
+  warn_fallback_once(kernel_key, message)
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/flash_attn/cute/fallback.py:622: RuntimeWarning: kestrel-kernels: falling back to torch attention for flash_attn_fwd (arch=sm121, variant=dense, mask=none).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/flash_attn/cute/fallback.py:622: RuntimeWarning: kestrel-kernels: falling back to torch attention for flash_attn_fwd (arch=sm121, variant=paged, mask=block_bidirectional).
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/fallback.py:104: RuntimeWarning: kestrel-kernels: using PyTorch fallback for build_paged_kv_metadata (no CuTe cubin bundle available for this device/runtime).
+  warn_fallback_once(kernel_key, message)
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/sampling/dispatch.py:1109: RuntimeWarning: kestrel-kernels: greedy tail failed at runtime; using the equivalent PyTorch fallback path.
+  warn_fallback_once(
+/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel_kernels/sampling/dispatch.py:1127: RuntimeWarning: kestrel-kernels: native CUDA greedy tail is unavailable; using the equivalent PyTorch fallback path.
+  warn_fallback_once(
+Timeout (0:02:00)!
+Thread 0x0000e5abc444d180 (most recent call first):
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 89 in _worker
+  File "/usr/lib/python3.12/threading.py", line 1010 in run
+  File "/usr/lib/python3.12/threading.py", line 1073 in _bootstrap_inner
+  File "/usr/lib/python3.12/threading.py", line 1030 in _bootstrap
+
+Thread 0x0000e5aca3154180 (most recent call first):
+  File "/home/sparkdev/vss/tools/moondream/gb10_compat.py", line 91 in fp8_moe_forward
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124 in decorate_context
+  File "/home/sparkdev/vss/tools/moondream/gb10_compat.py", line 130 in forward
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/moe.py", line 168 in forward
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1446 in _fn
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1789 in _call_impl
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1778 in _wrapped_call_impl
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/layers.py", line 171 in moe_mlp
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/text.py", line 261 in text_decoder
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/runtime.py", line 2664 in _native_decode_hidden
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/runtime.py", line 2601 in _run_decode_forward
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/runtime/decode_graph.py", line 121 in run
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/runtime.py", line 2479 in _decode_with_slot
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/models/moondream/runtime.py", line 2470 in decode_with_slot
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/scheduler/scheduler.py", line 2512 in _launch_forward_on_stream
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/scheduler/scheduler.py", line 583 in advance
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/executor.py", line 358 in advance
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/engine/core.py", line 1804 in _scheduler_loop
+  File "/usr/lib/python3.12/threading.py", line 1010 in run
+  File "/usr/lib/python3.12/threading.py", line 1073 in _bootstrap_inner
+  File "/usr/lib/python3.12/threading.py", line 1030 in _bootstrap
+
+Thread 0x0000e5afc55e3180 (most recent call first):
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 89 in _worker
+  File "/usr/lib/python3.12/threading.py", line 1010 in run
+  File "/usr/lib/python3.12/threading.py", line 1073 in _bootstrap_inner
+  File "/usr/lib/python3.12/threading.py", line 1030 in _bootstrap
+
+Thread 0x0000e5afc5df3180 (most recent call first):
+  File "/usr/lib/python3.12/selectors.py", line 468 in select
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 1949 in _run_once
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 641 in run_forever
+  File "/usr/lib/python3.12/threading.py", line 1010 in run
+  File "/usr/lib/python3.12/threading.py", line 1073 in _bootstrap_inner
+  File "/usr/lib/python3.12/threading.py", line 1030 in _bootstrap
+
+Thread 0x0000e5b2d3100b20 (most recent call first):
+  File "/usr/lib/python3.12/threading.py", line 359 in wait
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 451 in result
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/moondream/photon_client.py", line 158 in _wait_on_loop
+  File "/home/sparkdev/vss/.spark/moondream-photon/venv/lib/python3.12/site-packages/moondream/photon_client.py", line 604 in _run
+  File "/home/sparkdev/vss/tools/moondream/measure.py", line 85 in child
+  File "/home/sparkdev/vss/tools/moondream/measure.py", line 181 in <module>

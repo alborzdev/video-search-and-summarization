@@ -1,0 +1,133 @@
+{
+  "schemaVersion": "city.native-sei-hint-gate-failure.v1",
+  "inputSnapshotBytes": 31426652,
+  "readStartBytes": 30429405,
+  "segmentSha256": "76fdd1c2d63ce3c1819d9128e2465dee9addcb6eb63d420d35e4de7a0afa1d82",
+  "retainedRows": 219,
+  "retainedFile": ".spark/city/runtime/native-capture-clock-hints-candidate-20261026/pre-hint-fix.ndjson",
+  "retainedSha256": "76fdd1c2d63ce3c1819d9128e2465dee9addcb6eb63d420d35e4de7a0afa1d82",
+  "sourceStatistics": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "frames": 110,
+      "persons": 722,
+      "native3D": 706,
+      "globalHint": 0
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "frames": 109,
+      "persons": 348,
+      "native3D": 338,
+      "globalHint": 0
+    }
+  },
+  "sharedActualSdkTargetOpportunities": 217,
+  "examples": [
+    {
+      "targetId": "12",
+      "sources": [
+        "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      ],
+      "sessions": [
+        "8f706600-df62-4cba-a44e-89a9ed17b325",
+        "f9cc8efe-60ee-4d72-b747-cb43a10fa3ea"
+      ],
+      "sourceTimeNs": [
+        "1793010333329983018",
+        "1793010333330420251"
+      ],
+      "nativeFrameCounters": [
+        "79290",
+        "79290"
+      ],
+      "captureSkewMs": 0.437233,
+      "globalTrackIds": [
+        null,
+        null
+      ],
+      "sdkWorldPositions": [
+        [
+          -11.5440435,
+          70.2759094
+        ],
+        [
+          -11.5686522,
+          70.197052
+        ]
+      ]
+    },
+    {
+      "targetId": "12",
+      "sources": [
+        "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      ],
+      "sessions": [
+        "8f706600-df62-4cba-a44e-89a9ed17b325",
+        "f9cc8efe-60ee-4d72-b747-cb43a10fa3ea"
+      ],
+      "sourceTimeNs": [
+        "1793010333411715581",
+        "1793010333330420251"
+      ],
+      "nativeFrameCounters": [
+        "79291",
+        "79290"
+      ],
+      "captureSkewMs": 81.29533,
+      "globalTrackIds": [
+        null,
+        null
+      ],
+      "sdkWorldPositions": [
+        [
+          -11.555131,
+          70.2807922
+        ],
+        [
+          -11.5686522,
+          70.197052
+        ]
+      ]
+    },
+    {
+      "targetId": "12",
+      "sources": [
+        "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      ],
+      "sessions": [
+        "8f706600-df62-4cba-a44e-89a9ed17b325",
+        "f9cc8efe-60ee-4d72-b747-cb43a10fa3ea"
+      ],
+      "sourceTimeNs": [
+        "1793010333411715581",
+        "1793010333412065437"
+      ],
+      "nativeFrameCounters": [
+        "79291",
+        "79291"
+      ],
+      "captureSkewMs": 0.349856,
+      "globalTrackIds": [
+        null,
+        null
+      ],
+      "sdkWorldPositions": [
+        [
+          -11.555131,
+          70.2807922
+        ],
+        [
+          -11.5676966,
+          70.181076
+        ]
+      ]
+    }
+  ],
+  "cause": "tracker_3d.hpp demo_global_identity RTCP-only clock basis test suppresses valid native-SEI hints. Actual SDK target IDs/world metadata exist; no SDK/geometry/threshold change is needed.",
+  "limits": [
+    "Same SDK target in two cameras is evidence of native association output, not independently labelled physical identity accuracy.",
+    "Backend/UI map grouping still needs all independent qualification guards after publisher fix."
+  ]
+}

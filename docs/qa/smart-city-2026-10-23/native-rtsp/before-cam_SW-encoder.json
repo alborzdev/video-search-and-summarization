@@ -1,0 +1,16 @@
+{
+  "frames": 35865,
+  "firstCaptureNs": "1792782543713176365",
+  "lastCaptureNs": "1792786695219002799",
+  "lastSimulationNs": "1475266666666",
+  "lastPts": 373807556,
+  "epochNs": "1792782541801718605",
+  "timeBase": "1/90000",
+  "updatedAt": 1792786695.232941,
+  "codec": "libx264",
+  "resolution": [
+    1280,
+    720
+  ],
+  "url": "rtsp://172.17.0.1:18556/cam_SW"
+}

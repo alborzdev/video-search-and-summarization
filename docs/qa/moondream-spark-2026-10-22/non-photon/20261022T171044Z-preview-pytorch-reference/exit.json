@@ -1,0 +1,30 @@
+{
+  "returncode": 3,
+  "child_returncode": 0,
+  "stop_reason": null,
+  "missing_cases": [],
+  "mask_failures": [
+    {
+      "case": "person-point-raw",
+      "status": "bbox_only",
+      "finish_reason": "eos"
+    },
+    {
+      "case": "panel-point-raw",
+      "status": "bbox_only",
+      "finish_reason": "eos"
+    },
+    {
+      "case": "box-point-raw",
+      "status": "bbox_only",
+      "finish_reason": "max_tokens"
+    },
+    {
+      "case": "panel-point-conditioned",
+      "status": "bbox_only",
+      "finish_reason": "max_tokens"
+    }
+  ],
+  "elapsed_s": 89.39462570566684,
+  "run_dir": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference"
+}

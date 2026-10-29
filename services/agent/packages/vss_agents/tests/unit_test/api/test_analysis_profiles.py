@@ -13,10 +13,12 @@ import pytest
 
 from vss_agents.api.analysis_profiles import ANALYSIS_PROFILES
 from vss_agents.api.analysis_profiles import SEMANTIC_PROFILE_ID
+from vss_agents.api.analysis_profiles import SMART_CITY_PROFILE_ID
 from vss_agents.api.analysis_profiles import TRAFFIC_PROFILE_ID
 from vss_agents.api.analysis_profiles import WAREHOUSE_PROFILE_ID
 from vss_agents.api.analysis_profiles import _local_profile_recommendation
 from vss_agents.api.analysis_profiles import _nemotron_profile_recommendation
+from vss_agents.api.analysis_profiles import analysis_profile_endpoint
 from vss_agents.api.analysis_profiles import create_analysis_profiles_router
 
 
@@ -25,12 +27,17 @@ def test_catalog_exposes_only_concrete_vss_profiles():
         SEMANTIC_PROFILE_ID,
         WAREHOUSE_PROFILE_ID,
         TRAFFIC_PROFILE_ID,
+        SMART_CITY_PROFILE_ID,
     ]
     warehouse = ANALYSIS_PROFILES[1]
     traffic = ANALYSIS_PROFILES[2]
     assert {"Person", "Forklift", "Pallet"}.issubset(warehouse.object_types)
     assert {"Bicycle", "Car", "Person", "Road sign"}.issubset(traffic.object_types)
     assert traffic.max_sources == 1
+    city = ANALYSIS_PROFILES[3]
+    assert city.max_sources == 2
+    assert set(city.object_types) == {"person", "bicycle", "car", "motorcycle", "bus", "truck"}
+    assert {"line-crossing", "queue", "wrong-way", "occupancy-threshold"} <= set(city.rule_kinds)
 
 
 @pytest.mark.parametrize(
@@ -39,6 +46,9 @@ def test_catalog_exposes_only_concrete_vss_profiles():
         ("WH1 Loading Dock", "alert when a forklift approaches a person", WAREHOUSE_PROFILE_ID),
         ("Main Intersection", "watch cars and pedestrian crossings", TRAFFIC_PROFILE_ID),
         ("Camera 4", "make the footage searchable", SEMANTIC_PROFILE_ID),
+        ("City intersection", "watch bus queues and wrong-way vehicles", SMART_CITY_PROFILE_ID),
+        ("Warehouse loading dock", "watch forklift queues", WAREHOUSE_PROFILE_ID),
+        ("Office", "watch business hours", SEMANTIC_PROFILE_ID),
     ],
 )
 def test_local_recommendation_is_safe_and_scene_aware(source_name, intent, expected):
@@ -87,6 +97,7 @@ async def test_nemotron_recommendation_accepts_only_manifest_tool_calls(monkeypa
         "semantic_search",
         "warehouse_safety",
         "traffic_monitoring",
+        "smart_city",
     }
 
 
@@ -104,8 +115,12 @@ async def test_catalog_readiness_reflects_real_workers(monkeypatch):
     with patch("vss_agents.api.analysis_profiles.httpx.AsyncClient", return_value=client):
         result = await router.routes[0].endpoint()
 
-    assert [profile.ready for profile in result.profiles] == [True, True, True]
-    assert [profile.ready_detail for profile in result.profiles[1:]] == ["Detector ready", "Detector ready"]
+    assert [profile.ready for profile in result.profiles] == [True, True, True, False]
+    assert [profile.ready_detail for profile in result.profiles[1:]] == [
+        "Detector ready",
+        "Detector ready",
+        "No worker configured",
+    ]
     assert client.get.await_args_list[0].args[0].startswith("http://warehouse:9000/")
     assert client.get.await_args_list[1].args[0].startswith("http://traffic:9010/")
 
@@ -201,6 +216,7 @@ else:
         SEMANTIC_PROFILE_ID: 8,
         WAREHOUSE_PROFILE_ID: expected,
         TRAFFIC_PROFILE_ID: 1,
+        SMART_CITY_PROFILE_ID: 2,
     }
     assert payload["conflict"] == {
         "code": "analysis_profile_capacity_exhausted",
@@ -223,3 +239,10 @@ def test_invalid_warehouse_capacity_fails_at_manifest_import(configured: str, tm
     assert result.returncode != 0
     assert "VSS_WAREHOUSE_MAX_SOURCES must be a decimal integer between 1 and 8" in result.stderr
     assert not (tmp_path / "source-analysis-state.json").exists()
+
+
+def test_city_endpoint_is_explicitly_configured(monkeypatch):
+    monkeypatch.delenv("VSS_CITY_RTVI_CV_URL", raising=False)
+    assert analysis_profile_endpoint("http://warehouse:9000", SMART_CITY_PROFILE_ID) == ""
+    monkeypatch.setenv("VSS_CITY_RTVI_CV_URL", "http://127.0.0.1:9190/")
+    assert analysis_profile_endpoint("http://warehouse:9000", SMART_CITY_PROFILE_ID) == "http://127.0.0.1:9190"

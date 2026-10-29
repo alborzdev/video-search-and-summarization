@@ -1,0 +1,72 @@
+{
+  "schemaVersion": "city.simulation-rate-source-audit.v1",
+  "readOnly": true,
+  "runtimeChanged": false,
+  "captureChanged": false,
+  "sourceSha256": {
+    "/home/sparkdev/isaac_city_sim/scripts/traffic/vehicle_lib.py": "c0ee83c9376fcfe0a68cf079403c3dc7b5cf6807e34d526517bcc07b6678217f",
+    "/home/sparkdev/isaac_city_sim/scripts/traffic/vehicle_controller.py": "b422b2bc47a1c895c44c5044047ebea71f18aea5ed0d370a891e9412bd56795a",
+    "/home/sparkdev/isaac_city_sim/scripts/traffic/light_controller.py": "73c1317fec22456abf37b4e20be692d0acb859faeb39952812b812f7d2d9825a",
+    "/home/sparkdev/isaac_city_sim/scripts/people/people_controller.py": "e63c1afb86764b35833dcf8948f7702d1f53188be454dabe017bd1f20b8aaa15",
+    "/home/sparkdev/isaacsim-6.1.0/apps/isaacsim.exp.full.kit": "34be16cb1ec52bb8b004b4f4508547796e3c2806c7596f5b3e992c168ae8d1ab",
+    "/home/sparkdev/isaacsim-6.1.0/exts/omni.kit.loop-isaac/omni/kit/loop/bindings/_loop.pyi": "461f404d45160d692eaeec52b5e2b02185a20a33fdc8143285f212041a22a2bd",
+    "/home/sparkdev/isaacsim-6.1.0/kit/dev/include/omni/timeline/ITimeline.h": "f27ebf3a7dcb0f2df6b5192afab7d9caa97a36e22964e3b38f590a0fb30f3095"
+  },
+  "observedRateBasis": "Root reports current simulation/wall factor0.35\u20130.43 and about13renderframes/sec; reviewer did not run a new live timing capture.",
+  "sourceFacts": {
+    "stageTimeCodesPerSecond": 30,
+    "fullAppUseFixedTimeStepping": true,
+    "vehicleFixedStepSeconds": 0.016666666666666666,
+    "vehicleMaximumSubstepsPerCallback": 4,
+    "vehicleWritesAfterEverySubstep": true,
+    "droppedVehicleTimeAddedToPhaseOffset": true,
+    "nativePeopleAndPhysicsExactDtNotProvenByThisAudit": true
+  },
+  "cpuControls": [
+    {
+      "case": "30Hz fixed",
+      "callbacks": 130,
+      "timelineSeconds": 4.333333333333333,
+      "vehicleIntegratedSeconds": 4.316666666666657,
+      "signalPhaseSeconds": 4.316666666666657,
+      "droppedSeconds": 0.0,
+      "fixedSteps": 259
+    },
+    {
+      "case": "1/15 second fixed",
+      "callbacks": 130,
+      "timelineSeconds": 8.666666666666666,
+      "vehicleIntegratedSeconds": 8.666666666666677,
+      "signalPhaseSeconds": 8.666666666666677,
+      "droppedSeconds": 0.0,
+      "fixedSteps": 520
+    },
+    {
+      "case": "wall delta at13callbacks/sec",
+      "callbacks": 130,
+      "timelineSeconds": 10.0,
+      "vehicleIntegratedSeconds": 8.666666666666677,
+      "signalPhaseSeconds": 10.000000000000012,
+      "droppedSeconds": 1.333333333333335,
+      "fixedSteps": 520
+    },
+    {
+      "case": "wall delta at10callbacks/sec",
+      "callbacks": 100,
+      "timelineSeconds": 10.0,
+      "vehicleIntegratedSeconds": 6.666666666666648,
+      "signalPhaseSeconds": 9.999999999999993,
+      "droppedSeconds": 3.3333333333333437,
+      "fixedSteps": 400
+    }
+  ],
+  "conclusion": "Defer live timing changes. A wall-delta switch alone makes signal time advance beyond integrated vehicle motion once the four-substep cap drops time.",
+  "futureBoundedCandidate": "Manual run-loop step1/15second plus timeline useFixedTimeStepping=false, retaining the same stage TCPS, may use one common66.7ms loop/timeline delta within the vehicle cap. This is a candidate only; native walking/animation/physics clocks and dropped-time counters must be verified before use.",
+  "performanceLimits": [
+    "At13actualupdates/sec, a66.7ms step yields about0.867simulationseconds perwallsecond, not30FPS or a guaranteed1xrate.",
+    "Vehicle CPU integration and repeated USD pose writes can roughly double; this can lower actual FPS even without adding camera render products.",
+    "Larger visual displacement per rendered frame does not increase image smoothness.",
+    "No generic playback_speed setter was found in the installed timeline interface/header/Python source.",
+    "No live configuration, stage, camera, controller or animation settings were changed."
+  ]
+}

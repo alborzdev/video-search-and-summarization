@@ -1,0 +1,185 @@
+{
+  "schemaVersion": "city.optimization-receipt.v1",
+  "recordedAtUnixNs": "1793117720555439128",
+  "activeImage": "sha256:8e755229e733280aaf9555ef54688c0c7fb694c9c5ce18279d79e377c3b07c20",
+  "runtimeTuning": {
+    "muxTimeoutUs": 10000,
+    "previewFps": 30,
+    "decoder": "cpu"
+  },
+  "trackingArchitecture": "mv3dt-native-v1",
+  "modelEngineSha256": "9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+  "binaryHashes": {
+    "city-worker": "65ab09346d9ad0a1b6fd1775c8b1180f80a12d36e781cc86a9f55a4282bf4f80",
+    "libcity_parser.so": "48575edcf19d8335bfbc9ca5321dcb989317e78d2a747f33233e45ae285b10bd",
+    "libcity_preprocess.so": "5d2580873e2a71edcf2d58b529173f837ff46ec65321f07e97849438f58dd9f8"
+  },
+  "sourceHashes": {
+    "rfdetr_preprocess.cu": "4c33e24d98ea7a4930b3d4006842b22a74a260bbb17e490b99d4c849c2694900",
+    "rfdetr_parser.cpp": "d486162fa1537f1a9f5b01171c7609870cfc423046814baa55c320f325073cc6",
+    "tracker_diagnostics.hpp": "f6724bc68eda18c6f04ef7d16bd9ecbf1fe5ca2b62a0e9b6720b8f56b924ffc9",
+    "staged_tracking.hpp": "8c1d5891eead8cb448c8d762964fa8383d41ccf45e13db6c86b98024feb12b04",
+    "runtime_tuning.hpp": "25e85465fbf84924edd8d60e1eccd25974e5903c042c2f3f59c12b92407bfa6c",
+    "analytics_config.hpp": "c1272c7ef05392540d33853e365c0041229b79441e09521384f2474e9124ea9d",
+    "source_epoch.hpp": "e29516d64922e816fe1a58354db6ec4176ee133aed26845d6c1385c39322667f",
+    "city_worker.cpp": "5b335e4a4e217623591c3bf2285eecefd9a6ed4a7d27eaf363725dc69ebaa7d0",
+    "native_capture_clock.hpp": "b1ae73311d5750f0cb3e8b94aa567f453833ec1b0c52ffb6c879143bd58ad763",
+    "detector_schedule.hpp": "cd51f1923d6a30af2a7caac5674d2ae4cae60aca09245f7c8209f3e8a424309b",
+    "source_clock_diagnostics.hpp": "f7131739b0b28ded2ef6bcf2eb4a1f6b7452b78611272da7b3f317525466eb69",
+    "rolling_output.hpp": "2e64d261b4d499319ebe11c318e5bb318a597827d8ec040f578f57a674cbb07d",
+    "preview_core.hpp": "b2d88c9dc7cfda58cf28f77e1e9b68d753dd97acab441ac6659b41f5ca333daa",
+    "tracker_3d.hpp": "e182c8aca2f35b614ad26372c2b8fde4aac59a2d6a64f8ec92eb160a89ee907e",
+    "media_clock.hpp": "2011ec5aa336f1a2d6563ed227142e0e4b36faec6f9ddb41d95bc38c11437ae0",
+    "rfdetr_core.hpp": "00f663f55c7a47990fa12dac41cc94e0cf0a658bba6dd53bcf4ad6bdcbcc585a"
+  },
+  "guardActive": true,
+  "savedReserveGiB": 20.0,
+  "sources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "status": "live"
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "status": "live"
+    }
+  ],
+  "nativeDelivery": {
+    "status": "fresh",
+    "enabled": true,
+    "failed": false,
+    "sources": [
+      {
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "decoder": "cpu",
+        "decoderExtraSurfaces": 0,
+        "decoderLowLatency": false,
+        "width": 960,
+        "height": 540,
+        "selected": 967,
+        "rateDropped": 2,
+        "sourceQueueOverruns": 0,
+        "identityMissing": 0,
+        "identityEvicted": 0,
+        "identitiesPending": 0,
+        "geometryMismatch": 0,
+        "encoded": 967,
+        "oversizeDropped": 0,
+        "networkQueueDropped": 0,
+        "published": 967,
+        "postFailed": 0,
+        "pendingDropped": 0,
+        "observedEncodedFps": 5.993,
+        "observedPublishedFps": 5.993,
+        "timingMs": {
+          "selectedToJpeg": {
+            "count": 967,
+            "mean": 5.1888,
+            "last": 7.67744,
+            "max": 14.8908,
+            "p50Upper": 10,
+            "p95Upper": 10
+          },
+          "postQueue": {
+            "count": 967,
+            "mean": 1.90699,
+            "last": 0.08872,
+            "max": 87.668,
+            "p50Upper": 1,
+            "p95Upper": 1
+          },
+          "post": {
+            "count": 967,
+            "mean": 38.7588,
+            "last": 29.8412,
+            "max": 242.503,
+            "p50Upper": 50,
+            "p95Upper": 200
+          }
+        },
+        "lastPublishedAtNs": "1793117719543676330"
+      },
+      {
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "decoder": "cpu",
+        "decoderExtraSurfaces": 0,
+        "decoderLowLatency": false,
+        "width": 960,
+        "height": 540,
+        "selected": 968,
+        "rateDropped": 1,
+        "sourceQueueOverruns": 0,
+        "identityMissing": 0,
+        "identityEvicted": 0,
+        "identitiesPending": 0,
+        "geometryMismatch": 0,
+        "encoded": 968,
+        "oversizeDropped": 0,
+        "networkQueueDropped": 0,
+        "published": 968,
+        "postFailed": 0,
+        "pendingDropped": 0,
+        "observedEncodedFps": 5.993,
+        "observedPublishedFps": 5.993,
+        "timingMs": {
+          "selectedToJpeg": {
+            "count": 968,
+            "mean": 4.73894,
+            "last": 5.40489,
+            "max": 15.2227,
+            "p50Upper": 10,
+            "p95Upper": 10
+          },
+          "postQueue": {
+            "count": 968,
+            "mean": 1.15349,
+            "last": 0.071569,
+            "max": 90.5613,
+            "p50Upper": 1,
+            "p95Upper": 1
+          },
+          "post": {
+            "count": 968,
+            "mean": 33.9185,
+            "last": 32.5584,
+            "max": 222.313,
+            "p50Upper": 20,
+            "p95Upper": 200
+          }
+        },
+        "lastPublishedAtNs": "1793117719570454783"
+      }
+    ],
+    "updatedAtNs": "1793117719596251438",
+    "deliveryAgeSeconds": 0.8054141998291016,
+    "fpsLimitPerSource": 30,
+    "jpegQuality": 70,
+    "maxJpegBytes": 2097152,
+    "identityLimitPerSource": 32,
+    "pendingJpegs": 0,
+    "batchQueueOverruns": 0,
+    "pipeline": {
+      "detectorCadence": 1,
+      "muxTimeoutUs": 10000,
+      "batches": 1934,
+      "fullBatches": 5,
+      "inferredFrames": 1938,
+      "trackedFrames": 1938,
+      "preprocessInferPathMs": {
+        "mean": 8.7309,
+        "p95Upper": 20
+      },
+      "trackerAnalyticsPathMs": {
+        "mean": 26.514,
+        "p95Upper": 50
+      }
+    }
+  },
+  "pythonTestsPassed": 128,
+  "browser": {
+    "analyzedCameras": 2,
+    "consoleErrorsOrWarnings": 0,
+    "simulatorStatus": "UI reported paused; state unchanged"
+  },
+  "retainedDefaultsReason": "Cadence harmed exact-frame box agreement; longer batching gave no rate improvement; tuned hardware decoder saved only ~0.05 CPU core with decoder-dependent box variation."
+}

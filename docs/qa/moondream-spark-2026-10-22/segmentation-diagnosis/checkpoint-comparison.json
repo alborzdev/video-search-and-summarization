@@ -1,0 +1,300 @@
+{
+  "created_utc": "2026-10-22T16:29:04.022941+00:00",
+  "network_per_request_cap_bytes": 16777216,
+  "network_total_cap_bytes": 52428800,
+  "gpu_tests": false,
+  "preview": {
+    "revision": "5112966d1a723413b1c9a1e8bea272b72e647b35",
+    "local_checkpoint": "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--moondream--moondream3-preview/snapshots/5112966d1a723413b1c9a1e8bea272b72e647b35/model_fp8.pt",
+    "shards": [
+      {
+        "filename": "modelv2-00001-of-00004.safetensors",
+        "bytes": 4907406296
+      },
+      {
+        "filename": "modelv2-00002-of-00004.safetensors",
+        "bytes": 4736548872
+      },
+      {
+        "filename": "modelv2-00003-of-00004.safetensors",
+        "bytes": 4502742464
+      },
+      {
+        "filename": "modelv2-00004-of-00004.safetensors",
+        "bytes": 4390628760
+      }
+    ],
+    "total_bf16_bytes": 18537326392,
+    "direct_samples": [
+      {
+        "remote_key": "model.region.ln.weight",
+        "local_key": "region_model.ln.weight",
+        "shape": [
+          2048
+        ],
+        "equal": true,
+        "max_absolute_difference": 0.0
+      },
+      {
+        "remote_key": "model.region.ln.bias",
+        "local_key": "region_model.ln.bias",
+        "shape": [
+          2048
+        ],
+        "equal": true,
+        "max_absolute_difference": 0.0
+      },
+      {
+        "remote_key": "model.region.coord_encoder.bias",
+        "local_key": "region_model.coordinate_encoder.bias",
+        "shape": [
+          2048
+        ],
+        "equal": true,
+        "max_absolute_difference": 0.0
+      },
+      {
+        "remote_key": "model.text.blocks.4.mlp.router.bias",
+        "local_key": "text_model.transformer.h.4.gate.bias",
+        "shape": [
+          64
+        ],
+        "equal": true,
+        "max_absolute_difference": 0.0
+      },
+      {
+        "remote_key": "model.text.post_ln.weight",
+        "local_key": "text_model.lm_head.ln.weight",
+        "shape": [
+          2048
+        ],
+        "equal": true,
+        "max_absolute_difference": 0.0
+      },
+      {
+        "remote_key": "model.text.lm_head.bias",
+        "local_key": "text_model.lm_head.linear.bias",
+        "shape": [
+          51200
+        ],
+        "equal": true,
+        "max_absolute_difference": 0.0
+      }
+    ],
+    "expert_row_samples": [
+      {
+        "remote_key": "model.text.blocks.4.mlp.fc1.weight",
+        "expert": 0,
+        "row": 0,
+        "elements": 2048,
+        "requantized_bits_equal_fraction": 1.0,
+        "bf16_equals_dequantized_cached_fp8": true,
+        "cosine": 0.9999997615814209,
+        "cached_scale": 0.0002757481415756047
+      },
+      {
+        "remote_key": "model.text.blocks.4.mlp.fc1.weight",
+        "expert": 0,
+        "row": 1024,
+        "elements": 2048,
+        "requantized_bits_equal_fraction": 1.0,
+        "bf16_equals_dequantized_cached_fp8": true,
+        "cosine": 0.9999991655349731,
+        "cached_scale": 0.0002920968399848789
+      },
+      {
+        "remote_key": "model.text.blocks.4.mlp.fc1.weight",
+        "expert": 63,
+        "row": 2047,
+        "elements": 2048,
+        "requantized_bits_equal_fraction": 1.0,
+        "bf16_equals_dequantized_cached_fp8": true,
+        "cosine": 0.9999991655349731,
+        "cached_scale": 0.0002702985657379031
+      },
+      {
+        "remote_key": "model.text.blocks.4.mlp.fc2.weight",
+        "expert": 0,
+        "row": 0,
+        "elements": 1024,
+        "requantized_bits_equal_fraction": 1.0,
+        "bf16_equals_dequantized_cached_fp8": true,
+        "cosine": 0.9999987483024597,
+        "cached_scale": 0.00044904439710080624
+      },
+      {
+        "remote_key": "model.text.blocks.4.mlp.fc2.weight",
+        "expert": 63,
+        "row": 2047,
+        "elements": 1024,
+        "requantized_bits_equal_fraction": 1.0,
+        "bf16_equals_dequantized_cached_fp8": true,
+        "cosine": 0.9999991655349731,
+        "cached_scale": 0.00035095217754133046
+      }
+    ],
+    "cuda_initialized": false,
+    "limitation": "Sampled tensor equality is not a comparison of every Preview tensor."
+  },
+  "next": {
+    "revision": "a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913",
+    "local_31_checkpoint": "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--moondream--moondream3.1-9B-A2B/snapshots/1da27e6c2d2f9118de14560df456881dc62d91f3/model.safetensors",
+    "next_safetensors_lfs_sha256": "26dde16af961d3a486c7b86b9a34fc8487be7917f7e62324b751400ef4d391b4",
+    "cached_31_safetensors_lfs_sha256": "26dde16af961d3a486c7b86b9a34fc8487be7917f7e62324b751400ef4d391b4",
+    "same_advertised_safetensors_sha256": true,
+    "remote_pt_tensors": 870,
+    "local_safetensors_tensors": 870,
+    "missing_local_names": [],
+    "missing_remote_names": [],
+    "storage_crc_matches": 870,
+    "storage_crc_differences": [],
+    "skipped": [],
+    "local_payload_bytes_read": 10505161984,
+    "remote_pt_advertised_sha256": "e1acbd3f5eb8a1e74c7500b8a85051483de0406fa847eae35d53ce4032bb6ac7",
+    "comparison": "Remote ZIP central-directory CRC32 versus CRC32 computed from each local tensor payload.",
+    "limitation": "Remote PT tensor bodies and its complete SHA256 were not downloaded or independently verified. CRC32 is not a cryptographic proof."
+  },
+  "network_response_body_bytes": 442300,
+  "network_requests": [
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/model.safetensors.index.json",
+      "start": null,
+      "length": 53016
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 0,
+      "length": 8
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 8,
+      "length": 49200
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00002-of-00004.safetensors",
+      "start": 0,
+      "length": 8
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00002-of-00004.safetensors",
+      "start": 8,
+      "length": 7232
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00003-of-00004.safetensors",
+      "start": 0,
+      "length": 8
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00003-of-00004.safetensors",
+      "start": 8,
+      "length": 8504
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00004-of-00004.safetensors",
+      "start": 0,
+      "length": 8
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00004-of-00004.safetensors",
+      "start": 8,
+      "length": 7568
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00004-of-00004.safetensors",
+      "start": 5260952,
+      "length": 4096
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00004-of-00004.safetensors",
+      "start": 5256856,
+      "length": 4096
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00004-of-00004.safetensors",
+      "start": 4203928,
+      "length": 4096
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 1245700472,
+      "length": 128
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00004-of-00004.safetensors",
+      "start": 4390624664,
+      "length": 4096
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00004-of-00004.safetensors",
+      "start": 4180802968,
+      "length": 102400
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 440394104,
+      "length": 4096
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 444588408,
+      "length": 4096
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 977260920,
+      "length": 4096
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 977265016,
+      "length": 2048
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream3-preview/resolve/5112966d1a723413b1c9a1e8bea272b72e647b35/modelv2-00001-of-00004.safetensors",
+      "start": 1245698424,
+      "length": 2048
+    },
+    {
+      "url": "https://huggingface.co/api/models/moondream/moondream-next/revision/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913?blobs=true",
+      "start": null,
+      "length": 3352
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream-next/resolve/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913/model.pt",
+      "start": 10505450997,
+      "length": 22
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream-next/resolve/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913/model.pt",
+      "start": 10505450977,
+      "length": 20
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream-next/resolve/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913/model.pt",
+      "start": 10505450921,
+      "length": 56
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream-next/resolve/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913/model.pt",
+      "start": 10505388672,
+      "length": 62249
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream-next/resolve/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913/model.pt",
+      "start": 0,
+      "length": 30
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream-next/resolve/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913/model.pt",
+      "start": 30,
+      "length": 18
+    },
+    {
+      "url": "https://huggingface.co/moondream/moondream-next/resolve/a5b63b4e19d1be4ae8dbd1d02b2bde864cc09913/model.pt",
+      "start": 64,
+      "length": 115705
+    }
+  ]
+}

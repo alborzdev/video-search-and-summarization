@@ -1,0 +1,6 @@
+# CPU-only host control environment, versions verified during implementation.
+fastapi==0.159.1
+pydantic==2.14.1
+uvicorn==0.54.0
+opencv-python-headless==4.13.0.92
+numpy==2.5.4

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "city.native-sei-ui-source-delta.v1",
+  "at": "2026-10-26T10:16:31.682344+00:00",
+  "previousPackage": "20261026T085059804419Z",
+  "previousImageId": "sha256:6781e5ed19f647257e78e45c9af8a62d3741437e244d6f7900cea72b6a0b8c66",
+  "method": "Compare source inputs using packager exclusions; exclude generated workspace lib directories; add identical external Dash source intake.",
+  "changedFiles": [
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/mapObjects.test.tsx",
+      "previousSha256": "58d0b607ac2e5bff478d85e9603bc810b89d7608d6f03b2e8a393405e6b10a1c",
+      "candidateSha256": "1bd4d0b92aea23fde548d2a5b66631b40058e2ad455271dbe55ef04f03118ca8"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/processedPreview.test.ts",
+      "previousSha256": "592ad156593eb02690a3cc045bf88f118f5e7cba3ebb8a090a4e4166af356936",
+      "candidateSha256": "a9a45c9f31542eeb64508b7d1716e75b6af5a64baf915117a54c3c18dc1e49b9"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/sourceClock.test.ts",
+      "previousSha256": null,
+      "candidateSha256": "391f7d52c9f27c796685ac47591aa774df8301d5856d57ea1260ac5e55f3fc6f"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mapObjects.ts",
+      "previousSha256": "529ddb87c95d22d7711afba45c82accabdb96c2a466a37a638d5e6883d5d9447",
+      "candidateSha256": "6181b0c012493affeecb5646cbb9d8306371b4d94c4f91f45339a1934b436d86"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/processedPreview.ts",
+      "previousSha256": "a948226b6cf71eb04f9b3fd9069adb48ce4fad973c5fc73b00bccfa80ec99614",
+      "candidateSha256": "3dcdd54938d1681d41cf7ad866b37869de088fbcbec1b930d673796a1077fa48"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/sourceClock.ts",
+      "previousSha256": null,
+      "candidateSha256": "b0e150e50e400e26429523a51fb7b131b0439cfcfc46b4a468025fe08d7f94d0"
+    },
+    {
+      "path": "apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/types.ts",
+      "previousSha256": "8fd5ee44d7c1eaf9917e4a55eaff1f9a78fbdf46f9e76fd61a0a65f1d6e0e82e",
+      "candidateSha256": "0585a236af67fff3691ea4bd68cea13b34ecb106b61878469591db4d2b0a8b96"
+    }
+  ],
+  "acceptedLayoutChanged": false,
+  "runtimeActivated": false
+}

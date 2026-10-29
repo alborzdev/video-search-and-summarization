@@ -1,0 +1,41 @@
+{
+  "schemaVersion": "city.tracking-same-native-id-opportunities.v1",
+  "method": "Each southwest frame selects its nearest northeast source-RTCP timestamp within 150ms; reused peer frames are reported. Same IDs are SDK opportunities, never ground truth accuracy or UI qualification. Separate live cohorts, not identical inputs.",
+  "maximumSkewMs": 150,
+  "cohorts": {
+    "baselineFirst60": {
+      "file": ".spark/city/runtime/tracking-id-baseline-20261026/first60-observations.ndjson",
+      "sha256": "76432951081b714261f7f13055140e0a50d9250f9d9c398c730590dad55454a9",
+      "sourceRows": {
+        "997d3a69-e052-45a4-a1ce-be1b046670c4": 777,
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 773
+      },
+      "pairedFrames": 777,
+      "uniquePeerFrames": 640,
+      "peerFrameReuses": 137,
+      "maxActualSkewMs": 64.664179,
+      "rawPersonSameIdPairs": 355,
+      "rawPersonSameIdObjectOpportunities": 402,
+      "pairsWithEligibleHintsInBothViews": 767,
+      "eligibleGlobalSameIdPairs": 293,
+      "eligibleGlobalSameIdObjectOpportunities": 338
+    },
+    "flagsOffFirst60": {
+      "file": ".spark/city/runtime/stable-id-normal-cohort-20261026T055345Z/existing-first60-observations.ndjson",
+      "sha256": "544dfe59cb28aa21e1b3cf2c515260671308495e1d6b61a90b6391ecb0dd0272",
+      "sourceRows": {
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 934,
+        "997d3a69-e052-45a4-a1ce-be1b046670c4": 934
+      },
+      "pairedFrames": 934,
+      "uniquePeerFrames": 934,
+      "peerFrameReuses": 0,
+      "maxActualSkewMs": 14.607444,
+      "rawPersonSameIdPairs": 0,
+      "rawPersonSameIdObjectOpportunities": 0,
+      "pairsWithEligibleHintsInBothViews": 831,
+      "eligibleGlobalSameIdPairs": 0,
+      "eligibleGlobalSameIdObjectOpportunities": 0
+    }
+  }
+}

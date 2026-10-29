@@ -1,0 +1,56 @@
+{
+  "at": 1792732396.3030229,
+  "siteId": "isaac-intersection-a",
+  "siteRevision": 18,
+  "calibrationRevisions": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": "isaac-live-6aaa6befcc1f190b",
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "isaac-live-6aaa6befcc1f190b"
+  },
+  "rulesRevision": 153,
+  "ruleCount": 6,
+  "globalFusionEnabled": false,
+  "inputs": "two actual Isaac Sim software RTSP publishers, no evaluation labels",
+  "hashes": {
+    "/home/sparkdev/isaac_city_sim/config/vss_camera_profile.json": "ad2fd63ebf86ab87a3d9beaafb0f8ba49139f57cdfd5443e5732561b8722d242",
+    "services/analytics/behavior-analytics/apps/city/engine.py": "a975362c75d00777248ac381696dfe3942c21f80fbeb11edd741e24f3061db90",
+    "services/analytics/behavior-analytics/apps/city/models.py": "3d763e558d98e6aa084a73e8c7a0a1889934ac86f2781efcf5f09a08c2b1453f",
+    "tools/smart-city/controller.py": "f50e9989b0804f3af2036fd42dd1f12d0afb81b57ec7aa81c14a616ba532ac8a",
+    "tools/smart-city/isaac_demo.py": "c99adc55941a30bf80b090e8c21dbd4dd603af56390b8e2d3f80253ea11829bd",
+    "tools/smart-city/isaac_health.py": "15269dea6e3d37fca26c4a6bf0df82057535af9c61752f91791d5a4a28fdd61c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMap.tsx": "0d4d5d13dda38129734e8e61a3a0fc3b2552cabe7b1d137468baeb5ef70050cd"
+  },
+  "containers": {
+    "vss-city-polish-ui": {
+      "imageId": "sha256:3134f445308c4ccf95d4b28b01b4b9b8e0a1f120957900c17b6f1f1c27d60f8e",
+      "id": "5bd97a3db917782b44e3c1567a9255d75b90688fb5739d76e278d0e786787a17",
+      "startedAt": "2026-10-23T05:00:08.104266901Z",
+      "restarts": 0,
+      "oomKilled": false,
+      "status": "running"
+    },
+    "vss-city-detector": {
+      "imageId": "sha256:403f58f44856eafe5ce6d1a42308203ed4d923bab91cf7a073aceb3a6a2a868e",
+      "id": "105e0ed816f8245f489b29dd1908608ccfe607a07dfd6368a05a60ee6934f366",
+      "startedAt": "2026-10-23T05:07:17.786658855Z",
+      "restarts": 0,
+      "oomKilled": false,
+      "status": "running"
+    },
+    "vss-city-analytics": {
+      "imageId": "sha256:bc667c99fd6b3055c0c925afbcf158f356553070dbf184221ee394b8bbbf3487",
+      "id": "565e37f8e4ae1e364ed8903bd8286834b0905d723f670236d552954961ad505a",
+      "startedAt": "2026-10-23T04:45:18.415058988Z",
+      "restarts": 0,
+      "oomKilled": false,
+      "status": "running"
+    },
+    "vss-agent-ui": {
+      "imageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+      "id": "398fe2e495134fb4d805db92942da148658aaf7994f68a5e4ee1e39f29c94809",
+      "startedAt": "2026-10-22T19:56:31.606041615Z",
+      "restarts": 0,
+      "oomKilled": false,
+      "status": "running"
+    }
+  }
+}

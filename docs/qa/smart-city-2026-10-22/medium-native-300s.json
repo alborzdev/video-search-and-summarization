@@ -1,0 +1,122 @@
+{
+  "schemaVersion": "city.soak-result.v1",
+  "siteId": "recorded-traffic-tests",
+  "sourceIds": [
+    "291399aa-a062-43b6-badc-48c34bc08237",
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9"
+  ],
+  "startedAt": "2026-10-22T05:35:47.640767+00:00",
+  "finishedAt": "2026-10-22T05:40:47.641204+00:00",
+  "requestedSeconds": 300.0,
+  "wallSeconds": 300.00045072473586,
+  "sampleCount": 57,
+  "passed": true,
+  "failure": null,
+  "minimumAvailableGiB": 21.783267974853516,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 8875,
+      "uniquePts": 8600,
+      "duplicatePts": 275,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 311308932104,
+      "lastNs": 1792647643140055784,
+      "lastSequence": 9222,
+      "session": "b587ca24-8927-4047-aab9-d218ac67afc5",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 2958,
+      "uniquePts": 2958,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 311408925534,
+      "lastNs": 1792647643309306864,
+      "lastSequence": 3017,
+      "session": "62192eac-204f-4d53-845b-45b471686a18",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "lastMetrics": {
+    "sources": {
+      "291399aa-a062-43b6-badc-48c34bc08237": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792647643140055784",
+        "sessionId": "b587ca24-8927-4047-aab9-d218ac67afc5",
+        "clockToWallRatio": 0.9994654751109043,
+        "trustedSourceAgeSeconds": 0.3300597667694092,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 953,
+        "windowDuplicateFraction": 0.026232948583420776,
+        "frames": 8875,
+        "uniquePts": 8600
+      },
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792647643309306864",
+        "sessionId": "62192eac-204f-4d53-845b-45b471686a18",
+        "clockToWallRatio": 0.9983794024787727,
+        "trustedSourceAgeSeconds": 0.16080880165100098,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 317,
+        "windowDuplicateFraction": 0.0,
+        "frames": 2958,
+        "uniquePts": 2958
+      }
+    },
+    "minimumAvailableGiB": 21.783267974853516,
+    "nativeActive": true,
+    "nativeRevision": 45,
+    "warmedUp": true
+  },
+  "maximumTrustedSourceAgeSeconds": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.4036409854888916,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.25037527084350586
+  },
+  "maximumDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.04320337197049526,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "maximumPostWarmupDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.04320337197049526,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "lastClockToWallRatios": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.9994654751109043,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.9983794024787727
+  },
+  "askEnabled": false,
+  "scheduledAskCount": 0,
+  "asks": [],
+  "pauseOnFailure": false,
+  "pauseReceipts": [],
+  "samplesFile": "private runtime/medium-native-qualification/samples.ndjson",
+  "samplesSha256": "0f00e8e5e52ad685c4ddd8e92670470f7705b6f6ff7eac49426adcd742098266",
+  "monitorSourceSha256": "3602c3ffc1256afa65a5f11161b51e3de7ae42a8fccba01cef3bf47da53da1fe",
+  "criteria": {
+    "minimumReserveGiB": 20,
+    "warmupSeconds": 15,
+    "sampleEverySeconds": 5,
+    "clockWindowSeconds": 30,
+    "clockRatioBounds": [
+      0.9,
+      1.1
+    ],
+    "maximumDuplicateFraction": 0.05,
+    "trustSourceRtcpUtc": true,
+    "maximumSourceAgeSeconds": 5
+  },
+  "scope": "Concurrent pipeline stability and optional real UI Ask qualification; not engine latency, semantic event accuracy, browser-frame latency or final-city/MV3DT qualification.",
+  "modelSize": "medium",
+  "muxTimeoutUs": 10000,
+  "imageId": "sha256:39bf601b9c9174737656c509ca8b00da06ca35b8cf6c00b16d2f327e48df26a7",
+  "context": "Two actual Agent RTSP sources; Medium selected via validated artifact profile; VIOS2CPU2GiB; existing LLM,VLM,Embedloadedhealthy; developmentUIrestoredbeforemonitor. No Ask/export in this300s run. VIOS retained allocations from previous Small Ask/export remain; this is observed full-native throughput/clock qualification, not final endurance."
+}

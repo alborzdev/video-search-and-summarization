@@ -1,0 +1,69 @@
+{
+  "passed": false,
+  "method": "calibrated-ground-v1",
+  "checks": {
+    "duration": true,
+    "samples": true,
+    "clock": false,
+    "positionMedian": true,
+    "positionP95": false,
+    "matchedPeople": true,
+    "falseMerges": false,
+    "duplicateReduction": false
+  },
+  "metrics": {
+    "observationCount": 3701,
+    "distinctMatchedPeople": 8,
+    "associatedPersonObservations": 1965,
+    "unmatchedEligiblePersonDetections": 489,
+    "positionMedianM": 0.37590204173325964,
+    "positionP95M": 1.0071121173608941,
+    "allGroundAnchorMedianM": 0.41975820995837865,
+    "allGroundAnchorP95M": 0.947086125262367,
+    "sourceClockSkewP95Ms": 54.68534819999998,
+    "pairedSamples": 1769,
+    "crossViewOpportunities": 1975,
+    "sameIdCrossViewMatches": 5,
+    "duplicateReductionFraction": 0.002531645569620253,
+    "falseMergedGroups": 7,
+    "simultaneousWrongCrossViewMatches": 0
+  },
+  "falseMergeDetails": {
+    "ground:58b5123389f1493ba77635782c6f732a:00000003": [
+      "/World/Characters/Character_01/male_adult_construction_05/ManRoot/male_adult_construction_05",
+      "/World/Characters/Character_05/female_adult_medical_01/ManRoot/female_adult_medical_01"
+    ],
+    "ground:58b5123389f1493ba77635782c6f732a:00000004": [
+      "/World/Characters/Character/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_04/female_adult_business_02/ManRoot/female_adult_business_02"
+    ],
+    "ground:58b5123389f1493ba77635782c6f732a:00000005": [
+      "/World/Characters/Character_02/male_adult_construction_01/ManRoot/male_adult_construction_01",
+      "/World/Characters/Character_04/female_adult_business_02/ManRoot/female_adult_business_02"
+    ],
+    "ground:58b5123389f1493ba77635782c6f732a:00000007": [
+      "/World/Characters/Character/male_adult_medical_01/ManRoot/male_adult_medical_01",
+      "/World/Characters/Character_03/male_adult_construction_03/ManRoot/male_adult_construction_03",
+      "/World/Characters/Character_05/female_adult_medical_01/ManRoot/female_adult_medical_01"
+    ],
+    "ground:58b5123389f1493ba77635782c6f732a:00000008": [
+      "/World/Characters/Character_03/male_adult_construction_03/ManRoot/male_adult_construction_03",
+      "/World/Characters/Character_05/female_adult_medical_01/ManRoot/female_adult_medical_01"
+    ],
+    "ground:58b5123389f1493ba77635782c6f732a:00000009": [
+      "/World/Characters/Character_03/male_adult_construction_03/ManRoot/male_adult_construction_03",
+      "/World/Characters/Character_05/female_adult_medical_01/ManRoot/female_adult_medical_01"
+    ],
+    "ground:58b5123389f1493ba77635782c6f732a:00000010": [
+      "/World/Characters/Character_04/female_adult_business_02/ManRoot/female_adult_business_02",
+      "/World/Characters/Character_07/male_adult_construction_05/ManRoot/male_adult_construction_05"
+    ]
+  },
+  "withinViewConflicts": [],
+  "qualification": "Bounded simulator image-space label comparison. Not HOTA/IDF1, occlusion, vehicle fusion or real-city accuracy.",
+  "inputHashes": {
+    ".spark/city/runtime/isaac-ground-association-20261023/observations.ndjson": "aaa1016c7f33a2bba3c031fcd7b71d0eca7d3bb881559a6dd37b036e00bd899f",
+    ".spark/city/state/native/mv3dt-person-plane/package.json": "20f148347e50659a150e375bf4a1dcb8169bb24c20ac1b465519299c7e846a80",
+    "/home/sparkdev/isaac_city_sim/logs/vss-integration/evaluation-ground-truth-1792730895658285642.ndjson": "9f4f1391812c1ade85dce4fbe8a634d5cf3fed35afa3ea306dff9449d161be9a"
+  }
+}

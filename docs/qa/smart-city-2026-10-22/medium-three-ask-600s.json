@@ -1,0 +1,298 @@
+{
+  "schemaVersion": "city.concurrent-question-qualification.v1",
+  "passed": true,
+  "model": {
+    "schemaVersion": "city.model-selection.v1",
+    "device": "spark",
+    "size": "medium",
+    "engineSha256": "9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+    "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+    "selectedAt": "2026-10-22T05:31:46.462353+00:00"
+  },
+  "questions": {
+    "schemaVersion": "city.question-trial.v1",
+    "siteId": "recorded-traffic-tests",
+    "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+    "startedAt": "2026-10-22T06:29:15.638073+00:00",
+    "runnerSourceSha256": "78819ee777cf174f769349e6edd6a064663a77443c3706c3ad17d8b822c080e4",
+    "soakHelperSourceSha256": "3602c3ffc1256afa65a5f11161b51e3de7ae42a8fccba01cef3bf47da53da1fe",
+    "actualAskCount": 3,
+    "calls": [
+      {
+        "number": 1,
+        "askedAt": "2026-10-22T06:29:15.733775+00:00",
+        "readiness": {
+          "sourceTimeNs": "1792650555238075049",
+          "timestampBasis": "source-rtcp",
+          "sessionId": "f4063823-123e-4fce-a227-c75ba833f1bf",
+          "nativeRevision": 53,
+          "minimumAvailableGiB": 25.759380340576172
+        },
+        "status": "complete",
+        "askSeconds": 29.61483613308519,
+        "answerSha256": "e51c9daf7dc5af7a24ed889eb0493ad3d7a01bc95d73ad94155872b3aa7a8e87",
+        "answerCharacters": 940,
+        "groundedFlag": true,
+        "evidenceTools": [
+          "video_understanding_iso"
+        ],
+        "observedWindow": {
+          "startTime": "2026-10-22T06:29:05.733000Z",
+          "endTime": "2026-10-22T06:29:10.733000Z"
+        },
+        "evidence": {
+          "returnedStartTime": "2026-10-22T06:29:05.733Z",
+          "mediaPath": "/vst/storage/temp_files/city-traffic-rtsp-replay_20261022_062905_ff658.mp4",
+          "mediaUriSha256": "d02bdc37de74f15a48570d47fbe8e4b99c38efe2990181cf4625d2610f3bb3a9",
+          "bytes": 6448188,
+          "sha256": "d9e9cb403fd48e6c7e804afb67274e2d91ad060fc708ae519a50a6f1547a0536",
+          "fetchSeconds": 0.09059575060382485
+        },
+        "completedAt": "2026-10-22T06:29:45.607253+00:00",
+        "secondsFromPreviousCompletionToAskStart": null,
+        "completedMonotonicSeconds": 3078436.735340281
+      },
+      {
+        "number": 2,
+        "askedAt": "2026-10-22T06:30:45.658257+00:00",
+        "readiness": {
+          "sourceTimeNs": "1792650645150115347",
+          "timestampBasis": "source-rtcp",
+          "sessionId": "f4063823-123e-4fce-a227-c75ba833f1bf",
+          "nativeRevision": 53,
+          "minimumAvailableGiB": 25.05127716064453
+        },
+        "status": "complete",
+        "askSeconds": 23.88388640107587,
+        "answerSha256": "b67e72402192b69039963526b5b953fdf14d625424b4e70bb1a405fef2713b67",
+        "answerCharacters": 546,
+        "groundedFlag": true,
+        "evidenceTools": [
+          "video_understanding_iso"
+        ],
+        "observedWindow": {
+          "startTime": "2026-10-22T06:30:35.642000Z",
+          "endTime": "2026-10-22T06:30:40.642000Z"
+        },
+        "evidence": {
+          "returnedStartTime": "2026-10-22T06:30:35.642Z",
+          "mediaPath": "/vst/storage/temp_files/city-traffic-rtsp-replay_20261022_063035_fa7e1.mp4",
+          "mediaUriSha256": "2527d0fbf08bed2a7554f6d6ce9b101bb0916444e019da0181dd45cadcd86fad",
+          "bytes": 6572744,
+          "sha256": "b4a196ead1d26da3a97002be5a0c3e68c511bc79776cdcdf8019120427818000",
+          "fetchSeconds": 0.29671071097254753
+        },
+        "completedAt": "2026-10-22T06:31:10.012661+00:00",
+        "secondsFromPreviousCompletionToAskStart": 60.05102051002905,
+        "completedMonotonicSeconds": 3078521.140760487
+      },
+      {
+        "number": 3,
+        "askedAt": "2026-10-22T06:32:10.055613+00:00",
+        "readiness": {
+          "sourceTimeNs": "1792650729536096615",
+          "timestampBasis": "source-rtcp",
+          "sessionId": "f4063823-123e-4fce-a227-c75ba833f1bf",
+          "nativeRevision": 53,
+          "minimumAvailableGiB": 24.757328033447266
+        },
+        "status": "complete",
+        "askSeconds": 24.521174837835133,
+        "answerSha256": "0e7bc011e799635f48cd4c4bb803e84397efd02d9e9a7eda5f5f3a2690fae1cf",
+        "answerCharacters": 670,
+        "groundedFlag": true,
+        "evidenceTools": [
+          "video_understanding_iso"
+        ],
+        "observedWindow": {
+          "startTime": "2026-10-22T06:32:00.042000Z",
+          "endTime": "2026-10-22T06:32:05.042000Z"
+        },
+        "evidence": {
+          "returnedStartTime": "2026-10-22T06:32:00.042Z",
+          "mediaPath": "/vst/storage/temp_files/city-traffic-rtsp-replay_20261022_063200_f0b6f.mp4",
+          "mediaUriSha256": "14c27c883a672d8ec696e6e9f761d721901af2e8ebb53e3e84098e8caf82a017",
+          "bytes": 6293461,
+          "sha256": "cd670931fe9c056c32b37218229eada011cc40006e6ba976e13e2b409d92e351",
+          "fetchSeconds": 0.29663879284635186
+        },
+        "completedAt": "2026-10-22T06:32:35.009502+00:00",
+        "secondsFromPreviousCompletionToAskStart": 60.042957382276654,
+        "completedMonotonicSeconds": 3078606.137596632
+      }
+    ],
+    "betweenCompletedCallsMinimumSeconds": 60,
+    "timeoutSeconds": 55,
+    "clipByteLimit": 20971520,
+    "scope": "Three real UI questions plus evidence-byte delivery. Grounded flags and hashes do not prove semantic correctness, allocation reuse, model accuracy or internal export-cache behavior.",
+    "finishedAt": "2026-10-22T06:32:35.303519+00:00",
+    "wallSeconds": 199.66551922261715,
+    "passed": true,
+    "failure": null,
+    "cachedRepeat": {
+      "request": "repeat-first-observed-window-evidence-only",
+      "actualAdditionalAskCount": 0,
+      "returnedStartTime": "2026-10-22T06:29:05.733Z",
+      "mediaPath": "/vst/storage/temp_files/city-traffic-rtsp-replay_20261022_062905_ff658.mp4",
+      "mediaUriSha256": "d02bdc37de74f15a48570d47fbe8e4b99c38efe2990181cf4625d2610f3bb3a9",
+      "bytes": 6448188,
+      "sha256": "d9e9cb403fd48e6c7e804afb67274e2d91ad060fc708ae519a50a6f1547a0536",
+      "fetchSeconds": 0.057704186998307705,
+      "sameMediaUri": true,
+      "sameByteHash": true,
+      "scope": "Observed URI/byte equality only; no inference about VIOS internal cache implementation."
+    }
+  },
+  "monitor": {
+    "schemaVersion": "city.soak-result.v1",
+    "siteId": "recorded-traffic-tests",
+    "sourceIds": [
+      "291399aa-a062-43b6-badc-48c34bc08237",
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9"
+    ],
+    "startedAt": "2026-10-22T06:28:09.899575+00:00",
+    "finishedAt": "2026-10-22T06:38:09.900591+00:00",
+    "requestedSeconds": 600.0,
+    "wallSeconds": 600.0010282448493,
+    "sampleCount": 114,
+    "passed": true,
+    "failure": null,
+    "minimumAvailableGiB": 24.174129486083984,
+    "frames": {
+      "291399aa-a062-43b6-badc-48c34bc08237": {
+        "frames": 17859,
+        "uniquePts": 17408,
+        "duplicatePts": 451,
+        "backwardPts": 0,
+        "sequenceGaps": 0,
+        "sessionChanges": 0,
+        "clockRollbacks": 0,
+        "lastPts": 1124628049492,
+        "lastNs": 1792651084740002619,
+        "lastSequence": 33737,
+        "session": "f4063823-123e-4fce-a227-c75ba833f1bf",
+        "lastBasis": "source-rtcp"
+      },
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+        "frames": 5953,
+        "uniquePts": 5953,
+        "duplicatePts": 0,
+        "backwardPts": 0,
+        "sequenceGaps": 0,
+        "sessionChanges": 0,
+        "clockRollbacks": 0,
+        "lastPts": 1124768871521,
+        "lastNs": 1792651085109316025,
+        "lastSequence": 11155,
+        "session": "37525ce3-1757-4bb4-a6b8-b67cdf3895c6",
+        "lastBasis": "source-rtcp"
+      }
+    },
+    "lastMetrics": {
+      "sources": {
+        "291399aa-a062-43b6-badc-48c34bc08237": {
+          "status": "live",
+          "basis": "source-rtcp",
+          "sourceTimeNs": "1792651084740002619",
+          "sessionId": "f4063823-123e-4fce-a227-c75ba833f1bf",
+          "clockToWallRatio": 1.0007701117701382,
+          "trustedSourceAgeSeconds": 0.46648335456848145,
+          "clockStalledForSeconds": 0.0,
+          "windowFrames": 951,
+          "windowDuplicateFraction": 0.012618296529968454,
+          "frames": 17859,
+          "uniquePts": 17408
+        },
+        "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+          "status": "live",
+          "basis": "source-rtcp",
+          "sourceTimeNs": "1792651085109316025",
+          "sessionId": "37525ce3-1757-4bb4-a6b8-b67cdf3895c6",
+          "clockToWallRatio": 1.0010073890377622,
+          "trustedSourceAgeSeconds": 0.09716987609863281,
+          "clockStalledForSeconds": 0.0,
+          "windowFrames": 317,
+          "windowDuplicateFraction": 0.0,
+          "frames": 5953,
+          "uniquePts": 5953
+        }
+      },
+      "minimumAvailableGiB": 24.174129486083984,
+      "nativeActive": true,
+      "nativeRevision": 53,
+      "warmedUp": true
+    },
+    "maximumTrustedSourceAgeSeconds": {
+      "291399aa-a062-43b6-badc-48c34bc08237": 0.5671052932739258,
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.25023746490478516
+    },
+    "maximumDuplicateFractions": {
+      "291399aa-a062-43b6-badc-48c34bc08237": 0.0759493670886076,
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+    },
+    "maximumPostWarmupDuplicateFractions": {
+      "291399aa-a062-43b6-badc-48c34bc08237": 0.045168067226890755,
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+    },
+    "lastClockToWallRatios": {
+      "291399aa-a062-43b6-badc-48c34bc08237": 1.0007701117701382,
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 1.0010073890377622
+    },
+    "askEnabled": false,
+    "scheduledAskCount": 0,
+    "asks": [],
+    "pauseOnFailure": false,
+    "pauseReceipts": [],
+    "samplesFile": ".spark/city/runtime/medium-arena2-three-ask-monitor-20261022T0628Z/samples.ndjson",
+    "samplesSha256": "2a49a44f41cdd3acb20ea93879b6a02e0950c93b50633272a6bcf2926781d93f",
+    "monitorSourceSha256": "3602c3ffc1256afa65a5f11161b51e3de7ae42a8fccba01cef3bf47da53da1fe",
+    "criteria": {
+      "minimumReserveGiB": 20,
+      "warmupSeconds": 15,
+      "sampleEverySeconds": 5,
+      "clockWindowSeconds": 30,
+      "clockRatioBounds": [
+        0.9,
+        1.1
+      ],
+      "maximumDuplicateFraction": 0.05,
+      "trustSourceRtcpUtc": true,
+      "maximumSourceAgeSeconds": 5
+    },
+    "scope": "Concurrent pipeline stability and optional real UI Ask qualification; not engine latency, semantic event accuracy, browser-frame latency or final-city/MV3DT qualification."
+  },
+  "vios": {
+    "setting": "MALLOC_ARENA_MAX=2",
+    "cpuLimit": 2,
+    "memoryLimitMiB": 2048,
+    "firstSample": {
+      "at": "2026-10-22T06:28:09.899746+00:00",
+      "memoryMiB": 311.60546875
+    },
+    "lastSample": {
+      "at": "2026-10-22T06:38:05.206498+00:00",
+      "memoryMiB": 1062.80859375
+    },
+    "maximumMemoryMiB": 1068.6015625
+  },
+  "sourceReceipts": [
+    {
+      "path": ".spark/city/runtime/medium-arena2-three-ask-20261022T0630Z/receipt.json",
+      "sha256": "25c3c024116056fece0473d633cbd6be12f22f28a7f7853cedf334167affe747"
+    },
+    {
+      "path": ".spark/city/runtime/medium-arena2-three-ask-monitor-20261022T0628Z/receipt.json",
+      "sha256": "76645d9f868d9e0ce6007e89815987555e0719f29cbccc2949b2d34f6237ec27"
+    },
+    {
+      "path": ".spark/city/runtime/medium-arena2-three-ask-monitor-20261022T0628Z/samples.ndjson",
+      "sha256": "2a49a44f41cdd3acb20ea93879b6a02e0950c93b50633272a6bcf2926781d93f"
+    }
+  ],
+  "limits": [
+    "Ten minutes only; final endurance and correlated-preview runtime remain pending.",
+    "Preview concurrency and UI changed since the prior allocator investigation; this is not a controlled causal estimate of MALLOC_ARENA_MAX alone.",
+    "Bounded CPU frontend/native tests overlapped late monitoring.",
+    "Successful grounded flags and byte delivery do not score answer semantics."
+  ]
+}

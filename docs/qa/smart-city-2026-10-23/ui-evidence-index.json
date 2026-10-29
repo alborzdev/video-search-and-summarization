@@ -1,0 +1,42 @@
+{
+  "screenshots": [
+    "live-presentation-desktop.jpg",
+    "live-ask-desktop.jpg"
+  ],
+  "verified": [
+    "two exact analyzed previews",
+    "static map registered in metres",
+    "map zoom and linked track selection",
+    "six enabled rules visible in editor",
+    "both cameras produce actual five-second Cosmos answers",
+    "both returned evidence clips ready at 1280x720",
+    "Now/Ask/Reports and Presentation Mode",
+    "1920x1080,1366x900,390x844 document widths without horizontal overflow",
+    "JSON/CSV report endpoints returned 99 source-scoped event rows"
+  ],
+  "limits": [
+    "Historical live-event clips remain unavailable",
+    "In-app browser download event timed out; endpoint payloads passed",
+    "VLM semantic accuracy and raw browser capture-clock latency are not qualified"
+  ],
+  "fileHashes": {
+    "static-map-capture.json": "b79eca35c0e17db58a40b9c2e7f2a15030d62a74cf7f0f2a3452be298d16363a",
+    "responsive-layout.json": "6438b0dd281e70a19e98cd4ea8d28e91c0e574c2f4d38cc67180589de4eb20a3",
+    "live-ask-northeast.json": "e10cb6cfeb3619bd64469ed61b8891250072052f99d870bfa1633f3a0451f956",
+    "ui-package.json": "89e00f7e3a801e7b385dc5684e51b6980c99c43379a89ce305d5989b029558a5",
+    "live-presentation-desktop.jpg": "b6b07debc5d08f8d40e4b92d16df487b079a0e70a33b9cb6881a8cab7adda410",
+    "mv3dt-road-plane-comparison.json": "5360eb5ac49316b688d257bc25a4305200cd6732e6ec7f6f54fbe842382fe255",
+    "fusion-promotion-gates.json": "678d5b6f22b3ec10f05e75e5b88c91f2e5e2cd6bdf22fa0d465509669c12bb7d",
+    "live-ask-desktop.jpg": "dcb811e1e792d0bd9ad4655abe4bf24bb86e13a5a670b79f7cbd92917e82fc8f",
+    "applied-rules.json": "5db2dacc7db7c8f2de55df24d374ea541bbe1fc919bc3fe8f95b669db8860966",
+    "live-ask-browser.json": "364968799e026f02ac80fa1739fd8523a35346e137ff2de1f7b06154d8ce9009",
+    "report-export-api.json": "3e505c309235aadc4970be3618b83b30bb5a9623a2c98db036e88728990cf0fc",
+    "cpu-checks.json": "9fe42dee392a91dd9b16e242c97faf203c04eb6e814524c0b8e1675d19fff935",
+    "applied-site.json": "58b4cb8910209e0f68895da2c1f86c1b867f06edf80f532ce110dd49a0cec1e5",
+    "northeast-evidence-playback.json": "b66b81d4dc50a937be581e2010040a8915f9fe0173ab5d8556632193e9eb1000",
+    "mv3dt-person-plane-comparison.json": "a73106219ab1d92d696c004c7c67324fa2b22e2ca499c989184f702cabc952bf",
+    "native-policy-runtime.json": "983cda6129a7b07c36ea9f2d2193e4c45a8b9d48c6e282f659cab7afb139c2ec",
+    "ground-association-comparison.json": "826956177a4d2560b8e51f100ff19f470b2f845374555edc5bd7109aef152c12",
+    "deployment-identities.json": "fa86bbd7ba181764023f7308f8923c5af55b1900349979811fbdebff3d8cc325"
+  }
+}

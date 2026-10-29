@@ -1,0 +1,6 @@
+{
+  "tools/moondream/gb10_compat.py": "bf4e934ad13a1d0f014597928ff320d0e60e8880f24e548101bdd471a535925b",
+  "tools/moondream/measure.py": "0f636cd0f016391d3d72ee62ea47d107f3c417c2df5f993ad9ef6a298953beab",
+  "tools/moondream/check_gpu.py": "d9cb6f5ff9e76137857364fcfc6700b98be8e0302cb0e6845092697934a1e60c",
+  "tools/moondream/test_gb10_compat.py": "bb1228ef3cf18b79e01252576e5d3953f86198cd19978fddd11a912bc75561fc"
+}

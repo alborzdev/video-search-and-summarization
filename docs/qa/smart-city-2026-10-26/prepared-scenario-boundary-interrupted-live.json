@@ -1,0 +1,134 @@
+{
+  "date": "2026-10-26",
+  "writtenAt": "2026-10-26T14:56:38.158860+00:00",
+  "qualification": "Partial live reset/Ready evidence only; full scenario Play acceptance interrupted by human-requested detection pause in another chat. No scenario Play qualification.",
+  "candidateImagePrefix": "11019c98ba9b",
+  "runId": "6dc5fbe04c174562a4699baff0c49b16",
+  "scenarioId": "queue-recovery",
+  "nativeResetAck": {
+    "schemaVersion": "city.scenario-boundary.v1",
+    "status": "applied",
+    "trackingEpoch": "e46ccd22-402d-4aaa-a59b-ee4070b7e60e",
+    "afterCaptureNs": "1793026412557401457",
+    "appliedAtNs": "1793026412664718494",
+    "trackerStages": 2,
+    "method": "serialized-nvtracker-stream-reset",
+    "sourceClockReset": false,
+    "error": "",
+    "sourceIds": [
+      "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+    ]
+  },
+  "nativeObservationEvidence": {
+    "path": "/home/sparkdev/vss/.spark/city/state/live-observations.ndjson",
+    "rows": 599,
+    "sources": {
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "sourceSessions": [
+          "234dc93b-a9c9-4dd3-9b23-63f205103921"
+        ],
+        "rows": 300,
+        "beforeResetRows": 134,
+        "afterResetRows": 166,
+        "last": {
+          "sequence": 339,
+          "sourceTimeNs": 1793026422884943655,
+          "rawSourcePtsNs": 30013559881,
+          "frameCounter": 268456,
+          "trackingEpoch": "e46ccd22-402d-4aaa-a59b-ee4070b7e60e",
+          "fusionEpoch": "7e438949-f549-4634-ac7a-6b38284a5fbe"
+        },
+        "lastBeforeReset": {
+          "sequence": 173,
+          "sourceTimeNs": 1793026412575672395,
+          "rawSourcePtsNs": 19704282103,
+          "frameCounter": 268290,
+          "trackingEpoch": null,
+          "fusionEpoch": "63d62dc3-07d1-4bb6-8321-22325f094a38"
+        },
+        "firstAfterReset": {
+          "sequence": 174,
+          "sourceTimeNs": 1793026412626846188,
+          "rawSourcePtsNs": 19755448770,
+          "frameCounter": 268291,
+          "trackingEpoch": "e46ccd22-402d-4aaa-a59b-ee4070b7e60e",
+          "fusionEpoch": "7e438949-f549-4634-ac7a-6b38284a5fbe"
+        },
+        "firstAfterResetMinusFloorNs": 69444731
+      },
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "sourceSessions": [
+          "d86d2a6f-2e27-47dd-8fb9-ff1ba0573c55"
+        ],
+        "rows": 299,
+        "beforeResetRows": 133,
+        "afterResetRows": 166,
+        "last": {
+          "sequence": 339,
+          "sourceTimeNs": 1793026422884542007,
+          "rawSourcePtsNs": 30504623023,
+          "frameCounter": 268456,
+          "trackingEpoch": "e46ccd22-402d-4aaa-a59b-ee4070b7e60e",
+          "fusionEpoch": "7e438949-f549-4634-ac7a-6b38284a5fbe"
+        },
+        "lastBeforeReset": {
+          "sequence": 173,
+          "sourceTimeNs": 1793026412575318907,
+          "rawSourcePtsNs": 20195423023,
+          "frameCounter": 268290,
+          "trackingEpoch": null,
+          "fusionEpoch": "63d62dc3-07d1-4bb6-8321-22325f094a38"
+        },
+        "firstAfterReset": {
+          "sequence": 174,
+          "sourceTimeNs": 1793026412626291325,
+          "rawSourcePtsNs": 20246400801,
+          "frameCounter": 268291,
+          "trackingEpoch": "e46ccd22-402d-4aaa-a59b-ee4070b7e60e",
+          "fusionEpoch": "7e438949-f549-4634-ac7a-6b38284a5fbe"
+        },
+        "firstAfterResetMinusFloorNs": 68889868
+      }
+    },
+    "errors": [],
+    "checks": [
+      "exact source-native-sei capture timestamp and AU PTS proof for every retained row",
+      "monotonic source timestamp, frame counter, PTS and consecutive sequence per unchanged source session",
+      "new tracking/fusion epoch begins after requested capture floor; no old epoch resumes"
+    ]
+  },
+  "gatewayReadyEvidence": {
+    "readyAtNs": "1793026413971625724",
+    "settling": {
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "frames": 166,
+        "observedSeconds": 10.258097467
+      },
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "frames": 166,
+        "observedSeconds": 10.258250682
+      }
+    },
+    "basis": "Recorded gateway state retains successful readyAtNs, native reset ack and sample qualification; monitoring started after source pause."
+  },
+  "interruption": {
+    "cause": "Parent confirmed human requested pause detections in another chat at 14:53 UTC; remove-source calls occurred at 14:53:42/44 UTC.",
+    "result": "Readiness failed closed after source removal. Parent performed actor recovery; recovery settle then timed out with sources still intentionally paused.",
+    "errorsExpectedFromPause": [
+      "ready-camera-continuity-lost-or-stale; recover and settle again",
+      "post-reset-camera-settling-timeout"
+    ]
+  },
+  "readOnlyMonitor": {
+    "durationSeconds": 100.013,
+    "samples": 101,
+    "errors": [],
+    "gatedTracksMax": 0,
+    "gatedMetricsMax": 0,
+    "livePreviewSamples": 0,
+    "note": "Monitor started after sources were removed, so did not requalify exact previews during reset. Stopped on parent request.",
+    "temporaryReceipt": "/tmp/prepared-boundary-readonly-monitor.json"
+  },
+  "operations": "Only GET requests, Docker logs/inspect, reads of native observation/ack files, temporary receipt creation and stopping own monitor. No runtime/source/service/UI mutation by reviewer."
+}

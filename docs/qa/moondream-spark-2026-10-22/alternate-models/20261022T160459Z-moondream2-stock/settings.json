@@ -1,0 +1,13 @@
+{
+  "child": false,
+  "compat": false,
+  "tasks": "segment",
+  "image": null,
+  "model": "moondream2",
+  "model_path": "/home/sparkdev/vss/.spark/moondream-photon/hf-cache/models--vikhyatk--moondream2/snapshots/5d6c926f44e26b07957b0dd315bbedcb4c17a5fe/model.safetensors",
+  "cases": ".spark/moondream-photon/segment-cases.json",
+  "object": "metal panel",
+  "probe_md2_segment": true,
+  "prompt": "Describe the object lying on the concrete.",
+  "timeout": 600
+}

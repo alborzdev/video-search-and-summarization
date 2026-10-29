@@ -1,0 +1,87 @@
+{
+  "audit_date": "2026-10-22",
+  "mode": "CPU-only saved-token replay; no model inference or service changes",
+  "source_sha256": {
+    ".spark/moondream-photon/venv/lib/python3.12/site-packages/kestrel/utils/svg.py": "f4f8c49307c61660f9c5b23ab12fd6849384d36d330d8158599f03e65942a941",
+    "tools/moondream/reference_decode.py": "1a9da1c48794c1f833f33dea203d5e3816672c37ffe2a0eb7eb7fe62c1ca0b93",
+    "tools/moondream/mask_artifacts.py": "8e5f66090cb20d1963fae1e8964e42a87937f2ccdc3c05498eac6c08a27df109",
+    "docs/qa/moondream-spark-2026-10-22/non-photon/20261022T171044Z-preview-pytorch-reference/inference.jsonl": "3327c4024028541491cf3dd35ca23a3a1d10f34017026a3631a60a2f244d45b7",
+    ".spark/moondream-photon/hf-cache/models--moondream--starmie-v1/blobs/b34d2539188d02eda1a1a23a1ec575349fb12518": "0512fdcac4a5f9e7746cbefce4a468dc93bf0f93f11e701b84f8b31bff199e9c"
+  },
+  "checks": [
+    {
+      "case": "person-point-conditioned",
+      "decoded_token_lists_equal": true,
+      "saved_path_matches_independent_parser": true,
+      "official_raster_bbox": [
+        238,
+        112,
+        273,
+        222
+      ],
+      "independent_raster_bbox": [
+        238,
+        112,
+        273,
+        222
+      ],
+      "binary_iou_between_parsers": 1.0,
+      "changed_binary_pixels": 0,
+      "max_alpha_difference": 17,
+      "path_control_hull_in_bbox_units": [
+        -0.03125,
+        0.0104166667,
+        0.917708333,
+        0.995833333
+      ],
+      "model_bbox": {
+        "x_min": 0.37501712143421173,
+        "y_min": 0.3101299852132797,
+        "x_max": 0.42967037856578827,
+        "y_max": 0.6156512647867203
+      },
+      "bbox_was_clipped": false,
+      "finish_reason": "eos",
+      "output_tokens": 84,
+      "explicit_z_svg_end_eos": true,
+      "note": "Agreement between parsers is not agreement with ground truth."
+    },
+    {
+      "case": "box-point-conditioned",
+      "decoded_token_lists_equal": true,
+      "saved_path_matches_independent_parser": true,
+      "official_raster_bbox": [
+        401,
+        185,
+        517,
+        271
+      ],
+      "independent_raster_bbox": [
+        401,
+        185,
+        517,
+        271
+      ],
+      "binary_iou_between_parsers": 0.9994632889652211,
+      "changed_binary_pixels": 5,
+      "max_alpha_difference": 17,
+      "path_control_hull_in_bbox_units": [
+        -0.00520833333,
+        -0.00729166667,
+        0.975,
+        1.00208333
+      ],
+      "model_bbox": {
+        "x_min": 0.6278266608715057,
+        "y_min": 0.5155256241559982,
+        "x_max": 0.8116264641284943,
+        "y_max": 0.7500993758440018
+      },
+      "bbox_was_clipped": false,
+      "finish_reason": "eos",
+      "output_tokens": 61,
+      "explicit_z_svg_end_eos": true,
+      "note": "Agreement between parsers is not agreement with ground truth."
+    }
+  ]
+}

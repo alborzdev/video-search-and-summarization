@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-23T16:25:48.322564+00:00",
+  "status": "interrupted-not-qualified",
+  "reason": "Combined soak exec command session ended with exit143 after 542.7s; actual soak process absent and no final pass receipt. Runtime services remained live. Companion observers deliberately interrupted to start all three with detached systemd supervision.",
+  "lastProgress": {
+    "at": "2026-10-23T16:24:47.652774+00:00",
+    "elapsedSeconds": 542.6972372690216,
+    "sampleCount": 104,
+    "completedAsks": 0,
+    "askPending": false,
+    "status": "running"
+  },
+  "runtimeChanged": false,
+  "replacement": "fresh full2100s run in separate user-systemd transient units",
+  "noPassClaim": true
+}

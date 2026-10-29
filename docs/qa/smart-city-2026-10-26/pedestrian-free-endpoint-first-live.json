@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "city.pedestrian-free-endpoint-first-live.v1",
+  "wholeEpisodePassed": false,
+  "sourceTrace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-free-endpoint-final-v3-ui.ndjson",
+  "traceSha256": "1beabc0e8b2bc55f465f6767185464968f00d3654c835656d386c83d511b2897",
+  "runId": "0e7c5b62f64f4b18:000001",
+  "state": "failed",
+  "reason": "pedestrian-native-action-refused",
+  "elapsedWallSeconds": 41.34408915089443,
+  "restored": true,
+  "lastPreparation": {
+    "owner": "0e7c5b62f64f4b18:000001/walker",
+    "character": "Character",
+    "pc": 0,
+    "state": "waiting",
+    "acceptedTaskIds": [
+      584
+    ],
+    "reason": null,
+    "phase": "waiting",
+    "positionM": [
+      -11.047933578491211,
+      88.08696746826172,
+      0.037641871720552444
+    ],
+    "goalM": [
+      -11.2,
+      88.4,
+      0.0
+    ],
+    "entryM": [
+      -11.2,
+      88.4,
+      0.0
+    ],
+    "exitM": null,
+    "entryArrivalVerified": true,
+    "atEntry": false,
+    "endpointArrivalVerified": false,
+    "nativeTaskStatus": "RUNNING",
+    "arrivalEvidence": {
+      "sequence": 2,
+      "basis": "already-near-requested-goal",
+      "simTime": 1278.666666666161,
+      "taskId": null,
+      "nativeStatus": null,
+      "nativeError": null,
+      "positionM": [
+        -11.164328575134277,
+        88.20427703857422,
+        0.03647427633404732
+      ],
+      "requestedGoalM": [
+        -11.2,
+        88.4,
+        0.0
+      ],
+      "xyErrorM": 0.19894704868690796,
+      "zErrorM": 0.03647427633404732,
+      "xyToleranceM": 0.25,
+      "zToleranceM": 0.15
+    },
+    "observedArrival": false,
+    "arrivalToleranceM": 0.35,
+    "crossingRequest": {
+      "owner": "0e7c5b62f64f4b18:000001/walker",
+      "crosswalkId": "XW_E",
+      "signalGroup": "ped_cross_EW",
+      "points": [
+        [
+          -11.2,
+          79.2,
+          0.0
+        ],
+        [
+          -11.2,
+          71.0,
+          0.0
+        ]
+      ],
+      "requestedSimTime": 1278.666666666161,
+      "epoch": 7,
+      "generation": 3
+    },
+    "cohortAdmission": null
+  },
+  "nativePlanProofs": {},
+  "remainingRepair": "Re-approach the original verified curb point after dynamic waiting drift, with original finite time and tolerance."
+}

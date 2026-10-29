@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "city.rtsp-fixture-derivative.v1",
+  "createdAt": "2026-10-22T05:06:26.886891+00:00",
+  "source": "pedestrian-sample.mp4",
+  "sourceSha256": "93fed8e88e90491a411195b48ed7c55c330f0f255b030ce58cf0fa52c9f5768f",
+  "output": "pedestrian-replay-single-slice.mp4",
+  "outputSha256": "6c418cac4f3280bb942c3295e206e4b593833e0df293e4eb1b73d785d7650766",
+  "purpose": "recorded-video-RTSP-replay-fixture",
+  "encoder": "CPU libx264",
+  "pyavVersion": "19.0.2",
+  "width": 768,
+  "height": 576,
+  "frames": 795,
+  "fps": 10,
+  "firstMediaTimeSeconds": 0.0,
+  "lastMediaTimeSeconds": 79.4,
+  "x264Params": "slices=1:sliced-threads=0:keyint=10:min-keyint=10:scenecut=0:bframes=0:force-cfr=1",
+  "maximumVclSlicesPerFrame": 1,
+  "bFrames": 0,
+  "keyFrameInterval": 10,
+  "qualification": "Canonical integration encoding; arbitrary multi-slice VIOS inputs remain unqualified."
+}

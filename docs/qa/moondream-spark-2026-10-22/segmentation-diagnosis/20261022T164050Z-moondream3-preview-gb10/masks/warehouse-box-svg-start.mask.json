@@ -1,0 +1,32 @@
+{
+  "valid_mask": true,
+  "quality_validated": false,
+  "image_size": [
+    640,
+    360
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.625,
+    "x_max": 0.8125,
+    "y_min": 0.515625,
+    "y_max": 0.7578125
+  },
+  "artifacts": {
+    "mask": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T164050Z-moondream3-preview-gb10/masks/warehouse-box-svg-start.mask.png",
+    "svg": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T164050Z-moondream3-preview-gb10/masks/warehouse-box-svg-start.mask.svg",
+    "overlay": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T164050Z-moondream3-preview-gb10/masks/warehouse-box-svg-start.overlay.png",
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T164050Z-moondream3-preview-gb10/masks/warehouse-box-svg-start.mask.json"
+  },
+  "nonzero_pixels": 10369,
+  "mask_fraction": 0.04500434027777778,
+  "alpha_weighted_fraction": 0.04403637322984749,
+  "raster_bbox": [
+    399,
+    185,
+    519,
+    273
+  ],
+  "status": "nonempty_mask"
+}

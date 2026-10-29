@@ -1,0 +1,46 @@
+{
+  "acceptedForImplementation": true,
+  "authority": "User explicitly authorized autonomous design/implementation iteration; agent selected concepts after reviewing every generated screen.",
+  "referenceNativeSize": [
+    1672,
+    941
+  ],
+  "concepts": [
+    "events-reports.png",
+    "deployment-brief.png",
+    "find-clips.png",
+    "scenario-preparing.png",
+    "scenario-guide.png",
+    "measurements.png",
+    "ask-scene.png",
+    "zone-editor.png",
+    "overview.png",
+    "edge-ai.png"
+  ],
+  "copySource": "prompts.json",
+  "intentionalDeviations": [
+    "Actual camera frames, calibrated geometry, current source names, dates, counts and evidence states replace generated illustrations.",
+    "Generated table values, timeline times and example customer requirements are not analytics or preset customer facts.",
+    "Do not invent event-linked evidence thumbnails when no exact corresponding retained frame exists.",
+    "Keep all supported object classes and existing stopped-speed conditions; the concept Any speed control is not valid stopped-vehicle configuration.",
+    "Use native video controls for real playback. No decorative or fake progress.",
+    "Use genuine captured simulator images, labelled as demo examples on the explanatory page, in place of generated street photographs.",
+    "Existing uncertainty, source/run/epoch matching, scope and coverage guards take precedence over illustrative concept copy."
+  ],
+  "completionChecks": [
+    "Compare actual screenshots against every concept with view_image",
+    "Check native1672x941 and tradeshow1920x1080, compact desktop and mobile",
+    "Read and exercise every Smart City view, all five scenario flows, cancellation, search, Ask/evidence playback, event replay, exports, area editor cancellation and pilot brief download",
+    "Perform at least two visitor walkthrough/fix cycles; preserve every failed run and distinguish native scenario success from camera measurement evidence"
+  ],
+  "additionalSceneReportDesign": {
+    "image": "scene-reports.png",
+    "acceptedWithin": "User-authorized autonomous design iteration",
+    "implementation": "CitySceneReports",
+    "exceptions": [
+      "Use Recorded scenes, never assume all archived observations completed.",
+      "Actual run/source/clock values only.",
+      "Historical evidence remains separate from live views."
+    ]
+  }
+}

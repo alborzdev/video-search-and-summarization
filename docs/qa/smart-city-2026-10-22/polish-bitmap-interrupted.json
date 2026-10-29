@@ -1,0 +1,219 @@
+{
+  "schemaVersion": "city.soak-result.v1",
+  "siteId": "recorded-traffic-tests",
+  "sourceIds": [
+    "291399aa-a062-43b6-badc-48c34bc08237",
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9"
+  ],
+  "startedAt": "2026-10-22T15:07:00.590934+00:00",
+  "finishedAt": "2026-10-22T15:09:10.666654+00:00",
+  "requestedSeconds": 1200.0,
+  "wallSeconds": 130.07572458544746,
+  "sampleCount": 23,
+  "passed": false,
+  "failure": "monitor-interrupted",
+  "minimumAvailableGiB": 41.15594482421875,
+  "frames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": {
+      "frames": 3427,
+      "uniquePts": 3427,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 2330358495307,
+      "lastNs": 1792681734550309036,
+      "lastSequence": 69726,
+      "session": "21b8cd9b-b846-46b2-9a5a-3a921327c156",
+      "lastBasis": "source-rtcp"
+    },
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+      "frames": 1142,
+      "uniquePts": 1142,
+      "duplicatePts": 0,
+      "backwardPts": 0,
+      "sequenceGaps": 0,
+      "sessionChanges": 0,
+      "clockRollbacks": 0,
+      "lastPts": 2330488152106,
+      "lastNs": 1792681734709309942,
+      "lastSequence": 23251,
+      "session": "785c7d09-c990-44db-b621-94f43092383e",
+      "lastBasis": "source-rtcp"
+    }
+  },
+  "observationRotations": 0,
+  "lastMetrics": {
+    "sources": {
+      "291399aa-a062-43b6-badc-48c34bc08237": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792681734550309036",
+        "sessionId": "21b8cd9b-b846-46b2-9a5a-3a921327c156",
+        "clockToWallRatio": 0.99805046485513,
+        "trustedSourceAgeSeconds": 0.2542266845703125,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 930,
+        "windowDuplicateFraction": 0.0,
+        "frames": 3427,
+        "uniquePts": 3427
+      },
+      "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+        "status": "live",
+        "basis": "source-rtcp",
+        "sourceTimeNs": "1792681734709309942",
+        "sessionId": "785c7d09-c990-44db-b621-94f43092383e",
+        "clockToWallRatio": 0.9986919351892067,
+        "trustedSourceAgeSeconds": 0.09522581100463867,
+        "clockStalledForSeconds": 0.0,
+        "windowFrames": 310,
+        "windowDuplicateFraction": 0.0,
+        "frames": 1142,
+        "uniquePts": 1142
+      }
+    },
+    "minimumAvailableGiB": 41.15594482421875,
+    "nativeActive": true,
+    "nativeRevision": 105,
+    "warmedUp": true,
+    "processedPreview": {
+      "ready": true,
+      "acceptedFrames": 65070,
+      "nativeDeliveryAgeSeconds": 0.11536312103271484,
+      "sources": {
+        "291399aa-a062-43b6-badc-48c34bc08237": {
+          "available": true,
+          "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+          "sessionId": "21b8cd9b-b846-46b2-9a5a-3a921327c156",
+          "sourceSessionId": "21b8cd9b-b846-46b2-9a5a-3a921327c156",
+          "sequence": "69730",
+          "sourceTimeNs": "1792681734683583302",
+          "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+          "width": 1920,
+          "height": 1080,
+          "jpegWidth": 1920,
+          "jpegHeight": 1080,
+          "envelopeBytes": 296371,
+          "jpegBytes": 189905,
+          "envelopeSha256": "4eb503a02ecc57881baf208e5de7a220c217bdf6482a37904ec87c654917fd96",
+          "jpegSha256": "c7fb7646fce20c4f35665e30bf8cc26560e7770c5b91a4fd3bb76c94ee711304",
+          "fetchedAtMonotonic": 3109586.142681753,
+          "nativeCounters": {
+            "selected": 34898,
+            "encoded": 34898,
+            "published": 34894,
+            "rateDropped": 35010,
+            "sourceQueueOverruns": 0,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "geometryMismatch": 0,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 4,
+            "postFailed": 0,
+            "pendingDropped": 0
+          },
+          "identityStalledForSeconds": 0.0,
+          "publishedStalledForSeconds": 0.0,
+          "successfulFetches": 23
+        },
+        "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": {
+          "available": true,
+          "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+          "sessionId": "785c7d09-c990-44db-b621-94f43092383e",
+          "sourceSessionId": "785c7d09-c990-44db-b621-94f43092383e",
+          "sequence": "23253",
+          "sourceTimeNs": "1792681734909309280",
+          "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+          "width": 768,
+          "height": 576,
+          "jpegWidth": 768,
+          "jpegHeight": 576,
+          "envelopeBytes": 68450,
+          "jpegBytes": 49509,
+          "envelopeSha256": "540e3a68caf4379478a4474490d3ef077d86e7e7470019d53b368c73299e4dda",
+          "jpegSha256": "2d7de2ff7658d25deddfc9fdc6edc0f9d45300f7c3ab4444d3fbc882670a9628",
+          "fetchedAtMonotonic": 3109586.158219052,
+          "nativeCounters": {
+            "selected": 22532,
+            "encoded": 22532,
+            "published": 22532,
+            "rateDropped": 772,
+            "sourceQueueOverruns": 0,
+            "identityMissing": 0,
+            "identityEvicted": 0,
+            "geometryMismatch": 0,
+            "oversizeDropped": 0,
+            "networkQueueDropped": 0,
+            "postFailed": 0,
+            "pendingDropped": 0
+          },
+          "identityStalledForSeconds": 0.0,
+          "publishedStalledForSeconds": 0.0,
+          "successfulFetches": 23
+        }
+      },
+      "epochResetsDuringWarmup": 0
+    }
+  },
+  "maximumTrustedSourceAgeSeconds": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.26448678970336914,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.12544798851013184
+  },
+  "maximumDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.0,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "maximumPostWarmupDuplicateFractions": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.0,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.0
+  },
+  "lastClockToWallRatios": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 0.99805046485513,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 0.9986919351892067
+  },
+  "requireProcessedPreview": true,
+  "askEnabled": true,
+  "scheduledAskCount": 0,
+  "asks": [],
+  "pauseOnFailure": true,
+  "pauseReceipts": [
+    {
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "action": "pause",
+      "state": "paused",
+      "requestCompleted": true
+    },
+    {
+      "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "action": "pause",
+      "state": "paused",
+      "requestCompleted": true
+    }
+  ],
+  "samplesFile": "private runtime samples retained",
+  "samplesSha256": "892c6d1e73b1a706709d5ba91b2e98147eff7ca905ba301196dcaa5c5a5bb3d2",
+  "monitorSourceSha256": "53367510c4b96a3a418244ad7681000ea2b74e286dcdd987d08fb42ca4266816",
+  "criteria": {
+    "minimumReserveGiB": 20,
+    "warmupSeconds": 15,
+    "sampleEverySeconds": 5,
+    "processedPreview": {
+      "required": true,
+      "fetchEverySeconds": 5,
+      "requestTimeoutSeconds": 3,
+      "maximumEnvelopeBytes": 2621444,
+      "staleSeconds": 5
+    },
+    "clockWindowSeconds": 30,
+    "clockRatioBounds": [
+      0.9,
+      1.1
+    ],
+    "maximumDuplicateFraction": 0.05,
+    "trustSourceRtcpUtc": true,
+    "maximumSourceAgeSeconds": 5
+  },
+  "scope": "Concurrent pipeline stability and optional real UI Ask qualification; not engine latency, semantic event accuracy, browser-frame latency or final-city/MV3DT qualification.",
+  "interpretation": "Interrupted by a termination signal before the requested duration. Sender not established. Both source-scoped pause requests completed. No pass claimed."
+}

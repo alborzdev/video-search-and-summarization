@@ -1,0 +1,22 @@
+{
+  "status": "blocked_at_gpu_warmup",
+  "model": "moondream3.1-9B-A2B",
+  "revision": "1da27e6c2d2f9118de14560df456881dc62d91f3",
+  "checkpoint_sha256": "26dde16af961d3a486c7b86b9a34fc8487be7917f7e62324b751400ef4d391b4",
+  "checkpoint_bytes": 10505269576,
+  "gpu": "NVIDIA GB10",
+  "compute_capability": "12.1",
+  "batch_size": 1,
+  "kv_cache_pages": 4096,
+  "cuda_graphs": false,
+  "prefix_cache": false,
+  "saved_reserve_gib": 20,
+  "host_available_start_gib": 60.45793914794922,
+  "host_available_min_gib": 41.75517272949219,
+  "host_available_change_gib": 18.70276641845703,
+  "gpu_memory_single_observation_mib": 14458,
+  "gpu_memory_observation_is_peak": false,
+  "successful_inference": false,
+  "segmentation_verified": false,
+  "error": "FP8 MoE is not supported by the padded compatibility runtime; CUDA FP8 requires a tuned compact or warpgemv CuTe config."
+}

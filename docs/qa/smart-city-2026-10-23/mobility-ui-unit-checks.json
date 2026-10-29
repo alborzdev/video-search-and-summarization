@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "city.mobility-ui-unit-checks.v1",
+  "recordedAt": "2026-10-23T17:54:22.545160+00:00",
+  "status": "targeted-source-tests-passed-parent-manages-live-deployment",
+  "features": [
+    "Insights tab integrated into the existing inspector, with four keyboard-navigable inspector tabs and no Ask input in Insights.",
+    "Compact topic selector shows one of Movements, Crossing access, Queues or Walking at a time. Individual gate counts are collapsed beneath complete movement journeys.",
+    "1/5/15-minute source-video report windows, camera-scoped coverage disclosure, actual movement class counts and incomplete journeys; no fabricated chart series or cross-camera totals.",
+    "Stopped-zone episodes and unioned confirmed-active time, explicitly labelled a lower bound that excludes candidate time and observation gaps.",
+    "Current estimated queue extent and lower bounds, spillback boundary, window maximum and human-readable quality reasons. Unknown or stale current evidence hides current values and removes the selected tail from the map.",
+    "Pedestrian wait samples/median/P95, current waiting/crossing occupancy when supported, completed/abandoned/returned/incomplete journeys and source-time limitations.",
+    "Editable movement, crossing and queue configuration uses existing enabled same-camera rules, class checks, expected configuration revision and clear API/conflict errors. Open drafts survive ordinary report polling.",
+    "Queue geometry can be entered numerically or supplied by the parent map picker through a three-point callback. No invented initial coordinates are used.",
+    "Late settings-save completion cannot close a newer editor; late map picks cannot mutate a closed or replaced setup context.",
+    "CSV and JSON exports carry selected window, camera scope and observed coverage; formula-like CSV names are neutralized.",
+    "Polling is single-flight, scheduled three seconds after the preceding request, bounded by an eight-second deadline, and paused/aborted in hidden tabs. Pending save is bounded at ten seconds and aborted on unmount/context refresh."
+  ],
+  "contract": {
+    "get": "GET /api/v1/city/mobility?windowMinutes=1|5|15",
+    "put": "PUT /api/v1/city/mobility/config",
+    "browserProxy": "/api/vision/city/mobility",
+    "schemaVersion": "city.mobility.v1",
+    "identityChecks": [
+      "siteId",
+      "siteRevision",
+      "mode",
+      "windowMinutes",
+      "per-camera-source-time",
+      "globalFusionEnabled=false",
+      "matching configuration revision"
+    ],
+    "configFields": [
+      "expectedRevision",
+      "movements",
+      "crossings",
+      "queues"
+    ],
+    "ownerContractConfirmed": "sprint_map_accuracy and sprint_runtime_audit supplied and confirmed response and configuration fields."
+  },
+  "validation": {
+    "command": "timeout 20s docker exec -w /workspace/apps/nv-metropolis-bp-vss-ui vss-agent-ui node ../../node_modules/jest/bin/jest.js --runInBand components/vision-intelligence/smart-city/__tests__/useMobility.test.tsx components/vision-intelligence/smart-city/__tests__/CityMobilityPanel.test.tsx",
+    "passed": 14,
+    "failed": 0,
+    "suites": 2,
+    "elapsedSeconds": 1.733,
+    "coverage": [
+      "Report identity/window rejection",
+      "Three-second polling and hidden-tab pause",
+      "Aborted/late report rejection",
+      "Expected revision and API conflict",
+      "Pending save cancellation on site change",
+      "Actual measure rendering and topic/map actions",
+      "Draft persistence during polling",
+      "Concurrent configuration revision conflict",
+      "Three-point queue map setup",
+      "Current evidence suppression and stale/removed map tail",
+      "Formula-safe camera-scoped CSV",
+      "Same-camera and class validation",
+      "Late save cannot close a newer settings editor"
+    ],
+    "syntax": "TypeScript transpile syntax and PostCSS parse passed before the last topic-layout refinement; the final component and hook were compiled by the passing ts-jest run.",
+    "appTypecheck": "Parent reported app tsc passed before the final topic-selector refinement. A final whole-app check and browser QA remain parent-owned."
+  },
+  "sourceSha256": {
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMobilityPanel.tsx": "36448032382fad3aa45f2421ec6586f358d299e4761f76c78352da4eb0ec578c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityMobility.module.css": "733a5d6e045c0d0ba38a09e4f17f37e9cb6eb9672dac323955b83015cf7c4563",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/useMobility.ts": "6ab56cc547a04320875036a080342fbb1b2d7fc91b7aea5209841e131c09e501",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mobilityTypes.ts": "82e4a8f019f49ad7f2c3a788de416760f70014d942f5b7b663e8d4ebdb217acf",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityInspector.tsx": "413acc66718d863cac60e061a34617d0cd407b7e2d9c9c052de44ddf22a4c687",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/CityMobilityPanel.test.tsx": "f806648b76ba6a9294213e568614a388960f8e052a6711eef74b8e5877d047c2",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/useMobility.test.tsx": "9e93ce8bdf1baa1f880468e3c81cfb9fef822f06752cd20b949a0adae5f2028f"
+  },
+  "runtimeBoundary": {
+    "actionsByThisAgent": {
+      "modelRequests": false,
+      "serviceRestarts": false,
+      "builds": false,
+      "browserActions": false
+    },
+    "deploymentOwner": "Parent agent is serving source through isolated hot reload at port 7782 and manages gateway, source restoration and preset activation.",
+    "claim": "This receipt is unit/source evidence. It does not establish model accuracy, scene calibration accuracy, live API/UI acceptance, throughput or endurance."
+  },
+  "remainingChecks": [
+    "Parent browser QA: real API report, configured default movement journeys, topic switching, gate disclosure, coverage, exports and accessible map focus.",
+    "Parent browser QA: settings save/revision response, three-point map drawing, numeric fields and clear error feedback.",
+    "Verify desktop, laptop and narrow-width layout with real measurement names and actual unknown states.",
+    "Confirm queue overlay updates with live reports and clears on stale evidence or leaving the queue topic.",
+    "Keep camera-local identity, estimated geometry, source-time semantics and unvalidated detector classes explicit. Signal delay and fused unique traveler counts are not implemented."
+  ]
+}

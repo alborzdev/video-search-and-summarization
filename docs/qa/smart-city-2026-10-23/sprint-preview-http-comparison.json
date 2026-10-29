@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "city.preview-http-comparison.v1",
+  "scope": "Sequential local front-door HTTP requests for existing processed previews; not GPU inference timing or capture-to-display latency. Source-mode sample already included proxy and cadence fixes. Different running scenes/track payloads and timing confound causal before/after comparison.",
+  "samples": {
+    "development": {
+      "path": ".spark/city/runtime/sprint-ui-dev-sample-20261023T1526Z/summary.json",
+      "sha256": "38c9d11da2db1eec5125d36f0a1ea026f83701107e75b8363b0eec39da4460f5",
+      "summary": {
+        "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+          "requests": 180,
+          "errors": 0,
+          "requestMsP50": 28.54301268234849,
+          "requestMsP95": 61.295864172279835,
+          "meanJsonBytes": 54186.555555555555
+        },
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+          "requests": 180,
+          "errors": 0,
+          "requestMsP50": 25.20378725603223,
+          "requestMsP95": 58.64007771015167,
+          "meanJsonBytes": 52181.99444444444
+        }
+      }
+    },
+    "production": {
+      "path": ".spark/city/runtime/sprint-ui-production-sample-20261023/summary.json",
+      "sha256": "df05031905dca010fb434a5ed635e6f22a9e3fcd326f8feb6acc36f02ab69338",
+      "summary": {
+        "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+          "requests": 180,
+          "errors": 0,
+          "requestMsP50": 7.268087938427925,
+          "requestMsP95": 87.42686035111547,
+          "meanJsonBytes": 67285.9388888889
+        },
+        "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+          "requests": 180,
+          "errors": 0,
+          "requestMsP50": 5.52552193403244,
+          "requestMsP95": 27.48152008280158,
+          "meanJsonBytes": 70189.5611111111
+        }
+      }
+    }
+  }
+}

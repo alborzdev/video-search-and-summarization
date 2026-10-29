@@ -1,0 +1,96 @@
+{
+  "config": {
+    "revision": 3,
+    "movements": [
+      {
+        "id": "northbound-through",
+        "name": "Northbound \u00b7 straight",
+        "entryRuleId": "cam_sw-northbound-line",
+        "exitRuleId": "mobility-isaac-north-exit",
+        "classes": [
+          "car",
+          "bus",
+          "truck",
+          "motorcycle",
+          "bicycle"
+        ]
+      },
+      {
+        "id": "northbound-left",
+        "name": "Northbound \u00b7 left",
+        "entryRuleId": "cam_sw-northbound-line",
+        "exitRuleId": "mobility-isaac-west-exit",
+        "classes": [
+          "car",
+          "bus",
+          "truck",
+          "motorcycle",
+          "bicycle"
+        ]
+      },
+      {
+        "id": "northbound-right",
+        "name": "Northbound \u00b7 right",
+        "entryRuleId": "cam_sw-northbound-line",
+        "exitRuleId": "mobility-isaac-east-exit",
+        "classes": [
+          "car",
+          "bus",
+          "truck",
+          "motorcycle",
+          "bicycle"
+        ]
+      }
+    ],
+    "crossings": [
+      {
+        "id": "south-crossing-west-east",
+        "name": "South crossing \u00b7 west to east",
+        "waitingRuleId": "mobility-isaac-south-waiting-west",
+        "crossingRuleId": "mobility-isaac-south-crossing-measurement"
+      },
+      {
+        "id": "south-crossing-east-west",
+        "name": "South pedestrian corridor \u00b7 east to west",
+        "waitingRuleId": "mobility-isaac-south-waiting-east",
+        "crossingRuleId": "mobility-isaac-south-crossing-measurement"
+      }
+    ],
+    "queues": [
+      {
+        "id": "northbound-queue",
+        "name": "Northbound approach",
+        "zoneRuleId": "mobility-isaac-northbound-queue",
+        "stopLine": [
+          [
+            -23.7,
+            63.8
+          ],
+          [
+            -20.2,
+            63.8
+          ]
+        ],
+        "upstreamPoint": [
+          -22.89410029498525,
+          50.0
+        ],
+        "spillbackDistanceM": 10.0,
+        "maxAnchorGapM": 8.0,
+        "stopLineReachM": 8.0,
+        "minimumDurationMs": 1500,
+        "maximumObservationGapMs": 1000
+      }
+    ],
+    "curbs": [
+      {
+        "id": "north-curbside-access",
+        "name": "North arm \u00b7 curbside access",
+        "zoneRuleId": "mobility-isaac-north-curbside-lane",
+        "role": "general",
+        "dwellThresholdMs": 30000,
+        "maximumObservationGapMs": 1000
+      }
+    ]
+  }
+}

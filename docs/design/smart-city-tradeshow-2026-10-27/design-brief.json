@@ -1,0 +1,87 @@
+{
+  "direction": "Graphite field console: a calm, legible, evidence-led city demo. Preserve the global left navigation and the established neutral graphite/teal system; improve the guided story, not a wholesale unrelated visual theme.",
+  "referencePages": [
+    "https://recent.design/i/qbsvs1j-spacing-visualization-dashboard",
+    "https://recent.design/i/3w11htw-sidebar-design-audit"
+  ],
+  "interpretation": [
+    "One consistent spacing rhythm across sidebar, workspace header, media, result strip and forms",
+    "Fewer competing borders and duplicated actions",
+    "Make the primary demo action and scenario meaning readable from across a booth"
+  ],
+  "screens": [
+    "overview",
+    "measurements",
+    "scenario-guide-and-preparation",
+    "ask-scene",
+    "find-clips",
+    "events-and-event-replay",
+    "zone-editor",
+    "edge-ai",
+    "deployment-brief"
+  ],
+  "nativeReferenceSize": [
+    1920,
+    1080
+  ],
+  "tokens": {
+    "background": "#151617",
+    "surface": "#1b1d1f",
+    "surfaceRaised": "#202224",
+    "border": "#303438",
+    "text": "#f0f2f3",
+    "muted": "#a4adb3",
+    "teal": "#37d5c1",
+    "cameraBlue": "#679dff",
+    "warning": "#e4b46a",
+    "spacing": [
+      8,
+      12,
+      16,
+      24,
+      32
+    ],
+    "radius": 8,
+    "headingPx": 28,
+    "bodyPx": 15,
+    "controlPx": 14,
+    "iconFamily": "Existing Tabler outline, 18\u201320px, 1.7px stroke"
+  },
+  "shell": {
+    "sidebarWidth": 228,
+    "nav": [
+      "Smart City",
+      "Defense",
+      "Live view",
+      "Video workflow",
+      "Search video",
+      "Live cameras",
+      "Events & reports",
+      "Alert rules",
+      "What it can do",
+      "System"
+    ],
+    "localNav": [
+      "Overview",
+      "Measurements",
+      "Search & reports",
+      "Why edge AI"
+    ]
+  },
+  "newFeatures": [
+    "Scenario selection explains problem, watch point, value and research before an explicit Start demo action",
+    "Guarded preparation screen with the chosen problem, truthful phases and a stop action",
+    "Operational context and research sources alongside each measurement topic",
+    "One event-time evidence replay action distinct from current-camera Ask",
+    "Guided search examples and useful empty states",
+    "A local edge-workflow page and downloadable deployment discussion brief, with no fabricated capacity or ROI claims"
+  ],
+  "invariants": [
+    "Actual live frames remain the media; generated UI concepts are design only",
+    "No invented observed metric, completed crossing, successful clearance or accuracy percentage",
+    "No fake time-progress, fake service status, cloud-free claim beyond verified selected local execution, or hardware sizing promise",
+    "Uncertainty, lost tracks and source scope remain present, with details progressively disclosed",
+    "Native rendering/preparation/capture/streaming guards and memory reserve remain enabled",
+    "No unrequested messages or publishing to third parties"
+  ]
+}

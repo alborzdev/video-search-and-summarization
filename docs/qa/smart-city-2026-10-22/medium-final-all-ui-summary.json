@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "city.final-endurance-summary.v1",
+  "verifiedAt": "2026-10-22T09:57:12.552627+00:00",
+  "passed": true,
+  "durationSeconds": 7200.0002212990075,
+  "sampleCount": 1359,
+  "samplesHashVerified": true,
+  "monitorSourceHashVerified": true,
+  "totalObservations": 287862,
+  "perSourceFrames": {
+    "291399aa-a062-43b6-badc-48c34bc08237": 215896,
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 71966
+  },
+  "previewFetchesPerSource": {
+    "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9": 1359,
+    "291399aa-a062-43b6-badc-48c34bc08237": 1359
+  },
+  "askCount": 7,
+  "askIntervalSeconds": 900,
+  "askLatencySeconds": [
+    17.93165841093287,
+    14.928376409690827,
+    23.811193811241537,
+    7.751943130977452,
+    18.841339465696365,
+    9.964466380886734,
+    24.330813702661544
+  ],
+  "minimumAvailableGiB": 22.87506866455078,
+  "containers": {
+    "vss-city-detector": {
+      "id": "e1a5ef313236e484e80ab7c2af4d25018761f1cb7e072f67adaa4365e75861b2",
+      "memoryMax": "8589934592",
+      "firstMiB": 1036.641,
+      "peakMiB": 1077.875,
+      "finalMiB": 1077.875,
+      "restartCount": 0,
+      "oomEvents": 0
+    },
+    "vss-city-analytics": {
+      "id": "565e37f8e4ae1e364ed8903bd8286834b0905d723f670236d552954961ad505a",
+      "memoryMax": "805306368",
+      "firstMiB": 69.941,
+      "peakMiB": 86.422,
+      "finalMiB": 71.121,
+      "restartCount": 0,
+      "oomEvents": 0
+    },
+    "vss-agent": {
+      "id": "6adfd46f42c8359a26674516dad9031e9f867cec3596413f683c3048009456d9",
+      "memoryMax": "max",
+      "firstMiB": 825.172,
+      "peakMiB": 847.867,
+      "finalMiB": 844.121,
+      "restartCount": 0,
+      "oomEvents": 0
+    },
+    "vss-vios-streamprocessing": {
+      "id": "b1a30cf933dbd9342e411f83ae73ab9bddc1ebf4a7de5db23d25fc41309cefc2",
+      "memoryMax": "2147483648",
+      "firstMiB": 1322.355,
+      "peakMiB": 1428.477,
+      "finalMiB": 1423.887,
+      "restartCount": 0,
+      "oomEvents": 0
+    },
+    "vss-rtvi-embed": {
+      "id": "56bfb7f6f1f38cb0e159c6df8153f7c309e627d86f71ff0163807ef77fb232a1",
+      "memoryMax": "max",
+      "firstMiB": 3322.75,
+      "peakMiB": 3345.062,
+      "finalMiB": 3345.062,
+      "restartCount": 0,
+      "oomEvents": 0
+    },
+    "vss-rtvi-vlm": {
+      "id": "700cbd44ab5dc9a88093d4b35d17b1027eef03bf9d1fc68d72e1dd1ac869284c",
+      "memoryMax": "max",
+      "firstMiB": 6040.77,
+      "peakMiB": 6199.227,
+      "finalMiB": 6186.617,
+      "restartCount": 0,
+      "oomEvents": 0
+    },
+    "vss-spark-spark-llm-1": {
+      "id": "13987a6f7d1b2877ef854d03fb7d948ddff3489c6c1fa61fd7c4738620a304bf",
+      "memoryMax": "max",
+      "firstMiB": 2759.184,
+      "peakMiB": 2777.031,
+      "finalMiB": 2759.254,
+      "restartCount": 0,
+      "oomEvents": 0
+    },
+    "vss-agent-ui": {
+      "id": "33c8809dcebad796cb6c0ea9adb2fa82edd83789fd946cbc9ea2af48e7818d2e",
+      "memoryMax": "2147483648",
+      "firstMiB": 108.586,
+      "peakMiB": 119.273,
+      "finalMiB": 110.219,
+      "restartCount": 0,
+      "oomEvents": 0
+    }
+  },
+  "postRunContainerImages": {
+    "vss-city-detector": {
+      "id": "e1a5ef313236e484e80ab7c2af4d25018761f1cb7e072f67adaa4365e75861b2",
+      "imageId": "sha256:432a78281644e6ec13b90ca9c6ea0cabe474a9b6f88547c371bee19595ccd1d5",
+      "startedAt": "2026-10-22T07:49:30.711473522Z",
+      "restartCount": 0
+    },
+    "vss-city-analytics": {
+      "id": "565e37f8e4ae1e364ed8903bd8286834b0905d723f670236d552954961ad505a",
+      "imageId": "sha256:bc667c99fd6b3055c0c925afbcf158f356553070dbf184221ee394b8bbbf3487",
+      "startedAt": "2026-10-22T06:43:00.982510949Z",
+      "restartCount": 0
+    },
+    "vss-agent": {
+      "id": "6adfd46f42c8359a26674516dad9031e9f867cec3596413f683c3048009456d9",
+      "imageId": "sha256:165dfe62fea62e2716716f66dfab3f5059fe5eccce57df47dcc4f5e8ac170efe",
+      "startedAt": "2026-10-22T06:17:24.897344713Z",
+      "restartCount": 0
+    },
+    "vss-vios-streamprocessing": {
+      "id": "b1a30cf933dbd9342e411f83ae73ab9bddc1ebf4a7de5db23d25fc41309cefc2",
+      "imageId": "sha256:b9ec522c4def153e82a4beb60815bdf196e7d1b8ba8577a232c4c18f8358cb75",
+      "startedAt": "2026-10-22T06:00:18.180172112Z",
+      "restartCount": 0
+    },
+    "vss-rtvi-embed": {
+      "id": "56bfb7f6f1f38cb0e159c6df8153f7c309e627d86f71ff0163807ef77fb232a1",
+      "imageId": "sha256:335093f228cd4e616a44e10bef1204d212a0922ad4a4142ff882c532db8b371c",
+      "startedAt": "2026-10-22T04:20:48.30965188Z",
+      "restartCount": 0
+    },
+    "vss-rtvi-vlm": {
+      "id": "700cbd44ab5dc9a88093d4b35d17b1027eef03bf9d1fc68d72e1dd1ac869284c",
+      "imageId": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "startedAt": "2026-10-22T04:25:13.385285803Z",
+      "restartCount": 0
+    },
+    "vss-spark-spark-llm-1": {
+      "id": "13987a6f7d1b2877ef854d03fb7d948ddff3489c6c1fa61fd7c4738620a304bf",
+      "imageId": "sha256:82028e38ab950edd32f5053ca2030ee14d965e8fd4fe1c6e06468eb0be07a9a4",
+      "startedAt": "2026-10-22T06:13:02.439190897Z",
+      "restartCount": 0
+    },
+    "vss-agent-ui": {
+      "id": "33c8809dcebad796cb6c0ea9adb2fa82edd83789fd946cbc9ea2af48e7818d2e",
+      "imageId": "sha256:1b2db6c3e4e800c1f734ef696af75e68f63f73d06040ad18383231b74b284c8f",
+      "startedAt": "2026-10-22T07:38:39.989988457Z",
+      "restartCount": 0
+    }
+  },
+  "workerSha256": "5689867b0419680daca4a22ee4bc17c566bbd0d57bdbdc825899d1af6ab77524",
+  "engineSha256": "9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+  "postRunHttp": {
+    "/": 200,
+    "/api/vision/city/site": 200,
+    "/api/vision/city/health": 200
+  },
+  "runtimeTuning": {
+    "muxTimeoutUs": 10000
+  },
+  "limits": [
+    "Two-hour recorded RTSP replay qualification on Spark; no full booth-day or sustained visitor-rate/concurrent Ask qualification.",
+    "VLM evidence delivery does not establish semantic accuracy; reviewed prose has posture/fine-vehicle errors.",
+    "Observed VIOS memory retention/growth does not prove a leak, a day-long plateau or allocator causality.",
+    "Unrelated clips remain uncalibrated; map/rule geometry uses separate labelled synthetic fixtures.",
+    "MV3DT fusion/native adapter, final Isaac camera calibration and Thor runtime remain unqualified.",
+    "Source-clock ages are not measured browser capture-to-display latency."
+  ],
+  "postRunBrowser": {
+    "recordedAt": "2026-10-22T09:58:58.363383+00:00",
+    "viewport": [
+      1920,
+      1080
+    ],
+    "documentWidth": 1920,
+    "cameraCount": 2,
+    "bothGates": "exact-processed-frame",
+    "bothAligned": true,
+    "eachCameraCanvasCount": 1,
+    "eachCameraRawVideoCount": 0,
+    "previewObservationNanosecondsEqual": true,
+    "sourceNanoseconds": [
+      "1792663094818113071",
+      "1792663095009314535"
+    ],
+    "consoleErrorsObserved": 0,
+    "screenshot": "ui-final-endurance-desktop.jpg",
+    "screenshotSha256": "d43d879283dcf2d781f57951d24e47eebcf66dce61cee78c5d4dbe9156ab5778"
+  },
+  "gatewaySourceSha256": {
+    "engine.py": "95335db2801b4bed4b4039a3ca35c731c806dae385468bc22f1c16aab1eb3b02",
+    "main.py": "fc998fd59e3993b0a24bfb93eb306f4aba1c46847eaa10d39e685813331c9865",
+    "preview.py": "020e0324f4fe902ec54840870009f30f438537572532091d8d3fd15cff08b9b5"
+  },
+  "independentReceiptReviewPassed": true
+}

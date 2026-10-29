@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "city.native-free-curb-independent-source-review.v1",
+  "reviewedAt": "2026-10-26T09:17:24.694014+00:00",
+  "reviewer": "next_pipeline_perf",
+  "result": "no-blocking-findings-on-frozen-source",
+  "runtimeActions": false,
+  "GPUJobs": false,
+  "modelRequests": false,
+  "sourceSha256": {
+    "scripts/scenarios/runtime.py": "eedc647c6f3677b73d358deed5e21389e81e31eb7dfd31abcc1522d0cf25c682",
+    "scripts/people/people_controller.py": "c583253d01ff3ed736bbdab805921d2f4fbc23cc20059916f7ac5d49484a0109",
+    "scripts/scenarios/test_waiting_points.py": "79e6097b6e4d26f533837ca796e19acea0040701b37cd24df4fe54cbe2b92d7a",
+    "scripts/people/test_native_plan.py": "e83570d58eac1b6cfdce28f49b78373931bcdbcfc1f955ef8f34cd189c48ec1a",
+    "scripts/scenarios/test_runtime.py": "9fb9249f8189b8675150e75ed0a1d100765c73c8603d9547934212490fe3281e"
+  },
+  "scope": "Independent read-only source/API-fixture review; not proof of actual native navigation or actual scenario completion. Parent owns hot deployment and finite live acceptance.",
+  "independentTests": [
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest scripts.scenarios.test_waiting_points -q",
+      "cwd": "/home/sparkdev/isaac_city_sim",
+      "count": 14,
+      "seconds": 0.201,
+      "exitCode": 0
+    },
+    {
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s scripts/people -p test_native_plan.py -q",
+      "cwd": "/home/sparkdev/isaac_city_sim",
+      "count": 7,
+      "seconds": 1.773,
+      "exitCode": 0
+    }
+  ],
+  "ownerReportedAdditionalChecks": {
+    "fullScenarioTests": 110,
+    "nativePlanTests": 7,
+    "selectorTests": 14,
+    "compileAndFatalRuff": "pass; owner reported"
+  },
+  "reviewedContracts": {
+    "selectionArea": "Exact existing East south pad x[-12.2,-10.2],y[69.2,72] and north pad x[-12.2,-10.2],y[86.4,90.4]. No camera/ROI/gap/signal edits.",
+    "targetPreference": "Nominal first; then finite inward1m, outward1m/1.3m; lateral0/\u00b1.35, all independently subject to actualradius+.35 body/arrival inset, road exclusion and native path proof.",
+    "nativeProofBudget": "At most12 actual proof calls across a selection, at most3 per character/direction; diagonal endpoint-pair ordering covers alternate entries as well as exits. Failed nearest actor does not consume the entire search.",
+    "nativePath": "Actual native agent radius/height feed navmesh query; whole approach must avoid road/crossings; both final curb endpoints outside roadway and all painted crossings; full crossing path uses only the named strip. No tasks or actor/signal changes in preflight.",
+    "planning": "Max(waypoint length, actual verified native crossingPathMetres), then unchanged speed/margins; current signal/native admission rechecks remain authoritative.",
+    "identity": "Existing model/controller/people generation and epoch guards remain. Selected endpoints are locked as tuple-of-tuples; original template points/pads/radius pinned. Out-of-set and another allowed-candidate mutation both reject stale proof.",
+    "raceBoundary": "All current other native actor positions/radii checked before selection and again for both locked points before continue. A newly blocked point causes pending, not retargeting or forced movement.",
+    "idempotency": "Existing accepted command receipt and native owned-phase lease semantics retained; first choice is locked, no target search during a leased wait.",
+    "completion": "Existing real .35m endpoint arrival, named-crossing whole-body exit and original native program restoration remain required. Simulator actions never substitute for camera evidence."
+  },
+  "issuesAddressedBeforeFreeze": [
+    "Native-invalid nominal point no longer hides all nearby alternatives.",
+    "Proof attempts are globally/per-direction bounded and distributed across actor choices.",
+    "Both far and near curb endpoints reject roadway envelope overlap.",
+    "Measured native path length cannot be replaced by a shorter waypoint estimate in planning.",
+    "Pad/body mutation and mutation to another otherwise-allowed endpoint cannot reuse the original proof."
+  ],
+  "savedBlockerPrediction": {
+    "basis": "Separate simulator preparation evidence only, not supplied to camera analytics",
+    "blockerXYM": [
+      -11.272338867,
+      88.425163269
+    ],
+    "preferredAlternateXYM": [
+      -11.2,
+      87.4
+    ],
+    "targetToOtherBodyCentreM": 1.0277123331874483,
+    "requiredCentreClearanceM": 0.9583946769999999,
+    "unchangedPaintFarY": 86.4,
+    "unchangedArrivalToleranceM": 0.35,
+    "worstAcceptedNorthboundCentreY": 87.05000000000001,
+    "ownerRadiusM": 0.2542,
+    "wholeBodyClearAtWorstAcceptedY": true,
+    "interpretation": "Inward alternate ends before the parked body; outward89.4 would require passing it. These geometric predictions still need actual native path/arrival acceptance."
+  },
+  "limits": [
+    "Static native path validity and current free endpoints do not reserve future dynamic space.",
+    "Twelve proof attempts are bounded preparation, not exhaustive path search or a runtime latency guarantee.",
+    "Original normal walker programs and their later interactions are not changed by this selector.",
+    "A later blocked/missing endpoint still causes finite failure/recovery; no arrival or analytic completion is fabricated."
+  ]
+}

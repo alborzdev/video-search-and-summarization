@@ -1,0 +1,10 @@
+{
+  "output": "",
+  "result": {
+    "armed": true,
+    "scenarioId": "queue-recovery",
+    "expiresInSeconds": 30,
+    "actorPlacement": false,
+    "testBasis": "one deliberately invalid start copy; real native validation; not an environmental fault"
+  }
+}

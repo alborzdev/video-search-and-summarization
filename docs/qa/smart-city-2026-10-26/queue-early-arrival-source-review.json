@@ -1,0 +1,116 @@
+{
+  "schemaVersion": "city.queue-early-arrival-source-review.v1",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "gpuJobs": false,
+  "sourceRoot": "/home/sparkdev/isaac_city_sim",
+  "sourceSha256": {
+    "scripts/scenarios/catalog.py": "17bd644e94a0928e8e555b1217975eb7371dfe3969794934b67d74b2c8ad7ea4",
+    "scripts/scenarios/director.py": "370ea31cd01badad51c005b88bf1b9023c514cbb0ae1d9baab07f53c14ed032a",
+    "scripts/scenarios/runtime.py": "4e18d2fc7177089eb4dbf6d6b70e785ffec92e949294a4b2ed6fd210ed940dc6",
+    "scripts/scenarios/test_director.py": "14d2f7737ab0302572e615a8b8eee8b5b93ec740765d9303996df78b45614492",
+    "scripts/scenarios/test_runtime.py": "ea57ab53609e780f68c5ef2b7c8d3dceb59bca1b7c592a1c4e0722b8b84a5459"
+  },
+  "documentationSha256": {
+    "docs/tradeshow-operator-handover.md": "efe50553c955a5ad30ccc8a7651b0ac75932e0da402ceac55c709c4118cc14c4",
+    "docs/tradeshow-scenarios.md": "2b1507fe6f9e5cbbc39ca6d4b4094e6f7fcd67328ea134d4f002872acaab3098",
+    "docs/tradeshow-scenarios-adapter.md": "ce1f2cf9fc11a8d5a44efdeefc8e6fce15118962039f5b57aad0161a2bf3a103"
+  },
+  "checks": {
+    "command": "python3 -m unittest scripts.scenarios.test_director scripts.scenarios.test_runtime",
+    "testsPassed": 73,
+    "seconds": 1.553,
+    "result": "passed"
+  },
+  "initialInvocationError": "An initial command also named nonexistent scripts.scenarios.test_catalog; it produced one import error after 73 successful tests. The exact two existing suites were then rerun cleanly.",
+  "reviewFindings": [
+    "No blocker in exact frozen source.",
+    "Cancellation, global wall deadline, staging deadline and recovery are checked before optional arrivals; release is processed before another arrival.",
+    "Pending optional arrivals retain their command identity; applied and refused arrival indices are retired, including across staging-to-hold transition.",
+    "Normal spawn_now uses unchanged closed-route, pool-cap and actual-vehicle spawn-clearance gates; accepted cars remain normal after cancellation.",
+    "Extra-active cap is three, including a fallback head and previous accepted cars until actual departure.",
+    "The near-crossing head remains outside the inner junction box; no blocked-junction duration is claimed."
+  ],
+  "independentTrafficModelControl": {
+    "basis": "Actual TrafficSim CPU model with fixed northbound green, schedule disabled and pedestrian yielding disabled; not a live camera or normal-flow qualification.",
+    "observedWallSecondsIntoHold": 23.000000000000195,
+    "elapsedWallSeconds": 44.40740740740773,
+    "eventSpawns": 3,
+    "unchangedMeasuredQueuePolygon": [
+      [
+        -23.7,
+        50.0
+      ],
+      [
+        -20.2,
+        50.0
+      ],
+      [
+        -20.2,
+        63.8
+      ],
+      [
+        -23.7,
+        63.8
+      ]
+    ],
+    "actors": [
+      {
+        "aid": 0,
+        "positionM": [
+          -21.877196957280866,
+          65.13636512629594
+        ],
+        "speedMps": 0.0,
+        "ownedHead": true,
+        "insideMeasuredQueuePolygon": false
+      },
+      {
+        "aid": 1,
+        "positionM": [
+          -22.327228918430873,
+          58.30105385105547
+        ],
+        "speedMps": 0.0,
+        "ownedHead": false,
+        "insideMeasuredQueuePolygon": true
+      },
+      {
+        "aid": 2,
+        "positionM": [
+          -22.79408804595885,
+          51.464542221164045
+        ],
+        "speedMps": 0.0,
+        "ownedHead": false,
+        "insideMeasuredQueuePolygon": true
+      }
+    ]
+  },
+  "limits": [
+    "No source controller/queue code edits by reviewer.",
+    "No runtime changes, image build, restart or GPU work.",
+    "Root must append final real-button/live-camera queue and release qualification separately.",
+    "Scene-model coordinates are evaluation evidence only and are not VSS analytics input."
+  ],
+  "followUpCrossingCuration": {
+    "basis": "Separate NB_1-only crossing-obstruction selection after the initial 73-check queue freeze; runtime/director bytes unchanged.",
+    "sourceSha256": {
+      "scripts/scenarios/catalog.py": "0e57f62ccdcc0075483e28d476619eae90717c32dfa1a3d4d363e0a5a9f3e82a",
+      "scripts/scenarios/director.py": "370ea31cd01badad51c005b88bf1b9023c514cbb0ae1d9baab07f53c14ed032a",
+      "scripts/scenarios/runtime.py": "4e18d2fc7177089eb4dbf6d6b70e785ffec92e949294a4b2ed6fd210ed940dc6",
+      "scripts/scenarios/test_director.py": "14d2f7737ab0302572e615a8b8eee8b5b93ec740765d9303996df78b45614492",
+      "scripts/scenarios/test_runtime.py": "7258aa6b872d87531bdfda3a0bf1014cbdb3e8a25108a48d8da4b002aebac80b"
+    },
+    "testsPassed": 75,
+    "testsFailed": 0,
+    "seconds": 1.808,
+    "change": "Crossing car proceeds north into SW visible junction; same stop center, hold, presentation limit, analytics polygons and thresholds.",
+    "proofLimit": "Fixed camera projection verifies framing, not detection or AI clearance."
+  },
+  "currentDocumentationSha256": {
+    "docs/tradeshow-operator-handover.md": "2873eb02363516a248474079cd467f9b422667c47429e22b68c2f803a81d6aa6",
+    "docs/tradeshow-scenarios.md": "6b99eddbb4086ce15cd5126c6eaf26142f5baf055196f6e0dfcbf4d60d84142f",
+    "docs/tradeshow-scenarios-adapter.md": "0337e8bbeed3c80722ac0f80bab098069597c7f3d96836762cb305a0a67b05ca"
+  }
+}

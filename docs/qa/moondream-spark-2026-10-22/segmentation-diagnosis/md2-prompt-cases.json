@@ -1,0 +1,90 @@
+[
+  {
+    "id": "panel-space0-double0",
+    "image": "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png",
+    "object": "metal panel",
+    "prompt": "Describe the object on the concrete.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": false,
+      "double_answer": false
+    }
+  },
+  {
+    "id": "panel-space1-double0",
+    "image": "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png",
+    "object": "metal panel",
+    "prompt": "Describe the object on the concrete.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": true,
+      "double_answer": false
+    }
+  },
+  {
+    "id": "panel-space0-double1",
+    "image": "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png",
+    "object": "metal panel",
+    "prompt": "Describe the object on the concrete.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": false,
+      "double_answer": true
+    }
+  },
+  {
+    "id": "panel-space1-double1",
+    "image": "/home/sparkdev/vss/services/ui/apps/nv-metropolis-bp-vss-ui/public/defense-preview/drone-close.png",
+    "object": "metal panel",
+    "prompt": "Describe the object on the concrete.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": true,
+      "double_answer": true
+    }
+  },
+  {
+    "id": "person-space0-double0",
+    "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+    "object": "person",
+    "prompt": "Describe the person.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": false,
+      "double_answer": false
+    }
+  },
+  {
+    "id": "person-space1-double0",
+    "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+    "object": "person",
+    "prompt": "Describe the person.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": true,
+      "double_answer": false
+    }
+  },
+  {
+    "id": "person-space0-double1",
+    "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+    "object": "person",
+    "prompt": "Describe the person.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": false,
+      "double_answer": true
+    }
+  },
+  {
+    "id": "person-space1-double1",
+    "image": "/home/sparkdev/vss/artifacts/thor-memory-2026-09-09/frames/warehouse-01.jpg",
+    "object": "person",
+    "prompt": "Describe the person.",
+    "expect_present": true,
+    "diagnostic_prompt": {
+      "leading_space": true,
+      "double_answer": true
+    }
+  }
+]

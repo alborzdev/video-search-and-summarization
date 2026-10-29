@@ -1,0 +1,167 @@
+{
+  "schemaVersion": "city.sprint-runtime-audit.v1",
+  "writtenAt": "2026-10-23T15:25:44.357125+00:00",
+  "scope": "CPU code review and targeted recovery/proxy fixes; no GPU, simulation, image build or service lifecycle operations by this audit agent.",
+  "changes": [
+    {
+      "component": "Same-origin exact preview proxy",
+      "behavior": "After browser close, response error, or size cap, discard retained HTTP chunks and ignore subsequent data/end callbacks. Preserve sanitized binary frame metadata, JPEG bytes, conditional ETags and byte limits.",
+      "regressions": "Two tests first failed on the original handler: late data/end wrote a response after client close or oversize abort."
+    },
+    {
+      "component": "Preview allocation",
+      "behavior": "Retain immutable IncomingMessage buffers instead of copying each; reuse one-chunk envelopes; write sanitized metadata then the original JPEG slice instead of a second complete-envelope buffer.",
+      "limit": "This removes two JPEG-sized copies on multi-chunk reads, but is not an end-to-end FPS or memory-leak claim."
+    },
+    {
+      "component": "Class calibration contract",
+      "behavior": "Preserve classImageToGroundHomographies in the public source allowlist so caller context validation can reject frames from another class calibration."
+    },
+    {
+      "component": "Isaac start recovery",
+      "behavior": "Wait for healthy identity of the existing gateway before the early already-live readiness check or site read. Poll for60s with5s individual HTTP timeout; never start/recreate a gateway.",
+      "regressions": "Two tests first failed: transient refused connection aborted recovery; sustained unavailability reached simulator commands before any gateway admission."
+    },
+    {
+      "component": "Isaac status",
+      "behavior": "Return actual simulator state, vssReady:false and explicit sanitized gateway unavailability reason instead of a traceback when gateway cannot be read.",
+      "regressions": "Unavailable-gateway test first failed, then passed; normal ready JSON shape retained."
+    }
+  ],
+  "checks": {
+    "uiProxy": {
+      "tests": 15,
+      "passed": true,
+      "command": "docker exec -e NODE_OPTIONS=--max-old-space-size=1024 -w /workspace/apps/nv-metropolis-bp-vss-ui vss-city-polish-ui node ../../node_modules/jest/bin/jest.js --runInBand __tests__/api/vision/city/proxy.test.ts"
+    },
+    "isaacLauncher": {
+      "tests": 9,
+      "passed": true,
+      "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_isaac_demo.py"
+    },
+    "realPreviewSmoke": {
+      "sourceCount": 2,
+      "httpStatuses": [
+        200,
+        200
+      ],
+      "imageSize": [
+        1280,
+        720
+      ],
+      "envelopeBytes": [
+        117439,
+        103690
+      ],
+      "metadataBytes": [
+        46643,
+        32601
+      ],
+      "jpegBytes": [
+        70792,
+        71085
+      ],
+      "requestMilliseconds": [
+        37.55,
+        17.53
+      ],
+      "sequence": "188",
+      "qualification": "One request per existing source. No model call. Not a throughput benchmark."
+    },
+    "appTypeScript": {
+      "passed": true,
+      "command": "docker exec -e NODE_OPTIONS=--max-old-space-size=2048 -w /workspace/apps/nv-metropolis-bp-vss-ui vss-city-polish-ui node ../../node_modules/typescript/bin/tsc --noEmit --incremental false"
+    }
+  },
+  "memoryEvidence": {
+    "sampleFile": "work/city-repair-20261023/live-600s/samples.ndjson",
+    "sha256": "885a24131ee26760142252550cd2d30f801da8236d204a2b71e3b9fdd33866c5",
+    "samples": 113,
+    "durationSeconds": 600,
+    "containers": {
+      "vss-city-detector": {
+        "startMiB": 662.07421875,
+        "endMiB": 667.09375,
+        "minimumMiB": 661.45703125,
+        "maximumMiB": 667.72265625,
+        "deltaMiB": 5.01953125
+      },
+      "vss-city-analytics": {
+        "startMiB": 110.0,
+        "endMiB": 126.52734375,
+        "minimumMiB": 109.9296875,
+        "maximumMiB": 126.52734375,
+        "deltaMiB": 16.52734375
+      },
+      "vss-agent": {
+        "startMiB": 905.82421875,
+        "endMiB": 905.82421875,
+        "minimumMiB": 905.66015625,
+        "maximumMiB": 910.8125,
+        "deltaMiB": 0.0
+      },
+      "vss-vios-streamprocessing": {
+        "startMiB": 384.7109375,
+        "endMiB": 385.3671875,
+        "minimumMiB": 383.94921875,
+        "maximumMiB": 388.765625,
+        "deltaMiB": 0.65625
+      },
+      "vss-rtvi-embed": {
+        "startMiB": 3654.39453125,
+        "endMiB": 3651.51953125,
+        "minimumMiB": 3649.8125,
+        "maximumMiB": 3667.08984375,
+        "deltaMiB": -2.875
+      },
+      "vss-rtvi-vlm": {
+        "startMiB": 5696.87109375,
+        "endMiB": 5696.875,
+        "minimumMiB": 5696.87109375,
+        "maximumMiB": 5707.359375,
+        "deltaMiB": 0.00390625
+      },
+      "vss-spark-spark-llm-1": {
+        "startMiB": 2672.671875,
+        "endMiB": 2672.68359375,
+        "minimumMiB": 2672.671875,
+        "maximumMiB": 2689.9609375,
+        "deltaMiB": 0.01171875
+      },
+      "vss-city-polish-ui": {
+        "startMiB": 1508.703125,
+        "endMiB": 1815.6953125,
+        "minimumMiB": 1508.703125,
+        "maximumMiB": 1815.6953125,
+        "deltaMiB": 306.9921875
+      },
+      "vss-city-polish-ingress": {
+        "startMiB": 25.01171875,
+        "endMiB": 24.84765625,
+        "minimumMiB": 24.359375,
+        "maximumMiB": 25.75390625,
+        "deltaMiB": -0.1640625
+      },
+      "vss-agent-ui": {
+        "startMiB": 1868.421875,
+        "endMiB": 1926.265625,
+        "minimumMiB": 1865.15234375,
+        "maximumMiB": 1942.57421875,
+        "deltaMiB": 57.84375
+      }
+    },
+    "interpretation": "The isolated dev UI grew307MiB over the prior10-minute repair run; native detector+5MiB, gateway+16.5MiB, VIOS+0.7MiB. This supports replacing the isolated dev server with a packaged UI. These short-run observations do not prove leak causality or a long-term plateau."
+  },
+  "nativeAudit": {
+    "observations": "Bounded publisher queue (default1024), explicit exhaustion failure, manifest-backed rotating output, source timing map bounded4096 entries.",
+    "preview": "Bounded one pending JPEG per source,32 identity slots per source, single-buffer leaky GStreamer preview queues and2MiB JPEG cap.",
+    "change": "No native code changed; no new GPU qualification claimed."
+  },
+  "sourceSha256": {
+    "services/ui/apps/nv-metropolis-bp-vss-ui/pages/api/vision/city/[...path].ts": "100f290d07f722b99c04868a8890d03e4572a52d7a08253672eb5358a36a6fd7",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/proxy.test.ts": "1d7e8468753cd10da4935f1119769ac6066def4d00059635c201bdf8cf844023",
+    "tools/smart-city/isaac_demo.py": "8bd885efdd8abe2aa5f80630c16e239d8e2a04dea411edf267ba6f73b8da4f12",
+    "tools/smart-city/tests/test_isaac_demo.py": "690d1e54ddbc1fde7f6780321df2cf42e76f0b0b2005ca738d2b11f3d3b713fc"
+  },
+  "remaining": "Final packaged UI/browser/combined endurance qualification belongs to the root sprint. The independent calibration changes still require the backend source cutover."
+}

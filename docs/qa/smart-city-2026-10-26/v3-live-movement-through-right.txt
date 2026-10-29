@@ -1,0 +1,67 @@
+TRAFFIC ENGINEERING
+Intersection insights
+
+Movement demand, crossing service, queues and curb access. Measured on this device.
+
+1 min
+5 min
+15 min
+
+Per-camera video time · no combined camera total
+
+Observed video time
+2 cameras
+Movements
+Crossing access
+Queues
+Walking
+Curb access
+Movement demand
+Last 5 min
+Northbound · straight
+Southwest corner
+Observed
+2
+completed movements
+Car
+2
+0 in progress
+2 incomplete
+
+Median observed travel 9.2 s · P95 11.8 s
+
+Show on map
+Northbound · left
+Southwest corner
+Observed
+0
+completed movements
+
+No class counts in this window.
+
+0 in progress
+2 incomplete
+Show on map
+Northbound · right
+Southwest corner
+Observed
+1
+completed movements
+Car
+1
+0 in progress
+2 incomplete
+
+Median observed travel 13.2 s · P95 13.2 s
+
+Show on map
+Individual gate counts
+5
+Take the measurements with you
+
+Camera-scoped report with the selected window, coverage and configuration.
+
+Export CSV
+JSON
+Received 4:47:24 AM · configuration 6
+How to read these measures

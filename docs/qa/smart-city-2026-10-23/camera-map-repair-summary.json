@@ -1,0 +1,140 @@
+{
+  "passed": true,
+  "startedAt": "2026-10-23T14:08:38.402622+00:00",
+  "finishedAt": "2026-10-23T14:18:38.402932+00:00",
+  "pipelineSeconds": 600.0003156228922,
+  "simulatorSeconds": 600.3917260020971,
+  "pipelineSamples": 113,
+  "simulatorSamples": 101,
+  "frameObservations": 9995,
+  "exactPreviewReadsPerCamera": {
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 113,
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": 113
+  },
+  "minimumAvailableGiB": 23.073375701904297,
+  "minimumDiskFreeGiB": 16.120861053466797,
+  "minimumRollingFps": {
+    "cam_SW": 7.81912700525377,
+    "cam_NE": 7.81912700525377
+  },
+  "allSampledRecordingsReady": true,
+  "allSampledRenderProductsTwo": true,
+  "simulationTimeAdvancedSeconds": 210.6333333333214,
+  "containers": {
+    "vss-city-detector": {
+      "ids": [
+        "21a5f083069dd8f9aaab890265f9f1b74789f23081a10f96a0940b47537d65e5"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-city-analytics": {
+      "ids": [
+        "565e37f8e4ae1e364ed8903bd8286834b0905d723f670236d552954961ad505a"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-agent": {
+      "ids": [
+        "6adfd46f42c8359a26674516dad9031e9f867cec3596413f683c3048009456d9"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-vios-streamprocessing": {
+      "ids": [
+        "b3719960807367565e37ad00e05c2277e4551738f97953f99103ec1b69a6e051"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-rtvi-embed": {
+      "ids": [
+        "56bfb7f6f1f38cb0e159c6df8153f7c309e627d86f71ff0163807ef77fb232a1"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-rtvi-vlm": {
+      "ids": [
+        "700cbd44ab5dc9a88093d4b35d17b1027eef03bf9d1fc68d72e1dd1ac869284c"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-spark-spark-llm-1": {
+      "ids": [
+        "13987a6f7d1b2877ef854d03fb7d948ddff3489c6c1fa61fd7c4738620a304bf"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-city-polish-ui": {
+      "ids": [
+        "8478d14796a6300ecef42d67be13b05bd22081b3e4ef218c3ae50e80f1909809"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-city-polish-ingress": {
+      "ids": [
+        "e4a1c2bb9b468b1734506f09c92cc3ad3511974033714009e849393b3d1cdaed"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    },
+    "vss-agent-ui": {
+      "ids": [
+        "398fe2e495134fb4d805db92942da148658aaf7994f68a5e4ee1e39f29c94809"
+      ],
+      "restartCounts": [
+        0
+      ],
+      "anyOomKilled": false,
+      "maxOomEvents": 0
+    }
+  },
+  "regressions": {
+    "concurrentStreamErrors": 40000,
+    "actualRtspSourceTcpProperties": "passed",
+    "cityMapAndCameraTests": 14,
+    "cameraInventoryErrorTest": 1,
+    "isaacLauncherTests": 5,
+    "mainAppTypeScript": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "limits": [
+    "No new VLM inference was requested in this repair run; real recent five-second footage readiness was checked throughout.",
+    "The UI uses source-mounted hot reload, not a newly built immutable package.",
+    "No full booth-day endurance or independent production accuracy claim.",
+    "Cross-camera fusion remains disabled."
+  ]
+}

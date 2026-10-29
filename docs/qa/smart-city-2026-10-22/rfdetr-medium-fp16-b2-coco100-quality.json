@@ -1,0 +1,158 @@
+{
+  "schemaVersion": "city.tensorrt-corpus-quality.v1",
+  "model": "rfdetr-medium",
+  "engineSha256": "9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0",
+  "batch": 2,
+  "imageCount": 100,
+  "runReceiptSha256": "e9d74ea282f2e9286bd139b46c7b65b72410f769077952317b44b5050175a900",
+  "subsetManifestSha256": "900ab9789a74be6653d8c74519e64349bd5ba37c1104bdd685e40a5f72ea7830",
+  "predictionsSha256": "f50c4c8bb121ca0079a2f27fa0ac7dcfe07e35862fd06992569150b88ff7809d",
+  "sixRoadClasses": {
+    "metrics": {
+      "AP": 0.5780295501344629,
+      "AP50": 0.8009157223510871,
+      "AP75": 0.6479214125229311,
+      "APsmall": 0.3595709544792405,
+      "APmedium": 0.6256089619560947,
+      "APlarge": 0.8079640604688131,
+      "AR1": 0.30613884563178995,
+      "AR10": 0.6371246005289467,
+      "AR100": 0.7163300991632467,
+      "ARsmall": 0.511239307940559,
+      "ARmedium": 0.7778788018002064,
+      "ARlarge": 0.8938483061101029
+    },
+    "perClass": {
+      "person": {
+        "AP": 0.5747275963405293
+      },
+      "bicycle": {
+        "AP": 0.3788124375643229
+      },
+      "car": {
+        "AP": 0.6080412580747289
+      },
+      "motorcycle": {
+        "AP": 0.5616901038110914
+      },
+      "bus": {
+        "AP": 0.8190181032801985
+      },
+      "truck": {
+        "AP": 0.5258878017359061
+      }
+    },
+    "maxDets": [
+      1,
+      10,
+      100
+    ],
+    "iouThresholds": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "imageCount": 100,
+    "categories": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8
+    ]
+  },
+  "coarseRoadClasses": {
+    "metrics": {
+      "AP": 0.5669972168764468,
+      "AP50": 0.816062522392657,
+      "AP75": 0.6240386992998548,
+      "APsmall": 0.35224133678797015,
+      "APmedium": 0.6593699981091127,
+      "APlarge": 0.8078031334914101,
+      "AR1": 0.1983635480324222,
+      "AR10": 0.5812289060459154,
+      "AR100": 0.6880370860329033,
+      "ARsmall": 0.48819981965571463,
+      "ARmedium": 0.7798684820283028,
+      "ARlarge": 0.8876196037453644
+    },
+    "perClass": {
+      "person": {
+        "AP": 0.5747275963405293
+      },
+      "two-wheeler": {
+        "AP": 0.4771496698627008
+      },
+      "vehicle": {
+        "AP": 0.6491143844261101
+      }
+    },
+    "maxDets": [
+      1,
+      10,
+      100
+    ],
+    "iouThresholds": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "imageCount": 100,
+    "categories": [
+      1,
+      2,
+      3
+    ]
+  },
+  "scorerSourceSha256": "72d7f66de16614bd0c3aab6fb79405cca4c214f85bf93d4fbac90b770044398a",
+  "postprocessorSourceSha256": "bddc4e6d206db349e1723fdd4e1fa0a00bfe98d766e132787977c179f8be68fd",
+  "precision": "FP16-enabled engine; mixed internal precision allowed; FP32 I/O",
+  "gpuUsedForInference": true,
+  "scope": "Actual TensorRT engine outputs on a stratified COCO100 proxy, not full COCO or final-city/event qualification.",
+  "fp32Reference": {
+    "receiptSha256": "4b691533ff908a4099f41ae1f88e603e9939b79a99fd4d91289f62b2630e98c4",
+    "onnxSha256": "79744e2f198ffde5132bceb3a4f4c63a9647f2699a221e009e03f97b317535b9",
+    "metricDeltaPercentagePoints": {
+      "AP": 0.05296198464441737,
+      "AP50": 0.22854365000394283,
+      "AP75": 0.584551171615888,
+      "APsmall": 1.1819327658252776,
+      "APmedium": -0.38688167312990185,
+      "APlarge": 0.3689103802598126,
+      "AR1": 0.3077015560690899,
+      "AR10": -0.5838618016746788,
+      "AR100": -0.27634924208396194,
+      "ARsmall": 0.9643646032873932,
+      "ARmedium": -0.8518966685076013,
+      "ARlarge": -0.3971944948578332
+    },
+    "perClassApDeltaPercentagePoints": {
+      "person": -0.22822342268168372,
+      "bicycle": 1.0029284920476278,
+      "car": 0.14484001085808274,
+      "motorcycle": -0.2980637006143705,
+      "bus": 0.28758216611484144,
+      "truck": -0.5912916378579824
+    }
+  },
+  "precisionRetentionGate": {
+    "maximumApDropPercentagePoints": 1.0,
+    "passed": true,
+    "meaning": "Engineering consistency gate for this paired subset, not a statistical model superiority claim."
+  }
+}

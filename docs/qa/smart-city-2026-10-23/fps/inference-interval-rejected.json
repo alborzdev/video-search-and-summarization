@@ -1,0 +1,80 @@
+{
+  "schemaVersion": "city.inference-interval.rejected.v1",
+  "decision": "Withdraw nonzero inference-interval launch feature for this preprocessed-tensor pipeline.",
+  "featureAvailable": false,
+  "reducedDetectorCadenceProven": false,
+  "sourceEvidence": {
+    "inspectedContainer": "vss-city-detector",
+    "path": "/opt/nvidia/deepstream/deepstream/sources/gst-plugins/gst-nvinfer/gstnvinfer.cpp",
+    "sha256": "e2cef439003a3ec9b70f7bb68bf5b0637920079347226281ab097fa071780cb4",
+    "workerInputMode": {
+      "file": "services/rtvi/rt-cv/smart-city/src/city_worker.cpp",
+      "line": 805,
+      "input-tensor-meta": true
+    },
+    "branch": {
+      "line": 2428,
+      "condition": "nvinfer->input_tensor_from_meta",
+      "target": "gst_nvinfer_process_tensor_input"
+    },
+    "fullFrameIntervalCheck": {
+      "line": 1714,
+      "function": "gst_nvinfer_process_full_frame",
+      "expression": "nvinfer->interval_counter++ % (nvinfer->interval + 1) > 0"
+    },
+    "tensorFunction": {
+      "firstLine": 2158,
+      "lastLine": 2369,
+      "referencesIntervalCounter": false,
+      "referencesIntervalSetting": false,
+      "queuesPreprocessedInput": true
+    },
+    "conclusion": "Tensor-input dispatch bypasses the full-frame function containing the interval skip check. Changing infer.ini interval does not skip supplied preprocessed tensor batches in this installed source."
+  },
+  "liveTrial": {
+    "receipt": "docs/qa/smart-city-2026-10-23/fps/540p-cpu-interval1-preview30.json",
+    "sha256": "a398ce4a590cd827878bcd61f40def1c7220a3dc59fea7bf6870c896bbcac4f9",
+    "seconds": 20.16697419900447,
+    "nativeFps": {
+      "cam_SW": 11.057682615124694,
+      "cam_NE": 11.057682615124694
+    },
+    "observationFps": {
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 11.156854656515947,
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": 11.156854656515947
+    },
+    "objectRows": 2299,
+    "observedObjectRows": 2299,
+    "unobservedTrackedObjectRows": 0,
+    "interpretation": "The configured interval1 trial showed no reduced observed-object cadence. Its approximately 11.1 FPS is an unsuccessful tuning trial, not evidence of interval-based speedup."
+  },
+  "cleanup": {
+    "removedFiles": [
+      "tools/smart-city/runtime_inference.py",
+      "tools/smart-city/tests/test_runtime_inference.py"
+    ],
+    "runtimeTuningSupportedKeys": [
+      "muxTimeoutUs",
+      "previewFps",
+      "decoder"
+    ],
+    "inferenceIntervalKey": "Rejected explicitly, including zero, to avoid accepting a misleading knob.",
+    "baselineModelConfig": "Selected model config used directly; no overlay generation at launch.",
+    "evidencePreserved": "Original experiment receipt, worker logs and generated runtime overlay are retained as historical evidence; not deleted by this agent.",
+    "runtimeMutationsByThisAgent": false
+  },
+  "tests": {
+    "passed": 56,
+    "seconds": 0.09,
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/test_manage.py"
+  },
+  "artifactSha256": {
+    "tools/smart-city/manage.py": "49c6caae056cab6d0c8e1209c1e621f31af9eeab2d37d3ccd96af4f9b4fd9384",
+    "tools/smart-city/test_manage.py": "67c9e296b1d5c262e4c48a390a287e143c3626361da79ffd9a75fc2da625d52d"
+  },
+  "limits": [
+    "Read-only source inspection and short CPU controls only in this follow-up; no new GPU/model requests or service changes.",
+    "A real detector-frequency scheduler would require a different validated pipeline mechanism; no replacement skip mechanism was introduced.",
+    "Earlier asynchronous-rendering black-frame FPS experiments remain invalid working-demo benchmarks."
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "city.map-backdrop.v1",
+  "siteId": "isaac-intersection-a",
+  "replacesImageUrl": "/smart-city/isaac-intersection-a-map.png",
+  "imageUrl": "/smart-city/isaac-intersection-a-map-wide.png",
+  "focusBounds": [
+    -55,
+    45,
+    10,
+    115
+  ],
+  "bounds": [
+    -152.5,
+    -60.0,
+    107.5,
+    220.0
+  ],
+  "resolution": [
+    4160,
+    4480
+  ],
+  "pixelsPerMetre": 16,
+  "actorFree": true,
+  "sha256": "025888c3b16094c811ffd12fdfca093f4d7267eb53beee2acaa3a447498836cb"
+}

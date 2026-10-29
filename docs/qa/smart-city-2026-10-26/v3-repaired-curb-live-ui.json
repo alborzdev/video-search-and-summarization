@@ -1,0 +1,17 @@
+{
+  "sceneRunId": "45854524c4fa40c4:000003",
+  "sceneState": "completed",
+  "sceneElapsedWallSeconds": 42.04047824302688,
+  "sceneRestored": true,
+  "actualCameraOccupancyObserved": true,
+  "actualStoppedAndEightSecondDwellObserved": true,
+  "maximumObservedActiveDwellMs": 23092.919,
+  "observedStoppedSecondsAtEnd": 17.510607888,
+  "departureCountImmediatelyBeforeExit": 2,
+  "departureCountAtExit": 3,
+  "finalStatus": "empty",
+  "finalObservedOccupancy": 0,
+  "traceSha256": "062becacba554c80e7994ea732aaa2e427bfc25264978299d5c6006c6b8f2bf5",
+  "trace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-curb-evidence-repaired-v3-ui.ndjson",
+  "limits": "One actual UI-triggered curbside-lane episode; dwell is observed zone presence, not a legal parking or loading classification. Rolling window totals can change as older visits leave the window."
+}

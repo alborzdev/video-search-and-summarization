@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "city.decoder-tuning.source-controls.v1",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "tests": {
+    "passed": 50,
+    "seconds": 0.08,
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/test_manage.py"
+  },
+  "defaults": {
+    "spark": "cpu",
+    "thor": "hardware",
+    "recorded": "unchanged; ignores live tuning"
+  },
+  "hardwareSemantics": "Permits NVIDIA decoder autoplug selection by omitting --cpu-decode; does not prove successful hardware decoder selection or frame delivery.",
+  "cachedEvidence": {
+    "pluginPresent": "/usr/lib/aarch64-linux-gnu/gstreamer-1.0/libgstnvvideo4linux2.so",
+    "driverLibraryPresent": "/usr/lib/aarch64-linux-gnu/libnvcuvid.so.580.142",
+    "observedWorkerCpuDecodeFlag": true,
+    "observedMappedCodecLibraries": [
+      "libgstlibav.so",
+      "libavcodec.so.60.31.102"
+    ],
+    "nvcuvidMappedInObservedWorker": false
+  },
+  "readOnlyCpuSnapshot": {
+    "seconds": 1.0010107238776982,
+    "unit": "percent of one CPU core; one short sample, not sustained profiling",
+    "detectorCgroupPercent": 12.921639790125106,
+    "gatewayCgroupPercent": 19.141653074179313,
+    "viosCgroupPercent": 4.72951976144706,
+    "throttledPeriodsDeltaAllThree": 0
+  },
+  "readOnlyGpuSnapshot": {
+    "device": "NVIDIA GB10",
+    "driver": "580.142",
+    "gpuUtilizationPercent": 56,
+    "decoderUtilizationPercent": 1,
+    "encoderUtilizationPercent": 6,
+    "attribution": "system totals; not attributed to the city worker"
+  },
+  "sources": [
+    "https://www.nvidia.com/en-us/products/workstations/dgx-spark/",
+    "https://docs.nvidia.com/dgx/dgx-spark-porting-guide/latest/porting/software-requirements.html",
+    "https://docs.nvidia.com/deepstream/text/DS_docker_containers",
+    "https://docs.nvidia.com/deepstream/text/DS_plugin_gst-nvvideo4linux2",
+    "https://docs.nvidia.com/video-technologies/pynvvideocodec/read-me/release-notes-v10.html"
+  ],
+  "artifactSha256": {
+    "tools/smart-city/manage.py": "f104b7ebf7a58b6040add2b152dc7085edff99e8c7eacfb56d59080afdc4a5b0",
+    "tools/smart-city/test_manage.py": "e823fc2408fb34e6f719a68fdf414018a3a245e6ac3cc95dfe3a2d2d1ec4ea48"
+  },
+  "limits": [
+    "No decoder/plugin/media/GPU test executed by this agent.",
+    "Root owns controlled hardware trial and rollback.",
+    "Historical publisher receipt peakQueue6/published15160 of15160 is a previous worker session, not a live current-queue metric.",
+    "The earlier18.18/13.63FPS counters came from an async rendering experiment that delivered black camera images. They are invalid as working-demo throughput and the preset was removed. See async-rendering-black-frame-failure.json.",
+    "The async-rendering 18.1837/13.6250 FPS experiments produced black decoded images and were rejected by root. They are not valid working-demo benchmarks or evidence of a useful rendering ceiling. Synchronous540p needs fresh image/tracking verification."
+  ],
+  "rejectedAsyncExperiments": {
+    "acceptedAsWorkingDemoBenchmark": false,
+    "reason": "Decoded-image/browser checks found black frames; launcher asynchronous rendering was removed.",
+    "receipts": [
+      "540p-fast-native-no-analysis.json",
+      "540p-fast-combined-preview15.json"
+    ],
+    "throughputInferenceWithdrawn": true
+  }
+}

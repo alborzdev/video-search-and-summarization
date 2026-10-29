@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "city.source-only-fast-pass-frontend.v1",
+  "recordedAt": "2026-10-23T16:57:41.117651+00:00",
+  "status": "source-and-focused-unit-checks-passed-not-built-or-deployed",
+  "changes": [
+    "Pause hidden-tab processed-preview work, health polling and city SSE; avoid raw WebRTC fallback while hidden; refresh configuration and frame alignment on visibility return.",
+    "Ignore queued callbacks from a closed SSE connection and clear pending static request/timer state.",
+    "Show bounded backend evidence reasons on uncertain rule cards; missing metrics no longer look healthy.",
+    "Improve map legend contrast while preserving access to zoom controls.",
+    "Use draft generations so late save/delete results cannot close or attach errors to a different draft; close a deleted rule draft to avoid accidental resurrection.",
+    "Ignore camera drawing while saving; retain a completed line after extra clicks and cap polygon point count at 128.",
+    "Preserve evidence reasons through the sanitized public proxy without exposing nested private credential fields."
+  ],
+  "validation": [
+    {
+      "suites": [
+        "useDocumentVisible",
+        "usePreviewHealth",
+        "useCity",
+        "CityCamera"
+      ],
+      "passed": 24,
+      "elapsedSeconds": 1.927,
+      "execSession": 59740
+    },
+    {
+      "suites": [
+        "presentation",
+        "CityInspector",
+        "city API proxy"
+      ],
+      "passed": 61,
+      "elapsedSeconds": 1.799,
+      "execSession": 38681
+    },
+    {
+      "suites": [
+        "CityMap",
+        "CityRuleEditor",
+        "SmartCityWorkspace"
+      ],
+      "passed": 43,
+      "elapsedSeconds": 1.74,
+      "execSession": 55084,
+      "scope": "Final Workspace and Map; Editor later received a small-polygon intersection correction."
+    },
+    {
+      "suites": [
+        "CityRuleEditor"
+      ],
+      "passed": 19,
+      "elapsedSeconds": 1.146,
+      "execSession": 82127,
+      "scope": "Final Editor revision, including small crossed and small concave polygon cases; supersedes preceding Editor subset."
+    },
+    {
+      "check": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "testEnvironment": "Existing Node/Jest in vss-agent-ui, --runInBand, NODE_OPTIONS=--max-old-space-size=2048; no new build, dependency installation, server restart or GPU request.",
+  "independentReview": [
+    "UI agent reviewed visibility cleanup and Workspace generation guards without a blocker.",
+    "Runtime agent separately reviewed Workspace save/delete generation guards without a blocker."
+  ],
+  "changedFileSha256": {
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/useDocumentVisible.ts": "f2c646a3e51294b9786c26f7f432eb7bbcee55b01705c4fc5226a31cfaad575c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/usePreviewHealth.ts": "5676946cb759d5cfa74a4d0e3f29abfc7350b9c7d578a332ef0f49879f7c8b6d",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/useCity.ts": "67ba0d1f0b864fd5a6b630a255915cc8daf07c479eb969285686f0b96cac6695",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityCamera.tsx": "e56ea976fd0d4acdf41c0d9abf289198f5b377c654b9253775deb8d976b8bdf4",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/types.ts": "fff1358201d4280cb45f5b9f1ceef0871e377b55c49257a0e21bab27163ea2b3",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/presentation.ts": "1724386772634c8ace4559d11a694a52d2d73ceb5dcca0bb853000e84f8081b7",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/CityInspector.tsx": "a5f6846d694c6d39e33d0d7c6784911ef1d6d9e700139fb9b417b48a125fb0de",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/SmartCity.module.css": "b0869703270255afdf7187335147d81ac52b847fc8d2018254bd99bb8593f00d",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/useDocumentVisible.test.ts": "08a7cbbf084b832f0a223712857688fe2a6e50bc724328c6bacad69c6d3796e7",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/usePreviewHealth.test.ts": "c1cfd18d86bd48a46ebaf6186db1a914e24a4685a1bf084911019a8104f23a63",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/useCity.test.ts": "2f3b30a6b969ac810377f8f3ff58671f1e226aaf747aa526579659f538b0198e",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/CityCamera.test.tsx": "454d0ef0d20f263931c661f7b5a65c074acb7c51a047f5895ca184eebff51ce9",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/presentation.test.ts": "17aa34b8ba8b671002401f96a833cc99e941e42de40c655d08f65d8848d2cefb",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/CityInspector.test.tsx": "a442642880d183914ba8263663d6788d0d1cd9cc7cf59895678bee8a1b136459",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/__tests__/SmartCityWorkspace.test.tsx": "41c2c7333716146f9a6154284e761c463643c7f2b57282e5b9d5d7121df4e81c",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/SmartCityWorkspace.tsx": "570c9cb7cbef1e3d57c99018d3be502431420cf485d9c30eb6c4d863fc960ae4",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/proxy.test.ts": "d9d690f0576c7d9c6d1f615df0d390f11fa6e5ce7a4242d27173dbf926f07185"
+  },
+  "limits": [
+    "No production build, current-source browser rendering, hidden-tab browser memory qualification or end-to-end latency measurement.",
+    "Existing screenshots and runtime identities describe the previously deployed package, not this source revision.",
+    "Unit tests are several bounded batches; overlapping Editor tests are not claimed as one cumulative all-suite run.",
+    "Native SDK build, service reloads, real model questions and integrated endurance are deferred at user request."
+  ],
+  "relatedReceipts": [
+    "source-only-fast-pass-map-editor.json",
+    "source-only-fast-pass-backend.json",
+    "source-only-fast-pass-native.json",
+    "source-only-fast-pass-runtime.json"
+  ],
+  "runtime": {
+    "deployed": false,
+    "restarted": false,
+    "gpuOrModelRequests": false
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "valid_mask": true,
+  "quality_validated": false,
+  "image_size": [
+    640,
+    360
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.375,
+    "x_max": 0.4296875,
+    "y_min": 0.3095703125,
+    "y_max": 0.6162109375
+  },
+  "artifacts": {
+    "mask": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T163544Z-moondream3-preview-gb10/masks/person-point-continue.mask.png",
+    "svg": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T163544Z-moondream3-preview-gb10/masks/person-point-continue.mask.svg",
+    "overlay": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T163544Z-moondream3-preview-gb10/masks/person-point-continue.overlay.png",
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T163544Z-moondream3-preview-gb10/masks/person-point-continue.mask.json"
+  },
+  "nonzero_pixels": 2577,
+  "mask_fraction": 0.011184895833333333,
+  "alpha_weighted_fraction": 0.010370336328976035,
+  "raster_bbox": [
+    238,
+    111,
+    275,
+    221
+  ],
+  "status": "nonempty_mask"
+}

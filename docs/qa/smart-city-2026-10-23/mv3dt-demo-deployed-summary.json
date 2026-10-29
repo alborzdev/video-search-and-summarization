@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "city.mv3dt-demo-deployment.v1",
+  "checkedAtUnixNs": "1792784855240994909",
+  "url": "http://127.0.0.1:7782/?workspace=smart-city",
+  "scope": "Experimental person map association; partial demo capability, not production fusion qualification",
+  "imageId": "sha256:80dba42da528a28b758993466cf779a58ea6f5baca8157535f187e6e1da8e214",
+  "workerBinarySha256": "c8c5e8d63a857dd3a34eb6b94bff28de27671f3296f85fef2f2b58475921bd09",
+  "calibrations": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": "isaac-live-6aaa6befcc1f190b",
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": "isaac-live-6aaa6befcc1f190b"
+  },
+  "sources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "status": "live",
+      "sequence": "6237"
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "status": "live",
+      "sequence": "6237"
+    }
+  ],
+  "association": {
+    "mode": "camera-local",
+    "globalFusionEnabled": false,
+    "mapFusion": {
+      "mode": "mv3dt-demo",
+      "enabled": true,
+      "available": true,
+      "experimental": true,
+      "qualified": false,
+      "positionBasis": "camera-local-homography",
+      "analyticsIdentityBasis": "camera-local",
+      "status": "enabled"
+    }
+  },
+  "processedPreviews": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "available": true
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "available": true
+    }
+  ],
+  "smoke": {
+    "durationSeconds": 41.626007080078125,
+    "samples": 21,
+    "allTwoSourcesLive": true,
+    "perSource": [
+      {
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "analyzedFps": 8.816603506888924
+      },
+      {
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "analyzedFps": 8.816603506888924
+      }
+    ]
+  },
+  "checks": {
+    "backendScopedTests": 122,
+    "launcherScopedTests": 17,
+    "uiFinalMapWorkspaceTests": 44,
+    "typescript": "passed",
+    "nativeWorkerBuild": "passed",
+    "nativePolicyFrameLimitRtspCpuControls": "passed",
+    "browserPageIdentity": "passed",
+    "browserLiveCamerasMap": "passed",
+    "browserPresentationModeInteraction": "passed",
+    "browserConsoleErrors": [],
+    "browserPositiveJoinedCountObserved": 1,
+    "browserCrossCameraSelectionCaptured": false
+  },
+  "displayPolicy": {
+    "newJoinDistanceM": 1,
+    "establishedExitDistanceM": 1.5,
+    "maxCaptureSkewMs": 150,
+    "onlyCurrentExactFrames": true,
+    "sameIdEpochSessionCalibrationRequired": true,
+    "vehiclesFused": false,
+    "globalAnalyticsFused": false
+  },
+  "failureFixed": "Duplicate SDK IDs in one camera frame caused HTTP422 and publisher shutdown. Demo worker omits every ambiguous occurrence for that frame, without aliases or an arbitrary winner.",
+  "remainingLimits": [
+    "Only partial person matches are expected; duplicate map observations remain when evidence disagrees.",
+    "SDK ID correction may reset camera-local dwell or journey history.",
+    "Canonical production position/identity/clock gates still fail; no vehicle/global-count qualification.",
+    "BodyPose weights cached only; no pose inference enabled.",
+    "No endurance or Firefox retest performed."
+  ],
+  "screenshot": {
+    "path": "/home/sparkdev/.codex/visualizations/2026/10/23/city-mv3dt/live-demo.png",
+    "sha256": "49b2ec4c5b55a0e6207246ed4c3555b9231c5b9b4f28ba5da4e19840ddb699f8",
+    "note": "Actual live presentation layout; no shared marker selected in this captured frame."
+  }
+}

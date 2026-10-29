@@ -1,0 +1,605 @@
+{
+  "schemaVersion": "city.pedestrian-staged-visibility-and-continuity-audit.v1",
+  "readOnly": true,
+  "inputs": {
+    "scenarioFile": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-staged-ui.ndjson",
+    "scenarioSha256": "fab73e21f1b89512743ebd6477f95f3935f2cb647843deba44702f23d2414266",
+    "rawSource": "/home/sparkdev/vss/.spark/city/state/live-observations.ndjson",
+    "rawReadUpperBoundBytes": 78467435,
+    "selectedObservationsSha256": "00fd8188b4a3cd9c6fefb75bcdee90b8f85a05f132aca672f5fdf920048e417a",
+    "startNs": "1792999333314288110",
+    "endNs": "1792999405475025444",
+    "selectedRows": 1676,
+    "neFrames": 838
+  },
+  "retainedNativeSubset": "/home/sparkdev/vss/.spark/city/runtime/pedestrian-staged-audit-20261026/observations.ndjson",
+  "snapshotSampleCount": 35,
+  "scenarioGroundTruth": {
+    "label": "Simulator ground truth, separate audit reference only; never supplied to camera analytics, identity association, or replay input.",
+    "character": "Character_02",
+    "entryM": [
+      -37.5,
+      66.8,
+      0.0
+    ],
+    "exitM": [
+      -14.5,
+      66.8,
+      0.0
+    ],
+    "nativeCompletionWallSeconds": 74.2684247167781,
+    "endpointArrivalVerified": true,
+    "snapshots": [
+      {
+        "sampleElapsedWallSeconds": 0.095,
+        "episodePhase": "waiting",
+        "positionM": [
+          -37.49552536010742,
+          66.80226135253906,
+          0.029961155727505684
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 2.332,
+        "episodePhase": "waiting",
+        "positionM": [
+          -37.49552536010742,
+          66.80226135253906,
+          0.029961155727505684
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 4.505,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.49736022949219,
+          66.80067443847656,
+          0.02894645929336548
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 6.604,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.497249603271484,
+          66.80055236816406,
+          0.02865750528872013
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 8.696,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.49665832519531,
+          66.80130004882812,
+          0.029659276828169823
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 10.741,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.48854064941406,
+          66.79994201660156,
+          0.02964407205581665
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 12.796,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.49195098876953,
+          66.80797576904297,
+          0.02964472956955433
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 14.973,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.53061294555664,
+          66.84648895263672,
+          0.029643552377820015
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 17.185,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.515743255615234,
+          66.841796875,
+          0.029644165188074112
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 19.3,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.466026306152344,
+          66.8127670288086,
+          0.029645027592778206
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 21.44,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.44552993774414,
+          66.77716827392578,
+          0.029644256457686424
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 23.515,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.449363708496094,
+          66.7876205444336,
+          0.029643965885043144
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 25.597,
+        "episodePhase": "awaiting-walk",
+        "positionM": [
+          -37.49738311767578,
+          66.83621215820312,
+          0.029644405469298363
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 27.649,
+        "episodePhase": "crossing",
+        "positionM": [
+          -37.28104782104492,
+          66.8476333618164,
+          0.029589662328362465
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 29.71,
+        "episodePhase": "crossing",
+        "positionM": [
+          -36.12530517578125,
+          66.83342742919922,
+          0.027454551309347153
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 31.775,
+        "episodePhase": "crossing",
+        "positionM": [
+          -34.86233139038086,
+          66.78964233398438,
+          0.027972569689154625
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 33.93,
+        "episodePhase": "crossing",
+        "positionM": [
+          -33.61737823486328,
+          66.7088623046875,
+          0.030004426836967468
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 36.104,
+        "episodePhase": "crossing",
+        "positionM": [
+          -32.514549255371094,
+          66.68350219726562,
+          0.030002977699041367
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 38.221,
+        "episodePhase": "crossing",
+        "positionM": [
+          -31.63258171081543,
+          66.73572540283203,
+          0.03000371716916561
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 40.428,
+        "episodePhase": "crossing",
+        "positionM": [
+          -30.4757080078125,
+          66.76211547851562,
+          0.02999752014875412
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 42.571,
+        "episodePhase": "crossing",
+        "positionM": [
+          -29.11500358581543,
+          66.74346160888672,
+          0.02999700978398323
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 44.642,
+        "episodePhase": "crossing",
+        "positionM": [
+          -28.16938018798828,
+          66.67999267578125,
+          0.022547094151377678
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 46.942,
+        "episodePhase": "crossing",
+        "positionM": [
+          -26.97028923034668,
+          66.6954345703125,
+          0.030003560706973076
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 49.063,
+        "episodePhase": "crossing",
+        "positionM": [
+          -26.26279067993164,
+          66.82311248779297,
+          0.030004028230905533
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 51.206,
+        "episodePhase": "crossing",
+        "positionM": [
+          -25.608062744140625,
+          66.82530975341797,
+          0.029921775683760643
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 53.271,
+        "episodePhase": "crossing",
+        "positionM": [
+          -24.239103317260742,
+          66.81639862060547,
+          0.02990693412721157
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 55.384,
+        "episodePhase": "crossing",
+        "positionM": [
+          -22.918020248413086,
+          66.73413848876953,
+          0.029887083917856216
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 57.544,
+        "episodePhase": "crossing",
+        "positionM": [
+          -21.627182006835938,
+          66.70475006103516,
+          0.029858363792300224
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 59.765,
+        "episodePhase": "crossing",
+        "positionM": [
+          -20.43885612487793,
+          66.75082397460938,
+          0.02981657162308693
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 61.816,
+        "episodePhase": "crossing",
+        "positionM": [
+          -19.13701820373535,
+          66.76052856445312,
+          0.029720908030867577
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 63.875,
+        "episodePhase": "crossing",
+        "positionM": [
+          -18.03046989440918,
+          66.8429946899414,
+          0.02949335239827633
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 65.957,
+        "episodePhase": "crossing",
+        "positionM": [
+          -16.839101791381836,
+          66.8076171875,
+          0.020758088678121567
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 68.048,
+        "episodePhase": "crossing",
+        "positionM": [
+          -15.683619499206543,
+          66.77297973632812,
+          0.03000449389219284
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 70.141,
+        "episodePhase": "crossing",
+        "positionM": [
+          -14.698403358459473,
+          66.7462158203125,
+          0.029997358098626137
+        ],
+        "endpointArrivalVerified": false
+      },
+      {
+        "sampleElapsedWallSeconds": 72.246,
+        "episodePhase": "completed",
+        "positionM": [
+          -14.494871139526367,
+          66.8023452758789,
+          0.02999558113515377
+        ],
+        "endpointArrivalVerified": true
+      }
+    ]
+  },
+  "actualBackendReplay": {
+    "scope": "Exact current MobilitySpatial replay of retained native camera observations. Isolated process only; simulator C02 metadata used separately for audit scope, never supplied to mobility or tracking. Start-of-window history empty; final totals differ from preexisting live five-minute history.",
+    "codeSha256": "f1c9afc91e4eca0d7d3b59cd24134e806f84c868b7b282ba85f59278816eac74",
+    "maxima": {
+      "south-crossing-west-east": {
+        "waiting": 1,
+        "crossing": 1
+      },
+      "south-crossing-east-west": {
+        "waiting": 1,
+        "crossing": 1
+      }
+    },
+    "westWaitingObservedInstants": {
+      "count": 5,
+      "firstElapsed": 30.944215112,
+      "lastElapsed": 31.472926223
+    },
+    "actualObservedGapsAbove1s": [
+      {
+        "localTrackId": "1705599116026839336",
+        "previousElapsed": 50.009780779,
+        "nextElapsed": 51.09589189,
+        "gapSeconds": 1.086111111,
+        "previousPosition": [
+          -25.807660732443605,
+          67.46849511775615
+        ],
+        "nextPosition": [
+          -25.359377117020266,
+          67.43156409034245
+        ]
+      }
+    ]
+  },
+  "westOutcomes": [
+    {
+      "ns": 1792999364847703222,
+      "outcome": "entered-crossing",
+      "trackId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a:2a839247-e29d-410d-be34-1cf8b40ed32e:1705599116026839336",
+      "waitMs": null,
+      "lowerBoundWaitMs": 589.2,
+      "briefGapCount": 1,
+      "atElapsedSeconds": 31.533415112
+    },
+    {
+      "ns": 1792999384355457778,
+      "outcome": "incomplete",
+      "trackId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a:2a839247-e29d-410d-be34-1cf8b40ed32e:1705599116026839336",
+      "waitMs": null,
+      "atElapsedSeconds": 51.041169668
+    }
+  ],
+  "finalCrossings": [
+    {
+      "id": "south-crossing-west-east",
+      "name": "South crossing \u00b7 west to east",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "waitingRuleId": "mobility-isaac-south-waiting-west",
+      "crossingRuleId": "mobility-isaac-south-crossing-measurement",
+      "completionBasis": "observed-far-side-exit",
+      "timeBasis": "source-time",
+      "status": "unknown",
+      "waitingCount": 0,
+      "crossingCount": 0,
+      "pendingTrackCount": 0,
+      "oldestPendingGapMs": null,
+      "membershipComplete": false,
+      "currentCountsAvailable": true,
+      "oldestObservedWaitMs": null,
+      "qualityReasons": [
+        "Earlier pedestrian visits are incomplete; current counts include only visible people."
+      ],
+      "asOfSourceTimeNs": "1792999405460964445",
+      "countBasis": "currently-observed",
+      "unresolvedHistoricalTrackCount": 2,
+      "oldestLostTrackAgeMs": 21105.506667,
+      "lossEvidenceRetentionSeconds": 900,
+      "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+      "windowMinutes": 5,
+      "completedCount": 0,
+      "abandonedCount": 0,
+      "returnedCount": 0,
+      "incompleteCount": 1,
+      "waitSampleCount": 0,
+      "waitP50Ms": null,
+      "waitP95Ms": null,
+      "firstSeenWaitingCount": 1,
+      "lowerBoundWaitP50Ms": 589.2,
+      "briefGapRecoveredWaitCount": 1,
+      "lostTrackCount": 2
+    },
+    {
+      "id": "south-crossing-east-west",
+      "name": "South pedestrian corridor \u00b7 east to west",
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "waitingRuleId": "mobility-isaac-south-waiting-east",
+      "crossingRuleId": "mobility-isaac-south-crossing-measurement",
+      "completionBasis": "observed-far-side-exit",
+      "timeBasis": "source-time",
+      "status": "unknown",
+      "waitingCount": 0,
+      "crossingCount": 0,
+      "pendingTrackCount": 0,
+      "oldestPendingGapMs": null,
+      "membershipComplete": false,
+      "currentCountsAvailable": true,
+      "oldestObservedWaitMs": null,
+      "qualityReasons": [
+        "Earlier pedestrian visits are incomplete; current counts include only visible people."
+      ],
+      "asOfSourceTimeNs": "1792999405460964445",
+      "countBasis": "currently-observed",
+      "unresolvedHistoricalTrackCount": 4,
+      "oldestLostTrackAgeMs": 64567.92078,
+      "lossEvidenceRetentionSeconds": 900,
+      "waitBasis": "first-observed-wait-entry-to-first-observed-crossing-entry",
+      "windowMinutes": 5,
+      "completedCount": 0,
+      "abandonedCount": 0,
+      "returnedCount": 0,
+      "incompleteCount": 2,
+      "waitSampleCount": 0,
+      "waitP50Ms": null,
+      "waitP95Ms": null,
+      "firstSeenWaitingCount": 0,
+      "lowerBoundWaitP50Ms": null,
+      "briefGapRecoveredWaitCount": 0,
+      "lostTrackCount": 4
+    }
+  ],
+  "nativeCorridorTrackSummaries": [
+    {
+      "id": "1705599116026839326",
+      "observedSamples": 15,
+      "firstElapsed": 3.738088889,
+      "lastElapsed": 6.547811111,
+      "firstPosition": [
+        -13.867672220446757,
+        66.7031594932991
+      ],
+      "lastPosition": [
+        -13.880317395718603,
+        66.67655821195868
+      ],
+      "maxObservedGapSeconds": 0.575077778,
+      "maxShadowGapSeconds": 0.575077778,
+      "regionSamples": 15
+    },
+    {
+      "id": "1705599116026839336",
+      "observedSamples": 214,
+      "firstElapsed": 30.944215112,
+      "lastElapsed": 57.426703001,
+      "firstPosition": [
+        -35.902562166911835,
+        66.49652626188784
+      ],
+      "lastPosition": [
+        -21.648667855798216,
+        67.18833818264146
+      ],
+      "maxObservedGapSeconds": 1.086111111,
+      "maxShadowGapSeconds": 1.086111111,
+      "regionSamples": 214
+    },
+    {
+      "id": "1705599116026839343",
+      "observedSamples": 59,
+      "firstElapsed": 58.520525223,
+      "lastElapsed": 65.844459778,
+      "firstPosition": [
+        -21.056307853671917,
+        67.30627675411995
+      ],
+      "lastPosition": [
+        -16.98533856995372,
+        67.18736297608865
+      ],
+      "maxObservedGapSeconds": 0.789344444,
+      "maxShadowGapSeconds": 0.789344444,
+      "regionSamples": 59
+    },
+    {
+      "id": "1705599116026839348",
+      "observedSamples": 37,
+      "firstElapsed": 67.023404223,
+      "lastElapsed": 70.42343189,
+      "firstPosition": [
+        -16.183503547796576,
+        66.80565589721898
+      ],
+      "lastPosition": [
+        -14.524032914124119,
+        66.96106987173282
+      ],
+      "maxObservedGapSeconds": 0.393488889,
+      "maxShadowGapSeconds": 0.393488889,
+      "regionSamples": 37
+    }
+  ],
+  "findings": [
+    "The west waiting rectangle contains the separately verified native waiting point. It is not a demonstrated ROI geometry error.",
+    "The two-second operational snapshot sampling missed five real west-waiting observations over30.944\u201331.473seconds. Exact all-frame replay reaches waitingCount1, records first-seen waiting then a589.2ms lower-bound wait upon crossing.",
+    "No corresponding person is exported near the waiting point during the long native waiting/WALK wait. At that point the southwest projection is outside its image; northeast projection is inside its image. Metadata alone does not distinguish occlusion, inadequate visibility or detector rejection.",
+    "The first native local corridor handle is retained across a1.086111111second observed gap, but configured1second analytics continuity correctly expires the prior journey before it returns.",
+    "Subsequent native local handle replacements occur within the crossing and immediately across its far boundary. The last pre-exit handle ends atx\u221216.98533857, just before thex\u221216.9boundary; the next handle begins already outside atx\u221216.18350355. Completion cannot be proved without inventing an identity association.",
+    "East-to-west current occupancy is not proof this west-to-east actor performed an east-to-west crossing. Both directional measurements share the corridor but have different entry authority."
+  ],
+  "recommendations": [
+    "Keep current geometry and honest incomplete results. No structural state-machine defect was demonstrated.",
+    "Inspect retained camera imagery for waiting-area and far-edge visibility before any model or threshold change. A scene/camera composition that keeps the complete waiting-to-far-exit journey visible is the strongest demo improvement.",
+    "A separately reviewed finite same-ID gap allowance above1.086seconds could preserve the mid-crossing native handle, with pending/observed distinction unchanged, but this alone still produces no completion after the later actual ID changes.",
+    "If tracking is adjusted, use a separate native NvDCF configuration trial with source-held camera framing and measured same-ID retention. Longer shadow age alone does not establish retention or real detections; no global/GT/IoU alias should replace first native identity."
+  ],
+  "limits": [
+    "Sparse GT-to-camera correspondence is an offline hypothesis for audit scope, not validated physical-person identity.",
+    "Backend replay begins at the retained window with empty history; counts differ from preexisting live five-minute totals.",
+    "No runtime mutation, reader, model request, GPU job, build or source code change was made."
+  ]
+}

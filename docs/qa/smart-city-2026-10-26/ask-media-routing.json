@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-26T05:51:06.736834Z",
+  "mediaRoutingResult": "pass",
+  "archiveDir": ".spark/city/runtime/ask-media-route-20261026T054707Z",
+  "rootCause": "Agent fallback media origin referenced stopped shared UI port7777; isolated ingress bound only loopback and was unreachable from bridged VLM.",
+  "canonicalUpdates": [
+    ".spark/compose.json: services.vss-agent.environment.VST_CLIP_FALLBACK_MEDIA_URL",
+    ".spark/city/agent-city-overlay.json: same profile-specific media pin",
+    ".spark/city/polish-ui-compose.json: services.city-polish-ingress.environment.HAPROXY_BIND_ADDR",
+    ".spark/city/polish-ui-dev.json: same listener retained for future source-mode use"
+  ],
+  "agentApply": {
+    "upExitCode": 0,
+    "changedEnvironmentFields": [
+      "VST_CLIP_FALLBACK_MEDIA_URL"
+    ],
+    "sameImage": "sha256:165dfe62fea62e2716716f66dfab3f5059fe5eccce57df47dcc4f5e8ac170efe",
+    "commandUnchanged": true,
+    "mountsUnchanged": true,
+    "containerId": "f0edf0451d44043e37b0c89d559bcf90a9874d94dd92cd0a6e95b630cc6c6cf2",
+    "startedAt": "2026-10-26T05:48:53.877350081Z",
+    "status": "running",
+    "healthHttpStatus": 200,
+    "sourceProfileOverlay": ".spark/city/agent-city-overlay.json",
+    "modelRequestsIssued": false
+  },
+  "agentMediaValidation": {
+    "actualConfiguredOrigin": "http://172.17.0.1:7782",
+    "actualConfiguredUrlValidated": true,
+    "loopbackUrlValidated": true,
+    "method": "actual Agent validate_video_url; HEAD only",
+    "modelRequestsIssued": false
+  },
+  "bridgeMediaValidation": {
+    "headAndRangeFromActualVlmContainer": [
+      {
+        "method": "HEAD",
+        "status": 200,
+        "contentType": "video/mp4",
+        "contentLength": "3087789",
+        "contentRange": null,
+        "bytesRead": 0
+      },
+      {
+        "method": "GET",
+        "status": 206,
+        "contentType": "video/mp4",
+        "contentLength": "64",
+        "contentRange": "bytes 0-63/3087789",
+        "bytesRead": 64
+      }
+    ],
+    "listeners": [
+      "127.0.0.1:7782",
+      "172.17.0.1:7782"
+    ],
+    "clipBytes": 3087789,
+    "evidenceKeyIncluded": false,
+    "modelRequestsIssued": false,
+    "firstListenerProbe": "Immediate post-start probe preceded listener readiness; subsequent running-state/ss/HTTP probes passed without another restart."
+  },
+  "listeners": [
+    "127.0.0.1:7782",
+    "172.17.0.1:7782"
+  ],
+  "containersAfter": [
+    {
+      "name": "vss-agent",
+      "containerId": "f0edf0451d44043e37b0c89d559bcf90a9874d94dd92cd0a6e95b630cc6c6cf2",
+      "imageId": "sha256:165dfe62fea62e2716716f66dfab3f5059fe5eccce57df47dcc4f5e8ac170efe",
+      "startedAt": "2026-10-26T05:48:53.877350081Z",
+      "status": "running",
+      "unchangedFromPreMediaFix": false
+    },
+    {
+      "name": "vss-city-polish-ingress",
+      "containerId": "ecbcc8f9db7d119c34198f50aa3dee6d8464785b776b634fc971cd1bbd583e75",
+      "imageId": "sha256:d84eb36e91830bcaa67b23cfde1909850b99f11eb60da3abd185bd0daf3f75bb",
+      "startedAt": "2026-10-26T05:47:41.733038344Z",
+      "status": "running",
+      "unchangedFromPreMediaFix": false
+    },
+    {
+      "name": "vss-city-polish-ui",
+      "containerId": "57cf3cdb70ffa83b99e23d670d3d75453a74367a7ba48741cbf0a51b39ffd4f0",
+      "imageId": "sha256:840f5d98e50cc725ddc58d906b6e380843f2c38c9125c86211a95615d3f8c94b",
+      "startedAt": "2026-10-26T05:36:51.095087302Z",
+      "status": "running",
+      "unchangedFromPreMediaFix": true
+    },
+    {
+      "name": "vss-city-detector",
+      "status": "not-present-at-read",
+      "note": "Parent began separately authorized tracking profile pause/resume after media-ready handoff"
+    },
+    {
+      "name": "vss-rtvi-vlm",
+      "containerId": "700cbd44ab5dc9a88093d4b35d17b1027eef03bf9d1fc68d72e1dd1ac869284c",
+      "imageId": "sha256:7d5d439bb7888bdf4b3c42721c8c1bcb72d621821d8e87605a36b96c3a2aca7d",
+      "startedAt": "2026-10-26T05:02:08.713781972Z",
+      "status": "running",
+      "unchangedFromPreMediaFix": true
+    },
+    {
+      "name": "vss-rtvi-embed",
+      "containerId": "56bfb7f6f1f38cb0e159c6df8153f7c309e627d86f71ff0163807ef77fb232a1",
+      "imageId": "sha256:335093f228cd4e616a44e10bef1204d212a0922ad4a4142ff882c532db8b371c",
+      "startedAt": "2026-10-26T05:00:08.303151101Z",
+      "status": "running",
+      "unchangedFromPreMediaFix": true
+    }
+  ],
+  "postRestartAnalysisReceiptState": "Both actual analysis GETs initially reported partial/recovering after restart; sourcePaused=false and on-demand/no-generation persisted. Parent was notified before its separately authorized profile pause/resume. Do not interpret media checks as refreshed CV analysis receipts.",
+  "scope": "Only isolated ingress and Agent recreated by this fix; no UI/model/CV/Isaac restart or inference request. Existing media HEAD and64-byte Range checks only.",
+  "evidenceKeyIncluded": false,
+  "modelRequestsIssued": false,
+  "actualAskAfterFix": "Passed parent browser question, exact five-second interval and 5.0624-second inspected clip playback; see live-ask-browser.json"
+}

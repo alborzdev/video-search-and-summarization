@@ -1,0 +1,23 @@
+{
+  "baseImage": "sha256:25f2f400ba19cc4f618d8c82ed2d338b1599baa95d3d289f5436827d0f51fc6c",
+  "compileAndTestsPassed": true,
+  "commands": [
+    "make -j2 city-worker libcity_parser.so",
+    "make test parser-test frame-limit-test rtsp-transport-test"
+  ],
+  "runtime": "runc",
+  "network": "none",
+  "gpu": false,
+  "memoryGiB": 2,
+  "cpus": 2,
+  "firstAttempt": "Compilation passed; test output failed because base /tmp contained root-owned old test executables. Clean tmpfs retry passed.",
+  "artifacts": {
+    "city-worker": "8c65f9df3196f43c2eb0f9c572952079c634afb906e3379f901a556757ffc055",
+    "libcity_parser.so": "12f835d71309563e11da3e6509ae7bc1f5eb3463f0bfd42d9cec37a76190b1fa"
+  },
+  "imageId": "sha256:4b26d3546d5122daa0429ef225b22ac7ed3d225d75d5f9069e9e730df2b800d7",
+  "sourceManifestSha256": "8d4a221af881304bb71b4b29110c5ae38ef793fad935edc1a6f2cb9e15c8e41a",
+  "postprocess": "one-city-class-per-query-v1",
+  "runtimeQualification": "pending",
+  "artifactPackaging": "artifact-only layer on pinned local base tag; initial raw SHA FROM was rejected by BuildKit, then local pinned tag succeeded; no packages installed"
+}

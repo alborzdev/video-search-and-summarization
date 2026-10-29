@@ -1,0 +1,120 @@
+{
+  "schemaVersion": "city.polish-ui-review.v1",
+  "recordedAt": "2026-10-22T14:36:50.514414+00:00",
+  "package": {
+    "createdAt": "20261022T141159952818Z",
+    "sourceSha256": "166d32b44e5e9be9597895f667310780ce469f8b6d71b9725cd1c666549a34c0",
+    "lockSha256": "b937110179a40d8e7cb22ba570481ae759759ac2f746b450e925dcd652e40daa",
+    "dockerfileSha256": "be7b24d67daa4585a51b138f6272bc859ad170126b8096201b4c5322a7dd50bf",
+    "imageId": "sha256:066c450ffe1a5f557dc306cd835bd4237ae351334291dca9acc80666195e8fce",
+    "imageReference": "vss-spark-vss-ui:smart-city-166d32b44e5e-20261022t141159952818z",
+    "artifactSha256": "3f88e7cad78b2288c93464a7e9a3d1cfbb28ddcadcf9b2c094d0e4c3b2407a38",
+    "baseImageId": "sha256:0510e98cab5411523e795f23bd3f18f43564e8d574b29a1616687b0fc70ae3b5",
+    "nodeVersion": "22.22.3",
+    "dependencyMode": "reuse-installed"
+  },
+  "packageBuild": {
+    "tasksPassed": 10,
+    "tasksTotal": 10,
+    "wallSeconds": 107.704
+  },
+  "sourceTests": {
+    "uiTestsPassed": 152,
+    "uiSuitesPassed": 20,
+    "typeScriptNoEmitPassed": true,
+    "smartCityFilesComparedWithFrozenSnapshot": 34,
+    "smartCitySnapshotMismatches": []
+  },
+  "deployment": {
+    "productionOrigin": "http://127.0.0.1:7782",
+    "productionUiContainer": "vss-city-polish-ui",
+    "productionIngressContainer": "vss-city-polish-ingress",
+    "sharedDevelopmentOrigin": "http://127.0.0.1:7777",
+    "sharedDevelopmentPreserved": true,
+    "reasonForIsolatedUi": "Concurrent authorized Defense UI development recreated shared UI during first monitor attempt. Failed receipt retained."
+  },
+  "browser": {
+    "desktopViewport": [
+      1920,
+      1080
+    ],
+    "desktopDocumentWidth": 1920,
+    "laptopViewport": [
+      1366,
+      900
+    ],
+    "laptopDocumentWidth": 1366,
+    "mobileViewport": [
+      390,
+      844
+    ],
+    "mobileDocumentWidth": 390,
+    "bothCameraOverlayAligned": true,
+    "cameraModes": [
+      "exact-processed-frame",
+      "exact-processed-frame"
+    ],
+    "uncalibratedMapPreserved": true,
+    "arrowRightEndHomeInspectorNavigationPassed": true,
+    "olderReportEventDetailsRetained": true,
+    "ruleEditorOpenClosePassed": true,
+    "consoleErrorsObservedAtProductionOrigin": 0,
+    "viewportOverrideReset": true,
+    "reportDownloadCheck": {
+      "status": "unverified",
+      "detail": "Export report JSON was clicked. The browser automation download event timed out after10s; no visible or console error appeared. Unit payload/provenance coverage passed, but no downloaded file was inspected."
+    }
+  },
+  "manualAsk": {
+    "status": "answer-and-evidence-delivered",
+    "question": "Describe the main movement in this scene in two short sentences.",
+    "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+    "observedWindowLocal": "2026-10-22 10:31:25\u201310:31:30 America/Toronto",
+    "requestedSeconds": 5,
+    "explicitEvidenceLoad": true,
+    "videoDurationSeconds": 5.1472,
+    "videoSize": [
+      1920,
+      1080
+    ],
+    "videoReadyState": 4,
+    "videoError": null,
+    "changingNextCameraClearedClipWithoutRelabelingAnswer": true,
+    "answerTypographyPx": 16,
+    "answerLineHeightPx": 27.2,
+    "semanticAccuracyEvaluated": false,
+    "scheduledMonitorAskSeparate": true
+  },
+  "screenshots": [
+    {
+      "file": "polish-desktop.jpg",
+      "sha256": "9c14c6d9dca46fe4882a23facb9efc71a6d8ec8623c94f8aef38faf2e96eac42"
+    },
+    {
+      "file": "polish-mobile.jpg",
+      "sha256": "85c90e8802109e7fbb455710cd0fec8b18e52fba4955f2c4a2c06432747f3993"
+    },
+    {
+      "file": "polish-laptop.jpg",
+      "sha256": "06bdcdcaed5b5a433886ca312e0f93b88d286dcb83b39ee5a0f8cc2745f36bcb"
+    },
+    {
+      "file": "polish-ask-evidence.jpg",
+      "sha256": "941c26e6da3be961a3d4712847a6cbb9d7954fe5cefa5246d0481e72bb2b0f17"
+    },
+    {
+      "file": "polish-rule-editor.jpg",
+      "sha256": "0a05a524c958ff550ff46616c8d5b6752fd239034feb6a2ff5532f4cfd364aec"
+    },
+    {
+      "file": "polish-before-desktop.jpg",
+      "sha256": "2168831393329b4fba8d51b7f13bb61bd39710ea5be0c92721f6cad453fae394"
+    }
+  ],
+  "limits": [
+    "Manual answer verifies delivery/provenance/layout, not fine vehicle descriptions or counting accuracy.",
+    "Current independent recordings remain uncalibrated. No shared map or fused identity was fabricated.",
+    "The new combined runtime qualification is recorded separately; the historical two-hour baseline does not qualify this changed build.",
+    "Source-mode Defense/shared-shell edits after the immutable snapshot are outside this package qualification."
+  ]
+}

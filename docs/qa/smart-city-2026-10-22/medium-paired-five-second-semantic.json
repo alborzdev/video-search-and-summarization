@@ -1,0 +1,50 @@
+{
+  "schemaVersion": "city.question-semantic-check.v1",
+  "model": "Existing Cosmos3 Nano NVFP4 with EVS",
+  "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+  "lookbackSeconds": 5,
+  "wallSeconds": 9.372675004880875,
+  "groundedFlag": true,
+  "answerSha256": "4f33f1299fb3596056b53878e6a21d067b5611fb4e133af1ce918100e42dd370",
+  "answerCharacters": 143,
+  "observedWindow": {
+    "startTime": "2026-10-22T07:11:44.642000Z",
+    "endTime": "2026-10-22T07:11:49.642000Z"
+  },
+  "evidence": {
+    "bytes": 6277832,
+    "sha256": "4fba5e3ae90221431d04ba1b7e1a2482d5461baca96a4c3b3bd7345e97d28976",
+    "returnedStartTime": "2026-10-22T07:11:44.642Z"
+  },
+  "decodedFrames": 150,
+  "samples": [
+    {
+      "file": "frame-0.png",
+      "time": 0.0,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "frame-1.png",
+      "time": 2.5,
+      "width": 1920,
+      "height": 1080
+    },
+    {
+      "file": "frame-2.png",
+      "time": 4.8,
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "visualReview": {
+    "method": "Assistant inspected CPU-decoded unmodified first and4.8-second frames, plus matched input window.",
+    "finding": "Road traffic and pedestrians are visible; pedestrian movement away from the camera and passing vehicles agree broadly with the answer.",
+    "limit": "The answer mentions three pedestrians; a fourth person becomes visible near the end. This is not exhaustive counting or a semantic benchmark."
+  },
+  "failedOneFramePath": {
+    "state": "unqualified; excluded by explicit Smart City five-second request",
+    "observedResult": "A real one-frame UI request described a purple image. The original decoded asset was cleaned up and exact cause was not established.",
+    "investigation": "CPU reconstruction of nearby retained footage is valid; generic GPU JPEG decode/resize is plausible but unproven. No global model or decoder setting was changed."
+  }
+}

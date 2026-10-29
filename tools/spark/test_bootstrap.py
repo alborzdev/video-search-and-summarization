@@ -9,6 +9,7 @@ import tempfile
 import unittest
 import sys
 from unittest.mock import patch, Mock
+import test_safety
 
 spec = importlib.util.spec_from_file_location('spark_bootstrap', Path(__file__).with_name('bootstrap.py'))
 b = importlib.util.module_from_spec(spec)
@@ -21,12 +22,20 @@ with patch.dict(sys.modules, {'bootstrap': b}):
 
 class BootstrapTests(unittest.TestCase):
     def setUp(self):
+        test_safety.install(self)
         state = tempfile.TemporaryDirectory()
         self.addCleanup(state.cleanup)
         for module in (b, guard):
             patcher = patch.object(module, 'STATE', Path(state.name))
             patcher.start()
             self.addCleanup(patcher.stop)
+        # Unit-level guard tests cannot stop any real host service.
+        patcher = patch.object(guard, 'halt_local_vision', return_value={'code': 0})
+        self.local_stop = patcher.start()
+        self.addCleanup(patcher.stop)
+        patcher = patch.object(b.local_vision, 'stop_service')
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def test_provision_only_creates_missing_roots_without_sudo(self):
         data = b.STATE / 'data'
@@ -47,6 +56,17 @@ class BootstrapTests(unittest.TestCase):
         self.assertEqual(json.loads(command[-1]), [['models', 1000, os.getgid()],
                                                  ['vision-history', 65532, os.getgid()]])
         self.assertTrue(existing.is_dir())
+
+    def test_shared_helper_import_works_without_spark_on_python_path(self):
+        code = (
+            'import importlib.util,sys; '
+            'spec=importlib.util.spec_from_file_location("isolated_spark_helpers",sys.argv[1]); '
+            'module=importlib.util.module_from_spec(spec); spec.loader.exec_module(module); '
+            'print(module.local_vision.UNIT)'
+        )
+        result = subprocess.run([sys.executable, '-c', code, str(Path(b.__file__).resolve())],
+                                cwd=b.STATE, check=True, capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.stdout.strip(), 'vss-spark-local-vision.service')
 
     def test_provision_rejects_a_symlink_in_the_data_path(self):
         data = b.STATE / 'data'
@@ -267,6 +287,7 @@ class BootstrapTests(unittest.TestCase):
              patch.object(guard, 'halt', return_value={'code': 0}) as halt:
             stop.wait.side_effect = [False, True]
             guard.main()
+        self.local_stop.assert_called_once()
         halt.assert_called_once_with('candidate')
 
     def test_saved_reserve_and_model_admission(self):
@@ -275,9 +296,9 @@ class BootstrapTests(unittest.TestCase):
             settings = b.STATE / 'settings.json'
             settings.write_text(json.dumps({'reserve_gib': 24}))
             self.assertEqual(b.memory_reserve(), 24)
-            self.assertEqual(b.model_admission_gib('spark-llm'), 48)
-            self.assertEqual(b.model_admission_gib('rtvi-embed'), 44)
-            self.assertEqual(b.model_admission_gib('rtvi-vlm'), 48)
+            self.assertEqual(b.model_admission_gib('spark-llm'), 24)
+            self.assertEqual(b.model_admission_gib('rtvi-embed'), 24)
+            self.assertEqual(b.model_admission_gib('rtvi-vlm'), 24)
             for invalid in [0, -1, True, '24', float('nan'), float('inf')]:
                 with self.subTest(invalid=invalid):
                     settings.write_text(json.dumps({'reserve_gib': invalid}))
@@ -306,6 +327,36 @@ class BootstrapTests(unittest.TestCase):
         self.assertIn('127.0.0.1:30081:8000', services['spark-llm']['ports'])
         self.assertEqual(services['vss-haproxy-ingress']['environment']['HAPROXY_BIND_ADDR'],
                          '127.0.0.1:7777,172.17.0.1')
+
+    def test_local_vision_selection_survives_render_and_stays_server_private(self):
+        b.private_write(b.STATE / 'settings.json', json.dumps({'reserve_gib': 20}))
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', local_vision_enabled=True)
+        first = json.loads((b.STATE / 'compose.json').read_text())
+        token = first['services']['vss-ui']['environment']['LOCAL_VISION_API_TOKEN']
+        for _ in range(2):
+            b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1')
+            settings = json.loads((b.STATE / 'settings.json').read_text())
+            graph = json.loads((b.STATE / 'compose.json').read_text())
+            self.assertTrue(settings['local_vision_enabled'])
+            self.assertEqual(settings['reserve_gib'], 20)
+            self.assertEqual(graph['services']['rtvi-vlm'], first['services']['rtvi-vlm'])
+            env = graph['services']['vss-ui']['environment']
+            self.assertEqual(env['LOCAL_VISION_API_TOKEN'], token)
+            self.assertNotIn('NEXT_PUBLIC_LOCAL_VISION_API_TOKEN', env)
+            self.assertEqual((b.STATE / 'compose.json').stat().st_mode & 0o777, 0o600)
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', local_vision_enabled=False)
+        env = json.loads((b.STATE / 'compose.json').read_text())['services']['vss-ui']['environment']
+        self.assertNotIn('LOCAL_VISION_API_TOKEN', env)
+        self.assertNotIn('LOCAL_VISION_API_URL', env)
+
+    def test_down_stops_host_worker_even_if_docker_stop_fails(self):
+        with patch.object(sys, 'argv', ['bootstrap.py', 'down']), \
+                patch.object(b, 'run', side_effect=RuntimeError('docker failed')), \
+                patch('history_metadata.stop_bridge') as history:
+            with self.assertRaisesRegex(RuntimeError, 'docker failed'):
+                b.main()
+        b.local_vision.stop_service.assert_called_once()
+        history.assert_called_once()
 
     def test_adaptive_evs_requires_new_engine_and_preserves_selected_reserve(self):
         b.private_write(b.STATE / 'settings.json', json.dumps({'reserve_gib': 20}))
@@ -350,6 +401,34 @@ class BootstrapTests(unittest.TestCase):
                  rtvi_vlm_image='nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1-sbsa')
         services = json.loads((b.STATE / 'compose.json').read_text())['services']
         self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
+
+    def test_nvfp4_selection_updates_consumers_and_survives_rerender(self):
+        b.private_write(b.STATE / 'settings.json', json.dumps({'reserve_gib': 20}))
+        with self.assertRaisesRegex(RuntimeError, 'compatible 3.3'):
+            b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', vlm_precision='nvfp4')
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1',
+                 cached_models=True, adaptive_evs=True, demo_profile='clips',
+                 rtvi_vlm_image='vss-rtvi-vlm:3.3-sbsa-codecs', vlm_precision='nvfp4')
+        selected = b.vlm_model_choice({'vlm_precision': 'nvfp4'})['name']
+        for rerender in (False, True):
+            if rerender:
+                b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1')
+            settings = json.loads((b.STATE / 'settings.json').read_text())
+            services = json.loads((b.STATE / 'compose.json').read_text())['services']
+            self.assertEqual(settings['vlm_precision'], 'nvfp4')
+            self.assertEqual(settings['reserve_gib'], 20)
+            env = services['rtvi-vlm']['environment']
+            self.assertTrue(env['MODEL_PATH'].endswith('/' + selected))
+            self.assertEqual(env['VIA_EVS_SESSION'], 'true')
+            self.assertEqual(env['VLLM_KV_CACHE_MEMORY_BYTES'], '4294967296')
+            self.assertEqual(env['VLLM_MAX_NUM_SEQS'], '1')
+            self.assertEqual(services['lvs-server']['environment']['VIA_VLM_OPENAI_MODEL_DEPLOYMENT_NAME'], selected)
+            self.assertEqual(services['vss-agent']['environment']['VLM_NAME'], selected)
+        # Explicit rollback restores the original model, while retaining EVS/reserve.
+        b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1', vlm_precision='bf16')
+        services = json.loads((b.STATE / 'compose.json').read_text())['services']
+        self.assertTrue(services['rtvi-vlm']['environment']['MODEL_PATH'].endswith('/' + b.VLM))
+        self.assertEqual(b.memory_reserve(), 20)
 
     def test_native_vios_selection_changes_only_streamprocessor_and_ui_capability(self):
         b.render('127.0.0.1', str(b.STATE / 'data'), '172.17.0.1',

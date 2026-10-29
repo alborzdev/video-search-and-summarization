@@ -1,0 +1,536 @@
+{
+  "schemaVersion": "city.synthetic-rule-loop-qualification.v1",
+  "capturedAt": "2026-10-22T05:48:41.772454+00:00",
+  "result": "passed",
+  "mode": "fixture-replay",
+  "qualification": "Synthetic geometry/rule execution only. No AI model inference, model accuracy, physical camera calibration, cross-camera identity fusion, RTSP or live UI qualification.",
+  "isolation": {
+    "engine": "private direct CityEngine",
+    "database": "temporary private SQLite; removed after verification",
+    "reports": "in-process FastAPI TestClient; no listener or network client",
+    "nativeBridge": "disabled",
+    "liveServicesMutated": false,
+    "gpuUsed": false
+  },
+  "completeLoops": 30,
+  "secondsPerLoop": 20.0,
+  "testRateFpsPerCamera": 5,
+  "cameras": 2,
+  "syntheticClasses": [
+    "person",
+    "bicycle",
+    "car",
+    "motorcycle",
+    "bus",
+    "truck"
+  ],
+  "acceptedObservations": 6060,
+  "duplicateObservationsRejected": 120,
+  "lateRetiredSessionObservationsRejected": 58,
+  "ruleFamilies": [
+    "area-entry",
+    "dwell",
+    "line-crossing",
+    "occupancy-threshold",
+    "queue",
+    "stopped-in-zone",
+    "wrong-way"
+  ],
+  "eventCount": 330,
+  "totalsByKind": {
+    "area-entry": 30,
+    "dwell": 30,
+    "line-crossing": 120,
+    "occupancy-threshold": 30,
+    "queue": 30,
+    "stopped-in-zone": 60,
+    "wrong-way": 30
+  },
+  "eventIdsUniqueAcrossLoops": true,
+  "relativeTimelinesEqualAcrossLoops": true,
+  "historicalBeforeTriggerAtTriggerAtClearChecks": 990,
+  "linkedTwoViewProjectionChecks": 30,
+  "syntheticVideoEvidenceUnavailable": true,
+  "cameraLocalIdsNotFused": true,
+  "durableJsonAndCsvEventCounts": {
+    "beforeReopen": 330,
+    "afterReopen": 330,
+    "csvRowsAfterReopen": 330
+  },
+  "history": {
+    "memoryCacheFramesPerCamera": 4,
+    "sqliteFramesRetained": 1708,
+    "serializedBytesRetained": 32951100,
+    "serializedBytesQuota": 33554432,
+    "latestLoopReplayAfterReopen": true
+  },
+  "midIncidentResetProbe": {
+    "activeEventsMadeUnknown": 6,
+    "oldSessionFramesRejected": 2,
+    "newSessionEvents": 11,
+    "velocityAndDurationStateReset": true,
+    "fabricatedClears": 0
+  },
+  "perLoop": [
+    {
+      "loop": 1,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 2,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 3,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 4,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 5,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 6,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 7,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 8,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 9,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 10,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 11,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 12,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 13,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 14,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 15,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 16,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 17,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 18,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 19,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 20,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 21,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 22,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 23,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 24,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 25,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 26,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 27,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 28,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 29,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    },
+    {
+      "loop": 30,
+      "events": 11,
+      "totalsByKind": {
+        "wrong-way": 1,
+        "line-crossing": 4,
+        "occupancy-threshold": 1,
+        "stopped-in-zone": 2,
+        "queue": 1,
+        "dwell": 1,
+        "area-entry": 1
+      },
+      "allCleared": true,
+      "sameRelativeTimeline": true
+    }
+  ],
+  "codeSha256": {
+    "engine.py": "d78e11a6ac82e0509dce4b3d9a8dba2c6f82c21896ce94f104cdc9f5b8896cb7",
+    "fixtures.py": "5f95a924c38c74f3d1b9e15bf480c88c2006a1f6cac79ba3a01735411e3f57f4",
+    "geometry.py": "329bedc22ba61e202dc444d5df858c5100a4ada88f0997c3dc4a8acb5f22c0bf",
+    "models.py": "e0344e7d14913ba7cb177075cd80a12ac18a0a29a98711cc1cd70a2b3784fed6",
+    "store.py": "8af9f6c5a245b26e0a53af335f26626a32012ae9729cfa0e239a5dd89dbf1802",
+    "main.py": "22b202b4a1ba0da2926ee7a77faabd0e522c33044dfb429520d82487f5c93b00"
+  },
+  "elapsedWallSeconds": 24.179025075864047,
+  "maximumResidentMiB": 1513.08984375
+}

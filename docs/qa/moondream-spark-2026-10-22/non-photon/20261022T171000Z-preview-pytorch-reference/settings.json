@@ -1,0 +1,5 @@
+{
+  "child": false,
+  "cases": ".spark/moondream-photon/reference-cases.json",
+  "timeout": 600
+}

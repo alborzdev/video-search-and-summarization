@@ -1,0 +1,25 @@
+{
+  "schemaVersion": "city.preview-registration.v1",
+  "verifiedAt": "2026-10-22T04:42:35.372114+00:00",
+  "sources": [
+    {
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "name": "city-traffic-rtsp-replay",
+      "inputProvenance": "recorded-video-RTSP-replay",
+      "state": "paused",
+      "analysisActive": false,
+      "detectionEnabled": false,
+      "analysisProfileId": "semantic-search"
+    },
+    {
+      "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "name": "city-pedestrian-rtsp-replay",
+      "inputProvenance": "recorded-video-RTSP-replay",
+      "state": "paused",
+      "analysisActive": false,
+      "detectionEnabled": false,
+      "analysisProfileId": "semantic-search"
+    }
+  ],
+  "qualification": "VIOS previews only; detector/embedding/VLM analysis was explicitly paused. Source URIs and credentials are omitted."
+}

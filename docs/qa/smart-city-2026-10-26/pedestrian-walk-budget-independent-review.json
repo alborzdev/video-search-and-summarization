@@ -1,0 +1,49 @@
+{
+  "schemaVersion": "city.pedestrian-walk-budget-independent-review.v1",
+  "disposition": "no-blocker-for-bounded-live-retry",
+  "scope": "Independent read-only source review and nine CPU controls. No runtime, scene, service, model or rule changes by reviewer.",
+  "failure": {
+    "receipt": "pedestrian-walk-deadline-first-live.json",
+    "sourceTrace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-reapproach-final-v3-ui.ndjson",
+    "traceSha256": "ffc97f614b466f3699aa65ae84b795e80628f775738109668402c2dd67b7e485",
+    "runId": "6cb839744cdf46fc:000001",
+    "reason": "pedestrian-walk-signal-deadline",
+    "elapsedWallSeconds": 107.97596416529268,
+    "restored": true,
+    "entryArrivalVerified": true,
+    "atEntry": true,
+    "nextUsableWalkSimSeconds": 0.25,
+    "remainingPresentationWallSeconds": 72.10582169983536,
+    "currentPlannedCrossingWallSeconds": 51.4593198771825,
+    "oldLatchedWalkBudgetWallSeconds": 102.78527485278386
+  },
+  "reviewedSource": {
+    "/home/sparkdev/isaac_city_sim/scripts/scenarios/director.py": "f8a760c85a1773277d7f4bbdf34439e281a32d34452bbddce672c924cf7be1a9",
+    "/home/sparkdev/isaac_city_sim/scripts/scenarios/test_director.py": "6be17c6e5c2e66f239c05d35f8b99d2a3778841053e25b1e91d9393dea540237"
+  },
+  "contract": [
+    "Use only valid positive crossing estimates. Reserve the maximum of the published planned crossing wall duration and native-path-with-margin simulation duration divided by the current planning rate plus the existing eight-second planning margin.",
+    "Reserve an additional existing eight-second cleanup margin. Allocate WALK wait from original 180-second total availability at the original wait start, capped by the existing 115-second signal ceiling.",
+    "Latch exactly once; preserve original phase start and overall start. Later rate estimates, pending recovery and signal polls cannot extend or slide the deadline.",
+    "Missing or invalid crossing estimates retain the previous finite signal-estimate fallback instead of expanding to the full ceiling.",
+    "Expose allocation inputs and reserves in pacingBudget.walkWaitPlan and the actual latch event. This is planning, not a native arrival or WALK guarantee.",
+    "Keep current Runtime remaining-time validation, actual signal/native path/cohort admission, entry/exit tolerances and restoration unchanged.",
+    "The hard overall 180-second deadline still wins and restores the actor, including after a crossing has started."
+  ],
+  "independentTest": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest scripts.scenarios.test_director.AdaptiveBudgetControls -q",
+    "cwd": "/home/sparkdev/isaac_city_sim",
+    "passed": 9,
+    "elapsedSeconds": 0.003,
+    "exitCode": 0
+  },
+  "controls": [
+    "Exact retained slowing-rate example can reach the next real WALK while preserving the once-latched allocation.",
+    "Crossing reserve constrains wait to 83 seconds when approach consumes 19 seconds and crossing/cleanup need 70+8 seconds.",
+    "Later estimates cannot extend the allocated wait or reset its phase elapsed time.",
+    "Missing/invalid crossing reserve retains the previous smaller fallback.",
+    "Original total 180-second deadline restores rather than claiming a timed completion.",
+    "Existing invalid admission and presentation-budget conflict remain specific failures."
+  ],
+  "remainingLimit": "Actual dynamic completion still requires the parent's bounded native/UI retry. Slower future rendering can still exhaust the original finite budget; the new allocation does not promise arrival or alter native signal timing."
+}

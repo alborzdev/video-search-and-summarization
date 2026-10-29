@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "outcome": "deliberately-interrupted",
+  "reason": "Package the final responsive toolbar and unknown-evidence wording fixes before a fresh full run.",
+  "lastObservedElapsedSeconds": 373.80124277062714,
+  "samples": 72,
+  "lastMetricsHealthy": true,
+  "completedAsks": 0,
+  "monitorNativeReceiptAvailable": false,
+  "stopVerified": "isaac_demo.py stop completed; exactly the two Isaac analysis sources paused and Isaac service inactive.",
+  "recordedAt": "2026-10-23T15:53:26.676276+00:00"
+}

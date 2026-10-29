@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "city.native-sei-final-pedestrian.v1",
+  "nativeEpisodePassed": true,
+  "cameraCompletedCrossingQualified": false,
+  "runId": "2227daf39a19476d:000003",
+  "elapsedWallSeconds": 42.70988465193659,
+  "state": "completed",
+  "restored": true,
+  "nativeStatus": "SUCCEEDED",
+  "nativePositionM": [
+    -11.204948425292969,
+    69.9933090209961,
+    0.03738503158092499
+  ],
+  "nativeGoalM": [
+    -11.2,
+    70.0,
+    0.0
+  ],
+  "nativeLandingErrorM": 0.03830008745704862,
+  "outsideCrossing": true,
+  "cameraRow": {
+    "id": "east-crossing-north-south",
+    "completedBefore": 0,
+    "completedAfter": 0,
+    "incompleteBefore": 3,
+    "incompleteAfter": 3
+  },
+  "trace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-native-sei-pedestrian-final-ui.ndjson",
+  "traceSha256": "56bd512d168046b47a3f671c72788739277623615734ed30b5d472a20778a59c",
+  "limits": [
+    "Observer attached8.7seconds after actual UI start; native result includes the complete finite run.",
+    "Current camera count remains0; existing incomplete3 is unchanged. Native arrival is not an AI completion.",
+    "Read-only forensic audit separately examines observation gaps; no threshold or rule geometry changed.",
+    "Actual shared-person AX result is a separate observation, not an identity-accuracy score."
+  ]
+}

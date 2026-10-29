@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "city.current-epoch-native-vios-capture-clock.v1",
+  "decodeUsed": false,
+  "sourceClockBasisChanged": false,
+  "captureWindowSeconds": 10,
+  "runtime": "runc",
+  "utilityImageId": "sha256:6b74dbe97296e40adcd019f20422d4a1dc3b7f301e0bff2e9fab88f24f705cf1",
+  "perUtilityLimits": {
+    "cpus": 1,
+    "memoryBytes": 536870912
+  },
+  "paths": {
+    "native": {
+      "capture": ".spark/city/media/final-clock-native-10s-20261026T095002Z",
+      "captureManifestSha256": "ba2cf488a29bde8f3bae2c2d2fd1b9eee1b99752e247deec1dbe34e5820b5c1f",
+      "status": "complete",
+      "errors": [],
+      "requestedSeconds": 10,
+      "elapsedSeconds": 10.004,
+      "commonHostStartUnixNs": "1793008203744056330",
+      "endedUnixNs": "1793008213747632305",
+      "sourceStatistics": {
+        "cam_SW": {
+          "packets": 90,
+          "referencedNativeSeiPackets": 79,
+          "rtcpMinusNativeCaptureWallMs": {
+            "count": 79,
+            "min": -17.8461,
+            "p50": -17.8383,
+            "p90": -17.8329,
+            "max": -17.8286
+          },
+          "receiveMinusNativeCaptureWallMs": {
+            "count": 90,
+            "min": 0.7152,
+            "p50": 1.1483,
+            "p90": 1.4657,
+            "max": 195.5054
+          }
+        },
+        "cam_NE": {
+          "packets": 90,
+          "referencedNativeSeiPackets": 75,
+          "rtcpMinusNativeCaptureWallMs": {
+            "count": 75,
+            "min": -18.4442,
+            "p50": -18.4373,
+            "p90": -18.4324,
+            "max": -18.4304
+          },
+          "receiveMinusNativeCaptureWallMs": {
+            "count": 90,
+            "min": 0.632,
+            "p50": 0.9482,
+            "p90": 1.1568,
+            "max": 195.2009
+          }
+        }
+      },
+      "sameRenderFrame": {
+        "sourceOrder": [
+          "cam_NE",
+          "cam_SW"
+        ],
+        "basis": "Exact same SEI frame_num AND publish_sim_time_ns, unique in both sources.",
+        "matchedRenderTicks": 90,
+        "secondMinusFirstNativeHandoffMs": {
+          "count": 90,
+          "min": -0.7409,
+          "p50": -0.3909,
+          "p90": -0.3099,
+          "max": -0.2915
+        },
+        "secondMinusFirstReceiveMs": {
+          "count": 90,
+          "min": -0.8012,
+          "p50": -0.2411,
+          "p90": 0.0584,
+          "max": 0.3202
+        },
+        "secondMinusFirstReferenceMs": {
+          "count": 75,
+          "min": -0.1062,
+          "p50": 0.2271,
+          "p90": 0.2938,
+          "max": 0.3049
+        }
+      },
+      "fileSha256": {
+        "cam_SW.mkv": "1bd1788a23f3ae6c3bdd90332fb8d53939dafa75e77f636983e279c3e12db093",
+        "cam_NE.timing.ndjson": "d9c4db5c3123a2512684117b91893a47ff1a05802cf951dd8a2ca3f7c1445bff",
+        "capture.json": "ba2cf488a29bde8f3bae2c2d2fd1b9eee1b99752e247deec1dbe34e5820b5c1f",
+        "cam_SW.timing.ndjson": "b690915b7b8ac40dd44ea70e8f7724a25d5d6a9232b8cbd8c59f80d04ebbbba3",
+        "cam_NE.mkv": "9a97a27f8666d58fb667a3e78ef6ae98731684dabd166ded79b6ddd916f11492"
+      }
+    },
+    "vios": {
+      "capture": ".spark/city/media/final-clock-vios-10s-20261026T095002Z",
+      "captureManifestSha256": "94597d83db504d838289e91b2802fe9b9082ec4fce4a8cdebdf6ad1d2b721321",
+      "status": "complete",
+      "errors": [],
+      "requestedSeconds": 10,
+      "elapsedSeconds": 10.001,
+      "commonHostStartUnixNs": "1793008203746571932",
+      "endedUnixNs": "1793008213747759105",
+      "sourceStatistics": {
+        "cam_SW": {
+          "packets": 90,
+          "referencedNativeSeiPackets": 3,
+          "rtcpMinusNativeCaptureWallMs": {
+            "count": 3,
+            "min": 0.2071,
+            "p50": 0.2124,
+            "p90": 0.2145,
+            "max": 0.2145
+          },
+          "receiveMinusNativeCaptureWallMs": {
+            "count": 90,
+            "min": 1.0901,
+            "p50": 1.8137,
+            "p90": 42.3777,
+            "max": 43.5647
+          }
+        },
+        "cam_NE": {
+          "packets": 90,
+          "referencedNativeSeiPackets": 30,
+          "rtcpMinusNativeCaptureWallMs": {
+            "count": 30,
+            "min": 0.0927,
+            "p50": 0.0981,
+            "p90": 0.1028,
+            "max": 0.1099
+          },
+          "receiveMinusNativeCaptureWallMs": {
+            "count": 90,
+            "min": 1.1681,
+            "p50": 1.554,
+            "p90": 41.9963,
+            "max": 43.2305
+          }
+        }
+      },
+      "sameRenderFrame": {
+        "sourceOrder": [
+          "cam_NE",
+          "cam_SW"
+        ],
+        "basis": "Exact same SEI frame_num AND publish_sim_time_ns, unique in both sources.",
+        "matchedRenderTicks": 90,
+        "secondMinusFirstNativeHandoffMs": {
+          "count": 90,
+          "min": -0.7409,
+          "p50": -0.3909,
+          "p90": -0.3099,
+          "max": -0.2915
+        },
+        "secondMinusFirstReceiveMs": {
+          "count": 90,
+          "min": -41.7499,
+          "p50": -0.1737,
+          "p90": 40.2996,
+          "max": 41.9105
+        },
+        "secondMinusFirstReferenceMs": {
+          "count": 3,
+          "min": -0.3686,
+          "p50": -0.3352,
+          "p90": -0.213,
+          "max": -0.213
+        }
+      },
+      "fileSha256": {
+        "cam_SW.mkv": "1bc3d187711cf6affc0d77df1289b6687793f6859a57a7a303de64a3ac2dc75c",
+        "cam_NE.timing.ndjson": "b7a9fa7cae9e6069a741c70c5e741f7694d8dcfd36403b8541bbc6a03a312977",
+        "capture.json": "94597d83db504d838289e91b2802fe9b9082ec4fce4a8cdebdf6ad1d2b721321",
+        "cam_SW.timing.ndjson": "99bc99b9bc2e7be191899757ecd9d59a08ae9c1b5ec066b443951d720ba4a615",
+        "cam_NE.mkv": "b82929f659f9918bd9fe7f521fe009a95f39a24b859e5006fbdf49da8a4647cb"
+      }
+    }
+  },
+  "failedPreparation": {
+    "native": ".spark/city/media/final-clock-native-10s-20261026T094919Z/capture.json",
+    "vios": ".spark/city/media/final-clock-vios-10s-20261026T094919Z/capture.json",
+    "reason": "Host h264parse unavailable; failed before sources/readers were created. Preserved."
+  },
+  "comparisonReceipt": ".spark/city/runtime/pedestrian-pocket-live-20261026/final-performance/current-epoch-native-vios-clock-comparison.json",
+  "conclusions": [
+    "Current producer and VIOS wire clocks agree across the exact same native render frames to below1ms. The observed597ms worker skew is not present in these current-epoch packet references.",
+    "Both native handoff timestamps are same-host actual capture publication wall time, not geometry or actor ground truth. Native capture timing and wire references remain separate from physical exposure accuracy.",
+    "Native lazy-start capture-epoch ordering remains a potential independent startup flaw, but is not the cause of the current regression. No producer source change is justified from this capture.",
+    "Currentworker future timestamps point to client-specific reconstructed PTS/SDK NTP anchoring. Need exact same-buffer reference/nativeSEI export in the worker before choosing an authoritative replacement basis; no fixed offset or map guard relaxation."
+  ],
+  "limits": [
+    "Independent encoded client references do not expose the already-running worker GstReferenceTimestampMeta.",
+    "VIOS Southwest emitted references on only3 late AUs within this finite10s window; no extra capture was made.",
+    "No camera pipeline, worker, SDK, guard or source clock was changed."
+  ]
+}

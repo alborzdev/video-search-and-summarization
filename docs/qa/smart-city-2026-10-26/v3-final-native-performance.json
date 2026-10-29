@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "city.final-native-performance.v1",
+  "passed": true,
+  "durationSeconds": 30.062979795970023,
+  "samples": 11,
+  "simPerWall": 0.3373449576237438,
+  "nativeHandoffFps": {
+    "cam_SW": 10.120348728721519,
+    "cam_NE": 10.120348728721519
+  },
+  "rates": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "observationFps": 10.14536822596959,
+      "publishedPreviewFps": 10.045577718828905,
+      "exactPreviewChecks": 11,
+      "sourceClockAgeSecondsMax": 0.1789708137512207
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "observationFps": 10.112104723589361,
+      "publishedPreviewFps": 10.012314216448678,
+      "exactPreviewChecks": 11,
+      "sourceClockAgeSecondsMax": -0.37425827980041504
+    }
+  },
+  "latestSnapshotSkewMs": {
+    "median": 597.073176,
+    "max": 597.314732,
+    "within150ms": 0,
+    "samples": 11
+  },
+  "unchangedContainers": 6,
+  "limits": [
+    "Thirty-second native/server sample; browser rate measured separately.",
+    "Snapshot requests are sequential, so latest-pair skew is not a simultaneous physical-exposure test.",
+    "No whole-day or identity-accuracy claim."
+  ],
+  "sourceReceipt": "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/final-performance/receipt.json",
+  "sourceReceiptSha256": "2b4824a0335f8788bc8af172f058956734a917014bce25f08dad657093f24af5",
+  "sanitized": true,
+  "passedScope": "Bounded native/server throughput,22exact-envelope checks and6unchanged container identities; not cross-camera timing or MV3DT association qualification.",
+  "crossCameraAssociationQualified": false,
+  "timingDispositionPending": true,
+  "goalComplete": false
+}

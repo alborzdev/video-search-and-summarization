@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "city.preview.v1",
+  "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+  "sourceSessionId": "8f706600-df62-4cba-a44e-89a9ed17b325",
+  "sessionId": "8f706600-df62-4cba-a44e-89a9ed17b325",
+  "sequence": "1215",
+  "sourceTimeNs": "1793010232638771888",
+  "timestampBasis": "source-native-sei",
+  "sourceClockEvidence": {
+    "schemaVersion": "city.source-native-sei.v1",
+    "method": "isaac-native-sei-wall-capture",
+    "correlation": "exact-au-pts",
+    "captureTimeNs": "1793010232638771888",
+    "auPtsNs": "123809128180",
+    "frameCounter": "78342"
+  },
+  "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+  "image": {
+    "width": 960,
+    "height": 540,
+    "jpegWidth": 960,
+    "jpegHeight": 540,
+    "mimeType": "image/jpeg"
+  },
+  "provenance": {
+    "kind": "native-post-inference-exact-frame",
+    "correlation": "source-session-sequence-time",
+    "clockAlignment": "source-frame-exact",
+    "browserClockVerified": false
+  },
+  "snapshot": {
+    "siteId": "isaac-intersection-a",
+    "siteRevision": 159,
+    "mode": "live",
+    "timestamp": "2026-10-26T10:23:52.638772Z",
+    "sequence": "2472",
+    "rulesRevision": 442,
+    "sources": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "name": "isaac-intersection-southwest",
+        "width": 960,
+        "height": 540,
+        "vssSensorId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+        "browserClockVerified": false,
+        "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "sourceClockMode": "source-native-sei",
+        "sourceClockEvidence": {
+          "schemaVersion": "city.source-native-sei.v1",
+          "method": "isaac-native-sei-wall-capture",
+          "correlation": "exact-au-pts",
+          "captureTimeNs": "1793010232638771888",
+          "auPtsNs": "123809128180",
+          "frameCounter": "78342"
+        },
+        "status": "live",
+        "lastSourceTimeNs": "1793010232638771888",
+        "sessionId": "8f706600-df62-4cba-a44e-89a9ed17b325",
+        "sourceSessionId": "8f706600-df62-4cba-a44e-89a9ed17b325",
+        "sequence": "1215",
+        "mediaTimeSeconds": 123.776378,
+        "mediaTimeBasis": "source-relative-pts",
+        "rawSourcePtsNs": "123809128180",
+        "timestampBasis": "source-native-sei"
+      }
+    ],
+    "tracks": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4:8f706600-df62-4cba-a44e-89a9ed17b325:12146045634801041414",
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sessionId": "8f706600-df62-4cba-a44e-89a9ed17b325",
+        "sourceSessionId": "8f706600-df62-4cba-a44e-89a9ed17b325",
+        "localTrackId": "12146045634801041414",
+        "globalTrackId": null,
+        "associationMethod": null,
+        "class": "person",
+        "bboxPx": [
+          571.021729,
+          99.9316406,
+          11.081543,
+          28.6083984
+        ],
+        "anchorPx": [
+          576.5625005,
+          128.54003899999998
+        ],
+        "positionM": [
+          -11.315504961202638,
+          88.24284803916053
+        ],
+        "projectionStatus": "valid",
+        "positionUncertaintyM": null,
+        "velocityMps": [
+          -0.0006304705427852578,
+          -0.047971774458539576
+        ],
+        "speedMps": 0.047975917269045626,
+        "confidence": 0.822189093,
+        "observedThisFrame": true,
+        "stale": false,
+        "sourceTimeNs": "1793010232638771888",
+        "mediaTimeSeconds": 123.776378,
+        "trail": [
+          {
+            "positionM": [
+              -11.304376343411786,
+              88.25534188453905
+            ],
+            "sourceTimeNs": "1793010229014837970"
+          },
+          {
+            "positionM": [
+              -11.343929294430664,
+              88.2556769510471
+            ],
+            "sourceTimeNs": "1793010229319443585"
+          },
+          {
+            "positionM": [
+              -11.324472423739802,
+              88.27755668279505
+            ],
+            "sourceTimeNs": "1793010229638497791"
+          },
+          {
+            "positionM": [
+              -11.331424889233466,
+              88.2697384700829
+            ],
+            "sourceTimeNs": "1793010230051498805"
+          },
+          {
+            "positionM": [
+              -11.366127676635005,
+              88.23071448006698
+            ],
+            "sourceTimeNs": "1793010230455509103"
+          },
+          {
+            "positionM": [
+              -11.317515935153038,
+              88.28537941048408
+            ],
+            "sourceTimeNs": "1793010230640608746"
+          },
+          {
+            "positionM": [
+              -11.317515941276062,
+              88.28537935529499
+            ],
+            "sourceTimeNs": "1793010230923213103"
+          },
+          {
+            "positionM": [
+              -11.324472455673195,
+              88.27755658473008
+            ],
+            "sourceTimeNs": "1793010231141622254"
+          },
+          {
+            "positionM": [
+              -11.359195078611705,
+              88.23851028930426
+            ],
+            "sourceTimeNs": "1793010231665187402"
+          },
+          {
+            "positionM": [
+              -11.323081365508163,
+              88.27912088529582
+            ],
+            "sourceTimeNs": "1793010231858164061"
+          },
+          {
+            "positionM": [
+              -11.326623515830347,
+              88.23036553440167
+            ],
+            "sourceTimeNs": "1793010232216573636"
+          },
+          {
+            "positionM": [
+              -11.315504961202638,
+              88.24284803916053
+            ],
+            "sourceTimeNs": "1793010232638771888"
+          }
+        ],
+        "calibrationRevision": "isaac-live-045c84fe5fda7a15",
+        "modelRevision": "rfdetr-medium-fp16@sha256:9228a9c88bbde75a867b0ed92bd400da520e9b867baf855ea7343ce3c60866b0;postprocess=one-city-class-per-query-v1",
+        "mapAssociation": null,
+        "imageVelocityNormalizedPerSecond": [
+          0.003388463507891831,
+          -0.0008471211679863101
+        ],
+        "speedEstimationBasis": "trailing-observed-position-fit-1s"
+      }
+    ],
+    "zones": [],
+    "events": [],
+    "rules": [],
+    "metrics": []
+  }
+}

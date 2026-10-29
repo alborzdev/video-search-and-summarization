@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "city.source-only-fast-pass-runtime.v1",
+  "recordedAt": "2026-10-23T16:47:43.764142+00:00",
+  "status": "source-only-cpu-checks-passed-runtime-not-deployed",
+  "changes": [
+    "Explicit stop attempts both owned source pauses and the owned Isaac service stop even when an earlier cleanup is incomplete; incomplete cleanup is reported.",
+    "Start waits for the control bridge when an already-active Isaac unit is still booting, preserving the fully-ready fast path.",
+    "Controller readiness snapshots its process reference once to avoid a concurrent remove clearing it between the None check and poll.",
+    "Optional --cancel-file stops only soak observation and writes an explicit non-pass cancellation receipt without requesting source pauses.",
+    "Cancellation preserves existing real-failure and signal pause behavior, validates in-flight samples, and discloses an already-running Ask.",
+    "Soak pause receipts separate HTTP request completion from strict confirmation of successful source cleanup."
+  ],
+  "validation": [
+    {
+      "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_isaac_demo.py tools/smart-city/tests/test_controller_probe.py tools/smart-city/test_controller.py",
+      "passed": 82,
+      "elapsedSeconds": 0.38,
+      "warnings": 1,
+      "warning": "Existing Starlette/httpx TestClient deprecation."
+    },
+    {
+      "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_soak_cancel.py tools/smart-city/tests/test_soak.py tools/smart-city/tests/test_soak_preview.py",
+      "passed": 57,
+      "passedSubtests": 68,
+      "elapsedSeconds": 0.21
+    }
+  ],
+  "sourceSha256": {
+    "tools/smart-city/isaac_demo.py": "26f365066ccd74ca1c30a07ff540d30f81de5ceb219ca935dd9ee6857d42730e",
+    "tools/smart-city/controller.py": "0e439233838f1324b1c7a4d176e76938d5d51f01326cf278b82a98d3358bad62",
+    "tools/smart-city/soak.py": "a00fd570f8895873c76c02bd8f2f69984c80ea6486f53879c3916f5c9af8033a",
+    "tools/smart-city/tests/test_isaac_demo.py": "7d35862d32e391d9cb280d450f9aec23ac510a2844a9a5e20878ffb1cddbd459",
+    "tools/smart-city/tests/test_controller_probe.py": "48474685451f84a0c1191a628c1a4ab42535231d081b0ded5b644776650fda9f",
+    "tools/smart-city/tests/test_soak_cancel.py": "f41c8fa672917e3ebcdfbfacf5e0510a7c7cb9aea70d024d6ec4922c74d5b313",
+    "tools/smart-city/SOAK.md": "9bddf26704d6d90afe74e2def48591e25330b65898d6dccd092da3bb4bed3cb2"
+  },
+  "deploymentLimits": [
+    "No runtime services, camera sources, simulator state, model requests, GPU jobs, containers, images, or deployments were changed or started during this fast pass.",
+    "Controller source changes require a future authorized service restart to affect the running controller; none was performed.",
+    "Launcher and soak source changes affect later invocations, not processes already running.",
+    "No completed integrated endurance qualification is claimed; the user stopped the long observers.",
+    "The saved 20 GiB VSS guard is unchanged; only the earlier user-authorized Isaac-specific 23 GiB floor remains disabled.",
+    "A cancel marker is cooperative and cannot retract an already-submitted Ask; pending requests may finish.",
+    "No scene content was edited, no legacy Gaussian rendering was performed, and the two-camera limit is unchanged."
+  ]
+}

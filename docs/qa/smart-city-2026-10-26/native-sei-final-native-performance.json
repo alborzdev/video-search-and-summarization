@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "city.native-sei-final-performance.v1",
+  "clockBasis": "source-native-sei",
+  "passed": true,
+  "durationSeconds": 29.9867827729322,
+  "samples": 11,
+  "simPerWall": 0.3134172112091837,
+  "nativeHandoffFps": {
+    "cam_SW": 9.402516336284064,
+    "cam_NE": 9.402516336284064
+  },
+  "rates": {
+    "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+      "observationFps": 9.404143223211976,
+      "publishedPreviewFps": 9.370795197597749,
+      "exactPreviewChecks": 11,
+      "sourceClockAgeSecondsMax": 0.2308061122894287
+    },
+    "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+      "observationFps": 9.437491248826204,
+      "publishedPreviewFps": 9.370795197597749,
+      "exactPreviewChecks": 11,
+      "sourceClockAgeSecondsMax": 0.23053336143493652
+    }
+  },
+  "latestSnapshotSkewMs": {
+    "median": 0.501168,
+    "max": 123.68622,
+    "within150ms": 11,
+    "samples": 11
+  },
+  "unchangedContainers": 6,
+  "maxCurrentNativeMapHints": 8,
+  "limits": [
+    "Thirty-second native/server sample; browser rate measured separately.",
+    "Snapshot requests are sequential, so latest-pair skew is not a simultaneous physical-exposure test.",
+    "No whole-day or identity-accuracy claim."
+  ]
+}

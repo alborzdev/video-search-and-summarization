@@ -1,0 +1,58 @@
+{
+  "schemaVersion": "city.native-capture-clock-downstream-independent-review.v1",
+  "reviewedAt": "2026-10-26T10:28:37.738425+00:00",
+  "reviewer": "next_sim_perf",
+  "result": "no-blocking-source-finding; owner live activation/qualification still required",
+  "scope": "Independent read-only diff/source review plus CPU test execution; no deployment/Kit/GPU/model/actor changes.",
+  "context": "Parent actual54b13 candidate qualified current native clock proof/age and near.3ms paired handoff stamps, but discovered two separate downstream omissions: publicproxy stripped nested source clock fields; old optionalSDKhint helper still allowed RTCPonly. The prior component review did not cover those boundaries.",
+  "sourceSha256": {
+    "services/rtvi/rt-cv/smart-city/src/native_capture_clock.hpp": "4336400c12d5902486597d831f0f8d36855fac900b55226c713902855b4e1a9e",
+    "services/rtvi/rt-cv/smart-city/src/tracker_3d.hpp": "66525c36e87b830b30666d67f5d6bc6415fef7e76c589c2a1f8eeaeebf515f1a",
+    "services/rtvi/rt-cv/smart-city/src/city_worker.cpp": "f5f5f64b7cfeba315d0b8e9e500a4295aa5a14f4ec0b41306904845ab5e6794e",
+    "services/rtvi/rt-cv/smart-city/tests/test_native_capture_clock.cpp": "33ab872a7ce0f0ddc03821c02d441ec7c964ddbbe2bd0ddda69fe1d1bffeefd4",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/pages/api/vision/city/[...path].ts": "5df46ac4e5ebbfa35970b0aadccc673c454da4372cf0a290a473304aef20f962",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/proxy.test.ts": "1cf8e490f219ad5570416ccc73b3ad8f89d485de67cad661591dd8af14298f74",
+    "services/ui/apps/nv-metropolis-bp-vss-ui/__tests__/api/vision/city/fixtures/native-sei-preview-metadata.json": "a5724526d32a3249fc4c862e990a0c110f2b0ef3171619a7bdce8e4fb8e1a703"
+  },
+  "nativeHintRepair": {
+    "delta": "demo_global_identity adds defaultfalse native_capture_qualified. source-native-sei is accepted ONLYwhen that true; source-rtcp behavior and all person/class/observed/mode/geometry/visibility/epoch/invalidID guards remain.",
+    "callSite": "Writer supplies native_capture.has_value() after strict per-source exactAU/decoded/beforeMux/pretracker/still-same-after-tracking cache.take succeeded. A native-basis string alone cannot enable a hint.",
+    "identity": "Actual metadata serialization control keeps firstNvDCF local123 and SDKglobal55 distinct and exports optional map hint. Native producer frame counter/simulation values never supply tracking IDs. Counts/rules remain local.",
+    "negativeControls": "No explicit nativeproof, foreign/recorded/arrival basis, camera-local mode, non-person class or predicted object all omit hint.",
+    "preservedFixtureFailure": {
+      "testSha256": "7e34d134b4cf35decaa839d90b18d0bcde86be4e9f5c1a58b2c6e5867b2e8262",
+      "result": "Independent run exit2 at positive globalTrackId assertion. New fixture omitted frame.bInferDone=true, so existing observed-only guard correctly suppressed output.",
+      "repair": "Only fixture now marks actual post-inference condition true; productionguard/logic unchanged. Corrected testSHA33ab872a is included above. No production failure or threshold relaxation claimed."
+    }
+  },
+  "proxyRepair": {
+    "delta": "Exactly sourceClockMode and sourceClockEvidence added to nested PUBLIC_SOURCE_FIELDS. Existing recursive privateURI/password/credentials/path scrub unchanged.",
+    "roundTrip": "Saved real directgateway metadata reduced to publicframe/source/one actualtrack goes through actual binaryproxy handler and actual browser parsePreviewEnvelope. Native proof equality, mode, framecounter and unverifiedbrowser flag preserved; arbitrary privatefields removed. MarkerJPEG proves packet/metadata contract, not actual pixel fidelity.",
+    "ordinaryResponse": "Actual snapshot handler response also retains exact source proof/mode and strips privateinput URI.",
+    "rawVideoGuards": "RTCP/browserverified checks in rawWebRTC alignment paths remain unchanged; source-nativehandoff does not enable rawbrowser/exposure alignment."
+  },
+  "independentTests": [
+    {
+      "target": "native-capture-clock-test NATIVE_CAPTURE_FIXTURES=/wire",
+      "controlGroups": 20,
+      "actualEncodedAUs": 360,
+      "exitCode": 0,
+      "environment": "runc; sourceRO+rootRO/tmpfs;2CPU/4GiB; no network/NVIDIAdevices/image decode/GPU"
+    },
+    {
+      "target": "Jest proxy.test.ts +sourceClock.test.ts +mapObjects.test.tsx +processedPreview.test.ts",
+      "suites": 4,
+      "count": 88,
+      "seconds": 1.482,
+      "exitCode": 0,
+      "imageId": "sha256:77c06679148cc6cc1e9cb7277fc100261e8a63217b1f49db3096ec3b117931ed",
+      "environment": "runc; sourceRO+rootRO/tmpfs;2CPU/4GiB; no network/NVIDIAdevices/live UI/build"
+    }
+  ],
+  "limits": [
+    "Final immutable native/UI package identities and actual successful deployment belong to owner receipts.",
+    "Actual nativeclock/sharedperson map behavior must be re-observed on finalimages; CPU serialization/proxy tests alone do not qualify accuracy/FPS/endurance.",
+    "Native shared-person display stays experimental and vehicle counts/IDs camera-local.",
+    "Physical exposure and browser end-to-end latency remain unverified."
+  ]
+}

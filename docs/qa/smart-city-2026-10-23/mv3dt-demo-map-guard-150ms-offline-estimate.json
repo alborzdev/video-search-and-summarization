@@ -1,0 +1,315 @@
+{
+  "schemaVersion": "city.mv3dt.demo-map-guard-analysis.v1",
+  "displayPolicy": "User-authorized demo-only 150ms window; production 50ms qualification unchanged",
+  "qualificationCameraSkewMs": 50,
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "productionQualified": false,
+  "run": ".spark/city/state/native/mv3dt/probe-mv3dt-no-see-through-20261023T191702471164Z",
+  "thresholds": {
+    "warmupSeconds": 10,
+    "maximumCameraSkewMs": 150,
+    "maximumHomographyPositionDifferenceM": 1,
+    "minimumNativeVisibility": 0.25,
+    "imageAssignmentGate": 1,
+    "maximumGtSkewMs": 250
+  },
+  "inputHashes": {
+    "observations": "125437524f0f640cef51e475d3d6211b6aafe7a10ac1af0092e636dd4caa45a0",
+    "groundTruth": "db6f976c4cd782d8940950cab3975570aeceb7ad4ec5a3c4b0292d6cf9ecf0ee",
+    "runPackage": "b652148b98d4e84ec877f8434fc9ab0b2cda81f7e0d0a47b91c730a3e3367d79",
+    "currentStaticSite": "a35f0c148d8c47a35d35a63dc82a04dbd93466970e686d64c76b5ece4adace56"
+  },
+  "currentStaticSite": {
+    "siteId": "isaac-intersection-a",
+    "siteRevision": 71,
+    "mapBounds": [
+      -55.0,
+      45.0,
+      10.0,
+      115.0
+    ],
+    "sources": [
+      {
+        "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "width": 1280,
+        "height": 720,
+        "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+        "imageToGroundHomography": [
+          [
+            0.0013267784536451779,
+            -0.005843077246810029,
+            -0.3545450720356232
+          ],
+          [
+            -0.0008252667356333384,
+            0.009968050730148639,
+            1.7205687121628666
+          ],
+          [
+            2.2008430534583583e-20,
+            0.00016378620176489233,
+            0.0033603448116665173
+          ]
+        ],
+        "classImageToGroundHomographies": {
+          "person": [
+            [
+              0.0013267784536451779,
+              -0.005998652306888779,
+              -0.3577369516953688
+            ],
+            [
+              -0.0008252667356333384,
+              0.010273560666859154,
+              1.7268367537907656
+            ],
+            [
+              2.2640003810482407e-20,
+              0.00016848635463736228,
+              0.003456776221326506
+            ]
+          ]
+        },
+        "validGroundPolygon": [
+          [
+            -4.412373894679656e-13,
+            719.9999999999997
+          ],
+          [
+            1280.0000000000016,
+            720.0000000000008
+          ],
+          [
+            1280.0,
+            175.12879789544618
+          ],
+          [
+            748.2326146205746,
+            80.81744415613993
+          ],
+          [
+            1.0187291552146515e-13,
+            150.4538765513936
+          ]
+        ]
+      },
+      {
+        "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "width": 1280,
+        "height": 720,
+        "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+        "imageToGroundHomography": [
+          [
+            -0.0013267784536451779,
+            -0.0017893597554339577,
+            0.19795300381196396
+          ],
+          [
+            0.0008252667356333362,
+            0.015779140187292456,
+            -1.1923225077688828
+          ],
+          [
+            -1.6379217769203307e-20,
+            0.00016378620176489244,
+            0.003360344811666585
+          ]
+        ],
+        "classImageToGroundHomographies": {
+          "person": [
+            [
+              -0.0013267784536451779,
+              -0.0018528118192123037,
+              0.19665117978155403
+            ],
+            [
+              0.0008252667356333362,
+              0.016212494282134195,
+              -1.1834315317982314
+            ],
+            [
+              -1.6849250205496324e-20,
+              0.00016848635463736242,
+              0.003456776221326576
+            ]
+          ]
+        },
+        "validGroundPolygon": [
+          [
+            1280.0000000000011,
+            720.0000000000006
+          ],
+          [
+            1280.0,
+            182.23106738505174
+          ],
+          [
+            754.7873102554878,
+            85.70075370403895
+          ],
+          [
+            9.400029914511342e-14,
+            159.77835581939124
+          ],
+          [
+            1.654640210504873e-13,
+            719.9999999999999
+          ]
+        ]
+      }
+    ]
+  },
+  "counts": {
+    "accepted:same-actor": 324,
+    "accepted:different-actor": 0,
+    "accepted:unmatched-label": 11,
+    "candidateFramePairs": 1002,
+    "framePairsWithin150Ms": 1002,
+    "sharedSdkIdPersonPairs": 454,
+    "shared:same-actor": 442,
+    "acceptedDisplayPairs": 335,
+    "accepted-isolated:same-actor": 298,
+    "pairsRejectedOver1m": 119,
+    "distance-rejected:same-actor": 118,
+    "shared:unmatched-label": 12,
+    "distance-rejected:unmatched-label": 1
+  },
+  "sameActorPairedImageAssignmentOpportunities": 1458,
+  "correctDisplayPairFractionOfLabelledOpportunities": 0.2222222222222222,
+  "nearestFrameSkewP95Ms": 71.92011864999998,
+  "secondCameraFrameReuseCount": 141,
+  "sharedIdHomographyAgreementMedianM": 0.7838408203060689,
+  "sharedIdHomographyAgreementP95M": 1.3861027043250487,
+  "acceptedNonSameActorExamples": [
+    {
+      "sourceTimeNs": "1792783070921859562",
+      "targetId": "0",
+      "labels": [
+        "Character_01",
+        null
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.28334219898229795,
+      "cameraSkewMs": 38.554669
+    },
+    {
+      "sourceTimeNs": "1792783071098437339",
+      "targetId": "0",
+      "labels": [
+        "Character_01",
+        null
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.5821793815721734,
+      "cameraSkewMs": 46.278664
+    },
+    {
+      "sourceTimeNs": "1792783092859353782",
+      "targetId": "47",
+      "labels": [
+        null,
+        "Character"
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.2977860514491506,
+      "cameraSkewMs": 0.716005
+    },
+    {
+      "sourceTimeNs": "1792783092965520448",
+      "targetId": "47",
+      "labels": [
+        null,
+        "Character"
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.6497393422719532,
+      "cameraSkewMs": 8.138227
+    },
+    {
+      "sourceTimeNs": "1792783093060320448",
+      "targetId": "47",
+      "labels": [
+        null,
+        "Character"
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.354517819053846,
+      "cameraSkewMs": 6.971561
+    },
+    {
+      "sourceTimeNs": "1792783093175231559",
+      "targetId": "47",
+      "labels": [
+        null,
+        "Character"
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.2833742945968403,
+      "cameraSkewMs": 10.049339
+    },
+    {
+      "sourceTimeNs": "1792783093298287115",
+      "targetId": "47",
+      "labels": [
+        null,
+        "Character"
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.23396397577744632,
+      "cameraSkewMs": 62.827116
+    },
+    {
+      "sourceTimeNs": "1792783104281871747",
+      "targetId": "66",
+      "labels": [
+        "Character_05",
+        null
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.5795799415810621,
+      "cameraSkewMs": 33.420262
+    },
+    {
+      "sourceTimeNs": "1792783104396360636",
+      "targetId": "66",
+      "labels": [
+        "Character_05",
+        null
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.5332138869019523,
+      "cameraSkewMs": 37.131373
+    },
+    {
+      "sourceTimeNs": "1792783104461505080",
+      "targetId": "66",
+      "labels": [
+        "Character_05",
+        null
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.5337368899065318,
+      "cameraSkewMs": 28.013071
+    },
+    {
+      "sourceTimeNs": "1792783143619974224",
+      "targetId": "110",
+      "labels": [
+        "Character_01",
+        null
+      ],
+      "bothIsolated": false,
+      "positionAgreementM": 0.9736400390928563,
+      "cameraSkewMs": 40.506674
+    }
+  ],
+  "limits": [
+    "Existing image-space label assignments are unchanged; ambiguity and occlusion remain unverified.",
+    "No samples relabelled or thresholds tuned for a pass.",
+    "This offline guard estimate uses every detector frame, not the actual UI preview cadence.",
+    "The source run emitted diagnostic SDK IDs, not server-approved mv3dt-demo hints; this estimates the geometric/clock display guard only.",
+    "Full original production qualification gates remain failed.",
+    "Counts are frame-pair observations, not distinct people or unique mistakes."
+  ]
+}

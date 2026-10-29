@@ -48,7 +48,7 @@ def capacity_snapshot():
     reserve = settings.get('reserve_gib')
     floor = guard.get('floor_gib')
     stamp = guard.get('time')
-    if (isinstance(reserve, bool) or not isinstance(reserve, (int, float)) or not 20 <= reserve < 128
+    if (isinstance(reserve, bool) or not isinstance(reserve, (int, float)) or not 0 < reserve < 128
             or floor != reserve or isinstance(stamp, bool) or not isinstance(stamp, (int, float))
             or not 0 <= time.time() - stamp <= 5):
         raise RuntimeError('Spark guard status is stale or inconsistent.')

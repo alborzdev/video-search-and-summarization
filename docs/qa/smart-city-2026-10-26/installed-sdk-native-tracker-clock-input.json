@@ -1,0 +1,46 @@
+{
+  "schemaVersion": "city.installed-sdk-nvmot-clock-input-review.v1",
+  "recordedAt": "2026-10-26T09:56:39.838364+00:00",
+  "scope": "Independent read-only inspection of actual installed SDK source/headers inside the current worker container. No pipeline/model/GPU/runtime changes.",
+  "containerImageId": "sha256:f68fc7202b48b0a6822049b598c9fc5229d6721f414836b12b3df8130e5cf0dd",
+  "sourceSha256": {
+    "/opt/nvidia/deepstream/deepstream/sources/gst-plugins/gst-nvtracker/nvtracker_proc.cpp": "a54f2b26fe3822b6780f251a3101cdc065b9bff92a89fbe6af75c5be47e37234",
+    "/opt/nvidia/deepstream/deepstream/sources/includes/nvdstracker.h": "f7256cded31b230d756aa6410f3580d84245482a01d67496a26aec7659d52f90"
+  },
+  "findings": [
+    {
+      "file": "/opt/nvidia/deepstream/deepstream/sources/gst-plugins/gst-nvtracker/nvtracker_proc.cpp",
+      "function": "NvTrackerProc::fillMOTFrame",
+      "lines": [
+        1453,
+        1463
+      ],
+      "behavior": "Initializes frameTimeStamp=0/frameTimeValid=false; if frameMeta.ntp_timestamp!=0 uses that value and marks valid; otherwise uses valid Gst frameMeta.buf_pts. localTimestamp remains actual host preparation wall time."
+    },
+    {
+      "file": "/opt/nvidia/deepstream/deepstream/sources/gst-plugins/gst-nvtracker/nvtracker_proc.cpp",
+      "lines": [
+        2548,
+        2928
+      ],
+      "behavior": "The tracker processing paths call fillMOTFrame for their input frames."
+    },
+    {
+      "file": "/opt/nvidia/deepstream/deepstream/sources/includes/nvdstracker.h",
+      "lines": [
+        52,
+        73,
+        281,
+        293
+      ],
+      "behavior": "NvMOTTimeStamp uint64; timeMeta.frameTimeStamp documented stream/media time in ns; NvMOTFrame carries the timeMeta object."
+    }
+  ],
+  "candidateImplication": "Assign exact native encoded-frame wallcapture ns to NvDsFrameMeta.ntp_timestamp AFTER mux and BEFORE both local NvDCF and native MV3DT, retain original buf_pts. The same nonzero timestamp then becomes actual tracker timeMeta.frameTimeStamp for both stages; export must retain the identical clock. JSON-only timestamp changes would not repair native tracker time.",
+  "boundaryConditions": [
+    "Opt-in native capture mode only; generic RTCP source mode unchanged.",
+    "Native SEI timestamp is encoded-frame handoff wall time from the current producer, not independently measured physical exposure.",
+    "No simulation-time, fitted offset, host-arrival substitution or GT identity is allowed for this source clock.",
+    "Installed source proof establishes the SDK mapping; candidate pad order and exact frame/epoch association require separate source/tests and actual trial."
+  ]
+}

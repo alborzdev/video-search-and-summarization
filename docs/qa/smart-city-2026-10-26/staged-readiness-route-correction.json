@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "city.staged-readiness-route-correction.v1",
+  "problem": "Initial launcher guard incorrectly expected full source session/tracker fields in minimal /health.sources. Root caught this before candidate inference resumed.",
+  "correction": "Fetch one current /snapshot for exact source order/site/live DTOs, tracking architecture/mode, common fusion epoch and optional excluded prior source sessions; retain original /health preview/native/rules checks.",
+  "actualRouteShapeRegressionPassed": true,
+  "focusedTestsPassed": 126,
+  "durationSeconds": 0.43,
+  "ruffScopedFatalPassed": true,
+  "launcherMypyPassed": true,
+  "imageAndProfileUnchanged": true,
+  "runtimeChangesByThisFix": false,
+  "sourceHashes": {
+    "tools/smart-city/isaac_demo.py": "77311dc2326d4cb9c2cae13213dc9bf61737e9a1da499c0ee998ff56d9442635",
+    "tools/smart-city/tests/test_isaac_demo.py": "342f8089a74105e78043fe5ab9a7f49d45cfbc24fb76888b9186557760ba95b6",
+    "services/analytics/behavior-analytics/apps/city/tests/test_map_demo.py": "87a38f515a9bae81254c5c710d3ec75d73159bc56f0785ba981acd388b5cc9ea"
+  }
+}

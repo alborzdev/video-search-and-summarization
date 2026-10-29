@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "city.waiting-point-selector-readiness-cpu.v1",
+  "calls": 20,
+  "medianMs": 4.668409936130047,
+  "maximumMs": 7.840665988624096,
+  "fixture": "Eight retained native positions from the actual cold-start motion receipt, controlled agent radius.25m in CPU fixture.",
+  "scope": "CPU-only readiness geometry; no native navmesh queries, native tasks, rendering, model requests or GPU jobs. Not Kit callback latency or FPS.",
+  "runtimeSha256": "eedc647c6f3677b73d358deed5e21389e81e31eb7dfd31abcc1522d0cf25c682"
+}

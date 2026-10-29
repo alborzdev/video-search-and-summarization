@@ -1,0 +1,138 @@
+{
+  "schemaVersion": "city.cold-load-people-startup-source.v1",
+  "sourceOnly": false,
+  "liveAppliedByThisTask": false,
+  "actualFailure": {
+    "error": "[people] GATE FAIL: all pedestrians moving (Fabric positions)",
+    "loaded": false,
+    "playing": true,
+    "walkerCount": 8,
+    "states": {
+      "Character": "signal-wait",
+      "Character_01": "signal-wait",
+      "Character_02": "signal-wait",
+      "Character_03": "signal-wait",
+      "Character_04": "signal-wait",
+      "Character_05": "signal-wait",
+      "Character_06": "signal-wait",
+      "Character_07": "signal-wait"
+    },
+    "normalRejoinReasons": {
+      "Character": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      },
+      "Character_01": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      },
+      "Character_02": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      },
+      "Character_03": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      },
+      "Character_04": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      },
+      "Character_05": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      },
+      "Character_06": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      },
+      "Character_07": {
+        "joined": false,
+        "reason": "normal-rejoin-unavailable",
+        "detail": "Current traffic survey geometry unavailable"
+      }
+    },
+    "measuredOldMotionGateMovingWalkers": 0,
+    "expectedWalkers": 8,
+    "cause": "The people phase required motion before the following traffic phase installed the survey/light dependencies needed by the pinned signal-aware normal-program rejoin. All eight actual walkers reported Current traffic survey geometry unavailable."
+  },
+  "repair": {
+    "scope": "Verified Expo signal-aware people only. Agent setup/alive gate stays before traffic; observed-motion proof runs after traffic, before spill/scenario preparation and loaded=True.",
+    "motionThresholdMetres": 0.5,
+    "requiredWalkers": 8,
+    "maximumWallSeconds": 120,
+    "proof": "Each of the same eight actors must show >0.5m displacement during a valid accepted native GoTo/CrossWalk task. Task ID 0 is valid; negative/missing/bool IDs do not qualify. Idle settling, changed task origins, legal waits or missing agents cannot replace motion.",
+    "additionalGuards": [
+      "progressing controller ticks and timeline",
+      "current safe normal-program rejoin",
+      "unchanged stage/people/traffic identity and generations",
+      "applied healthy light phase coherent with traffic",
+      "bounded failure leaves loaded=False"
+    ],
+    "legacy": "Non-Expo keeps the original snap/check all-moving gate.",
+    "runtimeReceipt": "The actual new loader writes people_motion_receipt and a unique smartcity_people_startup_motion-*.json in its log directory. Source tests do not establish a live pass."
+  },
+  "tests": {
+    "command": "python3 -m unittest discover -s scripts/people -p 'test_*startup*.py' -q",
+    "passed": 12,
+    "elapsedSeconds": 0.011,
+    "pureMotionControls": 9,
+    "mockedColdLifecycleControls": 3,
+    "compile": "passed",
+    "fatalRuff": "passed",
+    "lifecycleCases": [
+      "Expo motion phase occurs after traffic and loaded becomes true only after eight proofs",
+      "one stuck native actor remains at seven proofs and loaded stays false with a bounded failure receipt",
+      "non-Expo retains its original snap/check gate"
+    ]
+  },
+  "remaining": "No further cold-load action is required for this bounded repair. RTSP, completed East crossing detection, scenario acceptance, sustained FPS and integrated endurance remain separate checks owned by root.",
+  "sha256": {
+    "/home/sparkdev/isaac_city_sim/exts/smartcity.pilot/smartcity/pilot/pilot_loader.py": "6ce379bf0e4a91e06879fa4cc0eea9c8fabe8e34586c3ba0a4d3da2de86daba2",
+    "/home/sparkdev/isaac_city_sim/scripts/people/startup_motion.py": "7d052067bf2ad42e475319682ac8453a3f0302aa5b83f03d374a04656d758ea2",
+    "/home/sparkdev/isaac_city_sim/scripts/people/test_startup_motion.py": "ec546bc3172069e76d4918ed2d1f1c10140a08254b94e4f171c4bd2d90cab6be",
+    "/home/sparkdev/isaac_city_sim/scripts/people/test_loader_startup.py": "667469c3427d96d9d804de7823c69a58c95bd2aa7cff84955ac938f77629a259",
+    "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/first-load-people-state.json": "aedb44ef994c1c5d1b8dddaddfec16e1d96a3051202d42718765e11149fa278f",
+    "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/first-load-people-gate-failure.json": "c7247188d7d646e193885954cb2da951cff388e009bbe1b748f3b3f1ee04f03b",
+    "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/source.first-load-failure.console.log": "cafdf683ca8f7785fdba7eb1f870594cda491923c5630c415575c943d81d1269",
+    "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/source.first-load-failure.smartcity_people_setup.log": "48fec651f978393b3bcaad91642a0649d2ed5adf30d1cc3c4e8fca0d683b295b",
+    "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/actual-people-startup-motion.json": "7bf2781dab1f1e6e10a9ee4a2a5aa2386299926bc01f5b80b2b84dd4bebded1c",
+    "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/restart-with-signal-motion-gate/loaded.json": "0bae9d5ca59b6d29aa5df1eace19f0f06f86f4f1ea9e57bf7dd357c236d153cb",
+    "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/restart-with-signal-motion-gate/source-identities.json": "a5c6bf6a0c17ded4c3f32061695feff46a916a98562722eaa106a7b6fb665ba1",
+    "/home/sparkdev/vss/docs/qa/smart-city-2026-10-26/cold-load-people-startup-actual.json": "7bf2781dab1f1e6e10a9ee4a2a5aa2386299926bc01f5b80b2b84dd4bebded1c",
+    "/home/sparkdev/vss/docs/qa/smart-city-2026-10-26/cold-load-people-startup-loaded.json": "0bae9d5ca59b6d29aa5df1eace19f0f06f86f4f1ea9e57bf7dd357c236d153cb"
+  },
+  "validationStage": "source controls plus actual fresh cold LOAD performed by root",
+  "actualColdLoad": {
+    "passed": true,
+    "loaded": true,
+    "error": null,
+    "pilotStartupWallSecondsRounded": 74,
+    "motionGateWallSeconds": 40.81878386903554,
+    "motionGateSimSeconds": 18.30000000000047,
+    "controllerTickDelta": 1098,
+    "observedMovingWalkers": 8,
+    "expectedWalkers": 8,
+    "dependenciesReady": true,
+    "rawNativeFailsAtSnapshot": 2,
+    "rawRejectsAtSnapshot": 0,
+    "rawTimeoutsAtSnapshot": 0,
+    "scope": "Bounded startup dependency and accepted native-task motion proof. Raw native failures are retained; this is not a zero-failure, completed-crossing, RTSP or integrated VSS qualification.",
+    "actualMotionReceipt": "cold-load-people-startup-actual.json",
+    "loadedSnapshot": "cold-load-people-startup-loaded.json",
+    "streamingAtLoadedSnapshot": false
+  },
+  "helperIdentity": {
+    "finalFrozenOnDiskSha256": "7d052067bf2ad42e475319682ac8453a3f0302aa5b83f03d374a04656d758ea2",
+    "earlierSourceSnapshotSha256": "0a3bac0a15faad42e2531668aa59b7f642777c8b01dde72791ff752361a289f7",
+    "earlierSourceSnapshotPath": "/home/sparkdev/vss/.spark/city/runtime/pedestrian-pocket-live-20261026/restart-with-signal-motion-gate/source-identities.json",
+    "explanation": "The pre-phase source-identities snapshot preceded the final helper refinement. It remains unchanged as historical evidence. The loader opens and exec-compiles startup_motion.py when the post-traffic phase runs; the final helper was frozen before that phase. The actual motion receipt does not embed an in-memory source hash. The final on-disk pin is recorded separately, not substituted into the earlier snapshot."
+  }
+}

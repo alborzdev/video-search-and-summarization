@@ -49,6 +49,14 @@ backend bk_vss_ui
     timeout server 3600s
     server s1 "${VSS_UI_SERVICE_HOST}:${VSS_UI_PORT}" check resolvers docker init-addr none
 
+backend bk_city_events
+    # Frame metadata must beat WebRTC presentation. HTTP packet coalescing added
+    # up to 220 ms on this SSE path, leaving playing video without its boxes.
+    # Keep interactive flushing scoped here, rather than changing all traffic.
+    option http-no-delay
+    timeout server 3600s
+    server s1 "${VSS_UI_SERVICE_HOST}:${VSS_UI_PORT}" check resolvers docker init-addr none
+
 backend bk_vss_agent
     # Same reasoning as bk_vss_ui: /chat and /api reach the agent directly, and a
     # turn outlasts the 120s default whenever a tool does.
@@ -340,6 +348,10 @@ frontend fe_http
 
     # The custom demo's health, evidence, reports and source adapters are Next
     # API routes. Keep them ahead of the agent's generic /api namespace.
+    acl p_city_events path /api/vision/city/stream
+    acl p_city_events path_beg /api/vision/city-video/metadata/
+    use_backend bk_city_events if h_main p_city_events
+
     acl p_api_vision path /api/vision
     acl p_api_vision path_beg /api/vision/
     use_backend bk_vss_ui if h_main p_api_vision

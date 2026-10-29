@@ -1,0 +1,31 @@
+{
+  "schemaVersion": "city.mobility-preset-preservation-source.v1",
+  "checkedAt": "2026-10-26T08:22:33.432606+00:00",
+  "runtimeChanged": false,
+  "apiCalled": false,
+  "finalStatusChanged": false,
+  "problem": "The old prefix-based replacement deleted separately reviewed XW_E rules while keeping their saved measurement references.",
+  "changes": [
+    "Only replace rule IDs emitted by this preset; preserve all other saved rules, including custom/disabled mobility-prefixed rules.",
+    "Before any rules PUT, reject missing references across saved movement/crossing/queue/curb selections. No bypass added.",
+    "Remove preset apply and calibration refresh from routine current-site recovery instructions; distinguish legacy South-east flag from physical East XW_E story."
+  ],
+  "tests": {
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest tools/smart-city/tests/test_isaac_mobility.py tools/smart-city/tests/test_isaac_movement_gates.py tools/smart-city/tests/test_isaac_site.py -q",
+    "passed": 26,
+    "failed": 0,
+    "elapsedSeconds": 0.39,
+    "scope": "Pure builders and mocked actual CLI control. No live PUT, Docker or simulator action."
+  },
+  "sourceSha256": {
+    "tools/smart-city/isaac_mobility.py": "61d1363faa9007d176ea0710a2e0b6a8a567239d1bb9512e5c640ef533add89a",
+    "tools/smart-city/tests/test_isaac_mobility.py": "1b21672aef5570a06134bc53b15db42befff895efe0f4b3c1e6cd340b3737960",
+    "tools/smart-city/README.md": "b0db4a37e16df9a8189c4ff91ca463356dc81f363aa0019c4596c71fa4fc7b23",
+    "docs/smart-city-isaac-integration.md": "cf76676f9cd1224271efe8234c5411da8cdd7fffae16886a0134c5ed70365a25"
+  },
+  "limits": [
+    "Known preset-owned rule IDs still deliberately reset to preset defaults; this is not a general operator-state restore command.",
+    "Base-site refresh is a separate operation and still requires a reviewed preservation migration.",
+    "Current final scene, map, UI and runtime IDs remain pending root integration."
+  ]
+}

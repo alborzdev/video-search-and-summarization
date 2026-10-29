@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "city.final-browser-preview-performance.v1",
+  "start": {
+    "at": 1793000002364,
+    "frames": [
+      {
+        "renderFps": "10.6",
+        "rendered": "1002",
+        "sequence": "1054",
+        "session": "c73772f4-ccd1-4557-9d1b-142cea017a35",
+        "source": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "renderFps": "9.5",
+        "rendered": "1023",
+        "sequence": "1080",
+        "session": "6e7abb2a-2995-4b08-baee-f2ea3796b964",
+        "source": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "end": {
+    "at": 1793000140703,
+    "frames": [
+      {
+        "renderFps": "10.0",
+        "rendered": "2552",
+        "sequence": "2728",
+        "session": "c73772f4-ccd1-4557-9d1b-142cea017a35",
+        "source": "997d3a69-e052-45a4-a1ce-be1b046670c4"
+      },
+      {
+        "renderFps": "8.3",
+        "rendered": "2553",
+        "sequence": "2754",
+        "session": "6e7abb2a-2995-4b08-baee-f2ea3796b964",
+        "source": "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+      }
+    ]
+  },
+  "seconds": 138.339,
+  "rates": [
+    {
+      "source": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "sameSession": true,
+      "renderFps": 11.204360303312876,
+      "selectedSequenceFps": 12.100709127577906
+    },
+    {
+      "source": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "sameSession": true,
+      "renderFps": 11.059787912302388,
+      "selectedSequenceFps": 12.100709127577906
+    }
+  ],
+  "limits": [
+    "Displayed counter sample spans the stated browser interval; the native 30-second sample is separate.",
+    "No full-day or external-display timing claim."
+  ]
+}

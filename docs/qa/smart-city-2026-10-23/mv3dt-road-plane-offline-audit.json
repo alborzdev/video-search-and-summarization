@@ -1,0 +1,481 @@
+{
+  "schemaVersion": "city.mv3dt.offline-audit.v1",
+  "run": ".spark/city/state/native/mv3dt/probe-20261023T043825Z",
+  "savedMetricsReproducedExactly": true,
+  "savedChecksReproducedExactly": true,
+  "inputIntegrity": {
+    "verified": true,
+    "sha256": {
+      "package.json": "b652148b98d4e84ec877f8434fc9ab0b2cda81f7e0d0a47b91c730a3e3367d79",
+      "promotion-gates.json": "678d5b6f22b3ec10f05e75e5b88c91f2e5e2cd6bdf22fa0d465509669c12bb7d"
+    }
+  },
+  "passedOriginalGates": false,
+  "originalChecks": {
+    "inputIntegrity": true,
+    "runtimeCompleted": true,
+    "duration": true,
+    "memory": true,
+    "pairedSamples": true,
+    "sourceClockSkew": true,
+    "positionMedian": false,
+    "positionP95": false,
+    "falseMerges": false,
+    "matchedPeople": true,
+    "duplicateReduction": true
+  },
+  "originalMetrics": {
+    "observationCount": 2200,
+    "scoredObservationCount": 1902,
+    "matchedPersonObservations": 5441,
+    "distinctMatchedPeople": 8,
+    "unmatchedEligiblePersonDetections": 973,
+    "clockUnmatchedObservations": 0,
+    "sourceSkewPairs": 951,
+    "sourceClockSkewP95Ms": 1.6169955,
+    "personPositionMedianM": 0.5204653090316057,
+    "personPositionP95M": 1.3489984192991789,
+    "falseMergedNativeIds": 6,
+    "baselineGroundAnchorMedianM": 0.4266954944474444,
+    "baselineGroundAnchorP95M": 1.402509813604359,
+    "positionByCamera": {
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "nativeMedianM": 0.5316753915161687,
+        "nativeP95M": 1.8791576474778784,
+        "baselineMedianM": 0.3590998080738078,
+        "baselineP95M": 1.5039553975845508
+      },
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "nativeMedianM": 0.5150766822274223,
+        "nativeP95M": 1.199629173599328,
+        "baselineMedianM": 0.513453445510398,
+        "baselineP95M": 1.1790750670099692
+      }
+    },
+    "crossViewOpportunities": 1333,
+    "sameIdCrossViewMatches": 732,
+    "duplicateReductionFraction": 0.5491372843210802
+  },
+  "groundTruthSha256": "aae76ab42a29bcf0bf642c2d1ab341c6d35722c5f08b2d416a0f4e776ce8c541",
+  "observationsSha256": "fecabca03d5f9a06022b4352a0e911f878f8257e20a937eac922182d4a700890",
+  "configHashesMatchInvocation": {
+    "package.json": true,
+    "camera-0.yml": true,
+    "camera-1.yml": true,
+    "tracker-mv3dt.experimental.yml": true,
+    "promotion-gates.json": true,
+    "pub-sub.yml": true
+  },
+  "cameraOrderMatchesInvocation": true,
+  "timingSensitivityFixedOriginalActorLabelsNativeM": {
+    "-250": {
+      "count": 5441,
+      "median": 0.5022856998849557,
+      "p95": 1.341665287095514,
+      "maximum": 5.933386003826107
+    },
+    "-100": {
+      "count": 5441,
+      "median": 0.5096043807361793,
+      "p95": 1.3302527039959182,
+      "maximum": 5.836871815984262
+    },
+    "-50": {
+      "count": 5441,
+      "median": 0.5096043807361793,
+      "p95": 1.3302527039959182,
+      "maximum": 5.836871815984262
+    },
+    "0": {
+      "count": 5441,
+      "median": 0.5204653090316057,
+      "p95": 1.3489984192991789,
+      "maximum": 5.769215567306249
+    },
+    "50": {
+      "count": 5441,
+      "median": 0.5242847126516316,
+      "p95": 1.3489984192991789,
+      "maximum": 5.769215567306249
+    },
+    "100": {
+      "count": 5441,
+      "median": 0.5338437281304493,
+      "p95": 1.3403918830870782,
+      "maximum": 5.769215567306249
+    },
+    "250": {
+      "count": 5441,
+      "median": 0.5615216730750349,
+      "p95": 1.3699754916141273,
+      "maximum": 5.66940194905446
+    }
+  },
+  "sourceClock": {
+    "strictlyMonotonicBySource": true,
+    "scoredSourceSessions": {
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": 1,
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": 1
+    },
+    "fusionEpochs": 1,
+    "sourceToNearestGtOffsetMs": {
+      "count": 1902,
+      "median": 39.424547000000004,
+      "p95": 55.8519589,
+      "maximum": 73.701442
+    },
+    "pairedSecondViewReuseCount": 0
+  },
+  "imageAssignmentDiagnostics": {
+    "sameFrameDuplicateIdRows": 0,
+    "ambiguousMultipleRoots": 374,
+    "ambiguousMultipleObjects": 227,
+    "assignmentNotNearest": 16,
+    "isolatedByOriginalImageGate": 4968
+  },
+  "identityDiagnostics": {
+    "idLabelCounts": {
+      "23": {
+        "Character": 49,
+        "Character_02": 14
+      },
+      "3": {
+        "Character_06": 440,
+        "Character": 1
+      },
+      "0": {
+        "Character_07": 68
+      },
+      "4": {
+        "Character_04": 359,
+        "Character": 47
+      },
+      "40": {
+        "Character_05": 399
+      },
+      "45": {
+        "Character": 553,
+        "Character_06": 3,
+        "Character_04": 245
+      },
+      "37": {
+        "Character_05": 1
+      },
+      "48": {
+        "Character_05": 2
+      },
+      "52": {
+        "Character_02": 28
+      },
+      "53": {
+        "Character": 8
+      },
+      "56": {
+        "Character_02": 123
+      },
+      "60": {
+        "Character_03": 9,
+        "Character_07": 160
+      },
+      "61": {
+        "Character_07": 5,
+        "Character_03": 458,
+        "Character": 40
+      },
+      "62": {
+        "Character_05": 58
+      },
+      "63": {
+        "Character_02": 184
+      },
+      "68": {
+        "Character_06": 10
+      },
+      "73": {
+        "Character_06": 175
+      },
+      "74": {
+        "Character_02": 31
+      },
+      "75": {
+        "Character_04": 198
+      },
+      "76": {
+        "Character_03": 131
+      },
+      "79": {
+        "Character": 273
+      },
+      "81": {
+        "Character": 4
+      },
+      "85": {
+        "Character_01": 375
+      },
+      "89": {
+        "Character_01": 4
+      },
+      "93": {
+        "Character_01": 86
+      },
+      "101": {
+        "Character_04": 10
+      },
+      "92": {
+        "Character_04": 237
+      },
+      "106": {
+        "Character_05": 276
+      },
+      "118": {
+        "Character_01": 43
+      },
+      "125": {
+        "Character_03": 131
+      },
+      "127": {
+        "Character": 149
+      },
+      "131": {
+        "Character_02": 48
+      },
+      "132": {
+        "Character_05": 6
+      }
+    },
+    "idsWithMultipleIsolatedLabels": {
+      "4": {
+        "Character_04": 338,
+        "Character": 37
+      },
+      "45": {
+        "Character": 476,
+        "Character_04": 241
+      }
+    },
+    "crossView": {
+      "all": 1333,
+      "same": 732,
+      "isolated": 1188,
+      "isolatedSame": 630
+    },
+    "simultaneousConflictingIdPairs": 16,
+    "simultaneousConflictingIdPairsIsolatedBoth": 1,
+    "isolatedConflictTruthSeparationM": {
+      "count": 1,
+      "median": 1.545360966197615,
+      "p95": 1.545360966197615,
+      "maximum": 1.545360966197615
+    },
+    "isolatedConflictNativeSeparationM": {
+      "count": 1,
+      "median": 1.9042116036477266,
+      "p95": 1.9042116036477266,
+      "maximum": 1.9042116036477266
+    },
+    "conflictsById": {
+      "3": 1,
+      "45": 14,
+      "4": 1
+    },
+    "firstIsolatedConflicts": [
+      {
+        "id": "45",
+        "actors": [
+          "Character_04",
+          "Character"
+        ],
+        "timeNs": "1792730370046643456",
+        "isolatedBoth": true,
+        "groundTruthSeparationM": 1.545360966197615,
+        "nativeSeparationM": 1.9042116036477266
+      }
+    ],
+    "sameIdNativeCrossViewSeparationM": {
+      "count": 748,
+      "median": 0.7845138913159764,
+      "p95": 1.2065043391805537,
+      "maximum": 1.9042116036477266
+    },
+    "observedIdChangesWithin500Ms": {
+      "all": 48,
+      "isolatedBoth": 26
+    },
+    "people": {
+      "Character": {
+        "matches": 1124,
+        "uniqueSdkIds": 9,
+        "isolatedUniqueSdkIds": 6,
+        "positionM": {
+          "count": 1124,
+          "median": 0.2713747356598473,
+          "p95": 0.9249413228675832,
+          "maximum": 3.296996054659687
+        },
+        "isolatedPositionM": {
+          "count": 912,
+          "median": 0.25592284309296864,
+          "p95": 0.8197528204815044,
+          "maximum": 2.3622369524405005
+        }
+      },
+      "Character_01": {
+        "matches": 508,
+        "uniqueSdkIds": 4,
+        "isolatedUniqueSdkIds": 4,
+        "positionM": {
+          "count": 508,
+          "median": 0.5058732998533713,
+          "p95": 1.2200962861812086,
+          "maximum": 2.492340823420871
+        },
+        "isolatedPositionM": {
+          "count": 508,
+          "median": 0.5058732998533713,
+          "p95": 1.2200962861812086,
+          "maximum": 2.492340823420871
+        }
+      },
+      "Character_02": {
+        "matches": 428,
+        "uniqueSdkIds": 6,
+        "isolatedUniqueSdkIds": 5,
+        "positionM": {
+          "count": 428,
+          "median": 0.4675743154149598,
+          "p95": 2.850212469049331,
+          "maximum": 3.511295471444418
+        },
+        "isolatedPositionM": {
+          "count": 413,
+          "median": 0.47710442946548776,
+          "p95": 2.842548901610171,
+          "maximum": 3.511295471444418
+        }
+      },
+      "Character_03": {
+        "matches": 729,
+        "uniqueSdkIds": 4,
+        "isolatedUniqueSdkIds": 3,
+        "positionM": {
+          "count": 729,
+          "median": 0.5971761317010837,
+          "p95": 1.4508981528376217,
+          "maximum": 1.9257939689478445
+        },
+        "isolatedPositionM": {
+          "count": 654,
+          "median": 0.7450378339345822,
+          "p95": 1.433602932677633,
+          "maximum": 1.9257939689478445
+        }
+      },
+      "Character_04": {
+        "matches": 1049,
+        "uniqueSdkIds": 5,
+        "isolatedUniqueSdkIds": 5,
+        "positionM": {
+          "count": 1049,
+          "median": 0.6771407716807333,
+          "p95": 1.2170940923332814,
+          "maximum": 1.7289632455716082
+        },
+        "isolatedPositionM": {
+          "count": 1003,
+          "median": 0.6702247061422689,
+          "p95": 1.2135282337845923,
+          "maximum": 1.7289632455716082
+        }
+      },
+      "Character_05": {
+        "matches": 742,
+        "uniqueSdkIds": 6,
+        "isolatedUniqueSdkIds": 6,
+        "positionM": {
+          "count": 742,
+          "median": 0.5807812050103953,
+          "p95": 1.0329766265840135,
+          "maximum": 5.769215567306249
+        },
+        "isolatedPositionM": {
+          "count": 709,
+          "median": 0.6028747787551583,
+          "p95": 1.0343108275398099,
+          "maximum": 5.769215567306249
+        }
+      },
+      "Character_06": {
+        "matches": 628,
+        "uniqueSdkIds": 4,
+        "isolatedUniqueSdkIds": 3,
+        "positionM": {
+          "count": 628,
+          "median": 0.4341863463137795,
+          "p95": 0.7841987577686936,
+          "maximum": 1.8864498049614353
+        },
+        "isolatedPositionM": {
+          "count": 608,
+          "median": 0.4401628328113691,
+          "p95": 0.7841987577686936,
+          "maximum": 1.8864498049614353
+        }
+      },
+      "Character_07": {
+        "matches": 233,
+        "uniqueSdkIds": 3,
+        "isolatedUniqueSdkIds": 2,
+        "positionM": {
+          "count": 233,
+          "median": 0.3236568185108983,
+          "p95": 0.7035784098204652,
+          "maximum": 1.90885467577902
+        },
+        "isolatedPositionM": {
+          "count": 161,
+          "median": 0.3236568185108983,
+          "p95": 0.6833838288501763,
+          "maximum": 0.757138064950299
+        }
+      }
+    }
+  },
+  "positionDiagnostics": {
+    "nativeImageFootHomographyVsNativeWorldM": {
+      "count": 6414,
+      "median": 0.022379591591105752,
+      "p95": 0.14935913955143046,
+      "maximum": 1.4992863526103173
+    },
+    "nativeWorldVsBboxBottomGroundM": {
+      "count": 6414,
+      "median": 0.9356765747123958,
+      "p95": 2.947338377397151,
+      "maximum": 7.232240364698913
+    },
+    "nativeFootVsMatchedGtPixelPx": {
+      "count": 5441,
+      "median": 11.2232451511249,
+      "p95": 31.696582309539885,
+      "maximum": 76.14217182565676
+    },
+    "isolatedMatchesNativeM": {
+      "count": 4968,
+      "median": 0.5344888923292244,
+      "p95": 1.2837158233448038,
+      "maximum": 5.769215567306249
+    },
+    "isolatedMatchesBboxGroundM": {
+      "count": 4968,
+      "median": 0.4046783088390804,
+      "p95": 1.3876645022922423,
+      "maximum": 3.7415578717536575
+    }
+  },
+  "limits": [
+    "Diagnostic subsets do not remove samples from saved promotion gates.",
+    "Isolated means one-to-one under the original image-space distance gate, not independently verified visibility or correct identity.",
+    "Unique SDK IDs per actor and short-gap changes include tracker ID corrections, label error and fragmentation; not HOTA/IDF1.",
+    "GT capture time versus source RTCP is nearest-neighbor matching, not recorded frame-ID evidence."
+  ]
+}

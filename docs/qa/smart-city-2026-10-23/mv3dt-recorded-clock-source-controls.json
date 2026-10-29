@@ -1,0 +1,28 @@
+{
+  "schemaVersion": "city.mv3dt.recorded-clock-source-controls.v1",
+  "date": "2026-10-23",
+  "sourceOnly": true,
+  "runtimeChanged": false,
+  "gpuWork": false,
+  "realRecordedReplayQualified": false,
+  "clockSchema": "city.encoded-pair-clock.v1",
+  "preservesInferenceTimestampBasis": true,
+  "preservesInferenceSourceTimeNs": true,
+  "neverFitsReplayPtsOffset": true,
+  "requiredSharedFileClockMaximumSpreadMs": 50,
+  "tests": {
+    "passed": 28,
+    "durationSeconds": 0.04,
+    "command": "/tmp/vss-city-backend-test-env/bin/python -m pytest -q tools/smart-city/tests/test_mv3dt_evaluator.py"
+  },
+  "historicalLiveRecheck": {
+    "sameMetricsBothRuns": true,
+    "sameOriginalGateOutcomesBothRuns": true,
+    "bothRunsStillFail": true
+  },
+  "files": {
+    "tools/smart-city/evaluate_mv3dt_probe.py": "2b0f3321c0a63b12a88d34826a052d55c19e79bbe301ac532af0f64eae4a281f",
+    "tools/smart-city/tests/test_mv3dt_evaluator.py": "321dc1e865eb12a0c87f1cb83ac869cf8ded99a002e66191bebf9a12ef0e3201",
+    "docs/smart-city-mv3dt-recorded-clock.md": "d78e611fc92c0b40e344e1a4c8f8863a78024df692ca60d470f63663f6e07f8f"
+  }
+}

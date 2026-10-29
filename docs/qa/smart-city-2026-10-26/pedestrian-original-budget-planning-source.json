@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "city.pedestrian-original-budget-planning-source.v1",
+  "recordedAt": "2026-10-26T09:38:11.690170+00:00",
+  "scope": "Director-only source planning repair. No runtime/Kit/actors/GPU changes by this author. Parent owns fresh actual UI acceptance.",
+  "actualFailure": {
+    "sourceTrace": "/home/sparkdev/isaac_city_sim/logs/vss-integration/rebuild-20261026/scenario-pedestrian-reapproach-final-v3-ui.ndjson",
+    "sha256": "ffc97f614b466f3699aa65ae84b795e80628f775738109668402c2dd67b7e485",
+    "runId": "6cb839744cdf46fc:000001",
+    "state": "failed",
+    "reason": "pedestrian-walk-signal-deadline",
+    "elapsedWallSeconds": 107.97596416529268,
+    "restored": true,
+    "entryArrivalVerified": true,
+    "atEntry": true,
+    "entryRecovery": null,
+    "latchedWaitWallSeconds": 102.78527485278386,
+    "initialObservedSimPerWall": 0.37081717107678636,
+    "finalPlanningSimPerWall": 0.3136266291906739,
+    "nextUsableWalkSimSeconds": 0.25,
+    "remainingOriginalWallSecondsAtLastAction": 72.10582169983536,
+    "currentPlannedCrossingWallSeconds": 51.4593198771825,
+    "nativePlanProof": {
+      "nativePathVerified": true,
+      "crosswalkId": "XW_E",
+      "crossingPathMetres": 17.680827876230673,
+      "approachPathMetres": 0.05197208599580561,
+      "pointCount": 213,
+      "basis": "native navmesh query with actual agent dimensions; not observed arrival",
+      "selectionProofAttempts": 1
+    },
+    "limits": "This was a genuine planning-deadline failure with normal restoration before crossing. A future signal window was not actual permission to cross. No analytic/native completion is claimed."
+  },
+  "sourceSha256": {
+    "scripts/scenarios/director.py": "f8a760c85a1773277d7f4bbdf34439e281a32d34452bbddce672c924cf7be1a9",
+    "scripts/scenarios/test_director.py": "6be17c6e5c2e66f239c05d35f8b99d2a3778841053e25b1e91d9393dea540237",
+    "scripts/scenarios/runtime.py": "0cf9ee6852079547d94361066bbadbe020c677207056c7b6877e452629778098",
+    "scripts/people/people_controller.py": "836ed862cde8ac7303411c91050b7cefbf3ca666a6a003a49c40dac57b7be111"
+  },
+  "repair": {
+    "latch": "Once per original awaiting-walk phase; original phase start and original180s episode start retained. Polls/slowdowns never relatch or extend it.",
+    "crossingReserve": "Maximum of any valid positive current native-path-with-margin SIM/rate+existing8s margin and published crossing wall estimate. Actual runtime computes its path from the locked selected plan and current planning rate.",
+    "cleanupReserveWallSeconds": 8,
+    "allocation": "min(existing115s signal ceiling, max(0, original180 total minus time before WAIT minus pinned crossing reserve minus cleanup reserve))",
+    "fallback": "Missing/invalid positive crossing duration keeps the old finite wait/rate+margin fallback; no full-slack expansion without a reserve.",
+    "liveEntryGuards": "Actual displayed/traffic phase, full native path, cohort, real curb arrival, unchanged0.35m arrival tolerance and CURRENT remaining-original-budget fit remain authoritative. No forced WALK or timer completion.",
+    "exposedFields": "pacingBudget.walkWaitPlan and walk-wait-budget-latched.planningComponents hold actual ratio, initial wait estimate, original available time, crossing/cleanup reserves, ceiling and allocated fixed wait."
+  },
+  "predictionForSavedFailure": {
+    "oldWaitWallSeconds": 102.78527485278386,
+    "newWaitWallSeconds": 115,
+    "initialPlannedCrossingWallSeconds": 44.75665816774593,
+    "cleanupWallSeconds": 8,
+    "basis": "CPU replay of saved failure values; not actual future playback or a guarantee. Current remaining-budget and WALK checks must still pass."
+  },
+  "validation": [
+    {
+      "command": "python3 -m unittest scripts.scenarios.test_director.AdaptiveBudgetControls -q",
+      "count": 9,
+      "seconds": 0.003,
+      "exitCode": 0
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts/scenarios -t . -q",
+      "count": 117,
+      "seconds": 7.051,
+      "exitCode": 0
+    },
+    {
+      "command": "fatal Ruff +py_compile director.py",
+      "result": "pass"
+    }
+  ],
+  "independentReview": "next_pipeline_perf verified exact f8a760c8/6be17c6e, independently repeated9 adaptive controls and reported no blocker. Separate review receipt will retain exact hashes.",
+  "remainingLimits": [
+    "A later rendering slowdown can still make a real signal window or original overall budget unusable.",
+    "Crossing and restoration still need actual native and camera evidence independently.",
+    "The115s phase ceiling and180s original maximum remain hard limits; no repeated retry extends them."
+  ]
+}

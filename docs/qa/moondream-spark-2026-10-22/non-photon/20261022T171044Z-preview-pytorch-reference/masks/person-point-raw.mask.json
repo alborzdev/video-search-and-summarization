@@ -1,0 +1,20 @@
+{
+  "valid_mask": false,
+  "quality_validated": false,
+  "image_size": [
+    640,
+    360
+  ],
+  "coordinate_system": "bbox_relative_0_1",
+  "renderer": "system_librsvg",
+  "bbox": {
+    "x_min": 0.37501712143421173,
+    "y_min": 0.3101299852132797,
+    "x_max": 0.42967037856578827,
+    "y_max": 0.6156512647867203
+  },
+  "artifacts": {
+    "metadata": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T171044Z-preview-pytorch-reference/masks/person-point-raw.mask.json"
+  },
+  "status": "bbox_only"
+}

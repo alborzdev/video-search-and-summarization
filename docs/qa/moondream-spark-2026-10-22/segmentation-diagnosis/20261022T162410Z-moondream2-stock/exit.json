@@ -1,0 +1,49 @@
+{
+  "returncode": 3,
+  "child_returncode": 0,
+  "missing_or_failed_tasks": [],
+  "mask_failures": [
+    {
+      "case": "panel-space0-double0",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "panel-space1-double0",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "panel-space0-double1",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "panel-space1-double1",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "person-space0-double0",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "person-space1-double0",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "person-space0-double1",
+      "expected_present": true,
+      "status": "bbox_only"
+    },
+    {
+      "case": "person-space1-double1",
+      "expected_present": true,
+      "status": "bbox_only"
+    }
+  ],
+  "elapsed_s": 39.46287978813052,
+  "log": "/home/sparkdev/vss/.spark/moondream-photon/runs/20261022T162410Z-moondream2-stock/inference.jsonl"
+}

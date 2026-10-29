@@ -1,0 +1,456 @@
+{
+  "capturedAt": "2026-10-22T04:59:47.170429+00:00",
+  "phase": "two-source-active-with-proxy-duplicate-pts-finding",
+  "reserveGiB": 20,
+  "minimumAvailableGiB": 23.75218963623047,
+  "samples": [
+    {
+      "elapsedSeconds": 0.0,
+      "availableGiB": 24.12842559814453
+    },
+    {
+      "elapsedSeconds": 1.0,
+      "availableGiB": 23.99673843383789
+    },
+    {
+      "elapsedSeconds": 2.0,
+      "availableGiB": 23.992286682128906
+    },
+    {
+      "elapsedSeconds": 3.0,
+      "availableGiB": 23.95041275024414
+    },
+    {
+      "elapsedSeconds": 4.0,
+      "availableGiB": 23.933135986328125
+    },
+    {
+      "elapsedSeconds": 5.0,
+      "availableGiB": 23.97970199584961
+    },
+    {
+      "elapsedSeconds": 6.0,
+      "availableGiB": 23.967514038085938
+    },
+    {
+      "elapsedSeconds": 7.0,
+      "availableGiB": 23.92613983154297
+    },
+    {
+      "elapsedSeconds": 8.0,
+      "availableGiB": 23.75218963623047
+    },
+    {
+      "elapsedSeconds": 9.0,
+      "availableGiB": 23.86223602294922
+    },
+    {
+      "elapsedSeconds": 10.01,
+      "availableGiB": 23.874584197998047
+    },
+    {
+      "elapsedSeconds": 11.01,
+      "availableGiB": 23.867298126220703
+    },
+    {
+      "elapsedSeconds": 12.01,
+      "availableGiB": 23.890453338623047
+    },
+    {
+      "elapsedSeconds": 13.01,
+      "availableGiB": 23.903202056884766
+    },
+    {
+      "elapsedSeconds": 14.01,
+      "availableGiB": 23.87298583984375
+    },
+    {
+      "elapsedSeconds": 15.01,
+      "availableGiB": 23.919883728027344
+    },
+    {
+      "elapsedSeconds": 16.01,
+      "availableGiB": 23.939453125
+    },
+    {
+      "elapsedSeconds": 17.01,
+      "availableGiB": 23.95398712158203
+    },
+    {
+      "elapsedSeconds": 18.01,
+      "availableGiB": 23.95313262939453
+    },
+    {
+      "elapsedSeconds": 19.01,
+      "availableGiB": 23.968063354492188
+    },
+    {
+      "elapsedSeconds": 20.01,
+      "availableGiB": 23.924816131591797
+    },
+    {
+      "elapsedSeconds": 21.01,
+      "availableGiB": 23.94485092163086
+    },
+    {
+      "elapsedSeconds": 22.01,
+      "availableGiB": 23.957237243652344
+    },
+    {
+      "elapsedSeconds": 23.01,
+      "availableGiB": 23.95484161376953
+    },
+    {
+      "elapsedSeconds": 24.01,
+      "availableGiB": 24.027725219726562
+    },
+    {
+      "elapsedSeconds": 25.01,
+      "availableGiB": 24.021236419677734
+    },
+    {
+      "elapsedSeconds": 26.01,
+      "availableGiB": 24.026416778564453
+    },
+    {
+      "elapsedSeconds": 27.01,
+      "availableGiB": 24.03213119506836
+    },
+    {
+      "elapsedSeconds": 28.01,
+      "availableGiB": 24.012752532958984
+    },
+    {
+      "elapsedSeconds": 29.01,
+      "availableGiB": 24.02444839477539
+    },
+    {
+      "elapsedSeconds": 30.01,
+      "availableGiB": 24.004932403564453
+    },
+    {
+      "elapsedSeconds": 31.01,
+      "availableGiB": 24.05535888671875
+    },
+    {
+      "elapsedSeconds": 32.02,
+      "availableGiB": 23.921184539794922
+    },
+    {
+      "elapsedSeconds": 33.02,
+      "availableGiB": 23.96886444091797
+    },
+    {
+      "elapsedSeconds": 34.02,
+      "availableGiB": 23.995098114013672
+    }
+  ],
+  "snapshot": {
+    "sources": [
+      {
+        "id": "291399aa-a062-43b6-badc-48c34bc08237",
+        "status": "live",
+        "timestampBasis": "source-rtcp",
+        "lastSourceTimeNs": "1792645186843258151",
+        "sessionId": "b71e7b35-c2ee-404f-8360-f23bca90f4c9",
+        "mediaTimeSeconds": 35.593174
+      },
+      {
+        "id": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+        "status": "live",
+        "timestampBasis": "source-rtcp",
+        "lastSourceTimeNs": "1792645175551530321",
+        "sessionId": "02300d08-4c68-495a-a853-211281e134e5",
+        "mediaTimeSeconds": 24.9186484
+      }
+    ],
+    "trackCount": 120,
+    "nativeAnalytics": {
+      "status": "active",
+      "requestedRevision": 21,
+      "appliedRevision": 21,
+      "primitives": [
+        {
+          "ruleId": "rtsp-pedestrian-image-occupancy",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_9759f7135a55ecd8",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        }
+      ],
+      "eventAuthority": "city-behavior-analytics",
+      "counterEpoch": "96f9ece2-cc6b-4a91-be59-c94de1d19ae0",
+      "sourceTimeNs": "1792645173486970444",
+      "error": "",
+      "lastAppliedRevision": 21,
+      "operationalStatus": "fresh"
+    }
+  },
+  "mediaQualification": "recorded-video-rtsp-replay",
+  "clockQualification": "pending native/browser mapping; source-rtcp alone does not qualify browser overlays",
+  "oneSourceSample": {
+    "capturedAt": "2026-10-22T04:57:53.276624+00:00",
+    "phase": "one-rtsp-source-first-30s-retry",
+    "reserveGiB": 20,
+    "minimumAvailableGiB": 23.880409240722656,
+    "samples": [
+      {
+        "elapsedSeconds": 0.0,
+        "availableGiB": 26.19497299194336
+      },
+      {
+        "elapsedSeconds": 1.0,
+        "availableGiB": 26.130210876464844
+      },
+      {
+        "elapsedSeconds": 2.0,
+        "availableGiB": 25.776077270507812
+      },
+      {
+        "elapsedSeconds": 3.0,
+        "availableGiB": 25.42261505126953
+      },
+      {
+        "elapsedSeconds": 4.0,
+        "availableGiB": 25.126514434814453
+      },
+      {
+        "elapsedSeconds": 5.0,
+        "availableGiB": 25.24657440185547
+      },
+      {
+        "elapsedSeconds": 6.0,
+        "availableGiB": 24.940536499023438
+      },
+      {
+        "elapsedSeconds": 7.0,
+        "availableGiB": 24.842567443847656
+      },
+      {
+        "elapsedSeconds": 8.0,
+        "availableGiB": 24.788143157958984
+      },
+      {
+        "elapsedSeconds": 9.01,
+        "availableGiB": 24.35776138305664
+      },
+      {
+        "elapsedSeconds": 10.01,
+        "availableGiB": 24.11749267578125
+      },
+      {
+        "elapsedSeconds": 11.01,
+        "availableGiB": 23.880409240722656
+      },
+      {
+        "elapsedSeconds": 12.01,
+        "availableGiB": 23.937786102294922
+      },
+      {
+        "elapsedSeconds": 13.01,
+        "availableGiB": 23.991405487060547
+      },
+      {
+        "elapsedSeconds": 14.01,
+        "availableGiB": 23.99956512451172
+      },
+      {
+        "elapsedSeconds": 15.01,
+        "availableGiB": 24.0384521484375
+      },
+      {
+        "elapsedSeconds": 16.01,
+        "availableGiB": 24.027374267578125
+      },
+      {
+        "elapsedSeconds": 17.01,
+        "availableGiB": 24.00769805908203
+      },
+      {
+        "elapsedSeconds": 18.01,
+        "availableGiB": 24.050289154052734
+      },
+      {
+        "elapsedSeconds": 19.01,
+        "availableGiB": 24.08306121826172
+      },
+      {
+        "elapsedSeconds": 20.01,
+        "availableGiB": 24.015026092529297
+      },
+      {
+        "elapsedSeconds": 21.01,
+        "availableGiB": 24.058025360107422
+      },
+      {
+        "elapsedSeconds": 22.01,
+        "availableGiB": 24.260482788085938
+      },
+      {
+        "elapsedSeconds": 23.01,
+        "availableGiB": 24.343387603759766
+      },
+      {
+        "elapsedSeconds": 24.01,
+        "availableGiB": 24.307327270507812
+      },
+      {
+        "elapsedSeconds": 25.01,
+        "availableGiB": 24.27584457397461
+      },
+      {
+        "elapsedSeconds": 26.01,
+        "availableGiB": 24.340904235839844
+      },
+      {
+        "elapsedSeconds": 27.01,
+        "availableGiB": 24.35458755493164
+      },
+      {
+        "elapsedSeconds": 28.01,
+        "availableGiB": 24.306106567382812
+      },
+      {
+        "elapsedSeconds": 29.01,
+        "availableGiB": 24.257667541503906
+      }
+    ],
+    "snapshot": {
+      "sources": [
+        {
+          "id": "291399aa-a062-43b6-badc-48c34bc08237",
+          "status": "live",
+          "timestampBasis": "source-rtcp",
+          "lastSourceTimeNs": "1792645072998506517",
+          "sessionId": "572f9c6f-f8e0-4ad7-8cf2-5e5840e5b2c1",
+          "frameId": null,
+          "mediaTimeSeconds": 20.2779008
+        }
+      ],
+      "trackCount": 102,
+      "nativeAnalytics": {
+        "status": "active",
+        "requestedRevision": 18,
+        "appliedRevision": 18,
+        "primitives": [],
+        "eventAuthority": "city-behavior-analytics",
+        "counterEpoch": "688d6808-6d7a-4309-8fe1-08babc171431",
+        "sourceTimeNs": "1792645047973619144",
+        "error": "",
+        "lastAppliedRevision": 18,
+        "operationalStatus": "fresh"
+      }
+    },
+    "mediaQualification": "recorded-video-rtsp-replay",
+    "clockQualification": "pending native/browser mapping; source-rtcp alone does not qualify browser overlays"
+  },
+  "vios": {
+    "running": true,
+    "oomKilled": false
+  },
+  "ruleReloadSnapshot": {
+    "sources": [
+      {
+        "id": "291399aa-a062-43b6-badc-48c34bc08237",
+        "status": "live",
+        "timestampBasis": "source-rtcp",
+        "lastSourceTimeNs": "1792645191414103381",
+        "sessionId": "b71e7b35-c2ee-404f-8360-f23bca90f4c9"
+      },
+      {
+        "id": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+        "status": "live",
+        "timestampBasis": "source-rtcp",
+        "lastSourceTimeNs": "1792645178888041274",
+        "sessionId": "02300d08-4c68-495a-a853-211281e134e5"
+      }
+    ],
+    "nativeAnalytics": {
+      "status": "active",
+      "requestedRevision": 21,
+      "appliedRevision": 21,
+      "primitives": [
+        {
+          "ruleId": "rtsp-pedestrian-image-occupancy",
+          "primitiveStatus": "compiled",
+          "nativeLabel": "city_9759f7135a55ecd8",
+          "nativeClassFilter": "all",
+          "eventAuthority": "city-behavior-analytics"
+        }
+      ],
+      "eventAuthority": "city-behavior-analytics",
+      "counterEpoch": "96f9ece2-cc6b-4a91-be59-c94de1d19ae0",
+      "sourceTimeNs": "1792645173486970444",
+      "error": "",
+      "lastAppliedRevision": 21,
+      "operationalStatus": "fresh"
+    },
+    "metrics": [
+      {
+        "ruleId": "rtsp-pedestrian-image-occupancy",
+        "totalCrossings": 0,
+        "count": 2,
+        "occupancy": 2,
+        "activeEventCount": 1,
+        "oldestDwellMs": 5401.07083,
+        "status": "active",
+        "timestamp": "2026-10-22T04:59:38.888041Z"
+      }
+    ],
+    "eventCount": 1,
+    "trackCount": 110
+  },
+  "liveAnalysisSourceControls": [
+    {
+      "sensorId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "state": "active",
+      "analysisActive": true,
+      "analysisProfileId": "smart-city",
+      "detectionEnabled": true,
+      "steps": {
+        "detection": true,
+        "embedding_resource": true,
+        "embedding": true,
+        "caption_resource": true,
+        "indexing": true
+      }
+    },
+    {
+      "sensorId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "state": "active",
+      "analysisActive": true,
+      "analysisProfileId": "smart-city",
+      "detectionEnabled": true,
+      "steps": {
+        "detection": true,
+        "embedding_resource": true,
+        "embedding": true,
+        "caption_resource": true,
+        "indexing": true
+      }
+    }
+  ],
+  "result": "functional-controls-passed-live-latency-not-qualified",
+  "sourceLifecycleQualified": true,
+  "guardUnit": "vss-spark-guard.service",
+  "qualification": "Agent two-source controls, real detections, semantic indexing and ROI hotreload passed; later clock sampling exposed VIOS proxy repeated-PTS frames and growing pedestrian clock age. This does not qualify live latency or endurance. Sources remain active for coordinated debugging, with guard20GiB unchanged.",
+  "snapshotSiteRevisionPendingReload": true,
+  "nativeClockProgressSample": [
+    {
+      "sourceId": "291399aa-a062-43b6-badc-48c34bc08237",
+      "wallIntervalSeconds": 10.043027639389038,
+      "sourceClockAdvanceSeconds": 10.04264144,
+      "currentClockAgeSeconds": 0.37273144721984863,
+      "sessionChanged": false,
+      "timestampBasis": "source-rtcp"
+    },
+    {
+      "sourceId": "bc1d9430-135a-4d83-a9a8-1d5b3858fcc9",
+      "wallIntervalSeconds": 10.043027639389038,
+      "sourceClockAdvanceSeconds": 7.981650995,
+      "currentClockAgeSeconds": 41.81917071342468,
+      "sessionChanged": false,
+      "timestampBasis": "source-rtcp"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "at": "2026-10-23T20:30:46.632580+00:00",
+  "ready": true,
+  "nativeStreams": {
+    "cam_SW": {
+      "cam": "cam_SW",
+      "port": 18560,
+      "mount": "/cam_SW",
+      "encoding": "h264",
+      "frames": 5528,
+      "pushed": 5462,
+      "failed": false,
+      "server": true,
+      "server_starts": 1,
+      "capture_timestamp_basis": "wall-capture",
+      "last_capture_ns": 1792787446544249158,
+      "push_rejected": 66,
+      "client_connected": true,
+      "first_error": null,
+      "swizzled": 0,
+      "swizzle_error": null,
+      "swizzle_ms": null,
+      "attached": true
+    },
+    "cam_NE": {
+      "cam": "cam_NE",
+      "port": 18561,
+      "mount": "/cam_NE",
+      "encoding": "h264",
+      "frames": 5528,
+      "pushed": 5525,
+      "failed": false,
+      "server": true,
+      "server_starts": 1,
+      "capture_timestamp_basis": "wall-capture",
+      "last_capture_ns": 1792787446543874886,
+      "push_rejected": 3,
+      "client_connected": true,
+      "first_error": null,
+      "swizzled": 0,
+      "swizzle_error": null,
+      "swizzle_ms": null,
+      "attached": true
+    }
+  },
+  "sources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "status": "live"
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "status": "live"
+    }
+  ],
+  "processedPreviewSources": [
+    {
+      "id": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "available": true,
+      "status": "ready"
+    },
+    {
+      "id": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "available": true,
+      "status": "ready"
+    }
+  ],
+  "mapFusion": {
+    "mode": "mv3dt-demo",
+    "enabled": true,
+    "available": true,
+    "experimental": true,
+    "qualified": false,
+    "positionBasis": "camera-local-homography",
+    "analyticsIdentityBasis": "camera-local",
+    "status": "enabled"
+  },
+  "calibrationRevision": "isaac-live-6aaa6befcc1f190b",
+  "nativeWorkerImage": "sha256:80dba42da528a28b758993466cf779a58ea6f5baca8157535f187e6e1da8e214"
+}

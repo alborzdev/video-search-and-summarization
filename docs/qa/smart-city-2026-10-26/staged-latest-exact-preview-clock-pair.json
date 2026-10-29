@@ -1,0 +1,200 @@
+{
+  "schemaVersion": "city.current-exact-preview-clock-pair.v1",
+  "readOnly": true,
+  "captureSkewMs": 452.757359,
+  "guardMaximumSkewMs": 150,
+  "timestampGuardPass": false,
+  "sameNativeGlobalHintExamples": [
+    {
+      "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:76",
+      "localTrackIds": [
+        "2896516065997619601",
+        "2896516065997619530"
+      ],
+      "positionM": [
+        [
+          -37.53717453173751,
+          87.39099595404635
+        ],
+        [
+          -36.96721902738889,
+          87.70366874119247
+        ]
+      ],
+      "distanceM": 0.6500873393314294
+    }
+  ],
+  "frames": [
+    {
+      "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+      "fetchedFromUnixNs": "1792997077795746018",
+      "fetchedToUnixNs": "1792997077871962171",
+      "bodySha256": "00ebbbde3dc29881dc23141ac4b97e9491f735fc173ad4238827719b327ae1b0",
+      "jsonBytes": 46100,
+      "jpegBytes": 52225,
+      "sourceSessionId": "13e60b49-25c8-4ba4-a5c6-49c6b3a239cf",
+      "sequence": "9366",
+      "sourceTimeNs": "1792997078220722582",
+      "provenance": {
+        "kind": "native-post-inference-exact-frame",
+        "correlation": "source-session-sequence-time",
+        "clockAlignment": "source-frame-exact",
+        "browserClockVerified": false
+      },
+      "image": {
+        "width": 960,
+        "height": 540,
+        "jpegWidth": 960,
+        "jpegHeight": 540,
+        "mimeType": "image/jpeg"
+      },
+      "tracks": [
+        {
+          "localTrackId": "2896516065997619416",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "observedThisFrame": true,
+          "positionM": [
+            -11.545552845533994,
+            87.63297655987567
+          ],
+          "mapAssociation": {
+            "method": "mv3dt-demo",
+            "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:236",
+            "targetId": "236",
+            "fusionEpoch": "78d1e4e7-03ce-490f-b97e-4190241973d5",
+            "calibrationRevision": "isaac-live-e8b0fd8728666cd5",
+            "visibility": 0.983774662,
+            "sourceClockBasis": "source-rtcp"
+          }
+        },
+        {
+          "localTrackId": "2896516065997619534",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "observedThisFrame": true,
+          "positionM": [
+            -36.98528120392755,
+            73.08831695699192
+          ],
+          "mapAssociation": {
+            "method": "mv3dt-demo",
+            "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:306",
+            "targetId": "306",
+            "fusionEpoch": "78d1e4e7-03ce-490f-b97e-4190241973d5",
+            "calibrationRevision": "isaac-live-e8b0fd8728666cd5",
+            "visibility": 0.531749964,
+            "sourceClockBasis": "source-rtcp"
+          }
+        },
+        {
+          "localTrackId": "2896516065997619594",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "observedThisFrame": true,
+          "positionM": [
+            -36.5138649929433,
+            89.28315177477286
+          ],
+          "mapAssociation": {
+            "method": "mv3dt-demo",
+            "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:374",
+            "targetId": "374",
+            "fusionEpoch": "78d1e4e7-03ce-490f-b97e-4190241973d5",
+            "calibrationRevision": "isaac-live-e8b0fd8728666cd5",
+            "visibility": 0.711209834,
+            "sourceClockBasis": "source-rtcp"
+          }
+        },
+        {
+          "localTrackId": "2896516065997619601",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "observedThisFrame": true,
+          "positionM": [
+            -37.53717453173751,
+            87.39099595404635
+          ],
+          "mapAssociation": {
+            "method": "mv3dt-demo",
+            "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:76",
+            "targetId": "76",
+            "fusionEpoch": "78d1e4e7-03ce-490f-b97e-4190241973d5",
+            "calibrationRevision": "isaac-live-e8b0fd8728666cd5",
+            "visibility": 0.809186757,
+            "sourceClockBasis": "source-rtcp"
+          }
+        },
+        {
+          "localTrackId": "2896516065997619602",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "observedThisFrame": true,
+          "positionM": [
+            -37.93561138110617,
+            89.63917463441969
+          ],
+          "mapAssociation": null
+        },
+        {
+          "localTrackId": "2896516065997619614",
+          "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+          "observedThisFrame": true,
+          "positionM": [
+            -25.56686008869571,
+            94.68943772621238
+          ],
+          "mapAssociation": {
+            "method": "mv3dt-demo",
+            "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:395",
+            "targetId": "395",
+            "fusionEpoch": "78d1e4e7-03ce-490f-b97e-4190241973d5",
+            "calibrationRevision": "isaac-live-e8b0fd8728666cd5",
+            "visibility": 0.734495401,
+            "sourceClockBasis": "source-rtcp"
+          }
+        }
+      ]
+    },
+    {
+      "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+      "fetchedFromUnixNs": "1792997077796236234",
+      "fetchedToUnixNs": "1792997077872254918",
+      "bodySha256": "c9702c93dbde1ad67e86015b84fdbcd59ed1ada99495ed7ce07ecedf74cad51b",
+      "jsonBytes": 38499,
+      "jpegBytes": 49892,
+      "sourceSessionId": "60e22a84-fa26-41ca-8de0-b422b9028008",
+      "sequence": "9278",
+      "sourceTimeNs": "1792997077767965223",
+      "provenance": {
+        "kind": "native-post-inference-exact-frame",
+        "correlation": "source-session-sequence-time",
+        "clockAlignment": "source-frame-exact",
+        "browserClockVerified": false
+      },
+      "image": {
+        "width": 960,
+        "height": 540,
+        "jpegWidth": 960,
+        "jpegHeight": 540,
+        "mimeType": "image/jpeg"
+      },
+      "tracks": [
+        {
+          "localTrackId": "2896516065997619530",
+          "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+          "observedThisFrame": true,
+          "positionM": [
+            -36.96721902738889,
+            87.70366874119247
+          ],
+          "mapAssociation": {
+            "method": "mv3dt-demo",
+            "globalTrackId": "mv3dt-demo:78d1e4e7-03ce-490f-b97e-4190241973d5:76",
+            "targetId": "76",
+            "fusionEpoch": "78d1e4e7-03ce-490f-b97e-4190241973d5",
+            "calibrationRevision": "isaac-live-e8b0fd8728666cd5",
+            "visibility": 0.472617894,
+            "sourceClockBasis": "source-rtcp"
+          }
+        }
+      ]
+    }
+  ],
+  "scope": "Latest exact processed-preview envelopes fetched concurrently; proves server-deliverable frames, not the browser actual displayed pair."
+}

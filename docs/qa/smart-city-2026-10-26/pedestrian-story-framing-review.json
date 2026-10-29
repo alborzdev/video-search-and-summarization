@@ -1,0 +1,370 @@
+{
+  "schemaVersion": "city.pedestrian-story-framing-review.v1",
+  "status": "prepared-navigation-and-geometry-valid-visibility-not-qualified",
+  "readOnly": true,
+  "candidate": {
+    "id": "ped-west-curb-y67p6-review-20261026",
+    "entryM": [
+      -36.0,
+      67.6,
+      0.03
+    ],
+    "middleM": [
+      -26.2,
+      67.6,
+      0.03
+    ],
+    "exitM": [
+      -14.5,
+      67.6,
+      0.03
+    ],
+    "waitingWallSeconds": 5,
+    "unchanged": "Protected cameras/calibration, waiting/crossing polygons, signal walk gate, analytics1s gap, detectors, native identity authority.",
+    "notApplied": true
+  },
+  "nativeReview": {
+    "sourceReceipt": "/home/sparkdev/vss/.spark/city/runtime/pedestrian-staged-audit-20261026/native-story-review.json",
+    "sha256": "9f345871d786c9e7f06bf9877c65624666304668f3247d8f5e92c7ff39fe4bbf",
+    "script": "/home/sparkdev/isaac_city_sim/scripts/tools/inspect_pedestrian_story_candidate.py",
+    "scriptSha256": "4fd94908feae400b4993d832a772a5b97d0984883e3dcf4150025d4f59439afc",
+    "queryWallSeconds": 0.03080636914819479,
+    "actor": {
+      "name": "Character_02",
+      "radiusM": 0.2551494538784027,
+      "heightM": 1.8224960565567017,
+      "currentPositionM": [
+        -14.434005737304688,
+        66.76011657714844,
+        0.030003711581230164
+      ]
+    },
+    "pathSegments": [
+      {
+        "exists": true,
+        "pointCount": 104,
+        "lengthM": 9.828247131068807
+      },
+      {
+        "exists": true,
+        "pointCount": 124,
+        "lengthM": 11.750598347087141
+      }
+    ],
+    "rays": [
+      {
+        "targetM": [
+          -36.0,
+          67.6,
+          0.85
+        ],
+        "hit": false,
+        "collider": "",
+        "distanceM": null,
+        "positionM": null,
+        "targetDistanceM": 34.09593084225742
+      },
+      {
+        "targetM": [
+          -36.0,
+          67.6,
+          1.65
+        ],
+        "hit": false,
+        "collider": "",
+        "distanceM": null,
+        "positionM": null,
+        "targetDistanceM": 33.93718462100238
+      }
+    ],
+    "rayLimit": "Existing PhysX collider ray only; a miss does not prove render visibility or absence of a building."
+  },
+  "cpuGeometry": {
+    "entryInsideWaiting": true,
+    "entryOutsideCrossing": true,
+    "middleInsideCrossing": true,
+    "exitOutsideCrossing": true,
+    "pathInsideNativeCrosswalkYBand": true,
+    "pathMinimumCrosswalkYClearanceM": 1.1153381347656222,
+    "projection": [
+      {
+        "pointM": [
+          -36.0,
+          67.6,
+          0.03
+        ],
+        "footPx": [
+          570.9986874026,
+          122.64953951479069
+        ],
+        "headPx": [
+          573.7055353585167,
+          94.25180075437515
+        ],
+        "projectionSiteZOriginWorldM": -0.2,
+        "bodySpanPx": 28.526454258481852,
+        "validProjectionStatus": "valid",
+        "projectedBackM": [
+          -36.00352885937518,
+          67.59614178041649
+        ]
+      },
+      {
+        "pointM": [
+          -26.2,
+          67.6,
+          0.03
+        ],
+        "footPx": [
+          441.8513264929641,
+          144.74589181160724
+        ],
+        "headPx": [
+          440.5286083048192,
+          112.4108955659582
+        ],
+        "projectionSiteZOriginWorldM": -0.2,
+        "bodySpanPx": 32.362038959425696,
+        "validProjectionStatus": "valid",
+        "projectedBackM": [
+          -26.201991845069543,
+          67.59614178041649
+        ]
+      },
+      {
+        "pointM": [
+          -14.5,
+          67.6,
+          0.03
+        ],
+        "footPx": [
+          220.72398453441286,
+          182.57947676417595
+        ],
+        "headPx": [
+          209.51842826363256,
+          143.9098635524876
+        ],
+        "projectionSiteZOriginWorldM": -0.2,
+        "bodySpanPx": 40.26044556732087,
+        "validProjectionStatus": "valid",
+        "projectedBackM": [
+          -14.500156838194455,
+          67.59614178041649
+        ]
+      }
+    ],
+    "crossingBoundaryTransitions": [
+      {
+        "fromM": [
+          -35.58350372314453,
+          67.60369873046875,
+          0.01481082383543253
+        ],
+        "toM": [
+          -35.5,
+          67.60443115234375,
+          0.009999999776482582
+        ],
+        "entering": true,
+        "nearEntryGuard": true,
+        "farExitGuard": false
+      },
+      {
+        "fromM": [
+          -16.929527282714844,
+          67.66735076904297,
+          0.016173288226127625
+        ],
+        "toM": [
+          -16.899999618530273,
+          67.66756439208984,
+          0.014999999664723873
+        ],
+        "entering": false,
+        "nearEntryGuard": false,
+        "farExitGuard": true
+      }
+    ]
+  },
+  "retainedImages": [
+    {
+      "row": 0,
+      "scenarioElapsed": 0.095,
+      "scenarioPhase": "waiting",
+      "nativeReferencePositionM": [
+        -37.49552536010742,
+        66.80226135253906,
+        0.029961155727505684
+      ],
+      "requestedSourceTimeNs": "1792999333314288110",
+      "requestedTimestamp": "2026-10-26T07:22:13.314288Z",
+      "request": "POST existing /picture (retained media CPU decode; no RTSP/model)",
+      "dimensions": [
+        960,
+        540
+      ],
+      "status": 200,
+      "sha256": "fd1cd539aa4fd074138d329d118ffeaf9843128240104cd2ebed340e28936826",
+      "bytes": 74726,
+      "wallSeconds": 0.417,
+      "file": "pedestrian-visual-ne-row-00-waiting.jpg",
+      "scope": "Retained VIOS camera image decoded by existing CPU-only /picture service; request target accepted only within existing\u2264250ms media PTS tolerance. Separate simulator position is audit reference, not AI input."
+    },
+    {
+      "row": 11,
+      "scenarioElapsed": 23.515,
+      "scenarioPhase": "awaiting-walk",
+      "nativeReferencePositionM": [
+        -37.449363708496094,
+        66.7876205444336,
+        0.029643965885043144
+      ],
+      "requestedSourceTimeNs": "1792999356836657777",
+      "requestedTimestamp": "2026-10-26T07:22:36.836658Z",
+      "request": "POST existing /picture (retained media CPU decode; no RTSP/model)",
+      "dimensions": [
+        960,
+        540
+      ],
+      "status": 200,
+      "sha256": "50b8ecd2e9dd1b718c4cef2f2c7b840e1fd3545e1837d8f68b30e660f189bebb",
+      "bytes": 72485,
+      "wallSeconds": 0.252,
+      "file": "pedestrian-visual-ne-row-11-awaiting-walk.jpg",
+      "scope": "Retained VIOS camera image decoded by existing CPU-only /picture service; request target accepted only within existing\u2264250ms media PTS tolerance. Separate simulator position is audit reference, not AI input."
+    },
+    {
+      "row": 15,
+      "scenarioElapsed": 31.775,
+      "scenarioPhase": "crossing",
+      "nativeReferencePositionM": [
+        -34.86233139038086,
+        66.78964233398438,
+        0.027972569689154625
+      ],
+      "requestedSourceTimeNs": "1792999365093547666",
+      "requestedTimestamp": "2026-10-26T07:22:45.093548Z",
+      "request": "POST existing /picture (retained media CPU decode; no RTSP/model)",
+      "dimensions": [
+        960,
+        540
+      ],
+      "status": 200,
+      "sha256": "734eabf2912e974666cc3203fdd58e59971e3ac447a98e1ee7c98339478e6215",
+      "bytes": 73266,
+      "wallSeconds": 0.239,
+      "file": "pedestrian-visual-ne-row-15-crossing.jpg",
+      "scope": "Retained VIOS camera image decoded by existing CPU-only /picture service; request target accepted only within existing\u2264250ms media PTS tolerance. Separate simulator position is audit reference, not AI input."
+    },
+    {
+      "row": 30,
+      "scenarioElapsed": 63.875,
+      "scenarioPhase": "crossing",
+      "nativeReferencePositionM": [
+        -18.03046989440918,
+        66.8429946899414,
+        0.02949335239827633
+      ],
+      "requestedSourceTimeNs": "1792999397201525666",
+      "requestedTimestamp": "2026-10-26T07:23:17.201526Z",
+      "request": "POST existing /picture (retained media CPU decode; no RTSP/model)",
+      "dimensions": [
+        960,
+        540
+      ],
+      "status": 200,
+      "sha256": "44d9f4374637759225b713baebb887fbc744ee9abf42425a8ea2efbc47e2c438",
+      "bytes": 73601,
+      "wallSeconds": 0.222,
+      "file": "pedestrian-visual-ne-row-30-crossing.jpg",
+      "scope": "Retained VIOS camera image decoded by existing CPU-only /picture service; request target accepted only within existing\u2264250ms media PTS tolerance. Separate simulator position is audit reference, not AI input."
+    },
+    {
+      "row": 32,
+      "scenarioElapsed": 68.048,
+      "scenarioPhase": "crossing",
+      "nativeReferencePositionM": [
+        -15.683619499206543,
+        66.77297973632812,
+        0.03000449389219284
+      ],
+      "requestedSourceTimeNs": "1792999401376670111",
+      "requestedTimestamp": "2026-10-26T07:23:21.376670Z",
+      "request": "POST existing /picture (retained media CPU decode; no RTSP/model)",
+      "dimensions": [
+        960,
+        540
+      ],
+      "status": 200,
+      "sha256": "5bdc6e99f9a8e3b996620a9aac81ad087fe6f0a65d6e91128abe85a3fc9ebf17",
+      "bytes": 73451,
+      "wallSeconds": 0.207,
+      "file": "pedestrian-visual-ne-row-32-crossing.jpg",
+      "scope": "Retained VIOS camera image decoded by existing CPU-only /picture service; request target accepted only within existing\u2264250ms media PTS tolerance. Separate simulator position is audit reference, not AI input."
+    },
+    {
+      "row": 31,
+      "scenarioElapsed": 65.957,
+      "scenarioPhase": "crossing",
+      "nativeReferencePositionM": [
+        -16.839101791381836,
+        66.8076171875,
+        0.020758088678121567
+      ],
+      "requestedSourceTimeNs": "1792999399278747888",
+      "requestedTimestamp": "2026-10-26T07:23:19.278748Z",
+      "request": "POST existing /picture (retained media CPU decode; no RTSP/model)",
+      "dimensions": [
+        960,
+        540
+      ],
+      "status": 200,
+      "sha256": "c4fc909703d8237ced7c0d64800e199a38efcc7e519750f74bcda42678859f65",
+      "bytes": 73539,
+      "wallSeconds": 0.47,
+      "file": "pedestrian-visual-ne-row-31-crossing.jpg",
+      "scope": "Retained VIOS camera image decoded by existing CPU-only /picture service; request target accepted only within existing\u2264250ms media PTS tolerance. Separate simulator position is audit reference, not AI input."
+    },
+    {
+      "row": 14,
+      "scenarioElapsed": 29.71,
+      "scenarioPhase": "crossing",
+      "nativeReferencePositionM": [
+        -36.12530517578125,
+        66.83342742919922,
+        0.027454551309347153
+      ],
+      "requestedSourceTimeNs": "1792999362953379999",
+      "requestedTimestamp": "2026-10-26T07:22:42.953380Z",
+      "request": "POST existing /picture (retained media CPU decode; no RTSP/model)",
+      "dimensions": [
+        960,
+        540
+      ],
+      "status": 200,
+      "sha256": "17958b419f52c68a7c2b7cfc6dd5680645af2a04e858147a494815d6dff60127",
+      "bytes": 72587,
+      "wallSeconds": 0.468,
+      "file": "pedestrian-visual-ne-row-14-crossing.jpg",
+      "scope": "Retained VIOS camera image decoded by existing CPU-only /picture service; request target accepted only within existing\u2264250ms media PTS tolerance. Separate simulator position is audit reference, not AI input."
+    }
+  ],
+  "visualFindings": [
+    "Waiting and late WALK-wait images show no C02 at the projected location against the static building facade. No bus or other vehicle covers that image location. This supports static scene placement/occlusion rather than transient vehicle occlusion, without claiming an exact render-ray proof.",
+    "The actual frame with native C02 reference near(\u221236.125,66.833), close to the proposed old-y entry, also shows no visible C02. Therefore moving only x to\u221236.0 is not a proven fix.",
+    "The next sampled native reference near(\u221234.862,66.790) is clearly visible against the facade and has a detector/local observation.",
+    "At elapsed65.957s the person is clearly visible in the far-boundary image but lacks a corresponding observed local track. A pole partly covers it later68.048s, after the new handle has appeared, so the pole cannot alone explain the earlier loss.",
+    "The documented survey SW building extent x\u2264\u221235.64,y\u226472.46 contains both old and proposed entry coordinates; a static geometry/render check or finite visibility trial is required before treating this candidate as a scene fix."
+  ],
+  "nextReviewProcedure": [
+    "Do not apply the full story automatically. Parent may run one finite episode-owned native approach to the candidate entry and hold for5seconds while preserving normal restore semantics.",
+    "Verify native arrival separately, then inspect the existing recorded camera image and actual observed NE detections during that hold. Actor arrival or a predicted projected point alone is not evidence of visibility.",
+    "If hidden or not detected, cancel/restore and reject this candidate. Do not enlarge ROI, relax gaps, change IDs or assert completion to force acceptance.",
+    "Only after visible hold evidence, run the existing WALK-gated crossing and check the actual same local ID through the far boundary. Native path existence does not guarantee rendered clearance or tracking."
+  ],
+  "limits": [
+    "Existing PhysX rays hit no collider for either old or new points; absent render-mesh colliders make these negative rays inconclusive.",
+    "No actor moved, native task submitted, scene saved, camera changed, recording stopped, model requested, GPU reader opened, runtime restarted or profile changed by this audit."
+  ]
+}

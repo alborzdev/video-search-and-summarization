@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "city.controller-profile-activation.v1",
+  "verifiedAt": "2026-10-22T04:42:35.372114+00:00",
+  "serviceUnit": "vss-city-controller-spark.service",
+  "unitProperties": {
+    "MainPID": "423828",
+    "MemoryMax": "536870912",
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "loopbackEndpoint": "http://127.0.0.1:9190",
+  "isolatedEnvironment": ".spark/city/control-env",
+  "requirements": "tools/smart-city/controller-requirements.txt",
+  "controllerHealth": {
+    "ready": true,
+    "detail": "Native image, engine, gateway and saved memory guard available",
+    "stream-info": {
+      "stream-info": []
+    },
+    "capacity": {
+      "maxSources": 2,
+      "registeredSources": 0,
+      "availableSources": 2
+    }
+  },
+  "agentProfileIds": [
+    "semantic-search",
+    "warehouse-safety",
+    "traffic-monitoring",
+    "smart-city"
+  ],
+  "cityProfile": {
+    "id": "smart-city",
+    "name": "Smart City",
+    "shortName": "Smart City",
+    "description": "RF-DETR detection and CUDA tracking for people, bicycles, motorcycles, cars, buses and trucks; calibrated street mapping, crossings, occupancy, dwell, stopped vehicles, queues and wrong-way rules.",
+    "detectionEnabled": true,
+    "modelId": "roboflow/rf-detr-small",
+    "modelLabel": "RF-DETR Small \u00b7 DeepStream 9.2",
+    "objectTypes": [
+      "person",
+      "bicycle",
+      "car",
+      "motorcycle",
+      "bus",
+      "truck"
+    ],
+    "ready": true,
+    "readyDetail": "Detector ready",
+    "resourceTier": "medium",
+    "maxSources": 2,
+    "ruleKinds": [
+      "area-entry",
+      "line-crossing",
+      "occupancy-threshold",
+      "dwell",
+      "stopped-in-zone",
+      "queue",
+      "wrong-way"
+    ],
+    "sceneTypes": [
+      "smart city",
+      "intersection",
+      "street",
+      "crosswalk",
+      "bus stop",
+      "traffic"
+    ]
+  },
+  "agentOverlay": ".spark/city/agent-city-overlay.json",
+  "changedServiceRoles": [
+    "vss-agent",
+    "city-analytics",
+    "host-city-controller"
+  ],
+  "sourceLifecycleQualified": true,
+  "qualification": "CPU profile activation and actual two-recording Agent add/remove/switch, idempotency and capacity controls passed. RTSP combined ingestion and source-clock alignment remain separate pending qualifications.",
+  "sourceLifecycleReceipt": "controller-lifecycle.json"
+}

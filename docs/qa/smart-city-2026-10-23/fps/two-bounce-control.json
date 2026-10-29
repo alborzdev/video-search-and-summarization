@@ -1,0 +1,36 @@
+{
+  "test": "bounded-live-two-bounce-image-control",
+  "settings": {
+    "/rtx/rtpt/maxBounces": 2,
+    "/rtx/rtpt/maxSpecularAndTransmissionBounces": 2
+  },
+  "change": {
+    "previous": {
+      "/rtx/rtpt/maxBounces": 3,
+      "/rtx/rtpt/maxSpecularAndTransmissionBounces": 3
+    },
+    "current": {
+      "/rtx/rtpt/maxBounces": 2,
+      "/rtx/rtpt/maxSpecularAndTransmissionBounces": 2
+    }
+  },
+  "meanLuma": 122.89077160493827,
+  "stddevLuma": 56.53178618485626,
+  "nonblack": true,
+  "seconds": 20.013776909094304,
+  "nativeFps": {
+    "cam_SW": 11.641980474666143,
+    "cam_NE": 11.641980474666143
+  },
+  "ready": true,
+  "restored": {
+    "previous": {
+      "/rtx/rtpt/maxBounces": 2,
+      "/rtx/rtpt/maxSpecularAndTransmissionBounces": 2
+    },
+    "current": {
+      "/rtx/rtpt/maxBounces": 3,
+      "/rtx/rtpt/maxSpecularAndTransmissionBounces": 3
+    }
+  }
+}

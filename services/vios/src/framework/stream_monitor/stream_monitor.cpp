@@ -19,6 +19,7 @@
 #include "rtspconnectionclient.h"
 #include "livevideosource.h"
 #include "stream_monitor.h"
+#include "stream_errors.h"
 #include "stream_event_manager.h"
 #include "logger.h"
 #include "macros.h"
@@ -441,8 +442,8 @@ void printBackendQoSData();
 std::map<string, shared_ptr<QosMeasurementRecord>, std::less<>> g_records;
 std::map<string, std::unique_ptr<QosRtspClient>, std::less<>> g_rtspSources;
 std::map<string, struct timeval, std::less<>> g_blackList;
-std::multimap<string, pair<string, string>, std::less<>> g_streamFailureCount;
-std::mutex g_streamFailureMapMutex, g_qosDumpMutex, g_rtspSourceMutex;
+StreamErrors g_streamErrors;
+std::mutex g_qosDumpMutex, g_rtspSourceMutex;
 
 // class QosMeasurementRecord
 class QosMeasurementRecord
@@ -1341,10 +1342,9 @@ QosRtspClient::~QosRtspClient()
 
 void QosRtspClient::updateStreamError(string uri, string error_msg)
 {
-    std::lock_guard<std::mutex> recordLock(g_streamFailureMapMutex);
     string currentTime = getCurrentTimeMS();
     std::replace(error_msg.begin(), error_msg.end(), ',', ' ');
-    g_streamFailureCount.insert({uri, make_pair(error_msg, currentTime)});
+    g_streamErrors.record(std::move(uri), std::move(error_msg), std::move(currentTime));
 }
 
 void removeRecord(string uri)
@@ -2192,7 +2192,7 @@ void StreamMonitor::cleanupQoSThread()
     // Delete all the measurements records.
     g_records.clear();
     g_blackList.clear();
-    g_streamFailureCount.clear();
+    (void)g_streamErrors.take();
 
     // Delete the rtsp sources
     g_rtspSources.clear();
@@ -2548,6 +2548,7 @@ void StreamMonitor::removeStream(const string& stream_id)
 #ifndef DUMP_QOS_IN_NON_CSV_FORMAT
 void printQoSData()
 {
+    const auto streamFailures = g_streamErrors.take();
     // TODO: Remove possible double lockings, as the scope of this lock is very wide
     std::lock_guard<std::mutex> qosdumplock(g_qosDumpMutex);
     std::map<std::string, shared_ptr<QosMeasurementRecord>, std::less<>>::iterator it;
@@ -2589,7 +2590,7 @@ void printQoSData()
             {
                 // Errorneous case, print dummy values with actual error.
                 string errorLog = ",  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  [ ],  ";
-                if (g_streamFailureCount.count(rtspSrc->getUri()) > 0)
+                if (streamFailures.count(rtspSrc->getUri()) > 0)
                 {
                     LOG_QOS("\n %s ,\t",curQOSRecord->m_fName.c_str());
                     LOG_QOS("%s,\t", getCurrentUtcTime().c_str());
@@ -2613,7 +2614,7 @@ void printQoSData()
                     info["avgFps"] = 0;
                     info["avgFramecount"] = 0;
                 }
-                for (const auto &err: g_streamFailureCount)
+                for (const auto &err: streamFailures)
                 {
                     if (rtspSrc->getUri() == err.first)
                     {
@@ -2754,7 +2755,7 @@ void printQoSData()
 
             // Print all the errors if any
             string error;
-            for (const auto &err: g_streamFailureCount)
+            for (const auto &err: streamFailures)
             {
                 if (rtspSrc->getUri() == err.first)
                 {
@@ -2787,12 +2788,13 @@ void printQoSData()
 
     /* As of now removing backend qos dumping since rtsp server might be running in separate process/ms */
     //printBackendQoSData();
-    g_streamFailureCount.clear();
+
     return;
 }
 
 void printBackendQoSData()
 {
+    const auto streamFailures = g_streamErrors.take();
     std::map<std::string, shared_ptr<QosMeasurementRecord>, std::less<>>::iterator it;
     for (it = g_records.begin(); it != g_records.end(); it++)
     {
@@ -2810,7 +2812,7 @@ void printBackendQoSData()
             string device_name = curQOSRecord->m_fName + "_backend";
             RTPSource* src = curQOSRecord->getBackendRtpSource();
             if (src == nullptr || !curQOSRecord->m_isQosStarted ||
-                g_streamFailureCount.count(rtspSrc->getUri()) > 0)
+                streamFailures.count(rtspSrc->getUri()) > 0)
             {
                 // Errorneous case, print dummy values with actual error.
                 string errorLog = " ,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, ";
@@ -2923,6 +2925,7 @@ void StreamMonitor::getQosInfo(Json::Value &response)
 // This function will print QoS data on console in readable format instead of csv format.
 void printQoSData()
 {
+    const auto streamFailures = g_streamErrors.take();
     std::lock_guard<std::mutex> qosdumplock(g_qosDumpMutex);
     std::map<std::string, shared_ptr<QosMeasurementRecord>>::iterator it;
     int rcount = 0;
@@ -2942,8 +2945,8 @@ void printQoSData()
             if (src == nullptr || !curQOSRecord->m_isQosStarted)
             {
                 LOG(info) << "QoS not started for this stream" << endl;
-                LOG(info) << "stream failure count:" << g_streamFailureCount.count(rtspSrc->getUri()) << endl;
-                for (const auto &err: g_streamFailureCount)
+                LOG(info) << "stream failure count:" << streamFailures.count(rtspSrc->getUri()) << endl;
+                for (const auto &err: streamFailures)
                 {
                     if (rtspSrc->getUri() == err.first)
                     {
@@ -3029,8 +3032,8 @@ void printQoSData()
             }
 
             // Print all the errors if any
-            LOG(info) << "stream failure count:" << g_streamFailureCount.count(rtspSrc->getUri()) << endl;
-            for (const auto &err: g_streamFailureCount)
+            LOG(info) << "stream failure count:" << streamFailures.count(rtspSrc->getUri()) << endl;
+            for (const auto &err: streamFailures)
             {
                 if (rtspSrc->getUri() == err.first)
                 {
@@ -3040,7 +3043,7 @@ void printQoSData()
             }
         }
     }
-    g_streamFailureCount.clear();
+
     LOG(info) << "=============================================================================" << endl << reset << endl;
     return;
 }

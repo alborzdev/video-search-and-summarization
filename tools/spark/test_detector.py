@@ -11,6 +11,8 @@ import sys
 import tempfile
 import unittest
 from unittest.mock import patch
+import test_safety
+import history_metadata
 
 spec = importlib.util.spec_from_file_location('spark_detector_bootstrap', Path(__file__).with_name('bootstrap.py'))
 b = importlib.util.module_from_spec(spec)
@@ -18,6 +20,15 @@ spec.loader.exec_module(b)
 
 
 class DetectorTests(unittest.TestCase):
+    def setUp(self):
+        test_safety.install(self)
+        for module, names in ((b.local_vision, ('ensure_service', 'stop_service')),
+                              (history_metadata, ('ensure_bridge', 'stop_bridge'))):
+            for name in names:
+                patcher = patch.object(module, name, return_value=False)
+                patcher.start()
+                self.addCleanup(patcher.stop)
+
     def test_actual_compose_opt_in_preserves_models_and_saved_settings(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(b, 'STATE', Path(temp)), contextlib.redirect_stdout(io.StringIO()):
             data = str(Path(temp) / 'data')
@@ -35,11 +46,13 @@ class DetectorTests(unittest.TestCase):
                 if name not in ('vss-agent', 'vss-ui'):
                     self.assertEqual(services[name], baseline['services'][name], name)
             for name, allowed in [('vss-agent', ('VSS_WAREHOUSE_RTVI_CV_URL', 'VSS_WAREHOUSE_MAX_SOURCES', 'VSS_OBJECT_APPEARANCE_ENABLED')),
-                                  ('vss-ui', ('RTVI_CV_HEALTH_URL',))]:
+                                  ('vss-ui', ('RTVI_CV_HEALTH_URL', 'VSS_DETECTOR_ENABLED'))]:
                 before, after = baseline['services'][name].copy(), services[name].copy()
                 before['environment'] = {k: v for k, v in before['environment'].items() if k not in allowed}
                 after['environment'] = {k: v for k, v in after['environment'].items() if k not in allowed}
                 self.assertEqual(before, after)
+            self.assertEqual(baseline['services']['vss-ui']['environment']['VSS_DETECTOR_ENABLED'], 'false')
+            self.assertEqual(services['vss-ui']['environment']['VSS_DETECTOR_ENABLED'], 'true')
             self.assertEqual(worker['image'], 'nvcr.io/nvidia/vss-core/vss-rt-cv:3.2.1-sbsa')
             self.assertEqual(worker['runtime'], 'nvidia')
             self.assertEqual(worker['network_mode'], 'host')
@@ -118,11 +131,11 @@ class DetectorTests(unittest.TestCase):
         with patch.object(sys, 'argv', ['bootstrap.py', 'render', '--host-ip', '192.0.2.10', '--detector']), \
              patch.object(b, 'render') as render:
             b.main()
-            self.assertIs(render.call_args.args[-1], True)
+            self.assertIs(render.call_args.args[6], True)
         with patch.object(sys, 'argv', ['bootstrap.py', 'render', '--host-ip', '192.0.2.10', '--no-detector']), \
              patch.object(b, 'render') as render:
             b.main()
-            self.assertIs(render.call_args.args[-1], False)
+            self.assertIs(render.call_args.args[6], False)
         with patch.object(sys, 'argv', ['bootstrap.py', 'up', '--detector']), patch.object(b, 'up') as up, \
              contextlib.redirect_stderr(io.StringIO()):
             with self.assertRaises(SystemExit):

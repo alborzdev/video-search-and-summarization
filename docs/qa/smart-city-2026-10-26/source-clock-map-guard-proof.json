@@ -1,0 +1,136 @@
+{
+  "schemaVersion": "city.source-clock-map-guard-proof.v1",
+  "readOnly": true,
+  "cohort": {
+    "rawFile": "/home/sparkdev/vss/.spark/city/runtime/source-clock-diagnostic-cohort-20261026/first30-post-rtcp.ndjson",
+    "rawSha256": "52494bd85f55575f1f07bc695b3abe25f0c2278c82206597255f1bd88369268e",
+    "rawRows": 634,
+    "sourceCounts": {
+      "40af41ea-2180-4b7b-83d6-bb5d08ff094a": {
+        "personRows": 520,
+        "observed": 520,
+        "projection:valid": 459,
+        "eligibleNativeHint": 496,
+        "noHint:native3D-absent": 11,
+        "projection:outside-valid-region": 61,
+        "noHint:visibility-below-.25": 13
+      },
+      "997d3a69-e052-45a4-a1ce-be1b046670c4": {
+        "personRows": 1744,
+        "observed": 1744,
+        "projection:valid": 1676,
+        "eligibleNativeHint": 1687,
+        "noHint:native3D-absent": 52,
+        "projection:outside-valid-region": 68,
+        "noHint:visibility-below-.25": 5
+      }
+    },
+    "cohortScope": "Native output-order latest-per-source pairing; exact backend map-association predicate and projection; conditional map guard replay, not browser frame presentation or identity accuracy. Different live cohorts cannot prove causality."
+  },
+  "latestOutputPairing": {
+    "updates": 633,
+    "noSharedEligibleNativeId": 0,
+    "sameGlobalCandidates": 633,
+    "duplicateSourceRefusals": 0,
+    "distanceAbove1mRefusals": 0,
+    "clockAbove150msRefusals": 25,
+    "allInitialGuardsPass": 608
+  },
+  "sameGlobalHintHomographyDistanceM": {
+    "minimum": 0.2950025161013865,
+    "p50": 0.47458891424421135,
+    "p95": 0.5747581383311564,
+    "maximum": 0.6307170031290346
+  },
+  "sameGlobalHintCaptureSkewMs": {
+    "minimum": 13.834554,
+    "p50": 38.776779,
+    "p95": 138.012332,
+    "maximum": 297.546443
+  },
+  "actualUiFunction": {
+    "schemaVersion": "city.actual-ui-map-function-offline-replay.v1",
+    "sourceFile": "services/ui/apps/nv-metropolis-bp-vss-ui/components/vision-intelligence/smart-city/mapObjects.ts",
+    "sourceSha256": "529ddb87c95d22d7711afba45c82accabdb96c2a466a37a638d5e6883d5d9447",
+    "scope": "Conditional offline replay, videoFrameMatched explicitly assumed for the paired actual observation rows; does not establish browser presented frames or physical identity. Uses actual UI function, not threshold approximation.",
+    "updates": 633,
+    "updatesWithShared": 608,
+    "sharedObjectUpdates": 608,
+    "maxSharedObjects": 1,
+    "freshJoinObjectUpdates": 608,
+    "current": {
+      "sharedObjects": [
+        {
+          "id": "experimental:[\"isaac-intersection-a\",142,\"mv3dt-demo\",\"8daa2c13-c8a4-4cd4-a904-7696da97f805\",\"mv3dt-demo:8daa2c13-c8a4-4cd4-a904-7696da97f805:121\",\"121\"]",
+          "memberTrackIds": [
+            "997d3a69-e052-45a4-a1ce-be1b046670c4:7ab0a936-4573-42b9-bf30-493c5c9be5d9:1705599116026839154",
+            "40af41ea-2180-4b7b-83d6-bb5d08ff094a:2a839247-e29d-410d-be34-1cf8b40ed32e:1705599116026839207"
+          ],
+          "sourceIds": [
+            "997d3a69-e052-45a4-a1ce-be1b046670c4",
+            "40af41ea-2180-4b7b-83d6-bb5d08ff094a"
+          ],
+          "positionM": [
+            -11.263524190686205,
+            69.49181047300782
+          ]
+        }
+      ],
+      "localObjects": 14
+    }
+  },
+  "laterCurrentExactPair": {
+    "scope": "Concurrent server exact preview envelopes, not actual browser-presented frames. Guard evaluation is conditional on those same images being presented.",
+    "frames": [
+      {
+        "sourceId": "997d3a69-e052-45a4-a1ce-be1b046670c4",
+        "sourceSessionId": "7ab0a936-4573-42b9-bf30-493c5c9be5d9",
+        "sequence": "3989",
+        "sourceTimeNs": "1792999218033513777",
+        "timestampBasis": "source-rtcp",
+        "bodySha256": "6568dc7996cdbfcac0b8d22903ac50a71f48b5a529dc938ebec7669df7ef9a1a"
+      },
+      {
+        "sourceId": "40af41ea-2180-4b7b-83d6-bb5d08ff094a",
+        "sourceSessionId": "2a839247-e29d-410d-be34-1cf8b40ed32e",
+        "sequence": "4015",
+        "sourceTimeNs": "1792999218019028444",
+        "timestampBasis": "source-rtcp",
+        "bodySha256": "a8e621f4788783bb3a48b2257dbc4e37993126c612eea428fa7b66492749a090"
+      }
+    ],
+    "skewMs": 14.485333,
+    "sameGlobalHintMatches": [
+      {
+        "globalTrackId": "mv3dt-demo:8daa2c13-c8a4-4cd4-a904-7696da97f805:121",
+        "memberCount": 2,
+        "uniqueSources": true,
+        "distanceM": 0.7234055365740603,
+        "skewMs": 14.485333,
+        "initialJoinPass": true,
+        "establishedSplitPass": true
+      }
+    ],
+    "observedPersons": [
+      7,
+      1
+    ],
+    "eligiblePositionedHints": [
+      5,
+      1
+    ]
+  },
+  "browserEvidence": {
+    "file": "queue-final-active.jpg",
+    "sha256": "097b9095ae618b012788a45ed15127a17e888b0e440a3d05462b129d384569cb",
+    "reportedBy": "root actual browser inspection",
+    "observedLabel": "Experimental shared people IDs \u00b7 2 joined",
+    "scope": "Separate later queue scenario browser capture with both exact previews; not the retained634-row cohort or target121 envelope pair."
+  },
+  "limits": [
+    "No physical-person accuracy ground truth or independent landmark calibration validation.",
+    "Output-order conditional guard replay is not browser frame presentation.",
+    "Camera-local analytics remain separate; map-only person grouping is experimental.",
+    "No map threshold, source clock authority or runtime setting was changed during this audit."
+  ]
+}

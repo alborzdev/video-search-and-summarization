@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 
 export type PrimarySection =
+  | 'smart-city'
+  | 'defense'
   | 'capabilities'
   | 'events'
   | 'explore'

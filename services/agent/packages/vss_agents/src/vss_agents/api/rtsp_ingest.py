@@ -30,6 +30,8 @@ import asyncio
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from contextlib import suppress
+from datetime import UTC
+from datetime import datetime
 import logging
 from typing import Any
 from typing import Literal
@@ -62,6 +64,11 @@ from vss_agents.api.source_analysis_state import is_source_paused
 from vss_agents.api.source_analysis_state import set_source_kind
 from vss_agents.api.source_analysis_state import set_source_paused
 from vss_agents.api.source_cleanup import registered_rtvi_cv_stream_ids
+from vss_agents.api.source_indexing import finish_indexing_session
+from vss_agents.api.source_indexing import get_indexing_policy
+from vss_agents.api.source_indexing import indexing_is_allowed
+from vss_agents.api.source_indexing import indexing_required_for_analysis
+from vss_agents.api.source_indexing import mark_indexing_started
 from vss_agents.tools.vst.utils import add_proxy_stream as vst_add_proxy_stream
 from vss_agents.tools.vst.utils import add_sensor as vst_add_sensor
 from vss_agents.tools.vst.utils import delete_proxy_stream as vst_delete_proxy_stream
@@ -207,9 +214,9 @@ class AddStreamResponse(BaseModel):
 
     status: Literal["success", "failure"] = Field(..., description="'success' or 'failure'")
     message: str = Field(..., description="Human-readable status message")
-    error: str | None = Field(None, description="Error details if failed")
-    sensor_id: str | None = Field(None, alias="sensorId", description="Stable VST sensor identity on success")
-    name: str | None = Field(None, description="Exact sensor name on success")
+    error: str | None = Field(default=None, description="Error details if failed")
+    sensor_id: str | None = Field(default=None, alias="sensorId", description="Stable VST sensor identity on success")
+    name: str | None = Field(default=None, description="Exact sensor name on success")
     analysis_paused: bool = Field(default=False, alias="analysisPaused", description="Analysis is intentionally paused")
     detection_enabled: bool = Field(
         default=True,
@@ -617,6 +624,9 @@ async def start_embedding_generation(
         logger.info("RTVI-embed not configured, skipping embedding generation")
         return True, "Skipped (not configured)"
 
+    if not indexing_is_allowed(stream_id):
+        return False, "Indexing is not requested by the source policy"
+
     existing = _embedding_generation_tasks.get(stream_id)
     if existing is not None and not existing.done():
         return True, "Already running"
@@ -624,7 +634,7 @@ async def start_embedding_generation(
     loop = asyncio.get_running_loop()
     started: asyncio.Future[tuple[bool, str]] = loop.create_future()
     task = asyncio.create_task(
-        _supervise_embedding_generation(config, stream_id, started),
+        _run_embedding_generation(config, stream_id, started),
         name=f"live-embedding-{stream_id}",
     )
     _embedding_generation_tasks[stream_id] = task
@@ -649,6 +659,98 @@ async def start_embedding_generation(
 _embedding_generation_tasks: dict[str, asyncio.Task[None]] = {}
 _embedding_bootstrap_tasks: set[asyncio.Task[None]] = set()
 _embedding_connected_streams: set[str] = set()
+_embedding_operation_locks: dict[str, asyncio.Lock] = {}
+_embedding_cleanup_results: dict[str, tuple[bool, str]] = {}
+
+
+def embedding_operation_lock(stream_id: str) -> asyncio.Lock:
+    """Serialize resource changes with policy actions for this source only."""
+    return _embedding_operation_locks.setdefault(stream_id, asyncio.Lock())
+
+
+def embedding_cleanup_status(stream_id: str) -> tuple[bool, str] | None:
+    return _embedding_cleanup_results.get(stream_id)
+
+
+def embedding_task_active(stream_id: str) -> bool:
+    task = _embedding_generation_tasks.get(stream_id)
+    return task is not None and not task.done()
+
+
+async def stop_source_indexing(client: httpx.AsyncClient, config: ServiceConfig, stream_id: str) -> tuple[bool, str]:
+    """Release managed generation and its embedding resource, retaining vectors."""
+    await stop_managed_embedding_generation(stream_id)
+    generation = await cleanup_rtvi_embed_generation(client, config, stream_id)
+    resource = await cleanup_rtvi_embed_stream(client, config, stream_id)
+    success = generation[0] and resource[0]
+    message = (
+        "Stopped; retained vectors preserved"
+        if success
+        else "; ".join(item[1] for item in (generation, resource) if not item[0])
+    )
+    _embedding_cleanup_results[stream_id] = (success, message)
+    return success, message
+
+
+async def _run_embedding_generation(
+    config: ServiceConfig, stream_id: str, started: asyncio.Future[tuple[bool, str]]
+) -> None:
+    """Bound finite work even if the remote SSE is silent or disconnected."""
+    policy = get_indexing_policy(stream_id)
+    session = policy.session if policy.mode == "on-demand" else None
+    remaining = max(0.0, (session.deadline_at - datetime.now(UTC)).total_seconds()) if session else None
+    acknowledged = asyncio.get_running_loop().create_future() if session else started
+
+    def forward_acknowledgement(completed: asyncio.Future[tuple[bool, str]]) -> None:
+        # A failed finite start is reported only after its remote cleanup has
+        # finished. Otherwise the caller's cancellation could abort cleanup.
+        if not completed.cancelled() and completed.result()[0] and not started.done():
+            started.set_result(completed.result())
+
+    if session:
+        acknowledged.add_done_callback(forward_acknowledgement)
+    _embedding_cleanup_results.pop(stream_id, None)
+    try:
+        async with asyncio.timeout(remaining):
+            await _supervise_embedding_generation(config, stream_id, acknowledged)
+    except TimeoutError:
+        finish_indexing_session(stream_id, "completed", "deadline-reached")
+    finally:
+        _embedding_connected_streams.discard(stream_id)
+        if session:
+            finish_indexing_session(stream_id, "failed", "generation-ended-before-deadline")
+
+            # No lock here: the policy route can hold it while awaiting task
+            # cancellation. Closing SSE alone is not a remote-stop receipt.
+            async def cleanup() -> None:
+                async with httpx.AsyncClient(timeout=10.0) as cleanup_client:
+                    generation = await cleanup_rtvi_embed_generation(cleanup_client, config, stream_id)
+                    resource = await cleanup_rtvi_embed_stream(cleanup_client, config, stream_id)
+                    success = generation[0] and resource[0]
+                    _embedding_cleanup_results[stream_id] = (
+                        success,
+                        "Stopped" if success else "Embedding cleanup failed",
+                    )
+
+            cleanup_task = asyncio.create_task(cleanup(), name=f"indexing-cleanup-{stream_id}")
+            cancelled_during_cleanup = False
+            while not cleanup_task.done():
+                try:
+                    await asyncio.shield(cleanup_task)
+                except asyncio.CancelledError:
+                    cancelled_during_cleanup = True
+            await cleanup_task
+            if not started.done():
+                result = (
+                    acknowledged.result()
+                    if acknowledged.done() and not acknowledged.cancelled()
+                    else (False, "Indexing window ended before generation was acknowledged")
+                )
+                started.set_result(result)
+            if cancelled_during_cleanup:
+                raise asyncio.CancelledError
+
+
 _live_analysis_runtime_steps: dict[str, dict[str, bool]] = {}
 _cv_registered_streams: set[str] = set()
 
@@ -697,6 +799,10 @@ async def _supervise_embedding_generation(
 
     while True:
         _embedding_connected_streams.discard(stream_id)
+        if not indexing_is_allowed(stream_id):
+            if not started.done():
+                started.set_result((False, "Indexing is no longer requested"))
+            return
         try:
             logger.info("Starting supervised embedding generation for stream %s", stream_id)
             async with (
@@ -712,14 +818,20 @@ async def _supervise_embedding_generation(
                         return
                     logger.warning("Live embedding reconnect failed for %s: %s", stream_id, scrub_log(error))
                 else:
+                    if not indexing_is_allowed(stream_id):
+                        return
                     _embedding_connected_streams.add(stream_id)
+                    policy = get_indexing_policy(stream_id)
+                    if policy.mode == "on-demand" and policy.session:
+                        mark_indexing_started(stream_id, policy.session.id)
                     if not started.done():
                         started.set_result((True, "OK"))
                     logger.info("Embedding generation active for stream %s", stream_id)
                     async for _line in response.aiter_lines():
                         # Consuming the SSE body is what keeps RTVI-Embed's
                         # live pipeline alive. Kafka remains the data path.
-                        pass
+                        if not indexing_is_allowed(stream_id):
+                            return
                     _embedding_connected_streams.discard(stream_id)
                     logger.warning("Live embedding response ended for %s; reconnecting", stream_id)
         except asyncio.CancelledError:
@@ -738,6 +850,7 @@ async def _supervise_embedding_generation(
 
 async def stop_managed_embedding_generation(stream_id: str) -> None:
     """Stop this process from reconnecting a stream during explicit deletion."""
+    finish_indexing_session(stream_id, "cancelled", "source-paused-or-indexing-cancelled")
     _embedding_connected_streams.discard(stream_id)
     task = _embedding_generation_tasks.pop(stream_id, None)
     if task is None:
@@ -763,14 +876,33 @@ async def _registered_stream_ids(client: httpx.AsyncClient, base_url: str) -> se
     }
 
 
-async def _registered_cv_stream_ids(client: httpx.AsyncClient, base_url: str) -> set[str]:
+async def _available_rtvi_inventory(client: httpx.AsyncClient, base_url: str) -> set[str] | None:
+    """Keep unavailable model inventory distinct from a proved empty list.
+
+    Detection is independent from model startup. An unavailable embedding
+    inventory still leaves required continuous indexing unconfirmed; it must
+    not abort detector admission or invent a successful resource registration.
+    """
+    if not base_url:
+        return set()
+    try:
+        async with asyncio.timeout(5.0):
+            return await _registered_stream_ids(client, base_url)
+    except Exception:
+        logger.warning("RTVI model inventory is unavailable at %s", scrub_log(base_url), exc_info=True)
+        return None
+
+
+async def _registered_cv_stream_ids(
+    client: httpx.AsyncClient, base_url: str, *, running_only: bool = False
+) -> set[str]:
     """Read RTVI-CV's real stream inventory.
 
     RTVI-CV loses dynamic stream registrations whenever its container is
     replaced. The agent process can survive that restart, so an in-memory set
     is not authoritative for recovery.
     """
-    return await registered_rtvi_cv_stream_ids(client, base_url)
+    return await registered_rtvi_cv_stream_ids(client, base_url, running_only=running_only)
 
 
 async def _detector_inventories(
@@ -781,6 +913,7 @@ async def _detector_inventories(
     inventories: dict[str, set[str]] = {}
     for endpoint in configured_detector_endpoints(config):
         try:
+            # Cleanup needs every owned resource, including stopped entries.
             inventories[endpoint] = await _registered_cv_stream_ids(client, endpoint)
         except Exception:
             inventories[endpoint] = set()
@@ -795,8 +928,8 @@ async def _reconcile_live_source(
     name: str,
     rtsp_url: str,
     cv_inventories: dict[str, set[str]],
-    embed_inventory: set[str],
-    vlm_inventory: set[str],
+    embed_inventory: set[str] | None,
+    vlm_inventory: set[str] | None,
 ) -> dict[str, bool]:
     """Ensure one desired-active VST source exists in every live pipeline."""
     steps: dict[str, bool] = {}
@@ -827,6 +960,20 @@ async def _reconcile_live_source(
 
     detection_enabled = is_source_detection_enabled(stream_id)
     selected_inventory = cv_inventories.get(selected_endpoint, set())
+    running_on_selected_worker = stream_id in selected_inventory
+    if detection_enabled and selected_endpoint and running_on_selected_worker:
+        try:
+            running_on_selected_worker = stream_id in await _registered_cv_stream_ids(
+                client, selected_endpoint, running_only=True
+            )
+        except Exception:
+            running_on_selected_worker = False
+            logger.warning(
+                "Could not verify running detector status for %s at %s",
+                scrub_log(stream_id),
+                scrub_log(selected_endpoint),
+                exc_info=True,
+            )
     if not detection_enabled:
         _cv_registered_streams.discard(stream_id)
         steps["detection"] = False
@@ -837,7 +984,7 @@ async def _reconcile_live_source(
             scrub_log(profile_id),
             scrub_log(stream_id),
         )
-    elif stream_id not in selected_inventory:
+    elif not running_on_selected_worker:
         cv_success, cv_message = await add_to_rtvi_cv(
             client,
             config,
@@ -861,36 +1008,60 @@ async def _reconcile_live_source(
         steps["detection"] = True
         _cv_registered_streams.add(stream_id)
 
-    if config.rtvi_embed_url and stream_id not in embed_inventory:
-        embed_success, embed_message, _ = await add_to_rtvi_embed(client, config, stream_id, name, rtsp_url)
-        steps["embedding_resource"] = embed_success
-        if embed_success:
-            embed_inventory.add(stream_id)
+    async with embedding_operation_lock(stream_id):
+        if not indexing_is_allowed(stream_id):
+            # The booth policy retains CV and on-demand questions without a
+            # permanent decoder/inference loop. Remove only this source's
+            # embedding resource; existing vector documents are not deleted.
+            cleanup = embedding_cleanup_status(stream_id)
+            if (
+                (embed_inventory is not None and stream_id in embed_inventory)
+                or stream_id in _embedding_generation_tasks
+                or (cleanup is not None and not cleanup[0])
+            ):
+                await stop_source_indexing(client, config, stream_id)
+                if embed_inventory is not None:
+                    embed_inventory.discard(stream_id)
+            steps["embedding_resource"] = False
+            steps["embedding"] = False
+        elif embed_inventory is None:
+            steps["embedding_resource"] = False
+            steps["embedding"] = False
         else:
-            logger.warning(
-                "Could not restore embedding resource for %s: %s",
-                scrub_log(stream_id),
-                scrub_log(embed_message),
-            )
-    else:
-        steps["embedding_resource"] = True
+            if config.rtvi_embed_url and stream_id not in embed_inventory:
+                embed_success, embed_message, _ = await add_to_rtvi_embed(client, config, stream_id, name, rtsp_url)
+                steps["embedding_resource"] = embed_success
+                if embed_success:
+                    embed_inventory.add(stream_id)
+                else:
+                    logger.warning(
+                        "Could not restore embedding resource for %s: %s",
+                        scrub_log(stream_id),
+                        scrub_log(embed_message),
+                    )
+            else:
+                steps["embedding_resource"] = True
 
-    if steps["embedding_resource"]:
-        embed_success, embed_message = await start_embedding_generation(None, config, stream_id)
-        steps["embedding"] = embed_success
-        if not embed_success:
-            logger.warning(
-                "Could not restore live embedding for %s: %s",
-                scrub_log(stream_id),
-                scrub_log(embed_message),
-            )
-    else:
-        steps["embedding"] = False
+            if steps["embedding_resource"] and indexing_is_allowed(stream_id):
+                embed_success, embed_message = await start_embedding_generation(None, config, stream_id)
+                steps["embedding"] = embed_success
+                if not embed_success:
+                    logger.warning(
+                        "Could not restore live embedding for %s: %s", scrub_log(stream_id), scrub_log(embed_message)
+                    )
+            else:
+                steps["embedding"] = False
+                if not indexing_is_allowed(stream_id):
+                    await stop_source_indexing(client, config, stream_id)
+                    embed_inventory.discard(stream_id)
+                    steps["embedding_resource"] = False
 
     # RTVI-VLM registration is the resource prerequisite for on-demand live
     # captions. Caption generation itself remains controlled by the saved
     # source-history scenario in the UI/LVS path.
-    if config.rtvi_vlm_url and stream_id not in vlm_inventory:
+    if vlm_inventory is None:
+        steps["caption_resource"] = False
+    elif config.rtvi_vlm_url and stream_id not in vlm_inventory:
         vlm_success, vlm_message, _ = await add_to_rtvi_vlm(client, config, stream_id, name, rtsp_url)
         steps["caption_resource"] = vlm_success
         if vlm_success:
@@ -918,10 +1089,10 @@ async def reconcile_live_source_now(
     timeout = httpx.Timeout(connect=15.0, read=60.0, write=60.0, pool=15.0)
     async with httpx.AsyncClient(timeout=timeout) as client:
         cv_inventories = await _detector_inventories(client, config)
-        embed_inventory = (
-            await _registered_stream_ids(client, config.rtvi_embed_url) if config.rtvi_embed_url else set()
+        embed_inventory, vlm_inventory = await asyncio.gather(
+            _available_rtvi_inventory(client, config.rtvi_embed_url),
+            _available_rtvi_inventory(client, config.rtvi_vlm_url),
         )
-        vlm_inventory = await _registered_stream_ids(client, config.rtvi_vlm_url) if config.rtvi_vlm_url else set()
         return await _reconcile_live_source(
             client,
             config,
@@ -944,6 +1115,8 @@ async def stop_all_managed_embedding_generation() -> None:
     _embedding_bootstrap_tasks.clear()
 
     stream_ids = list(_embedding_generation_tasks)
+    for stream_id in stream_ids:
+        finish_indexing_session(stream_id, "interrupted", "agent-shutdown; explicit start required")
     await asyncio.gather(
         *(stop_managed_embedding_generation(stream_id) for stream_id in stream_ids),
         return_exceptions=True,
@@ -1000,10 +1173,10 @@ async def reconcile_registered_live_sources(
     timeout = httpx.Timeout(connect=15.0, read=60.0, write=60.0, pool=15.0)
     async with httpx.AsyncClient(timeout=timeout) as client:
         cv_inventories = await _detector_inventories(client, config)
-        embed_inventory = (
-            await _registered_stream_ids(client, config.rtvi_embed_url) if config.rtvi_embed_url else set()
+        embed_inventory, vlm_inventory = await asyncio.gather(
+            _available_rtvi_inventory(client, config.rtvi_embed_url),
+            _available_rtvi_inventory(client, config.rtvi_vlm_url),
         )
-        vlm_inventory = await _registered_stream_ids(client, config.rtvi_vlm_url) if config.rtvi_vlm_url else set()
 
         active_count = 0
         desired_count = 0
@@ -1017,7 +1190,16 @@ async def reconcile_registered_live_sources(
                 continue
 
             if is_source_paused(stream_id):
-                await stop_managed_embedding_generation(stream_id)
+                async with embedding_operation_lock(stream_id):
+                    cleanup = embedding_cleanup_status(stream_id)
+                    if (
+                        (embed_inventory is not None and stream_id in embed_inventory)
+                        or stream_id in _embedding_generation_tasks
+                        or (cleanup is not None and not cleanup[0])
+                    ):
+                        await stop_source_indexing(client, config, stream_id)
+                        if embed_inventory is not None:
+                            embed_inventory.discard(stream_id)
                 # RTVI-CV's dynamic remove endpoint is not safely idempotent:
                 # some builds can tear down the active source when asked to
                 # remove an ID that is not registered in that worker. The
@@ -1046,9 +1228,9 @@ async def reconcile_registered_live_sources(
                         )
                 _live_analysis_runtime_steps[stream_id] = {
                     "detection": False,
-                    "embedding_resource": stream_id in embed_inventory,
+                    "embedding_resource": embed_inventory is not None and stream_id in embed_inventory,
                     "embedding": False,
-                    "caption_resource": stream_id in vlm_inventory,
+                    "caption_resource": vlm_inventory is not None and stream_id in vlm_inventory,
                 }
                 continue
 
@@ -1075,7 +1257,9 @@ async def reconcile_registered_live_sources(
                 vlm_inventory,
             )
             runtime = get_live_analysis_runtime_steps(stream_id)
-            if (not is_source_detection_enabled(stream_id) or runtime.get("detection")) and runtime.get("embedding"):
+            if (not is_source_detection_enabled(stream_id) or runtime.get("detection")) and (
+                not indexing_required_for_analysis(stream_id) or runtime.get("embedding")
+            ):
                 active_count += 1
 
     logger.info(
@@ -1317,8 +1501,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                 status="failure",
                 message=f"The {profile.name} detector is not configured on this VSS appliance",
                 error="Selected detector worker is unavailable",
-                detection_enabled=True,
-                analysis_profile_id=profile.id,
+                detectionEnabled=True,
+                analysisProfileId=profile.id,
             )
 
         try:
@@ -1348,8 +1532,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                     status="failure",
                     message=f"Failed at VST: {msg}",
                     error=msg,
-                    detection_enabled=profile.detection_enabled,
-                    analysis_profile_id=profile.id,
+                    detectionEnabled=profile.detection_enabled,
+                    analysisProfileId=profile.id,
                 )
             logger.info(f"Added RTSP to VST: {sensor_id} {rtsp_url} successfully")
             # After successful VST add, sensor_id and rtsp_url are guaranteed to be set.
@@ -1407,8 +1591,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                         status="failure",
                         message=f"Failed at RTVI-VLM: {msg}",
                         error=msg,
-                        detection_enabled=profile.detection_enabled,
-                        analysis_profile_id=profile.id,
+                        detectionEnabled=profile.detection_enabled,
+                        analysisProfileId=profile.id,
                     )
                 rtvi_vlm_added = True
 
@@ -1417,10 +1601,10 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                     status="success",
                     message=f"Stream '{request.name}' added successfully",
                     error=None,
-                    sensor_id=sensor_id,
+                    sensorId=sensor_id,
                     name=request.name,
-                    detection_enabled=profile.detection_enabled,
-                    analysis_profile_id=profile.id,
+                    detectionEnabled=profile.detection_enabled,
+                    analysisProfileId=profile.id,
                 )
 
             # Step 2: Add to RTVI-CV using RTSP URL from VST streams API
@@ -1445,10 +1629,31 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                         status="failure",
                         message=f"Failed at RTVI-CV: {msg}",
                         error=msg,
-                        detection_enabled=profile.detection_enabled,
-                        analysis_profile_id=profile.id,
+                        detectionEnabled=profile.detection_enabled,
+                        analysisProfileId=profile.id,
                     )
                 rtvi_cv_added = True
+
+            # The Smart City booth default deliberately leaves the semantic
+            # producer idle. CV and on-demand VLM registration above remain.
+            if not indexing_is_allowed(sensor_id):
+                set_live_analysis_runtime_steps(
+                    sensor_id,
+                    {
+                        "detection": rtvi_cv_added,
+                        "embedding_resource": False,
+                        "embedding": False,
+                        "caption_resource": rtvi_vlm_added,
+                    },
+                )
+                return AddStreamResponse(
+                    status="success",
+                    message=f"Stream '{request.name}' added; semantic indexing waits for an explicit window",
+                    sensorId=sensor_id,
+                    name=request.name,
+                    detectionEnabled=profile.detection_enabled,
+                    analysisProfileId=profile.id,
+                )
 
             # Step 3: Add to RTVI-embed using RTSP URL from VST streams API
             with TimeMeasure("rtsp_stream: add to RTVI-embed"):
@@ -1475,8 +1680,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                     status="failure",
                     message=f"Failed at RTVI-embed: {msg}",
                     error=msg,
-                    detection_enabled=profile.detection_enabled,
-                    analysis_profile_id=profile.id,
+                    detectionEnabled=profile.detection_enabled,
+                    analysisProfileId=profile.id,
                 )
             rtvi_embed_added = config.rtvi_embed_url != ""
 
@@ -1507,8 +1712,8 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
                     status="failure",
                     message=f"Failed at embedding generation: {msg}",
                     error=msg,
-                    detection_enabled=profile.detection_enabled,
-                    analysis_profile_id=profile.id,
+                    detectionEnabled=profile.detection_enabled,
+                    analysisProfileId=profile.id,
                 )
 
         # Success
@@ -1516,10 +1721,10 @@ def create_rtsp_ingest_router(config: ServiceConfig) -> APIRouter:
             status="success",
             message=f"Stream '{request.name}' added successfully",
             error=None,
-            sensor_id=sensor_id,
+            sensorId=sensor_id,
             name=request.name,
-            detection_enabled=profile.detection_enabled,
-            analysis_profile_id=profile.id,
+            detectionEnabled=profile.detection_enabled,
+            analysisProfileId=profile.id,
         )
 
     return router

@@ -4,6 +4,8 @@ import type { SystemHealth } from "./systemHealth";
 
 interface VssStoryWorkspaceProps {
   onOpenDemo?: () => void;
+  onOpenCityStory?: () => void;
+  onOpenDefenseStory?: () => void;
   systemHealth: SystemHealth | null;
 }
 import { industryBeats, VssIndustryScene } from "./VssIndustryScenes";
@@ -135,7 +137,8 @@ function Fingerprint({ query = false }: { query?: boolean }) {
     </div>
   );
 }
-export function VssStoryWorkspace({ onOpenDemo, systemHealth }: VssStoryWorkspaceProps) {
+export function VssStoryWorkspace({ onOpenDemo, onOpenCityStory,
+  onOpenDefenseStory, systemHealth }: VssStoryWorkspaceProps) {
   const processingHardware = systemHealth?.hardwareProfile === "DGX-SPARK"
     ? "DGX Spark"
     : systemHealth?.hardwareProfile === "IGX-THOR"
@@ -238,7 +241,8 @@ export function VssStoryWorkspace({ onOpenDemo, systemHealth }: VssStoryWorkspac
       }}
     >
       <nav className={s.nav} aria-label="VSS story chapters">
-        <span>Inside VSS</span>
+        {onOpenCityStory ? <button type="button" onClick={onOpenCityStory} style={{ color: '#a8e4ce', display: 'flex', alignItems: 'center', gap: 8 }}>Smart City story <IconArrowRight size={14} /></button> : <span>Inside VSS</span>}
+        {onOpenDefenseStory && <button type="button" onClick={onOpenDefenseStory} style={{ color: '#a8e4ce', display: 'flex', alignItems: 'center', gap: 8 }}>Defense story <IconArrowRight size={14} /></button>}
         <div>
           {groups.map(([name, index], i) => (
             <button
