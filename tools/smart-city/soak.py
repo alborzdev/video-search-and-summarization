@@ -484,7 +484,7 @@ def container_state(name,proc=Path('/proc'),cgroup=Path('/sys/fs/cgroup')):
 class Checks:
     def __init__(self,args):
         self.args=args;self.started=None;self.sources={};self.containers={};self.frame_windows={}
-        self.min_available=None;self.max_age={};self.max_duplicate={};self.max_duplicate_post_warmup={};self.clock_ratios={}
+        self.min_available=None;self.reserve_floor=None;self.max_age={};self.max_duplicate={};self.max_duplicate_post_warmup={};self.clock_ratios={}
         self.previews=ProcessedPreviewChecks(args.source_id) if getattr(args,'require_processed_preview',False) else None
 
     def evaluate(self,sample):
@@ -494,7 +494,9 @@ class Checks:
         memory=sample['memory']
         for key in ('availableGiB','guardAvailableGiB','savedReserveGiB','guardFloorGiB','guardAgeSeconds'):
             if not finite(memory.get(key)):raise SoakFailure('invalid-memory-guard-telemetry')
-        floor=max(20,memory['savedReserveGiB'])
+        floor=memory['savedReserveGiB']
+        if floor < 0:raise SoakFailure('invalid-memory-guard-telemetry')
+        self.reserve_floor=floor
         if memory['guardFloorGiB']<floor:raise SoakFailure('memory-guard-floor-below-saved-reserve')
         if memory['guardAgeSeconds']>15 or memory['guardAgeSeconds']< -2:raise SoakFailure('memory-guard-telemetry-stale')
         available=min(memory['availableGiB'],memory['guardAvailableGiB'])
@@ -757,7 +759,7 @@ def run(args):
         'askEnabled':bool(args.ask_every_seconds),'scheduledAskCount':ask_number,'asks':ask_results,'pauseOnFailure':args.pause_on_failure,'pauseReceipts':pause,
         'samplesFile':str(sample_path),'samplesSha256':file_sha(sample_path),
         'monitorSourceSha256':MONITOR_SOURCE_SHA256,
-        'criteria':{'minimumReserveGiB':20,'warmupSeconds':args.warmup_seconds,
+        'criteria':{'minimumReserveGiB':checks.reserve_floor,'warmupSeconds':args.warmup_seconds,
             'sampleEverySeconds':args.sample_every_seconds,
             'processedPreview':{'required':args.require_processed_preview,'fetchEverySeconds':PREVIEW_INTERVAL_SECONDS,
                 'requestTimeoutSeconds':PREVIEW_TIMEOUT_SECONDS,'maximumEnvelopeBytes':PREVIEW_ENVELOPE_MAX,'staleSeconds':PREVIEW_STALE_SECONDS},

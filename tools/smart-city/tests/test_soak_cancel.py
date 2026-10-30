@@ -46,6 +46,7 @@ def observer(monkeypatch, tmp_path):
     monkeypatch.setattr(soak, 'FrameTail', Tail)
     class Checks:
         min_available=25
+        reserve_floor=None
         max_age={};max_duplicate={};max_duplicate_post_warmup={};clock_ratios={'a':1,'b':1};previews=None
         def __init__(self, *_): pass
         def evaluate(self, sample):

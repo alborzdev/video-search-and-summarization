@@ -11,6 +11,7 @@ import ctypes as C
 import ctypes.util
 from datetime import datetime, timezone
 import json
+import math
 from pathlib import Path
 import subprocess
 import time
@@ -165,8 +166,8 @@ def run(args):
     import numpy as np
     if not args.allow_gpu:
         raise RuntimeError('run requires --allow-gpu and a coordinated GPU lease')
-    if args.reserve_gib < 20:
-        raise RuntimeError('The saved Spark reserve floor is 20 GiB')
+    if not math.isfinite(args.reserve_gib) or args.reserve_gib < 0:
+        raise RuntimeError('The selected Spark reserve must be finite and nonnegative')
     available = next(int(line.split()[1])*1024 for line in Path('/proc/meminfo').read_text().splitlines()
                      if line.startswith('MemAvailable:'))
     if available < args.reserve_gib * 1024**3:

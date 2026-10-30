@@ -144,9 +144,14 @@
 .mapSymbolKey span+span i { border-radius:2px; width:10px; height:6px; }
 .cameraKeys i { width:6px; height:6px; border-radius:50%; }
 .mapIdentityNote { display:block; margin-top:10px; font-size:11px; color:#9fadb6; }
-.mapControls { position:absolute; top:66px; right:14px; display:flex; flex-direction:column; background:#182026ee; border:1px solid #465058; border-radius:6px; overflow:hidden; }
+.mapControls { position:absolute; top:12px; right:14px; display:flex; flex-direction:column; background:#182026ee; border:1px solid #465058; border-radius:6px; overflow:hidden; }
 .mapControls button { padding:8px; border-radius:0; border-bottom:1px solid #3a434a; }
 .mapControls button:last-child { border-bottom:0; }
+@media(max-height:700px) {
+ .mapControls { top:8px; right:8px; flex-direction:row; }
+ .mapControls button { border-bottom:0; border-right:1px solid #3a434a; }
+ .mapControls button:last-child { border-right:0; }
+}
 .north { position:absolute; top:12px; right:24px; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:10px; color:#f4f6f6; text-shadow:0 1px 3px black; pointer-events:none; }
 .north svg { width:15px; height:18px; }
 .mapEmpty { position:absolute; inset:0; background:#15191bb5; }
@@ -476,3 +481,59 @@
 
 /* The manual description stays in the map footer and can grow to two sentences. */
 .mapContext.descriptionContext { height:auto; min-height:96px; max-height:48%; }
+
+/* Keep the map and interactive simulation together on the live overview. */
+.mapRegionWithViewer { display:grid; grid-template-columns:minmax(0,1fr) 24px minmax(0,1fr); gap:0; transition:grid-template-columns 360ms cubic-bezier(.22,.61,.36,1),grid-template-rows 360ms cubic-bezier(.22,.61,.36,1); }
+.mapRegionWithViewer[data-simulation-open=false] { grid-template-columns:minmax(0,2fr) 24px minmax(0,0fr); }
+.workspace .simulationHandle { position:relative; align-self:stretch; display:flex; align-items:center; justify-content:center; padding:0; border:0; border-radius:0; background:transparent; color:var(--city-muted); cursor:pointer; }
+.simulationHandle:before { content:""; position:absolute; top:12px; bottom:12px; width:1px; background:var(--city-border); }
+.simulationHandle>span { z-index:1; display:flex; align-items:center; justify-content:center; width:20px; height:48px; border:1px solid var(--city-border); border-radius:8px; background:#1a2024; }
+.workspace .simulationHandle:hover { color:var(--city-accent); background:transparent; }
+.simulationHandle:hover>span { border-color:var(--city-accent); }
+.simulationColumn { display:flex; flex-direction:column; gap:8px; min-width:0; min-height:0; overflow:auto; container-type:inline-size; opacity:1; transform:translateX(0); transition:opacity 240ms ease,transform 360ms cubic-bezier(.22,.61,.36,1),visibility 0s; }
+.mapRegionWithViewer[data-simulation-open=false] .simulationColumn { overflow:hidden; opacity:0; transform:translateX(24px); visibility:hidden; transition:opacity 180ms ease,transform 360ms cubic-bezier(.22,.61,.36,1),visibility 0s 360ms; }
+.simulationPanel { width:100%; min-width:0; min-height:0; overflow:hidden; border:1px solid var(--city-border); border-radius:7px; background:#171a1c; }
+.simulationPanel iframe { display:block; border:0; width:100%; height:100%; }
+.simulationDescription { flex:1 0 100px; display:flex; min-height:100px; container:scene-assistant / size; border:1px solid var(--city-border); border-radius:7px; background:#1a2024; }
+@media(max-width:760px) { .headingActions { flex-wrap:wrap; } }
+@media(max-width:1200px) and (min-width:761px) {
+ .workspace:has(.contentWithSimulation) { overflow:auto; }
+ .contentWithSimulation { min-height:760px; flex-shrink:0; }
+ .contentWithSimulation .cameraRail { align-self:start; }
+ .contentWithSimulation .cameras { display:flex; flex-direction:column; flex:none; }
+ .contentWithSimulation .cameraStage { flex:none; aspect-ratio:16/9; }
+ .mapRegionWithViewer { grid-template-columns:1fr; grid-template-rows:minmax(0,1fr) 24px minmax(0,1.3fr); }
+ .mapRegionWithViewer .map { container-type:inline-size; }
+ .simulationPanel { flex:1; min-height:180px; }
+}
+@media(max-width:760px) { .mapRegionWithViewer { height:980px; grid-template-columns:1fr; grid-template-rows:minmax(0,1fr) 24px minmax(0,1fr); } .workspace[data-showcase] .mapRegionWithViewer { height:980px; } .simulationPanel { flex:1; min-height:180px; } }
+
+@media(min-width:1201px) {
+ .contentWithSimulation { grid-template-columns:minmax(260px,1fr) minmax(0,2fr); }
+ .mapRegionWithViewer { container-type:size; }
+ .mapRegionWithViewer .map { container-type:inline-size; }
+ .mapRegionWithViewer .mapHeading { padding:8px; gap:4px; }
+ .mapRegionWithViewer .mapHeading strong { font-size:14px; white-space:nowrap; }
+ .mapRegionWithViewer .mapHeadingText>span { display:none; }
+ .mapRegionWithViewer .mapToolbar { gap:0; }
+ .mapRegionWithViewer .mapToolbar button { gap:4px; padding:5px; font-size:10px; }
+ .simulationPanel { align-self:start; max-height:100%; container-type:inline-size; }
+ .simulationPanel iframe { height:min(calc(100cqi * 9 / 16 + 76px),100cqb); }
+}
+
+@media(max-width:1200px) {
+ .mapRegionWithViewer[data-simulation-open=false] { grid-template-columns:1fr; grid-template-rows:minmax(0,2fr) 24px minmax(0,0fr); }
+ .simulationHandle:before { top:50%; bottom:auto; left:12px; right:12px; width:auto; height:1px; }
+ .simulationHandle>span { width:48px; height:20px; }
+ .simulationHandle svg { transform:rotate(90deg); }
+}
+@media(prefers-reduced-motion:reduce) {
+ .mapRegionWithViewer,.simulationColumn,.mapRegionWithViewer[data-simulation-open=false] .simulationColumn { transition:none; }
+}
+
+/* Menus enter without shifting the map or restarting its live layers. */
+.mapLegend,.presenterMenu[open]>div { transition:opacity 180ms ease,translate 220ms cubic-bezier(.22,.61,.36,1); }
+@starting-style {
+ .mapLegend:not([hidden]),.presenterMenu[open]>div { opacity:0; translate:0 -6px; }
+ .detailDrawer { opacity:0; translate:20px 0; }
+}

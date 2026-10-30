@@ -27,10 +27,12 @@ describe("workload admission", () => {
       sparkCapacity: { state: "fresh", guardActive: true, availableGiB: 5, reserveGiB: 5 } });
     expect(evaluateWorkloadAdmission("long_video_history_build", spark).decision).toBe("allow");
     for (const capacity of [undefined, { ...spark.sparkCapacity!, state: "unknown" as const },
-      { ...spark.sparkCapacity!, guardActive: false }, { ...spark.sparkCapacity!, reserveGiB: 0 },
+      { ...spark.sparkCapacity!, guardActive: false }, { ...spark.sparkCapacity!, reserveGiB: -1 },
       { ...spark.sparkCapacity!, availableGiB: Number.NaN }]) {
       expect(evaluateWorkloadAdmission("long_video_history_build", { ...spark, sparkCapacity: capacity }).reasonCode).toBe("SPARK_CAPACITY_REQUIRED");
     }
+    expect(evaluateWorkloadAdmission("long_video_history_build", { ...spark,
+      sparkCapacity: { ...spark.sparkCapacity!, availableGiB: 0.5, reserveGiB: 0 } }).decision).toBe("allow");
     expect(evaluateWorkloadAdmission("long_video_history_build", { ...spark,
       sparkCapacity: { ...spark.sparkCapacity!, availableGiB: 4.99 } }).reasonCode).toBe("SPARK_HEADROOM_REQUIRED");
     expect(evaluateWorkloadAdmission("long_video_history_build", { ...spark,

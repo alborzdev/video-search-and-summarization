@@ -194,6 +194,16 @@ def sources():
     return [registration[name] for name in ('cam_SW', 'cam_NE')]
 
 
+def embedding_service_stopped():
+    """Host proof for pausing an explicitly optional, already stopped producer."""
+    try:
+        state = subprocess.run(['docker', 'inspect', 'vss-rtvi-embed', '--format', '{{json .State.Running}}'],
+                               capture_output=True, text=True, timeout=5)
+        return state.returncode == 0 and state.stdout.strip() == 'false'
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
 def analysis(source, action):
     # Agent HTTP 200 can mean partial success. Smart City CV may be healthy
     # without an embedding producer only when the Agent explicitly confirms
@@ -221,8 +231,12 @@ def analysis(source, action):
         response.get('state') == 'active' and response.get('analysisActive') is True
         and steps.get('detection') is True and indexing_confirmed
     ) if action == 'resume' else (
-        response.get('state') == 'paused' and response.get('analysisActive') is False
-        and steps.get('detection') is True and steps.get('embedding') is True and all(steps.values())
+        response.get('analysisActive') is False and steps.get('detection') is True and (
+            response.get('state') == 'paused' and steps.get('embedding') is True and all(steps.values())
+            or response.get('state') == 'partial' and indexing_confirmed and indexing_required is False
+            and steps.get('embedding') is False and all(value for key, value in steps.items() if key != 'embedding')
+            and embedding_service_stopped()
+        )
     )
     if not complete:
         required = ('detection',) if action == 'resume' and indexing_required is False and indexing_confirmed else (

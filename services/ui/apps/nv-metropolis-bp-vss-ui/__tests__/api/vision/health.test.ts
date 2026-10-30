@@ -20,6 +20,16 @@ describe("vision health API", () => {
   const originalFetch = global.fetch;
   afterEach(() => { process.env = { ...originalEnv }; global.fetch = originalFetch; });
 
+  it("keeps required Spark services online when optional embeddings are off", async () => {
+    process.env.HARDWARE_PROFILE = "DGX-SPARK";
+    global.fetch = jest.fn(async (input) => ({ ok: !String(input).includes("8017") })) as jest.Mock;
+    const {json,response} = responseHarness();
+    await handler({method:"GET"} as NextApiRequest,response);
+    const payload = json.mock.calls[0][0];
+    expect(payload.status).toBe("online");
+    expect(payload.services).toEqual(expect.arrayContaining([expect.objectContaining({key:"embedding",ok:false,selected:false,onDemand:true})]));
+  });
+
   it("uses measured Spark capacity without probing or inventing Thor metrics", async () => {
     process.env.HARDWARE_PROFILE = "DGX-SPARK";
     process.env.SPARK_CAPACITY_URL = "http://capacity.test/capacity";

@@ -97,7 +97,7 @@ class DetectorTests(unittest.TestCase):
     def test_worker_startup_after_models_and_admission_boundary(self):
         names = ['broker', 'spark-perception', 'spark-llm', 'rtvi-embed', 'rtvi-vlm',
                  'vss-agent', 'vss-ui', 'vss-haproxy-ingress', 'lvs-server', 'alert-bridge', 'vss-va-mcp']
-        for detector_available, allowed in [(29.999, False), (30, True)]:
+        for detector_available, allowed in [(23.999, False), (24, True)]:
             with self.subTest(detector_available=detector_available), tempfile.TemporaryDirectory() as temp, \
                  patch.object(b, 'STATE', Path(temp)), patch.object(b, 'doctor'), patch.object(b, 'provision'), \
                  patch.object(b, 'await_service'), patch.object(b, 'reclaim_model_file_cache') as reclaim, \
@@ -125,7 +125,9 @@ class DetectorTests(unittest.TestCase):
                         self.assertNotIn('spark-perception', started)
                         self.assertNotIn('vss-agent', started)
                         verify.assert_not_called()
-                    self.assertEqual([c.args[0] for c in reclaim.call_args_list], ['spark-llm', 'rtvi-embed', 'rtvi-vlm'])
+                    self.assertNotIn('rtvi-embed', started)
+                    self.assertEqual(json.loads((b.STATE / 'compose.json').read_text())['services']['rtvi-embed']['restart'], 'no')
+                    self.assertEqual([c.args[0] for c in reclaim.call_args_list], ['spark-llm', 'rtvi-vlm'])
 
     def test_detector_cli_is_explicit_and_render_only(self):
         with patch.object(sys, 'argv', ['bootstrap.py', 'render', '--host-ip', '192.0.2.10', '--detector']), \

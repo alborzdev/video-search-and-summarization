@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: MIT
 import React, { memo, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { IconArrowRight, IconFocus2, IconInfoCircle, IconLayersIntersect, IconMapPin, IconMinus, IconPlus, IconVideo, IconX } from '@tabler/icons-react';
+import { IconFocus2, IconInfoCircle, IconLayersIntersect, IconMapPin, IconMinus, IconPlus, IconVideo } from '@tabler/icons-react';
 import type { CityRule, CitySite, CitySnapshot, Point } from './types';
 import { objectName, ruleGroundPoints } from './geometry';
 import styles from './SmartCity.module.css';
 import { cameraColor, groupRuleGeometry, sourceName } from './presentation';
 import { areaLabel } from './overviewObservation';
 import { deriveMapObjects, hasNativeMapPosition, usesNativeMapPositions, type CityMapObject } from './mapObjects';
-import { cameraViewCue, mapBackdrop, monitoringDescription } from './mapPresentation';
+import { cameraViewCue, mapBackdrop } from './mapPresentation';
 
 export interface QueueMapOverlay {
   name: string; sourceId: string; stopLineM: Point[]; upstreamPointM: Point;
   tailPositionM?: Point | null; status: string; observedExtentM?: number | null;
 }
 
-export const CityMap = memo(function CityMap({ site, snapshot, rules, selectedTrack, onSelect, focusedRuleId, onGroundPoint, groundDraft, groundPrompt, onCancelGround, queueOverlay, mapObjects, children, contextClassName, keepContextVisible = false, analysisEnabled = true, showAllRules = false, inspectable = true, onFocusRule, onInspectRule, onPreviewRule, onClearFocus }: {
+export const CityMap = memo(function CityMap({ site, snapshot, rules, selectedTrack, onSelect, focusedRuleId, onGroundPoint, groundDraft, groundPrompt, onCancelGround, queueOverlay, mapObjects, children, contextClassName, analysisEnabled = true, showAllRules = false, inspectable = true, onFocusRule, onPreviewRule, onClearFocus }: {
   site: CitySite; snapshot: CitySnapshot | null; rules: CityRule[];
   selectedTrack: string | null; onSelect: (id: string) => void;
   focusedRuleId?: string | null; onGroundPoint?: (point: Point) => void; groundDraft?: Point[];
   groundPrompt?: string; onCancelGround?: () => void; queueOverlay?: QueueMapOverlay | null;
-  mapObjects?: CityMapObject[]; children?: React.ReactNode; contextClassName?: string; keepContextVisible?: boolean; analysisEnabled?: boolean; showAllRules?: boolean;
-  inspectable?: boolean; onFocusRule?: (id: string) => void; onInspectRule?: (id: string) => void; onPreviewRule?: (id: string | null) => void; onClearFocus?: () => void;
+  mapObjects?: CityMapObject[]; children?: React.ReactNode; contextClassName?: string; analysisEnabled?: boolean; showAllRules?: boolean;
+  inspectable?: boolean; onFocusRule?: (id: string) => void; onPreviewRule?: (id: string | null) => void; onClearFocus?: () => void;
 }) {
   type Target = { kind: 'camera' | 'area'; id: string };
   const mapRoot = useRef<HTMLElement>(null);
@@ -58,7 +58,6 @@ export const CityMap = memo(function CityMap({ site, snapshot, rules, selectedTr
     track.observedThisFrame !== false && track.positionM && !hasNativeMapPosition(track)).length : 0;
   const zoneLayers = geometry.filter(layer => showAllRules || inspectable && areasVisible || layer.group.rules.some(rule => rule.id === focusedRuleId)).map(layer => ({ ...layer, active: Boolean(snapshot?.zones.some(zone => layer.group.rules.some(rule => rule.id === zone.id) && zone.active)) }))
     .sort((a, b) => Number(a.active) - Number(b.active));
-  const inspectedCamera = inspected?.kind === 'camera' ? cameras.find(camera => camera.source.id === inspected.id) : null;
   const inspectedArea = inspected?.kind === 'area' ? geometry.find(layer => layer.group.key === inspected.id) : null;
   const previewedRuleId = inspectedArea?.group.rules[0].id ?? null;
   useEffect(() => { onPreviewRule?.(previewedRuleId); }, [onPreviewRule, previewedRuleId]);
@@ -175,16 +174,6 @@ export const CityMap = memo(function CityMap({ site, snapshot, rules, selectedTr
     </div>
     {usesNativeMapPositions(snapshot) && <div className={styles.mapPositionNote} role="status" title="Dashed amber rings mark shared SDK identities whose camera positions differ by more than one metre. Camera detections remain visible.">{disputedPositions > 0 ? `${disputedPositions} shared ${disputedPositions === 1 ? 'ID has' : 'IDs have'} uncertain position${withheldPositions > 0 ? ` · ${withheldPositions} invalid positions hidden` : ''}` : withheldPositions > 0 ? `${withheldPositions} uncertain map ${withheldPositions === 1 ? 'position' : 'positions'} hidden · camera detections remain visible` : 'Uncertain map positions are hidden · camera detections remain visible'}</div>}
     {inspectable && <div id={`${gridId}-guide`} hidden={!guideOpen} className={styles.mapLegend}><div className={styles.mapSymbolKey}><span><i />People</span><span><i />Vehicles</span></div>{calibrated && <><strong title="Map markers are observations, not a unique site count.">{objects.length} {experimental ? `map object${objects.length === 1 ? '' : 's'}` : `observation${objects.length === 1 ? '' : 's'}`}</strong><div className={styles.cameraKeys}>{site.sources.map((source, index) => <span key={source.id}><i style={{ background: cameraColor(index) }} />{sourceName(source)}</span>)}</div></>}<span className={styles.mapIdentityNote}>{experimental ? `Display association · ${sharedCount} linked ${sharedCount === 1 ? 'object' : 'objects'} · unmatched camera views can show an object twice` : 'Camera-owned observations · overlap can show an object twice'}</span></div>}
-    {!keepContextVisible && (inspectedArea || inspectedCamera) ? <div className={styles.mapContext} onKeyDown={event => { if (event.key === 'Escape') clearInspection(); }}>
-      <section className={styles.mapInspection} aria-label="Map inspection" style={{ '--inspection-color': inspectedCamera ? cameraColor(inspectedCamera.index) : '#67d3bd' } as React.CSSProperties}>
-        <div className={styles.mapInspectionCopy}>
-          <span>{inspectedCamera ? `Camera ${String(inspectedCamera.index + 1).padStart(2, '0')}` : 'Monitoring area'} · {inspectedCamera ? 'View direction' : sourceName(site.sources.find(source => source.id === inspectedArea!.group.rules[0].sourceId) ?? { name: 'Camera' })}</span>
-          <strong>{inspectedCamera ? sourceName(inspectedCamera.source) : areaLabel(inspectedArea!.group.rules[0].name)}</strong>
-          <p title={inspectedArea ? inspectedArea.group.rules.map(monitoringDescription).join(' ') : undefined}>{inspectedCamera ? 'The camera is at its calibrated position. The cone shows viewing direction, not detection range.' : inspectedArea!.group.rules.map(monitoringDescription).join(' ')}</p>
-        </div>
-        {inspectedArea && onInspectRule && pinned?.kind === 'area' && <button type="button" className={styles.textButton} onClick={() => { onInspectRule(inspectedArea.group.rules[0].id); setPinned(null); setHovered(null); }}>View measurement<IconArrowRight size={16} /></button>}
-        {pinned && <button type="button" aria-label="Close map details" onClick={clearInspection}><IconX size={16} /></button>}
-      </section>
-    </div> : React.Children.toArray(children).length > 0 ? <div className={`${styles.mapContext} ${contextClassName ?? ''}`}>{children}</div> : inspectable && <div className={styles.mapContext}><div className={styles.mapInspectionHint}><IconInfoCircle size={17} /><span>Hover a camera or area to explore. Click to keep its details.</span></div></div>}
+    {React.Children.toArray(children).length > 0 && <div className={`${styles.mapContext} ${contextClassName ?? ''}`}>{children}</div>}
   </section>;
 });

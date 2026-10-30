@@ -29,13 +29,13 @@ def build(package, site, saved, mobility):
     # Reviewed against the orthographic map and both unchanged live cameras.
     # XW_E's navigation survey extends beyond the visible paint. This polygon
     # follows the actual stripe edges, including the slight road skew.
-    crossing = [[-14.0,83.0],[-10.7,82.85],[-10.7,72.7],[-14.0,72.9]]
+    crossing = [[-11.157913810431364, 72.35760559271463], [-13.843809477679917, 73.3515576727803], [-13.638742309886563, 82.31474010901458], [-10.781761392571232, 82.47821290960839]]
     # Emergency access watches the NS cross-traffic corridor. The waiting
     # ambulance is outside this area and must not create its own blockage.
     zones = [('expo-crossing-occupancy','East crossing','occupancy-threshold',['person'],crossing,100),
         ('expo-approach-queue','North approach queue','queue',['car','bus','truck'],[[-27.2,93],[-23.7,93],[-23.8,103],[-27.3,103]],1500),
-        ('expo-junction-blockage','Junction box','stopped-in-zone',['car','bus','truck'],[[-30.9,72],[-16.1,72],[-16.1,85],[-30.9,85]],1800),
-        ('expo-emergency-blockage','Emergency access','stopped-in-zone',['car','bus','truck'],[[-28.4,72],[-19.2,72],[-19.2,85],[-28.4,85]],1800)]
+        ('expo-junction-blockage','Junction box','stopped-in-zone',['car','bus','truck'],[[-15.812755478602723, 72.88627102187658], [-29.616015016816625, 72.04166421443422], [-32.27617749927033, 74.61156020016918], [-31.365279711778086, 84.47251946913023], [-29.2429091498398, 85.94778987678153], [-16.454027191096046, 84.70315785368591], [-14.535009715671384, 82.84925782345162]],1800),
+        ('expo-emergency-blockage','Emergency access','stopped-in-zone',['car','bus','truck'],[[-19.2, 72.67900912309653], [-28.4, 72.1160708832585], [-28.4, 85.0], [-19.5041489131365, 85.0], [-19.2, 84.97039979895814]],1800)]
     generated=[]
     for identifier,name,kind,classes,points,duration in zones:
         key = 'cam_NE' if classes == ['person'] else 'cam_SW'

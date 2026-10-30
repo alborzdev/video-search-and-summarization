@@ -188,9 +188,31 @@ def _qualified_model(root, device, size):
     if not engine.is_file() or not graph.is_file():
         raise ProfileError(f'{size.capitalize()} device-local engine/ONNX is not staged')
     engine_hash=digest(engine);graph_hash=digest(graph)
-    if graph_hash != model.get('onnxSha256'):
+    local_path=_controlled(directory/'state/model-artifacts.json',directory)
+    local_hash=None
+    expected_graph=model.get('onnxSha256');expected_engine=model.get('sparkObservedEngineSha256')
+    if local_path.exists():
+        local=_json_file(local_path,directory)
+        if (local.get('schemaVersion') != 'city.local-model-artifacts.v1'
+                or local.get('device') != device or local.get('artifactLockSha256') != digest(lock_path)
+                or not isinstance(local.get('models'),dict)):
+            raise ProfileError('Device-local artifact pins do not match this device/source lock')
+        pin=local['models'].get(size)
+        if pin is not None:
+            export_path=graph.parent/'export-receipt.json';build_path=engine.with_suffix('.build.json')
+            export=_json_file(export_path,directory)
+            _json_file(build_path,directory)
+            if (not isinstance(pin,dict) or not model.get('checkpointSha256')
+                    or export.get('checkpointSha256') != model['checkpointSha256']
+                    or pin.get('checkpointSha256') != model['checkpointSha256']
+                    or pin.get('exportReceiptSha256') != digest(export_path)
+                    or pin.get('buildReceiptSha256') != digest(build_path)):
+                raise ProfileError('Device-local artifacts require the pinned checkpoint and matching export/build receipts')
+            expected_graph=pin.get('onnxSha256');expected_engine=pin.get('engineSha256')
+            local_hash=digest(local_path)
+    if graph_hash != expected_graph:
         raise ProfileError('Local ONNX does not match artifacts.lock.json')
-    if device == 'spark' and engine_hash != model.get('sparkObservedEngineSha256'):
+    if (device == 'spark' or local_hash) and engine_hash != expected_engine:
         raise ProfileError('Local Spark engine does not match artifacts.lock.json')
     if device == 'thor' and engine_hash == model.get('sparkObservedEngineSha256'):
         raise ProfileError('A Spark engine cannot qualify a Thor deployment')
@@ -218,7 +240,7 @@ def _qualified_model(root, device, size):
         'modelRevision':f'rfdetr-{size}-fp16@sha256:{engine_hash}',
         'engineContainerPath':f'/models/{engine.name}',
         'onnxContainerPath':f'/models/rfdetr-{size}/rfdetr-{size}.onnx',
-        'artifactLockSha256':digest(lock_path),'buildReceiptSha256':build_hash,
+        'artifactLockSha256':digest(lock_path),'deviceArtifactPinsSha256':local_hash,'buildReceiptSha256':build_hash,
         'qualityReceipts':quality,'qualification':'Target-device FP16 corpus quality; native pipeline qualification remains separate.'}
 
 

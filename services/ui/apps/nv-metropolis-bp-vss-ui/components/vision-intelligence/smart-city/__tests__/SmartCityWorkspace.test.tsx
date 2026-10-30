@@ -13,7 +13,7 @@ jest.mock('../CityDemoControls', () => ({ CityDemoControls: (props: any) => <div
 jest.mock('../CityIndexingControl', () => ({ CityIndexingControl: (props: any) => <button onClick={() => props.onOpenEvidence({ sensor_id: props.sources[0].id, video_name: 'Indexed alias', description: 'Match', start_time: '2026-10-26T08:00:00Z', end_time: '2026-10-26T08:00:05Z' })}>Open mock capture clip</button> }));
 jest.mock('../CityCaptureEvidenceDrawer', () => ({ CityCaptureEvidenceDrawer: (props: any) => <section role="dialog" aria-label="Mock retained clip"><span>{props.sourceName}</span><output aria-label="Retained clip source">{props.match.sensor_id}</output><button onClick={props.onClose}>Close mock clip</button></section> }));
 jest.mock('../CityCamera', () => ({ CityCamera: (props: any) => <div>Camera<output aria-label={`Camera framing ${props.source.id}`}>{props.fillFrame ? 'cropped' : 'full frame'}</output><output aria-label={`Scenario areas ${props.source.id}`}>{props.scenarioRuleIds?.join('|') ?? 'all'}</output><output aria-label={`Area guide ${props.source.id}`}>{props.areaHighlight?.id ?? 'none'}</output><button onClick={() => props.onPoint([.2, .3])}>Place mock point</button><output aria-label={`Selected camera ${props.source.id}`}>{props.selectedTrackIds?.join('|')}</output><output aria-label={`Preview limit ${props.source.id}`}>{props.previewFpsLimit ?? 'default'}</output></div> }));
-jest.mock('../CityMap', () => ({ CityMap: (props: any) => <div>Map<output aria-label="Map areas">{props.rules.map((rule: any) => rule.id).join('|')}</output>{props.children}<button onClick={() => props.onPreviewRule?.(props.rules[0]?.id)}>Preview map area</button><button onClick={props.onClearFocus}>Clear map focus</button>{props.rules?.length > 0 && <button onClick={() => props.onInspectRule(props.rules[0].id)}>Inspect map measurement</button>}{props.mapObjects?.some((object: any) => object.shared) && <button onClick={() => props.onSelect(props.mapObjects.find((object: any) => object.shared).track.id)}>Select shared map object</button>}</div> }));
+jest.mock('../CityMap', () => ({ CityMap: (props: any) => <div>Map<output aria-label="Map areas">{props.rules.map((rule: any) => rule.id).join('|')}</output>{props.children}<button onClick={() => props.onPreviewRule?.(props.rules[0]?.id)}>Preview map area</button><button onClick={props.onClearFocus}>Clear map focus</button>{props.rules?.length > 0 && <button onClick={() => props.onFocusRule(props.rules[0].id)}>Focus map area</button>}{props.mapObjects?.some((object: any) => object.shared) && <button onClick={() => props.onSelect(props.mapObjects.find((object: any) => object.shared).track.id)}>Select shared map object</button>}</div> }));
 jest.mock('../alignedSnapshot', () => ({ displaySnapshot: (_site: unknown, snapshot: unknown) => snapshot }));
 jest.mock('../CityMobilityPanel', () => ({ CityMobilityPanel: (props: any) => <div><output aria-label="Measurement topic">{props.topic}</output><button onClick={() => props.onTopicChange('curbs')}>Manually select curb insights</button></div> }));
 jest.mock('../CityInspector', () => ({ CityInspector: (props: any) => <div>
@@ -42,6 +42,20 @@ function state() {
   return { site, snapshot: { siteId: 'site-a', mode: 'live', tracks: [], events: [], sources: [], rules: [], zones: [] }, sourceSnapshots: {}, rules: { revision: 3, rules: [{ id: 'stop', name: 'Custom stop rule', kind: 'stopped-in-zone', sourceId: 'camera', classes: ['car'], enabled: false, revision: 2, geometry: { space: 'image-normalized', points: [[0, 0], [1, 0], [1, 1]] }, conditions: { speedBelowMps: 1.25, minimumDurationMs: 2500, maximumObservationGapMs: 1200 } }] }, connected: true, loading: false, saving: false, error: null, previewGeneration: 1, saveRules: jest.fn().mockResolvedValue({}), atMediaTime: jest.fn(), atSourceTime: jest.fn(), presentProcessedFrame: jest.fn(), refresh: jest.fn() };
 }
 describe('Smart City workspace state', () => {
+
+  it('shows the local simulation alongside the map only for the Isaac overview', () => {
+    const city = state();
+    (useCity as jest.Mock).mockReturnValue({ ...city, site: { ...city.site, id: 'isaac-intersection-a' } });
+    const { rerender } = render(<SmartCityWorkspace />);
+    expect(screen.getByTitle('Live Isaac Sim viewer')).toHaveAttribute('src', 'http://127.0.0.1:7790/?embedded=1');
+    expect(screen.getByText('Map')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Measurements' }));
+    expect(screen.queryByTitle('Live Isaac Sim viewer')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Overview' }));
+    (useCity as jest.Mock).mockReturnValue(city);
+    rerender(<SmartCityWorkspace />);
+    expect(screen.queryByTitle('Live Isaac Sim viewer')).not.toBeInTheDocument();
+  });
 
   it('preserves full camera frames in overview and measurements', () => {
     const city = state();
@@ -118,11 +132,12 @@ describe('Smart City workspace state', () => {
     expect(screen.getByLabelText('Area guide camera')).toHaveTextContent('none');expect(screen.getByLabelText('Area guide other')).toHaveTextContent('none');expect(city.saveRules).not.toHaveBeenCalled();
   });
 
-  it('opens the matching measurement topic from a configured map area before live metrics arrive', () => {
+  it('keeps area selection in the overview without opening a details footer or another view', () => {
     const city = state(); city.rules.rules[0] = {...city.rules.rules[0],kind:'queue',enabled:true};
     (useCity as jest.Mock).mockReturnValue(city); render(<SmartCityWorkspace />);
-    fireEvent.click(screen.getByRole('button',{name:'Inspect map measurement'}));
-    expect(screen.getByLabelText('Measurement topic')).toHaveTextContent('queues');
+    fireEvent.click(screen.getByRole('button',{name:'Focus map area'}));
+    expect(screen.getByTestId('smart-city-workspace')).toHaveAttribute('data-view','overview');
+    expect(screen.queryByLabelText('Measurement topic')).not.toBeInTheDocument();
   });
 
   beforeEach(() => { (usePreviewHealth as jest.Mock).mockReturnValue(null); });

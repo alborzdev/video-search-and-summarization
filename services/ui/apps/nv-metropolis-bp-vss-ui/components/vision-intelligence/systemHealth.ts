@@ -6,6 +6,7 @@ export interface VisionServiceHealth {
   latencyMs: number | null;
   ok: boolean;
   selected?: boolean;
+  onDemand?: boolean;
 }
 
 export interface ThorHealthMetrics {

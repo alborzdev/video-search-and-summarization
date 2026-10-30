@@ -232,7 +232,7 @@ def lock(action, progress):
 
 def model_health(*, city=False):
     urls = ['http://127.0.0.1:30081/v1/models', 'http://127.0.0.1:8018/v1/health/ready',
-            'http://127.0.0.1:8017/v1/ready', 'http://127.0.0.1:8100/health']
+            'http://127.0.0.1:8100/health']
     if not city:
         urls.append('http://127.0.0.1:9000/api/v1/health/get-dsready-state')
     for url in urls:
@@ -278,6 +278,8 @@ def stack_ready(graph):
     states = {row['Config']['Labels']['com.docker.compose.service']: row['State'] for row in rows}
     completed = b.completed_services(graph)
     for name in graph['services']:
+        if name == 'rtvi-embed':
+            continue
         state = states.get(name, {})
         if name in completed and state.get('Status') == 'exited' and state.get('ExitCode') == 0:
             continue

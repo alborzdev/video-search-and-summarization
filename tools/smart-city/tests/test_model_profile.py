@@ -157,6 +157,36 @@ class ModelProfiles(unittest.TestCase):
             profile.select_model(self.root,'spark','medium')
         self.assertEqual(profile.selection_name(self.root,'spark'),'small')
 
+    def test_local_pins_keep_target_builds_separate_and_retain_quality_gates(self):
+        size='large';engine=self.directory/'models/rfdetr-large-fp16-b2.engine'
+        graph=self.directory/'models/rfdetr-large/rfdetr-large.onnx'
+        export_path=graph.parent/'export-receipt.json';build_path=engine.with_suffix('.build.json')
+        self.lock['models'][size]['checkpointSha256']='c'*64
+        self.lock['models'][size]['onnxSha256']='0'*64
+        self.lock['models'][size]['sparkObservedEngineSha256']='1'*64
+        self.write(self.root/'tools/smart-city/artifacts.lock.json',self.lock)
+        export=json.loads(export_path.read_text());export['checkpointSha256']='c'*64;self.write(export_path,export)
+        pin={'checkpointSha256':'c'*64,'onnxSha256':profile.digest(graph),'engineSha256':profile.digest(engine),
+             'exportReceiptSha256':profile.digest(export_path),'buildReceiptSha256':profile.digest(build_path)}
+        path=self.directory/'state/model-artifacts.json'
+        value={'schemaVersion':'city.local-model-artifacts.v1','device':'spark',
+               'artifactLockSha256':profile.digest(self.root/'tools/smart-city/artifacts.lock.json'),'models':{size:pin}}
+        self.write(path,value)
+        selected=profile.select_model(self.root,'spark',size)
+        self.assertEqual(selected['deviceArtifactPinsSha256'],profile.digest(path))
+        self.quality_path(size,2).unlink()
+        with self.assertRaises(profile.ProfileError):profile.selected_model(self.root,'spark')
+        value['device']='thor';self.write(path,value)
+        with self.assertRaisesRegex(profile.ProfileError,'device/source lock'):profile.selected_model(self.root,'spark')
+
+    def test_local_pins_cannot_replace_checkpoint_or_unmatched_receipts(self):
+        size='large';self.lock['models'][size]['checkpointSha256']='c'*64
+        self.write(self.root/'tools/smart-city/artifacts.lock.json',self.lock)
+        self.write(self.directory/'state/model-artifacts.json',{'schemaVersion':'city.local-model-artifacts.v1',
+            'device':'spark','artifactLockSha256':profile.digest(self.root/'tools/smart-city/artifacts.lock.json'),
+            'models':{size:{'checkpointSha256':'d'*64}}})
+        with self.assertRaisesRegex(profile.ProfileError,'pinned checkpoint'):profile.select_model(self.root,'spark',size)
+
     def test_missing_quality_receipt_cannot_select(self):
         self.quality_path('medium',2).unlink()
         with self.assertRaisesRegex(profile.ProfileError,'receipt is missing'):

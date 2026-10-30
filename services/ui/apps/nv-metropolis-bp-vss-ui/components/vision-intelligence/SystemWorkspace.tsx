@@ -16,6 +16,7 @@ import {
   IconTrash,
   IconVideo,
 } from "@tabler/icons-react";
+import { EmbeddingControl } from './EmbeddingControl';
 import React, { ReactNode } from "react";
 import type {
   WorkloadAdmissions,
@@ -192,6 +193,7 @@ export function SystemWorkspace({
 
       {panel === "overview" && (
         <div className="vi-system-overview">
+          {spark && <EmbeddingControl />}
           <article className="vi-system-hero">
             <div className="vi-system-hardware">
               <div className="vi-system-device">
@@ -453,7 +455,7 @@ export function SystemWorkspace({
                     {service.ok ? <IconCheck size={15} /> : <IconServer size={15} />}
                   </span>
                   <strong>{service.label}</strong>
-                  <em>{service.selected === false ? "Not selected" : service.ok ? "Ready" : "Unavailable"}</em>
+                  <em>{service.onDemand && !service.ok ? "Off · on demand" : service.selected === false ? "Not selected" : service.ok ? "Ready" : "Unavailable"}</em>
                   <small>{service.latencyMs == null ? "—" : `${service.latencyMs} ms`}</small>
                 </div>
               ))}

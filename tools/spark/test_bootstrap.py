@@ -299,7 +299,10 @@ class BootstrapTests(unittest.TestCase):
             self.assertEqual(b.model_admission_gib('spark-llm'), 24)
             self.assertEqual(b.model_admission_gib('rtvi-embed'), 24)
             self.assertEqual(b.model_admission_gib('rtvi-vlm'), 24)
-            for invalid in [0, -1, True, '24', float('nan'), float('inf')]:
+            settings.write_text(json.dumps({'reserve_gib': 0}))
+            self.assertEqual(b.memory_reserve(), 0)
+            self.assertEqual(b.model_admission_gib('rtvi-vlm'), 0)
+            for invalid in [-1, True, '24', float('nan'), float('inf')]:
                 with self.subTest(invalid=invalid):
                     settings.write_text(json.dumps({'reserve_gib': invalid}))
                     with self.assertRaises(RuntimeError):
@@ -401,6 +404,7 @@ class BootstrapTests(unittest.TestCase):
                  rtvi_vlm_image='nvcr.io/nvidia/vss-core/vss-rt-vlm:3.2.1-sbsa')
         services = json.loads((b.STATE / 'compose.json').read_text())['services']
         self.assertNotIn('RTVI_VLLM_NATIVE_CONV3D', services['rtvi-vlm']['environment'])
+        self.assertNotIn('VLLM_ATTENTION_BACKEND', services['rtvi-vlm']['environment'])
 
     def test_nvfp4_selection_updates_consumers_and_survives_rerender(self):
         b.private_write(b.STATE / 'settings.json', json.dumps({'reserve_gib': 20}))

@@ -123,6 +123,15 @@ class ClockAndResourceControls(unittest.TestCase):
             with self.subTest(key=key),self.assertRaisesRegex(soak.SoakFailure,message):
                 soak.Checks(options()).evaluate(data)
 
+    def test_zero_saved_reserve_is_preserved_without_a_hidden_floor(self):
+        data=sample(0)
+        data['memory'].update(savedReserveGiB=0,guardFloorGiB=0,availableGiB=1,guardAvailableGiB=1)
+        checks=soak.Checks(options());checks.evaluate(data)
+        self.assertEqual(checks.reserve_floor,0)
+        data['memory']['savedReserveGiB']=-1
+        with self.assertRaisesRegex(soak.SoakFailure,'invalid-memory-guard-telemetry'):
+            checks.evaluate(data)
+
     def test_cgroup_oom_and_container_recreation_fail(self):
         for field,value,message in [('memoryEvents',{'oom':1,'oom_kill':1},'cgroup-oom-event'),('id','new-container','restarted-or-recreated')]:
             checks=soak.Checks(options());checks.evaluate(sample(0));bad=sample(5)

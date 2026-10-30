@@ -103,7 +103,11 @@ class UiPackagingControls(unittest.TestCase):
             with patch.object(module, 'run'), patch.object(module, 'available_gib', return_value=20):
                 self.assertEqual(module.require_guard(root), 20)
             (root / '.spark/settings.json').write_text('{"reserve_gib":0}')
-            with self.assertRaisesRegex(RuntimeError, 'positive reserve'): module.saved_floor(root)
+            self.assertEqual(module.saved_floor(root), 0)
+            with patch.object(module, 'run'), patch.object(module, 'available_gib', return_value=0.5):
+                self.assertEqual(module.require_guard(root), 0)
+            (root / '.spark/settings.json').write_text('{"reserve_gib":-1}')
+            with self.assertRaisesRegex(RuntimeError, 'nonnegative'): module.saved_floor(root)
 
     def test_registry_credentials_and_external_package_paths_are_rejected(self):
         for value in ['http://registry.test', 'https://user:secret@registry.test', 'https://registry.test?token=secret']:

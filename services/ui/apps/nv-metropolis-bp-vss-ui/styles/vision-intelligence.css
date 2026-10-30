@@ -9793,3 +9793,34 @@ body:has(.vi-app [role="dialog"][aria-modal="true"]) { overflow: hidden; }
 .vi-dash-canvas .vi-replay-controls { bottom: 14px; grid-template-columns: 50px minmax(0, 1fr) auto; }
 .vi-dash-canvas .vi-replay-controls > button { width: 50px; color: #f4f7f7; font-size: 11px; }
 .vi-dash-canvas .vi-replay-controls input { min-width: 0; width: 100%; accent-color: var(--vi-accent); }
+
+/* Shared motion: quick feedback, gentle navigation, stable live surfaces. */
+.vi-app {
+  --vi-motion-ease: cubic-bezier(.22,.61,.36,1);
+  --vi-motion-fast: 160ms;
+  --vi-motion-panel: 260ms;
+}
+.vi-app :where(button, summary, [role="tab"], input, select, textarea) {
+  transition: background-color var(--vi-motion-fast) ease,
+    border-color var(--vi-motion-fast) ease, color var(--vi-motion-fast) ease,
+    box-shadow var(--vi-motion-fast) ease;
+}
+.vi-main { view-transition-name: vi-workspace; }
+html[data-vi-transition]::view-transition { pointer-events:none; }
+html[data-vi-transition]::view-transition-old(root) { animation:none; opacity:0; }
+html[data-vi-transition]::view-transition-new(root) { animation:none; mix-blend-mode:normal; }
+html[data-vi-transition]::view-transition-group(vi-workspace) { animation-duration:280ms; animation-timing-function:cubic-bezier(.22,.61,.36,1); }
+html[data-vi-transition]::view-transition-old(vi-workspace) { animation:vi-workspace-out 180ms ease both; mix-blend-mode:normal; }
+html[data-vi-transition]::view-transition-new(vi-workspace) { animation:vi-workspace-in 280ms cubic-bezier(.22,.61,.36,1) both; mix-blend-mode:normal; }
+@keyframes vi-workspace-out { to { opacity:0; translate:0 -8px; } }
+@keyframes vi-workspace-in { from { opacity:0; translate:0 12px; } to { opacity:1; translate:0 0; } }
+.vi-app :is([role="dialog"], [role="menu"], .vi-system-popover, .vi-layers-popover, .vi-theme-menu) {
+  transition:opacity var(--vi-motion-panel) ease,translate var(--vi-motion-panel) var(--vi-motion-ease);
+}
+@starting-style {
+  .vi-app :is([role="dialog"], [role="menu"], .vi-system-popover, .vi-layers-popover, .vi-theme-menu) { opacity:0; translate:0 10px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .vi-app *, .vi-app *::before, .vi-app *::after { animation-duration:.01ms!important; animation-iteration-count:1!important; transition-duration:0s!important; scroll-behavior:auto!important; }
+  html[data-vi-transition]::view-transition-group(*),html[data-vi-transition]::view-transition-old(*),html[data-vi-transition]::view-transition-new(*) { animation:none!important; }
+}

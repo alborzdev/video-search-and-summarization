@@ -278,7 +278,12 @@ def reconcile(graph, root, hardware, options, detector_enabled=None):
     # Restrict host-published chat URLs to the existing ingress.
     for key in ('NEXT_PUBLIC_HTTP_CHAT_COMPLETION_URL', 'NEXT_PUBLIC_SIDEBAR_CHAT_HTTP_CHAT_COMPLETION_URL'):
         ui[key] = 'http://127.0.0.1:7777/chat/stream'
-    services['rtvi-vlm'].setdefault('environment', {}).pop('RTVI_VLLM_NATIVE_CONV3D', None)
+    vlm_environment = services['rtvi-vlm'].setdefault('environment', {})
+    vlm_environment.pop('RTVI_VLLM_NATIVE_CONV3D', None)
+    # An empty Compose default is not a backend selection. vLLM validates
+    # this process environment before auto-selecting the hardware backend.
+    if not vlm_environment.get('VLLM_ATTENTION_BACKEND'):
+        vlm_environment.pop('VLLM_ATTENTION_BACKEND', None)
     if options['rtvi_vlm_image']:
         vlm = services['rtvi-vlm']
         vlm['image'] = options['rtvi_vlm_image']

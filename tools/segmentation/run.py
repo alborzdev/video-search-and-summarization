@@ -31,8 +31,8 @@ def available_gib():
 
 def saved_reserve(path=SETTINGS):
     value = json.loads(Path(path).read_text())["reserve_gib"]
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
-        raise RuntimeError("Saved Spark reserve must be finite and positive.")
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+        raise RuntimeError("Saved Spark reserve must be finite and nonnegative.")
     return float(value)
 
 

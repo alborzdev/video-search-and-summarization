@@ -16,11 +16,11 @@ class AvatarControl:
             raise ValueError('Choose start or stop live avatars')
         payload = {'action': 'avatars', 'operation': operation}
         if operation != 'status':
-            payload['expiresAt'] = time.time() + 3
+            payload['expiresAt'] = time.time() + 8
         token = (self.repo / 'logs/vss-integration/bridge-token').read_text().strip()
         request = urllib.request.Request('http://127.0.0.1:8766/control',
             data=json.dumps(payload).encode(), headers={'Content-Type': 'application/json', 'X-City-Token': token})
-        with urllib.request.urlopen(request, timeout=4) as response:
+        with urllib.request.urlopen(request, timeout=20) as response:
             result = json.load(response)
         if result.get('ok') is not True:
             raise RuntimeError(str(result.get('error', 'Avatar control unavailable')).splitlines()[-1][:240])

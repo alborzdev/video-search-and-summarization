@@ -127,24 +127,24 @@ describe('city map interactions', () => {
     pointer('pointercancel', 1, 10); const stopped = transform(); pointer('pointermove', 1, 20); expect(transform()).toBe(stopped);
   });
 
-  it('explains grouped monitoring rules on hover, pins on keyboard selection and opens the measurement', () => {
-    const onFocusRule = jest.fn(); const onInspectRule = jest.fn();
+  it('highlights areas without adding a footer or displacing the existing content', () => {
+    const onFocusRule = jest.fn();
     const rule: any = { id: 'crossing', sourceId: 'camera', kind: 'occupancy-threshold', name: 'East crossing', enabled: true, classes: ['person'], conditions: {countThreshold: 2},
       geometry: { space: 'site-metres', points: [[1,1],[4,1],[4,4]] } };
-    render(<CityMap {...props} rules={[rule]} onFocusRule={onFocusRule} onInspectRule={onInspectRule}><div>Automatic finding</div></CityMap>);
+    render(<CityMap {...props} rules={[rule]} onFocusRule={onFocusRule}><div>Automatic finding</div></CityMap>);
     const area = screen.getByRole('button', {name:'East crossing · Count area · monitoring area'});
-    fireEvent.mouseEnter(area); expect(screen.getByLabelText('Map inspection')).toHaveTextContent('Counts people inside this area.');
-    expect(screen.queryByText('Automatic finding')).not.toBeInTheDocument();
+    fireEvent.mouseEnter(area); expect(screen.queryByLabelText('Map inspection')).not.toBeInTheDocument();
+    expect(screen.getByText('Automatic finding')).toBeInTheDocument();
     fireEvent.mouseLeave(screen.getByLabelText('Calibrated live top-down map')); expect(screen.getByText('Automatic finding')).toBeInTheDocument();
     fireEvent.keyDown(area, {key:' '}); expect(onFocusRule).toHaveBeenCalledWith('crossing');
     expect(area).toHaveAttribute('aria-pressed','true');
-    fireEvent.click(screen.getByRole('button', {name:'View measurement'})); expect(onInspectRule).toHaveBeenCalledWith('crossing');
+    expect(screen.queryByLabelText('Map inspection')).not.toBeInTheDocument();
     expect(screen.getByText('Automatic finding')).toBeInTheDocument();
   });
   it('keeps the scenario explanation visible when a visitor points at its area', () => {
     const rule: any = { id: 'crossing', sourceId: 'camera', kind: 'occupancy-threshold', name: 'East crossing', enabled: true, classes: ['person'], conditions: {},
       geometry: { space: 'site-metres', points: [[1,1],[4,1],[4,4]] } };
-    render(<CityMap {...props} rules={[rule]} keepContextVisible><div>Scenario explanation</div></CityMap>);
+    render(<CityMap {...props} rules={[rule]}><div>Scenario explanation</div></CityMap>);
     fireEvent.mouseEnter(screen.getByRole('button', { name: 'East crossing · Count area · monitoring area' }));
     expect(screen.getByText('Scenario explanation')).toBeInTheDocument();
     expect(screen.queryByLabelText('Map inspection')).not.toBeInTheDocument();
@@ -155,8 +155,8 @@ describe('city map interactions', () => {
     const pin = screen.getByRole('button', {name:'Inspect camera 01 · Camera'});
     const map = screen.getByLabelText('Top-down camera observations in metres'); const capture = jest.fn(); Object.defineProperty(map,'setPointerCapture',{value:capture});
     fireEvent.pointerDown(pin,{button:0,pointerId:1}); expect(capture).not.toHaveBeenCalled();
-    fireEvent.focus(pin); expect(screen.getByLabelText('Map inspection')).toHaveTextContent('calibrated position');
-    fireEvent.keyDown(pin,{key:'Enter'}); fireEvent.blur(pin); expect(screen.getByLabelText('Map inspection')).toBeInTheDocument();
+    fireEvent.focus(pin); expect(screen.queryByLabelText('Map inspection')).not.toBeInTheDocument();
+    fireEvent.keyDown(pin,{key:'Enter'}); fireEvent.blur(pin); expect(pin).toHaveAttribute('aria-pressed','true'); expect(screen.queryByLabelText('Map inspection')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', {name:'Person · Camera on map'})); expect(screen.queryByLabelText('Map inspection')).not.toBeInTheDocument();
     expect(screen.getByText('Automatic finding')).toBeInTheDocument();
   });

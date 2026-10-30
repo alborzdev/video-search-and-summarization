@@ -82,6 +82,10 @@ python3 tools/runtime/bootstrap.py stop
 launcher and guard. Omit `--no-open` to open the app in the device's configured
 browser. UI `deps` is an explicit online setup step; reuse installed dependencies
 for ordinary source edits. Keep the saved reserve and model budgets intact.
+An explicitly selected `--reserve-gib 0` disables Spark's available-memory
+reserve floor. Telemetry and container memory limits remain active; restart
+`vss-spark-guard.service` after changing the saved reserve so its telemetry
+matches the new setting. Negative or nonfinite reserves remain invalid.
 On a fresh Spark without a registered local simulator, startup opens the app for
 recorded clips. Add the RTSP source later; no simulator is required for file use.
 Existing local Sim installations retain their recording/indexing startup path,
@@ -182,6 +186,13 @@ city/VSS images, model and BodyPose artifacts, local engine/export/quality
 receipts, MediaMTX, the controller environment, and its own source registrations.
 Current model and native-tracker selection checks exact artifact hashes; a newly
 built engine must be reconciled with its target receipts before activation.
+For a new target export/build, keep reviewed checkpoint hashes in the shared
+lock and store target hashes in `.spark/city/state/model-artifacts.json` (or the
+corresponding Thor directory). The `city.local-model-artifacts.v1` object pins
+the device, shared `artifactLockSha256`, and a `models` entry containing
+`checkpointSha256`, `onnxSha256`, `engineSha256`, `exportReceiptSha256` and
+`buildReceiptSha256`. Selection still requires the matching target build and
+both actual 100-image FP16 corpus receipts; local pins do not waive those checks.
 Preserve the destination's saved memory reserve and guard.
 
 Use [Smart City tooling](../tools/smart-city/README.md) and the companion migration

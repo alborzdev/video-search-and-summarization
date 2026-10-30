@@ -95,6 +95,14 @@ class LocalVisionTests(unittest.TestCase):
         with patch.object(local, 'active', return_value=True), patch.object(local, 'available_gib', return_value=5):
             self.assertEqual(local.admission(self.state), 5)
 
+    def test_zero_reserve_keeps_guard_requirement_without_memory_floor(self):
+        (self.state / 'settings.json').write_text('{"reserve_gib":0}')
+        with patch.object(local, 'active', return_value=True), patch.object(local, 'available_gib', return_value=0.5):
+            self.assertEqual(local.admission(self.state), 0)
+        with patch.object(local, 'active', return_value=False):
+            with self.assertRaisesRegex(RuntimeError, 'guard'):
+                local.admission(self.state)
+
     def test_disabled_start_does_not_install_or_run(self):
         (self.state / 'settings.json').write_text('{"reserve_gib":20,"local_vision_enabled":false}')
         with patch.object(local, 'install_unit') as install, patch.object(local, 'active', return_value=False) as active:

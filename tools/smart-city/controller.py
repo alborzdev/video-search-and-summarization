@@ -1031,6 +1031,17 @@ def create_app(controller: CityController | None = None) -> FastAPI:
             return {"schemaVersion": "city.tradeshow-control.v1", "available": False, "playing": False,
                     "scenario": {"state": "offline", "active": False, "catalog": []}, "detail": str(exc)[:240]}
 
+    from embedding_control import EmbeddingControl
+    embeddings = EmbeddingControl()
+
+    @app.get('/api/v1/embedding')
+    def embedding_status():
+        return embeddings.status()
+
+    @app.post('/api/v1/embedding')
+    def embedding_action(payload: AvatarRequest):
+        return embeddings.action(payload.operation)
+
     @app.get('/api/v1/avatars')
     def avatar_status():
         try:

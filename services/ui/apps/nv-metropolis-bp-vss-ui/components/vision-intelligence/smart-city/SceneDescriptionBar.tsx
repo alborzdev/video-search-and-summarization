@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 import React, { useEffect, useRef, useState } from 'react';
-import { IconSparkles } from '@tabler/icons-react';
+import { IconMessageCircle, IconSparkles } from '@tabler/icons-react';
 import { captureSceneFrame } from './scenarioFrameCapture';
 import type { SceneDescription } from './sceneDescription';
 import styles from './SceneDescriptionBar.module.css';
 
 interface Props {
   siteId: string; epoch?: string; sourceId?: string; sessionId?: string;
-  sourceName?: string; enabled: boolean;
+  sourceName?: string; enabled: boolean; onAsk?: () => void; fill?: boolean;
 }
-export function SceneDescriptionBar({ siteId, epoch, sourceId, sessionId, sourceName, enabled }: Props) {
+export function SceneDescriptionBar({ siteId, epoch, sourceId, sessionId, sourceName, enabled, onAsk, fill = false }: Props) {
   const [result, setResult] = useState<{ key: string; value: SceneDescription } | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -57,13 +57,16 @@ export function SceneDescriptionBar({ siteId, epoch, sourceId, sessionId, source
       if (request.current === controller) { request.current = null; setBusy(false); }
     }
   }
-  return <section className={styles.bar} aria-label="Scene description">
-    <button type="button" className={styles.button} onClick={() => void describe()} disabled={!ready || busy}>
-      {busy ? <span className="vi-spinner" /> : <IconSparkles size={17} />}<span>{busy ? 'Describing…' : 'Describe scene'}</span>
+  const hasContent = busy || !!error || !!description;
+  return <section data-has-content={hasContent} className={`${styles.bar} ${onAsk ? styles.barWithAsk : ''} ${fill ? styles.fillPanel : ''}`} aria-label="Scene description">
+    {fill && <div className={styles.panelHeading}><h2>Scene assistant</h2><span>{sourceName ?? 'Live camera'}</span></div>}
+    <button type="button" className={styles.button} aria-label={busy ? 'Describing…' : 'Describe scene'} onClick={() => void describe()} disabled={!ready || busy}>
+      {busy ? <span className="vi-spinner" /> : <IconSparkles size={17} />}<span className={styles.actionText}><span>{busy ? 'Describing…' : 'Describe scene'}</span>{fill && !hasContent && <small>Summarize the current camera view</small>}</span>
     </button>
-    <div className={styles.copy} role="status" aria-live="polite" aria-atomic="true">
+    {onAsk && <button type="button" className={styles.askButton} aria-label="Ask a question" onClick={onAsk}><IconMessageCircle size={17} /><span className={styles.actionText}><span>Ask a question</span>{fill && !hasContent && <small>Explore what’s happening in the scene</small>}</span></button>}
+    {(!fill || hasContent) && <div className={styles.copy} role="status" aria-live="polite" aria-atomic="true">
       <p>{busy ? 'Reading a fresh camera frame…' : error || description?.text || (ready ? 'Get a short description of the current view.' : 'Waiting for a live camera frame.')}</p>
       <small>{description && !busy && !error ? `Cosmos VLM · ${sourceName ?? 'Camera'} · captured ${new Date(description.observedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}` : sourceName ? `Cosmos VLM · ${sourceName}` : 'Cosmos VLM'}</small>
-    </div>
+    </div>}
   </section>;
 }

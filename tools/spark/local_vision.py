@@ -112,8 +112,8 @@ def select(enabled, state=None):
 
 def reserve_gib(state=None):
     reserve = json.loads((_state(state) / 'settings.json').read_text())['reserve_gib']
-    if isinstance(reserve, bool) or not isinstance(reserve, (int, float)) or not math.isfinite(reserve) or not 0 < reserve < 128:
-        raise RuntimeError('Local vision requires the saved Spark positive reserve.')
+    if isinstance(reserve, bool) or not isinstance(reserve, (int, float)) or not math.isfinite(reserve) or not 0 <= reserve < 128:
+        raise RuntimeError('Local vision requires a valid saved Spark reserve (0 disables the floor).')
     return float(reserve)
 
 

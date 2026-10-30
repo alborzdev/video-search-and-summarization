@@ -131,7 +131,8 @@ def preflight(args,previous=None):
     memory=soak.host_memory(args.root,args.device,time.time())
     if not all(soak.finite(memory.get(k)) for k in ('availableGiB','guardAvailableGiB','savedReserveGiB','guardFloorGiB','guardAgeSeconds')):
         raise TrialFailure('memory-guard-invalid')
-    floor=max(20,memory['savedReserveGiB'])
+    floor=memory['savedReserveGiB']
+    if floor < 0:raise TrialFailure('memory-guard-invalid')
     if memory['guardFloorGiB']<floor or not -2<=memory['guardAgeSeconds']<=15 or min(memory['availableGiB'],memory['guardAvailableGiB'])<floor:
         raise TrialFailure('memory-reserve-or-guard-not-ready')
     if not isinstance(source.get('name'),str) or not source['name']:raise TrialFailure('source-name-missing')

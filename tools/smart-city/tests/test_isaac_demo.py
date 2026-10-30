@@ -164,7 +164,7 @@ def test_native_clock_readiness_requires_exact_public_proof_and_native_ack(monke
     assert m.ready() == (health if fault is None else False)
 
 
-@pytest.mark.parametrize('running,available,starts', [(True, 21, False), (False, 25, True), (False, 23, False)])
+@pytest.mark.parametrize('running,available,starts', [(True, 21, False), (False, 25, True), (False, 23, True), (False, 19, False)])
 def test_video_recovery_reuses_owned_container_and_respects_reserve(monkeypatch, running, available, starts):
     calls = []
     def command(*args):
@@ -174,7 +174,7 @@ def test_video_recovery_reuses_owned_container_and_respects_reserve(monkeypatch,
     monkeypatch.setattr(m, 'command', command)
     monkeypatch.setattr(m, 'json_request', lambda *_: [])
     monkeypatch.setattr(m, 'wait_for', lambda check, *_: check())
-    if not running and available < 24:
+    if not running and available < 20:
         with pytest.raises(RuntimeError, match='reserve'): m.ensure_video_service()
     else:
         m.ensure_video_service()
@@ -782,3 +782,15 @@ def test_failed_city_load_reports_its_reason_without_waiting_another_deadline(mo
     monkeypatch.setattr(m, 'bridge', lambda: {'loaded': False, 'loading': False, 'error': 'Pedestrian preparation failed'})
     with pytest.raises(m.CityLoadFailed, match='Pedestrian preparation failed'):
         m.wait_for(m.loaded_city, 'loading city', 210)
+
+@pytest.mark.parametrize('stopped', [True, False])
+def test_optional_embedding_pause_needs_independent_host_stop_proof(monkeypatch, stopped):
+    response = analysis_response('pause', state='partial', indexingPolicy='on-demand', indexingRequired=False,
+        steps={'detection': True, 'embedding': False})
+    monkeypatch.setattr(m, 'command', lambda *_: SimpleNamespace(stdout=json.dumps(response)))
+    monkeypatch.setattr(m, 'embedding_service_stopped', lambda: stopped)
+    if stopped:
+        assert m.analysis({'id':'source-a','name':'SW'}, 'pause') == response
+    else:
+        with pytest.raises(RuntimeError, match='Analysis pause failed'):
+            m.analysis({'id':'source-a','name':'SW'}, 'pause')

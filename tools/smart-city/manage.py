@@ -151,7 +151,7 @@ def saved_reserve(device: str) -> float:
         raise RuntimeError(f"Initialize the existing {device} deployment and its saved guard before launch")
     settings = json.loads(path.read_text())
     value = settings.get("reserve_gib")
-    if not isinstance(value, (int, float)) or isinstance(value, bool) or value <= 0:
+    if not isinstance(value, (int, float)) or isinstance(value, bool) or value < 0:
         raise RuntimeError("Saved memory reserve is missing or invalid; refusing an unguarded launch")
     return float(value)
 

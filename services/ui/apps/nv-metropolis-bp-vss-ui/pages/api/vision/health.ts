@@ -17,6 +17,7 @@ interface ServiceHealth {
   latencyMs: number | null;
   ok: boolean;
   selected: boolean;
+  onDemand?: boolean;
 }
 
 interface ThorMetrics {
@@ -192,6 +193,8 @@ export default async function handler(
       spark ? Promise.resolve(null) : readThorMetrics(),
       spark ? readSparkCapacity() : Promise.resolve(null),
     ]);
+  // Spark embeddings are opt-in; a stopped optional model is not a stack fault.
+  if (spark) { embedding.onDemand = true; embedding.selected = embedding.ok; }
   const services = [video, agent, analytics, perception, embedding, vlm, llm];
   const selectedServices = services.filter((service) => service.selected);
   const healthy = selectedServices.filter((service) => service.ok).length;

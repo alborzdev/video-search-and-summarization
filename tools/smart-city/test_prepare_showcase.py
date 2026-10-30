@@ -42,7 +42,7 @@ def test_crossing_roi_uses_painted_road_plane_for_camera_map_round_trip():
     rules,_=build(package,site,{'rules':[]},{})
     crossing=next(r for r in rules if r['id']=='expo-crossing-occupancy')
     actual=[project(camera['imageToGroundHomography'],[u*1280,v*480]) for u,v in crossing['geometry']['points']]
-    expected=[[-14.,83.],[-10.7,82.85],[-10.7,72.7],[-14.,72.9]]
+    expected=[[-11.157913810431364, 72.35760559271463], [-13.843809477679917, 73.3515576727803], [-13.638742309886563, 82.31474010901458], [-10.781761392571232, 82.47821290960839]]
     for a,b in zip(actual,expected): assert a==pytest.approx(b)
     queue=next(r for r in rules if r['id']=='expo-approach-queue')
     ground=[project(package['cameras']['cam_SW']['imageToGroundHomography'],[u*1280,v*480]) for u,v in queue['geometry']['points']]

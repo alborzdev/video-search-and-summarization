@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!['http:', 'https:'].includes(base.protocol) || base.username || base.password) throw new Error('Invalid controller');
     const response = await fetch(new URL('/api/v1/avatars', base), {
       method: req.method, headers: { 'Content-Type': 'application/json' },
-      body: req.method === 'POST' ? JSON.stringify(req.body) : undefined, signal: AbortSignal.timeout(5000),
+      body: req.method === 'POST' ? JSON.stringify(req.body) : undefined, signal: AbortSignal.timeout(25000),
     });
     const data = await response.json();
     if (!response.ok) return res.status(response.status).json({ error: data.detail || 'Avatar action failed. Check status before retrying.' });

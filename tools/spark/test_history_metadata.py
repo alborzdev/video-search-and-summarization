@@ -69,6 +69,17 @@ class HistoryMetadataTests(unittest.TestCase):
                     side_effect=subprocess.CalledProcessError(3, ['systemctl'])):
                 with self.assertRaises(subprocess.CalledProcessError): h.capacity_snapshot()
 
+    def test_zero_reserve_is_reported_with_fresh_telemetry(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(h, 'STATE', Path(folder)):
+            (Path(folder) / 'settings.json').write_text('{"reserve_gib":0}')
+            (Path(folder) / 'guard-status.json').write_text('{"floor_gib":0,"time":99}')
+            with patch.object(h.time, 'time', return_value=100), patch.object(h.subprocess, 'run'), \
+                 patch.object(h, 'Path', return_value=Mock(read_text=Mock(return_value='MemAvailable: 524288 kB\n'))):
+                snapshot = h.capacity_snapshot()
+            self.assertEqual(snapshot['reserveGiB'], 0)
+            self.assertEqual(snapshot['availableGiB'], 0.5)
+            self.assertTrue(snapshot['guardActive'])
+
     def test_query_is_fixed_and_read_only(self):
         with patch.object(h.subprocess, 'run', return_value=Mock(stdout='[{"row_id": 10}]')) as run:
             self.assertEqual(h.recording_snapshot(), {'recordings': [{'row_id': 10}]})

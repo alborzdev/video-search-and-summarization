@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+import { animateViewChange } from './viewTransition';
 
 import { DashPlaybackCapability } from "./DashPlaybackCapability";
 
@@ -192,8 +193,10 @@ export default function VisionIntelligenceApp({
   const [presentationMode, setPresentationMode] = useState(false);
   const [cityView, setCityView] = useState<CityWorkspaceView>('overview');
   const changeCityView = useCallback((view: CityWorkspaceView) => {
-    setCityView(view);
-    cityScroll.current?.scrollTo?.({ top: 0, behavior: "auto" });
+    animateViewChange(() => {
+      setCityView(view);
+      cityScroll.current?.scrollTo?.({ top: 0, behavior: "auto" });
+    });
   }, []);
   const showCityStory = useCallback(() => {
     const container = cityScroll.current;
@@ -245,14 +248,15 @@ export default function VisionIntelligenceApp({
 
   const navigateToSection = useCallback(
     (nextSection: PrimarySection) => {
-      if (nextSection !== "monitoring") setMonitoringSourceId(null);
-      setSection(nextSection);
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
-      if (!router.isReady) return;
-
-      void router.push(workspaceHref(nextSection, router.query), undefined, {
-        shallow: true,
-        scroll: false,
+      animateViewChange(() => {
+        if (nextSection !== "monitoring") setMonitoringSourceId(null);
+        setSection(nextSection);
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" as ScrollBehavior });
+        if (!router.isReady) return;
+        void router.push(workspaceHref(nextSection, router.query), undefined, {
+          shallow: true,
+          scroll: false,
+        });
       });
     },
     [router]
@@ -492,6 +496,7 @@ export default function VisionIntelligenceApp({
         .vi-city-tabs button:hover { color:#fff; }
         .vi-city-tabs button:focus-visible { outline:2px solid #37d5c1; outline-offset:-4px; }
         @media(min-width:901px) and (max-width:1450px) { .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status { display:none; } .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-bar { gap:16px; } .vi-city-tabs { gap:10px; } }
+        @media(min-width:1201px) { .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status { display:flex; } }
         @media(max-width:1100px) { .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-context-title strong { font-size:18px; } .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-presentation-button { width:36px; min-width:36px; padding:0; font-size:0; } }
         @media(max-width:900px) { .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] { grid-template-columns:minmax(0,1fr); } .vi-city-tabs { gap:4px; } .vi-city-tabs button { font-size:12px; padding-inline:5px; } .vi-brand-v2.vi-tradeshow[data-workspace="smart-city"] .vi-processing-status { display:none; } }
 
@@ -652,14 +657,14 @@ export default function VisionIntelligenceApp({
               </div>
             )}
           </div>
-          <button
+          {(section !== "smart-city" || presentationMode) && <button
             className="vi-presentation-button"
             type="button"
             onClick={() => void togglePresentationMode()}
           >
             <IconMaximize size={18} />
             {presentationMode ? "Exit Presentation" : "Presentation Mode"}
-          </button>
+          </button>}
           <button
             className="vi-more-button"
             type="button"

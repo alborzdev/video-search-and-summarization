@@ -1,9 +1,58 @@
 .bar { display:flex; align-items:center; gap:16px; min-width:0; padding:15px 18px; min-height:96px; }
-.bar .button { flex:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid #45655e; border-radius:7px; background:#243b35; color:#b9efdf; padding:10px 13px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
-.bar .button:hover:not(:disabled) { background:#2e4a41; border-color:#71bda6; }
+.bar .button { flex:none; display:inline-flex; align-items:center; justify-content:center; gap:8px; border:1px solid #39474c; border-radius:7px; background:transparent; color:#d5e3e4; padding:10px 13px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.bar .button:hover:not(:disabled) { background:#263237; border-color:#647a80; }
 .bar .button:focus-visible { outline:2px solid #80e3c3; outline-offset:3px; }
 .bar .button:disabled { cursor:default; opacity:.6; }
 .copy { flex:1; min-width:0; }
 .copy p { margin:0; color:#e4ecef; font-size:13px; line-height:1.55; overflow-wrap:anywhere; }
 .copy small { display:block; margin-top:5px; color:#96a9ad; font-size:10px; line-height:1.4; }
+.barWithAsk { display:grid; grid-template-columns:auto 1fr; gap:8px; align-items:center; min-height:0; padding:10px 12px; }
+.barWithAsk .button,.barWithAsk .askButton { width:100%; justify-content:center; padding:8px; font-size:11px; }
+.barWithAsk .askButton { display:inline-flex; align-items:center; gap:5px; border:1px solid #39474c; border-radius:7px; color:#d5e3e4; background:transparent; font-weight:600; cursor:pointer; white-space:nowrap; }
+.barWithAsk .askButton:hover { background:#263237; border-color:#647a80; }
+.barWithAsk .askButton:focus-visible { outline:2px solid #80e3c3; outline-offset:3px; }
+.barWithAsk .copy { grid-column:1/-1; }
+.barWithAsk .copy p { font-size:11px; line-height:1.4; }
+.barWithAsk .copy small { margin-top:2px; }
 @media(max-width:1150px) { .bar { align-items:flex-start; flex-direction:column; gap:10px; padding:13px 15px; } }
+@container (min-width:321px) and (max-width:500px) {
+ .bar { flex-direction:row; align-items:center; gap:10px; padding:10px 12px; }
+}
+@container (max-width:320px) {
+ .bar { flex-direction:row; align-items:center; gap:8px; padding:10px; min-height:84px; }
+ .bar .button { gap:5px; padding:8px; font-size:11px; }
+ .copy p { font-size:11px; line-height:1.4; }
+}
+/* Group each action with its purpose, so the available space is useful. */
+.bar.fillPanel { width:100%; min-height:0; padding:14px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); grid-template-rows:auto minmax(0,1fr); gap:12px; align-items:stretch; }
+.panelHeading { grid-column:1/-1; display:flex; align-items:baseline; justify-content:space-between; gap:12px; min-width:0; }
+.panelHeading h2 { margin:0; font-size:14px; font-weight:600; color:#eff2f4; white-space:nowrap; }
+.panelHeading>span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#96a9ad; font-size:11px; }
+.fillPanel .button,.fillPanel .askButton { grid-row:2; display:flex; align-items:center; justify-content:flex-start; min-width:0; min-height:34px; padding:14px; gap:10px; font-size:13px; text-align:left; white-space:normal; }
+.fillPanel .button>svg,.fillPanel .askButton>svg { flex:none; }
+.actionText { min-width:0; }
+.actionText small { display:block; margin-top:5px; color:#a2b5b8; font-size:11px; font-weight:400; line-height:1.45; }
+.fillPanel .askButton { background:transparent; border-color:#39474c; color:#d5e3e4; }
+.fillPanel[data-has-content=true] { grid-template-rows:auto minmax(0,1fr) auto; }
+.fillPanel[data-has-content=true] .button,.fillPanel[data-has-content=true] .askButton { grid-row:3; padding:8px; justify-content:center; font-size:12px; }
+.fillPanel .copy { grid-column:1/-1; grid-row:2; min-height:0; overflow:auto; align-self:stretch; }
+.fillPanel .copy p { font-size:13px; line-height:1.6; }
+.fillPanel .copy small { margin-top:8px; color:#96a9ad; font-size:10px; }
+@container scene-assistant (max-height:135px) {
+ .bar.fillPanel,.bar.fillPanel[data-has-content=true] { padding:10px 12px; gap:8px; grid-template-rows:minmax(0,1fr) auto; }
+ .fillPanel .panelHeading { display:none; }
+ .fillPanel:not([data-has-content=true]) .button,.fillPanel:not([data-has-content=true]) .askButton { grid-row:1/-1; }
+ .fillPanel[data-has-content=true] .button,.fillPanel[data-has-content=true] .askButton { grid-row:2; }
+ .fillPanel .copy { grid-row:1; }
+ .fillPanel .copy p { font-size:12px; line-height:1.4; }
+ .fillPanel .copy small { margin-top:4px; }
+}
+@container scene-assistant (max-width:350px) {
+ .fillPanel .button,.fillPanel .askButton { padding:10px; gap:7px; font-size:12px; }
+ .fillPanel .actionText small { font-size:10px; }
+ .panelHeading>span { font-size:10px; }
+}
+
+/* Both choices are neutral until the user interacts with them. */
+.bar .button,.barWithAsk .askButton { transition:background-color 160ms ease,border-color 160ms ease,box-shadow 160ms ease; }
+@media(prefers-reduced-motion:reduce) { .bar .button,.barWithAsk .askButton { transition:none; } }

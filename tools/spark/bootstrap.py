@@ -118,8 +118,8 @@ def available():
 
 
 def validate_reserve(value):
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 < value < 128:
-        raise RuntimeError('Runtime reserve must be a finite number between 0 and 128 GiB.')
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value < 128:
+        raise RuntimeError('Runtime reserve must be finite, at least 0 and below 128 GiB; 0 disables the reserve floor.')
     return value
 
 
@@ -630,6 +630,8 @@ def up():
     # Adopt selected host-worker UI wiring on cached starts too. Existing model
     # images, budgets and cache choices are untouched.
     original = json.dumps(graph, sort_keys=True)
+    # Embeddings are an operator-started workload and stay off after reboot.
+    graph['services']['rtvi-embed']['restart'] = 'no'
     local_vision.configure_graph(graph, state=STATE)
     if json.dumps(graph, sort_keys=True) != original:
         private_write(STATE / 'compose.json', json.dumps(graph, indent=2) + '\n')
@@ -638,6 +640,8 @@ def up():
     late = ['vss-agent', 'vss-ui', 'vss-haproxy-ingress', 'lvs-server', 'alert-bridge', 'vss-va-mcp']
     early = [s for s in graph['services'] if s not in models + detectors + late]
     order = startup_order(graph['services'], early, models + detectors, late)
+    order = [service for service in order if service != 'rtvi-embed']
+    run(compose('stop', 'rtvi-embed'))
     one_shots = completed_services(graph)
     for service in order:
         if service in models:
@@ -755,7 +759,7 @@ WantedBy=default.target
 def verify():
     failures = []
     probes = {'llm': 'http://127.0.0.1:30081/v1/models', 'vlm': 'http://127.0.0.1:8018/v1/health/ready',
-              'embed': 'http://127.0.0.1:8017/v1/ready', 'agent': 'http://127.0.0.1:8100/health',
+              'agent': 'http://127.0.0.1:8100/health',
               'vios': 'http://127.0.0.1:30888/vst/api/v1/sensor/list',
               'history': 'http://127.0.0.1:8101/health', 'history-metadata': 'http://127.0.0.1:8102/health'}
     graph_path = STATE / 'compose.json'

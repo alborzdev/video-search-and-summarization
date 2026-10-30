@@ -25,10 +25,12 @@ class LocalCLITests(unittest.TestCase):
 
     def test_saved_reserve_and_startup_admission(self):
         settings = self.root / "settings.json"
-        for value in (0, True, float("nan")):
+        for value in (-1, True, float("nan")):
             settings.write_text(json.dumps({"reserve_gib": value}))
             with self.assertRaises(RuntimeError):
                 run.saved_reserve(settings)
+        settings.write_text('{"reserve_gib": 0}')
+        self.assertEqual(run.saved_reserve(settings), 0)
         settings.write_text('{"reserve_gib": 28}')
         self.assertEqual(run.saved_reserve(settings), 28)
         with patch.object(run, "saved_reserve", return_value=28), patch.object(run, "guard_active", return_value=True), patch.object(run, "available_gib", return_value=27.9):

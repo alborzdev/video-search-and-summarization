@@ -50,8 +50,8 @@ def available_gib() -> float:
 
 def saved_floor(root: Path) -> float:
     value = json.loads((root / ".spark/settings.json").read_text()).get("reserve_gib")
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 0:
-        raise RuntimeError("Packaging requires the saved Spark positive reserve; it never lowers that reserve")
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+        raise RuntimeError("Packaging requires a finite nonnegative saved Spark reserve; it never lowers that reserve")
     return float(value)
 
 

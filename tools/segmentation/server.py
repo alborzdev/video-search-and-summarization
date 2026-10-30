@@ -46,8 +46,8 @@ class RequestError(Exception):
 def reserve_gib():
     value = json.loads((ROOT / ".spark/settings.json").read_text())["reserve_gib"]
     if (isinstance(value, bool) or not isinstance(value, (int, float))
-            or not math.isfinite(value) or value <= 0):
-        raise RuntimeError("Saved Spark reserve must be finite and positive")
+            or not math.isfinite(value) or value < 0):
+        raise RuntimeError("Saved Spark reserve must be finite and nonnegative")
     return float(value)
 
 
